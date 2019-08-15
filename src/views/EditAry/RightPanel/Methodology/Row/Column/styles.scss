@@ -1,9 +1,12 @@
-%cell {
+.cell {
     display: table-cell;
     padding: var(--spacing-small-alt);
 
-}
+    .cell-item {
+        display: inline-block;
 
-.cell {
-    @extend %cell;
+        :not(:last-child) {
+            margin-right: var(--spacing-small);
+        }
+    }
 }

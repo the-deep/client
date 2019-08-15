@@ -62,7 +62,7 @@ export default class Methodology extends React.PureComponent {
         },
     ])
 
-    headerKeySelector = methodologyGroup => methodologyGroup.id
+    headerKeySelector = methodologyGroup => methodologyGroup.id;
 
     headerRendererParams = (k, methodologyGroup) => ({
         title: methodologyGroup.title,
@@ -99,12 +99,11 @@ export default class Methodology extends React.PureComponent {
                 <FaramGroup faramElementName="methodology">
                     <ResizableV
                         className={styles.top}
-                        topContainerClassName={styles.toptop}
-                        bottomContainerClassName={styles.topbottom}
+                        topContainerClassName={styles.top}
+                        bottomContainerClassName={styles.bottom}
                         topChild={
                             <div className={styles.methodologyContent}>
                                 <Header
-                                    className={styles.header}
                                     title={methodologyContentTitle}
                                 />
                                 <div className={styles.content}>

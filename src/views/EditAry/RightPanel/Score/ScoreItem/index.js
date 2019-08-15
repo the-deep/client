@@ -10,7 +10,7 @@ import _cs from '#cs';
 import styles from './styles.scss';
 
 const propTypes = {
-    value: PropTypes.number.isRequired,
+    value: PropTypes.number,
     minValue: PropTypes.number.isRequired,
     maxValue: PropTypes.number.isRequired,
     minColor: PropTypes.string.isRequired,
@@ -20,6 +20,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    value: undefined,
     className: '',
     title: '',
 };

@@ -1,19 +1,11 @@
-%cell {
-    display: table-cell;
-    padding: var(--spacing-small-alt);
-
-}
-
-%action-buttons {
-    @extend %cell;
-    width: var(--width-action-buttons);
-}
-
 .row {
     display: table-row;
 
     .action-buttons {
-        @extend %action-buttons;
+        display: table-cell;
+        padding: var(--spacing-small-alt);
+        width: var(--width-action-buttons);
+        vertical-align: top;
     }
 
     :global {

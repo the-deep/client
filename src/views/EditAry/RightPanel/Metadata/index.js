@@ -37,7 +37,7 @@ export default class Metadata extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static columnKeySelector = data => data.id
+    static columnKeySelector = data => data.id;
 
     getMetadataGroupList = memoize(metadataGroups => Object.values(metadataGroups))
 

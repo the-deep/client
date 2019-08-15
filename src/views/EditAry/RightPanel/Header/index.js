@@ -9,11 +9,13 @@ import styles from './styles.scss';
 const propTypes = {
     title: PropTypes.string,
     className: PropTypes.string,
+    headingClassName: PropTypes.string,
 };
 
 const defaultProps = {
     title: '',
     className: '',
+    headingClassName: '',
 };
 
 export default class Header extends React.PureComponent {
@@ -24,6 +26,7 @@ export default class Header extends React.PureComponent {
         const {
             title,
             className: classNameFromProps,
+            headingClassName,
         } = this.props;
 
         const className = _cs(
@@ -33,7 +36,7 @@ export default class Header extends React.PureComponent {
 
         return (
             <header className={className}>
-                <h3 className={styles.heading}>
+                <h3 className={_cs(styles.heading, headingClassName)}>
                     { title }
                 </h3>
                 <NonFieldErrors

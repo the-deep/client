@@ -1,11 +1,14 @@
-
 .header {
     display: flex;
     align-items: center;
+    padding: var(--spacing-small) 0;
 
     .heading {
-        flex-shrink: 0;
-        padding: 0 var(--spacing-medium);
+        display: flex;
+        align-items: center;
+        padding: 0 var(--spacing-small);
+        text-transform: capitalize;
+        color: var(--color-accent);
     }
 
     .non-field-errors {

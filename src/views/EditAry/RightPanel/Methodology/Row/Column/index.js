@@ -41,6 +41,7 @@ export default class Column extends React.PureComponent {
 
         return {
             ...widgetProps,
+            className: styles.cellItem,
             fieldType,
             hidden: isHidden,
         };
@@ -51,6 +52,7 @@ export default class Column extends React.PureComponent {
             index,
             fields,
         } = this.props;
+
         return (
             <FaramGroup
                 faramElementName={String(index)}

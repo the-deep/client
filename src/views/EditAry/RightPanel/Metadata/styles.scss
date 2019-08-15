@@ -1,17 +1,3 @@
-%section-basic {
-    display: flex;
-    flex-direction: column;
-
-    >.header {
-        flex-shrink: 0;
-    }
-
-    >.content {
-        display: flex;
-        flex-grow: 1;
-    }
-}
-
 .metadata {
     display: flex;
     position: relative;
@@ -20,13 +6,19 @@
     overflow: auto;
 
     .basic-information {
-        @extend %section-basic;
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
         height: 100%;
 
+        >.header {
+            flex-shrink: 0;
+        }
+
         >.content {
-            overflow-x: auto;
+            display: flex;
+            justify-content: space-between;
         }
     }
 }

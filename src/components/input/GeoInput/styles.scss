@@ -1,8 +1,8 @@
-
 .geo-list-input {
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow-y: auto;
 
     .action {
         padding: var(--spacing-extra-small) var(--spacing-small);
@@ -10,6 +10,7 @@
 
     .select-input {
         flex-grow: 1;
+        overflow-y: auto;
     }
 
     .no-list-selection {

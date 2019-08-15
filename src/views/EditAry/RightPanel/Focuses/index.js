@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { _cs } from '@togglecorp/fujs';
 import { FaramGroup } from '@togglecorp/faram';
+
 import ListSelection from '#rsci/ListSelection';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -78,59 +79,67 @@ export default class Focuses extends React.PureComponent {
             <div className={styles.focuses}>
                 {pending && <LoadingAnimation />}
                 <FaramGroup faramElementName="methodology">
-                    <section className={styles.middleSection}>
-                        <div className={styles.middleSectionItem}>
-                            <Header
-                                className={styles.header}
-                                title={focusesTitle}
-                            />
-                            <ListSelection
-                                className={styles.focuses}
-                                faramElementName="focuses"
-                                options={focuses}
-                                keySelector={idSelector}
-                                labelSelector={titleSelector}
-                            />
-                        </div>
-                        <div className={styles.middleSectionItem}>
-                            <Header
-                                className={styles.header}
-                                title={sectorsTitle}
-                            />
-                            <ListSelection
-                                faramElementName="sectors"
-                                options={sectors}
-                                className={styles.sectors}
-                                keySelector={idSelector}
-                                labelSelector={titleSelector}
-                            />
-                        </div>
-                        <div className={styles.affectedGroups}>
-                            <Header
-                                className={styles.header}
-                                title={affectedGroupsTitle}
-                            />
-                            <OrganigramInput
-                                faramElementName="affectedGroups"
-                                data={affectedGroups}
-                                childSelector={Focuses.orgChildSelector}
-                                labelSelector={Focuses.orgLabelSelector}
-                                idSelector={Focuses.orgIdSelector}
-                            />
-                        </div>
-                        <div className={styles.locationSelection}>
-                            <Header
-                                className={styles.header}
-                                title={locationsTitle}
-                            />
-                            <GeoInput
-                                faramElementName="locations"
-                                title={locationsTitle}
-                                geoOptionsByRegion={geoOptions}
-                                regions={projectDetails.regions}
-                            />
-                        </div>
-                    </section>
+                    <div className={_cs(styles.sectionItem, styles.middleSectionItem)}>
+                        <Header
+                            title={focusesTitle}
+                            headingClassName={styles.heading}
+                            className={styles.header}
+                        />
+                        <ListSelection
+                            showLabel={false}
+                            className={styles.content}
+                            faramElementName="focuses"
+                            options={focuses}
+                            keySelector={idSelector}
+                            labelSelector={titleSelector}
+                        />
+                    </div>
+                    <div className={_cs(styles.sectionItem, styles.middleSectionItem)}>
+                        <Header
+                            headingClassName={styles.heading}
+                            title={sectorsTitle}
+                            className={styles.header}
+                        />
+                        <ListSelection
+                            showLabel={false}
+                            faramElementName="sectors"
+                            options={sectors}
+                            className={styles.content}
+                            keySelector={idSelector}
+                            labelSelector={titleSelector}
+                        />
+                    </div>
+                    <div className={_cs(styles.sectionItem, styles.affectedGroups)}>
+                        <Header
+                            className={styles.header}
+                            headingClassName={styles.heading}
+                            title={affectedGroupsTitle}
+                        />
+                        <OrganigramInput
+                            className={styles.content}
+                            faramElementName="affectedGroups"
+                            data={affectedGroups}
+                            childSelector={Focuses.orgChildSelector}
+                            labelSelector={Focuses.orgLabelSelector}
+                            idSelector={Focuses.orgIdSelector}
+                            showLabel={false}
+                        />
+                    </div>
+                    <div className={_cs(styles.sectionItem, styles.locationSelection)}>
+                        <Header
+                            className={styles.header}
+                            headingClassName={styles.heading}
+                            title={locationsTitle}
+                        />
+                        <GeoInput
+                            showLabel={false}
+                            className={styles.content}
+                            faramElementName="locations"
+                            title={locationsTitle}
+                            geoOptionsByRegion={geoOptions}
+                            regions={projectDetails.regions}
+                        />
+                    </div>
                 </FaramGroup>
             </div>
         );

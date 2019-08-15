@@ -22,18 +22,6 @@
     background-color: var(--color-foreground);
 }
 
-.header {
-    flex-shrink: 0;
-    background-color: var(--color-foreground);
-    padding: var(--spacing-small) 0;
-
-    h3 {
-        text-transform: capitalize;
-        color: var(--color-accent);
-        font-size: var(--font-size-medium);
-    }
-}
-
 .methodology {
     display: flex;
     position: relative;
@@ -49,9 +37,9 @@
         min-height: 60%;
         overflow: auto;
 
-        .toptop {
+        .top {
             flex-grow: 1;
-            height: 50%;
+            height: 30%;
             min-height: 40px;
             overflow: auto;
 
@@ -88,9 +76,9 @@
             }
         }
 
-        .topbottom {
+        .bottom {
             border-top: var(--width-separator-thin) solid var(--color-separator);
-            height: 50%;
+            height: 70%;
             min-height: 20%;
             overflow: auto;
 
@@ -135,7 +123,6 @@
                 }
             }
         }
-
     }
 }
 

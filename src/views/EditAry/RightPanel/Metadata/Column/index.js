@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -22,17 +21,15 @@ const ModalButton = modalize(StakeholderButton);
 const propTypes = {
     title: PropTypes.string.isRequired,
     sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    fields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    fields: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 const defaultProps = {
-    fields: {},
+    fields: [],
 };
 
 export default class Column extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    getFieldList = memoize(fields => Object.values(fields))
 
     isStakeholderColumn = () => {
         const { title } = this.props;
@@ -64,28 +61,27 @@ export default class Column extends React.PureComponent {
             sources,
         } = this.props;
 
-        const fieldList = this.getFieldList(fields);
         const isStakeholder = this.isStakeholderColumn();
 
         return (
             <div className={styles.widgetGroup}>
-                <h4 className={styles.heading}>
+                <h3 className={styles.heading}>
                     {title}
                     {isStakeholder &&
                         <ModalButton
                             className={styles.showMoreButton}
                             modal={
                                 <StakeholderModal
-                                    fields={fieldList}
+                                    fields={fields}
                                     sources={sources}
                                 />
                             }
                         />
                     }
-                </h4>
+                </h3>
                 <ListView
                     className={styles.content}
-                    data={fieldList}
+                    data={fields}
                     rendererParams={this.fieldRendererParams}
                     renderer={BaseWidget}
                     keySelector={Column.fieldKeySelector}

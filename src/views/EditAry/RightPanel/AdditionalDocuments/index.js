@@ -51,38 +51,36 @@ export default class AdditionalDocuments extends React.PureComponent {
                 <FaramGroup faramElementName="metadata">
                     <FaramGroup faramElementName="additionalDocuments">
                         <div className={styles.container}>
-                            <div className={styles.content}>
-                                <MultiDocumentUploader
-                                    label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="executiveSummary"
-                                    showPageRange
-                                    acceptFileTypes={acceptFileTypes}
-                                    onPending={this.handleExecutiveSummaryPending}
-                                />
-                                <MultiDocumentUploader
-                                    label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="assessmentData"
-                                    showUrlInput
-                                    acceptFileTypes={acceptFileTypes}
-                                    onPending={this.handleAssessmentDataPending}
-                                />
-                                <MultiDocumentUploader
-                                    label={_ts('editAssessment.metadata', 'questionnaireTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="questionnaire"
-                                    showPageRange
-                                    acceptFileTypes={acceptFileTypes}
-                                    onPending={this.handleQuestionnairePending}
-                                />
-                                <MultiDocumentUploader
-                                    label={_ts('editAssessment.metadata', 'miscTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="misc"
-                                    onPending={this.handleMiscPending}
-                                />
-                            </div>
+                            <MultiDocumentUploader
+                                label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
+                                className={styles.baksa}
+                                faramElementName="executiveSummary"
+                                showPageRange
+                                acceptFileTypes={acceptFileTypes}
+                                onPending={this.handleExecutiveSummaryPending}
+                            />
+                            <MultiDocumentUploader
+                                label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
+                                className={styles.baksa}
+                                faramElementName="assessmentData"
+                                showUrlInput
+                                acceptFileTypes={acceptFileTypes}
+                                onPending={this.handleAssessmentDataPending}
+                            />
+                            <MultiDocumentUploader
+                                label={_ts('editAssessment.metadata', 'questionnaireTitle')}
+                                className={styles.baksa}
+                                faramElementName="questionnaire"
+                                showPageRange
+                                acceptFileTypes={acceptFileTypes}
+                                onPending={this.handleQuestionnairePending}
+                            />
+                            <MultiDocumentUploader
+                                label={_ts('editAssessment.metadata', 'miscTitle')}
+                                className={styles.baksa}
+                                faramElementName="misc"
+                                onPending={this.handleMiscPending}
+                            />
                         </div>
                     </FaramGroup>
                 </FaramGroup>
