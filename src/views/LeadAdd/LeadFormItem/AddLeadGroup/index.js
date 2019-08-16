@@ -59,9 +59,6 @@ export default class AddLeadGroup extends React.PureComponent {
         };
     }
 
-    componentWillUnmount() {
-    }
-
     startLeadGroupCreateRequest = (newLeadGroup) => {
         if (this.requestForLeadGroupCreate) {
             this.requestForLeadGroupCreate.stop();
