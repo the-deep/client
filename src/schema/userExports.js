@@ -16,6 +16,8 @@ const exportSchema = [];
             project: { type: 'uint' },
             mimeType: { type: 'string', required: true },
             pending: { type: 'boolean', required: true },
+            exportType: { type: 'string' },
+            status: { type: 'string', required: true },
             isPreview: { type: 'boolean', required: true },
             title: { type: 'string', required: true },
             type: { type: 'string', required: true },

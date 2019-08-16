@@ -26,10 +26,16 @@
     }
 
     .content {
+        display: flex;
         flex-basis: 100%;
+        flex-direction: column;
         flex-grow: 1;
         background-color: var(--color-foreground);
         overflow-y: auto;
+
+        .table {
+            flex-grow: 1;
+        }
 
         .link {
             padding: 0 var(--spacing-medium);

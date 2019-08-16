@@ -973,7 +973,8 @@
         "-17456167": "Use Framework",
         "-56943688": "Edit details",
         "-59011405": "No. of Pages",
-        "-86287086": "No framework is currently selected."
+        "-86287086": "No framework is currently selected.",
+        "-28816005": "To be started"
     },
     "links": {
         "browserExtension": {
@@ -1423,7 +1424,7 @@
             "statusHeaderLabel": 8,
             "exportTypeHeaderLabel": 627,
             "exportDownloadHeaderLabel": 628,
-            "pendingStatusLabel": 629,
+            "pendingStatusLabel": -28816005,
             "errorStatusLabel": 630,
             "completedStatusLabel": 631,
             "userExportsHeader": 632,
@@ -1446,7 +1447,8 @@
             "cantLoadGeo": 534,
             "exportStatusTitle": -33031804,
             "continueButtonLabel": -22307298,
-            "exportImageGnerationPending": -46932501
+            "exportImageGnerationPending": -46932501,
+            "startedStatusLabel": 629
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

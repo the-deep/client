@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import {
     reverseRoute,
     compareString,
-    compareBoolean,
     compareDate,
 } from '@togglecorp/fujs';
 
@@ -121,21 +120,24 @@ export default class UserExports extends React.PureComponent {
                 comparator: (a, b) => compareString(a.title, b.title),
             },
             {
-                key: 'pending',
+                key: 'status',
                 label: _ts('export', 'statusHeaderLabel'),
                 order: 4,
                 sortable: true,
                 comparator: (a, b) => (
-                    compareBoolean(a.pending, b.pending) ||
-                    compareDate(a.exportedAt, b.exportedAt)
+                    compareString(a.status, b.status)
                 ),
                 modifier: (row) => {
-                    if (row.pending) {
+                    if (row.status === 'pending') {
                         return _ts('export', 'pendingStatusLabel');
-                    } else if (!row.file) {
+                    } else if (row.status === 'started') {
+                        return _ts('export', 'startedStatusLabel');
+                    } else if (row.status === 'failure') {
                         return _ts('export', 'errorStatusLabel');
+                    } else if (row.status === 'success') {
+                        return _ts('export', 'completedStatusLabel');
                     }
-                    return _ts('export', 'completedStatusLabel');
+                    return '';
                 },
             },
             {
@@ -152,13 +154,13 @@ export default class UserExports extends React.PureComponent {
                 label: _ts('export', 'exportDownloadHeaderLabel'),
                 order: 6,
                 modifier: (row) => {
-                    if (row.pending) {
+                    if (row.status === 'started' || row.status === 'pending') {
                         return (
                             <div className={styles.loadingAnimation}>
                                 <LoadingAnimation />
                             </div>
                         );
-                    } else if (!row.pending && !row.file) {
+                    } else if (row.status === 'failure' || !row.file) {
                         return (
                             <div className="file-error">
                                 <Icon name="error" />
@@ -359,6 +361,7 @@ export default class UserExports extends React.PureComponent {
                         { pendingExports && <LoadingAnimation /> }
                         <div className={styles.tableContainer}>
                             <Table
+                                className={styles.table}
                                 data={userExports || emptyList}
                                 headers={this.exportsTableHeader}
                                 keySelector={UserExports.tableKeyExtractor}

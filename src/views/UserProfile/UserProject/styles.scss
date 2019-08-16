@@ -16,8 +16,14 @@
     }
 
     .projects-table {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         overflow-y: auto;
+
+        .table {
+            flex-grow: 1;
+        }
 
         .link {
             padding: 0 var(--spacing-medium);

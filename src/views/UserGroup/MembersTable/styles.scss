@@ -30,10 +30,16 @@
     }
 
     .content {
+        display: flex;
         flex-basis: 100%;
+        flex-direction: column;
         flex-grow: 1;
         background-color: var(--color-background);
         overflow-y: auto;
+
+        .table {
+            flex-grow: 1;
+        }
     }
 }
 

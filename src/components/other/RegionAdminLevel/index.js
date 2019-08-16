@@ -302,6 +302,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                 </div>
                 <div className={styles.adminLevelsList}>
                     <Table
+                        className={styles.table}
                         data={adminLevelList}
                         headers={this.adminLevelHeaders}
                         keySelector={this.keySelector}

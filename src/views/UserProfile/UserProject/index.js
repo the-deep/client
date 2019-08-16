@@ -245,6 +245,7 @@ export default class UserProject extends React.PureComponent {
                 }
                 <div className={styles.projectsTable}>
                     <Table
+                        className={styles.table}
                         data={userProjects}
                         headers={this.projectTableHeaders}
                         keySelector={this.projectTableKeyExtractor}

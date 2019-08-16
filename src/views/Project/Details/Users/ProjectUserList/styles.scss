@@ -2,7 +2,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
 
     .header {
         flex-shrink: 0;
@@ -12,9 +12,15 @@
         }
     }
 
-    .table-wrapper {
+    .table {
         flex-grow: 1;
         background-color: var(--color-foreground);
-        overflow: auto;
+        overflow-y: auto;
+
+        :global {
+            .header {
+                z-index: 1;
+            }
+        }
     }
 }
