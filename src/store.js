@@ -56,7 +56,7 @@ const prepareStore = () => {
 const injectHeaders = (reduxStore) => {
     const noOp = () => {};
 
-    // eslint-disable-next-line global-require
+    // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
     const { tokenSelector } = require('./redux/selectors/auth');
 
     let currentAccess;

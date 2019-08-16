@@ -13,7 +13,7 @@ const ShellRunPlugin = require('./shellrun-plugin');
 const getEnvVariables = require('./env.js');
 
 const appBase = process.cwd();
-const eslintFile = path.resolve(appBase, '.eslintrc-loader');
+const eslintFile = path.resolve(appBase, '.eslintrc-loader.js');
 const appSrc = path.resolve(appBase, 'src/');
 const appDist = path.resolve(appBase, 'build/');
 const appIndexJs = path.resolve(appBase, 'src/index.js');
@@ -36,6 +36,7 @@ module.exports = (env) => {
         },
 
         resolve: {
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
             alias: {
                 'base-scss': path.resolve(appBase, 'src/stylesheets/'),
                 'rs-scss': path.resolve(appBase, 'src/vendor/react-store/stylesheets/'),
@@ -87,7 +88,7 @@ module.exports = (env) => {
         module: {
             rules: [
                 {
-                    test: /\.(js|jsx)$/,
+                    test: /\.(js|jsx|ts|tsx)$/,
                     include: appSrc,
                     use: [
                         'babel-loader',
