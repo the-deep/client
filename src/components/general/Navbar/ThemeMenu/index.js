@@ -40,9 +40,7 @@ export default class ThemeMenu extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getRendererParams = themeKey => ({
-        onClickParams: {
-            themeKey,
-        },
+        onClickParams: themeKey,
         children: themes[themeKey].title,
         onClick: this.handleThemeButtonClick,
         className: _cs(
@@ -52,10 +50,10 @@ export default class ThemeMenu extends React.PureComponent {
         transparent: true,
     })
 
-    handleThemeButtonClick = ({ params }) => {
+    handleThemeButtonClick = ({ params: themeKey }) => {
         const { setCurrentTheme } = this.props;
 
-        setCurrentTheme(params.themeKey);
+        setCurrentTheme(themeKey);
         // setTheme(params.themeKey);
     }
 

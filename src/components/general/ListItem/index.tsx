@@ -1,20 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import styles from './styles.scss';
 
-const propTypes = {
-    value: PropTypes.string.isRequired,
-    marker: PropTypes.string,
-};
+interface Props {
+    value: string;
+    marker?: string;
+}
 
-const defaultProps = {
-    marker: '•',
-};
-
-export default class ListItem extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+export default class ListItem extends React.PureComponent<Props> {
+    static defaultProps = {
+        marker: '•',
+    };
 
     render() {
         const {
