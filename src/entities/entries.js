@@ -1,5 +1,10 @@
-import { listToMap, union } from '@togglecorp/fujs';
+import {
+    listToMap,
+    union,
+    encodeDate,
+} from '@togglecorp/fujs';
 import { generateRelation } from '#utils/forest';
+import { getDateWithTimezone } from '#utils/common';
 
 // TODO: move this somewhere else
 const ONE_DAY = 24 * 60 * 60 * 1000;
@@ -56,8 +61,9 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
         const { widgetId } = widget || {};
 
         // TODO: handle static filters
+        // TODO: Fix date filter for date widgets
         // if (filterKey === 'search' || filterKey === 'created_by') {
-        if (widgetId === 'dateWidget' || filterKey === 'created_at') {
+        if (widgetId === 'dateWidget') {
             const { startDate, endDate } = filterOptions;
             result.push([
                 `${filterKey}__gt`,
@@ -66,6 +72,19 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
             result.push([
                 `${filterKey}__lt`,
                 toDays(endDate),
+            ]);
+        } else if (filterKey === 'created_at') {
+            const { startDate, endDate: oldEndDate } = filterOptions;
+            const endDate = new Date(oldEndDate);
+            endDate.setDate(endDate.getDate() + 1);
+
+            result.push([
+                `${filterKey}__gte`,
+                getDateWithTimezone(startDate),
+            ]);
+            result.push([
+                `${filterKey}__lt`,
+                getDateWithTimezone(encodeDate(endDate)),
             ]);
         } else if (widgetId === 'timeWidget') {
             const { startTime, endTime } = filterOptions;

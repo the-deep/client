@@ -1,6 +1,7 @@
 import {
     camelToNormalCase,
     compareTime,
+    getDateWithTimezone,
 } from './common';
 
 test('convert camelcase to normal', () => {
@@ -15,4 +16,8 @@ test('compare time', () => {
     expect(compareTime('12:00:00', '13:00:00')).toBeLessThan(0);
     expect(compareTime('13:00:00', '13:00:00')).toEqual(0);
     expect(compareTime('13:00:00', '12:00:00')).toBeGreaterThan(0);
+});
+
+test('get date with timezone', () => {
+    expect(getDateWithTimezone('2019-05-13')).toEqual('2019-05-13+0545');
 });

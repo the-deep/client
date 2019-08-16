@@ -1,4 +1,6 @@
 import update from '#rsu/immutable-update';
+import { getDateWithTimezone } from '#utils/common';
+import { encodeDate } from '@togglecorp/fujs';
 
 export const LEAD_TYPE = {
     dropbox: 'dropbox',
@@ -168,14 +170,20 @@ export const getFiltersForRequest = (filters) => {
         switch (key) {
             case 'created_at':
                 if (filter) {
-                    requestFilters.created_at__gt = filter.startDate;
-                    requestFilters.created_at__lt = filter.endDate;
+                    const endDate = new Date(filter.endDate);
+                    endDate.setDate(endDate.getDate() + 1);
+
+                    requestFilters.created_at__gte = getDateWithTimezone(filter.startDate);
+                    requestFilters.created_at__lt = getDateWithTimezone(encodeDate(endDate));
                 }
                 break;
             case 'published_on':
                 if (filter) {
-                    requestFilters.published_on__gt = filter.startDate;
-                    requestFilters.published_on__lt = filter.endDate;
+                    const endDate = new Date(filter.endDate);
+                    endDate.setDate(endDate.getDate() + 1);
+
+                    requestFilters.published_on__gte = filter.startDate;
+                    requestFilters.published_on__lt = encodeDate(endDate);
                 }
                 break;
             default:
