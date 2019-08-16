@@ -246,6 +246,7 @@ export default class UserGroup extends React.PureComponent {
                 }
                 <div className={styles.usergroupTable}>
                     <Table
+                        className={styles.table}
                         data={usergroups}
                         headers={this.userGroupsTableHeaders}
                         keySelector={UserGroup.userGroupsTableKeyExtractor}

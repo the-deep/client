@@ -1,4 +1,3 @@
-
 .user-exports {
     .header {
         display: flex;
@@ -35,54 +34,57 @@
                 }
             }
 
+            .table {
+                flex-grow: 1;
 
-            :global {
-                .raw-table {
-                    .headers {
-                        .mime-type {
-                            width: 96px;
-                        }
+                :global {
+                    .raw-table {
+                        .headers {
+                            .mime-type {
+                                width: 96px;
+                            }
 
-                        .file {
-                            width: 64px;
-                        }
-                    }
-
-                    .body {
-                        cursor: pointer;
-
-                        .row {
-                            &.highlighted {
-                                background-color: var(--color-accent);
-                                color: var(--color-text-on-accent);
-
-                                .file-download {
-                                    color: inherit;
-                                }
+                            .file {
+                                width: 64px;
                             }
                         }
 
-                        .cell {
-                            position: relative;
+                        .body {
+                            cursor: pointer;
+
+                            .row {
+                                &.highlighted {
+                                    background-color: var(--color-accent);
+                                    color: var(--color-text-on-accent);
+
+                                    .file-download {
+                                        color: inherit;
+                                    }
+                                }
+                            }
+
+                            .cell {
+                                position: relative;
+                            }
                         }
                     }
-                }
 
-                .icon-wrapper {
-                    display: flex;
-                    justify-content: center;
-                }
+                    .icon-wrapper {
+                        display: flex;
+                        justify-content: center;
+                    }
 
-                .file-error {
-                    display: flex;
-                    justify-content: center;
-                    color: var(--color-danger);
-                }
+                    .file-error {
+                        display: flex;
+                        justify-content: center;
+                        color: var(--color-danger);
+                    }
 
-                .file-download {
-                    display: flex;
-                    justify-content: center;
-                    color: var(--color-accent);
+                    .file-download {
+                        display: flex;
+                        justify-content: center;
+                        color: var(--color-accent);
+                    }
                 }
             }
         }

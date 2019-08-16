@@ -178,6 +178,7 @@ export default class ProjectsTable extends React.PureComponent {
                 </div>
                 <div className={styles.content}>
                     <Table
+                        className={styles.table}
                         data={searchedProjects}
                         headers={this.projectHeaders}
                         keySelector={this.keySelector}

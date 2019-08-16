@@ -217,19 +217,17 @@ export default class ProjectUserList extends React.PureComponent {
                         { _ts('project.users', 'usersTitle') }
                     </h4>
                 </header>
-                <div className={styles.tableWrapper}>
-                    { pendingUserList ? (
-                        <LoadingAnimation />
-                    ) : (
-                        <Table
-                            data={filteredMembers}
-                            className={styles.table}
-                            headers={this.headers}
-                            keySelector={userListKeySelector}
-                            emptyComponent={emptyComponent}
-                        />
-                    )}
-                </div>
+                { pendingUserList ? (
+                    <LoadingAnimation />
+                ) : (
+                    <Table
+                        data={filteredMembers}
+                        className={styles.table}
+                        headers={this.headers}
+                        keySelector={userListKeySelector}
+                        emptyComponent={emptyComponent}
+                    />
+                )}
             </div>
         );
     }

@@ -93,12 +93,16 @@
                 }
 
                 .leads-table-container {
+                    display: flex;
                     position: relative;
+                    flex-direction: column;
                     flex-grow: 1;
                     background-color: var(--color-foreground);
-                    overflow: auto;
+                    overflow-y: auto;
 
                     .leads-table {
+                        overflow: auto;
+
                         :global {
                             .select {
                                 max-width: 56px;

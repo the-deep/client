@@ -218,6 +218,7 @@ export default class MembersTable extends React.PureComponent {
                 </div>
                 <div className={styles.content}>
                     <Table
+                        className={styles.table}
                         data={membershipList}
                         headers={this.memberHeaders}
                         keySelector={this.calcMemberKey}

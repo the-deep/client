@@ -272,13 +272,12 @@ export default class FrameworkUsersTable extends React.PureComponent {
                         />
                     )}
                 </header>
-                <div className={styles.tableContainer} >
-                    <Table
-                        headers={this.headers}
-                        data={users}
-                        keySelector={keySelector}
-                    />
-                </div>
+                <Table
+                    className={styles.table}
+                    headers={this.headers}
+                    data={users}
+                    keySelector={keySelector}
+                />
             </div>
         );
     }
