@@ -26,6 +26,8 @@ import _ts from '#ts';
 import SelectionItem from './SelectionItem';
 import styles from './styles.scss';
 
+const emptyEmptyComponent = () => '';
+
 const propTypes = {
     onPending: PropTypes.func,
 
@@ -366,6 +368,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                         keySelector={MultiDocumentUploader.keySelector}
                         rendererParams={this.rendererParamsForSelection}
                         renderer={SelectionItem}
+                        emptyComponent={emptyEmptyComponent}
                     />
                 </div>
                 <HintAndError

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Faram from '@togglecorp/faram';
+import Faram, { analyzeErrors } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -22,14 +23,18 @@ import {
     editAryShouldShowCNA,
 } from '#redux';
 import _ts from '#ts';
-import TabTitle from '#components/general/TabTitle';
 
-import Metadata from './Metadata';
-import Summary from './Summary';
-import Score from './Score';
-import Methodology from './Methodology';
-import HNO from './HNO';
+
+import { NormalTabTitle } from '#components/general/TabTitle';
+
+import AdditionalDocuments from './AdditionalDocuments';
 import CNA from './CNA';
+import Focuses from './Focuses';
+import HNO from './HNO';
+import Metadata from './Metadata';
+import Methodology from './Methodology';
+import Score from './Score';
+import Summary from './Summary';
 
 import styles from './styles.scss';
 
@@ -95,6 +100,8 @@ export default class RightPanel extends React.PureComponent {
 
         this.tabs = {
             metadata: _ts('editAssessment', 'metadataTabLabel'),
+            additionalDocuments: _ts('editAssessment', 'additionalDocumentsTabLabel'),
+            focuses: _ts('editAssessment', 'focusesTabLabel'),
             methodology: _ts('editAssessment', 'methodologyTabLabel'),
             summary: _ts('editAssessment', 'summaryTabLabel'),
             score: _ts('editAssessment', 'scoreTabLabel'),
@@ -107,9 +114,16 @@ export default class RightPanel extends React.PureComponent {
                 rendererParams: () => ({
                     className: styles.metadata,
                     pending: this.props.pending,
-                    onUploadPending: this.props.onUploadPending,
                 }),
                 component: Metadata,
+            },
+            additionalDocuments: {
+                rendererParams: () => ({
+                    className: styles.metadata,
+                    pending: this.props.pending,
+                    onUploadPending: this.props.onUploadPending,
+                }),
+                component: AdditionalDocuments,
             },
             summary: {
                 rendererParams: () => ({
@@ -118,6 +132,12 @@ export default class RightPanel extends React.PureComponent {
                     onActiveSectorChange: this.props.onActiveSectorChange,
                 }),
                 component: Summary,
+            },
+            focuses: {
+                rendererParams: () => ({
+                    pending: this.props.pending,
+                }),
+                component: Focuses,
             },
             methodology: {
                 rendererParams: () => ({
@@ -154,7 +174,7 @@ export default class RightPanel extends React.PureComponent {
         };
     }
 
-    getTabs = (tabs, showHNO, showCNA) => {
+    getTabs = memoize((tabs, showHNO, showCNA) => {
         if (!showHNO && !showCNA) {
             return tabs;
         }
@@ -169,6 +189,57 @@ export default class RightPanel extends React.PureComponent {
         }
 
         return newTabs;
+    })
+
+    // NOTE: can be memoized
+    calculateError = (tabKey) => {
+        const {
+            editAryFaramErrors: {
+                metadata: {
+                    additionalDocuments,
+                    ...metadata
+                } = {},
+                methodology: {
+                    focuses,
+                    sectors,
+                    affectedGroups,
+                    locations,
+                    ...methodology
+                } = {},
+                summary,
+                score,
+                questionnaire: {
+                    hno,
+                    cna,
+                } = {},
+            },
+        } = this.props;
+
+        switch (tabKey) {
+            case 'metadata':
+                return analyzeErrors(metadata);
+            case 'additionalDocuments':
+                return analyzeErrors(additionalDocuments);
+            case 'focuses':
+                return analyzeErrors({
+                    focuses,
+                    sectors,
+                    affectedGroups,
+                    locations,
+                });
+            case 'methodology':
+                return analyzeErrors(methodology);
+            case 'summary':
+                return analyzeErrors(summary);
+            case 'score':
+                return analyzeErrors(score);
+            case 'hno':
+                return analyzeErrors(hno);
+            case 'cna':
+                return analyzeErrors(cna);
+            default:
+                return false;
+        }
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
@@ -199,8 +270,8 @@ export default class RightPanel extends React.PureComponent {
     }
 
     tabRendererParams = (tabKey, data) => ({
-        faramElementName: tabKey,
         title: data,
+        hasError: this.calculateError(tabKey),
     });
 
     render() {
@@ -235,7 +306,7 @@ export default class RightPanel extends React.PureComponent {
                     replaceHistory
                     tabs={tabs}
                     itemClassName={styles.tab}
-                    renderer={TabTitle}
+                    renderer={NormalTabTitle}
                     rendererParams={this.tabRendererParams}
                 />
                 <MultiViewContainer

@@ -54,11 +54,14 @@
 
         &:not(.with-url-input) {
             justify-content: flex-end;
-            margin-top: -var(--spacing-large);
 
             .file-input {
-                padding: var(--spacing-extra-small);
+                @include button-like-link(var(--color-primary));
+                margin-bottom: var(--spacing-small);
+                margin-left: var(--spacing-medium);
+                padding: var(--spacing-extra-small) var(--spacing-small);
                 width: auto;
+                text-transform: none;
 
                 label {
                     color: var(--color-primary);

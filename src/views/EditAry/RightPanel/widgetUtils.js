@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FaramGroup } from '@togglecorp/faram';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -54,7 +54,7 @@ const getOptions = (sourceType, sources, options) => {
     }
 };
 
-const getProps = (data, sources) => {
+export const getProps = (data, sources) => {
     const {
         fieldType,
         id: key,
@@ -83,6 +83,7 @@ const getProps = (data, sources) => {
     };
 };
 
+// NOTE: this should be deprecated
 // eslint-disable-next-line import/prefer-default-export
 export const renderWidget = (k, data, sources, otherProps) => {
     const { fieldType } = data;
@@ -103,11 +104,30 @@ export const renderWidget = (k, data, sources, otherProps) => {
     );
 };
 
+export const BaseWidget = memo(({ fieldType, hidden, ...otherProps }) => {
+    const Component = widgets[fieldType];
+
+    if (!Component) {
+        console.error('Unidentified fieldType', fieldType);
+        return null;
+    }
+
+    if (hidden) {
+        return null;
+    }
+
+    return (
+        <Component
+            {...otherProps}
+        />
+    );
+});
+
 export const isDroppableWidget = (sourceType, fieldType) => (
     (sourceType === 'organizations' && fieldType === 'multiselect')
 );
 
-// eslint-disable-next-line import/prefer-default-export
+// NOTE: this should be use new widget api
 export const renderDroppableWidget = (key, data, sources, otherProps = {}) => {
     const {
         sourceType,

@@ -1370,7 +1370,9 @@
             "saveButtonTitle": 25,
             "cancelButtonTitle": 61,
             "hnoTabLabel": -61148587,
-            "cnaTabLabel": -55402838
+            "cnaTabLabel": -55402838,
+            "additionalDocumentsTabLabel": 9021,
+            "focusesTabLabel": 9025
         },
         "editAssessment.entriesListing": {
             "altLabel": 512,
@@ -1479,7 +1481,6 @@
             "emptyLinkMessage": -52524002
         },
         "editAssessment.metadata": {
-            "basicInformationTitle": 9020,
             "additionalDocumentsTitle": 9021,
             "executiveSummaryTitle": 9022,
             "assessmentDatabaseTitle": 9023,
@@ -1868,7 +1869,6 @@
             "frameworkVisibilityInputHint": -59667485,
             "frameworkVisibilityInputLabel": 1120,
             "editFrameworkModalTitle": -59086768,
-            "editFrameworkModalSaveButtonTitle": 25,
             "editWidgetsButtonTitle": -49370702,
             "frameworkUseNotifyTitle": -17456167
         },
@@ -2670,12 +2670,7 @@
             "dropFilesHereLabel": -93329065,
             "uploadingFilesLabel": -16421564
         },
-        "widgets.editor": {
-            "addAfTitleLabel": 13,
-            "addAfTitlePlaceholder": 361,
-            "afDescriptionLabel": 200,
-            "afDescriptionPlaceholder": 12501
-        },
+        "widgets.editor": {},
         "leadgroups": {
             "emptyMessage": -50910995,
             "emptyWithFilterMessage": -27964979
@@ -2766,7 +2761,6 @@
             "editFrameworkModalSaveButtonTitle": -59215530
         },
         "components.naiveSearchList": {
-            "searchInputLabel": 9,
             "searchInputPlaceholder": -81392551
         },
         "components.addFromSearch": {
