@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import {
+    _cs,
     compareStringByWordCount,
     compareString,
     compareNumber,
@@ -21,12 +22,14 @@ import EditStringModal from '../EditStringModal';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     linkCollection: PropTypes.array.isRequired,
     disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = state => ({
@@ -158,7 +161,11 @@ export default class LinksTable extends React.PureComponent {
     }
 
     render() {
-        const { linkCollection } = this.props;
+        const {
+            linkCollection,
+            className,
+        } = this.props;
+
         const {
             showDeleteLinkConfirmModal,
             deleteLinkId,
@@ -171,7 +178,7 @@ export default class LinksTable extends React.PureComponent {
         return (
             <React.Fragment>
                 <Table
-                    className={styles.linksTable}
+                    className={_cs(styles.linksTable, className)}
                     data={linkCollection}
                     headers={this.linksTableHeader}
                     keySelector={LinksTable.keySelector}

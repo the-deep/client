@@ -1,11 +1,7 @@
-:root {
-    --width-error-pane: 320px;
-}
-
 %error-pane {
     border-top: var(--width-separator-thin) solid var(--color-separator);
     border-left: var(--width-separator-thin) solid var(--color-separator);
-    width: var(--width-error-pane);
+    width: var(--width-error-pane-string-management);
 }
 
 .no-problems {

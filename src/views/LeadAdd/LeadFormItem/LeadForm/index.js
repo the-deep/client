@@ -129,6 +129,7 @@ export default class LeadForm extends React.PureComponent {
         const commonFields = {
             title: [requiredCondition],
             source: [requiredCondition],
+            author: [requiredCondition],
             confidentiality: [requiredCondition],
             assignee: [requiredCondition],
             publishedOn: [requiredCondition, dateCondition],
@@ -354,6 +355,20 @@ export default class LeadForm extends React.PureComponent {
                         faramElementName="source"
                         label={_ts('addLeads', 'publisherLabel')}
                         placeholder={_ts('addLeads', 'publisherPlaceHolderLabel')}
+                    />
+                </ApplyAll>
+
+                <ApplyAll
+                    className={styles.source}
+                    disabled={isApplyAllDisabled}
+                    identiferName="author"
+                    onApplyAllClick={this.handleApplyAllClick}
+                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                >
+                    <TextInput
+                        faramElementName="author"
+                        label={_ts('addLeads', 'authorLabel')}
+                        placeholder={_ts('addLeads', 'authorPlaceHolderLabel')}
                     />
                 </ApplyAll>
 

@@ -20,6 +20,7 @@ const styleProperties = {
         maxHeightSearchInput: '280px',
         widthUserItemPicture: '30px',
         heightUserItemPicture: '30px',
+        widthErrorPaneStringManagement: '320px',
     },
 };
 

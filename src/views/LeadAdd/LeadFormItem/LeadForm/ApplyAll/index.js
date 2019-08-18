@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
 import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
@@ -36,7 +37,7 @@ export default class ApplyAll extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={`${styles.applyInput} ${className}`}>
+            <div className={_cs(styles.applyInput, className)}>
                 { children }
                 <div className={styles.applyButtons}>
                     <AccentConfirmButton
