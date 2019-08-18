@@ -16,10 +16,12 @@ const propTypes = {
     identiferName: PropTypes.string.isRequired,
     onApplyAllClick: PropTypes.func.isRequired,
     onApplyAllBelowClick: PropTypes.func.isRequired,
+    extraButtons: PropTypes.node,
 };
 
 const defaultProps = {
     className: '',
+    extraButtons: undefined,
 };
 
 export default class ApplyAll extends React.PureComponent {
@@ -34,12 +36,14 @@ export default class ApplyAll extends React.PureComponent {
             identiferName,
             onApplyAllClick,
             onApplyAllBelowClick,
+            extraButtons,
         } = this.props;
 
         return (
             <div className={_cs(styles.applyInput, className)}>
                 { children }
                 <div className={styles.applyButtons}>
+                    { extraButtons }
                     <AccentConfirmButton
                         className={styles.applyButton}
                         transparent

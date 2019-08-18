@@ -200,6 +200,20 @@ export default class LeadForm extends React.PureComponent {
 
     handleAddLeadGroupClick = () => this.props.onAddLeadGroupClick();
 
+    handleSameAsPublisherButtonClick = () => {
+        const {
+            lead,
+            onChange,
+        } = this.props;
+
+        const values = leadAccessor.getFaramValues(lead);
+        const newValues = {
+            ...values,
+            author: values.source,
+        };
+        onChange(newValues);
+    }
+
     submit = () => {
         if (this.submitForm && !this.props.isSaveDisabled) {
             this.submitForm();
@@ -364,6 +378,15 @@ export default class LeadForm extends React.PureComponent {
                     identiferName="author"
                     onApplyAllClick={this.handleApplyAllClick}
                     onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    extraButtons={
+                        <Button
+                            className={styles.sameAsButton}
+                            iconName="copyOutline"
+                            transparent
+                            title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
+                            onClick={this.handleSameAsPublisherButtonClick}
+                        />
+                    }
                 >
                     <TextInput
                         faramElementName="author"

@@ -976,7 +976,8 @@
         "-86287086": "No framework is currently selected.",
         "-28816005": "To be started",
         "-31511044": "Author",
-        "-36668463": "e.g. Ernest Hemingway"
+        "-36668463": "e.g. Ernest Hemingway",
+        "-30790313": "Same as publisher"
     },
     "links": {
         "browserExtension": {
@@ -1664,7 +1665,8 @@
             "tabularButtonTitle": -4174557,
             "extractTabularButtonTitle": -61649895,
             "authorLabel": -31511044,
-            "authorPlaceHolderLabel": -36668463
+            "authorPlaceHolderLabel": -36668463,
+            "sameAsPublisherButtonTitle": -30790313
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

@@ -20,6 +20,11 @@
         padding: var(--spacing-medium) 0;
     }
 
+    .same-as-button {
+        margin-right: var(--spacing-extra-small);
+        padding: var(--spacing-extra-small);
+    }
+
     .lead-group-container {
         display: flex;
         align-items: center;
