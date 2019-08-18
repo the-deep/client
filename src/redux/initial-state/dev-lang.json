@@ -1586,7 +1586,8 @@
             "wordsLabel": 13001,
             "pagesLabel": 13002,
             "leadsRange": 13003,
-            "entriesLabel": 15
+            "entriesLabel": 15,
+            "authorLabel": -31511044
         },
         "leadsViz": {
             "chordDiagram": 4007,
