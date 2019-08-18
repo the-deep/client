@@ -33,6 +33,7 @@ const analysisFrameworkSchema = [];
                 },
                 required: true,
             },
+            properties: { type: 'object', required: false },
             isAdmin: { type: 'boolean', required: true },
             isPrivate: { type: 'boolean', required: true },
             description: { type: 'string' },

@@ -1,7 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+    _cs,
+    isFalsy,
+} from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
+import EntryCommentModal from '#components/general/EntryCommentModal';
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
@@ -18,6 +25,8 @@ import _ts from '#ts';
 import WidgetFaram from '../../WidgetFaram';
 import HeaderComponent from './HeaderComponent';
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -95,26 +104,27 @@ export default class WidgetFaramContainer extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.widgetFaramContainer}
-        `;
-
-        const headerClassName = `
-            widget-container-header
-            ${styles.header}
-        `;
-
-        const widgetClassName = `
-            widget
-            ${styles.widget}
-        `;
+        const {
+            data: {
+                id: entryServerId,
+            },
+        } = entry;
 
         return (
             <div
-                className={className}
+                className={_cs(classNameFromProps, styles.widgetFaramContainer)}
             >
-                <header className={headerClassName}>
+                <header className={_cs('widget-container-header', styles.header)}>
+                    <ModalButton
+                        iconName="chat"
+                        transparent
+                        disabled={isFalsy(entryServerId)}
+                        modal={
+                            <EntryCommentModal
+                                entryServerId={entryServerId}
+                            />
+                        }
+                    />
                     <Cloak
                         hide={this.shouldHideEntryDelete}
                         render={
@@ -141,7 +151,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                     />
                 </header>
                 <WidgetFaram
-                    className={widgetClassName}
+                    className={_cs('widget', styles.widget)}
                     entry={entry}
                     widgets={widgets}
                     pending={pending}
