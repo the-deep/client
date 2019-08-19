@@ -9,7 +9,44 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const propTypes = {
+const ApplyAll = ({
+    className,
+    disabled,
+    children,
+    identiferName,
+    onApplyAllClick,
+    onApplyAllBelowClick,
+    extraButtons,
+}) => (
+    <div className={_cs(styles.applyInput, className)}>
+        { children }
+        <div className={styles.applyButtons}>
+            { extraButtons }
+            <AccentConfirmButton
+                className={styles.applyButton}
+                transparent
+                title={_ts('addLeads', 'applyAllButtonTitle')}
+                disabled={disabled}
+                onClick={() => onApplyAllClick(identiferName)}
+                tabIndex="-1"
+                iconName="applyAll"
+                confirmationMessage={_ts('addLeads', 'applyToAll')}
+            />
+            <WarningConfirmButton
+                className={styles.applyButton}
+                transparent
+                title={_ts('addLeads', 'applyAllBelowButtonTitle')}
+                disabled={disabled}
+                onClick={() => onApplyAllBelowClick(identiferName)}
+                tabIndex="-1"
+                iconName="applyAllBelow"
+                confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
+            />
+        </div>
+    </div>
+);
+
+ApplyAll.propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool.isRequired,
     children: PropTypes.node.isRequired,
@@ -19,55 +56,11 @@ const propTypes = {
     extraButtons: PropTypes.node,
 };
 
-const defaultProps = {
+ApplyAll.defaultProps = {
     className: '',
     extraButtons: undefined,
 };
 
-export default class ApplyAll extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-
-    render() {
-        const {
-            className,
-            disabled,
-            children,
-            identiferName,
-            onApplyAllClick,
-            onApplyAllBelowClick,
-            extraButtons,
-        } = this.props;
-
-        return (
-            <div className={_cs(styles.applyInput, className)}>
-                { children }
-                <div className={styles.applyButtons}>
-                    { extraButtons }
-                    <AccentConfirmButton
-                        className={styles.applyButton}
-                        transparent
-                        title={_ts('addLeads', 'applyAllButtonTitle')}
-                        disabled={disabled}
-                        onClick={() => onApplyAllClick(identiferName)}
-                        tabIndex="-1"
-                        iconName="applyAll"
-                        confirmationMessage={_ts('addLeads', 'applyToAll')}
-                    />
-                    <WarningConfirmButton
-                        className={styles.applyButton}
-                        transparent
-                        title={_ts('addLeads', 'applyAllBelowButtonTitle')}
-                        disabled={disabled}
-                        onClick={() => onApplyAllBelowClick(identiferName)}
-                        tabIndex="-1"
-                        iconName="applyAllBelow"
-                        confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
-                    />
-                </div>
-            </div>
-        );
-    }
-}
+export default ApplyAll;
 
 export { default as ExtractThis } from './ExtractThis';
