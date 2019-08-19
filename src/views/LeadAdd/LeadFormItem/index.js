@@ -181,6 +181,7 @@ export default class LeadFormItem extends React.PureComponent {
                 const webInfoToValueMap = {
                     date: 'publishedOn',
                     source: 'source',
+                    author: 'author',
                     website: 'website',
                     title: 'title',
                     url: 'url',

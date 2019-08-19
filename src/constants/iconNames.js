@@ -25,6 +25,7 @@ const iconNames = {
     code: 'ion-code',
     codeWorking: 'ion-code-working',
     copy: 'ion-ios-copy',
+    copyOutline: 'ion-ios-copy-outline',
     csv: 'fa fa-file-code-o',
     delete: 'ion-android-delete',
     discover: 'fa fa-binoculars',

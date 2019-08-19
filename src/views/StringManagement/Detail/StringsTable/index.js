@@ -6,6 +6,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Table from '#rscv/Table';
 import {
+    _cs,
     compareBoolean,
     compareNumber,
     compareString,
@@ -20,12 +21,14 @@ import EditStringModal from '../EditStringModal';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     allStrings: PropTypes.array.isRequired,
     disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = state => ({
@@ -144,7 +147,11 @@ export default class StringsTable extends React.PureComponent {
     }
 
     render() {
-        const { allStrings } = this.props;
+        const {
+            className,
+            allStrings,
+        } = this.props;
+
         const {
             showDeleteStringConfirmModal,
             deleteStringId,
@@ -155,7 +162,7 @@ export default class StringsTable extends React.PureComponent {
         return (
             <React.Fragment>
                 <Table
-                    className={styles.stringsTable}
+                    className={_cs(styles.stringsTable, className)}
                     data={allStrings}
                     headers={this.stringsTableHeader}
                     keySelector={StringsTable.keySelector}

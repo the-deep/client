@@ -265,6 +265,8 @@ export default class GridItem extends React.PureComponent {
                 id: assigneeId,
                 displayName: assigneeDisplayName,
             } = {},
+            source,
+            author,
         } = lead;
 
         return (
@@ -292,24 +294,20 @@ export default class GridItem extends React.PureComponent {
                     </p>
                     <div className={styles.leadInfoExtra}>
                         {isTruthy(assigneeId) &&
-                            <React.Fragment>
-                                <Link
-                                    className={styles.user}
-                                    to={reverseRoute(pathNames.userProfile,
-                                        { userId: assigneeId })}
-                                >
-                                    {_ts('leads', 'assignee')}: {assigneeDisplayName}
-                                </Link>
-                                <Link
-                                    className={styles.user}
-                                    to={reverseRoute(
-                                        pathNames.userProfile,
-                                        { userId: lead.createdBy },
-                                    )}
-                                >
-                                    {_ts('leadsGrid', 'publisherLabel')}: {lead.createdByName}
-                                </Link>
-                            </React.Fragment>
+                            <Link
+                                className={styles.user}
+                                to={reverseRoute(pathNames.userProfile, { userId: assigneeId })}
+                            >
+                                {_ts('leads', 'assignee')}: {assigneeDisplayName}
+                            </Link>
+                        }
+                        <div className={styles.publisher}>
+                            {_ts('leadsGrid', 'publisherLabel')}: {source}
+                        </div>
+                        {author &&
+                            <div className={styles.author}>
+                                {_ts('leadsGrid', 'authorLabel')}: {author}
+                            </div>
                         }
                         <div className={styles.status}>
                             Status: {lead.status}

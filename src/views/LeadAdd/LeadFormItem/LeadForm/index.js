@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
 import { formatDateToString } from '@togglecorp/fujs';
 import Faram, {
     requiredCondition,
@@ -10,7 +9,6 @@ import Faram, {
 } from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
-import AccentButton from '#rsca/Button/AccentButton';
 import DateInput from '#rsci/DateInput';
 import HiddenInput from '#rsci/HiddenInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -129,6 +127,7 @@ export default class LeadForm extends React.PureComponent {
         const commonFields = {
             title: [requiredCondition],
             source: [requiredCondition],
+            author: [requiredCondition],
             confidentiality: [requiredCondition],
             assignee: [requiredCondition],
             publishedOn: [requiredCondition, dateCondition],
@@ -198,6 +197,20 @@ export default class LeadForm extends React.PureComponent {
     handleApplyAllBelowClick = attrName => this.props.onApplyAllBelowClick(attrName);
 
     handleAddLeadGroupClick = () => this.props.onAddLeadGroupClick();
+
+    handleSameAsPublisherButtonClick = () => {
+        const {
+            lead,
+            onChange,
+        } = this.props;
+
+        const values = leadAccessor.getFaramValues(lead);
+        const newValues = {
+            ...values,
+            author: values.source,
+        };
+        onChange(newValues);
+    }
 
     submit = () => {
         if (this.submitForm && !this.props.isSaveDisabled) {
@@ -354,6 +367,29 @@ export default class LeadForm extends React.PureComponent {
                         faramElementName="source"
                         label={_ts('addLeads', 'publisherLabel')}
                         placeholder={_ts('addLeads', 'publisherPlaceHolderLabel')}
+                    />
+                </ApplyAll>
+
+                <ApplyAll
+                    className={styles.source}
+                    disabled={isApplyAllDisabled}
+                    identiferName="author"
+                    onApplyAllClick={this.handleApplyAllClick}
+                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    extraButtons={
+                        <Button
+                            className={styles.sameAsButton}
+                            iconName="copyOutline"
+                            transparent
+                            title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
+                            onClick={this.handleSameAsPublisherButtonClick}
+                        />
+                    }
+                >
+                    <TextInput
+                        faramElementName="author"
+                        label={_ts('addLeads', 'authorLabel')}
+                        placeholder={_ts('addLeads', 'authorPlaceHolderLabel')}
                     />
                 </ApplyAll>
 

@@ -19,6 +19,7 @@ const leadSchema = [];
             project: { type: 'uint' },
             publishedOn: { type: 'string' },
             source: { type: 'string' }, // url
+            author: { type: 'string' },
             status: { type: 'string', required: true },
             text: { type: 'string' },
             title: { type: 'string', required: true },

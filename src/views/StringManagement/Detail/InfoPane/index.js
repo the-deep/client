@@ -32,6 +32,7 @@ eslint css-modules/no-unused-class: [
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     problemCollection: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -46,6 +47,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = state => ({
@@ -321,7 +323,11 @@ export default class InfoPane extends React.PureComponent {
     }
 
     render() {
-        const { problemCollectionStats } = this.props;
+        const {
+            className,
+            problemCollectionStats,
+        } = this.props;
+
         const {
             showEditLinkModal,
             editLinkId,
@@ -346,7 +352,7 @@ export default class InfoPane extends React.PureComponent {
         const problemKeys = Object.keys(this.props.problemCollection);
 
         return (
-            <Fragment>
+            <div className={className} >
                 <ListView
                     className={styles.problems}
                     data={problemKeys}
@@ -358,7 +364,7 @@ export default class InfoPane extends React.PureComponent {
                         onClose={this.handleEditLinkModalClose}
                     />
                 }
-            </Fragment>
+            </div>
         );
     }
 }

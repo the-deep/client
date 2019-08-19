@@ -974,7 +974,10 @@
         "-56943688": "Edit details",
         "-59011405": "No. of Pages",
         "-86287086": "No framework is currently selected.",
-        "-28816005": "To be started"
+        "-28816005": "To be started",
+        "-31511044": "Author",
+        "-36668463": "e.g. Ernest Hemingway",
+        "-30790313": "Same as publisher"
     },
     "links": {
         "browserExtension": {
@@ -1574,7 +1577,8 @@
             "emptyMessage": -52516388,
             "Preview": -77224022,
             "exportToOtherProjectsButtonTitle": -16703906,
-            "pageCountTitle": -59011405
+            "pageCountTitle": -59011405,
+            "tableHeaderAuthor": -31511044
         },
         "leadsGrid": {
             "publisherLabel": 5,
@@ -1582,7 +1586,8 @@
             "wordsLabel": 13001,
             "pagesLabel": 13002,
             "leadsRange": 13003,
-            "entriesLabel": 15
+            "entriesLabel": 15,
+            "authorLabel": -31511044
         },
         "leadsViz": {
             "chordDiagram": 4007,
@@ -1659,7 +1664,10 @@
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
             "tabularButtonTitle": -4174557,
-            "extractTabularButtonTitle": -61649895
+            "extractTabularButtonTitle": -61649895,
+            "authorLabel": -31511044,
+            "authorPlaceHolderLabel": -36668463,
+            "sameAsPublisherButtonTitle": -30790313
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

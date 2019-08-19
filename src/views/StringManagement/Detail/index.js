@@ -276,14 +276,24 @@ export default class StringManagement extends React.PureComponent {
                     showExport={showExport}
                 />
                 <div className={styles.content}>
-                    <div className={styles.scrollWrapper}>
-                        {
-                            linkCollectionName === '$all'
-                                ? <StringsTable disabled={disabled} />
-                                : <LinksTable disabled={disabled} />
-                        }
-                    </div>
-                    <InfoPane disabled={disabled} />
+                    {
+                        linkCollectionName === '$all'
+                            ? (
+                                <StringsTable
+                                    className={styles.table}
+                                    disabled={disabled}
+                                />
+                            ) : (
+                                <LinksTable
+                                    className={styles.table}
+                                    disabled={disabled}
+                                />
+                            )
+                    }
+                    <InfoPane
+                        className={styles.infoPane}
+                        disabled={disabled}
+                    />
                 </div>
             </React.Fragment>
         );

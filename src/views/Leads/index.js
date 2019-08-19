@@ -191,9 +191,15 @@ export default class Leads extends React.PureComponent {
                 sortable: true,
             },
             {
+                key: 'author',
+                label: _ts('leads', 'tableHeaderAuthor'),
+                order: 5,
+                sortable: true,
+            },
+            {
                 key: 'published_on',
                 label: _ts('leads', 'tableHeaderDatePublished'),
-                order: 5,
+                order: 6,
                 sortable: true,
                 modifier: row => (
                     <FormattedDate
@@ -205,7 +211,7 @@ export default class Leads extends React.PureComponent {
             {
                 key: 'created_by',
                 label: _ts('leads', 'tableHeaderOwner'),
-                order: 6,
+                order: 7,
                 sortable: true,
                 modifier: row => (
                     <Link
@@ -220,7 +226,7 @@ export default class Leads extends React.PureComponent {
             {
                 key: 'assignee',
                 label: _ts('leads', 'assignee'),
-                order: 7,
+                order: 8,
                 sortable: true,
                 modifier: ({ assignee, assigneeDetails }) => (
                     assignee ? (
@@ -237,7 +243,7 @@ export default class Leads extends React.PureComponent {
             {
                 key: 'created_at',
                 label: _ts('leads', 'tableHeaderDateCreated'),
-                order: 8,
+                order: 9,
                 sortable: true,
                 modifier: row => (
                     <FormattedDate
@@ -250,7 +256,7 @@ export default class Leads extends React.PureComponent {
                 key: 'confidentiality',
                 label: _ts('leads', 'tableHeaderConfidentiality'),
                 sortable: true,
-                order: 9,
+                order: 10,
                 modifier: row => (
                     <div className="confidentiality">
                         {row.confidentiality}
@@ -261,7 +267,7 @@ export default class Leads extends React.PureComponent {
                 key: 'status',
                 label: _ts('leads', 'tableHeaderStatus'),
                 sortable: true,
-                order: 10,
+                order: 11,
                 modifier: row => (
                     <div className="status">
                         {row.status}
@@ -271,14 +277,14 @@ export default class Leads extends React.PureComponent {
             {
                 key: 'no_of_entries',
                 label: _ts('leads', 'tableHeaderNoOfEntries'),
-                order: 11,
+                order: 12,
                 sortable: true,
                 modifier: row => row.noOfEntries,
             },
             {
                 key: 'actions',
                 label: _ts('leads', 'tableHeaderActions'),
-                order: 12,
+                order: 13,
                 sortable: false,
                 modifier: row => (
                     <ActionButtons

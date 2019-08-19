@@ -128,6 +128,11 @@
         max-height: 0;
         overflow: hidden;
 
+        .publisher,
+        .author {
+            margin-bottom: var(--spacing-extra-small);
+        }
+
         .status {
             margin-bottom: var(--spacing-small-alt);
         }
@@ -186,7 +191,7 @@
 
     .user {
         display: block;
-        margin: var(--spacing-small) 0;
+        margin: var(--spacing-extra-small) 0;
         text-transform: none;
     }
 
