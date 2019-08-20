@@ -7,8 +7,10 @@
 
     .section-item {
         display: flex;
+        flex-basis: 25%;
         flex-direction: column;
         flex-grow: 1;
+        flex-shrink: 0;
         overflow-y: auto;
 
         .header {
