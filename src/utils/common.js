@@ -1,3 +1,5 @@
+import { padStart } from '@togglecorp/fujs';
+
 export const mapObjectToObject = (obj, fn) => {
     const newObj = {};
     Object.keys(obj).forEach((key) => {
@@ -78,4 +80,17 @@ export const timeFrom = (date) => {
     }
 
     return 'just now';
+};
+
+export const getDateWithTimezone = (date) => {
+    const newDate = new Date();
+    const timezoneOffset = newDate.getTimezoneOffset();
+    const reverseSign = timezoneOffset < 0 ? '+' : '-';
+
+    const hours = Math.floor(Math.abs(timezoneOffset) / 60);
+    const minutes = Math.abs(timezoneOffset) % 60;
+
+    const timezoneOffsetString = `${reverseSign}${padStart(hours, 2)}${padStart(minutes, 2)}`;
+
+    return `${date}${timezoneOffsetString}`;
 };
