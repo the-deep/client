@@ -66,7 +66,16 @@ export default class Summary extends React.PureComponent {
     static isTabForSector = key => key.startsWith(sectorIdentifier);
     static getSectorIdForSector = key => key.substr(sectorIdentifier.length + 1);
 
-    static getSelectedSector = memoize((sectors, selectedSectorsList) => {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeTab: undefined,
+        };
+
+        this.tabs = emptyObject;
+    }
+
+    getSelectedSector = memoize((sectors, selectedSectorsList) => {
         const selectedSectorsMap = listToMap(
             selectedSectorsList,
             d => d,
@@ -81,15 +90,6 @@ export default class Summary extends React.PureComponent {
 
         return selectedSectors;
     })
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            activeTab: undefined,
-        };
-
-        this.tabs = emptyObject;
-    }
 
     getTabs = memoize((sectorTabs, humanitarianAccessVisibility, crossSectorVisibility) => {
         let tabs = {};
@@ -143,7 +143,7 @@ export default class Summary extends React.PureComponent {
 
         let activeSector;
         if (Summary.isTabForSector(key)) {
-            const sectorTabs = Summary.getSelectedSector(sectors, selectedSectors);
+            const sectorTabs = this.getSelectedSector(sectors, selectedSectors);
             activeSector = sectorTabs[key];
         }
         onActiveSectorChange(activeSector);
@@ -172,7 +172,7 @@ export default class Summary extends React.PureComponent {
             selectedFocuses,
         } = this.props;
 
-        const sectorTabs = Summary.getSelectedSector(sectors, selectedSectors);
+        const sectorTabs = this.getSelectedSector(sectors, selectedSectors);
         const humanitarianAccessVisibility = this.shouldShowHumanitarianAccess(
             focuses,
             selectedFocuses,
