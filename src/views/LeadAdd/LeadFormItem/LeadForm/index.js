@@ -205,11 +205,16 @@ export default class LeadForm extends React.PureComponent {
         } = this.props;
 
         const values = leadAccessor.getFaramValues(lead);
+        const errors = leadAccessor.getFaramErrors(lead);
+
+        const newErrors = { ...errors };
+        delete newErrors.author;
+
         const newValues = {
             ...values,
             author: values.source,
         };
-        onChange(newValues);
+        onChange(newValues, newErrors);
     }
 
     submit = () => {

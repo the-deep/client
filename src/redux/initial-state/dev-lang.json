@@ -977,7 +977,8 @@
         "-28816005": "To be started",
         "-31511044": "Author",
         "-36668463": "e.g. Ernest Hemingway",
-        "-30790313": "Same as publisher"
+        "-30790313": "Same as publisher",
+        "-67237579": "Focus"
     },
     "links": {
         "browserExtension": {
@@ -1376,7 +1377,7 @@
             "hnoTabLabel": -61148587,
             "cnaTabLabel": -55402838,
             "additionalDocumentsTabLabel": 9021,
-            "focusesTabLabel": 9025
+            "focusesTabLabel": -67237579
         },
         "editAssessment.entriesListing": {
             "altLabel": 512,
