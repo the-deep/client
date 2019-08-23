@@ -74,7 +74,11 @@ test('should add widget', () => {
     };
 
     const action = addAfViewWidgetAction({
-        widget: { key: '1', name: 'widget1', properties: {} },
+        widget: {
+            key: '1',
+            title: 'widget1',
+            properties: {},
+        },
         analysisFrameworkId: 1,
     });
     const after = {
@@ -84,7 +88,7 @@ test('should add widget', () => {
                     widgets: [
                         {
                             key: '1',
-                            name: 'widget1',
+                            title: 'widget1',
                             properties: {},
                         },
                     ],
@@ -102,8 +106,8 @@ test('should remove widget', () => {
             1: {
                 data: {
                     widgets: [
-                        { key: '1', name: 'widget1' },
-                        { key: '2', name: 'widget2' },
+                        { key: '1', title: 'widget1' },
+                        { key: '2', title: 'widget2' },
                     ],
                 },
             },
@@ -118,7 +122,7 @@ test('should remove widget', () => {
             1: {
                 data: {
                     widgets: [
-                        { key: '1', name: 'widget1' },
+                        { key: '1', title: 'widget1' },
                     ],
                 },
                 pristine: false,
@@ -134,15 +138,16 @@ test('should update widget', () => {
             1: {
                 data: {
                     widgets: [
-                        { key: '1', name: 'widget1' },
-                        { key: '2', name: 'widget2' },
+                        { key: '1', title: 'widget1' },
+                        { key: '2', title: 'widget2' },
                     ],
                 },
             },
         },
     };
     const action = updateAfViewWidgetAction({
-        widget: { key: '1', name: 'widget3' },
+        widgetKey: '1',
+        widgetTitle: 'widget3',
         analysisFrameworkId: 1,
     });
     const after = {
@@ -150,8 +155,8 @@ test('should update widget', () => {
             1: {
                 data: {
                     widgets: [
-                        { key: '1', name: 'widget3' },
-                        { key: '2', name: 'widget2' },
+                        { key: '1', title: 'widget3' },
+                        { key: '2', title: 'widget2' },
                     ],
                 },
                 pristine: false,

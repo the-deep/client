@@ -208,8 +208,6 @@ const afViewUpdateWidget = (state, action) => {
     const existingWidgets = analysisFramework.widgets;
     const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widgetKey);
 
-    console.warn(widgetIndex, widgetKey);
-
     if (widgetIndex === -1) {
         return state;
     }
@@ -221,11 +219,16 @@ const afViewUpdateWidget = (state, action) => {
                     widgets: {
                         [widgetIndex]: {
                             title: { $set: widgetTitle },
-                            properties: {
-                                data: {
-                                    $merge: widgetData,
+                            $if: [
+                                !!widgetData,
+                                {
+                                    properties: { $auto: {
+                                        data: { $auto: {
+                                            $merge: widgetData,
+                                        } },
+                                    } },
                                 },
-                            },
+                            ],
                         },
                     },
                 },
