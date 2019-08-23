@@ -21,7 +21,9 @@ export const createUrlForConnectorleads = connectorId => (
 );
 export const urlForConnectorSources = `${wsEndpoint}/connector-sources/`;
 
-export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?${p({ 'feed-url': url })}`;
+export const createUrlForXmlField = (url, key) =>
+    `${wsEndpoint}/connector-sources/${key}/fields/?${p({ 'feed-url': url })}`;
+
 export const createUrlForConnectorTest = source => `${wsEndpoint}/connector-sources/${source}/leads/?${p({ limit: 10 })}`;
 
 export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&projects=${projectId}`;
