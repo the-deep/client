@@ -30,7 +30,8 @@ import styles from './styles.scss';
 const propTypes = {
     title: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgetKey: PropTypes.string.isRequired,
 };
@@ -118,6 +119,12 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         cells: [],
     }));
 
+    static getDataFromFaramValues = (data) => {
+        const { rows } = data;
+        return { rows };
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -148,6 +155,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         ) : (
             this.state.selectedRowKey
         );
+
         this.setState({
             faramValues,
             faramErrors,
@@ -155,6 +163,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             hasError: faramInfo.hasError,
             selectedRowKey,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            Matrix1dEditWidget.getDataFromFaramValues(faramValues),
+            Matrix1dEditWidget.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -165,8 +183,18 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (_, faramValues) => {
-        const { title, rows } = faramValues;
-        this.props.onSave({ rows }, title);
+        const {
+            widgetKey,
+            onSave,
+            closeModal,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            Matrix1dEditWidget.getDataFromFaramValues(faramValues),
+            Matrix1dEditWidget.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     };
 
     addRowClick = (rows) => {
@@ -222,7 +250,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         } = this.state;
 
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -329,7 +357,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={_ts('widgets.editor.matrix1d', 'cancelConfirmMessage')}
                             skipConfirmation={pristine}
                         >

@@ -21,7 +21,9 @@ import styles from './styles.scss';
 const propTypes = {
     title: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    widgetKey: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
@@ -100,6 +102,16 @@ export default class MultiSelectEditWidget extends React.PureComponent {
         index: i,
     })
 
+    static getDataFromFaramValues = (data) => {
+        const {
+            title, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            ...otherValues
+        } = data;
+        return otherValues;
+    };
+
+    static getTitleFromFaramValues = data => data.title;
+
     constructor(props) {
         super(props);
 
@@ -121,6 +133,16 @@ export default class MultiSelectEditWidget extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            MultiSelectEditWidget.getDataFromFaramValues(faramValues),
+            MultiSelectEditWidget.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -131,8 +153,18 @@ export default class MultiSelectEditWidget extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (_, faramValues) => {
-        const { title, ...otherProps } = faramValues;
-        this.props.onSave(otherProps, title);
+        const {
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            MultiSelectEditWidget.getDataFromFaramValues(faramValues),
+            MultiSelectEditWidget.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     };
 
     render() {
@@ -143,7 +175,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
             hasError,
         } = this.state;
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -211,7 +243,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={cancelConfirmMessage}
                             skipConfirmation={pristine}
                         >

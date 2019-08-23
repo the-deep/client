@@ -36,7 +36,8 @@ import styles from './styles.scss';
 const propTypes = {
     title: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgetKey: PropTypes.string.isRequired,
 };
@@ -181,6 +182,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         tooltip: '',
         subsectors: [],
     }));
+
+    static getDataFromFaramValues = (data) => {
+        const { dimensions, sectors } = data;
+        return { dimensions, sectors };
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -335,6 +343,16 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            Matrix2dEditWidget.getDataFromFaramValues(faramValues),
+            Matrix2dEditWidget.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -346,14 +364,17 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
     handleFaramValidationSuccess = (_, faramValues) => {
         const {
-            title,
-            dimensions,
-            sectors,
-        } = faramValues;
-        this.props.onSave(
-            { dimensions, sectors },
-            title,
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            Matrix2dEditWidget.getDataFromFaramValues(faramValues),
+            Matrix2dEditWidget.getTitleFromFaramValues(faramValues),
         );
+        closeModal();
     };
 
     addDimensionClick = (options) => {
@@ -537,7 +558,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         } = this.state;
 
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -577,7 +598,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
                             skipConfirmation={pristine}
                         >

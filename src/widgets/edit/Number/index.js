@@ -19,8 +19,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -28,7 +30,7 @@ const defaultProps = {
     data: {},
 };
 
-export default class NumberFrameworkList extends React.PureComponent {
+export default class NumberEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -46,6 +48,16 @@ export default class NumberFrameworkList extends React.PureComponent {
             maxValue: [],
         },
     }
+
+    static getDataFromFaramValues = (data) => {
+        const {
+            minValue,
+            maxValue,
+        } = data;
+        return { minValue, maxValue };
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -77,6 +89,16 @@ export default class NumberFrameworkList extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            NumberEditWidget.getDataFromFaramValues(faramValues),
+            NumberEditWidget.getTitleFromFaramValues(faramValues),
+        );
     }
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -86,19 +108,19 @@ export default class NumberFrameworkList extends React.PureComponent {
         });
     }
 
-    handleFaramValidationSuccess = (_, values) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const {
-            title,
-            minValue,
-            maxValue,
-        } = values;
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
 
-        const newRange = {
-            minValue,
-            maxValue,
-        };
-
-        this.props.onSave(newRange, title);
+        onSave(
+            widgetKey,
+            NumberEditWidget.getDataFromFaramValues(faramValues),
+            NumberEditWidget.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     }
 
     render() {
@@ -110,7 +132,7 @@ export default class NumberFrameworkList extends React.PureComponent {
         } = this.state;
 
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -127,7 +149,7 @@ export default class NumberFrameworkList extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={NumberFrameworkList.schema}
+                    schema={NumberEditWidget.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
@@ -161,7 +183,7 @@ export default class NumberFrameworkList extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={cancelConfirmMessage}
                             skipConfirmation={pristine}
                         >

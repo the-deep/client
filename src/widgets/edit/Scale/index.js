@@ -23,8 +23,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
@@ -34,7 +36,7 @@ const defaultProps = {
 
 const emptyList = [];
 
-export default class ScaleFrameworkList extends React.PureComponent {
+export default class ScaleEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -47,7 +49,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 scaleUnits: oldScaleUnits,
                 ...otherData
             } = data;
-            const { keySelector } = ScaleFrameworkList;
+            const { keySelector } = ScaleEditWidget;
 
             // For each unit, add a `defaultScaleUnit` boolean value
             const scaleUnits = oldScaleUnits.map(unit => ({
@@ -66,7 +68,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 scaleUnits,
                 ...otherData
             } = value;
-            const { keySelector } = ScaleFrameworkList;
+            const { keySelector } = ScaleEditWidget;
 
             // We want to only keep one of the default values
             // clearing others if multiple was selected.
@@ -112,7 +114,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     }
                     return errors;
                 },
-                keySelector: ScaleFrameworkList.keySelector,
+                keySelector: ScaleEditWidget.keySelector,
                 member: {
                     fields: {
                         key: [requiredCondition],
@@ -128,6 +130,16 @@ export default class ScaleFrameworkList extends React.PureComponent {
         ...options,
         { key: randomString(16) },
     ])
+
+    static getDataFromFaramValues = (data) => {
+        const {
+            title, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            ...otherValues
+        } = data;
+        return otherValues;
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -159,6 +171,16 @@ export default class ScaleFrameworkList extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            ScaleEditWidget.getDataFromFaramValues(faramValues),
+            ScaleEditWidget.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -169,8 +191,18 @@ export default class ScaleFrameworkList extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (_, faramValues) => {
-        const { title, ...otherProps } = faramValues;
-        this.props.onSave(otherProps, title);
+        const {
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            ScaleEditWidget.getDataFromFaramValues(faramValues),
+            ScaleEditWidget.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     };
 
     render() {
@@ -182,7 +214,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         } = this.state;
         const {
             title,
-            onClose,
+            closeModal,
         } = this.props;
 
         return (
@@ -192,11 +224,11 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={ScaleFrameworkList.schema}
+                    schema={ScaleEditWidget.schema}
                     value={faramValues}
                     error={faramErrors}
-                    faramInboundTransform={ScaleFrameworkList.faramTransform.inbound}
-                    faramOutboundTransform={ScaleFrameworkList.faramTransform.outbound}
+                    faramInboundTransform={ScaleEditWidget.faramTransform.inbound}
+                    faramOutboundTransform={ScaleEditWidget.faramTransform.outbound}
                 >
                     <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
@@ -216,7 +248,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         <div className={styles.scaleUnits}>
                             <FaramList
                                 faramElementName="scaleUnits"
-                                keySelector={ScaleFrameworkList.keySelector}
+                                keySelector={ScaleEditWidget.keySelector}
                             >
                                 <NonFieldErrors
                                     className={styles.nonFieldErrors}
@@ -228,7 +260,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                     </h4>
                                     <PrimaryButton
                                         faramElementName="add-btn"
-                                        faramAction={ScaleFrameworkList.addOptionClick}
+                                        faramAction={ScaleEditWidget.addOptionClick}
                                         iconName="add"
                                         transparent
                                     >
@@ -239,7 +271,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                     className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
                                     faramElement
-                                    rendererParams={ScaleFrameworkList.rendererParams}
+                                    rendererParams={ScaleEditWidget.rendererParams}
                                     itemClassName={styles.sortableUnit}
                                     renderer={InputRow}
                                 />
@@ -248,7 +280,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={_ts('widgets.editor.scale', 'cancelConfirmMessage')}
                             skipConfirmation={pristine}
                         >

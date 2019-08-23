@@ -18,8 +18,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -27,7 +29,7 @@ const defaultProps = {
     data: undefined,
 };
 
-export default class Organigram extends React.PureComponent {
+export default class OrganigramEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -37,6 +39,15 @@ export default class Organigram extends React.PureComponent {
             data: [],
         },
     };
+
+    static getDataFromFaramValues = (data) => {
+        const {
+            data: orgData,
+        } = data;
+        return { data: orgData };
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -64,6 +75,16 @@ export default class Organigram extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            OrganigramEditWidget.getDataFromFaramValues(faramValues),
+            OrganigramEditWidget.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -75,10 +96,17 @@ export default class Organigram extends React.PureComponent {
 
     handleFaramValidationSuccess = (_, faramValues) => {
         const {
-            title,
-            data,
-        } = faramValues;
-        this.props.onSave(data, title);
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            OrganigramEditWidget.getDataFromFaramValues(faramValues),
+            OrganigramEditWidget.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     };
 
     render() {
@@ -89,7 +117,7 @@ export default class Organigram extends React.PureComponent {
             hasError,
         } = this.state;
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -107,7 +135,7 @@ export default class Organigram extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={Organigram.schema}
+                    schema={OrganigramEditWidget.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
@@ -138,7 +166,7 @@ export default class Organigram extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={cancelConfirmMessage}
                             skipConfirmation={pristine}
                         >

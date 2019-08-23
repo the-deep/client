@@ -15,8 +15,10 @@ import _ts from '#ts';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
@@ -53,6 +55,17 @@ export default class DefaultEditWidget extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        const { title } = faramValues;
+        onChange(
+            widgetKey,
+            undefined,
+            title,
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -64,7 +77,18 @@ export default class DefaultEditWidget extends React.PureComponent {
 
     handleFaramValidationSuccess = (_, faramValues) => {
         const { title } = faramValues;
-        this.props.onSave(undefined, title);
+        const {
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            undefined,
+            title,
+        );
+        closeModal();
     };
 
     render() {
@@ -75,7 +99,7 @@ export default class DefaultEditWidget extends React.PureComponent {
             hasError,
         } = this.state;
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -106,7 +130,7 @@ export default class DefaultEditWidget extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={cancelConfirmMessage}
                             skipConfirmation={pristine}
                         >

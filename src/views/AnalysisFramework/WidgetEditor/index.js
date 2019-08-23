@@ -2,9 +2,12 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import produce from 'immer';
 
 import Faram, { FaramGroup } from '@togglecorp/faram';
 
+import modalize from '#rscg/Modalize';
+import WarningButton from '#rsca/Button/WarningButton';
 import Icon from '#rscg/Icon';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rscv/GridLayoutEditor';
@@ -27,8 +30,9 @@ import {
 
 import _ts from '#ts';
 
-import EditButton from './EditButton';
 import styles from './styles.scss';
+
+const ModalButton = modalize(WarningButton);
 
 const propTypes = {
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -61,6 +65,23 @@ export default class WidgetEditor extends React.PureComponent {
     static schema = {};
     static value = {};
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            temporaryWidgetState: undefined,
+        };
+    }
+
+    getModifiedWidget = memoize((widget, temporaryWidgetState) => (
+        produce(widget, (safeWidget) => {
+            // eslint-disable-next-line no-param-reassign
+            safeWidget.title = temporaryWidgetState.title;
+            // eslint-disable-next-line no-param-reassign
+            safeWidget.properties.data = temporaryWidgetState.data;
+        })
+    ))
+
     getWidgets = memoize((widgets, widgetType) => (
         widgets.filter(
             w => hasWidgetFrameworkComponent(w.widgetId, widgetType, w.properties.addedFrom),
@@ -74,15 +95,33 @@ export default class WidgetEditor extends React.PureComponent {
         return minSize;
     }
 
-    handleItemChange = (newWidget) => {
+    handleItemCancel = () => {
+        this.setState({ temporaryWidgetState: undefined });
+    }
+
+    handleItemSave = (key, data, title) => {
         const {
             analysisFrameworkId,
             updateWidget,
         } = this.props;
 
+        this.setState({ temporaryWidgetState: undefined });
+
         updateWidget({
             analysisFrameworkId,
-            widget: newWidget,
+            widgetKey: key,
+            widgetData: data,
+            widgetTitle: title,
+        });
+    }
+
+    handleItemChange = (key, data, title) => {
+        this.setState({
+            temporaryWidgetState: {
+                key,
+                data,
+                title,
+            },
         });
     }
 
@@ -161,10 +200,22 @@ export default class WidgetEditor extends React.PureComponent {
                     {
                         !hideButtons ? (
                             <Fragment>
-                                <EditButton
-                                    widget={widget}
-                                    renderer={Widget}
-                                    onChange={this.handleItemChange}
+                                <ModalButton
+                                    iconName="edit"
+                                    title={_ts('framework.widgetEditor', 'editTooltip')}
+                                    tabIndex="-1"
+                                    transparent
+                                    onClose={this.handleItemCancel}
+                                    modal={
+                                        <Widget
+                                            widgetKey={widget.key}
+                                            title={widget.title}
+                                            data={widget.properties.data}
+                                            properties={widget.properties}
+                                            onSave={this.handleItemSave}
+                                            onChange={this.handleItemChange}
+                                        />
+                                    }
                                 />
                                 <DangerConfirmButton
                                     iconName="delete"
@@ -200,6 +251,7 @@ export default class WidgetEditor extends React.PureComponent {
                     height = 0,
                 } = {},
             },
+            key,
         } = widget;
 
         const { widgetType } = this.props;
@@ -209,7 +261,6 @@ export default class WidgetEditor extends React.PureComponent {
 
         const isDisabled = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
 
-        // FIXME: use Message component?
         if (isDisabled) {
             disablerMaskText = _ts('framework.widgetEditor', 'disablerMastText', { title });
             fontSize = Math.min(
@@ -232,6 +283,13 @@ export default class WidgetEditor extends React.PureComponent {
             ${isDisabled ? styles.disabled : ''}
         `;
 
+        const {
+            temporaryWidgetState,
+        } = this.state;
+
+        const modifiedWidget = temporaryWidgetState && key === temporaryWidgetState.key
+            ? this.getModifiedWidget(widget, temporaryWidgetState)
+            : widget;
 
         return (
             <div className={className}>
@@ -240,7 +298,7 @@ export default class WidgetEditor extends React.PureComponent {
                         <Widget
                             widgetName={widgetId}
                             widgetType={widgetType}
-                            widget={widget}
+                            widget={modifiedWidget}
 
                             entryType="excerpt"
                             excerpt=""
@@ -250,7 +308,7 @@ export default class WidgetEditor extends React.PureComponent {
                         />
                     </FaramGroup>
                 </FaramGroup>
-                { isDisabled && (
+                { isDisabled && ( // FIXME: use Message component?
                     <div
                         className={styles.disablerMask}
                         style={{
