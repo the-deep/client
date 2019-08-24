@@ -10,6 +10,10 @@ import { FaramInputElement } from '@togglecorp/faram';
 import {
     listToMap,
     mapToList,
+    mapToMap,
+    listToGroupList,
+    isDefined,
+    unique,
 } from '@togglecorp/fujs';
 import _cs from '#cs';
 
@@ -62,71 +66,69 @@ export default class GeoInput extends React.PureComponent {
     // Calculate the mapping from id to options for all geo options
     // Useful for fast reference
     static calcGeoOptionsById = (geoOptionsByRegion) => {
-        const geoOptionsById = {};
-        Object.keys(geoOptionsByRegion).forEach((region) => {
-            const options = geoOptionsByRegion[region];
-            if (!options) {
-                return;
-            }
-
-            options.forEach((geoOption) => {
-                geoOptionsById[geoOption.key] = geoOption;
-            }, {});
-        });
-
-        return geoOptionsById;
+        const geoOptionsList = mapToList(
+            geoOptionsByRegion,
+            geoOption => geoOption,
+        )
+            .filter(isDefined)
+            .flat();
+        const geoOptionsMapping = listToMap(
+            geoOptionsList,
+            geoOption => geoOption.key,
+            geoOption => geoOption,
+        );
+        return geoOptionsMapping;
     }
 
     static calcAdminLevelsById = (geoOptionsByRegion) => {
-        const adminLevelsById = {};
-        const adminLevelTitlesByIdMap = {};
-        Object.keys(geoOptionsByRegion).forEach((region) => {
-            const options = geoOptionsByRegion[region];
-            if (!options) {
-                return;
-            }
-            adminLevelsById[region] = {};
-            adminLevelTitlesByIdMap[region] = {};
+        const adminLevelsById = mapToMap(
+            geoOptionsByRegion,
+            key => key,
+            geoOptions => listToGroupList(
+                geoOptions,
+                geoOption => geoOption.adminLevel,
+            ),
+        );
 
-            options.forEach((option) => {
-                if (!adminLevelTitlesByIdMap[region][option.adminLevel]) {
-                    adminLevelTitlesByIdMap[region][option.adminLevel] = option.adminLevelTitle;
-                }
-                adminLevelsById[region][option.adminLevel] = [
-                    option,
-                    ...(adminLevelsById[region][option.adminLevel] || []),
-                ];
-            }, {});
-        });
-        const adminLevelTitlesById = {};
-        Object.keys(adminLevelTitlesByIdMap).forEach((region) => {
-            const adminLevels = mapToList(
-                adminLevelTitlesByIdMap[region],
-                (data, key) => ({
-                    key,
-                    title: data,
-                }),
-            );
-            adminLevelTitlesById[region] = adminLevels;
-        });
+        const adminLevelTitlesById = mapToMap(
+            geoOptionsByRegion,
+            key => key,
+            geoOptions => unique(
+                geoOptions,
+                geoOption => geoOption.adminLevel,
+            ).map(geoOption => ({
+                key: geoOption.adminLevel,
+                title: geoOption.adminLevelTitle,
+            })),
+        );
 
         return { adminLevelsById, adminLevelTitlesById };
     }
 
-    static getAllGeoOptions = geoOptionsByRegion => (
-        Object.values(geoOptionsByRegion).reduce((acc, r) => [...acc, ...r], [])
-    )
+    // FIXME: repeated code here
+    static getAllGeoOptions = (geoOptionsByRegion) => {
+        const geoOptionsList = mapToList(
+            geoOptionsByRegion,
+            geoOption => geoOption,
+        )
+            .filter(isDefined)
+            .flat();
+        return geoOptionsList;
+    }
 
+    /*
     static getRegionDetails = memoize((regions = emptyArray, allRegions = emptyArray) => {
-        const allRegionsMap = listToMap(allRegions, r => r.key);
+        const allRegionsMap = listToMap(
+            allRegions,
+            region => region.key,
+            region => region,
+        );
         return regions.map(selectedRegion => allRegionsMap[selectedRegion]);
     });
+    */
 
     constructor(props) {
         super(props);
-
-        // Calculate state from initial value
-        this.geoOptionsById = GeoInput.calcGeoOptionsById(props.geoOptionsByRegion);
 
         const {
             adminLevelsById,
@@ -136,7 +138,12 @@ export default class GeoInput extends React.PureComponent {
         this.adminLevelsById = adminLevelsById;
         this.adminLevelTitlesById = adminLevelTitlesById;
 
+        // For value selector and select input
+        this.geoOptionsById = GeoInput.calcGeoOptionsById(props.geoOptionsByRegion);
+
+        // For select input
         this.geoOptions = GeoInput.getAllGeoOptions(props.geoOptionsByRegion);
+
         this.state = {
             modalValue: props.value,
             showModal: false,
@@ -165,10 +172,10 @@ export default class GeoInput extends React.PureComponent {
     handleModalApply = () => {
         const { onChange } = this.props;
         const { modalValue } = this.state;
-        const detailedValue = GeoInput.getRegionDetails(modalValue, this.geoOptions);
+        // const detailedValue = GeoInput.getRegionDetails(modalValue, this.geoOptions);
         this.setState({ showModal: false }, () => {
             if (onChange) {
-                onChange(modalValue, detailedValue);
+                onChange(modalValue);
             }
         });
     }
@@ -179,9 +186,9 @@ export default class GeoInput extends React.PureComponent {
     }
 
     handleSelectChange = (newValues) => {
-        const detailedValue = GeoInput.getRegionDetails(newValues, this.geoOptions);
+        // const detailedValue = GeoInput.getRegionDetails(newValues, this.geoOptions);
         if (this.props.onChange) {
-            this.props.onChange(newValues, detailedValue);
+            this.props.onChange(newValues);
         }
     }
 
