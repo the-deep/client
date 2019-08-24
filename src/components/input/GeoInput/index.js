@@ -56,31 +56,47 @@ const defaultProps = {
     placeholder: undefined,
 };
 
-const emptyArray = [];
-
 @FaramInputElement
 export default class GeoInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    // Calculate the mapping from id to options for all geo options
-    // Useful for fast reference
-    static calcGeoOptionsById = (geoOptionsByRegion) => {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            modalValue: props.value,
+            showModal: false,
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.value !== nextProps.value) {
+            this.setState({ modalValue: nextProps.value });
+        }
+    }
+
+    getAllGeoOptions = memoize((geoOptionsByRegion) => {
         const geoOptionsList = mapToList(
             geoOptionsByRegion,
             geoOption => geoOption,
         )
             .filter(isDefined)
             .flat();
+        return geoOptionsList;
+    })
+
+    getAllGeoOptionsMap = memoize((geoOptionsList) => {
         const geoOptionsMapping = listToMap(
             geoOptionsList,
             geoOption => geoOption.key,
             geoOption => geoOption,
         );
         return geoOptionsMapping;
-    }
+    })
 
-    static calcAdminLevelsById = (geoOptionsByRegion) => {
+    // Should be moved inside geo modal
+    getAdminLevels = memoize((geoOptionsByRegion) => {
         const adminLevelsById = mapToMap(
             geoOptionsByRegion,
             key => key,
@@ -89,7 +105,11 @@ export default class GeoInput extends React.PureComponent {
                 geoOption => geoOption.adminLevel,
             ),
         );
+        return adminLevelsById;
+    })
 
+    // Should be moved inside geo modal
+    getAdminLevelTitles = memoize((geoOptionsByRegion) => {
         const adminLevelTitlesById = mapToMap(
             geoOptionsByRegion,
             key => key,
@@ -101,94 +121,34 @@ export default class GeoInput extends React.PureComponent {
                 title: geoOption.adminLevelTitle,
             })),
         );
+        return adminLevelTitlesById;
+    })
 
-        return { adminLevelsById, adminLevelTitlesById };
-    }
-
-    // FIXME: repeated code here
-    static getAllGeoOptions = (geoOptionsByRegion) => {
-        const geoOptionsList = mapToList(
-            geoOptionsByRegion,
-            geoOption => geoOption,
-        )
-            .filter(isDefined)
-            .flat();
-        return geoOptionsList;
-    }
-
-    /*
-    static getRegionDetails = memoize((regions = emptyArray, allRegions = emptyArray) => {
-        const allRegionsMap = listToMap(
-            allRegions,
-            region => region.key,
-            region => region,
-        );
-        return regions.map(selectedRegion => allRegionsMap[selectedRegion]);
-    });
-    */
-
-    constructor(props) {
-        super(props);
-
-        const {
-            adminLevelsById,
-            adminLevelTitlesById,
-        } = GeoInput.calcAdminLevelsById(props.geoOptionsByRegion);
-
-        this.adminLevelsById = adminLevelsById;
-        this.adminLevelTitlesById = adminLevelTitlesById;
-
-        // For value selector and select input
-        this.geoOptionsById = GeoInput.calcGeoOptionsById(props.geoOptionsByRegion);
-
-        // For select input
-        this.geoOptions = GeoInput.getAllGeoOptions(props.geoOptionsByRegion);
-
-        this.state = {
-            modalValue: props.value,
+    handleModalCancel = () => {
+        const { value: modalValue } = this.props;
+        this.setState({
             showModal: false,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.geoOptionsByRegion !== nextProps.geoOptionsByRegion) {
-            this.geoOptionsById = GeoInput.calcGeoOptionsById(nextProps.geoOptionsByRegion);
-            const {
-                adminLevelsById,
-                adminLevelTitlesById,
-            } = GeoInput.calcAdminLevelsById(nextProps.geoOptionsByRegion);
-
-            this.adminLevelsById = adminLevelsById;
-            this.adminLevelTitlesById = adminLevelTitlesById;
-
-            this.geoOptions = GeoInput.getAllGeoOptions(nextProps.geoOptionsByRegion);
-        }
-
-        if (this.props.value !== nextProps.value) {
-            this.setState({ modalValue: nextProps.value });
-        }
+            modalValue,
+        });
     }
 
     handleModalApply = () => {
         const { onChange } = this.props;
         const { modalValue } = this.state;
-        // const detailedValue = GeoInput.getRegionDetails(modalValue, this.geoOptions);
-        this.setState({ showModal: false }, () => {
-            if (onChange) {
-                onChange(modalValue);
-            }
-        });
-    }
-
-    handleModalCancel = () => {
-        const { value: modalValue } = this.props;
-        this.setState({ showModal: false, modalValue });
+        this.setState(
+            { showModal: false },
+            () => {
+                if (onChange) {
+                    onChange(modalValue);
+                }
+            },
+        );
     }
 
     handleSelectChange = (newValues) => {
-        // const detailedValue = GeoInput.getRegionDetails(newValues, this.geoOptions);
-        if (this.props.onChange) {
-            this.props.onChange(newValues);
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(newValues);
         }
     }
 
@@ -201,8 +161,17 @@ export default class GeoInput extends React.PureComponent {
     }
 
     valueLabelSelector = (v) => {
-        const option = this.geoOptionsById[this.valueKeySelector(v)];
-        if (this.props.regions.length > 0) {
+        const {
+            geoOptionsByRegion,
+            regions,
+        } = this.props;
+
+        const allGeoOptionsMap = this.getAllGeoOptionsMap(
+            this.getAllGeoOptions(geoOptionsByRegion),
+        );
+        const option = allGeoOptionsMap[this.valueKeySelector(v)];
+
+        if (regions.length > 0) {
             return `${option.regionTitle} / ${option.label}`;
         }
         return option.label;
@@ -231,9 +200,11 @@ export default class GeoInput extends React.PureComponent {
                 title={label}
                 regions={regions}
                 geoOptionsByRegion={geoOptionsByRegion}
-                geoOptionsById={this.geoOptionsById}
-                adminLevelsById={this.adminLevelsById}
-                adminLevelTitlesById={this.adminLevelTitlesById}
+                geoOptionsById={this.getAllGeoOptionsMap(
+                    this.getAllGeoOptions(geoOptionsByRegion),
+                )}
+                adminLevelsById={this.getAdminLevels(geoOptionsByRegion)}
+                adminLevelTitlesById={this.getAdminLevelTitles(geoOptionsByRegion)}
                 value={modalValue}
                 onChange={this.handleModalValueChange}
                 onApply={this.handleModalApply}
@@ -274,6 +245,7 @@ export default class GeoInput extends React.PureComponent {
             hideInput,
             placeholder,
             emptyComponent,
+            geoOptionsByRegion,
         } = this.props;
 
         if (hideList || hideInput) {
@@ -284,7 +256,7 @@ export default class GeoInput extends React.PureComponent {
                             showLabel={false}
                             value={value}
                             onChange={this.handleSelectChange}
-                            options={this.geoOptions}
+                            options={this.getAllGeoOptions(geoOptionsByRegion)}
                             labelSelector={this.valueLabelSelector}
                             keySelector={this.valueKeySelector}
                             showHintAndError={false}
@@ -314,7 +286,7 @@ export default class GeoInput extends React.PureComponent {
                 showLabel={false}
                 onChange={this.handleSelectChange}
                 className={styles.selectInput}
-                options={this.geoOptions}
+                options={this.getAllGeoOptions(geoOptionsByRegion)}
                 labelSelector={this.valueLabelSelector}
                 keySelector={this.valueKeySelector}
                 showHintAndError={false}
