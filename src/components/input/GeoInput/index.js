@@ -10,10 +10,7 @@ import { FaramInputElement } from '@togglecorp/faram';
 import {
     listToMap,
     mapToList,
-    mapToMap,
-    listToGroupList,
     isDefined,
-    unique,
 } from '@togglecorp/fujs';
 import _cs from '#cs';
 
@@ -95,35 +92,6 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsMapping;
     })
 
-    // Should be moved inside geo modal
-    getAdminLevels = memoize((geoOptionsByRegion) => {
-        const adminLevelsById = mapToMap(
-            geoOptionsByRegion,
-            key => key,
-            geoOptions => listToGroupList(
-                geoOptions,
-                geoOption => geoOption.adminLevel,
-            ),
-        );
-        return adminLevelsById;
-    })
-
-    // Should be moved inside geo modal
-    getAdminLevelTitles = memoize((geoOptionsByRegion) => {
-        const adminLevelTitlesById = mapToMap(
-            geoOptionsByRegion,
-            key => key,
-            geoOptions => unique(
-                geoOptions,
-                geoOption => geoOption.adminLevel,
-            ).map(geoOption => ({
-                key: geoOption.adminLevel,
-                title: geoOption.adminLevelTitle,
-            })),
-        );
-        return adminLevelTitlesById;
-    })
-
     handleModalCancel = () => {
         const { value: modalValue } = this.props;
         this.setState({
@@ -203,8 +171,6 @@ export default class GeoInput extends React.PureComponent {
                 geoOptionsById={this.getAllGeoOptionsMap(
                     this.getAllGeoOptions(geoOptionsByRegion),
                 )}
-                adminLevelsById={this.getAdminLevels(geoOptionsByRegion)}
-                adminLevelTitlesById={this.getAdminLevelTitles(geoOptionsByRegion)}
                 value={modalValue}
                 onChange={this.handleModalValueChange}
                 onApply={this.handleModalApply}

@@ -7,6 +7,8 @@ import { FaramInputElement } from '@togglecorp/faram';
 import Confirm from '#rscv/Modal/Confirm';
 import {
     getDuplicates,
+    mapToList,
+    isDefined,
     listToMap,
 } from '@togglecorp/fujs';
 
@@ -68,6 +70,16 @@ export default class GeoLink extends React.PureComponent {
         };
     }
 
+    getAllGeoOptions = memoize((geoOptionsByRegion) => {
+        const geoOptionsList = mapToList(
+            geoOptionsByRegion,
+            geoOption => geoOption,
+        )
+            .filter(isDefined)
+            .flat();
+        return geoOptionsList;
+    })
+
     handleDuplicatesConfirmClose = () => {
         const { newValue } = this.state;
         const { lastItemTitle } = this.state;
@@ -79,7 +91,11 @@ export default class GeoLink extends React.PureComponent {
         });
     }
 
-    handleGeoChange = (_, objectValues) => {
+    handleGeoChange = (values) => {
+        const { geoOptions } = this.props;
+
+        const objectValues = this.getAllGeoOptions(geoOptions).filter(d => values.includes(d.key));
+
         const locations = objectValues.map(item => ({
             ...item,
             label: item.title,
