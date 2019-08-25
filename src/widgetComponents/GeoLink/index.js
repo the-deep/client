@@ -77,7 +77,7 @@ export default class GeoLink extends React.PureComponent {
         )
             .filter(isDefined)
             .flat();
-        return geoOptionsList;
+        return listToMap(geoOptionsList, d => d.key, d => d);
     })
 
     handleDuplicatesConfirmClose = () => {
@@ -94,7 +94,7 @@ export default class GeoLink extends React.PureComponent {
     handleGeoChange = (values) => {
         const { geoOptions } = this.props;
 
-        const objectValues = this.getAllGeoOptions(geoOptions).filter(d => values.includes(d.key));
+        const objectValues = values.map(v => this.getAllGeoOptions(geoOptions)[v]);
 
         const locations = objectValues.map(item => ({
             ...item,
