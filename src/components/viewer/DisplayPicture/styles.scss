@@ -1,4 +1,3 @@
-
 .display-picture {
     margin: 0 var(--spacing-extra-small);
     border-radius: 50%;
@@ -8,13 +7,13 @@
         .gallery-image {
             overflow: unset;
         }
+    }
 
-        .image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center center;
-        }
+    .image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
     }
 }
 

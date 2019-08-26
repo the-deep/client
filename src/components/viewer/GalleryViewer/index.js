@@ -58,6 +58,7 @@ const Preview = ({
     isHttps,
     cannotPreviewUrlMessage,
     invalidUrlMessage,
+    ...otherProps
 }) => {
     if (isHttps && galleryMapping[mimeType] === galleryType.IMAGE) {
         return (
@@ -65,6 +66,7 @@ const Preview = ({
                 className={className}
                 imageUrl={url}
                 canShowIframe={canShowIframe}
+                {...otherProps}
             />
         );
     } else if (galleryMapping[mimeType] === galleryType.DOC) {
@@ -75,6 +77,7 @@ const Preview = ({
                 mimeType={mimeType}
                 canShowIframe={canShowIframe}
                 notHttps={!isHttps}
+                {...otherProps}
             />
         );
     } else if (!previewError && (
@@ -238,6 +241,7 @@ export default class GalleryViewer extends React.PureComponent {
             showScreenshot,
             invalidUrlMessage,
             cannotPreviewUrlMessage,
+            ...otherProps
         } = this.props;
 
         const { screenshotMode } = this.state;
@@ -286,6 +290,7 @@ export default class GalleryViewer extends React.PureComponent {
                         isHttps={isHttps}
                         invalidUrlMessage={invalidUrlMessage}
                         cannotPreviewUrlMessage={cannotPreviewUrlMessage}
+                        {...otherProps}
                     />
                 </div>
             </div>

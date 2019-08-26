@@ -286,7 +286,7 @@ export default class GeoModal extends React.PureComponent {
             selectedAdminLevel,
         );
 
-        const filteredValues = value.filter(o => !!optionsForSelectedAdminLevelsMap[o]);
+        const filteredValues = this.getFilteredValues(value, optionsForSelectedAdminLevelsMap);
 
         const geoModalClassName = _cs(
             styles.geoModal,

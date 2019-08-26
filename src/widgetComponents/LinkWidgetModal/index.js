@@ -130,7 +130,8 @@ export default class LinkWidgetModal extends React.PureComponent {
         } = this.props;
 
         this.filteredWidgets = getSupportedWidgets(widgets, widgetKey);
-        const selectedWidget = this.filteredWidgets > 0 ? this.filteredWidgets[0].key : undefined;
+        const selectedWidget = this.filteredWidgets.length > 0 ?
+            this.filteredWidgets[0].key : undefined;
 
         const {
             items,

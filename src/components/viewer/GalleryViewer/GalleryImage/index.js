@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import _ts from '#ts';
@@ -11,11 +12,13 @@ export { galleryImageMimeType as supportedMimeType } from '#config/deepMimeTypes
 const propTypes = {
     className: PropTypes.string,
     imageUrl: PropTypes.string,
+    imageClassName: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     imageUrl: undefined,
+    imageClassName: undefined,
 };
 
 /*
@@ -28,21 +31,22 @@ export default class GalleryImage extends React.PureComponent {
     render() {
         const {
             className,
+            imageClassName,
             imageUrl,
         } = this.props;
 
         return (
-            <div className={`gallery-image ${styles.galleryImage} ${className}`}>
+            <div className={_cs('gallery-image', styles.galleryImage, className)}>
                 {
                     imageUrl ? (
                         <img
                             alt={_ts('components.galleryImage', 'altUser')}
-                            className={`image ${styles.image}`}
+                            className={_cs('image', styles.image, imageClassName)}
                             src={imageUrl}
                         />
                     ) : (
                         <Icon
-                            className={`image-alt ${styles.imageAlt}`}
+                            className={_cs('image-alt', styles.imageAlt)}
                             name="user"
                         />
                     )

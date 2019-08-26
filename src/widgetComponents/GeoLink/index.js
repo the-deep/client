@@ -94,7 +94,8 @@ export default class GeoLink extends React.PureComponent {
     handleGeoChange = (values) => {
         const { geoOptions } = this.props;
 
-        const objectValues = values.map(v => this.getAllGeoOptions(geoOptions)[v]);
+        const allGeoOptions = this.getAllGeoOptions(geoOptions);
+        const objectValues = values.map(v => allGeoOptions[v]);
 
         const locations = objectValues.map(item => ({
             ...item,
