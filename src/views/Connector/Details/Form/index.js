@@ -102,6 +102,11 @@ const mapDispatchToProps = dispatch => ({
 
 const emptyList = [];
 
+const xmlConnectorTypes = [
+    'rss-feed',
+    'atom-feed',
+];
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ConnectorDetailsForm extends React.PureComponent {
     static propTypes = propTypes;
@@ -299,10 +304,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             this.startUserProjectsGetRequest(this.props.activeUser.userId);
         }
 
-        if (key === 'rss-feed') {
+        if (xmlConnectorTypes.includes(key)) {
             const urlFeed = ConnectorDetailsForm.getFeedUrl(faramValues);
             if (urlFeed && isValidUrl(urlFeed)) {
-                this.rssFieldGetRequest.init(urlFeed);
+                this.rssFieldGetRequest.init(urlFeed, key);
                 this.rssFieldGetRequest.start();
             }
         }
@@ -340,11 +345,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             this.projectsOptions = this.getOptionsForProjects(newProjects, newFaramValues.projects);
         }
 
-        if (newConnectorSource.key === 'rss-feed') {
+        if (xmlConnectorTypes.includes(newConnectorSource.key)) {
             const newFeedUrl = ConnectorDetailsForm.getFeedUrl(newFaramValues);
             const oldFeedUrl = ConnectorDetailsForm.getFeedUrl(oldFaramValues);
             if (newFeedUrl !== oldFeedUrl && newFeedUrl && isValidUrl(newFeedUrl)) {
-                this.rssFieldGetRequest.init(newFeedUrl);
+                this.rssFieldGetRequest.init(newFeedUrl, newConnectorSource.key);
                 this.rssFieldGetRequest.start();
             }
         }
@@ -691,7 +696,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 />
             );
         } else if (data.fieldType === 'select') {
-            if (connectorKey === 'rss-feed') {
+            if (xmlConnectorTypes.includes(connectorKey)) {
                 if (isFalsy(rssOptions)) {
                     return null;
                 }

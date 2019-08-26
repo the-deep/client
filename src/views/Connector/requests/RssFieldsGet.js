@@ -3,7 +3,7 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import {
-    createUrlForRssField,
+    createUrlForXmlField,
     createParamsForGet,
 } from '#rest';
 
@@ -43,9 +43,9 @@ export default class RssFieldsGet extends Request {
         });
     }
 
-    init = (url) => {
+    init = (url, key) => {
         this.createDefault({
-            url: createUrlForRssField(url),
+            url: createUrlForXmlField(url, key),
             params: createParamsForGet(),
         });
     }
