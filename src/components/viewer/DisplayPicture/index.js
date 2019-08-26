@@ -31,6 +31,7 @@ export default class DisplayPicture extends React.PureComponent {
                 <InternalGallery
                     className={classNames}
                     galleryId={galleryId}
+                    imageClassName={styles.image}
                 />
             );
         }

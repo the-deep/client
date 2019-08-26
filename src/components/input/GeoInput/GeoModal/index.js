@@ -1,32 +1,37 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import {
+    listToMap,
+    listToGroupList,
+    unique,
+} from '@togglecorp/fujs';
 
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import Button from '#rsca/Button';
+import DismissableListItem from '#rsca/DismissableListItem';
+import ListView from '#rscv/List/ListView';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
-import ListInput from '#rsci/ListInput';
 import { FaramInputElement } from '@togglecorp/faram';
-import { listToMap } from '@togglecorp/fujs';
 import _ts from '#ts';
 import _cs from '#cs';
 
 import RegionMap from '#components/geo/RegionMap';
 import styles from './styles.scss';
 
+const EmptyComponent = () => '';
+
 const MAX_DISPLAY_OPTIONS = 100;
 
 const propTypes = {
     title: PropTypes.string,
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    adminLevelsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    adminLevelTitlesById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     geoOptionsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -39,8 +44,6 @@ const propTypes = {
 const defaultProps = {
     title: '',
     geoOptionsByRegion: {},
-    adminLevelsById: {},
-    adminLevelTitlesById: {},
     geoOptionsById: {},
     value: [],
     onChange: undefined,
@@ -65,15 +68,14 @@ export default class GeoModal extends React.PureComponent {
     static geoOptionLabelSelector = option => option.title;
     static geoOptionLongLabelSelector = option => option.label;
 
+    static groupKeySelector = option => option.adminLevel;
+
     constructor(props) {
         super(props);
 
         // Set default selectedRegion to the first region
         const { regions } = props;
-        let selectedRegion;
-        if (regions.length > 0) {
-            selectedRegion = regions[0].id;
-        }
+        const selectedRegion = regions.length > 0 ? regions[0].id : undefined;
 
         // Calculate state from initial value
         this.state = {
@@ -92,9 +94,37 @@ export default class GeoModal extends React.PureComponent {
         }
     }
 
-    getOptionsForSelectedAdminLevels = memoize((selectedRegion, selectedAdminLevel) => {
-        const { adminLevelsById, geoOptionsByRegion } = this.props;
-        const selectedRegionAdminLevels = adminLevelsById[selectedRegion];
+    getAdminLevels = memoize((geoOptionsByRegion, selectedRegion) => {
+        if (!geoOptionsByRegion[selectedRegion]) {
+            return {};
+        }
+        const adminLevelsById = listToGroupList(
+            geoOptionsByRegion[selectedRegion],
+            geoOption => geoOption.adminLevel,
+        );
+        return adminLevelsById;
+    })
+
+    getAdminLevelTitles = memoize((geoOptionsByRegion, selectedRegion) => {
+        if (!geoOptionsByRegion[selectedRegion]) {
+            return {};
+        }
+        const adminLevelTitlesById = unique(
+            geoOptionsByRegion[selectedRegion],
+            geoOption => geoOption.adminLevel,
+        ).map(geoOption => ({
+            key: geoOption.adminLevel,
+            title: geoOption.adminLevelTitle,
+        }));
+        return adminLevelTitlesById;
+    })
+
+    getOptionsForSelectedAdminLevels = memoize((
+        geoOptionsByRegion,
+        selectedRegion,
+        selectedAdminLevel,
+    ) => {
+        const selectedRegionAdminLevels = this.getAdminLevels(geoOptionsByRegion, selectedRegion);
         let optionsForSelectedAdminLevels = [];
         if (selectedAdminLevel.length > 0) {
             selectedAdminLevel.forEach((adminLevel) => {
@@ -111,40 +141,22 @@ export default class GeoModal extends React.PureComponent {
         };
     });
 
-    // calcValueState = (props, selectedRegion)
+    getFilteredValues = (value, options) => (
+        value.filter(o => !options[o])
+    )
+
     calcValueState = ({ value: originalValue, geoOptionsById }, selectedRegion) => {
-        const adminLevels = {};
         const value = originalValue.filter(v => (
             geoOptionsById[v] &&
             geoOptionsById[v].region === selectedRegion
         ));
 
-        const groupMap = value.reduce(
-            (acc, v) => {
-                const geoOption = geoOptionsById[v];
-                if (!acc[geoOption.adminLevel]) {
-                    acc[geoOption.adminLevel] = [v];
-                    adminLevels[geoOption.adminLevel] = geoOption.adminLevelTitle;
-                } else {
-                    acc[geoOption.adminLevel].push(v);
-                }
-                return acc;
-            },
-            {},
-        );
-
-        const groupedValue = Object.entries(adminLevels)
-            .sort(l => l[0] - l[1])
-            .map(al => ({
-                level: al[0],
-                title: al[1],
-                value: groupMap[al[0]],
-            }));
+        const valueMap = value.map(v => geoOptionsById[v]);
 
         return {
             value,
-            groupedValue,
             selectedRegion,
+            valueMap,
         };
     }
 
@@ -170,6 +182,8 @@ export default class GeoModal extends React.PureComponent {
     }
 
     handleFilteredRegionValueChange = (regionValue) => {
+        const { geoOptionsByRegion } = this.props;
+
         const {
             value,
             selectedRegion,
@@ -177,10 +191,13 @@ export default class GeoModal extends React.PureComponent {
         } = this.state;
 
         const { optionsForSelectedAdminLevelsMap } = this.getOptionsForSelectedAdminLevels(
+            geoOptionsByRegion,
             selectedRegion,
             selectedAdminLevel,
         );
-        const filteredValues = value.filter(o => !optionsForSelectedAdminLevelsMap[o]);
+
+        const filteredValues = this.getFilteredValues(value, optionsForSelectedAdminLevelsMap);
+
         this.handleRegionValueChange([
             ...regionValue,
             ...filteredValues,
@@ -206,60 +223,70 @@ export default class GeoModal extends React.PureComponent {
         this.setState({ selectedAdminLevel });
     }
 
-    handleGroupValueChange = (adminLevel, groupValue) => {
-        const { groupedValue } = this.state;
-        const regionValue = groupedValue.reduce((acc, group) => {
-            if (group.level === adminLevel) {
-                return [...acc, ...groupValue];
-            }
+    handleGroupValueChange = (itemKey) => {
+        const { value } = this.state;
+        const { onChange } = this.props;
 
-            return [...acc, ...group.value];
-        }, []);
-
-        this.handleRegionValueChange(regionValue);
+        const newValue = value.filter(v => v !== itemKey);
+        onChange(newValue);
     }
 
     geoValueLabelSelector = v => GeoModal.geoOptionLabelSelector(this.props.geoOptionsById[v]);
     geoValueKeySelector = v => v;
 
-    renderGroupSelectionList = ({ selection }) => (
-        <div className={styles.selectionGroup}>
-            <div className={styles.title}>
-                {selection.title}
-            </div>
-            <ListInput
-                onChange={value => this.handleGroupValueChange(selection.level, value)}
-                value={selection.value}
-                labelSelector={this.geoValueLabelSelector}
-                keySelector={this.geoValueKeySelector}
-            />
-        </div>
-    )
+    groupRendererParams = (groupKey) => {
+        const { geoOptionsByRegion } = this.props;
+
+        const { selectedRegion } = this.state;
+        const adminLevelTitlesById = this.getAdminLevelTitles(
+            geoOptionsByRegion,
+            selectedRegion,
+        );
+
+        const adminLevel = adminLevelTitlesById.find(a => String(a.key) === String(groupKey));
+
+        return {
+            children: adminLevel ? adminLevel.title : '',
+        };
+    }
+
+    listRendererParams = (key, geoOption) => ({
+        className: styles.item,
+        itemKey: key,
+        onDismiss: this.handleGroupValueChange,
+        value: geoOption.title,
+    })
 
     render() {
         const {
             regions,
             title,
             modalLeftComponent,
-            adminLevelTitlesById,
+            geoOptionsByRegion,
         } = this.props;
 
         const {
             value,
+            valueMap,
             selectedRegion,
-            groupedValue,
             selectedAdminLevel,
         } = this.state;
 
-        const GroupSelectionList = this.renderGroupSelectionList;
+        const adminLevelTitlesById = this.getAdminLevelTitles(
+            geoOptionsByRegion,
+            selectedRegion,
+        );
+
         const {
             optionsForSelectedAdminLevels,
             optionsForSelectedAdminLevelsMap,
         } = this.getOptionsForSelectedAdminLevels(
+            geoOptionsByRegion,
             selectedRegion,
             selectedAdminLevel,
         );
-        const filteredValues = value.filter(o => !!optionsForSelectedAdminLevelsMap[o]);
+
+        const filteredValues = this.getFilteredValues(value, optionsForSelectedAdminLevelsMap);
 
         const geoModalClassName = _cs(
             styles.geoModal,
@@ -290,13 +317,14 @@ export default class GeoModal extends React.PureComponent {
                                 labelSelector={GeoModal.regionLabelSelector}
                                 onChange={this.handleRegionChange}
                                 value={selectedRegion}
+                                hideClearButton
                                 showHintAndError={false}
                             />
                             <div className={styles.leftInputs} >
                                 <MultiSelectInput
                                     label={_ts('components.geo.geoModal', 'adminLevelLabel')}
                                     className={styles.selectInput}
-                                    options={adminLevelTitlesById[selectedRegion]}
+                                    options={adminLevelTitlesById}
                                     labelSelector={GeoModal.geoOptionLabelSelector}
                                     keySelector={GeoModal.geoOptionKeySelector}
                                     onChange={this.handleAdminLevelChange}
@@ -326,13 +354,18 @@ export default class GeoModal extends React.PureComponent {
                         />
                     </div>
                     <div className={styles.right}>
-                        {groupedValue.map(v => (
-                            // FIXME: use List
-                            <GroupSelectionList
-                                key={v.level}
-                                selection={v}
-                            />
-                        ))}
+                        <h3 className={styles.heading}>
+                            {_ts('components.geo.geoModal', 'listHeading')}
+                        </h3>
+                        <ListView
+                            data={valueMap}
+                            emptyComponent={EmptyComponent}
+                            renderer={DismissableListItem}
+                            rendererParams={this.listRendererParams}
+                            keySelector={GeoModal.geoOptionKeySelector}
+                            groupKeySelector={GeoModal.groupKeySelector}
+                            groupRendererParams={this.groupRendererParams}
+                        />
                     </div>
                 </ModalBody>
                 <ModalFooter>
