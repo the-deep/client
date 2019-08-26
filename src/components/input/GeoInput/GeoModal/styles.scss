@@ -66,8 +66,8 @@
 
             .heading {
                 flex-shrink: 0;
-                border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                text-transform: capitalize;
+                padding: var(--spacing-small);
+                text-transform: initial;
             }
 
             .item {

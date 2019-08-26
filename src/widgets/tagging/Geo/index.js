@@ -87,9 +87,9 @@ export default class GeoWidget extends React.PureComponent {
                 emptyComponent={null}
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>
-                        <h4 className={styles.title} >
+                        <h3 className={styles.title} >
                             {excerptHeaderTitle}
-                        </h4>
+                        </h3>
                         <ExcerptOutput
                             className={styles.excerptBox}
                             type={entryTypes[entryType]}

@@ -12,10 +12,10 @@
 
     .title {
         flex-shrink: 0;
-        padding: var(--spacing-small) var(--spacing-medium);
+        padding: var(--spacing-small);
+        padding-bottom: 0;
         text-transform: uppercase;
-        color: var(--color-accent);
-        font-weight: var(--font-weight-bold);
+        text-transform: initial;
     }
 
     .excerpt {

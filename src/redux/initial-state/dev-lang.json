@@ -978,7 +978,8 @@
         "-31511044": "Author",
         "-36668463": "e.g. Ernest Hemingway",
         "-30790313": "Same as publisher",
-        "-67237579": "Focus"
+        "-67237579": "Focus",
+        "-63009300": "Selected geo-areas"
     },
     "links": {
         "browserExtension": {
@@ -2636,7 +2637,8 @@
             "cancelButtonLabel": 61,
             "geoAreasLabel": -10995037,
             "regionLabel": -67487923,
-            "geoAreasPlaceholder": -65943043
+            "geoAreasPlaceholder": -65943043,
+            "listHeading": -63009300
         },
         "project.regions": {
             "saveButtonLabel": 25,

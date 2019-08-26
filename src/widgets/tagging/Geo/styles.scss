@@ -1,4 +1,3 @@
-
 .geo-input {
     height: 100%;
     overflow: auto;
@@ -14,8 +13,7 @@
         padding: var(--spacing-small);
         padding-bottom: 0;
         text-transform: uppercase;
-        color: var(--color-accent);
-        font-weight: var(--font-weight-bold);
+        text-transform: initial;
     }
 
     .excerpt-box {
