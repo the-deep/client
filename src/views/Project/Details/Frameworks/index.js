@@ -23,7 +23,7 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
 
     // eslint-disable-next-line react/no-unused-prop-types
-    setAnalysisFrameworksInPageAction: PropTypes.func.isRequired,
+    setFrameworkList: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
 };
 
