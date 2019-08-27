@@ -107,16 +107,16 @@ export default class GeoModal extends React.PureComponent {
 
     getAdminLevelTitles = memoize((geoOptionsByRegion, selectedRegion) => {
         if (!geoOptionsByRegion[selectedRegion]) {
-            return {};
+            return [];
         }
-        const adminLevelTitlesById = unique(
+        const adminLevelTitles = unique(
             geoOptionsByRegion[selectedRegion],
             geoOption => geoOption.adminLevel,
         ).map(geoOption => ({
             key: geoOption.adminLevel,
             title: geoOption.adminLevelTitle,
         }));
-        return adminLevelTitlesById;
+        return adminLevelTitles;
     })
 
     getOptionsForSelectedAdminLevels = memoize((
@@ -238,12 +238,12 @@ export default class GeoModal extends React.PureComponent {
         const { geoOptionsByRegion } = this.props;
 
         const { selectedRegion } = this.state;
-        const adminLevelTitlesById = this.getAdminLevelTitles(
+        const adminLevelTitles = this.getAdminLevelTitles(
             geoOptionsByRegion,
             selectedRegion,
         );
 
-        const adminLevel = adminLevelTitlesById.find(a => String(a.key) === String(groupKey));
+        const adminLevel = adminLevelTitles.find(a => String(a.key) === String(groupKey));
 
         return {
             children: adminLevel ? adminLevel.title : '',
@@ -272,7 +272,7 @@ export default class GeoModal extends React.PureComponent {
             selectedAdminLevel,
         } = this.state;
 
-        const adminLevelTitlesById = this.getAdminLevelTitles(
+        const adminLevelTitles = this.getAdminLevelTitles(
             geoOptionsByRegion,
             selectedRegion,
         );
@@ -324,7 +324,7 @@ export default class GeoModal extends React.PureComponent {
                                 <MultiSelectInput
                                     label={_ts('components.geo.geoModal', 'adminLevelLabel')}
                                     className={styles.selectInput}
-                                    options={adminLevelTitlesById}
+                                    options={adminLevelTitles}
                                     labelSelector={GeoModal.geoOptionLabelSelector}
                                     keySelector={GeoModal.geoOptionKeySelector}
                                     onChange={this.handleAdminLevelChange}
