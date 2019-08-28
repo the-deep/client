@@ -1,5 +1,10 @@
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+    listToGroupList,
+} from '@togglecorp/fujs';
 import React from 'react';
 
 import FloatingContainer from '#rscv/FloatingContainer';
@@ -14,6 +19,8 @@ import {
     requestMethods,
 } from '#request';
 
+import Thread from './Thread';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -22,7 +29,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     closeModal: () => {},
 };
 
@@ -46,6 +53,22 @@ const requests = {
 export default class EntryCommentModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getCommentsByThreads = (allComments) => {
+        const parentList = allComments.filter(c => isNotDefined(c.parent));
+        const childrenList = allComments.filter(c => isDefined(c.parent));
+
+        const childrenGroup = listToGroupList(
+            childrenList,
+            d => d.parent,
+        );
+
+        const threads = parentList.map(p => ({
+            parent: p,
+            children: childrenGroup[p.id],
+        }));
+        return threads;
+    }
 
     handleInvalidate = (container) => {
         // Note: pass through prop
@@ -74,7 +97,19 @@ export default class EntryCommentModal extends React.PureComponent {
         const {
             className,
             closeModal,
+            entryCommentsGet: {
+                response: {
+                    results: allComments = [],
+                } = {},
+                pending,
+            },
         } = this.props;
+
+        if (pending) {
+            return null;
+        }
+
+        const comments = this.getCommentsByThreads(allComments)[0];
 
         return (
             <FloatingContainer
@@ -85,7 +120,7 @@ export default class EntryCommentModal extends React.PureComponent {
                 focusTrap
                 showHaze
             >
-                Entry comment modal
+                <Thread comments={comments} />
             </FloatingContainer>
         );
     }
