@@ -981,7 +981,8 @@
         "-67237579": "Focus",
         "-63009300": "Selected geo-areas",
         "-28548476": "EMM Entities",
-        "-35842630": "EMM Triggers"
+        "-35842630": "EMM Triggers",
+        "-127936": "Assigned to {name}"
     },
     "links": {
         "browserExtension": {
@@ -2802,6 +2803,9 @@
         },
         "editFramework": {
             "dummyExcerptPlaceholder": -66973833
+        },
+        "entryComment": {
+            "assignedTo": -127936
         }
     }
 }

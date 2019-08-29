@@ -34,7 +34,6 @@ export default class GalleryImage extends React.PureComponent {
             imageClassName,
             imageUrl,
         } = this.props;
-        console.warn(className);
 
         return (
             <div className={_cs('gallery-image', styles.galleryImage, className)}>

@@ -1,4 +1,10 @@
-import { padStart } from '@togglecorp/fujs';
+import {
+    padStart,
+    isDefined,
+    isNotDefined,
+    isObject,
+    isList,
+} from '@togglecorp/fujs';
 
 export const mapObjectToObject = (obj, fn) => {
     const newObj = {};
@@ -93,4 +99,34 @@ export const getDateWithTimezone = (date) => {
     const timezoneOffsetString = `${reverseSign}${padStart(hours, 2)}${padStart(minutes, 2)}`;
 
     return `${date}${timezoneOffsetString}`;
+};
+
+export const forEach = (obj, func) => {
+    Object.keys(obj).forEach((key) => {
+        const val = obj[key];
+        func(key, val);
+    });
+};
+
+export const sanitizeResponse = (data) => {
+    if (data === null || data === undefined) {
+        return undefined;
+    }
+    if (isList(data)) {
+        return data.map(sanitizeResponse).filter(isDefined);
+    }
+    if (isObject(data)) {
+        let newData = {};
+        forEach(data, (k, val) => {
+            const newEntry = sanitizeResponse(val);
+            if (isDefined(newEntry)) {
+                newData = {
+                    ...newData,
+                    [k]: newEntry,
+                };
+            }
+        });
+        return newData;
+    }
+    return data;
 };

@@ -5,6 +5,7 @@ import {
     isNotDefined,
     listToGroupList,
 } from '@togglecorp/fujs';
+import { connect } from 'react-redux';
 import React from 'react';
 
 import FloatingContainer from '#rscv/FloatingContainer';
@@ -13,6 +14,9 @@ import {
     defaultOffset,
     defaultLimit,
 } from '#rsu/bounds';
+import {
+    projectIdFromRouteSelector,
+} from '#redux';
 import {
     RequestCoordinator,
     RequestClient,
@@ -23,13 +27,19 @@ import Thread from './Thread';
 
 import styles from './styles.scss';
 
+const mapStateToProps = state => ({
+    projectId: projectIdFromRouteSelector(state),
+});
+
 const propTypes = {
     className: PropTypes.string,
     closeModal: PropTypes.func,
+    projectId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
 };
 
 const defaultProps = {
     className: undefined,
+    projectId: undefined,
     closeModal: () => {},
 };
 
@@ -42,12 +52,23 @@ const requests = {
         }),
         onMount: true,
         onPropsChanged: ['entryServerId'],
+    },
+    projectMembersGet: {
+        url: '/project-memberships/',
+        method: requestMethods.GET,
+        query: ({ props: { projectId } }) => ({
+            project: projectId,
+            fields: ['member_name', 'member'],
+        }),
+        onMount: true,
+        onPropsChanged: ['project'],
         onSuccess: ({ response }) => {
             console.warn(response);
         },
     },
 };
 
+@connect(mapStateToProps)
 @RequestCoordinator
 @RequestClient(requests)
 export default class EntryCommentModal extends React.PureComponent {
@@ -96,20 +117,31 @@ export default class EntryCommentModal extends React.PureComponent {
     render() {
         const {
             className,
+            entryServerId,
             closeModal,
             entryCommentsGet: {
                 response: {
                     results: allComments = [],
                 } = {},
-                pending,
+                pending: commentsPending,
+            },
+            projectMembersGet: {
+                response: {
+                    results: members = [],
+                } = {},
+                pending: membersPending,
             },
         } = this.props;
 
-        if (pending) {
+        if (commentsPending || membersPending) {
             return null;
         }
 
         const comments = this.getCommentsByThreads(allComments)[0];
+        const membersMap = members.map(m => ({
+            key: m.member,
+            name: m.memberName,
+        }));
 
         return (
             <FloatingContainer
@@ -120,7 +152,11 @@ export default class EntryCommentModal extends React.PureComponent {
                 focusTrap
                 showHaze
             >
-                <Thread comments={comments} />
+                <Thread
+                    comments={comments}
+                    entryId={entryServerId}
+                    members={membersMap}
+                />
             </FloatingContainer>
         );
     }

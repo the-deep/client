@@ -1,8 +1,38 @@
 .thread {
     .parent {
-        .display-picture {
-            width: var(--width-navbar-avatar);
-            height: var(--height-navbar-avatar);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+
+        .header {
+            flex-shrink: 0;
+        }
+    }
+
+    .children-list {
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+
+        .comment {
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    .form {
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-medium) var(--spacing-medium) var(--spacing-extra-small);
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--spacing-extra-small) 0 var(--spacing-small);
+
+        .button {
+            margin-left: var(--spacing-small);
         }
     }
 }

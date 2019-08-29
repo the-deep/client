@@ -9,6 +9,7 @@ import {
 } from '@togglecorp/react-rest-request';
 
 import update from '#rsu/immutable-update';
+import { sanitizeResponse } from '#utils/common';
 
 import { wsEndpoint } from '#config/rest';
 import schema from '#schema';
@@ -81,7 +82,7 @@ const CustomRequestCoordinator = createRequestCoordinator({
                 throw (e);
             }
         }
-        return body;
+        return sanitizeResponse(body);
     },
 
     /*
