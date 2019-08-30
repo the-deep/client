@@ -35,11 +35,15 @@ const propTypes = {
     className: PropTypes.string,
     closeModal: PropTypes.func,
     projectId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+    entryServerId: PropTypes.number,
+    entryCommentsGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectMembersGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: undefined,
     projectId: undefined,
+    entryServerId: undefined,
     closeModal: () => {},
 };
 
@@ -52,19 +56,17 @@ const requests = {
         }),
         onMount: true,
         onPropsChanged: ['entryServerId'],
+        schemaName: 'entryComments',
     },
     projectMembersGet: {
-        url: '/project-memberships/',
+        url: ({ props: { projectId } }) => `/projects/${projectId}/members/`,
         method: requestMethods.GET,
-        query: ({ props: { projectId } }) => ({
-            project: projectId,
-            fields: ['member_name', 'member'],
-        }),
+        query: {
+            fields: ['id', 'display_name'],
+        },
         onMount: true,
         onPropsChanged: ['project'],
-        onSuccess: ({ response }) => {
-            console.warn(response);
-        },
+        schemaName: 'projectMembers',
     },
 };
 
@@ -138,10 +140,6 @@ export default class EntryCommentModal extends React.PureComponent {
         }
 
         const comments = this.getCommentsByThreads(allComments)[0];
-        const membersMap = members.map(m => ({
-            key: m.member,
-            name: m.memberName,
-        }));
 
         return (
             <FloatingContainer
@@ -155,7 +153,7 @@ export default class EntryCommentModal extends React.PureComponent {
                 <Thread
                     comments={comments}
                     entryId={entryServerId}
-                    members={membersMap}
+                    members={members}
                 />
             </FloatingContainer>
         );

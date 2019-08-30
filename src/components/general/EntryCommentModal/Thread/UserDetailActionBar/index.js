@@ -5,12 +5,12 @@ import { _cs } from '@togglecorp/fujs';
 import DisplayPicture from '#components/viewer/DisplayPicture';
 import FormattedDate from '#rscv/FormattedDate';
 import Button from '#rsca/Button';
+import DropdownMenu from '#rsca/DropdownMenu';
 import {
     RequestClient,
 } from '#request';
 
 import styles from './styles.scss';
-
 
 const propTypes = {
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -38,6 +38,7 @@ export default class UserDetailActionBar extends React.PureComponent {
                 modifiedAt = new Date(),
                 name,
             },
+            onEditClick,
             textHistory,
         } = this.props;
 
@@ -51,7 +52,7 @@ export default class UserDetailActionBar extends React.PureComponent {
                         url={displayPicture}
                     />
                 </div>
-                <div className={styles.rightContainer}>
+                <div className={styles.midContainer}>
                     <div className={styles.userName}>
                         {name}
                     </div>
@@ -66,6 +67,20 @@ export default class UserDetailActionBar extends React.PureComponent {
                             </Button>
                         )}
                     </div>
+                </div>
+                <div className={styles.rightContainer}>
+                    <DropdownMenu
+                        className={className}
+                        dropdownIcon="menuDots"
+                        dropdownIconClassName={styles.icon}
+                        closeOnClick
+                    >
+                        <Button
+                            onClick={onEditClick}
+                        >
+                            Edit
+                        </Button>
+                    </DropdownMenu>
                 </div>
             </div>
         );

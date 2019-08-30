@@ -108,6 +108,7 @@ const iconNames = {
     user: 'ion-android-contact',
     userGroup: 'ion-android-contacts',
     verticalBar: 'ion-connection-bars',
+    menuDots: 'ion-android-more-vertical',
     warning: 'ion-alert-circled',
     widget: 'ion-cube',
     word: 'ion-social-wordpress-outline',

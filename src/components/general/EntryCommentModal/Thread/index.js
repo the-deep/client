@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Faram, { requiredCondition } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestClient,
     requestMethods,
 } from '#request';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 import ListView from '#rscv/List/ListView';
 import TextArea from '#rsci/TextArea';
 import SelectInput from '#rsci/SelectInput';
@@ -20,10 +20,14 @@ import styles from './styles.scss';
 const propTypes = {
     comments: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     members: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    entryId: PropTypes.number,
     className: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    commentCreateRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
+    entryId: undefined,
     className: undefined,
     comments: {},
     members: [],
@@ -37,12 +41,13 @@ const requests = {
         onSuccess: ({ response }) => {
             console.warn(response);
         },
+        schemaName: 'entryComment',
     },
 };
 
 const childrenKeySelector = c => c.id;
-const memberKeySelector = m => m.key;
-const memberLabelSelector = m => m.name;
+const memberKeySelector = m => m.id;
+const memberLabelSelector = m => m.displayName;
 
 @RequestClient(requests)
 export default class EntryCommentThread extends React.PureComponent {
@@ -73,6 +78,7 @@ export default class EntryCommentThread extends React.PureComponent {
         assigneeDetail: data.assigneeDetail,
         text: data.text,
         textHistory: data.textHistory,
+        members: this.props.members,
     })
 
     handleFaramChange = (values, errors) => {
@@ -83,7 +89,6 @@ export default class EntryCommentThread extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (_, values) => {
-        console.warn('reply', values);
         const {
             commentCreateRequest,
             entryId,
@@ -157,6 +162,8 @@ export default class EntryCommentThread extends React.PureComponent {
                         assigneeDetail={assigneeDetail}
                         text={text}
                         textHistory={textHistory}
+                        members={members}
+                        isParent
                     />
                 </div>
                 <ListView

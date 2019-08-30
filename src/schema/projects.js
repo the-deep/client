@@ -255,6 +255,38 @@ const projectSchema = [];
     projectSchema.push({ name, schema });
 }
 {
+    const name = 'projectMember';
+    const schema = {
+        doc: {
+            name: 'Project Member for Project Members Get Response',
+            description: 'Response item for GET /projects/<id>/members/',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            displayName: { type: 'string', required: true },
+            email: { type: 'string', required: false },
+            displayPicture: { type: 'uint', required: false },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+{
+    const name = 'projectMembers';
+    const schema = {
+        doc: {
+            name: 'Project Members Get Response',
+            description: 'Response for GET /projects/<id>/members/',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.projectMember', required: true },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+{
     const name = 'projectCreateResponse';
     const schema = {
         doc: {

@@ -3,6 +3,7 @@ import Dict, { basicTypes } from '@togglecorp/ravl';
 import leads from './leads';
 import leadsViz from './leadsViz';
 import entries from './entries';
+import entryComments from './entryComments';
 import projects from './projects';
 import regions from './regions';
 import connectors from './connectors';
@@ -101,6 +102,7 @@ const dict = new Dict(
     ...leads,
     ...leadsViz,
     ...entries,
+    ...entryComments,
     ...projects,
     ...regions,
     ...connectors,

@@ -16,7 +16,7 @@
         }
     }
 
-    .right-container {
+    .mid-container {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
@@ -48,6 +48,14 @@
                     background-color: transparent;
                 }
             }
+        }
+    }
+
+    .right-container {
+        flex-shrink: 0;
+
+        .icon {
+            font-size: var(--font-size-large);
         }
     }
 }
