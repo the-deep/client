@@ -1,7 +1,6 @@
 import {
     padStart,
     isDefined,
-    isNotDefined,
     isObject,
     isList,
 } from '@togglecorp/fujs';

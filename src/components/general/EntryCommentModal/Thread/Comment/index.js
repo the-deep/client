@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestClient,
     requestMethods,
 } from '#request';
+
+import {
+    activeUserSelector,
+} from '#redux';
+
 import Confirm from '#rscv/Modal/Confirm';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import _ts from '#ts';
@@ -34,6 +40,7 @@ const propTypes = {
     commentEditRequest: PropTypes.object.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
+    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -44,6 +51,10 @@ const defaultProps = {
     assigneeDetail: {},
     members: [],
 };
+
+const mapStateToProps = state => ({
+    activeUser: activeUserSelector(state),
+});
 
 const requests = {
     commentEditRequest: {
@@ -73,6 +84,7 @@ const requests = {
     },
 };
 
+@connect(mapStateToProps)
 @RequestClient(requests)
 export default class Comment extends React.PureComponent {
     static propTypes = propTypes;
@@ -183,6 +195,9 @@ export default class Comment extends React.PureComponent {
             textHistory,
             userDetails,
             members,
+            activeUser: {
+                userId: activeUserId,
+            },
             assigneeDetail: {
                 name: assigneeName,
             },
@@ -206,6 +221,9 @@ export default class Comment extends React.PureComponent {
             ? _ts('entryComments', 'parentDeleteConfirmMessage')
             : _ts('entryComments', 'replyDeleteConfirmMessage');
 
+        const hideActions = activeUserId !== userDetails.id;
+        console.warn(this.props.activeUser, activeUserId, userDetails);
+
         return (
             <div className={_cs(className, styles.comment)}>
                 {deletePending && <LoadingAnimation />}
@@ -216,6 +234,7 @@ export default class Comment extends React.PureComponent {
                     onResolveClick={this.handleResolveClick}
                     onDeleteClick={this.handleDeleteClick}
                     isParent={isParent}
+                    hideActions={hideActions}
                 />
                 {editMode ? (
                     <CommentFaram

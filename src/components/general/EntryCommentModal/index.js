@@ -268,6 +268,9 @@ export default class EntryCommentModal extends React.PureComponent {
             entryCommentsGet: {
                 pending: commentsPending,
             },
+            commentCreateRequest: {
+                pending: commentCreationPending,
+            },
             projectMembersGet: {
                 response: {
                     results: members = [],
@@ -279,8 +282,6 @@ export default class EntryCommentModal extends React.PureComponent {
         if (commentsPending || membersPending) {
             return null;
         }
-
-        const pending = commentsPending || membersPending;
 
         const {
             comments: allComments,
@@ -337,7 +338,7 @@ export default class EntryCommentModal extends React.PureComponent {
                 {showCommentForm && (
                     <CommentFaram
                         className={styles.newComment}
-                        pending={pending}
+                        pending={commentCreationPending}
                         pristine={pristine}
                         onChange={this.handleFaramChange}
                         onValidationFailure={this.handleFaramValidationFailure}

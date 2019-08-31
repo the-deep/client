@@ -6,9 +6,6 @@ import DisplayPicture from '#components/viewer/DisplayPicture';
 import FormattedDate from '#rscv/FormattedDate';
 import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';
-import {
-    RequestClient,
-} from '#request';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -21,6 +18,7 @@ const propTypes = {
     onResolveClick: PropTypes.func.isRequired,
     textHistory: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     isParent: PropTypes.bool,
+    hideActions: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -29,10 +27,6 @@ const defaultProps = {
     userDetails: {},
 };
 
-const requests = {
-};
-
-@RequestClient(requests)
 export default class UserDetailActionBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -50,6 +44,7 @@ export default class UserDetailActionBar extends React.PureComponent {
             onResolveClick,
             textHistory,
             isParent,
+            hideActions,
         } = this.props;
 
         const isModified = textHistory.length > 1;
@@ -79,36 +74,38 @@ export default class UserDetailActionBar extends React.PureComponent {
                         )}
                     </div>
                 </div>
-                <div className={styles.rightContainer}>
-                    <DropdownMenu
-                        className={styles.dropdown}
-                        dropdownIcon="menuDots"
-                        dropdownClassName={styles.dropdownContainer}
-                        dropdownIconClassName={styles.icon}
-                        closeOnClick
-                    >
-                        {isParent && (
+                {!hideActions && (
+                    <div className={styles.rightContainer}>
+                        <DropdownMenu
+                            className={styles.dropdown}
+                            dropdownIcon="menuDots"
+                            dropdownClassName={styles.dropdownContainer}
+                            dropdownIconClassName={styles.icon}
+                            closeOnClick
+                        >
+                            {isParent && (
+                                <Button
+                                    className={styles.button}
+                                    onClick={onResolveClick}
+                                >
+                                    {_ts('entryComments', 'resolveLabel')}
+                                </Button>
+                            )}
                             <Button
                                 className={styles.button}
-                                onClick={onResolveClick}
+                                onClick={onEditClick}
                             >
-                                {_ts('entryComments', 'resolveLabel')}
+                                {_ts('entryComments', 'editLabel')}
                             </Button>
-                        )}
-                        <Button
-                            className={styles.button}
-                            onClick={onEditClick}
-                        >
-                            {_ts('entryComments', 'editLabel')}
-                        </Button>
-                        <Button
-                            className={styles.button}
-                            onClick={onDeleteClick}
-                        >
-                            {_ts('entryComments', 'deleteLabel')}
-                        </Button>
-                    </DropdownMenu>
-                </div>
+                            <Button
+                                className={styles.button}
+                                onClick={onDeleteClick}
+                            >
+                                {_ts('entryComments', 'deleteLabel')}
+                            </Button>
+                        </DropdownMenu>
+                    </div>
+                )}
             </div>
         );
     }

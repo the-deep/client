@@ -38,7 +38,6 @@
 
             .date {
                 color: var(--color-text-label);
-                font-style: italic;
             }
 
             .edited-button {
@@ -48,7 +47,6 @@
                 padding: 0;
                 text-transform: lowercase;
                 color: var(--color-primary);
-                font-style: italic;
 
                 &:hover {
                     background-color: transparent;
