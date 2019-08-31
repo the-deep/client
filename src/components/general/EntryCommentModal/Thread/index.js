@@ -6,14 +6,11 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import Faram, { requiredCondition } from '@togglecorp/faram';
 import ListView from '#rscv/List/ListView';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import TextArea from '#rsci/TextArea';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import DangerButton from '#rsca/Button/DangerButton';
 import _ts from '#ts';
 
+import CommentFaram from '../CommentFaram';
 import Comment from './Comment';
 
 import styles from './styles.scss';
@@ -67,12 +64,6 @@ export default class EntryCommentThread extends React.PureComponent {
             faramValues: {},
             faramErrors: {},
             type: 'reply',
-        };
-
-        this.schema = {
-            fields: {
-                text: [requiredCondition],
-            },
         };
     }
 
@@ -214,52 +205,31 @@ export default class EntryCommentThread extends React.PureComponent {
                     rendererParams={this.childRendererParams}
                     renderer={Comment}
                 />
-                <Faram
-                    className={styles.form}
-                    onChange={this.handleFaramChange}
-                    onValidationFailure={this.handleFaramValidationFailure}
-                    onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={this.schema}
-                    value={faramValues}
-                    error={faramErrors}
-                >
-                    {pending && <LoadingAnimation /> }
-                    {showReplyBox && (
-                        <TextArea
-                            faramElementName="text"
-                            showLabel={false}
-                            rows={5}
-                            resize="vertical"
-                        />
-                    )}
-                    <div className={styles.actionButtons}>
-                        {showReplyBox ? (
-                            <React.Fragment>
-                                <PrimaryButton
-                                    type="submit"
-                                    className={styles.button}
-                                >
-                                    {_ts('entryComments', 'replyFaramReplyButtonLabel')}
-                                </PrimaryButton>
-                                <DangerButton
-                                    onClick={this.handleReplyCancelClick}
-                                    className={styles.button}
-                                    type="button"
-                                >
-                                    {_ts('entryComments', 'replyFaramCancelButtonLabel')}
-                                </DangerButton>
-                            </React.Fragment>
-                        ) : (
-                            <PrimaryButton
-                                onClick={this.handleReplyClick}
-                                className={styles.button}
-                                type="button"
-                            >
-                                {_ts('entryComments', 'replyButtonLabel')}
-                            </PrimaryButton>
-                        )}
+                {showReplyBox ? (
+                    <CommentFaram
+                        className={styles.form}
+                        pending={pending}
+                        onChange={this.handleFaramChange}
+                        onValidationFailure={this.handleFaramValidationFailure}
+                        onValidationSuccess={this.handleFaramValidationSuccess}
+                        faramValues={faramValues}
+                        faramErrors={faramErrors}
+                        onCancelClick={this.handleReplyCancelClick}
+                        hasAssignee={false}
+                        members={members}
+                        commentButtonLabel={_ts('entryComments', 'replyFaramReplyButtonLabel')}
+                        cancelButtonLabel={_ts('entryComments', 'replyFaramCancelButtonLabel')}
+                    />
+                ) : (
+                    <div className={styles.newComment}>
+                        <PrimaryButton
+                            onClick={this.handleReplyClick}
+                            type="button"
+                        >
+                            {_ts('entryComments', 'replyButtonLabel')}
+                        </PrimaryButton>
                     </div>
-                </Faram>
+                )}
             </div>
         );
     }

@@ -4,20 +4,6 @@
     flex-direction: column;
     padding-bottom: var(--spacing-small);
 
-    .form {
-        padding: var(--spacing-extra-small) var(--spacing-medium);
-
-        .action-buttons {
-            display: flex;
-            justify-content: flex-end;
-            padding: var(--spacing-extra-small) 0 var(--spacing-small);
-
-            .button {
-                margin-left: var(--spacing-small);
-            }
-        }
-    }
-
     .comment-text {
         padding: var(--spacing-extra-small) var(--spacing-medium);
     }

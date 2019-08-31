@@ -18,18 +18,12 @@
     }
 
     .form {
-        position: relative;
         border-top: var(--width-separator-thin) solid var(--color-separator);
-        padding: var(--spacing-medium) var(--spacing-medium) var(--spacing-extra-small);
     }
 
-    .action-buttons {
-        display: flex;
-        justify-content: flex-end;
-        padding: var(--spacing-extra-small) 0 var(--spacing-small);
-
-        .button {
-            margin-left: var(--spacing-small);
-        }
+    .new-comment {
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) var(--spacing-medium);
+        text-align: right;
     }
 }

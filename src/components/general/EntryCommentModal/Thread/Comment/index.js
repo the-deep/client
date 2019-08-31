@@ -6,16 +6,12 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import _ts from '#ts';
-import Faram, { requiredCondition } from '@togglecorp/faram';
-import TextArea from '#rsci/TextArea';
-import SelectInput from '#rsci/SelectInput';
 import Confirm from '#rscv/Modal/Confirm';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import DangerButton from '#rsca/Button/DangerButton';
+import _ts from '#ts';
 
 import UserDetailActionBar from '../UserDetailActionBar';
+import CommentFaram from '../../CommentFaram';
 
 import styles from './styles.scss';
 
@@ -77,9 +73,6 @@ const requests = {
     },
 };
 
-const memberKeySelector = m => m.id;
-const memberLabelSelector = m => m.displayName;
-
 @RequestClient(requests)
 export default class Comment extends React.PureComponent {
     static propTypes = propTypes;
@@ -91,7 +84,6 @@ export default class Comment extends React.PureComponent {
         const {
             text,
             assigneeDetail,
-            isParent,
         } = this.props;
 
         this.state = {
@@ -103,16 +95,6 @@ export default class Comment extends React.PureComponent {
             },
             faramErrors: {},
         };
-
-        this.schema = {
-            fields: {
-                text: [requiredCondition],
-            },
-        };
-
-        if (isParent) {
-            this.schema.fields.assignee = [requiredCondition];
-        }
     }
 
     handleEditClick = () => {
@@ -204,11 +186,9 @@ export default class Comment extends React.PureComponent {
             ? _ts('entryComments', 'parentDeleteConfirmMessage')
             : _ts('entryComments', 'replyDeleteConfirmMessage');
 
-        const requestPending = editPending || deletePending;
-
         return (
             <div className={_cs(className, styles.comment)}>
-                {requestPending && <LoadingAnimation />}
+                {deletePending && <LoadingAnimation />}
                 <UserDetailActionBar
                     userDetails={userDetails}
                     textHistory={textHistory}
@@ -218,46 +198,19 @@ export default class Comment extends React.PureComponent {
                     isParent={isParent}
                 />
                 {editMode ? (
-                    <Faram
-                        className={styles.form}
+                    <CommentFaram
+                        pending={editPending}
                         onChange={this.handleFaramChange}
                         onValidationFailure={this.handleFaramValidationFailure}
                         onValidationSuccess={this.handleFaramValidationSuccess}
-                        schema={this.schema}
-                        value={faramValues}
-                        error={faramErrors}
-                    >
-                        <TextArea
-                            faramElementName="text"
-                            showLabel={false}
-                            rows={5}
-                            resize="vertical"
-                        />
-                        {isParent && (
-                            <SelectInput
-                                faramElementName="assignee"
-                                label="Assignee"
-                                options={members}
-                                keySelector={memberKeySelector}
-                                labelSelector={memberLabelSelector}
-                            />
-                        )}
-                        <div className={styles.actionButtons}>
-                            <PrimaryButton
-                                type="submit"
-                                className={styles.button}
-                            >
-                                {_ts('entryComments', 'editFaramSaveButtonLabel')}
-                            </PrimaryButton>
-                            <DangerButton
-                                onClick={this.handleCancelClick}
-                                className={styles.button}
-                                type="button"
-                            >
-                                {_ts('entryComments', 'editFaramCancelButtonLabel')}
-                            </DangerButton>
-                        </div>
-                    </Faram>
+                        faramValues={faramValues}
+                        faramErrors={faramErrors}
+                        hasAssignee={isParent}
+                        onCancelClick={this.handleCancelClick}
+                        members={members}
+                        commentButtonLabel={_ts('entryComments', 'editFaramSaveButtonLabel')}
+                        cancelButtonLabel={_ts('entryComments', 'editFaramCancelButtonLabel')}
+                    />
                 ) : (
                     <React.Fragment>
                         <div className={styles.commentText}>
