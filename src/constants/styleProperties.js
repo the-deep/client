@@ -7,6 +7,7 @@ const styleProperties = {
         colorNavbarActiveMenuItemBorder: defaultColors.colorAccent,
         colorNavbarActiveMenuItem: defaultColors.colorAccent,
         colorNavbarMenuItemHover: defaultColors.colorAccent,
+        colorBackgroundPrimaryHint: '#ecf3fa',
         colorHighlight: '#ffff8d',
         colorTextSuccess: '#43a047',
         colorTextOnHightlight: defaultColors.colorTextOnLight,

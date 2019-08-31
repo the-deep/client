@@ -1,3 +1,44 @@
 .container {
-    border-radius: var(--radius-border-large);
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small);
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .buttons {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+    }
+
+    .threads {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .thread {
+            &:not(:last-child) {
+                border-bottom: var(--width-separator-thick) solid var(--color-separator);
+            }
+        }
+    }
+
+    .new-comment {
+        flex-shrink: 0;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding-top: var(--spacing-small);
+    }
 }

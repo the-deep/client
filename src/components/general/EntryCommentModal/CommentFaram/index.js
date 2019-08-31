@@ -9,6 +9,8 @@ import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
+import _ts from '#ts';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -24,9 +26,11 @@ const propTypes = {
     onCancelClick: PropTypes.func.isRequired,
     hasAssignee: PropTypes.bool,
     pending: PropTypes.bool,
+    pristine: PropTypes.bool,
 };
 
 const defaultProps = {
+    pristine: false,
     className: undefined,
     commentButtonLabel: '',
     pending: false,
@@ -74,7 +78,12 @@ export default class CommentFaram extends React.PureComponent {
             members,
             onCancelClick,
             pending,
+            pristine,
         } = this.props;
+
+        const textAreaPlaceholder = hasAssignee
+            ? _ts('entryComments', 'commentAreaPlaceholder')
+            : _ts('entryComments', 'replyAreaPlaceholder');
 
         return (
             <div className={_cs(styles.formContainer, className)}>
@@ -90,6 +99,7 @@ export default class CommentFaram extends React.PureComponent {
                     disabled={pending}
                 >
                     <TextArea
+                        placeholder={textAreaPlaceholder}
                         faramElementName="text"
                         showLabel={false}
                         rows={5}
@@ -108,6 +118,7 @@ export default class CommentFaram extends React.PureComponent {
                         <PrimaryButton
                             type="submit"
                             className={styles.button}
+                            disabled={pristine || pending}
                         >
                             {commentButtonLabel}
                         </PrimaryButton>

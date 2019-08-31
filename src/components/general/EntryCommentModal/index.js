@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import FloatingContainer from '#rscv/FloatingContainer';
+import Button from '#rsca/Button';
+import ListView from '#rscv/List/ListView';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -22,10 +24,14 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+import _ts from '#ts';
 
 import Thread from './Thread';
+import CommentFaram from './CommentFaram';
 
 import styles from './styles.scss';
+
+const EmptyComponent = () => null;
 
 const mapStateToProps = state => ({
     projectId: projectIdFromRouteSelector(state),
@@ -38,6 +44,8 @@ const propTypes = {
     entryServerId: PropTypes.number,
     entryCommentsGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectMembersGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    commentCreateRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -61,6 +69,18 @@ const requests = {
         onPropsChanged: ['entryServerId'],
         schemaName: 'entryComments',
     },
+    commentCreateRequest: {
+        url: '/entry-comments/',
+        method: requestMethods.POST,
+        body: ({ params: { body } }) => body,
+        onSuccess: ({
+            response,
+            params: { onAddSuccess },
+        }) => {
+            onAddSuccess(response);
+        },
+        schemaName: 'entryComment',
+    },
     projectMembersGet: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/members/`,
         method: requestMethods.GET,
@@ -72,6 +92,8 @@ const requests = {
         schemaName: 'projectMembers',
     },
 };
+
+const threadsKeySelector = d => d.key;
 
 @connect(mapStateToProps)
 @RequestCoordinator
@@ -93,6 +115,10 @@ export default class EntryCommentModal extends React.PureComponent {
 
         this.state = {
             comments: [],
+            startingNewThread: false,
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
         };
     }
 
@@ -106,9 +132,11 @@ export default class EntryCommentModal extends React.PureComponent {
         );
 
         const threads = parentList.map(p => ({
+            key: p.id,
             parent: p,
             children: childrenGroup[p.id],
         }));
+
         return threads;
     }
 
@@ -133,6 +161,55 @@ export default class EntryCommentModal extends React.PureComponent {
         );
 
         return optionsContainerPosition;
+    }
+
+    handleFaramChange = (faramValues, faramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+            pristine: false,
+        });
+    }
+
+    handleFaramValidationSuccess = (_, values) => {
+        const {
+            entryServerId,
+            commentCreateRequest,
+        } = this.props;
+
+        const body = {
+            ...values,
+            entry: entryServerId,
+        };
+
+        commentCreateRequest.do({
+            body,
+            onAddSuccess: this.handleCommentAdd,
+        });
+        this.setState({
+            startingNewThread: false,
+            pristine: true,
+        });
+    }
+
+    handleFaramValidationFailure = (faramErrors) => {
+        this.setState({ faramErrors });
+    }
+
+    handleClearClick = () => {
+        const { comments } = this.state;
+        if (comments.length === 0) {
+            this.setState({
+                faramValues: {},
+                pristine: true,
+            });
+        } else {
+            this.setState({ startingNewThread: false });
+        }
+    }
+
+    handleNewThreadClick = () => {
+        this.setState({ startingNewThread: true });
     }
 
     handleCommentsGet = (comments) => {
@@ -163,10 +240,30 @@ export default class EntryCommentModal extends React.PureComponent {
         this.setState({ comments: newComments });
     }
 
+    threadRendererParams = (key, thread) => {
+        const {
+            projectMembersGet: {
+                response: {
+                    results: members = [],
+                } = {},
+            },
+            entryServerId,
+        } = this.props;
+
+        return ({
+            className: styles.thread,
+            entryId: entryServerId,
+            comments: thread,
+            members,
+            onAdd: this.handleCommentAdd,
+            onEdit: this.handleEditComment,
+            onDelete: this.handleDeleteComment,
+        });
+    }
+
     render() {
         const {
             className,
-            entryServerId,
             closeModal,
             entryCommentsGet: {
                 pending: commentsPending,
@@ -182,11 +279,23 @@ export default class EntryCommentModal extends React.PureComponent {
         if (commentsPending || membersPending) {
             return null;
         }
+
+        const pending = commentsPending || membersPending;
+
         const {
             comments: allComments,
+            faramValues,
+            faramErrors,
+            startingNewThread,
+            pristine,
         } = this.state;
 
-        const comments = this.getCommentsByThreads(allComments)[0];
+        const threads = this.getCommentsByThreads(allComments);
+        const showCommentForm = threads.length === 0 || startingNewThread;
+
+        const cancelButtonLabel = threads.length === 0
+            ? _ts('entryComments', 'commentFaramClearButtonLabel')
+            : _ts('entryComments', 'commentFaramCancelButtonLabel');
 
         return (
             <FloatingContainer
@@ -197,14 +306,51 @@ export default class EntryCommentModal extends React.PureComponent {
                 focusTrap
                 showHaze
             >
-                <Thread
-                    comments={comments}
-                    entryId={entryServerId}
-                    members={members}
-                    onAdd={this.handleCommentAdd}
-                    onEdit={this.handleEditComment}
-                    onDelete={this.handleDeleteComment}
+                <div className={styles.header}>
+                    <h4 className={styles.heading}>
+                        Comments
+                    </h4>
+                    <div className={styles.buttons}>
+                        {threads.length > 0 &&
+                            <Button
+                                onClick={this.handleNewThreadClick}
+                                transparent
+                            >
+                                {_ts('entryComments', 'newThreadButtonLabel')}
+                            </Button>
+                        }
+                        <Button
+                            iconName="close"
+                            onClick={closeModal}
+                            transparent
+                        />
+                    </div>
+                </div>
+                <ListView
+                    className={styles.threads}
+                    data={threads}
+                    keySelector={threadsKeySelector}
+                    renderer={Thread}
+                    rendererParams={this.threadRendererParams}
+                    emptyComponent={EmptyComponent}
                 />
+                {showCommentForm && (
+                    <CommentFaram
+                        className={styles.newComment}
+                        pending={pending}
+                        pristine={pristine}
+                        onChange={this.handleFaramChange}
+                        onValidationFailure={this.handleFaramValidationFailure}
+                        onValidationSuccess={this.handleFaramValidationSuccess}
+                        faramValues={faramValues}
+                        faramErrors={faramErrors}
+                        hasAssignee
+                        onCancelClick={this.handleClearClick}
+                        members={members}
+                        commentButtonLabel={_ts('entryComments', 'commentFaramCommentButtonLabel')}
+                        cancelButtonLabel={cancelButtonLabel}
+                    />
+                )}
             </FloatingContainer>
         );
     }

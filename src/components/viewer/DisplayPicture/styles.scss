@@ -1,6 +1,7 @@
 .display-picture {
     margin: 0 var(--spacing-extra-small);
     border-radius: 50%;
+    background-color: var(--color-foreground);
     overflow: hidden;
 
     :global {

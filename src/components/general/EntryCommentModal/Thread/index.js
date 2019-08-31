@@ -15,6 +15,8 @@ import Comment from './Comment';
 
 import styles from './styles.scss';
 
+const EmptyComponent = () => null;
+
 const propTypes = {
     comments: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     members: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -63,7 +65,6 @@ export default class EntryCommentThread extends React.PureComponent {
             showReplyBox: false,
             faramValues: {},
             faramErrors: {},
-            type: 'reply',
         };
     }
 
@@ -104,17 +105,13 @@ export default class EntryCommentThread extends React.PureComponent {
                 } = {},
             },
         } = this.props;
-        const {
-            type,
-        } = this.state;
 
         const body = {
             ...values,
             entry: entryId,
+            parent: parentId,
         };
-        if (type === 'reply') {
-            body.parent = parentId;
-        }
+
         commentCreateRequest.do({
             body,
             onAddSuccess: this.handleCommentAdd,
@@ -142,14 +139,12 @@ export default class EntryCommentThread extends React.PureComponent {
     handleReplyClick = () => {
         this.setState({
             showReplyBox: true,
-            type: 'reply',
         });
     }
 
     handleReplyCancelClick = () => {
         this.setState({
             showReplyBox: false,
-            type: undefined,
         });
     }
 
@@ -184,26 +179,25 @@ export default class EntryCommentThread extends React.PureComponent {
 
         return (
             <div className={_cs(className, styles.thread)}>
-                <div className={styles.parent}>
-                    <Comment
-                        commentId={parentId}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                        className={styles.comment}
-                        userDetails={createdByDetail}
-                        assigneeDetail={assigneeDetail}
-                        text={text}
-                        textHistory={textHistory}
-                        members={members}
-                        isParent
-                    />
-                </div>
+                <Comment
+                    className={styles.parent}
+                    commentId={parentId}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    userDetails={createdByDetail}
+                    assigneeDetail={assigneeDetail}
+                    text={text}
+                    textHistory={textHistory}
+                    members={members}
+                    isParent
+                />
                 <ListView
                     data={children}
                     className={styles.childrenList}
                     keySelector={childrenKeySelector}
                     rendererParams={this.childRendererParams}
                     renderer={Comment}
+                    emptyComponent={EmptyComponent}
                 />
                 {showReplyBox ? (
                     <CommentFaram
@@ -224,6 +218,7 @@ export default class EntryCommentThread extends React.PureComponent {
                     <div className={styles.newComment}>
                         <PrimaryButton
                             onClick={this.handleReplyClick}
+                            className={styles.button}
                             type="button"
                         >
                             {_ts('entryComments', 'replyButtonLabel')}

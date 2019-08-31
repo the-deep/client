@@ -1,19 +1,11 @@
 .thread {
     .parent {
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
+        background-color: var(--color-background-primary-hint);
     }
 
     .children-list {
-        border-top: var(--width-separator-thin) solid var(--color-separator);
-
         .comment {
-            border-bottom: var(--width-separator-thin) solid var(--color-separator);
-
-            &:last-child {
-                border-bottom: 0;
-            }
+            padding-left: var(--spacing-large);
         }
     }
 
@@ -22,8 +14,11 @@
     }
 
     .new-comment {
-        border-top: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-small) var(--spacing-medium);
         text-align: right;
+
+        .button {
+            font-size: var(--font-size-small);
+        }
     }
 }
