@@ -11,10 +11,12 @@
 
     .form {
         border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding-top: var(--spacing-small-alt);
+        padding-left: var(--spacing-large);
     }
 
     .new-comment {
-        padding: var(--spacing-small) var(--spacing-medium);
+        padding: var(--spacing-small) var(--spacing-medium) var(--spacing-small-alt);
         text-align: right;
 
         .button {

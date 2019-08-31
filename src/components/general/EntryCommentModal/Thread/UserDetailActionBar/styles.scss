@@ -31,19 +31,6 @@
             font-weight: var(--font-weight-bold);
         }
 
-        .edited-button {
-            margin: 0 var(--spacing-small);
-            border: 0;
-            padding: 0;
-            text-transform: lowercase;
-            color: var(--color-primary);
-            font-style: italic;
-
-            &:hover {
-                background-color: transparent;
-            }
-        }
-
         .mid-bottom-container {
             display: flex;
             align-items: center;
@@ -51,6 +38,25 @@
 
             .date {
                 color: var(--color-text-label);
+                font-style: italic;
+            }
+
+            .edited-button {
+                margin: 0 var(--spacing-small);
+                border: 0!important;
+                background-color: transparent!important;
+                padding: 0;
+                text-transform: lowercase;
+                color: var(--color-primary);
+                font-style: italic;
+
+                &:hover {
+                    background-color: transparent;
+                }
+
+                &:active {
+                    transform: translateY(0)!important;
+                }
             }
         }
     }

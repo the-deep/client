@@ -2,6 +2,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
+    padding-top: var(--spacing-small);
 
     .comment-text {
         padding: var(--spacing-extra-small) var(--spacing-medium);

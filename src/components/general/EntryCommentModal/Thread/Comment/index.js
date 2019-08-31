@@ -94,6 +94,7 @@ export default class Comment extends React.PureComponent {
                 assignee: assigneeDetail.id,
             },
             faramErrors: {},
+            pristine: true,
         };
     }
 
@@ -122,9 +123,21 @@ export default class Comment extends React.PureComponent {
     }
 
     handleFaramChange = (values, errors) => {
+        let pristine = false;
+
+        const {
+            text,
+            assigneeDetail,
+        } = this.props;
+
+        if (values.text === text && values.assignee === assigneeDetail.id) {
+            pristine = true;
+        }
+
         this.setState({
             faramValues: values,
             faramErrors: errors,
+            pristine,
         });
     }
 
@@ -145,11 +158,17 @@ export default class Comment extends React.PureComponent {
         } = this.props;
 
         onEdit(commentId, values, isParent);
-        this.setState({ editMode: false });
+        this.setState({
+            editMode: false,
+            pristine: true,
+        });
     }
 
     handleFaramValidationFailure = (faramErrors) => {
-        this.setState({ faramErrors });
+        this.setState({
+            faramErrors,
+            pristine: true,
+        });
     }
 
     handleCancelClick = () => {
@@ -178,6 +197,7 @@ export default class Comment extends React.PureComponent {
         const {
             faramValues,
             faramErrors,
+            pristine,
             editMode,
             deleteMode,
         } = this.state;
@@ -200,6 +220,7 @@ export default class Comment extends React.PureComponent {
                 {editMode ? (
                     <CommentFaram
                         pending={editPending}
+                        pristine={pristine}
                         onChange={this.handleFaramChange}
                         onValidationFailure={this.handleFaramValidationFailure}
                         onValidationSuccess={this.handleFaramValidationSuccess}

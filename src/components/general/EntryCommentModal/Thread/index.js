@@ -65,6 +65,7 @@ export default class EntryCommentThread extends React.PureComponent {
             showReplyBox: false,
             faramValues: {},
             faramErrors: {},
+            pristine: true,
         };
     }
 
@@ -92,6 +93,7 @@ export default class EntryCommentThread extends React.PureComponent {
         this.setState({
             faramValues: values,
             faramErrors: errors,
+            pristine: false,
         });
     }
 
@@ -129,11 +131,15 @@ export default class EntryCommentThread extends React.PureComponent {
             showReplyBox: false,
             faramValues: {},
             faramErrors: {},
+            pristine: true,
         });
     }
 
     handleFaramValidationFailure = (faramErrors) => {
-        this.setState({ faramErrors });
+        this.setState({
+            faramErrors,
+            pristine: true,
+        });
     }
 
     handleReplyClick = () => {
@@ -167,6 +173,7 @@ export default class EntryCommentThread extends React.PureComponent {
             showReplyBox,
             faramValues,
             faramErrors,
+            pristine,
         } = this.state;
 
         const {
@@ -203,6 +210,7 @@ export default class EntryCommentThread extends React.PureComponent {
                     <CommentFaram
                         className={styles.form}
                         pending={pending}
+                        pristine={pristine}
                         onChange={this.handleFaramChange}
                         onValidationFailure={this.handleFaramValidationFailure}
                         onValidationSuccess={this.handleFaramValidationSuccess}
