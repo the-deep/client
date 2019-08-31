@@ -982,7 +982,12 @@
         "-63009300": "Selected geo-areas",
         "-28548476": "EMM Entities",
         "-35842630": "EMM Triggers",
-        "-127936": "Assigned to {name}"
+        "-127936": "Assigned to {name}",
+        "-88121745": "(edited)",
+        "-17414549": "Are you sure you want to delete this comment? This will delete all its replies as well.",
+        "-82620920": "Are you sure you want to delete this reply?",
+        "-1007390": "Resolve",
+        "-39910172": "Reply"
     },
     "links": {
         "browserExtension": {
@@ -2804,8 +2809,20 @@
         "editFramework": {
             "dummyExcerptPlaceholder": -66973833
         },
-        "entryComment": {
-            "assignedTo": -127936
+        "entryComment": {},
+        "entryComments": {
+            "assignedTo": -127936,
+            "deleteLabel": -94736495,
+            "editLabel": 363,
+            "editedFlagLabel": -88121745,
+            "parentDeleteConfirmMessage": -17414549,
+            "replyDeleteConfirmMessage": -82620920,
+            "resolveLabel": -1007390,
+            "editFaramCancelButtonLabel": 61,
+            "editFaramSaveButtonLabel": 25,
+            "replyButtonLabel": -39910172,
+            "replyFaramCancelButtonLabel": 61,
+            "replyFaramReplyButtonLabel": -39910172
         }
     }
 }

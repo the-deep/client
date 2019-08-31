@@ -8,10 +8,11 @@ import {
 } from '#request';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import ListView from '#rscv/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import TextArea from '#rsci/TextArea';
-import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import _ts from '#ts';
 
 import Comment from './Comment';
 
@@ -24,6 +25,9 @@ const propTypes = {
     className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     commentCreateRequest: PropTypes.object.isRequired,
+    onAdd: PropTypes.func.isRequired,
+    onEdit: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -38,16 +42,17 @@ const requests = {
         url: '/entry-comments/',
         method: requestMethods.POST,
         body: ({ params: { body } }) => body,
-        onSuccess: ({ response }) => {
-            console.warn(response);
+        onSuccess: ({
+            response,
+            params: { onAddSuccess },
+        }) => {
+            onAddSuccess(response);
         },
         schemaName: 'entryComment',
     },
 };
 
 const childrenKeySelector = c => c.id;
-const memberKeySelector = m => m.id;
-const memberLabelSelector = m => m.displayName;
 
 @RequestClient(requests)
 export default class EntryCommentThread extends React.PureComponent {
@@ -67,19 +72,29 @@ export default class EntryCommentThread extends React.PureComponent {
         this.schema = {
             fields: {
                 text: [requiredCondition],
-                assignee: [requiredCondition],
             },
         };
     }
 
-    childRendererParams = (key, data) => ({
-        className: styles.comment,
-        userDetails: data.createdByDetail,
-        assigneeDetail: data.assigneeDetail,
-        text: data.text,
-        textHistory: data.textHistory,
-        members: this.props.members,
-    })
+    childRendererParams = (key, data) => {
+        const {
+            onEdit,
+            onDelete,
+            members,
+        } = this.props;
+
+        return ({
+            commentId: key,
+            className: styles.comment,
+            userDetails: data.createdByDetail,
+            assigneeDetail: data.assigneeDetail,
+            text: data.text,
+            textHistory: data.textHistory,
+            members,
+            onEdit,
+            onDelete,
+        });
+    }
 
     handleFaramChange = (values, errors) => {
         this.setState({
@@ -109,7 +124,24 @@ export default class EntryCommentThread extends React.PureComponent {
         if (type === 'reply') {
             body.parent = parentId;
         }
-        commentCreateRequest.do({ body });
+        commentCreateRequest.do({
+            body,
+            onAddSuccess: this.handleCommentAdd,
+        });
+    }
+
+    handleCommentAdd = (response) => {
+        const {
+            onAdd,
+        } = this.props;
+
+        onAdd(response);
+
+        this.setState({
+            showReplyBox: false,
+            faramValues: {},
+            faramErrors: {},
+        });
     }
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -137,7 +169,12 @@ export default class EntryCommentThread extends React.PureComponent {
                 parent = {},
                 children,
             },
+            commentCreateRequest: {
+                pending,
+            },
             members,
+            onEdit,
+            onDelete,
         } = this.props;
 
         const {
@@ -151,12 +188,16 @@ export default class EntryCommentThread extends React.PureComponent {
             text,
             textHistory,
             assigneeDetail,
+            id: parentId,
         } = parent;
 
         return (
             <div className={_cs(className, styles.thread)}>
                 <div className={styles.parent}>
                     <Comment
+                        commentId={parentId}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
                         className={styles.comment}
                         userDetails={createdByDetail}
                         assigneeDetail={assigneeDetail}
@@ -182,23 +223,14 @@ export default class EntryCommentThread extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
+                    {pending && <LoadingAnimation /> }
                     {showReplyBox && (
-                        <React.Fragment>
-                            <TextArea
-                                faramElementName="text"
-                                placeholder="Reply..."
-                                label="Reply"
-                                rows={5}
-                                resize="vertical"
-                            />
-                            <SelectInput
-                                faramElementName="assignee"
-                                label="Assignee"
-                                options={members}
-                                keySelector={memberKeySelector}
-                                labelSelector={memberLabelSelector}
-                            />
-                        </React.Fragment>
+                        <TextArea
+                            faramElementName="text"
+                            showLabel={false}
+                            rows={5}
+                            resize="vertical"
+                        />
                     )}
                     <div className={styles.actionButtons}>
                         {showReplyBox ? (
@@ -207,14 +239,14 @@ export default class EntryCommentThread extends React.PureComponent {
                                     type="submit"
                                     className={styles.button}
                                 >
-                                    Reply
+                                    {_ts('entryComments', 'replyFaramReplyButtonLabel')}
                                 </PrimaryButton>
                                 <DangerButton
                                     onClick={this.handleReplyCancelClick}
                                     className={styles.button}
                                     type="button"
                                 >
-                                    Cancel
+                                    {_ts('entryComments', 'replyFaramCancelButtonLabel')}
                                 </DangerButton>
                             </React.Fragment>
                         ) : (
@@ -223,7 +255,7 @@ export default class EntryCommentThread extends React.PureComponent {
                                 className={styles.button}
                                 type="button"
                             >
-                                Reply
+                                {_ts('entryComments', 'replyButtonLabel')}
                             </PrimaryButton>
                         )}
                     </div>

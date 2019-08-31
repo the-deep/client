@@ -18,6 +18,7 @@
     }
 
     .form {
+        position: relative;
         border-top: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-medium) var(--spacing-medium) var(--spacing-extra-small);
     }

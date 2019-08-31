@@ -55,6 +55,9 @@ const requests = {
             entry: entryServerId,
         }),
         onMount: true,
+        onSuccess: ({ params: { onCommentsGet }, response }) => {
+            onCommentsGet(response.results);
+        },
         onPropsChanged: ['entryServerId'],
         schemaName: 'entryComments',
     },
@@ -76,6 +79,22 @@ const requests = {
 export default class EntryCommentModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        const {
+            entryCommentsGet,
+        } = this.props;
+
+        entryCommentsGet.setDefaultParams({
+            onCommentsGet: this.handleCommentsGet,
+        });
+
+        this.state = {
+            comments: [],
+        };
+    }
 
     getCommentsByThreads = (allComments) => {
         const parentList = allComments.filter(c => isNotDefined(c.parent));
@@ -116,15 +135,40 @@ export default class EntryCommentModal extends React.PureComponent {
         return optionsContainerPosition;
     }
 
+    handleCommentsGet = (comments) => {
+        this.setState({ comments });
+    }
+
+    handleEditComment = (commentId, values, isParent) => {
+        const { comments } = this.state;
+        const newComments = comments.filter(c => c.id !== commentId);
+        newComments.push(values);
+        this.setState({ comments: newComments });
+    }
+
+    handleDeleteComment = (commentId, isParent) => {
+        const { comments } = this.state;
+        const newComments = comments.filter(c => c.id !== commentId);
+        this.setState({ comments: newComments });
+    }
+
+    handleCommentAdd = (comment) => {
+        const { comments } = this.state;
+
+        const newComments = [
+            ...comments,
+            comment,
+        ];
+
+        this.setState({ comments: newComments });
+    }
+
     render() {
         const {
             className,
             entryServerId,
             closeModal,
             entryCommentsGet: {
-                response: {
-                    results: allComments = [],
-                } = {},
                 pending: commentsPending,
             },
             projectMembersGet: {
@@ -138,6 +182,9 @@ export default class EntryCommentModal extends React.PureComponent {
         if (commentsPending || membersPending) {
             return null;
         }
+        const {
+            comments: allComments,
+        } = this.state;
 
         const comments = this.getCommentsByThreads(allComments)[0];
 
@@ -154,6 +201,9 @@ export default class EntryCommentModal extends React.PureComponent {
                     comments={comments}
                     entryId={entryServerId}
                     members={members}
+                    onAdd={this.handleCommentAdd}
+                    onEdit={this.handleEditComment}
+                    onDelete={this.handleDeleteComment}
                 />
             </FloatingContainer>
         );

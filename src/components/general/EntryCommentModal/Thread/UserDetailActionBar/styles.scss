@@ -1,3 +1,7 @@
+:root {
+    --width-action-item: 96px;
+}
+
 .user-detail-action-bar {
     display: flex;
     align-items: center;
@@ -27,7 +31,20 @@
             font-weight: var(--font-weight-bold);
         }
 
-        .right-bottom-container {
+        .edited-button {
+            margin: 0 var(--spacing-small);
+            border: 0;
+            padding: 0;
+            text-transform: lowercase;
+            color: var(--color-primary);
+            font-style: italic;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+
+        .mid-bottom-container {
             display: flex;
             align-items: center;
             font-size: var(--font-size-small);
@@ -35,27 +52,46 @@
             .date {
                 color: var(--color-text-label);
             }
-
-            .edited-button {
-                margin: 0 var(--spacing-small);
-                border: 0;
-                padding: 0;
-                text-transform: lowercase;
-                color: var(--color-primary);
-                font-style: italic;
-
-                &:hover {
-                    background-color: transparent;
-                }
-            }
         }
     }
 
     .right-container {
         flex-shrink: 0;
 
-        .icon {
-            font-size: var(--font-size-large);
+        .dropdown {
+            .icon {
+                font-size: var(--font-size-large);
+            }
         }
     }
 }
+
+.dropdown-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .button {
+        margin: 0;
+        border: 0!important;
+        padding: var(--spacing-small);
+        min-width: var(--width-action-item);
+        text-align: left;
+        text-transform: capitalize;
+        font-size: var(--font-size-normal);
+        font-weight: var(--font-weight-normal);
+
+        &:hover {
+            background-color: var(--color-background-accent-hint)!important;
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+
+        &:not(:last-child) {
+            border-bottom: var(--width-separator-thin) solid var(--color-separator)!important;
+        }
+    }
+}
+

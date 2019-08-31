@@ -31,7 +31,7 @@ const entryCommentsSchema = [];
             text: { type: 'string', required: true },
             textHistory: { type: 'array.textHistory', required: true },
             entry: { type: 'uint', required: true },
-            assignee: { type: 'uint', required: true },
+            assignee: { type: 'uint' },
             createdBy: { type: 'uint', required: true },
             assigneeDetail: {
                 type: {
@@ -40,13 +40,13 @@ const entryCommentsSchema = [];
                         description: 'detail for assignee',
                     },
                     fields: {
+                        displayPicture: { type: 'string' },
                         email: { type: 'string', required: true },
                         id: { type: 'uint', required: true },
                         name: { type: 'string', required: true },
                         organization: { type: 'string' },
                     },
                 },
-                required: true,
             },
             createdByDetail: {
                 type: {

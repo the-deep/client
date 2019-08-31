@@ -9,16 +9,23 @@ import DropdownMenu from '#rsca/DropdownMenu';
 import {
     RequestClient,
 } from '#request';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const propTypes = {
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
+    onEditClick: PropTypes.func.isRequired,
+    onDeleteClick: PropTypes.func.isRequired,
+    onResolveClick: PropTypes.func.isRequired,
+    textHistory: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    isParent: PropTypes.bool,
 };
 
 const defaultProps = {
     className: undefined,
+    isParent: false,
     userDetails: {},
 };
 
@@ -39,7 +46,10 @@ export default class UserDetailActionBar extends React.PureComponent {
                 name,
             },
             onEditClick,
+            onDeleteClick,
+            onResolveClick,
             textHistory,
+            isParent,
         } = this.props;
 
         const isModified = textHistory.length > 1;
@@ -56,29 +66,46 @@ export default class UserDetailActionBar extends React.PureComponent {
                     <div className={styles.userName}>
                         {name}
                     </div>
-                    <div className={styles.rightBottomContainer}>
+                    <div className={styles.midBottomContainer}>
                         <FormattedDate
+                            className={styles.date}
                             value={modifiedAt}
                             mode="dd-MM-yyyy hh:mm aaa"
                         />
                         {isModified && (
                             <Button className={styles.editedButton}>
-                                (edited)
+                                {_ts('entryComments', 'editedFlagLabel')}
                             </Button>
                         )}
                     </div>
                 </div>
                 <div className={styles.rightContainer}>
                     <DropdownMenu
-                        className={className}
+                        className={styles.dropdown}
                         dropdownIcon="menuDots"
+                        dropdownClassName={styles.dropdownContainer}
                         dropdownIconClassName={styles.icon}
                         closeOnClick
                     >
+                        {isParent && (
+                            <Button
+                                className={styles.button}
+                                onClick={onResolveClick}
+                            >
+                                {_ts('entryComments', 'resolveLabel')}
+                            </Button>
+                        )}
                         <Button
+                            className={styles.button}
                             onClick={onEditClick}
                         >
-                            Edit
+                            {_ts('entryComments', 'editLabel')}
+                        </Button>
+                        <Button
+                            className={styles.button}
+                            onClick={onDeleteClick}
+                        >
+                            {_ts('entryComments', 'deleteLabel')}
                         </Button>
                     </DropdownMenu>
                 </div>
