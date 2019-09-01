@@ -1,0 +1,23 @@
+.resolved-threads {
+    z-index: 11;
+    width: var(--width-modal-small);
+
+    .modal-body {
+        padding: 0;
+        max-height: var(--max-height-modal);
+        overflow-y: auto;
+
+        .threads {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+
+            .thread {
+                &:not(:last-child) {
+                    border-bottom: var(--width-separator-thick) solid var(--color-separator);
+                }
+            }
+        }
+    }
+}

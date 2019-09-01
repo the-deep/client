@@ -24,14 +24,19 @@ const propTypes = {
     className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     commentCreateRequest: PropTypes.object.isRequired,
-    onAdd: PropTypes.func.isRequired,
-    onEdit: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
+    onAdd: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func,
+    isResolved: PropTypes.bool,
 };
 
 const defaultProps = {
+    isResolved: false,
     entryId: undefined,
     className: undefined,
+    onAdd: () => {},
+    onEdit: () => {},
+    onDelete: () => {},
     comments: {},
     members: [],
 };
@@ -74,6 +79,7 @@ export default class EntryCommentThread extends React.PureComponent {
             onEdit,
             onDelete,
             members,
+            isResolved,
         } = this.props;
 
         return ({
@@ -83,6 +89,7 @@ export default class EntryCommentThread extends React.PureComponent {
             assigneeDetail: data.assigneeDetail,
             text: data.text,
             textHistory: data.textHistory,
+            isResolved,
             members,
             onEdit,
             onDelete,
@@ -166,6 +173,7 @@ export default class EntryCommentThread extends React.PureComponent {
             },
             members,
             onEdit,
+            isResolved,
             onDelete,
         } = this.props;
 
@@ -197,6 +205,7 @@ export default class EntryCommentThread extends React.PureComponent {
                     textHistory={textHistory}
                     members={members}
                     isParent
+                    isResolved={isResolved}
                 />
                 <ListView
                     data={children}
@@ -206,7 +215,7 @@ export default class EntryCommentThread extends React.PureComponent {
                     renderer={Comment}
                     emptyComponent={EmptyComponent}
                 />
-                {showReplyBox ? (
+                {showReplyBox && (
                     <CommentFaram
                         className={styles.form}
                         pending={pending}
@@ -222,7 +231,8 @@ export default class EntryCommentThread extends React.PureComponent {
                         commentButtonLabel={_ts('entryComments', 'replyFaramReplyButtonLabel')}
                         cancelButtonLabel={_ts('entryComments', 'replyFaramCancelButtonLabel')}
                     />
-                ) : (
+                )}
+                {!(showReplyBox || isResolved) && (
                     <div className={styles.newComment}>
                         <PrimaryButton
                             onClick={this.handleReplyClick}

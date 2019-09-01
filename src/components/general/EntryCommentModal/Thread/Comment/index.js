@@ -30,6 +30,7 @@ const propTypes = {
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     assigneeDetail: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     isParent: PropTypes.bool,
+    isResolved: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     textHistory: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -38,6 +39,8 @@ const propTypes = {
     commentDeleteRequest: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     commentEditRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    commentResolveRequest: PropTypes.object.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -47,6 +50,7 @@ const defaultProps = {
     className: undefined,
     text: '',
     isParent: false,
+    isResolved: false,
     userDetails: {},
     assigneeDetail: {},
     members: [],
@@ -82,6 +86,17 @@ const requests = {
             onDelete(commentId, isParent);
         },
     },
+    commentResolveRequest: {
+        url: ({ props: { commentId } }) => `/entry-comments/${commentId}/resolved/`,
+        method: requestMethods.POST,
+        onSuccess: ({
+            params: { onEditSuccess },
+            response,
+        }) => {
+            onEditSuccess(response);
+        },
+        schemaName: 'entryComment',
+    },
 };
 
 @connect(mapStateToProps)
@@ -115,7 +130,10 @@ export default class Comment extends React.PureComponent {
     };
 
     handleResolveClick = () => {
-        console.warn('resolve clicking');
+        const { commentResolveRequest } = this.props;
+        commentResolveRequest.do({
+            onEditSuccess: this.handleEditSuccess,
+        });
     };
 
     handleDeleteClick = () => {
@@ -170,6 +188,7 @@ export default class Comment extends React.PureComponent {
         } = this.props;
 
         onEdit(commentId, values, isParent);
+
         this.setState({
             editMode: false,
             pristine: true,
@@ -195,6 +214,7 @@ export default class Comment extends React.PureComponent {
             textHistory,
             userDetails,
             members,
+            isResolved,
             activeUser: {
                 userId: activeUserId,
             },
@@ -221,7 +241,7 @@ export default class Comment extends React.PureComponent {
             ? _ts('entryComments', 'parentDeleteConfirmMessage')
             : _ts('entryComments', 'replyDeleteConfirmMessage');
 
-        const hideActions = activeUserId !== userDetails.id;
+        const hideActions = (activeUserId !== userDetails.id) || isResolved;
 
         return (
             <div className={_cs(className, styles.comment)}>

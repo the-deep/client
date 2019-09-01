@@ -20,11 +20,12 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     history: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    closeModal: PropTypes.func.isRequired,
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
     className: undefined,
+    closeModal: () => {},
 };
 
 const historyKeySelector = h => h.id;

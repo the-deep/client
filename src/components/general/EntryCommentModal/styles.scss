@@ -1,3 +1,7 @@
+:root {
+    --max-height-modal: 60vh;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -15,6 +19,19 @@
 
         .heading {
             flex-grow: 1;
+        }
+
+        .resolved-modal-button {
+            margin: 0 var(--spacing-small);
+            border: 0!important;
+            background-color: transparent!important;
+            padding: 0;
+            text-transform: lowercase;
+            color: var(--color-primary);
+
+            &:active {
+                transform: translateY(0)!important;
+            }
         }
 
         .buttons {
@@ -43,3 +60,4 @@
         padding-top: var(--spacing-small);
     }
 }
+

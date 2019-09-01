@@ -10,6 +10,7 @@ import React from 'react';
 
 import FloatingContainer from '#rscv/FloatingContainer';
 import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 import ListView from '#rscv/List/ListView';
 import {
     calcFloatPositionInMainWindow,
@@ -27,9 +28,12 @@ import {
 import _ts from '#ts';
 
 import Thread from './Thread';
+import ResolvedThreadModal from './ResolvedThreadModal';
 import CommentFaram from './CommentFaram';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const EmptyComponent = () => null;
 
@@ -133,11 +137,15 @@ export default class EntryCommentModal extends React.PureComponent {
 
         const threads = parentList.map(p => ({
             key: p.id,
+            isResolved: p.isResolved,
             parent: p,
             children: childrenGroup[p.id],
         }));
 
-        return threads;
+        const resolvedThreads = threads.filter(t => t.isResolved);
+        const unResolvedThreads = threads.filter(t => !t.isResolved);
+
+        return { resolvedThreads, unResolvedThreads };
     }
 
     handleInvalidate = (container) => {
@@ -198,7 +206,9 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleClearClick = () => {
         const { comments } = this.state;
-        if (comments.length === 0) {
+        const { unResolvedThreads } = this.getCommentsByThreads(comments);
+
+        if (unResolvedThreads.length === 0) {
             this.setState({
                 faramValues: {},
                 pristine: true,
@@ -216,14 +226,14 @@ export default class EntryCommentModal extends React.PureComponent {
         this.setState({ comments });
     }
 
-    handleEditComment = (commentId, values, isParent) => {
+    handleEditComment = (commentId, values) => {
         const { comments } = this.state;
         const newComments = comments.filter(c => c.id !== commentId);
         newComments.push(values);
         this.setState({ comments: newComments });
     }
 
-    handleDeleteComment = (commentId, isParent) => {
+    handleDeleteComment = (commentId) => {
         const { comments } = this.state;
         const newComments = comments.filter(c => c.id !== commentId);
         this.setState({ comments: newComments });
@@ -291,12 +301,18 @@ export default class EntryCommentModal extends React.PureComponent {
             pristine,
         } = this.state;
 
-        const threads = this.getCommentsByThreads(allComments);
-        const showCommentForm = threads.length === 0 || startingNewThread;
+        const {
+            resolvedThreads,
+            unResolvedThreads,
+        } = this.getCommentsByThreads(allComments);
 
-        const cancelButtonLabel = threads.length === 0
+        const showCommentForm = unResolvedThreads.length === 0 || startingNewThread;
+
+        const cancelButtonLabel = unResolvedThreads.length === 0
             ? _ts('entryComments', 'commentFaramClearButtonLabel')
             : _ts('entryComments', 'commentFaramCancelButtonLabel');
+
+        const resolvedThreadsCount = resolvedThreads.length;
 
         return (
             <FloatingContainer
@@ -308,10 +324,20 @@ export default class EntryCommentModal extends React.PureComponent {
             >
                 <div className={styles.header}>
                     <h4 className={styles.heading}>
-                        Comments
+                        {_ts('entryComments', 'commentsHeaderLabel')}
+                        {resolvedThreadsCount > 0 && (
+                            <ModalButton
+                                className={styles.resolvedModalButton}
+                                modal={
+                                    <ResolvedThreadModal resolvedThreads={resolvedThreads} />
+                                }
+                            >
+                                {_ts('entryComments', 'resolvedCommentsCountLabel', { count: resolvedThreadsCount })}
+                            </ModalButton>
+                        )}
                     </h4>
                     <div className={styles.buttons}>
-                        {threads.length > 0 &&
+                        {unResolvedThreads.length > 0 &&
                             <Button
                                 onClick={this.handleNewThreadClick}
                                 transparent
@@ -328,7 +354,7 @@ export default class EntryCommentModal extends React.PureComponent {
                 </div>
                 <ListView
                     className={styles.threads}
-                    data={threads}
+                    data={unResolvedThreads}
                     keySelector={threadsKeySelector}
                     renderer={Thread}
                     rendererParams={this.threadRendererParams}

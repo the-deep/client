@@ -992,7 +992,10 @@
         "-13999983": "Comment...",
         "-49537479": "Reply...",
         "-89194894": "New thread",
-        "-1874062": "Comment History"
+        "-1874062": "Comment History",
+        "-2991833": "Comments",
+        "-40879299": "Resolved Comments",
+        "-54226779": "({count} resolved)"
     },
     "links": {
         "browserExtension": {
@@ -2834,7 +2837,10 @@
             "replyAreaPlaceholder": -49537479,
             "commentAreaPlaceholder": -13999983,
             "newThreadButtonLabel": -89194894,
-            "textHistoryTitle": -1874062
+            "textHistoryTitle": -1874062,
+            "commentsHeaderLabel": -2991833,
+            "resolvedCommentsCountLabel": -54226779,
+            "resolvedCommentsModalHeader": -40879299
         }
     }
 }
