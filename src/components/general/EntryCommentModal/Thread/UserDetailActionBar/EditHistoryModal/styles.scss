@@ -1,0 +1,22 @@
+:root {
+    --max-height-comment-history: 60vh;
+    --min-width-date-time: 120px;
+}
+
+.modal {
+    z-index: 11;
+    width: var(--width-modal-small);
+
+    .modal-body {
+        max-height: var(--max-height-comment-history);
+        overflow-y: auto;
+
+        .history-item {
+            font-size: var(--font-size-normal);
+
+            .date {
+                min-width: var(--min-width-date-time);
+            }
+        }
+    }
+}

@@ -991,7 +991,8 @@
         "-37497941": "Comment",
         "-13999983": "Comment...",
         "-49537479": "Reply...",
-        "-89194894": "New thread"
+        "-89194894": "New thread",
+        "-1874062": "Comment History"
     },
     "links": {
         "browserExtension": {
@@ -2832,7 +2833,8 @@
             "commentFaramCancelButtonLabel": 61,
             "replyAreaPlaceholder": -49537479,
             "commentAreaPlaceholder": -13999983,
-            "newThreadButtonLabel": -89194894
+            "newThreadButtonLabel": -89194894,
+            "textHistoryTitle": -1874062
         }
     }
 }

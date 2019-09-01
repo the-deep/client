@@ -4,11 +4,15 @@ import { _cs } from '@togglecorp/fujs';
 
 import DisplayPicture from '#components/viewer/DisplayPicture';
 import FormattedDate from '#rscv/FormattedDate';
+import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';
 import _ts from '#ts';
+import EditHistoryModal from './EditHistoryModal';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -68,9 +72,14 @@ export default class UserDetailActionBar extends React.PureComponent {
                             mode="dd-MM-yyyy hh:mm aaa"
                         />
                         {isModified && (
-                            <Button className={styles.editedButton}>
+                            <ModalButton
+                                className={styles.editedButton}
+                                modal={
+                                    <EditHistoryModal history={textHistory} />
+                                }
+                            >
                                 {_ts('entryComments', 'editedFlagLabel')}
-                            </Button>
+                            </ModalButton>
                         )}
                     </div>
                 </div>

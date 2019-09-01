@@ -222,7 +222,6 @@ export default class Comment extends React.PureComponent {
             : _ts('entryComments', 'replyDeleteConfirmMessage');
 
         const hideActions = activeUserId !== userDetails.id;
-        console.warn(this.props.activeUser, activeUserId, userDetails);
 
         return (
             <div className={_cs(className, styles.comment)}>

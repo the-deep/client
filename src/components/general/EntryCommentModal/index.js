@@ -302,10 +302,9 @@ export default class EntryCommentModal extends React.PureComponent {
             <FloatingContainer
                 className={_cs(className, styles.container)}
                 onInvalidate={this.handleInvalidate}
-                closeOnEscape
                 onClose={closeModal}
                 focusTrap
-                showHaze
+                closeOnEscape
             >
                 <div className={styles.header}>
                     <h4 className={styles.heading}>
