@@ -21,6 +21,7 @@ const propTypes = {
     comments: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     members: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     entryId: PropTypes.number,
+    threadId: PropTypes.number,
     className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     commentCreateRequest: PropTypes.object.isRequired,
@@ -28,11 +29,15 @@ const propTypes = {
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
     isResolved: PropTypes.bool,
+    currentEdit: PropTypes.string,
+    onCurrentEditChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    currentEdit: undefined,
     isResolved: false,
     entryId: undefined,
+    threadId: undefined,
     className: undefined,
     onAdd: () => {},
     onEdit: () => {},
@@ -66,12 +71,15 @@ export default class EntryCommentThread extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const { threadId } = this.props;
+
         this.state = {
-            showReplyBox: false,
             faramValues: {},
             faramErrors: {},
             pristine: true,
         };
+
+        this.threadReplyId = `${threadId}-new`;
     }
 
     childRendererParams = (key, data) => {
@@ -80,9 +88,13 @@ export default class EntryCommentThread extends React.PureComponent {
             onDelete,
             members,
             isResolved,
+            currentEdit,
+            onCurrentEditChange,
         } = this.props;
 
         return ({
+            onCurrentEditChange,
+            currentEdit,
             commentId: key,
             className: styles.comment,
             userDetails: data.createdByDetail,
@@ -130,12 +142,13 @@ export default class EntryCommentThread extends React.PureComponent {
     handleCommentAdd = (response) => {
         const {
             onAdd,
+            onCurrentEditChange,
         } = this.props;
 
         onAdd(response);
+        onCurrentEditChange(undefined);
 
         this.setState({
-            showReplyBox: false,
             faramValues: {},
             faramErrors: {},
             pristine: true,
@@ -150,15 +163,11 @@ export default class EntryCommentThread extends React.PureComponent {
     }
 
     handleReplyClick = () => {
-        this.setState({
-            showReplyBox: true,
-        });
+        this.props.onCurrentEditChange(this.threadReplyId);
     }
 
     handleReplyCancelClick = () => {
-        this.setState({
-            showReplyBox: false,
-        });
+        this.props.onCurrentEditChange(undefined);
     }
 
     render() {
@@ -175,10 +184,11 @@ export default class EntryCommentThread extends React.PureComponent {
             onEdit,
             isResolved,
             onDelete,
+            currentEdit,
+            onCurrentEditChange,
         } = this.props;
 
         const {
-            showReplyBox,
             faramValues,
             faramErrors,
             pristine,
@@ -192,9 +202,13 @@ export default class EntryCommentThread extends React.PureComponent {
             id: parentId,
         } = parent;
 
+        const showReplyBox = currentEdit === this.threadReplyId;
+
         return (
             <div className={_cs(className, styles.thread)}>
                 <Comment
+                    currentEdit={currentEdit}
+                    onCurrentEditChange={onCurrentEditChange}
                     className={styles.parent}
                     commentId={parentId}
                     onEdit={onEdit}

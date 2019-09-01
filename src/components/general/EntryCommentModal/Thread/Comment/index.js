@@ -44,9 +44,12 @@ const propTypes = {
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    currentEdit: PropTypes.string,
+    onCurrentEditChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    currentEdit: undefined,
     className: undefined,
     text: '',
     isParent: false,
@@ -111,10 +114,10 @@ export default class Comment extends React.PureComponent {
         const {
             text,
             assigneeDetail,
+            commentId,
         } = this.props;
 
         this.state = {
-            editMode: false,
             deleteMode: false,
             faramValues: {
                 text,
@@ -123,10 +126,12 @@ export default class Comment extends React.PureComponent {
             faramErrors: {},
             pristine: true,
         };
+
+        this.commentEditId = `${commentId}-edit`;
     }
 
     handleEditClick = () => {
-        this.setState({ editMode: true });
+        this.props.onCurrentEditChange(this.commentEditId);
     };
 
     handleResolveClick = () => {
@@ -185,12 +190,13 @@ export default class Comment extends React.PureComponent {
             commentId,
             isParent,
             onEdit,
+            onCurrentEditChange,
         } = this.props;
 
         onEdit(commentId, values, isParent);
+        onCurrentEditChange(undefined);
 
         this.setState({
-            editMode: false,
             pristine: true,
         });
     }
@@ -203,7 +209,7 @@ export default class Comment extends React.PureComponent {
     }
 
     handleCancelClick = () => {
-        this.setState({ editMode: false });
+        this.props.onCurrentEditChange(undefined);
     };
 
     render() {
@@ -227,13 +233,13 @@ export default class Comment extends React.PureComponent {
             commentDeleteRequest: {
                 pending: deletePending,
             },
+            currentEdit,
         } = this.props;
 
         const {
             faramValues,
             faramErrors,
             pristine,
-            editMode,
             deleteMode,
         } = this.state;
 
@@ -242,6 +248,7 @@ export default class Comment extends React.PureComponent {
             : _ts('entryComments', 'replyDeleteConfirmMessage');
 
         const hideActions = (activeUserId !== userDetails.id) || isResolved;
+        const editMode = currentEdit === this.commentEditId;
 
         return (
             <div className={_cs(className, styles.comment)}>
@@ -283,6 +290,7 @@ export default class Comment extends React.PureComponent {
                     </React.Fragment>
                 )}
                 <Confirm
+                    className={styles.confirmModal}
                     onClose={this.handleDeleteConfirmClose}
                     show={deleteMode}
                 >

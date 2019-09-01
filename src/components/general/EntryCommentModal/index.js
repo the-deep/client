@@ -119,7 +119,7 @@ export default class EntryCommentModal extends React.PureComponent {
 
         this.state = {
             comments: [],
-            startingNewThread: false,
+            currentEdit: undefined,
             faramValues: {},
             faramErrors: {},
             pristine: true,
@@ -194,8 +194,9 @@ export default class EntryCommentModal extends React.PureComponent {
             body,
             onAddSuccess: this.handleCommentAdd,
         });
+
         this.setState({
-            startingNewThread: false,
+            currentEdit: undefined,
             pristine: true,
         });
     }
@@ -214,12 +215,12 @@ export default class EntryCommentModal extends React.PureComponent {
                 pristine: true,
             });
         } else {
-            this.setState({ startingNewThread: false });
+            this.setState({ currentEdit: undefined });
         }
     }
 
     handleNewThreadClick = () => {
-        this.setState({ startingNewThread: true });
+        this.setState({ currentEdit: 'new-thread' });
     }
 
     handleCommentsGet = (comments) => {
@@ -250,7 +251,13 @@ export default class EntryCommentModal extends React.PureComponent {
         this.setState({ comments: newComments });
     }
 
+    handleCurrentEditChange = (currentEdit) => {
+        this.setState({ currentEdit });
+    }
+
     threadRendererParams = (key, thread) => {
+        const { currentEdit } = this.state;
+
         const {
             projectMembersGet: {
                 response: {
@@ -263,7 +270,10 @@ export default class EntryCommentModal extends React.PureComponent {
         return ({
             className: styles.thread,
             entryId: entryServerId,
+            threadId: key,
+            onCurrentEditChange: this.handleCurrentEditChange,
             comments: thread,
+            currentEdit,
             members,
             onAdd: this.handleCommentAdd,
             onEdit: this.handleEditComment,
@@ -297,7 +307,7 @@ export default class EntryCommentModal extends React.PureComponent {
             comments: allComments,
             faramValues,
             faramErrors,
-            startingNewThread,
+            currentEdit,
             pristine,
         } = this.state;
 
@@ -306,7 +316,7 @@ export default class EntryCommentModal extends React.PureComponent {
             unResolvedThreads,
         } = this.getCommentsByThreads(allComments);
 
-        const showCommentForm = unResolvedThreads.length === 0 || startingNewThread;
+        const showCommentForm = unResolvedThreads.length === 0 || currentEdit === 'new-thread';
 
         const cancelButtonLabel = unResolvedThreads.length === 0
             ? _ts('entryComments', 'commentFaramClearButtonLabel')
