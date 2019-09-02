@@ -995,7 +995,9 @@
         "-1874062": "Comment History",
         "-2991833": "Comments",
         "-40879299": "Resolved Comments",
-        "-54226779": "({count} resolved)"
+        "-54226779": "({count} resolved)",
+        "-34360343": "Active ({count})",
+        "-177898": "Resolved ({count})"
     },
     "links": {
         "browserExtension": {
@@ -2838,9 +2840,9 @@
             "commentAreaPlaceholder": -13999983,
             "newThreadButtonLabel": -89194894,
             "textHistoryTitle": -1874062,
-            "commentsHeaderLabel": -2991833,
-            "resolvedCommentsCountLabel": -54226779,
-            "resolvedCommentsModalHeader": -40879299
+            "unResolvedTitle": -34360343,
+            "resolvedTitle": -177898,
+            "commentsHeader": -2991833
         }
     }
 }

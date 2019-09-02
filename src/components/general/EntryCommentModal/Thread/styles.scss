@@ -1,18 +1,15 @@
 .thread {
-    .parent {
-        background-color: var(--color-background-primary-hint);
-    }
+    border: var(--width-separator-thin) solid var(--color-separator);
 
     .children-list {
-        .comment {
-            padding-left: var(--spacing-large);
+        &.is-not-empty {
+            border-top: var(--width-separator-thin) solid var(--color-separator);
         }
     }
 
     .form {
         border-top: var(--width-separator-thin) solid var(--color-separator);
         padding-top: var(--spacing-small-alt);
-        padding-left: var(--spacing-large);
     }
 
     .new-comment {

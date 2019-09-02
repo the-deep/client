@@ -158,16 +158,13 @@ export default class Comment extends React.PureComponent {
     }
 
     handleFaramChange = (values, errors) => {
-        let pristine = false;
-
         const {
             text,
             assigneeDetail,
         } = this.props;
 
-        if (values.text === text && values.assignee === assigneeDetail.id) {
-            pristine = true;
-        }
+        // NOTE: This is to prevent unnecessary edits
+        const pristine = values.text === text && values.assignee === assigneeDetail.id;
 
         this.setState({
             faramValues: values,

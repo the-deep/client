@@ -35,7 +35,7 @@ export default class EditHistoryModal extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getSortedHistory = memoize(history => (
-        history.sort((a, b) => -compareDate(a.createdAt, b.createdAt))
+        history.sort((a, b) => compareDate(b.createdAt, a.createdAt))
     ));
 
     historyRendererParams = (key, data) => ({
@@ -46,8 +46,9 @@ export default class EditHistoryModal extends React.PureComponent {
             />
         ),
         labelClassName: styles.date,
+        valueClassName: styles.value,
         value: data.text,
-        type: 'table',
+        type: 'block',
         className: styles.historyItem,
     });
 
@@ -61,7 +62,11 @@ export default class EditHistoryModal extends React.PureComponent {
         const sortedHistory = this.getSortedHistory(history);
 
         return (
-            <Modal className={styles.modal}>
+            <Modal
+                className={styles.modal}
+                closeOnEscape
+                onClose={closeModal}
+            >
                 <ModalHeader
                     title={_ts('entryComments', 'textHistoryTitle')}
                     rightComponent={

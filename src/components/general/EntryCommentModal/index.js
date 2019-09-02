@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import FloatingContainer from '#rscv/FloatingContainer';
+import ScrollTabs from '#rscv/ScrollTabs';
 import Button from '#rsca/Button';
-import modalize from '#rscg/Modalize';
 import ListView from '#rscv/List/ListView';
 import {
     calcFloatPositionInMainWindow,
@@ -28,12 +28,9 @@ import {
 import _ts from '#ts';
 
 import Thread from './Thread';
-import ResolvedThreadModal from './ResolvedThreadModal';
 import CommentFaram from './CommentFaram';
 
 import styles from './styles.scss';
-
-const ModalButton = modalize(Button);
 
 const EmptyComponent = () => null;
 
@@ -58,6 +55,9 @@ const defaultProps = {
     entryServerId: undefined,
     closeModal: () => {},
 };
+
+const RESOLVED = 'resolved';
+const UNRESOLVED = 'unResolved';
 
 const requests = {
     entryCommentsGet: {
@@ -118,12 +118,25 @@ export default class EntryCommentModal extends React.PureComponent {
         });
 
         this.state = {
+            activeTabKey: UNRESOLVED,
             comments: [],
             currentEdit: undefined,
             faramValues: {},
             faramErrors: {},
             pristine: true,
         };
+    }
+
+    getTabs = (resolvedThreads, unResolvedThreads) => {
+        const tabs = {
+            [UNRESOLVED]: _ts('entryComments', 'unResolvedTitle', { count: unResolvedThreads.length }),
+        };
+
+        if (resolvedThreads.length > 0) {
+            tabs[RESOLVED] = _ts('entryComments', 'resolvedTitle', { count: resolvedThreads.length });
+        }
+
+        return tabs;
     }
 
     getCommentsByThreads = (allComments) => {
@@ -146,6 +159,10 @@ export default class EntryCommentModal extends React.PureComponent {
         const unResolvedThreads = threads.filter(t => !t.isResolved);
 
         return { resolvedThreads, unResolvedThreads };
+    }
+
+    handleTabClick = (tab) => {
+        this.setState({ activeTabKey: tab });
     }
 
     handleInvalidate = (container) => {
@@ -229,8 +246,11 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleEditComment = (commentId, values) => {
         const { comments } = this.state;
-        const newComments = comments.filter(c => c.id !== commentId);
-        newComments.push(values);
+
+        const newComments = comments
+            .filter(c => c.id !== commentId)
+            .push(values);
+
         this.setState({ comments: newComments });
     }
 
@@ -281,6 +301,12 @@ export default class EntryCommentModal extends React.PureComponent {
         });
     }
 
+    resolvedThreadRendererParams = (key, thread) => ({
+        className: styles.thread,
+        comments: thread,
+        isResolved: true,
+    });
+
     render() {
         const {
             className,
@@ -309,6 +335,7 @@ export default class EntryCommentModal extends React.PureComponent {
             faramErrors,
             currentEdit,
             pristine,
+            activeTabKey,
         } = this.state;
 
         const {
@@ -322,7 +349,11 @@ export default class EntryCommentModal extends React.PureComponent {
             ? _ts('entryComments', 'commentFaramClearButtonLabel')
             : _ts('entryComments', 'commentFaramCancelButtonLabel');
 
-        const resolvedThreadsCount = resolvedThreads.length;
+        const tabs = this.getTabs(resolvedThreads, unResolvedThreads);
+        const threads = activeTabKey === UNRESOLVED ? unResolvedThreads : resolvedThreads;
+        const rendererParams = activeTabKey === UNRESOLVED
+            ? this.threadRendererParams
+            : this.resolvedThreadRendererParams;
 
         return (
             <FloatingContainer
@@ -331,43 +362,45 @@ export default class EntryCommentModal extends React.PureComponent {
                 onClose={closeModal}
                 focusTrap
                 closeOnEscape
+                showHaze
             >
                 <div className={styles.header}>
-                    <h4 className={styles.heading}>
-                        {_ts('entryComments', 'commentsHeaderLabel')}
-                        {resolvedThreadsCount > 0 && (
-                            <ModalButton
-                                className={styles.resolvedModalButton}
-                                modal={
-                                    <ResolvedThreadModal resolvedThreads={resolvedThreads} />
-                                }
-                            >
-                                {_ts('entryComments', 'resolvedCommentsCountLabel', { count: resolvedThreadsCount })}
-                            </ModalButton>
-                        )}
-                    </h4>
-                    <div className={styles.buttons}>
-                        {unResolvedThreads.length > 0 &&
-                            <Button
-                                onClick={this.handleNewThreadClick}
-                                transparent
-                            >
-                                {_ts('entryComments', 'newThreadButtonLabel')}
-                            </Button>
-                        }
+                    <div className={styles.topHeader}>
+                        <h3 className={styles.heading}>
+                            {_ts('entryComments', 'commentsHeader')}
+                        </h3>
                         <Button
                             iconName="close"
                             onClick={closeModal}
                             transparent
                         />
                     </div>
+                    <ScrollTabs
+                        className={styles.tabs}
+                        active={activeTabKey}
+                        tabs={tabs}
+                        itemClassName={styles.tab}
+                        onClick={this.handleTabClick}
+                    >
+                        <div className={styles.buttons}>
+                            {unResolvedThreads.length > 0 &&
+                                <Button
+                                    onClick={this.handleNewThreadClick}
+                                    iconName="add"
+                                    transparent
+                                >
+                                    {_ts('entryComments', 'newThreadButtonLabel')}
+                                </Button>
+                            }
+                        </div>
+                    </ScrollTabs>
                 </div>
                 <ListView
                     className={styles.threads}
-                    data={unResolvedThreads}
+                    data={threads}
                     keySelector={threadsKeySelector}
                     renderer={Thread}
-                    rendererParams={this.threadRendererParams}
+                    rendererParams={rendererParams}
                     emptyComponent={EmptyComponent}
                 />
                 {showCommentForm && (

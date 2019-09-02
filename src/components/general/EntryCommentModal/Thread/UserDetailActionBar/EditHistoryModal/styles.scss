@@ -15,7 +15,18 @@
             font-size: var(--font-size-normal);
 
             .date {
-                min-width: var(--min-width-date-time);
+                padding-bottom: var(--spacing-extra-small);
+                font-size: var(--font-size-small);
+            }
+
+            .value {
+                color: var(--color-text);
+                font-size: var(--font-size-normal);
+                font-weight: var(--font-weight-normal);
+            }
+
+            &:not(:last-child) {
+                margin-bottom: var(--spacing-medium);
             }
         }
     }

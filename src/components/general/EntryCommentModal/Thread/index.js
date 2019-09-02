@@ -30,7 +30,7 @@ const propTypes = {
     onDelete: PropTypes.func,
     isResolved: PropTypes.bool,
     currentEdit: PropTypes.string,
-    onCurrentEditChange: PropTypes.func.isRequired,
+    onCurrentEditChange: PropTypes.func,
 };
 
 const defaultProps = {
@@ -39,6 +39,7 @@ const defaultProps = {
     entryId: undefined,
     threadId: undefined,
     className: undefined,
+    onCurrentEditChange: () => {},
     onAdd: () => {},
     onEdit: () => {},
     onDelete: () => {},
@@ -96,7 +97,6 @@ export default class EntryCommentThread extends React.PureComponent {
             onCurrentEditChange,
             currentEdit,
             commentId: key,
-            className: styles.comment,
             userDetails: data.createdByDetail,
             assigneeDetail: data.assigneeDetail,
             text: data.text,
@@ -175,7 +175,7 @@ export default class EntryCommentThread extends React.PureComponent {
             className,
             comments: {
                 parent = {},
-                children,
+                children = [],
             },
             commentCreateRequest: {
                 pending,
@@ -209,7 +209,6 @@ export default class EntryCommentThread extends React.PureComponent {
                 <Comment
                     currentEdit={currentEdit}
                     onCurrentEditChange={onCurrentEditChange}
-                    className={styles.parent}
                     commentId={parentId}
                     onEdit={onEdit}
                     onDelete={onDelete}
@@ -223,7 +222,12 @@ export default class EntryCommentThread extends React.PureComponent {
                 />
                 <ListView
                     data={children}
-                    className={styles.childrenList}
+                    className={
+                        _cs(
+                            styles.childrenList,
+                            children.length > 0 && styles.isNotEmpty,
+                        )
+                    }
                     keySelector={childrenKeySelector}
                     rendererParams={this.childRendererParams}
                     renderer={Comment}
