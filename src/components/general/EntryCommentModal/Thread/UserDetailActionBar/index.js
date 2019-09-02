@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    compareDate,
+} from '@togglecorp/fujs';
+import memoize from 'memoize-one';
 
 import DisplayPicture from '#components/viewer/DisplayPicture';
 import FormattedDate from '#rscv/FormattedDate';
@@ -31,16 +35,21 @@ const defaultProps = {
     userDetails: {},
 };
 
+const emptyObject = {};
+
 export default class UserDetailActionBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getSortedHistory = memoize(history => (
+        history.sort((a, b) => compareDate(b.createdAt, a.createdAt))
+    ));
 
     render() {
         const {
             className,
             userDetails: {
                 displayPicture,
-                modifiedAt = new Date(),
                 name,
             },
             onEditClick,
@@ -52,6 +61,8 @@ export default class UserDetailActionBar extends React.PureComponent {
         } = this.props;
 
         const isModified = textHistory.length > 1;
+        const sortedHistory = this.getSortedHistory(textHistory);
+        const modifiedAt = (sortedHistory[0] || emptyObject).createdAt;
 
         return (
             <div className={styles.userDetailActionBar}>
@@ -75,7 +86,7 @@ export default class UserDetailActionBar extends React.PureComponent {
                             <ModalButton
                                 className={styles.editedButton}
                                 modal={
-                                    <EditHistoryModal history={textHistory} />
+                                    <EditHistoryModal history={sortedHistory} />
                                 }
                             >
                                 {_ts('entryComments', 'editedFlagLabel')}

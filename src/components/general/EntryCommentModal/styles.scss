@@ -8,7 +8,7 @@
     z-index: 1;
     background-color: var(--color-foreground-alt);
     width: 360px;
-    max-height: 90vh;
+    max-height: 80vh;
     overflow-y: auto;
 
     .header {
@@ -47,29 +47,35 @@
         }
     }
 
-    .threads {
+    .content {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        background-color: var(--color-foreground-alt);
-        padding: var(--spacing-medium);
         overflow-y: auto;
 
-        .thread {
-            background-color: var(--color-foreground);
+        .threads {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: var(--color-foreground-alt);
+            padding: var(--spacing-medium);
 
-            &:not(:last-child) {
-                margin-bottom: var(--spacing-medium);
+            .thread {
+                background-color: var(--color-foreground);
+
+                &:not(:last-child) {
+                    margin-bottom: var(--spacing-medium);
+                }
             }
         }
-    }
 
-    .new-comment {
-        flex-shrink: 0;
-        margin: 0 var(--spacing-medium) var(--spacing-medium);
-        border: var(--width-separator-thin) solid var(--color-separator);
-        background-color: var(--color-foreground);
-        padding-top: var(--spacing-small);
+        .new-comment {
+            flex-shrink: 0;
+            margin: 0 var(--spacing-medium) var(--spacing-medium);
+            border: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            padding-top: var(--spacing-small);
+        }
     }
 }
 

@@ -13,11 +13,6 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import Button from '#rsca/Button';
 import ListView from '#rscv/List/ListView';
 import {
-    calcFloatPositionInMainWindow,
-    defaultOffset,
-    defaultLimit,
-} from '#rsu/bounds';
-import {
     projectIdFromRouteSelector,
 } from '#redux';
 import {
@@ -58,6 +53,8 @@ const defaultProps = {
 
 const RESOLVED = 'resolved';
 const UNRESOLVED = 'unResolved';
+
+const WINDOW_PADDING = 24;
 
 const requests = {
     entryCommentsGet: {
@@ -167,23 +164,38 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleInvalidate = (container) => {
         // Note: pass through prop
-        // eslint-disable-next-line react/prop-types
-        const { parentBCR } = this.props;
+        const {
+            // eslint-disable-next-line react/prop-types
+            parentBCR: {
+                // eslint-disable-next-line react/prop-types
+                top: parentBCRTop,
+                // eslint-disable-next-line react/prop-types
+                left: parentBCRLeft,
+            },
+        } = this.props;
 
         const contentRect = container.getBoundingClientRect();
 
-        const optionsContainerPosition = (
-            calcFloatPositionInMainWindow({
-                parentRect: parentBCR,
-                contentRect,
-                defaultOffset,
-                limit: {
-                    ...defaultLimit,
-                    minW: 240,
-                    maxW: 360,
-                },
-            })
-        );
+        const windowRect = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+        };
+
+        let topCalc = parentBCRTop;
+        let leftCalc = parentBCRLeft - contentRect.width;
+
+        if (leftCalc < 0) {
+            leftCalc = WINDOW_PADDING;
+        }
+
+        if ((topCalc + contentRect.height) > (windowRect.height - WINDOW_PADDING)) {
+            topCalc -= ((contentRect.height + topCalc + WINDOW_PADDING) - windowRect.height);
+        }
+
+        const optionsContainerPosition = {
+            top: `${topCalc}px`,
+            left: `${leftCalc}px`,
+        };
 
         return optionsContainerPosition;
     }
@@ -237,7 +249,10 @@ export default class EntryCommentModal extends React.PureComponent {
     }
 
     handleNewThreadClick = () => {
-        this.setState({ currentEdit: 'new-thread' });
+        this.setState({
+            currentEdit: 'new-thread',
+            activeTabKey: UNRESOLVED,
+        });
     }
 
     handleCommentsGet = (comments) => {
@@ -388,6 +403,7 @@ export default class EntryCommentModal extends React.PureComponent {
                                     onClick={this.handleNewThreadClick}
                                     iconName="add"
                                     transparent
+                                    disabled={currentEdit === 'new-thread'}
                                 >
                                     {_ts('entryComments', 'newThreadButtonLabel')}
                                 </Button>
@@ -395,31 +411,33 @@ export default class EntryCommentModal extends React.PureComponent {
                         </div>
                     </ScrollTabs>
                 </div>
-                <ListView
-                    className={styles.threads}
-                    data={threads}
-                    keySelector={threadsKeySelector}
-                    renderer={Thread}
-                    rendererParams={rendererParams}
-                    emptyComponent={EmptyComponent}
-                />
-                {showCommentForm && (
-                    <CommentFaram
-                        className={styles.newComment}
-                        pending={commentCreationPending}
-                        pristine={pristine}
-                        onChange={this.handleFaramChange}
-                        onValidationFailure={this.handleFaramValidationFailure}
-                        onValidationSuccess={this.handleFaramValidationSuccess}
-                        faramValues={faramValues}
-                        faramErrors={faramErrors}
-                        hasAssignee
-                        onCancelClick={this.handleClearClick}
-                        members={members}
-                        commentButtonLabel={_ts('entryComments', 'commentFaramCommentButtonLabel')}
-                        cancelButtonLabel={cancelButtonLabel}
+                <div className={styles.content}>
+                    <ListView
+                        className={styles.threads}
+                        data={threads}
+                        keySelector={threadsKeySelector}
+                        renderer={Thread}
+                        rendererParams={rendererParams}
+                        emptyComponent={EmptyComponent}
                     />
-                )}
+                    {showCommentForm && (
+                        <CommentFaram
+                            className={styles.newComment}
+                            pending={commentCreationPending}
+                            pristine={pristine}
+                            onChange={this.handleFaramChange}
+                            onValidationFailure={this.handleFaramValidationFailure}
+                            onValidationSuccess={this.handleFaramValidationSuccess}
+                            faramValues={faramValues}
+                            faramErrors={faramErrors}
+                            hasAssignee
+                            onCancelClick={this.handleClearClick}
+                            members={members}
+                            commentButtonLabel={_ts('entryComments', 'commentFaramCommentButtonLabel')}
+                            cancelButtonLabel={cancelButtonLabel}
+                        />
+                    )}
+                </div>
             </FloatingContainer>
         );
     }

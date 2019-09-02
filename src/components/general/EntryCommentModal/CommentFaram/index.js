@@ -62,6 +62,18 @@ export default class CommentFaram extends React.PureComponent {
         if (hasAssignee) {
             this.schema.fields.assignee = [requiredCondition];
         }
+
+        this.contentRef = React.createRef();
+    }
+
+    componentDidMount() {
+        const { contentRef } = this;
+        if (contentRef && contentRef.current) {
+            contentRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            });
+        }
     }
 
     render() {
@@ -86,7 +98,10 @@ export default class CommentFaram extends React.PureComponent {
             : _ts('entryComments', 'replyAreaPlaceholder');
 
         return (
-            <div className={_cs(styles.formContainer, className)}>
+            <div
+                className={_cs(styles.formContainer, className)}
+                ref={this.contentRef}
+            >
                 {pending && <LoadingAnimation />}
                 <Faram
                     className={styles.form}
@@ -104,6 +119,7 @@ export default class CommentFaram extends React.PureComponent {
                         showLabel={false}
                         rows={5}
                         resize="vertical"
+                        autoFocus
                     />
                     {hasAssignee && (
                         <SelectInput

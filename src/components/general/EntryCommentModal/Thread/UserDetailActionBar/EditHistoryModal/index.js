@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    _cs,
-    compareDate,
-} from '@togglecorp/fujs';
-import memoize from 'memoize-one';
+import { _cs } from '@togglecorp/fujs';
 
 import Modal from '#rscv/Modal';
 import FormattedDate from '#rscv/FormattedDate';
@@ -34,10 +30,6 @@ export default class EditHistoryModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getSortedHistory = memoize(history => (
-        history.sort((a, b) => compareDate(b.createdAt, a.createdAt))
-    ));
-
     historyRendererParams = (key, data) => ({
         label: (
             <FormattedDate
@@ -59,8 +51,6 @@ export default class EditHistoryModal extends React.PureComponent {
             closeModal,
         } = this.props;
 
-        const sortedHistory = this.getSortedHistory(history);
-
         return (
             <Modal
                 className={styles.modal}
@@ -79,7 +69,7 @@ export default class EditHistoryModal extends React.PureComponent {
                 />
                 <ModalBody className={_cs(styles.modalBody, className)}>
                     <ListView
-                        data={sortedHistory}
+                        data={history}
                         keySelector={historyKeySelector}
                         renderer={TextOutput}
                         rendererParams={this.historyRendererParams}
