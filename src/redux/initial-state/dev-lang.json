@@ -997,7 +997,12 @@
         "-40879299": "Resolved Comments",
         "-54226779": "({count} resolved)",
         "-34360343": "Active ({count})",
-        "-177898": "Resolved ({count})"
+        "-177898": "Resolved ({count})",
+        "-7178898": "You are assigned to a comment in entry of project {project} by {userName}.",
+        "-12333226": "{userName} replied to a comment you are following in project {project}.",
+        "-32902609": "{userName} modified a comment you are following in project {project}.",
+        "-63285888": "{userName} modified a reply you are following in project {project}.",
+        "-74972973": "{userName} resolved a comment you were following in project {project}."
     },
     "links": {
         "browserExtension": {
@@ -2843,6 +2848,13 @@
             "unResolvedTitle": -34360343,
             "resolvedTitle": -177898,
             "commentsHeader": -2991833
+        },
+        "entryComments.notifications": {
+            "entryCommentAdd": -7178898,
+            "entryCommentReplyAdd": -12333226,
+            "entryCommentModified": -32902609,
+            "entryCommentReplyModified": -63285888,
+            "entryCommentResolved": -74972973
         }
     }
 }

@@ -24,6 +24,7 @@ import _ts from '#ts';
 import ProjectJoinRequestItem from './items/ProjectJoinRequest';
 import ProjectJoinRequestAbortItem from './items/ProjectJoinRequestAbort';
 import ProjectJoinResponseItem from './items/ProjectJoinResponse';
+import EntryCommentItem from './items/EntryCommentItem';
 
 import styles from './styles.scss';
 
@@ -106,13 +107,24 @@ const notificationItems = {
     project_join_request: ProjectJoinRequestItem,
     project_join_response: ProjectJoinResponseItem,
     project_join_request_abort: ProjectJoinRequestAbortItem,
+    entry_comment_add: EntryCommentItem,
+    entry_comment_reply_add: EntryCommentItem,
+    entry_comment_resolved: EntryCommentItem,
+    entry_comment_assignee_change: EntryCommentItem,
+    entry_comment_modify: EntryCommentItem,
+    entry_comment_reply_modify: EntryCommentItem,
 };
 
 const NotificationItem = ({ notification }) => {
     const Item = notificationItems[notification.notificationType];
 
     if (Item) {
-        return <Item notification={notification} />;
+        return (
+            <Item
+                notification={notification}
+                notificationType={notification.notificationType}
+            />
+        );
     }
 
     return null;
