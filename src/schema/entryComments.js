@@ -31,6 +31,7 @@ const entryCommentsSchema = [];
             text: { type: 'string', required: true },
             textHistory: { type: 'array.textHistory', required: true },
             entry: { type: 'uint', required: true },
+            lead: { type: 'uint', required: true },
             assignee: { type: 'uint' },
             createdBy: { type: 'uint', required: true },
             assigneeDetail: {

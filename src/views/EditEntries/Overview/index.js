@@ -1,11 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isFalsy } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
+import EntryCommentModal from '#components/general/EntryCommentModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import Button from '#rsca/Button';
 
 import {
     entryAccessor,
@@ -24,6 +28,7 @@ import {
     editEntriesMarkAsDeletedEntryAction,
     // editEntriesTabularDataSelector,
     fieldsMapForTabularBookSelector,
+    routeSelector,
 } from '#redux';
 import { VIEW } from '#widgets';
 
@@ -34,6 +39,8 @@ import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
+
 const propTypes = {
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -41,6 +48,7 @@ const propTypes = {
     // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
+    routeUrl: PropTypes.string.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
@@ -63,6 +71,7 @@ const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
+    routeUrl: routeSelector(state),
     // tabularDataForSelectedEntry: editEntriesSelectedEntryTabularDataSelector(state),
     // tabularData: editEntriesTabularDataSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
@@ -77,6 +86,8 @@ const mapDispatchToProps = dispatch => ({
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
+const emptyObject = {};
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
@@ -85,6 +96,25 @@ export default class Overview extends React.PureComponent {
     static entryKeySelector = entry => entryAccessor.key(entry)
 
     static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
+
+    componentDidMount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryIdFromRoute = urlParams.get('entry_id');
+        const {
+            setSelectedEntryKey,
+            leadId,
+            entries,
+        } = this.props;
+        const entry = entries.find(e => String((e.data || emptyObject).id) === entryIdFromRoute);
+        const entryLocalId = entry && (entry.localData || emptyObject).id;
+
+        if (entryLocalId) {
+            setSelectedEntryKey({
+                leadId,
+                key: entryLocalId,
+            });
+        }
+    }
 
     entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
@@ -107,7 +137,6 @@ export default class Overview extends React.PureComponent {
     shouldHideEntryDelete = ({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
     )
-
     handleEntrySelect = (entryKey) => {
         this.props.setSelectedEntryKey({
             leadId: this.props.leadId,
@@ -140,8 +169,9 @@ export default class Overview extends React.PureComponent {
             leadId, // eslint-disable-line no-unused-vars
             entries, // eslint-disable-line no-unused-vars
             statuses,
-            selectedEntryKey, // eslint-disable-line no-unused-vars
+            selectedEntryKey,
             entryStates,
+            routeUrl,
 
             tabularFields,
 
@@ -198,10 +228,20 @@ export default class Overview extends React.PureComponent {
                                 labelSelector={this.entryLabelSelector}
                                 onChange={this.handleEntrySelect}
                                 options={this.props.entries}
-                                value={this.props.selectedEntryKey}
+                                value={selectedEntryKey}
                                 showHintAndError={false}
                                 showLabel={false}
                                 hideClearButton
+                            />
+                            <ModalButton
+                                iconName="chat"
+                                className={styles.entryCommentButton}
+                                disabled={isFalsy(entry && entry.data.id)}
+                                modal={
+                                    <EntryCommentModal
+                                        entryServerId={entry && entry.data.id}
+                                    />
+                                }
                             />
                         </header>
                         <WidgetFaram

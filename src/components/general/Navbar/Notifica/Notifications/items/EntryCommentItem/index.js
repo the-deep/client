@@ -62,6 +62,8 @@ export default class EntryCommentItem extends React.PureComponent {
                     id,
                     name,
                 } = {},
+                entry,
+                lead,
             } = {},
             project,
         } = notification;
@@ -74,105 +76,71 @@ export default class EntryCommentItem extends React.PureComponent {
             { userId: id },
         );
 
-        const projectLink = reverseRoute(
-            pathNames.entries,
-            { projectId: project },
+        const entriesLink = reverseRoute(
+            pathNames.editEntries,
+            {
+                projectId: project,
+                leadId: lead,
+            },
         );
+
+        const projectLink = reverseRoute(
+            pathNames.projects,
+            {
+                projectId: project,
+            },
+        );
+
+        const stringParams = {
+            userName: (
+                <LinkItem
+                    link={userLink}
+                    title={name}
+                />
+            ),
+            comment: (
+                <LinkItem
+                    link={`${entriesLink}?entry_id=${entry}`}
+                    title="comment"
+                />
+            ),
+            project: (
+                <LinkItem
+                    link={projectLink}
+                    title={projectTitle}
+                />
+            ),
+        };
 
         if (notificationType === 'entry_comment_add') {
             notificationText = _ts(
                 'entryComments.notifications',
                 'entryCommentAdd',
-                {
-                    userName: (
-                        <LinkItem
-                            link={userLink}
-                            title={name}
-                        />
-                    ),
-                    project: (
-                        <LinkItem
-                            link={projectLink}
-                            title={projectTitle}
-                        />
-                    ),
-                },
+                stringParams,
             );
         } else if (notificationType === 'entry_comment_reply_add') {
             notificationText = _ts(
                 'entryComments.notifications',
                 'entryCommentReplyAdd',
-                {
-                    userName: (
-                        <LinkItem
-                            link={userLink}
-                            title={name}
-                        />
-                    ),
-                    project: (
-                        <LinkItem
-                            link={projectLink}
-                            title={projectTitle}
-                        />
-                    ),
-                },
+                stringParams,
             );
         } else if (notificationType === 'entry_comment_resolved') {
             notificationText = _ts(
                 'entryComments.notifications',
                 'entryCommentResolved',
-                {
-                    userName: (
-                        <LinkItem
-                            link={userLink}
-                            title={name}
-                        />
-                    ),
-                    project: (
-                        <LinkItem
-                            link={projectLink}
-                            title={projectTitle}
-                        />
-                    ),
-                },
+                stringParams,
             );
         } else if (notificationType === 'entry_comment_modify') {
             notificationText = _ts(
                 'entryComments.notifications',
                 'entryCommentModified',
-                {
-                    userName: (
-                        <LinkItem
-                            link={userLink}
-                            title={name}
-                        />
-                    ),
-                    project: (
-                        <LinkItem
-                            link={projectLink}
-                            title={projectTitle}
-                        />
-                    ),
-                },
+                stringParams,
             );
         } else if (notificationType === 'entry_comment_reply_modify') {
             notificationText = _ts(
                 'entryComments.notifications',
                 'entryCommentReplyModified',
-                {
-                    userName: (
-                        <LinkItem
-                            link={userLink}
-                            title={name}
-                        />
-                    ),
-                    project: (
-                        <LinkItem
-                            link={projectLink}
-                            title={projectTitle}
-                        />
-                    ),
-                },
+                stringParams,
             );
         }
 
