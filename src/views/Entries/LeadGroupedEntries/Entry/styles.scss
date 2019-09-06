@@ -9,6 +9,15 @@
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
 
+    .header {
+        display: flex;
+        justify-content: flex-end;
+
+        .button {
+            padding: var(--spacing-extra-small) var(--spacing-small);
+        }
+    }
+
     .widget {
         @extend %widget;
         // border: var(--width-separator-thin) solid var(--color-separator);

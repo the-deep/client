@@ -1,9 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
+import {
+    _cs,
+    isFalsy,
+} from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
+import modalize from '#rscg/Modalize';
+import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
+
+import EntryCommentModal from '#components/general/EntryCommentModal';
 
 import {
     fetchWidgetViewComponent,
@@ -12,6 +20,8 @@ import {
 } from '#widgets';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -53,12 +63,8 @@ export default class Entry extends React.PureComponent {
     renderWidgetHeader = (widget) => {
         const { title } = widget;
 
-        const className = `
-            ${styles.header}
-        `;
-
         return (
-            <div className={className}>
+            <div className={styles.header}>
                 <h5
                     title={title}
                     className={styles.heading}
@@ -129,25 +135,34 @@ export default class Entry extends React.PureComponent {
             className: classNameFromProps,
             widgets,
             entry: {
+                id: entryId,
                 attributes,
             },
         } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.entry}
-        `;
 
         const filteredWidgets = this.getWidgets(widgets);
 
         return (
             <Faram
-                className={className}
+                className={_cs(classNameFromProps, styles.entry)}
                 value={attributes}
                 schema={emptySchema}
             >
+                <header className={_cs('widget-container-header', styles.header)}>
+                    <ModalButton
+                        iconName="chat"
+                        className={styles.button}
+                        transparent
+                        disabled={isFalsy(entryId)}
+                        modal={
+                            <EntryCommentModal
+                                entryServerId={entryId}
+                            />
+                        }
+                    />
+                </header>
                 <GridViewLayout
-                    className={className}
+                    className={_cs(classNameFromProps, styles.entry)}
                     data={filteredWidgets}
                     itemClassName={styles.widget}
                     itemContentModifier={this.renderWidgetContent}

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import FormattedDate from '#rscv/FormattedDate';
@@ -34,13 +35,8 @@ export default class Notification extends React.PureComponent {
             timestamp,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.notification}
-        `;
-
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.notification)}>
                 <div className={styles.left}>
                     { icon }
                     { !icon &&

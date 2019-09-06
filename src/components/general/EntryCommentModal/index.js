@@ -261,10 +261,10 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleEditComment = (commentId, values) => {
         const { comments } = this.state;
-
-        const newComments = comments
-            .filter(c => c.id !== commentId)
-            .push(values);
+        const newComments = [
+            ...comments.filter(c => c.id !== commentId),
+            values,
+        ];
 
         this.setState({ comments: newComments });
     }

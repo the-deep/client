@@ -10,26 +10,8 @@ import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Notification from '../Notification';
+import LinkItem from '../LinkItem';
 import styles from './styles.scss';
-
-const LinkItem = ({ link, title }) => (
-    <a
-        className={styles.title}
-        href={link}
-    >
-        {title}
-    </a>
-);
-
-LinkItem.propTypes = {
-    link: PropTypes.string,
-    title: PropTypes.string,
-};
-
-LinkItem.defaultProps = {
-    link: '',
-    title: '',
-};
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -38,6 +20,7 @@ const propTypes = {
     className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     userProjects: PropTypes.array.isRequired,
+    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -54,7 +37,7 @@ export default class EntryCommentItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getNotificationText = (notificationType, notification, projects) => {
+    getNotificationText = (notificationType, notification, projects, closeModal) => {
         let notificationText = notificationType;
         const {
             data: {
@@ -71,10 +54,8 @@ export default class EntryCommentItem extends React.PureComponent {
         const projectDetails = projects.find(p => p.id === project);
         const projectTitle = projectDetails && projectDetails.title;
 
-        const userLink = reverseRoute(
-            pathNames.userProfile,
-            { userId: id },
-        );
+        const userLink = reverseRoute(pathNames.userProfile, { userId: id });
+        const projectLink = reverseRoute(pathNames.projects, { projectId: project });
 
         const entriesLink = reverseRoute(
             pathNames.editEntries,
@@ -84,30 +65,27 @@ export default class EntryCommentItem extends React.PureComponent {
             },
         );
 
-        const projectLink = reverseRoute(
-            pathNames.projects,
-            {
-                projectId: project,
-            },
-        );
-
         const stringParams = {
             userName: (
                 <LinkItem
                     link={userLink}
                     title={name}
+                    closeModal={closeModal}
                 />
             ),
             comment: (
                 <LinkItem
                     link={`${entriesLink}?entry_id=${entry}`}
+                    // This is intentional
                     title="comment"
+                    closeModal={closeModal}
                 />
             ),
             project: (
                 <LinkItem
                     link={projectLink}
                     title={projectTitle}
+                    closeModal={closeModal}
                 />
             ),
         };
@@ -157,12 +135,14 @@ export default class EntryCommentItem extends React.PureComponent {
             notificationType,
             userProjects,
             className,
+            closeModal,
         } = this.props;
 
         const notificationText = this.getNotificationText(
             notificationType,
             notification,
             userProjects,
+            closeModal,
         );
 
         const {

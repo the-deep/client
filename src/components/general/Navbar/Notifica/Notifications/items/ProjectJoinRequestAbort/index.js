@@ -7,14 +7,17 @@ import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Notification from '../Notification';
-import styles from './styles.scss';
+import LinkItem from '../LinkItem';
 
 const propTypes = {
+    className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     notification: PropTypes.object,
+    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    className: undefined,
     notification: {},
 };
 
@@ -24,7 +27,7 @@ export default class ProjectJoinRequestAbortItem extends React.PureComponent {
 
     render() {
         const {
-            className: classNameFromProps,
+            className,
             notification: {
                 data: {
                     requestedBy: {
@@ -38,12 +41,8 @@ export default class ProjectJoinRequestAbortItem extends React.PureComponent {
                 },
                 timestamp,
             },
+            closeModal,
         } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.projectJoinRequestAbortNotification}
-        `;
 
         const requestorProfileLink = reverseRoute(
             pathNames.userProfile,
@@ -59,23 +58,21 @@ export default class ProjectJoinRequestAbortItem extends React.PureComponent {
             <Notification
                 className={className}
                 message={
-                    <div className={styles.message}>
+                    <div>
                         {_ts('notifications', 'projectJoinRequestAbortText', {
                             requestorName: (
-                                <a
-                                    className={styles.requestorName}
-                                    href={requestorProfileLink}
-                                >
-                                    {requestorName}
-                                </a>
+                                <LinkItem
+                                    link={requestorProfileLink}
+                                    title={requestorName}
+                                    closeModal={closeModal}
+                                />
                             ),
                             projectTitle: (
-                                <a
-                                    className={styles.projectTitle}
-                                    href={projectLink}
-                                >
-                                    {projectTitle}
-                                </a>
+                                <LinkItem
+                                    link={projectLink}
+                                    title={projectTitle}
+                                    closeModal={closeModal}
+                                />
                             ),
                         })}
                     </div>

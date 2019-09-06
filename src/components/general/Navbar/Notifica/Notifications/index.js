@@ -115,12 +115,13 @@ const notificationItems = {
     entry_comment_reply_modify: EntryCommentItem,
 };
 
-const NotificationItem = ({ notification }) => {
+const NotificationItem = ({ notification, closeModal }) => {
     const Item = notificationItems[notification.notificationType];
 
     if (Item) {
         return (
             <Item
+                closeModal={closeModal}
                 notification={notification}
                 notificationType={notification.notificationType}
             />
@@ -143,8 +144,6 @@ const NotificationEmpty = () => (
 );
 
 const notificationKeySelector = n => n.id;
-const notificationItemRendererParams = (_, d) => ({ notification: d });
-
 const requestsToListen = [
     'projectJoinApproveRequest',
     'projectJoinRejectRequest',
@@ -184,6 +183,12 @@ export default class Notifications extends React.PureComponent {
             notificationsGetRequest.do();
         }
     }
+
+    notificationItemRendererParams = (_, d) => ({
+        closeModal: this.props.closeModal,
+        notification: d,
+    });
+
 
     groupRendererParams = (groupKey) => {
         const pendingTitle = _ts('notifications', 'pendingHeaderTitle');
@@ -234,7 +239,7 @@ export default class Notifications extends React.PureComponent {
                     data={notifications}
                     keySelector={notificationKeySelector}
                     renderer={NotificationItem}
-                    rendererParams={notificationItemRendererParams}
+                    rendererParams={this.notificationItemRendererParams}
                     groupKeySelector={Notifications.groupKeySelector}
                     groupRendererParams={this.groupRendererParams}
                     groupRendererClassName={styles.heading}

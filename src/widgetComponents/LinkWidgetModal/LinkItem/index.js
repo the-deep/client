@@ -56,4 +56,3 @@ export default class LinkItem extends React.PureComponent {
         );
     }
 }
-
