@@ -9,7 +9,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import { getNewActiveProjectId } from '#entities/project';
 import {
@@ -44,8 +44,8 @@ const propTypes = {
     // Requests Props
     // eslint-disable-next-line react/no-unused-prop-types
     unsetProject: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    projectDeleteRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -64,10 +64,10 @@ const mapDispatchToProps = dispatch => ({
     unsetProject: params => dispatch(unsetProjectDetailsAction(params)),
 });
 
-const requests = {
+const requestOptions = {
     projectDeleteRequest: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onSuccess: ({ props }) => {
             const {
                 projectId,
@@ -106,7 +106,7 @@ const requests = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectPanel extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -115,7 +115,12 @@ export default class ProjectPanel extends React.PureComponent {
     static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
 
     handleProjectDelete = () => {
-        this.props.projectDeleteRequest.do({
+        const {
+            requests: {
+                projectDeleteRequest,
+            },
+        } = this.props;
+        projectDeleteRequest.do({
             projectId: this.props.projectId,
         });
     }
@@ -177,7 +182,9 @@ export default class ProjectPanel extends React.PureComponent {
     renderContent = () => {
         const {
             projectId,
-            projectDeleteRequest,
+            requests: {
+                projectDeleteRequest,
+            },
         } = this.props;
 
         if (!projectId) {

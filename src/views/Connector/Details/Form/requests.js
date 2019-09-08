@@ -1,4 +1,4 @@
-import { requestMethods } from '#request';
+import { methods } from '#request';
 import _ts from '#ts';
 import notify from '#notify';
 import {
@@ -33,7 +33,7 @@ const requests = {
                 return needToFetchOptions(connectorSource.key, connectorDetails);
             },
         },
-        method: requestMethods.GET,
+        method: methods.GET,
         onSuccess: ({
             response: {
                 hasEmmTriggers,
@@ -71,11 +71,13 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'xmlFieldOptions',
+        extras: {
+            schemaName: 'xmlFieldOptions',
+        },
     },
     connectorDeleteRequest: {
         url: ({ props: { connectorId } }) => `/connectors/${connectorId}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onSuccess: ({ props: {
             onConnectorDelete,
             deleteConnector,

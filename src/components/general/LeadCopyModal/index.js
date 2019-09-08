@@ -18,7 +18,7 @@ import {
 } from '#redux';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import notify from '#notify';
@@ -30,7 +30,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     leads: PropTypes.arrayOf(PropTypes.number),
-    leadsCopyRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     userProjects: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.number,
@@ -45,7 +45,6 @@ const defaultProps = {
     leads: [],
     userProjects: [],
     closeModal: () => {},
-    leadsCopyRequest: {},
 };
 
 const mapStateToProps = state => ({
@@ -55,11 +54,11 @@ const mapStateToProps = state => ({
 const listKeySelector = d => d.id;
 const listLabelSelector = d => d.title;
 
-const requests = {
+const requestOptions = {
     leadsCopyRequest: {
         url: '/lead-copy/',
         body: ({ params: { body } }) => body,
-        method: requestMethods.POST,
+        method: methods.POST,
         onSuccess: ({
             response: {
                 leadsByProjects,
@@ -104,12 +103,14 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'leadsCopy',
+        extras: {
+            schemaName: 'leadsCopy',
+        },
     },
 };
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class LeadCopyModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -138,7 +139,9 @@ export default class LeadCopyModal extends React.PureComponent {
     handleExport = () => {
         const {
             leads,
-            leadsCopyRequest,
+            requests: {
+                leadsCopyRequest,
+            },
         } = this.props;
 
         const { selectedProjects: projects } = this.state;
@@ -160,7 +163,9 @@ export default class LeadCopyModal extends React.PureComponent {
             userProjects,
             closeModal,
             leads,
-            leadsCopyRequest: { pending },
+            requests: {
+                leadsCopyRequest: { pending },
+            },
         } = this.props;
 
         const selectedProjectsNo = selectedProjects.length;

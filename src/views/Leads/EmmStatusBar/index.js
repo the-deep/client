@@ -13,7 +13,7 @@ import {
 } from '#redux';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import _ts from '#ts';
@@ -24,8 +24,7 @@ const ModalButton = modalize(AccentButton);
 
 const propTypes = {
     className: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    emmStatusRequest: PropTypes.object.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -37,10 +36,10 @@ const mapStateToProps = state => ({
     filters: leadPageFilterSelector(state),
 });
 
-const requests = {
+const requestOptions = {
     emmStatusRequest: {
         url: '/leads/emm-summary/',
-        method: requestMethods.POST,
+        method: methods.POST,
         onMount: true,
         body: ({
             props: {
@@ -78,12 +77,14 @@ const requests = {
 
             onEmmStatsGet(emmEntitiesWithCount, emmTriggersWithCount);
         },
-        schemaName: 'emmSummary',
+        extras: {
+            schemaName: 'emmSummary',
+        },
     },
 };
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EmmStatsBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -91,7 +92,11 @@ export default class EmmStatsBar extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { emmStatusRequest } = this.props;
+        const {
+            requests: {
+                emmStatusRequest,
+            },
+        } = this.props;
         emmStatusRequest.setDefaultParams({
             onEmmStatsGet: this.handleEmmStatsSet,
         });
@@ -112,8 +117,8 @@ export default class EmmStatsBar extends React.PureComponent {
     render() {
         const {
             className,
-            emmStatusRequest: {
-                pending,
+            requests: {
+                emmStatusRequest: { pending },
             },
         } = this.props;
 

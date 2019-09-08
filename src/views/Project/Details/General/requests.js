@@ -1,6 +1,5 @@
-import { requestMethods } from '#request';
+import { methods } from '#request';
 import notify from '#notify';
-import { getNewActiveProjectId } from '#entities/project';
 import { checkVersion } from '@togglecorp/fujs';
 import _ts from '#ts';
 
@@ -9,7 +8,9 @@ const requests = {
     projectGetRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
-        schema: 'projectGetResponse',
+        requests: {
+            schemaName: 'projectGetResponse',
+        },
         url: ({ props: { projectId } }) => `/projects/${projectId}/`,
         onSuccess: ({ props, response, params = {} }) => {
             const {
@@ -53,9 +54,11 @@ const requests = {
     },
 
     projectPutRequest: {
-        schema: 'projectPutResponse',
+        extras: {
+            schemaName: 'projectPutResponse',
+        },
         url: ({ props: { projectId } }) => `/projects/${projectId}/`,
-        method: requestMethods.PUT,
+        method: methods.PUT,
         body: ({ params }) => params.projectDetails,
         onSuccess: ({ props, response }) => {
             const { setProjectDetails, projectId } = props;

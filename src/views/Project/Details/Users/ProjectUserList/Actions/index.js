@@ -10,7 +10,7 @@ import { getNewActiveProjectId } from '#entities/project';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
     notifyOnFailure,
 } from '#request';
 import {
@@ -24,10 +24,10 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const requests = {
+const requestOptions = {
     changeMembershipRequest: {
         url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
-        method: requestMethods.PUT,
+        method: methods.PUT,
         body: ({ params: { membership } }) => membership,
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
@@ -46,7 +46,7 @@ const requests = {
 
     removeUserMembershipRequest: {
         url: ({ params: { membership: { id } } }) => `/project-memberships/${id}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             params: { membership },
@@ -76,15 +76,9 @@ const requests = {
     },
 };
 
-const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool.isRequired,
-});
-
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types, react/forbid-prop-types
     userProjects: PropTypes.array.isRequired,
-    changeMembershipRequest: RequestPropType.isRequired,
-    removeUserMembershipRequest: RequestPropType.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     removeProjectMembership: PropTypes.func.isRequired,
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -98,6 +92,8 @@ const propTypes = {
         userId: PropTypes.number,
     }).isRequired,
     readOnly: PropTypes.bool,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -124,7 +120,7 @@ const userGroupLabelSelector = userGroup => userGroup.title;
 const emptyObject = {};
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -146,7 +142,9 @@ export default class Actions extends React.PureComponent {
     handleRoleSelectInputChange = (newRole) => {
         const {
             row,
-            changeMembershipRequest,
+            requests: {
+                changeMembershipRequest,
+            },
         } = this.props;
 
         changeMembershipRequest.do({
@@ -160,7 +158,9 @@ export default class Actions extends React.PureComponent {
     handleLinkedGroupChange = (newGroup) => {
         const {
             row,
-            changeMembershipRequest,
+            requests: {
+                changeMembershipRequest,
+            },
         } = this.props;
 
         changeMembershipRequest.do({
@@ -174,7 +174,9 @@ export default class Actions extends React.PureComponent {
     handleRemoveMembershipButtonClick = () => {
         const {
             row: membership,
-            removeUserMembershipRequest,
+            requests: {
+                removeUserMembershipRequest,
+            },
         } = this.props;
 
         removeUserMembershipRequest.do({ membership });
@@ -188,8 +190,10 @@ export default class Actions extends React.PureComponent {
                 userId: activeUserId,
             },
             activeUserRole = emptyObject,
-            changeMembershipRequest,
-            removeUserMembershipRequest,
+            requests: {
+                changeMembershipRequest,
+                removeUserMembershipRequest,
+            },
             readOnly,
         } = this.props;
 

@@ -16,7 +16,7 @@ import Cloak from '#components/general/Cloak';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import {
     routeUrlSelector,
@@ -63,15 +63,8 @@ const propTypes = {
     setAryTemplate: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
-    // FIXME: use RequestClient.propType.isRequired
-    assessmentRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    leadRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    leadGroupRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    geoOptionsRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    arySaveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/forbid-prop-types
-    assessmentTemplateRequest: PropTypes.object.isRequired,
     // FIXME: inject for individual request
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
@@ -105,9 +98,11 @@ const mapDispatchToProps = dispatch => ({
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
 });
 
-const requests = {
+const requestOptions = {
     assessmentRequest: {
-        schema: 'aryGetResponse',
+        extras: {
+            schemaName: 'aryGetResponse',
+        },
         url: ({ props: { activeLeadId, activeLeadGroupId } }) => (
             activeLeadId === undefined
                 ? `/lead-group-assessments/${activeLeadGroupId}/`
@@ -153,21 +148,27 @@ const requests = {
         },
     },
     leadRequest: {
-        schema: 'lead',
+        extras: {
+            schemaName: 'lead',
+        },
         url: ({ props: { activeLeadId } }) => `/leads/${activeLeadId}/`,
         onMount: ({ props: { activeLeadId } }) => !!activeLeadId,
         onPropsChanged: ['activeLeadId'],
         // TODO: check mismatch between project and lead
     },
     leadGroupRequest: {
-        schema: 'leadGroup',
+        extras: {
+            schemaName: 'leadGroup',
+        },
         url: ({ props: { activeLeadGroupId } }) => `/lead-groups/${activeLeadGroupId}/`,
         onMount: ({ props: { activeLeadGroupId } }) => !!activeLeadGroupId,
         onPropsChanged: ['activeLeadGroupId'],
         // TODO: check mismatch between project and leadGroup
     },
     assessmentTemplateRequest: {
-        schema: 'aryTemplateGetResponse',
+        extras: {
+            schemaName: 'aryTemplateGetResponse',
+        },
         url: ({ props: { projectId } }) => `/projects/${projectId}/assessment-template/`,
         onMount: ({ props: { projectId } }) => !!projectId,
         onPropsChanged: ['projectId'],
@@ -185,7 +186,9 @@ const requests = {
         },
     },
     geoOptionsRequest: {
-        schema: 'geoOptions',
+        extras: {
+            schemaName: 'geoOptions',
+        },
         url: '/geo-options/',
         query: ({ props: { projectId } }) => ({ project: projectId }),
         onMount: ({ props: { projectId } }) => !!projectId,
@@ -198,9 +201,11 @@ const requests = {
         },
     },
     arySaveRequest: {
-        schema: 'aryPutResponse',
+        extras: {
+            schemaName: 'aryPutResponse',
+        },
         url: ({ params: { value } }) => (value.id ? `/assessments/${value.id}/` : '/assessments/'),
-        method: ({ params: { value } }) => (value.id ? requestMethods.PUT : requestMethods.POST),
+        method: ({ params: { value } }) => (value.id ? methods.PUT : methods.POST),
         body: ({ params }) => params.value,
         onSuccess: ({ props, response }) => {
             props.setAry({
@@ -228,7 +233,7 @@ const requests = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EditAry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -273,10 +278,13 @@ export default class EditAry extends React.PureComponent {
             editAryServerId,
             activeLeadId,
             activeLeadGroupId,
+            requests: {
+                assessmentRequest,
+            },
         } = this.props;
 
         if (editAryServerId) {
-            this.props.assessmentRequest.do({
+            assessmentRequest.do({
                 override: true,
             });
         } else {
@@ -288,7 +296,12 @@ export default class EditAry extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (value) => {
-        this.props.arySaveRequest.do({
+        const {
+            requests: {
+                arySaveRequest,
+            },
+        } = this.props;
+        arySaveRequest.do({
             value: {
                 ...value,
                 id: this.props.editAryServerId,
@@ -323,12 +336,14 @@ export default class EditAry extends React.PureComponent {
 
     render() {
         const {
-            assessmentRequest,
-            leadRequest,
-            leadGroupRequest,
-            assessmentTemplateRequest,
-            geoOptionsRequest,
-            arySaveRequest,
+            requests: {
+                assessmentRequest,
+                leadGroupRequest,
+                assessmentTemplateRequest,
+                geoOptionsRequest,
+                arySaveRequest,
+                leadRequest,
+            },
 
             projectId,
             activeLeadId,

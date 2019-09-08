@@ -30,7 +30,7 @@ import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
 import {
     RequestClient,
     RequestCoordinator,
-    requestMethods,
+    methods,
 } from '#request';
 
 import Cloak from '#components/general/Cloak';
@@ -210,16 +210,18 @@ const requests = {
     webInfoRequest: {
         url: '/v2/web-info-extract/',
         body: ({ params: { url } }) => ({ url }),
-        method: requestMethods.POST,
+        method: methods.POST,
         onSuccess: ({ params, response }) => {
             params.handleWebInfoFill(response);
         },
+        // extras: {
         // schemaName: 'webInfo',
+        // },
     },
 
     leadOptionsRequest: {
         url: '/lead-options/',
-        method: requestMethods.POST,
+        method: methods.POST,
 
         options: {
             delay: 1000,
@@ -257,7 +259,9 @@ const requests = {
                 return newProject !== oldProject && isDefined(newProject);
             },
         },
+        // extras: {
         // schemaName: 'leadOptions',
+        // },
     },
 
     organizationsRequest: {
@@ -266,7 +270,7 @@ const requests = {
             search: params.searchText,
             // limit: 30,
         }),
-        method: requestMethods.GET,
+        method: methods.GET,
         onSuccess: ({ params, response }) => {
             params.setSearchedOrganizations(response.results);
         },

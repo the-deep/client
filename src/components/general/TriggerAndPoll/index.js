@@ -1,18 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { RequestClient, requestMethods } from '#request';
+import { RequestClient, methods } from '#request';
 
 const propTypes = {
     children: PropTypes.element.isRequired,
     onDataReceived: PropTypes.func,
 
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setDefaultRequestParams: PropTypes.func.isRequired,
-
-    initialRequest: RequestClient.propType.isRequired,
-    triggerRequest: RequestClient.propType.isRequired,
-    pollRequest: RequestClient.propType.isRequired,
-    dataRequest: RequestClient.propType.isRequired,
 };
 
 const defaultProps = {
@@ -24,7 +20,7 @@ const defaultShouldTrigger = r => r.status === 'initial';
 const defaultShouldPoll = r => r.status === 'pending';
 const defaultIsValid = r => r.status === 'success';
 
-const requests = {
+const requestOptions = {
     initialRequest: {
         // schemaName: ({ props }) => props.initialSchemaName || props.schemaName,
         onMount: ({ props }) => !props.pollOnly,
@@ -36,7 +32,7 @@ const requests = {
         //     query: ({ props }) => !props.pollOnly && !props.initialQuery,
         // },
 
-        method: requestMethods.GET,
+        method: methods.GET,
         url: ({ props }) => props.initialUrl || props.url,
         query: ({ props }) => props.initialQuery || props.query || {},
         onSuccess: ({ response, props, params: {
@@ -80,7 +76,7 @@ const requests = {
             query: ({ props }) => props.pollOnly && !props.pollQuery,
         },
 
-        method: requestMethods.GET,
+        method: methods.GET,
         url: ({ props }) => props.pollUrl || props.url,
         query: ({ props }) => props.pollQuery || props.query || {},
         options: ({ props }) => ({
@@ -111,7 +107,7 @@ const requests = {
 
     triggerRequest: {
         // schemaName: ({ props }) => props.triggerSchemaName,
-        method: requestMethods.POST,
+        method: methods.POST,
         url: ({ props }) => props.triggerUrl,
         body: ({ props }) => props.triggerBody || props.body || {},
         onSuccess: ({ params: { poll } }) => poll(),
@@ -122,7 +118,7 @@ const requests = {
 
     dataRequest: {
         // schemaName: ({ props }) => props.schemaName,
-        method: requestMethods.GET,
+        method: methods.GET,
         url: ({ props }) => props.url,
         query: ({ props }) => props.query,
         onSuccess: ({ response, props, params: {
@@ -142,7 +138,7 @@ const requests = {
     },
 };
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class TriggerAndPoll extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -181,20 +177,43 @@ export default class TriggerAndPoll extends React.PureComponent {
     }
 
     trigger = () => {
-        this.props.triggerRequest.do();
+        const {
+            requests: {
+                triggerRequest,
+            },
+        } = this.props;
+        triggerRequest.do();
     }
 
     poll = () => {
-        this.props.pollRequest.do();
+        const {
+            requests: {
+                pollRequest,
+            },
+        } = this.props;
+        pollRequest.do();
     }
 
     fetchData = () => {
-        this.props.dataRequest.do();
+        const {
+            requests: {
+                dataRequest,
+            },
+        } = this.props;
+        dataRequest.do();
     }
 
     render() {
         const { data, completed, invalid } = this.state;
-        const { children, pollRequest, triggerRequest, dataRequest, initialRequest } = this.props;
+        const {
+            children,
+            requests: {
+                pollRequest,
+                triggerRequest,
+                dataRequest,
+                initialRequest,
+            },
+        } = this.props;
 
         return React.cloneElement(
             children, {

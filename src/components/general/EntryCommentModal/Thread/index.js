@@ -7,7 +7,7 @@ import {
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import ListView from '#rscv/List/ListView';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -28,8 +28,6 @@ const propTypes = {
     entryId: PropTypes.number,
     threadId: PropTypes.number,
     className: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    commentCreateRequest: PropTypes.object.isRequired,
     onAdd: PropTypes.func,
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
@@ -37,6 +35,7 @@ const propTypes = {
     currentEdit: PropTypes.string,
     onCurrentEditChange: PropTypes.func,
     setGlobalPristine: PropTypes.func,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -54,10 +53,10 @@ const defaultProps = {
     members: [],
 };
 
-const requests = {
+const requestOptions = {
     commentCreateRequest: {
         url: '/entry-comments/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params: { body } }) => body,
         onSuccess: ({
             response,
@@ -73,7 +72,9 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'entryComment',
+        extras: {
+            schemaName: 'entryComment',
+        },
     },
 };
 
@@ -82,7 +83,7 @@ const childrenKeySelector = c => c.id;
 const emptyObject = {};
 const emptyList = [];
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EntryCommentThread extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -144,7 +145,9 @@ export default class EntryCommentThread extends React.PureComponent {
 
     handleFaramValidationSuccess = (values) => {
         const {
-            commentCreateRequest,
+            requests: {
+                commentCreateRequest,
+            },
             entryId,
             comments: {
                 parent: {
@@ -235,8 +238,8 @@ export default class EntryCommentThread extends React.PureComponent {
                 parent = emptyObject,
                 children = emptyList,
             },
-            commentCreateRequest: {
-                pending,
+            requests: {
+                commentCreateRequest: { pending },
             },
             members,
             onEdit,

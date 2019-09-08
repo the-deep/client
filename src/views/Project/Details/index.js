@@ -11,7 +11,7 @@ import { getNewActiveProjectId } from '#entities/project';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import {
     unsetProjectDetailsAction,
@@ -36,8 +36,8 @@ const propTypes = {
     unsetProject: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     userProjects: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/forbid-prop-types
-    projectDeleteRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -53,10 +53,10 @@ const mapDispatchToProps = dispatch => ({
     unsetProject: params => dispatch(unsetProjectDetailsAction(params)),
 });
 
-const requests = {
+const requestOptions = {
     projectDeleteRequest: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onSuccess: ({ props }) => {
             const {
                 projectId,
@@ -95,7 +95,7 @@ const requests = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -201,7 +201,12 @@ export default class ProjectDetails extends React.PureComponent {
     }
 
     handleProjectDelete = () => {
-        this.props.projectDeleteRequest.do({
+        const {
+            requests: {
+                projectDeleteRequest,
+            },
+        } = this.props;
+        projectDeleteRequest.do({
             projectId: this.props.projectId,
         });
     }
@@ -209,7 +214,9 @@ export default class ProjectDetails extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            projectDeleteRequest,
+            requests: {
+                projectDeleteRequest,
+            },
         } = this.props;
 
         const className = `

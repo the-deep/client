@@ -14,7 +14,7 @@ import { alterResponseErrorToFaramError } from '#rest';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import { pathNames } from '#constants';
@@ -34,8 +34,8 @@ const propTypes = {
     addUserConnector: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     connectorSourcesList: PropTypes.array.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    connectorCreateRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({
@@ -46,10 +46,10 @@ const mapDispatchToProps = dispatch => ({
     addUserConnector: params => dispatch(addUserConnectorAction(params)),
 });
 
-const requests = {
+const requestOptions = {
     connectorCreateRequest: {
         url: '/connectors/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params: { values } }) => values,
         onSuccess: ({ response, params: { handleConnectorAdd } }) => {
             handleConnectorAdd(response);
@@ -63,12 +63,14 @@ const requests = {
         onFatal: ({ params: { handleRequestFatal } }) => {
             handleRequestFatal();
         },
-        schemaName: 'connector',
+        extras: {
+            schemaName: 'connector',
+        },
     },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ConnectorAddForm extends React.PureComponent {
     static propTypes = propTypes;
     static keySelector = s => s.key;
@@ -154,7 +156,11 @@ export default class ConnectorAddForm extends React.PureComponent {
     };
 
     handleValidationSuccess = (values) => {
-        const { connectorCreateRequest } = this.props;
+        const {
+            requests: {
+                connectorCreateRequest,
+            },
+        } = this.props;
 
         connectorCreateRequest.do({
             handleFaramErrors: this.handleFaramErrors,
@@ -179,9 +185,10 @@ export default class ConnectorAddForm extends React.PureComponent {
         } = this.state;
 
         const {
+            // FIXME: shouldn't create new list here
             connectorSourcesList = [],
-            connectorCreateRequest: {
-                pending: dataLoading,
+            requests: {
+                connectorCreateRequest: { pending: dataLoading },
             },
         } = this.props;
 

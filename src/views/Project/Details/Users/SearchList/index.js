@@ -11,7 +11,7 @@ import Message from '#rscv/Message';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import {
     projectMembershipListSelector,
@@ -41,16 +41,16 @@ const propTypes = {
     onItemRemove: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onItemsPull: PropTypes.func.isRequired,
-    userSearchRequest: RequestPropType.isRequired,
     readOnly: PropTypes.bool,
-    setDefaultRequestParams: PropTypes.func,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
     readOnly: false,
     searchItems: [],
-    setDefaultRequestParams: () => {},
 };
 
 const MIN_SEARCH_TEXT_CHARACTERS = 1;
@@ -105,10 +105,9 @@ const SearchValueNotFound = () => {
     );
 };
 
-const requests = {
+const requestOptions = {
     userSearchRequest: {
         url: '/combined/',
-        schemaName: 'userUserGroupSearchResponse',
         onMount: ({ props: { searchInputValue } }) => {
             const searchText = searchInputValue.trim();
             // FIXME: anti-pattern
@@ -122,7 +121,10 @@ const requests = {
             searchInputValue: ({
                 props: {
                     searchInputValue,
-                    userSearchRequest,
+                    // FIXME: this may be a problem
+                    requests: {
+                        userSearchRequest,
+                    },
                 },
                 prevProps: {
                     searchInputValue: oldSearchInputValue,
@@ -168,7 +170,7 @@ const requests = {
                 return false;
             },
         },
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({
             props: {
                 projectId,
@@ -194,6 +196,9 @@ const requests = {
         onFatal: ({ params, error: { errorMessage } }) => {
             params.setSearchError(errorMessage);
         },
+        extras: {
+            schemaName: 'userUserGroupSearchResponse',
+        },
     },
 };
 
@@ -203,7 +208,7 @@ const mapStateToProps = state => ({
 });
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class SearchList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -228,7 +233,12 @@ export default class SearchList extends React.PureComponent {
         // length is 0
         if (searchInputValue && searchInputValue !== newSearchInputValue && !newSearchInputValue) {
             this.setState({ searchError: undefined });
-            this.props.userSearchRequest.abort();
+            const {
+                requests: {
+                    userSearchRequest,
+                },
+            } = this.props;
+            userSearchRequest.abort();
         }
     }
 
@@ -297,7 +307,9 @@ export default class SearchList extends React.PureComponent {
 
         const {
             className: classNameFromProps,
-            userSearchRequest,
+            requests: {
+                userSearchRequest,
+            },
             searchInputValue,
             onSearchInputChange,
             readOnly,

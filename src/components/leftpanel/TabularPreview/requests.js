@@ -1,10 +1,10 @@
-import { requestMethods } from '#request';
+import { methods } from '#request';
 
 export default {
     bookRequest: {
         onMount: true,
         onPropsChanged: ['bookId'],
-        method: requestMethods.GET,
+        method: methods.GET,
         url: ({ props }) => `/tabular-books/${props.bookId}/processed/`,
         options: {
             pollTime: 5000,
@@ -16,7 +16,7 @@ export default {
             if (response.status === 'initial') {
                 triggerExtraction();
                 extraction request: {
-                    method: requestMethods.POST,
+                    method: methods.POST,
                     url: ({ props }) => `/tabular-extraction-trigger/${props.bookId}/`,
                     onSuccess: ({ params: { startPolling } }) => startPolling(),
                 }
@@ -32,12 +32,13 @@ export default {
         },
         onFailure: ({ params: { setInvalid } }) => setInvalid(),
         onFatal: ({ params: { setInvalid } }) => setInvalid(),
+        // extras: {
         // schemaName: 'TabularBookSchema',
+        // },
     },
 
     pollRequest: {
-        schemaName: 'TabularBookPollSchema',
-        method: requestMethods.POST,
+        method: methods.POST,
         url: ({ props }) => `/tabular-books/${props.bookId}/fields/`,
         body: ({ params: { fields } }) => ({ fields }),
         options: {

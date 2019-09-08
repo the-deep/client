@@ -14,7 +14,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import {
     addLeadGroupOfProjectAction,
@@ -47,13 +47,15 @@ const mapDispatchToProps = dispatch => ({
 
 const requests = {
     createLeadGroupRequest: {
-        schemaName: 'leadGroup',
+        extras: {
+            schemaName: 'leadGroup',
+        },
         url: '/lead-groups/',
         // NOTE: only pull what we post
         query: {
             fields: ['id', 'title', 'project', 'version_id'],
         },
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params }) => params.body,
         onSuccess: ({ props, response }) => {
             props.addLeadGroup({

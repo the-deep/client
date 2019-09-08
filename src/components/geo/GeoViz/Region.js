@@ -22,6 +22,7 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+// FIXME: this may break
 const RequestHandler = createRequestHandler(RequestClient);
 
 const emptyObject = {};
@@ -37,8 +38,8 @@ const propTypes = {
     onAdminLevelsFetched: PropTypes.func.isRequired,
     adminLevels: PropTypes.arrayOf(PropTypes.object),
     adminLevelId: PropTypes.string,
-    regionRequest: RequestClient.propType.isRequired,
     frequency: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     showLegend: PropTypes.bool,
 };
 
@@ -51,7 +52,7 @@ const defaultProps = {
 
 const noAuthBody = { $noAuth: true };
 
-const requests = {
+const requestOptions = {
     regionRequest: {
         onMount: true,
         onPropsChanged: ['regionId'],
@@ -137,7 +138,7 @@ LinearLegend.propTypes = {
 };
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Region extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -338,7 +339,9 @@ export default class Region extends React.PureComponent {
         const {
             className,
             adminLevelId,
-            regionRequest,
+            requests: {
+                regionRequest,
+            },
         } = this.props;
 
         const geoJsonKey = adminLevelId && `geoJson-${adminLevelId}`;

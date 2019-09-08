@@ -7,7 +7,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import notify from '#notify';
@@ -15,10 +15,10 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const requests = {
+const requestOptions = {
     changeMembershipRequest: {
         url: ({ props: { member } }) => `/framework-memberships/${member}/`,
-        method: requestMethods.PATCH,
+        method: methods.PATCH,
         body: ({ params: { membership } }) => membership,
         onFailure: () => {
             notify.send({
@@ -45,12 +45,13 @@ const requests = {
         }) => {
             onPatchUser(member, response);
         },
-        schemaName: 'frameworkMembership',
+        extras: {
+            schemaName: 'frameworkMembership',
+        },
     },
-
     removeUserMembershipRequest: {
         url: ({ props: { member } }) => `/framework-memberships/${member}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onFailure: () => {
             notify.send({
                 title: _ts('project.framework.edit', 'afPatch'),
@@ -77,10 +78,6 @@ const requests = {
 };
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    changeMembershipRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    removeUserMembershipRequest: PropTypes.object.isRequired,
     member: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     role: PropTypes.number.isRequired,
     roles: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -90,6 +87,8 @@ const propTypes = {
     }),
     isActiveUser: PropTypes.bool.isRequired,
     canEditMemberships: PropTypes.bool.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -99,28 +98,34 @@ const defaultProps = {
 const rolesKeySelector = d => d.id;
 const rolesLabelSelector = d => d.title;
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EditFrameworkUsersActions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     handleRoleChange = (role) => {
-        const { changeMembershipRequest } = this.props;
+        const {
+            requests: {
+                changeMembershipRequest,
+            },
+        } = this.props;
         changeMembershipRequest.do({ membership: { role } });
     }
 
     handleUserRemove = () => {
-        const { removeUserMembershipRequest } = this.props;
+        const {
+            requests: {
+                removeUserMembershipRequest,
+            },
+        } = this.props;
         removeUserMembershipRequest.do();
     }
 
     render() {
         const {
-            changeMembershipRequest: {
-                pending: changePending,
-            },
-            removeUserMembershipRequest: {
-                pending: removePending,
+            requests: {
+                changeMembershipRequest: { pending: changePending },
+                removeUserMembershipRequest: { pending: removePending },
             },
             role,
             roles,

@@ -9,7 +9,7 @@ import Message from '#rscv/Message';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import {
@@ -30,15 +30,14 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    notificationsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectJoinApproveRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectJoinRejectRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
-    notificationsGetRequest: {},
     projectJoinApproveRequest: {},
     projectJoinRejectRequest: {},
     notifications: [],
@@ -47,10 +46,10 @@ const defaultProps = {
 const NOTIFICATION_STATUS_UNSEEN = 'unseen';
 const NOTIFICATION_STATUS_SEEN = 'seen';
 
-const requests = {
+const requestOptions = {
     notificationsGetRequest: {
         url: '/notifications/',
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
         onPropsChanged: {
             notificationsCount: ({
@@ -144,6 +143,8 @@ const NotificationEmpty = () => (
 );
 
 const notificationKeySelector = n => n.id;
+
+// FIXME: this is probably breaking change
 const requestsToListen = [
     'projectJoinApproveRequest',
     'projectJoinRejectRequest',
@@ -152,7 +153,7 @@ const requestsToListen = [
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests, requestsToListen)
+@RequestClient(requestOptions, requestsToListen)
 export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -170,7 +171,9 @@ export default class Notifications extends React.PureComponent {
         const {
             projectJoinApproveRequest: newProjectJoinApproveRequest,
             projectJoinRejectRequest: newProjectJoinRejectRequest,
-            notificationsGetRequest,
+            requests: {
+                notificationsGetRequest,
+            },
         } = nextProps;
 
         const {
@@ -202,8 +205,8 @@ export default class Notifications extends React.PureComponent {
         const {
             className: classNameFromProps,
             notifications,
-            notificationsGetRequest: {
-                pending: notificationsPending,
+            requests: {
+                notificationsGetRequest: { pending: notificationsPending },
             },
         } = this.props;
 

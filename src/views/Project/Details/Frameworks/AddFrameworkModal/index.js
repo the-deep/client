@@ -16,7 +16,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import Cloak from '#components/general/Cloak';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import notify from '#notify';
@@ -30,10 +30,7 @@ const propTypes = {
     setActiveFramework: PropTypes.func.isRequired,
     closeModal: PropTypes.func,
     isClone: PropTypes.bool,
-    // eslint-disable-next-line react/forbid-prop-types
-    frameworkCreateRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    frameworkCloneRequest: PropTypes.object.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -48,10 +45,10 @@ const frameworkVisibilityOptions = [
     { key: true, label: _ts('project.framework', 'visibilityPrivateLabel') },
 ];
 
-const requests = {
+const requestOptions = {
     frameworkCloneRequest: {
         url: ({ params }) => `/clone-analysis-framework/${params.frameworkId}/`,
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params }) => ({ ...params.values }),
         onSuccess: ({ response, props }) => {
             // Second argument is to know that this is a new framework
@@ -78,11 +75,13 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'analysisFramework',
+        extras: {
+            schemaName: 'analysisFramework',
+        },
     },
     frameworkCreateRequest: {
         url: '/analysis-frameworks/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params }) => ({ ...params.values }),
         onSuccess: ({ response, props }) => {
             // Second argument is to know that this is a new framework
@@ -109,13 +108,15 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'analysisFramework',
+        extras: {
+            schemaName: 'analysisFramework',
+        },
     },
 };
 
 
 // NOTE: This component is used both for cloning and creating new frameworks
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class AddFrameworkModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -158,8 +159,10 @@ export default class AddFrameworkModal extends React.PureComponent {
         const {
             frameworkId,
             isClone,
-            frameworkCreateRequest,
-            frameworkCloneRequest,
+            requests: {
+                frameworkCreateRequest,
+                frameworkCloneRequest,
+            },
         } = this.props;
 
         if (!isClone) {
@@ -180,8 +183,10 @@ export default class AddFrameworkModal extends React.PureComponent {
         const {
             isClone,
             closeModal,
-            frameworkCreateRequest: { pending: addPending },
-            frameworkCloneRequest: { pending: clonePending },
+            requests: {
+                frameworkCreateRequest: { pending: addPending },
+                frameworkCloneRequest: { pending: clonePending },
+            },
         } = this.props;
 
         const {

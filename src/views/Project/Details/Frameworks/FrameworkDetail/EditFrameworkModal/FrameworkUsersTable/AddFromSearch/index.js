@@ -4,7 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import NaiveSearchList from '#components/general/NaiveSearchList';
@@ -37,11 +37,11 @@ const propTypes = {
     frameworkId: PropTypes.number,
     searchText: PropTypes.string,
     onSearchChange: PropTypes.func,
-    listGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    userAddRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    setDefaultRequestParams: PropTypes.func.isRequired,
     // onAddUser adds user to usersTable after successful request to add user
     onAddUser: PropTypes.func.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -53,7 +53,7 @@ const defaultProps = {
 
 const USER_SEARCH_LIMIT = 25;
 
-const requests = {
+const requestOptions = {
     listGetRequest: {
         url: '/users/',
         query: ({
@@ -66,7 +66,7 @@ const requests = {
             members_exclude_framework: frameworkId,
             limit: USER_SEARCH_LIMIT,
         }),
-        method: requestMethods.GET,
+        method: methods.GET,
         onPropsChanged: {
             searchText: ({ props: { searchText } }) => (
                 searchText.length > 0
@@ -94,11 +94,13 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'usersSearchGetResponse',
+        extras: {
+            schemaName: 'usersSearchGetResponse',
+        },
     },
     userAddRequest: {
         url: '/framework-memberships/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params }) => params.membership,
         onSuccess: ({
             response,
@@ -123,13 +125,15 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'frameworkMembership',
+        extras: {
+            schemaName: 'frameworkMembership',
+        },
     },
 };
 
 const listKeySelector = l => l.id;
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class AddFrameworkUserFromSearch extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -161,8 +165,8 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
 
     listRendererParams = (_, data) => {
         const {
-            userAddRequest: {
-                pending,
+            requests: {
+                userAddRequest: { pending },
             },
         } = this.props;
         const {
@@ -183,7 +187,9 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
     handleAddClick = (userId) => {
         const {
             frameworkId,
-            userAddRequest,
+            requests: {
+                userAddRequest,
+            },
         } = this.props;
 
         this.setState({ selectedUser: userId });
@@ -212,8 +218,8 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
         const {
             searchText,
             className: classNameFromProps,
-            listGetRequest: {
-                pending,
+            requests: {
+                listGetRequest: { pending },
             },
         } = this.props;
 
