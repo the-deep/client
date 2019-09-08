@@ -30,7 +30,7 @@ import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
 import {
     RequestClient,
     RequestCoordinator,
-    requestMethods,
+    methods,
 } from '#request';
 
 import Cloak from '#components/general/Cloak';
@@ -96,11 +96,7 @@ const propTypes = {
     leadState: PropTypes.string.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
-    webInfoRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    leadOptionsRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    organizationsRequest: PropTypes.object.isRequired,
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -206,20 +202,22 @@ function mergeLists(foo, bar) {
     );
 }
 
-const requests = {
+const requestOptions = {
     webInfoRequest: {
         url: '/v2/web-info-extract/',
         body: ({ params: { url } }) => ({ url }),
-        method: requestMethods.POST,
+        method: methods.POST,
         onSuccess: ({ params, response }) => {
             params.handleWebInfoFill(response);
         },
-        // schemaName: 'webInfo',
+        // extras: {
+        //     schemaName: 'webInfo',
+        // },
     },
 
     leadOptionsRequest: {
         url: '/lead-options/',
-        method: requestMethods.POST,
+        method: methods.POST,
 
         options: {
             delay: 1000,
@@ -257,7 +255,9 @@ const requests = {
                 return newProject !== oldProject && isDefined(newProject);
             },
         },
-        // schemaName: 'leadOptions',
+        // extras: {
+        //     schemaName: 'leadOptions',
+        // },
     },
 
     organizationsRequest: {
@@ -266,7 +266,7 @@ const requests = {
             search: params.searchText,
             // limit: 30,
         }),
-        method: requestMethods.GET,
+        method: methods.GET,
         onSuccess: ({ params, response }) => {
             params.setSearchedOrganizations(response.results);
         },
@@ -293,7 +293,9 @@ class LeadDetail extends React.PureComponent {
         };
 
         const {
-            leadOptionsRequest,
+            requests: {
+                leadOptionsRequest,
+            },
         } = this.props;
 
         leadOptionsRequest.setDefaultParams({
@@ -333,7 +335,12 @@ class LeadDetail extends React.PureComponent {
         const values = leadFaramValuesSelector(lead);
         const { url } = values;
 
-        this.props.webInfoRequest.do({
+        const {
+            requests: {
+                webInfoRequest,
+            },
+        } = this.props;
+        webInfoRequest.do({
             url,
             handleWebInfoFill: this.handleWebInfoFill,
         });
@@ -530,7 +537,9 @@ class LeadDetail extends React.PureComponent {
 
     handleOrganizationSearchValueChange = (searchText) => {
         const {
-            organizationsRequest,
+            requests: {
+                organizationsRequest,
+            },
         } = this.props;
 
         if (isFalsyString(searchText)) {
@@ -554,22 +563,24 @@ class LeadDetail extends React.PureComponent {
 
             bulkActionDisabled,
 
-            webInfoRequest: {
-                pending: webInfoRequestPending,
-                response: {
-                    sourceRaw,
-                    source,
-                    authorRaw,
-                    author,
-                } = {},
-            } = {},
-            leadOptionsRequest: {
-                pending: leadOptionsPending,
-                response: leadOptions = {},
-            } = {},
-            organizationsRequest: {
-                pending: pendingSearchedOrganizations,
-            } = {},
+            requests: {
+                webInfoRequest: {
+                    pending: webInfoRequestPending,
+                    response: {
+                        sourceRaw,
+                        source,
+                        authorRaw,
+                        author,
+                    } = {},
+                },
+                leadOptionsRequest: {
+                    pending: leadOptionsPending,
+                    response: leadOptions = {},
+                },
+                organizationsRequest: {
+                    pending: pendingSearchedOrganizations,
+                },
+            },
         } = this.props;
         const {
             showAddLeadGroupModal,
@@ -900,7 +911,7 @@ class LeadDetail extends React.PureComponent {
 }
 
 export default RequestCoordinator(
-    RequestClient(requests)(
+    RequestClient(requestOptions)(
         LeadDetail,
     ),
 );

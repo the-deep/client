@@ -22,7 +22,7 @@ import ListView from '#rscv/List/ListView';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import {
@@ -51,7 +51,8 @@ const propTypes = {
     setConnectorSources: PropTypes.func.isRequired,
     connectorsList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     connectorSources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    connectorSourcesGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -71,10 +72,10 @@ const mapDispatchToProps = dispatch => ({
 
 const emptyList = [];
 
-const requests = {
+const requestOptions = {
     connectorsGet: {
         url: '/connectors/',
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
         query: {
             role: ['admin'],
@@ -121,11 +122,13 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'connectors',
+        extras: {
+            schemaName: 'connectors',
+        },
     },
     connectorSourcesGet: {
         url: '/connector-sources/',
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
         onSuccess: ({
             response,
@@ -150,13 +153,15 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'connectorSources',
+        extras: {
+            schemaName: 'connectorSources',
+        },
     },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Connector extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -268,8 +273,8 @@ export default class Connector extends React.PureComponent {
         const {
             connectorId,
             connectorsList,
-            connectorSourcesGet: {
-                pending: connectorSourcesPending,
+            requests: {
+                connectorSourcesGet: { pending: connectorSourcesPending },
             },
             connectorSources,
         } = this.props;

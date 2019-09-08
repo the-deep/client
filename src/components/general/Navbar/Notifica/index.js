@@ -6,7 +6,7 @@ import { _cs } from '@togglecorp/fujs';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import DropdownMenu from '#rsca/DropdownMenu';
@@ -22,24 +22,21 @@ import styles from './styles.scss';
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setNotificationsCount: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    notificationsStatusUpdateRequest: PropTypes.object.isRequired,
-    notificationsCountRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     notificationsCount: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
-    notificationsCountRequest: {},
     className: undefined,
 };
 
-const requests = {
+const requestOptions = {
     notificationsCountRequest: {
         logWarning: false,
         logInfo: false,
         url: '/notifications/count/',
-        method: requestMethods.GET,
+        method: methods.GET,
         onSuccess: ({
             props: { setNotificationsCount },
             response: count,
@@ -48,11 +45,13 @@ const requests = {
             setNotificationsCount({ count });
             startRequestDelayed();
         },
-        schemaName: 'notificationsCountResponse',
+        extras: {
+            schemaName: 'notificationsCountResponse',
+        },
     },
     notificationsStatusUpdateRequest: {
         url: '/notifications/status/',
-        method: requestMethods.PUT,
+        method: methods.PUT,
         body: ({ params: { body } }) => body,
         onSuccess: ({ params: { onSuccess } }) => {
             onSuccess();
@@ -72,7 +71,7 @@ const mapDispatchToProps = dispatch => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Notifica extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -87,7 +86,11 @@ export default class Notifica extends React.PureComponent {
     }
 
     startRequest = () => {
-        const { notificationsCountRequest } = this.props;
+        const {
+            requests: {
+                notificationsCountRequest,
+            },
+        } = this.props;
 
         notificationsCountRequest.do({
             startRequestDelayed: this.startRequestDelayed,
@@ -106,7 +109,11 @@ export default class Notifica extends React.PureComponent {
     }
 
     updateNotificationStatus = (body) => {
-        const { notificationsStatusUpdateRequest } = this.props;
+        const {
+            requests: {
+                notificationsStatusUpdateRequest,
+            },
+        } = this.props;
         notificationsStatusUpdateRequest.do({
             body,
             onSuccess: this.handleNotificationsStatusUpdateSuccess,

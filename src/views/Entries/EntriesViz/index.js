@@ -12,24 +12,22 @@ import {
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 
-import requests from './requests';
+import requestOptions from './requests';
 import styles from './styles.scss';
 
 
 const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz/';
 
-const emptyObject = {};
-
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired, // used by request
     // eslint-disable-next-line react/forbid-prop-types
-    entriesVizGetRequest: PropTypes.object.isRequired,
+    requests: PropTypes.object.isRequired,
     setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EntriesViz extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -50,10 +48,12 @@ export default class EntriesViz extends React.PureComponent {
 
     render() {
         const {
-            entriesVizGetRequest: {
-                pending,
-                responseError,
-            } = emptyObject,
+            requests: {
+                entriesVizGetRequest: {
+                    pending,
+                    responseError,
+                },
+            },
         } = this.props;
         const { dataUrl } = this.state;
 

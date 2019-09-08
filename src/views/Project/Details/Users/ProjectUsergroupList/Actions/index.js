@@ -9,7 +9,7 @@ import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     RequestClient,
-    requestMethods,
+    methods,
     notifyOnFailure,
 } from '#request';
 import {
@@ -22,35 +22,33 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool,
-});
-
 const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.number,
         title: PropTypes.string,
         id: PropTypes.number,
     }).isRequired,
+
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectRoleList: PropTypes.arrayOf(
         PropTypes.shape({
             title: PropTypes.string,
         }),
     ).isRequired,
-    removeUsergroupMembershipRequest: RequestPropType.isRequired,
-    changeUserGroupRoleRequest: RequestPropType.isRequired,
+
     readOnly: PropTypes.bool,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     readOnly: false,
 };
 
-const requests = {
+const requestOptions = {
     changeUserGroupRoleRequest: {
         url: ({ params: { usergroupMembership } }) => `/project-usergroups/${usergroupMembership.id}/`,
-        method: requestMethods.PATCH,
+        method: methods.PATCH,
         body: ({ params: { usergroupMembership } }) => usergroupMembership,
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
@@ -69,7 +67,7 @@ const requests = {
     },
     removeUsergroupMembershipRequest: {
         url: ({ params: { membershipId } }) => `/project-usergroups/${membershipId}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             params: { membershipId },
@@ -101,7 +99,7 @@ const projectRoleLabelSelector = d => d.title;
 const emptyObject = {};
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -124,7 +122,9 @@ export default class Actions extends React.PureComponent {
             row: {
                 id,
             },
-            changeUserGroupRoleRequest,
+            requests: {
+                changeUserGroupRoleRequest,
+            },
         } = this.props;
 
         changeUserGroupRoleRequest.do({
@@ -140,7 +140,9 @@ export default class Actions extends React.PureComponent {
             row: {
                 id: membershipId,
             },
-            removeUsergroupMembershipRequest,
+            requests: {
+                removeUsergroupMembershipRequest,
+            },
         } = this.props;
 
         removeUsergroupMembershipRequest.do({
@@ -154,9 +156,9 @@ export default class Actions extends React.PureComponent {
             projectRoleList,
             row,
             activeUserRole = emptyObject,
-            removeUsergroupMembershipRequest: {
-                pending = false,
-            } = {},
+            requests: {
+                removeUsergroupMembershipRequest: { pending = false },
+            },
         } = this.props;
 
         const {

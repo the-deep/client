@@ -28,17 +28,13 @@ import {
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    addOrganizationRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    organizationTypesRequest: PropTypes.object.isRequired,
 
     closeModal: PropTypes.func.isRequired,
 
@@ -48,6 +44,7 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     organizationTypeList: PropTypes.array,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -61,15 +58,15 @@ const idSelector = item => item.id;
 
 const titleSelector = item => item.title;
 
-const requests = {
+const requestOptions = {
     organizationTypesRequest: {
         url: '/organization-types/',
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: ({ props }) => props.loadOrganizationList,
     },
     addOrganizationRequest: {
         url: '/organizations/',
-        method: requestMethods.POST,
+        method: methods.POST,
         onMount: false,
         body: ({ params: { body } }) => body,
         onSuccess: ({
@@ -94,7 +91,7 @@ const requests = {
 };
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class AddOrganizationModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -134,7 +131,11 @@ export default class AddOrganizationModal extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (values) => {
-        const { addOrganizationRequest } = this.props;
+        const {
+            requests: {
+                addOrganizationRequest,
+            },
+        } = this.props;
         // NOTE: adding title as long name
         const newValues = {
             ...values,
@@ -204,15 +205,15 @@ export default class AddOrganizationModal extends React.PureComponent {
         const {
             closeModal,
             organizationTypeList: organizationTypeListFromProps,
-            addOrganizationRequest: {
-                pending: pendingAddOrganizationRequest,
+            requests: {
+                addOrganizationRequest: { pending: pendingAddOrganizationRequest },
+                organizationTypesRequest: {
+                    pending: pendingOrganizationTypesRequest,
+                    response: {
+                        results: organizationTypeListFromResponse,
+                    } = {},
+                },
             },
-            organizationTypesRequest: {
-                pending: pendingOrganizationTypesRequest,
-                response: {
-                    results: organizationTypeListFromResponse,
-                } = {},
-            } = {},
             loadOrganizationList,
             title,
         } = this.props;

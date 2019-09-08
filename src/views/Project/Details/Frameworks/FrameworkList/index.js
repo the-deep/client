@@ -18,7 +18,7 @@ import modalize from '#rscg/Modalize';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import _ts from '#ts';
@@ -43,8 +43,8 @@ const propTypes = {
         activity: PropTypes.string,
         relatedToMe: PropTypes.bool,
     }).isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    frameworkListGetRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -64,10 +64,10 @@ const fameworkActivityOptions = [
 const getFrameworkKey = framework => framework.id;
 
 
-const requests = {
+const requestOptions = {
     frameworkListGetRequest: {
         url: '/analysis-frameworks/',
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({ props: { filterValues } }) => ({
             ...filterValues,
             fields: ['id', 'title', 'is_private'],
@@ -82,11 +82,13 @@ const requests = {
             const { results } = response;
             setFrameworkList({ analysisFrameworks: results });
         },
-        schemaName: 'analysisFrameworkTitleList',
+        extras: {
+            schemaName: 'analysisFrameworkTitleList',
+        },
     },
 };
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class FrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -124,8 +126,8 @@ export default class FrameworkList extends React.PureComponent {
             setActiveFramework,
             filterValues,
             frameworkList,
-            frameworkListGetRequest: {
-                pending,
+            requests: {
+                frameworkListGetRequest: { pending },
             },
             onFilterChange,
         } = this.props;

@@ -22,7 +22,7 @@ import RegionMap from '#components/geo/RegionMap';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -32,10 +32,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectDashboard: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    projectRequest: PropTypes.shape({
-        pending: PropTypes.bool,
-        response: PropTypes.object,
-    }).isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -53,18 +50,20 @@ const mapDispatchToProps = dispatch => ({
 
 const emptyList = [];
 
-const requests = {
+const requestOptions = {
     projectRequest: {
         onMount: true,
-        schemaName: 'projectDashboardGetResponse',
         onPropsChanged: ['projectId'],
-        method: requestMethods.GET,
+        method: methods.GET,
         url: ({ props }) => `/projects-stat/${props.projectId}/dashboard/`,
         onSuccess: ({ response, props }) => {
             props.setProjectDashboardDetails({
                 project: response,
                 projectId: props.projectId,
             });
+        },
+        extras: {
+            schemaName: 'projectDashboardGetResponse',
         },
     },
 };
@@ -109,7 +108,7 @@ UserItem.propTypes = {
 
 @RequestCoordinator
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectDashboard extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -160,11 +159,13 @@ export default class ProjectDashboard extends React.PureComponent {
 
     sourcerParams = (key, user) => {
         const {
-            projectRequest: {
-                response: {
-                    numberOfLeads,
+            requests: {
+                projectRequest: {
+                    response: {
+                        numberOfLeads,
+                    } = {},
                 } = {},
-            } = {},
+            },
         } = this.props;
 
         return ({
@@ -175,11 +176,13 @@ export default class ProjectDashboard extends React.PureComponent {
 
     taggerParams = (key, user) => {
         const {
-            projectRequest: {
-                response: {
-                    numberOfEntries,
+            requests: {
+                projectRequest: {
+                    response: {
+                        numberOfEntries,
+                    } = {},
                 } = {},
-            } = {},
+            },
         } = this.props;
 
         return ({
@@ -190,11 +193,13 @@ export default class ProjectDashboard extends React.PureComponent {
 
     renderLeadsActivity = () => {
         const {
-            projectRequest: {
-                response: {
-                    leadsActivity = emptyList,
+            requests: {
+                projectRequest: {
+                    response: {
+                        leadsActivity = emptyList,
+                    } = {},
                 } = {},
-            } = {},
+            },
         } = this.props;
 
         return (
@@ -217,11 +222,13 @@ export default class ProjectDashboard extends React.PureComponent {
 
     renderEntriesActivity = () => {
         const {
-            projectRequest: {
-                response: {
-                    entriesActivity = emptyList,
+            requests: {
+                projectRequest: {
+                    response: {
+                        entriesActivity = emptyList,
+                    } = {},
                 } = {},
-            } = {},
+            },
         } = this.props;
 
         return (
@@ -433,8 +440,8 @@ export default class ProjectDashboard extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            projectRequest: {
-                pending: projectRequestPending,
+            requests: {
+                projectRequest: { pending: projectRequestPending },
             },
         } = this.props;
 

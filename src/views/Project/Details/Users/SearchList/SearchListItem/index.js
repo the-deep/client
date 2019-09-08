@@ -10,7 +10,7 @@ import UserAddItem from '#components/general/UserAddItem';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
     notifyOnFailure,
 } from '#request';
 import {
@@ -38,14 +38,13 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     onItemRemove: PropTypes.func.isRequired,
     usergroupTitle: PropTypes.string,
-    userMembershipRequest: RequestPropType.isRequired,
-    usergroupMembershipRequest: RequestPropType.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const requests = {
+const requestOptions = {
     userMembershipRequest: {
         url: '/project-memberships/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({
             params: { membership },
         }) => membership,
@@ -73,7 +72,7 @@ const requests = {
 
     usergroupMembershipRequest: {
         url: '/project-usergroups/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params: { membership } }) => membership,
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
@@ -113,7 +112,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(undefined, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class SearchListItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -122,7 +121,9 @@ export default class SearchListItem extends React.PureComponent {
         const {
             projectId,
             memberId,
-            userMembershipRequest,
+            requests: {
+                userMembershipRequest,
+            },
         } = this.props;
 
         const membership = {
@@ -137,7 +138,9 @@ export default class SearchListItem extends React.PureComponent {
         const {
             projectId,
             memberId,
-            usergroupMembershipRequest,
+            requests: {
+                usergroupMembershipRequest,
+            },
         } = this.props;
 
         const membership = {
@@ -157,8 +160,10 @@ export default class SearchListItem extends React.PureComponent {
             firstName,
             displayPicture,
             usergroupTitle,
-            usergroupMembershipRequest,
-            userMembershipRequest,
+            requests: {
+                usergroupMembershipRequest,
+                userMembershipRequest,
+            },
             className: classNameFromProps,
         } = this.props;
 

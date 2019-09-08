@@ -7,7 +7,7 @@ import Icon from '#rscg/Icon';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import { adminEndpoint } from '#config/rest';
 import {
@@ -26,9 +26,8 @@ const propTypes = {
     currentPath: PropTypes.string.isRequired,
     pagesInfo: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-    // Requests Props
     // eslint-disable-next-line react/forbid-prop-types
-    helpLinkRequest: PropTypes.object.isRequired,
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -43,16 +42,18 @@ const mapDispatchToProps = dispatch => ({
     setPagesInfo: params => dispatch(setPagesInfoAction(params)),
 });
 
-const requests = {
+const requestOptions = {
     helpLinkRequest: {
-        schemaName: 'pageInfoRequest',
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
         url: '/pages/',
         onSuccess: ({ props: { setPagesInfo }, response }) => {
             setPagesInfo({
                 pagesInfo: response.results,
             });
+        },
+        extras: {
+            schemaName: 'pageInfoRequest',
         },
     },
 };
@@ -66,7 +67,7 @@ const createAddLink = currentPath =>
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class HelpLink extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -77,7 +78,9 @@ export default class HelpLink extends React.PureComponent {
         const {
             className: classNameFromProps,
             currentPath,
-            helpLinkRequest,
+            requests: {
+                helpLinkRequest,
+            },
             pagesInfo,
         } = this.props;
 
