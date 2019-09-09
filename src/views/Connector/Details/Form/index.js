@@ -2,6 +2,13 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import Faram, { FaramGroup, requiredCondition, urlCondition } from '@togglecorp/faram';
+import {
+    _cs,
+    compareString,
+    compareDate,
+    isFalsy,
+    isValidUrl,
+} from '@togglecorp/fujs';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -18,12 +25,6 @@ import NumberInput from '#rsci/NumberInput';
 import FormattedDate from '#rscv/FormattedDate';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import {
-    compareString,
-    compareDate,
-    isFalsy,
-    isValidUrl,
-} from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 import {
@@ -105,6 +106,7 @@ const emptyList = [];
 const xmlConnectorTypes = [
     'rss-feed',
     'atom-feed',
+    'emm',
 ];
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -288,11 +290,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 },
             },
         ];
+
         this.usersOptions = this.getOptionsForUser(users, faramValues.users);
         this.projectsOptions = this.getOptionsForProjects(userProjects, faramValues.projects);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const {
             activeUser,
             connectorSource: { key },
@@ -300,6 +303,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         } = this.props;
 
         this.startUsersListGetRequest();
+
         if (activeUser) {
             this.startUserProjectsGetRequest(this.props.activeUser.userId);
         }
@@ -779,7 +783,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         return (
             <Faram
-                className={`${styles.connectorDetailsForm} ${className}`}
+                className={_cs(styles.connectorDetailsForm, className)}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}
