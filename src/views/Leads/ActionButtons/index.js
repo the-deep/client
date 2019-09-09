@@ -39,6 +39,8 @@ export default class ActionButtons extends React.PureComponent {
 
     static shouldHideLeadDelete = ({ leadPermissions }) => !leadPermissions.delete
     static shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.modify
+    static shouldHideLeadCopy = ({ leadPermissions }) =>
+        !leadPermissions.modify || !leadPermissions.create
 
 
     static shouldHideEntryAdd = ({ hasAnalysisFramework, entryPermissions }) => (
@@ -158,13 +160,18 @@ export default class ActionButtons extends React.PureComponent {
                     />
                 </div>
                 <div className={styles.actionGroup}>
-                    <ModalButton
-                        tabIndex="-1"
-                        title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
-                        transparent
-                        iconName="openLink"
-                        modal={
-                            <LeadCopyModal leads={leadIds} />
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadCopy}
+                        render={
+                            <ModalButton
+                                tabIndex="-1"
+                                title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                                transparent
+                                iconName="openLink"
+                                modal={
+                                    <LeadCopyModal leads={leadIds} />
+                                }
+                            />
                         }
                     />
                     <Button

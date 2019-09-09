@@ -71,6 +71,9 @@ export default class GridItem extends React.PureComponent {
         !hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify)
     )
 
+    static shouldHideLeadCopy = ({ leadPermissions }) =>
+        !leadPermissions.modify || !leadPermissions.create
+
     get links() {
         const { activeProject, lead } = this.props;
         return {
@@ -220,13 +223,18 @@ export default class GridItem extends React.PureComponent {
                         transparent
                         iconName="search"
                     />
-                    <ModalButton
-                        tabIndex="-1"
-                        title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
-                        transparent
-                        iconName="openLink"
-                        modal={
-                            <LeadCopyModal leads={leadIds} />
+                    <Cloak
+                        hide={GridItem.shouldHideLeadCopy}
+                        render={
+                            <ModalButton
+                                tabIndex="-1"
+                                title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                                transparent
+                                iconName="openLink"
+                                modal={
+                                    <LeadCopyModal leads={leadIds} />
+                                }
+                            />
                         }
                     />
                     <Link
