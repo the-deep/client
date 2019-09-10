@@ -141,8 +141,12 @@ export default class GeoModal extends React.PureComponent {
         };
     });
 
-    getFilteredValues = (value, options) => (
+    getFilteredOutValues = (value, options) => (
         value.filter(o => !options[o])
+    )
+
+    getFilteredValues = (value, options) => (
+        value.filter(o => !!options[o])
     )
 
     calcValueState = ({ value: originalValue, geoOptionsById }, selectedRegion) => {
@@ -196,7 +200,10 @@ export default class GeoModal extends React.PureComponent {
             selectedAdminLevel,
         );
 
-        const filteredValues = this.getFilteredValues(value, optionsForSelectedAdminLevelsMap);
+        const filteredValues = this.getFilteredOutValues(
+            value,
+            optionsForSelectedAdminLevelsMap,
+        );
 
         this.handleRegionValueChange([
             ...regionValue,
@@ -286,7 +293,10 @@ export default class GeoModal extends React.PureComponent {
             selectedAdminLevel,
         );
 
-        const filteredValues = this.getFilteredValues(value, optionsForSelectedAdminLevelsMap);
+        const filteredValues = this.getFilteredValues(
+            value,
+            optionsForSelectedAdminLevelsMap,
+        );
 
         const geoModalClassName = _cs(
             styles.geoModal,
