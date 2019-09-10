@@ -1002,7 +1002,11 @@
         "-12333226": "{userName} replied to a {comment} you are following in project {project}.",
         "-32902609": "{userName} modified a {comment} you are following in project {project}.",
         "-63285888": "{userName} modified a reply in a {comment} you are following in project {project}.",
-        "-74972973": "{userName} resolved a {comment} you were following in project {project}."
+        "-74972973": "{userName} resolved a {comment} you were following in project {project}.",
+        "-28028216": "Resolved",
+        "-93432291": "Comment Assigned To",
+        "-95143967": "Comment created by",
+        "-84296296": "Comment status"
     },
     "links": {
         "browserExtension": {
@@ -1430,7 +1434,14 @@
             "multiselectRangePlaceholder": 14,
             "timePlaceholder": 18,
             "numberOfEntriesTooltip": 15011,
-            "includeSubRegionsTitle": -11188842
+            "includeSubRegionsTitle": -11188842,
+            "resolvedCommentLabel": -28028216,
+            "unresolvedCommentLabel": -57442233,
+            "commentAssignedToFilterLabel": -93432291,
+            "commentCreatedByFilterLabel": -95143967,
+            "commentCreatedByPlaceholder": 17,
+            "commentStatusOptionsFilterLabel": -84296296,
+            "commentStatusPlaceholder": 8
         },
         "export": {
             "headerExport": 600,

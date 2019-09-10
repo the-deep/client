@@ -5,14 +5,13 @@ import { connect } from 'react-redux';
 import { FgRestBuilder } from '#rsu/rest';
 import { doesObjectHaveNoData } from '@togglecorp/fujs';
 import SearchInput from '#rsci/SearchInput';
+import SelectInput from '#rsci/SelectInput';
 import DateFilter from '#rsci/DateFilter';
 import TimeFilter from '#rsci/TimeFilter';
 import RangeFilter from '#rsci/RangeFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-
-import GeoInput from '#components/input/GeoInput/';
 
 import {
     activeProjectIdFromStateSelector,
@@ -28,8 +27,6 @@ import {
     createUrlForEntryFilterOptions,
     createParamsForGet,
 } from '#rest';
-import schema from '#schema';
-import notify from '#notify';
 import _ts from '#ts';
 
 import GeoFilter from './GeoFilter';
@@ -72,6 +69,17 @@ const defaultProps = {
 };
 
 const emptyList = [];
+
+const commentStatusOptions = [
+    {
+        key: 'resolved',
+        value: _ts('entries', 'resolvedCommentLabel'),
+    },
+    {
+        key: 'unresolved',
+        value: _ts('entries', 'unresolvedCommentLabel'),
+    },
+];
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class FilterEntriesForm extends React.PureComponent {
@@ -276,6 +284,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             pristine,
             filters,
         } = this.state;
+
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         const { createdBy } = entryFilterOptions;
@@ -311,6 +320,42 @@ export default class FilterEntriesForm extends React.PureComponent {
                     value={filters.created_at}
                     disabled={pending}
                     placeholder={_ts('entries', 'createdAtPlaceholder')}
+                />
+                <MultiSelectInput
+                    className={styles.entriesFilter}
+                    keySelector={FilterEntriesForm.optionKeySelector}
+                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    options={createdBy}
+                    label={_ts('entries', 'commentAssignedToFilterLabel')}
+                    onChange={(value) => { this.handleFilterChange('comment_assignee', value); }}
+                    showHintAndError={false}
+                    value={filters.comment_assignee || emptyList}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'createdByPlaceholder')}
+                />
+                <MultiSelectInput
+                    className={styles.entriesFilter}
+                    keySelector={FilterEntriesForm.optionKeySelector}
+                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    options={createdBy}
+                    label={_ts('entries', 'commentCreatedByFilterLabel')}
+                    onChange={(value) => { this.handleFilterChange('comment_created_by', value); }}
+                    showHintAndError={false}
+                    value={filters.comment_created_by || emptyList}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
+                />
+                <SelectInput
+                    className={styles.entriesFilter}
+                    keySelector={FilterEntriesForm.optionKeySelector}
+                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    options={commentStatusOptions}
+                    label={_ts('entries', 'commentStatusOptionsFilterLabel')}
+                    onChange={(value) => { this.handleFilterChange('comment_status', value); }}
+                    showHintAndError={false}
+                    value={filters.comment_status || emptyList}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'commentStatusPlaceholder')}
                 />
                 { this.props.filters.map(this.renderFilter) }
                 {
