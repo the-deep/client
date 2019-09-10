@@ -12,6 +12,7 @@
     .header {
         display: flex;
         justify-content: flex-end;
+        width: 100%;
 
         .button {
             padding: var(--spacing-extra-small) var(--spacing-small);

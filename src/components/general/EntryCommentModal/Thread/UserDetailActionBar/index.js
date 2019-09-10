@@ -18,6 +18,25 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
+const ButtonWrapper = (props) => {
+    const {
+        closeModal, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+        ...otherProps
+    } = props;
+
+    return (
+        <Button {...otherProps} />
+    );
+};
+
+ButtonWrapper.propTypes = {
+    closeModal: PropTypes.func,
+};
+
+ButtonWrapper.defaultProps = {
+    closeModal: undefined,
+};
+
 const propTypes = {
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
@@ -42,7 +61,7 @@ export default class UserDetailActionBar extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getSortedHistory = memoize(history => (
-        history.sort((a, b) => compareDate(b.createdAt, a.createdAt))
+        [...history].sort((a, b) => compareDate(b.createdAt, a.createdAt))
     ));
 
     render() {
@@ -104,25 +123,25 @@ export default class UserDetailActionBar extends React.PureComponent {
                             closeOnClick
                         >
                             {isParent && (
-                                <Button
+                                <ButtonWrapper
                                     className={styles.button}
                                     onClick={onResolveClick}
                                 >
                                     {_ts('entryComments', 'resolveLabel')}
-                                </Button>
+                                </ButtonWrapper>
                             )}
-                            <Button
+                            <ButtonWrapper
                                 className={styles.button}
                                 onClick={onEditClick}
                             >
                                 {_ts('entryComments', 'editLabel')}
-                            </Button>
-                            <Button
+                            </ButtonWrapper>
+                            <ButtonWrapper
                                 className={styles.button}
                                 onClick={onDeleteClick}
                             >
                                 {_ts('entryComments', 'deleteLabel')}
-                            </Button>
+                            </ButtonWrapper>
                         </DropdownMenu>
                     </div>
                 )}

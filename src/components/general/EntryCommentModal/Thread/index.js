@@ -64,6 +64,9 @@ const requests = {
 
 const childrenKeySelector = c => c.id;
 
+const emptyObject = {};
+const emptyList = [];
+
 @RequestClient(requests)
 export default class EntryCommentThread extends React.PureComponent {
     static propTypes = propTypes;
@@ -116,7 +119,7 @@ export default class EntryCommentThread extends React.PureComponent {
         });
     }
 
-    handleFaramValidationSuccess = (_, values) => {
+    handleFaramValidationSuccess = (values) => {
         const {
             commentCreateRequest,
             entryId,
@@ -174,8 +177,8 @@ export default class EntryCommentThread extends React.PureComponent {
         const {
             className,
             comments: {
-                parent = {},
-                children = [],
+                parent = emptyObject,
+                children = emptyList,
             },
             commentCreateRequest: {
                 pending,

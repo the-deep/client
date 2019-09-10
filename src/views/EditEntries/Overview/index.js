@@ -105,8 +105,8 @@ export default class Overview extends React.PureComponent {
             leadId,
             entries,
         } = this.props;
-        const entry = entries.find(e => String((e.data || emptyObject).id) === entryIdFromRoute);
-        const entryLocalId = entry && (entry.localData || emptyObject).id;
+        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
+        const entryLocalId = entryAccessor.key(entry);
 
         if (entryLocalId) {
             setSelectedEntryKey({
@@ -236,7 +236,7 @@ export default class Overview extends React.PureComponent {
                             <ModalButton
                                 iconName="chat"
                                 className={styles.entryCommentButton}
-                                disabled={isFalsy(entry && entry.data.id)}
+                                disabled={isFalsy(entryAccessor.serverId(entry))}
                                 modal={
                                     <EntryCommentModal
                                         entryServerId={entry && entry.data.id}

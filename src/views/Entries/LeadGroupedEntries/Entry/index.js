@@ -148,7 +148,7 @@ export default class Entry extends React.PureComponent {
                 value={attributes}
                 schema={emptySchema}
             >
-                <header className={_cs('widget-container-header', styles.header)}>
+                <header className={_cs('entry-container-header', styles.header)}>
                     <ModalButton
                         iconName="chat"
                         className={styles.button}

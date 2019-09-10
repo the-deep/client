@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Faram, { requiredCondition } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import InternalGallery from '#components/viewer/InternalGallery';
 import SelectInput from '#rsci/SelectInput';
@@ -86,6 +87,7 @@ export default class UserEdit extends React.PureComponent {
         this.emailOptOutsOptions = [
             { key: 'news_and_updates', info: _ts('userProfile', 'newsAndUpdatesInfo') },
             { key: 'join_requests', info: _ts('userProfile', 'joinRequestsInfo') },
+            { key: 'email_comment', info: _ts('userProfile', 'entryCommentsInfo') },
         ];
 
         this.state = {
@@ -207,7 +209,7 @@ export default class UserEdit extends React.PureComponent {
                     )
                 }
                 <ImageInput
-                    className={`${styles.galleryImageSelect} ${styles.displayPicture}`}
+                    className={_cs(styles.galleryImageSelect, styles.displayPicture)}
                     showPreview={!showGalleryImage}
                     showStatus={false}
                     onChange={this.handleImageInputChange}
@@ -234,12 +236,11 @@ export default class UserEdit extends React.PureComponent {
                     keySelector={UserEdit.languageKeySelector}
                     labelSelector={UserEdit.languageLabelSelector}
                     options={availableLanguages}
-                    // FIXME: Use strings
-                    label="Language"
-                    // FIXME: Use strings
-                    placeholder="Default"
+                    label={_ts('userProfile', 'languageLabel')}
+                    placeholder={_ts('userProfile', 'languagePlaceholder')}
                 />
                 <ListSelection
+                    listClassName={styles.listSelection}
                     faramElementName="emailOptOuts"
                     keySelector={UserEdit.emailOptOutsKeySelector}
                     labelSelector={UserEdit.emailOptOutsLabelSelector}

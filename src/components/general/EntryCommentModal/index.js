@@ -96,6 +96,9 @@ const requests = {
 
 const threadsKeySelector = d => d.key;
 
+const emptyObject = {};
+const emptyList = [];
+
 @connect(mapStateToProps)
 @RequestCoordinator
 @RequestClient(requests)
@@ -208,7 +211,7 @@ export default class EntryCommentModal extends React.PureComponent {
         });
     }
 
-    handleFaramValidationSuccess = (_, values) => {
+    handleFaramValidationSuccess = (values) => {
         const {
             entryServerId,
             commentCreateRequest,
@@ -283,7 +286,12 @@ export default class EntryCommentModal extends React.PureComponent {
             comment,
         ];
 
-        this.setState({ comments: newComments });
+        this.setState({
+            comments: newComments,
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
     }
 
     handleCurrentEditChange = (currentEdit) => {
@@ -334,8 +342,8 @@ export default class EntryCommentModal extends React.PureComponent {
             },
             projectMembersGet: {
                 response: {
-                    results: members = [],
-                } = {},
+                    results: members = emptyList,
+                } = emptyObject,
                 pending: membersPending,
             },
         } = this.props;

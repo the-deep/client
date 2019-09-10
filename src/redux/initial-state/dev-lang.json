@@ -1006,7 +1006,9 @@
         "-28028216": "Resolved",
         "-93432291": "Comment Assigned To",
         "-95143967": "Comment created by",
-        "-84296296": "Comment status"
+        "-84296296": "Comment status",
+        "-76163429": "I want to receive updates on entry comments by email",
+        "-51206611": "Language"
     },
     "links": {
         "browserExtension": {
@@ -1522,7 +1524,6 @@
             "emptyLinkMessage": -52524002
         },
         "editAssessment.metadata": {
-            "additionalDocumentsTitle": 9021,
             "executiveSummaryTitle": 9022,
             "assessmentDatabaseTitle": 9023,
             "questionnaireTitle": 9024,
@@ -2191,7 +2192,10 @@
             "userGroupPostFatal": 204,
             "userPatchFatal": -71533605,
             "userProfileTitle": 5566,
-            "logoUploadFailureMessage": -57281759
+            "logoUploadFailureMessage": -57281759,
+            "entryCommentsInfo": -76163429,
+            "languageLabel": -51206611,
+            "languagePlaceholder": -82545000
         },
         "notifications": {
             "notificationHeaderTitle": 1929,
