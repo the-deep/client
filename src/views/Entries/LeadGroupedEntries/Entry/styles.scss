@@ -1,5 +1,23 @@
 @import '~base-scss/widget';
 
+.entry-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--spacing-small) 0 0 0;
+    width: 100%;
+
+    .button {
+        display: flex;
+        position: sticky;
+        top: var(--spacing-small);
+        right: var(--spacing-medium);
+        padding: var(--spacing-extra-small) var(--spacing-small);
+
+        .comment-count {
+            padding-left: var(--spacing-small);
+        }
+    }
+}
 .entry {
     padding: var(--spacing-small);
     min-width: 100%;
@@ -9,19 +27,9 @@
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
 
-    .header {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-
-        .button {
-            padding: var(--spacing-extra-small) var(--spacing-small);
-        }
-    }
 
     .widget {
         @extend %widget;
-        // border: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-extra-small);
 
         .header {
@@ -42,3 +50,4 @@
         }
     }
 }
+

@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
+import { connect } from 'react-redux';
 import {
     _cs,
     isFalsy,
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
+import { entriesSetEntryCommentsCountAction } from '#redux';
 import modalize from '#rscg/Modalize';
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 
@@ -31,11 +34,20 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     widgets: PropTypes.array.isRequired,
+    projectId: PropTypes.number,
+    leadId: PropTypes.number,
+    setEntryCommentsCount: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    projectId: undefined,
+    leadId: undefined,
     className: '',
 };
+
+const mapDispatchToProps = dispatch => ({
+    setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
+});
 
 const widgetLayoutSelector = (widget) => {
     const {
@@ -50,6 +62,7 @@ const widgetKeySelector = widget => widget.key;
 
 const emptySchema = { fields: {} };
 
+@connect(null, mapDispatchToProps)
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -59,6 +72,22 @@ export default class Entry extends React.PureComponent {
             w => hasWidgetViewComponent(w.widgetId, w.properties.addedFrom),
         )
     ))
+
+    handleCommentsCountChange = (unresolvedCommentCount, resolvedCommentCount, entryId) => {
+        const {
+            leadId,
+            projectId,
+            setEntryCommentsCount,
+        } = this.props;
+
+        const entry = {
+            unresolvedCommentCount,
+            resolvedCommentCount,
+            entryId,
+        };
+
+        setEntryCommentsCount({ entry, projectId, leadId });
+    }
 
     renderWidgetHeader = (widget) => {
         const { title } = widget;
@@ -137,40 +166,49 @@ export default class Entry extends React.PureComponent {
             entry: {
                 id: entryId,
                 attributes,
+                unresolvedCommentCount: commentCount,
             },
         } = this.props;
 
         const filteredWidgets = this.getWidgets(widgets);
 
         return (
-            <Faram
-                className={_cs(classNameFromProps, styles.entry)}
-                value={attributes}
-                schema={emptySchema}
-            >
-                <header className={_cs('entry-container-header', styles.header)}>
+            <React.Fragment>
+                <header className={_cs('entry-container-header', styles.entryHeader)}>
                     <ModalButton
-                        iconName="chat"
                         className={styles.button}
-                        transparent
                         disabled={isFalsy(entryId)}
                         modal={
                             <EntryCommentModal
                                 entryServerId={entryId}
+                                onCommentsCountChange={this.handleCommentsCountChange}
                             />
                         }
-                    />
+                    >
+                        <Icon name="chat" />
+                        {commentCount > 0 &&
+                            <div className={styles.commentCount}>
+                                {commentCount}
+                            </div>
+                        }
+                    </ModalButton>
                 </header>
-                <GridViewLayout
+                <Faram
                     className={_cs(classNameFromProps, styles.entry)}
-                    data={filteredWidgets}
-                    itemClassName={styles.widget}
-                    itemContentModifier={this.renderWidgetContent}
-                    itemHeaderModifier={this.renderWidgetHeader}
-                    keySelector={widgetKeySelector}
-                    layoutSelector={widgetLayoutSelector}
-                />
-            </Faram>
+                    value={attributes}
+                    schema={emptySchema}
+                >
+                    <GridViewLayout
+                        className={_cs(classNameFromProps, styles.entry)}
+                        data={filteredWidgets}
+                        itemClassName={styles.widget}
+                        itemContentModifier={this.renderWidgetContent}
+                        itemHeaderModifier={this.renderWidgetHeader}
+                        keySelector={widgetKeySelector}
+                        layoutSelector={widgetLayoutSelector}
+                    />
+                </Faram>
+            </React.Fragment>
         );
     }
 }

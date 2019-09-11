@@ -47,10 +47,22 @@ export default class LeadGroupedEntries extends React.PureComponent {
         !entryPermissions.modify && !entryPermissions.create && !entryPermissions.delete
     )
 
-    getEntryParams = (_, entry) => ({
-        entry,
-        widgets: this.props.widgets,
-    });
+    getEntryParams = (_, entry) => {
+        const {
+            projectId,
+            widgets,
+            lead: {
+                id: leadId,
+            },
+        } = this.props;
+
+        return ({
+            entry,
+            leadId,
+            projectId,
+            widgets,
+        });
+    }
 
     render() {
         const { className: classNameFromProps } = this.props;

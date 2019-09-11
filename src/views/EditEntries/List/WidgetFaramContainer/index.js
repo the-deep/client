@@ -7,6 +7,7 @@ import {
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
+import Icon from '#rscg/Icon';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -16,6 +17,7 @@ import Cloak from '#components/general/Cloak';
 import { entryAccessor } from '#entities/editEntries';
 import {
     editEntriesSetSelectedEntryKeyAction,
+    editEntriesSetEntryCommentsCountAction,
     leadIdFromRoute,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
@@ -37,6 +39,7 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
+    setEntryCommentsCount: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -52,6 +55,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+    setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
@@ -93,6 +97,21 @@ export default class WidgetFaramContainer extends React.PureComponent {
         });
     }
 
+    handleCommentsCountChange = (unresolvedCommentCount, resolvedCommentCount, entryId) => {
+        const {
+            leadId,
+            setEntryCommentsCount,
+        } = this.props;
+
+        const entry = {
+            unresolvedCommentCount,
+            resolvedCommentCount,
+            entryId,
+        };
+
+        setEntryCommentsCount({ entry, leadId });
+    }
+
     render() {
         const {
             widgets, // eslint-disable-line no-unused-vars
@@ -108,6 +127,9 @@ export default class WidgetFaramContainer extends React.PureComponent {
             data: {
                 id: entryServerId,
             },
+            serverData: {
+                unresolvedCommentCount,
+            },
         } = entry;
 
         return (
@@ -115,21 +137,10 @@ export default class WidgetFaramContainer extends React.PureComponent {
                 className={_cs(classNameFromProps, styles.widgetFaramContainer)}
             >
                 <header className={_cs('widget-container-header', styles.header)}>
-                    <ModalButton
-                        iconName="chat"
-                        transparent
-                        disabled={isFalsy(entryServerId)}
-                        modal={
-                            <EntryCommentModal
-                                entryServerId={entryServerId}
-                            />
-                        }
-                    />
                     <Cloak
                         hide={this.shouldHideEntryDelete}
                         render={
                             <DangerButton
-                                transparent
                                 iconName="delete"
                                 title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
                                 onClick={this.handleEntryDelete}
@@ -141,7 +152,6 @@ export default class WidgetFaramContainer extends React.PureComponent {
                         hide={this.shouldHideEntryEdit}
                         render={
                             <WarningButton
-                                transparent
                                 onClick={this.handleEdit}
                                 title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
                                 iconName="edit"
@@ -149,6 +159,23 @@ export default class WidgetFaramContainer extends React.PureComponent {
                             />
                         }
                     />
+                    <ModalButton
+                        disabled={isFalsy(entryServerId)}
+                        className={styles.entryCommentButton}
+                        modal={
+                            <EntryCommentModal
+                                entryServerId={entryServerId}
+                                onCommentsCountChange={this.handleCommentsCountChange}
+                            />
+                        }
+                    >
+                        <Icon name="chat" />
+                        {unresolvedCommentCount > 0 &&
+                            <div className={styles.commentCount}>
+                                {unresolvedCommentCount}
+                            </div>
+                        }
+                    </ModalButton>
                 </header>
                 <WidgetFaram
                     className={_cs('widget', styles.widget)}

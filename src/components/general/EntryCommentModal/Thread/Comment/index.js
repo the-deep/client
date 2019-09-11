@@ -90,7 +90,7 @@ const requests = {
         },
     },
     commentResolveRequest: {
-        url: ({ props: { commentId } }) => `/entry-comments/${commentId}/resolved/`,
+        url: ({ props: { commentId } }) => `/entry-comments/${commentId}/resolve/`,
         method: requestMethods.POST,
         onSuccess: ({
             params: { onEditSuccess },

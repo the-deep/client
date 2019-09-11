@@ -6,6 +6,7 @@ import { isFalsy } from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
+import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -20,13 +21,12 @@ import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
     editEntriesStatusesSelector,
-    // editEntriesSelectedEntryTabularDataSelector,
 
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
+    editEntriesSetEntryCommentsCountAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
-    // editEntriesTabularDataSelector,
     fieldsMapForTabularBookSelector,
     routeSelector,
 } from '#redux';
@@ -44,25 +44,26 @@ const ModalButton = modalize(Button);
 const propTypes = {
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    // tabularDataForSelectedEntry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     routeUrl: PropTypes.string.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
+    setEntryCommentsCount: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     entry: undefined,
-    // tabularDataForSelectedEntry: undefined,
-    // tabularData: {},
     widgets: [],
     entries: [],
     statuses: {},
+    tabularFields: {},
+    entryStates: {},
     selectedEntryKey: undefined,
 };
 
@@ -72,8 +73,6 @@ const mapStateToProps = (state, props) => ({
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
     routeUrl: routeSelector(state),
-    // tabularDataForSelectedEntry: editEntriesSelectedEntryTabularDataSelector(state),
-    // tabularData: editEntriesTabularDataSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
     statuses: editEntriesStatusesSelector(state),
@@ -82,11 +81,10 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
-
-const emptyObject = {};
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Overview extends React.PureComponent {
@@ -126,7 +124,9 @@ export default class Overview extends React.PureComponent {
         }
 
         if (fieldId) {
-            const field = this.props.tabularFields[fieldId];
+            const { tabularFields } = this.props;
+
+            const field = tabularFields[fieldId];
             // FIXME: use strings
             return (field && field.title) || `Column ${fieldId}`;
         }
@@ -161,22 +161,40 @@ export default class Overview extends React.PureComponent {
         });
     }
 
+    handleCommentsCountChange = (unresolvedCommentCount, resolvedCommentCount, entryId) => {
+        const {
+            leadId,
+            setEntryCommentsCount,
+        } = this.props;
+
+        const entry = {
+            unresolvedCommentCount,
+            resolvedCommentCount,
+            entryId,
+        };
+
+        setEntryCommentsCount({ entry, leadId });
+    }
+
     render() {
         const {
             entry,
-            // tabularDataForSelectedEntry,
-            // tabularData, // eslint-disable-line no-unused-vars
-            leadId, // eslint-disable-line no-unused-vars
-            entries, // eslint-disable-line no-unused-vars
+            leadId, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            entries, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
             statuses,
             selectedEntryKey,
             entryStates,
-            routeUrl,
+            routeUrl, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
             tabularFields,
 
             ...otherProps
         } = this.props;
+        const {
+            serverData: {
+                unresolvedCommentCount = 0,
+            } = {},
+        } = entry;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
@@ -214,7 +232,6 @@ export default class Overview extends React.PureComponent {
                                         <DangerButton
                                             onClick={this.handleEntryDelete}
                                             disabled={pending}
-                                            // disabled={!entry || pending}
                                             iconName="remove"
                                             title={_ts('editEntry.overview', 'deleteExcerptTooltip')}
                                         />
@@ -234,15 +251,22 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <ModalButton
-                                iconName="chat"
                                 className={styles.entryCommentButton}
                                 disabled={isFalsy(entryAccessor.serverId(entry))}
                                 modal={
                                     <EntryCommentModal
-                                        entryServerId={entry && entry.data.id}
+                                        entryServerId={entryAccessor.serverId(entry)}
+                                        onCommentsCountChange={this.handleCommentsCountChange}
                                     />
                                 }
-                            />
+                            >
+                                <Icon name="chat" />
+                                {unresolvedCommentCount > 0 &&
+                                    <div className={styles.commentCount}>
+                                        {unresolvedCommentCount}
+                                    </div>
+                                }
+                            </ModalButton>
                         </header>
                         <WidgetFaram
                             className={styles.content}

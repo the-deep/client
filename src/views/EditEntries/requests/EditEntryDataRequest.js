@@ -56,7 +56,9 @@ export default class EditEntryDataRequest extends Request {
 
         const diffs = createDiff(this.parent.getEntries(), entries);
 
+
         if (getApplicableDiffCount(diffs) <= 0) {
+            this.parent.setEntriesCommentsCount({ leadId, entries });
             return;
         }
 
@@ -73,6 +75,8 @@ export default class EditEntryDataRequest extends Request {
         });
 
         this.parent.setEntries({ leadId, entryActions: diffs });
+        this.parent.setEntriesCommentsCount({ leadId, entries });
+
 
         if (getApplicableAndModifyingDiffCount(diffs) <= 0) {
             return;

@@ -3,22 +3,34 @@
 }
 
 .widget-faram-container {
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+
     .header {
         display: flex;
         flex-shrink: 0;
         justify-content: flex-end;
+        padding: var(--spacing-small);
         width: 100%;
 
         >* {
+            margin-left: var(--spacing-small);
             border-radius: 0;
             box-shadow: none;
             padding: var(--spacing-extra-small-alt) var(--spacing-small-alt);
+        }
+
+        .entry-comment-button {
+            display: flex;
+            padding: var(--spacing-extra-small) var(--spacing-small);
+
+            .comment-count {
+                padding-left: var(--spacing-small);
+            }
         }
     }
 
     .widget {
         display: inline-block;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator-alt);
         min-width: 100%;
     }
 }

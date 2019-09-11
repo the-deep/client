@@ -42,6 +42,7 @@ import {
     editEntriesRemoveEntryAction,
     editEntriesSaveEntryAction,
     editEntriesSetEntriesAction,
+    editEntriesSetEntriesCommentsCountAction,
     editEntriesUpdateEntriesBulkAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
@@ -131,6 +132,7 @@ const mapDispatchToProps = dispatch => ({
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    setEntriesCommentsCount: params => dispatch(editEntriesSetEntriesCommentsCountAction(params)),
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
@@ -241,6 +243,7 @@ export default class EditEntries extends React.PureComponent {
         this.editEntryDataRequest = new EditEntryDataRequest({
             getProjectId: () => this.props.projectId,
             getEntries: () => this.props.entries,
+            setEntriesCommentsCount: this.props.setEntriesCommentsCount,
             setAnalysisFramework: this.props.setAnalysisFramework,
             setEntries: this.props.setEntries,
             setGeoOptions: this.props.setGeoOptions,

@@ -42,6 +42,7 @@ const propTypes = {
     projectMembersGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/forbid-prop-types
     commentCreateRequest: PropTypes.object.isRequired,
+    onCommentsCountChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -264,22 +265,50 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleEditComment = (commentId, values) => {
         const { comments } = this.state;
+        const {
+            onCommentsCountChange,
+            entryServerId,
+        } = this.props;
+
         const newComments = [
             ...comments.filter(c => c.id !== commentId),
             values,
         ];
 
         this.setState({ comments: newComments });
+
+        const {
+            resolvedThreads,
+            unResolvedThreads,
+        } = this.getCommentsByThreads(newComments);
+
+        onCommentsCountChange(unResolvedThreads.length, resolvedThreads.length, entryServerId);
     }
 
     handleDeleteComment = (commentId) => {
         const { comments } = this.state;
+        const {
+            onCommentsCountChange,
+            entryServerId,
+        } = this.props;
+
         const newComments = comments.filter(c => c.id !== commentId);
         this.setState({ comments: newComments });
+
+        const {
+            resolvedThreads,
+            unResolvedThreads,
+        } = this.getCommentsByThreads(newComments);
+
+        onCommentsCountChange(unResolvedThreads.length, resolvedThreads.length, entryServerId);
     }
 
     handleCommentAdd = (comment) => {
         const { comments } = this.state;
+        const {
+            onCommentsCountChange,
+            entryServerId,
+        } = this.props;
 
         const newComments = [
             ...comments,
@@ -292,6 +321,13 @@ export default class EntryCommentModal extends React.PureComponent {
             faramErrors: {},
             pristine: true,
         });
+
+        const {
+            resolvedThreads,
+            unResolvedThreads,
+        } = this.getCommentsByThreads(newComments);
+
+        onCommentsCountChange(unResolvedThreads.length, resolvedThreads.length, entryServerId);
     }
 
     handleCurrentEditChange = (currentEdit) => {
@@ -366,7 +402,9 @@ export default class EntryCommentModal extends React.PureComponent {
             unResolvedThreads,
         } = this.getCommentsByThreads(allComments);
 
-        const showCommentForm = unResolvedThreads.length === 0 || currentEdit === 'new-thread';
+        const showCommentForm =
+            activeTabKey === UNRESOLVED &&
+            (unResolvedThreads.length === 0 || currentEdit === 'new-thread');
 
         const cancelButtonLabel = unResolvedThreads.length === 0
             ? _ts('entryComments', 'commentFaramClearButtonLabel')
