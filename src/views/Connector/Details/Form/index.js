@@ -11,6 +11,7 @@ import {
     isValidUrl,
 } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
@@ -46,8 +47,11 @@ import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
 import RssFieldsGet from '../../requests/RssFieldsGet';
 import ConnectorDeleteRequest from '../../requests/ConnectorDeleteRequest';
 import UserListGetRequest from '../../requests/UserListGetRequest';
+import TestResults from '../TestResults';
 
 import styles from './styles.scss';
+
+const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     connectorId: PropTypes.number,
@@ -64,10 +68,8 @@ const propTypes = {
     setErrorUserConnectorDetails: PropTypes.func.isRequired,
     setUserConnectorDetails: PropTypes.func.isRequired,
     setUsers: PropTypes.func.isRequired,
-    onTestButtonClick: PropTypes.func.isRequired,
     deleteConnector: PropTypes.func.isRequired,
     onConnectorDelete: PropTypes.func.isRequired,
-    connectorTestLoading: PropTypes.bool,
     className: PropTypes.string,
 };
 
@@ -77,7 +79,6 @@ const defaultProps = {
     userProjects: [],
     className: '',
     connectorId: undefined,
-    connectorTestLoading: false,
 };
 
 const mapStateToProps = state => ({
@@ -124,18 +125,13 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         super(props);
 
         const {
-            users,
-            userProjects,
             connectorId,
             setErrorUserConnectorDetails,
         } = this.props;
 
-        const { faramValues = {} } = this.props.connectorDetails;
-
         this.state = {
             userDataLoading: true,
             connectorDataLoading: false,
-            disableTest: false,
             pending: false,
             rssOptions: undefined,
             schema: this.createSchema(props),
@@ -470,26 +466,38 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     }
 
     startConnectorDetailsRequest = (connectorId) => {
+        const {
+            setUserConnectorDetails,
+            connectorDetails,
+        } = this.props;
+
         if (this.requestForConnectorDetails) {
             this.requestForConnectorDetails.stop();
         }
+
         const requestForConnectorDetails = new ConnectorDetailsGetRequest({
             setState: v => this.setState(v),
-            setUserConnectorDetails: this.props.setUserConnectorDetails,
-            connectorDetails: this.props.connectorDetails,
+            setUserConnectorDetails,
+            connectorDetails,
             isBeingCancelled: true,
         });
+
         this.requestForConnectorDetails = requestForConnectorDetails.create(connectorId);
         this.requestForConnectorDetails.start();
     }
 
     handleToggleUserRoleClick = (selectedUser) => {
         const {
-            faramValues = {},
-            faramErrors,
-        } = this.props.connectorDetails;
+            connectorId,
+            connectorDetails: {
+                faramValues = {},
+                faramErrors,
+            },
+            changeUserConnectorDetails,
+        } = this.props;
 
         const index = (faramValues.users || emptyList).findIndex(u => u.user === selectedUser.user);
+
         if (index !== -1) {
             const settings = {
                 users: {
@@ -502,19 +510,24 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             };
 
             const newFaramValues = update(faramValues, settings);
-            this.props.changeUserConnectorDetails({
+
+            changeUserConnectorDetails({
                 faramValues: newFaramValues,
                 faramErrors,
-                connectorId: this.props.connectorId,
+                connectorId,
             });
         }
     }
 
     handleToggleProjectRoleClick = (selectedProject) => {
         const {
-            faramValues = {},
-            faramErrors,
-        } = this.props.connectorDetails;
+            connectorId,
+            connectorDetails: {
+                faramValues = {},
+                faramErrors,
+            },
+            changeUserConnectorDetails,
+        } = this.props;
 
         const index = (faramValues.projects || []).findIndex(p =>
             p.project === selectedProject.project);
@@ -531,21 +544,27 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             };
 
             const newFaramValues = update(faramValues, settings);
-            this.props.changeUserConnectorDetails({
+
+            changeUserConnectorDetails({
                 faramValues: newFaramValues,
                 faramErrors,
-                connectorId: this.props.connectorId,
+                connectorId,
             });
         }
     }
 
     handleDeleteUserClick = (selectedUser) => {
         const {
-            faramValues = {},
-            faramErrors,
-        } = this.props.connectorDetails;
+            connectorDetails: {
+                faramValues = {},
+                faramErrors,
+            },
+            changeUserConnectorDetails,
+            connectorId,
+        } = this.props;
 
         const index = (faramValues.users || emptyList).findIndex(u => u.user === selectedUser.user);
+
         if (index !== -1) {
             const settings = {
                 users: {
@@ -554,19 +573,24 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             };
 
             const newFaramValues = update(faramValues, settings);
-            this.props.changeUserConnectorDetails({
+
+            changeUserConnectorDetails({
                 faramValues: newFaramValues,
                 faramErrors,
-                connectorId: this.props.connectorId,
+                connectorId,
             });
         }
     }
 
     handleDeleteProjectClick = (selectedProject) => {
         const {
-            faramValues = {},
-            faramErrors,
-        } = this.props.connectorDetails;
+            connectorDetails: {
+                faramValues = {},
+                faramErrors,
+            },
+            changeUserConnectorDetails,
+            connectorId,
+        } = this.props;
 
         const index = (faramValues.projects || []).findIndex(p =>
             p.project === selectedProject.project);
@@ -579,27 +603,37 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             };
 
             const newFaramValues = update(faramValues, settings);
-            this.props.changeUserConnectorDetails({
+
+            changeUserConnectorDetails({
                 faramValues: newFaramValues,
                 faramErrors,
-                connectorId: this.props.connectorId,
+                connectorId,
             });
         }
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
-        this.props.changeUserConnectorDetails({
+        const {
+            changeUserConnectorDetails,
+            connectorId,
+        } = this.props;
+
+        changeUserConnectorDetails({
             faramValues,
             faramErrors,
-            connectorId: this.props.connectorId,
+            connectorId,
         });
-        this.setState({ disableTest: false });
     };
 
     handleValidationFailure = (faramErrors) => {
-        this.props.setErrorUserConnectorDetails({
+        const {
+            setErrorUserConnectorDetails,
+            connectorId,
+        } = this.props;
+
+        setErrorUserConnectorDetails({
             faramErrors,
-            connectorId: this.props.connectorId,
+            connectorId,
         });
     };
 
@@ -609,12 +643,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
     handleFormCancel = () => {
         this.startConnectorDetailsRequest(this.props.connectorId);
-    };
-
-    handleConnectorTestClick = () => {
-        const { faramValues: { params } = {} } = this.props.connectorDetails;
-        this.props.onTestButtonClick(params);
-        this.setState({ disableTest: true });
     };
 
     handleConnectorDelete = () => {
@@ -704,7 +732,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             userProjects,
             className,
             connectorSource,
-            connectorTestLoading,
+            connectorDetails,
+            connectorId,
         } = this.props;
 
         const {
@@ -712,18 +741,18 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             pending,
             connectorDataLoading,
             userDataLoading,
-            disableTest,
         } = this.state;
 
         const {
             faramValues = {},
             faramErrors,
             pristine,
-        } = this.props.connectorDetails;
+        } = connectorDetails;
 
         const {
             users: faramValuesUsers,
             projects: faramValuesProjects,
+            params,
         } = faramValues;
 
         const usersOptions = this.getOptionsForUser(users, faramValuesUsers);
@@ -738,10 +767,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             userDataLoading ||
             connectorDataLoading ||
             pending;
-
-        const disableTestButton =
-            connectorTestLoading ||
-            disableTest;
 
         return (
             <Faram
@@ -760,12 +785,17 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                         {faramValues.title}
                     </h3>
                     <div className={styles.actionButtons}>
-                        <AccentButton
-                            onClick={this.handleConnectorTestClick}
-                            disabled={disableTestButton}
+                        <AccentModalButton
+                            modal={
+                                <TestResults
+                                    connectorId={connectorId}
+                                    paramsForTest={params}
+                                    onConnectorTestLoading={this.handleConnectorTestLoading}
+                                />
+                            }
                         >
                             {_ts('connector', 'connectorDetailTestLabel')}
-                        </AccentButton>
+                        </AccentModalButton>
                         <DangerConfirmButton
                             confirmationMessage={_ts(
                                 'connector',

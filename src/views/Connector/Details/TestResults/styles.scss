@@ -1,24 +1,21 @@
+:root {
+    --height-modal-body: 80vh;
+    --width-modal-large: 90vw;
+}
+
 .test-results {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    border-top: var(--width-separator-thin) solid var(--color-separator);
+    width: var(--width-modal-large);
+    height: var(--height-modal-body);
 
-    .header {
-        flex-shrink: 0;
-        background-color: var(--color-background-header);
-        padding: var(--spacing-small);
-    }
-
-    .table-container {
+    .modal-body {
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
-        background-color: var(--color-foreground);
+        padding: 0;
         overflow-y: auto;
 
         .table {
             flex-grow: 1;
+            overflow-y: auto;
 
             :global {
                 .row {

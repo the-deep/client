@@ -1,28 +1,42 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
 import Table from '#rscv/Table';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+import Modal from '#rscv/Modal';
+import Button from '#rsca/Button';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
 import FormattedDate from '#rscv/FormattedDate';
 import {
     connectorIdFromRouteSelector,
     connectorSourceSelector,
 } from '#redux';
+import { alterAndCombineResponseError } from '#rest';
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
+
+import notify from '#notify';
 import _ts from '#ts';
 
-import ConnectorTestRequest from '../../requests/ConnectorTestRequest';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    connectorSource: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    paramsForTest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    onConnectorTestLoading: PropTypes.func.isRequired,
+    leadsGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
+    connectorSource: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
+    paramsForTest: PropTypes.object,
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
+    closeModal: () => {},
     className: '',
     connectorSource: {},
     paramsForTest: {},
@@ -33,7 +47,38 @@ const mapStateToProps = state => ({
     connectorSource: connectorSourceSelector(state),
 });
 
+const requests = {
+    leadsGet: {
+        url: ({ props: { connectorSource } }) => `/connector-sources/${connectorSource.key}/leads/`,
+        query: {
+            limit: 10,
+        },
+        body: ({ props: { paramsForTest } }) => paramsForTest,
+        method: requestMethods.POST,
+        onMount: true,
+        onFailure: ({ response }) => {
+            const message = alterAndCombineResponseError(response.errors).join(' ');
+            notify.send({
+                title: _ts('connector', 'connectorTitle'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('connector', 'connectorTitle'),
+                type: notify.type.ERROR,
+                message: _ts('connector', 'connectorTestFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        schemaName: 'connectorLeads',
+    },
+};
+
 @connect(mapStateToProps)
+@RequestClient(requests)
 export default class ConnectorTestResults extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -41,11 +86,6 @@ export default class ConnectorTestResults extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            connectorTestLoading: true,
-            testLeads: [],
-        };
 
         this.tableHeader = [
             {
@@ -59,7 +99,6 @@ export default class ConnectorTestResults extends React.PureComponent {
                 order: 2,
                 modifier: row => (
                     <FormattedDate
-                        className={styles.publishedDate}
                         date={row.publishedOn}
                         mode="dd-MM-yyyy"
                     />
@@ -83,69 +122,48 @@ export default class ConnectorTestResults extends React.PureComponent {
         ];
     }
 
-    componentWillMount() {
-        const {
-            paramsForTest,
-            connectorSource,
-        } = this.props;
-        this.startConnectorTestRequest(connectorSource.key, paramsForTest);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            paramsForTest: newParams,
-            connectorSource,
-        } = nextProps;
-        const { paramsForTest: oldParams } = this.props;
-
-        if (newParams !== oldParams) {
-            this.startConnectorTestRequest(connectorSource.key, newParams);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.requestForConnectorTest) {
-            this.requestForConnectorTest.stop();
-        }
-    }
-
-    startConnectorTestRequest = (source, params) => {
-        if (this.requestForConnectorTest) {
-            this.requestForConnectorTest.stop();
-        }
-        const requestForConnectorTest = new ConnectorTestRequest({
-            setState: v => this.setState(v),
-            onConnectorTestLoading: this.props.onConnectorTestLoading,
-        });
-        this.requestForConnectorTest = requestForConnectorTest.create(source, params);
-        this.requestForConnectorTest.start();
-    }
+    getFilteredLeads = memoize(leads => leads.filter(r => r.key));
 
     render() {
         const {
-            connectorTestLoading,
-            testLeads,
-        } = this.state;
-        const { className } = this.props;
-        const { tableHeader } = this;
+            className,
+            leadsGet: {
+                pending,
+                response: {
+                    results: leads = [],
+                } = {},
+            },
+            closeModal,
+        } = this.props;
+
+        const testLeads = this.getFilteredLeads(leads);
 
         return (
-            <div className={_cs(className, styles.testResults)} >
-                {connectorTestLoading && <LoadingAnimation /> }
-                <header className={styles.header} >
-                    <h4>
-                        {_ts('connector', 'testResultsHeading')}
-                    </h4>
-                </header>
-                <div className={styles.tableContainer} >
+            <Modal
+                className={_cs(className, styles.testResults)}
+                closeOnEscape
+                onClose={closeModal}
+            >
+                <ModalHeader
+                    title={_ts('connector', 'testResultsHeading')}
+                    rightComponent={
+                        <Button
+                            iconName="close"
+                            transparent
+                            onClick={closeModal}
+                        />
+                    }
+                />
+                <ModalBody className={styles.modalBody}>
                     <Table
                         data={testLeads}
                         className={styles.table}
-                        headers={tableHeader}
+                        headers={this.tableHeader}
                         keySelector={ConnectorTestResults.leadKeySelector}
+                        pending={pending}
                     />
-                </div>
-            </div>
+                </ModalBody>
+            </Modal>
         );
     }
 }
