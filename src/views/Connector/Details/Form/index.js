@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 import Faram, { FaramGroup, requiredCondition, urlCondition } from '@togglecorp/faram';
 import {
     _cs,
@@ -30,11 +31,9 @@ import update from '#rsu/immutable-update';
 import {
     connectorDetailsSelector,
     connectorSourceSelector,
-    activeUserSelector,
     usersInformationListSelector,
     currentUserProjectsSelector,
     setUsersInformationAction,
-    setUserProjectsAction,
     changeUserConnectorDetailsAction,
     deleteConnectorAction,
     setErrorUserConnectorDetailsAction,
@@ -47,7 +46,6 @@ import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
 import RssFieldsGet from '../../requests/RssFieldsGet';
 import ConnectorDeleteRequest from '../../requests/ConnectorDeleteRequest';
 import UserListGetRequest from '../../requests/UserListGetRequest';
-import UserProjectsGetRequest from '../../requests/UserProjectsGetRequest';
 
 import styles from './styles.scss';
 
@@ -62,10 +60,8 @@ const propTypes = {
             name: PropTypes.string,
         }),
     ),
-    setUserProjects: PropTypes.func.isRequired,
     changeUserConnectorDetails: PropTypes.func.isRequired,
     setErrorUserConnectorDetails: PropTypes.func.isRequired,
-    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setUserConnectorDetails: PropTypes.func.isRequired,
     setUsers: PropTypes.func.isRequired,
     onTestButtonClick: PropTypes.func.isRequired,
@@ -86,7 +82,6 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     connectorDetails: connectorDetailsSelector(state),
-    activeUser: activeUserSelector(state),
     users: usersInformationListSelector(state),
     userProjects: currentUserProjectsSelector(state),
     connectorSource: connectorSourceSelector(state),
@@ -94,7 +89,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setUsers: params => dispatch(setUsersInformationAction(params)),
-    setUserProjects: params => dispatch(setUserProjectsAction(params)),
     changeUserConnectorDetails: params => dispatch(changeUserConnectorDetailsAction(params)),
     setErrorUserConnectorDetails: params => dispatch(setErrorUserConnectorDetailsAction(params)),
     setUserConnectorDetails: params => dispatch(setUserConnectorDetailsAction(params)),
@@ -140,7 +134,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         this.state = {
             userDataLoading: true,
-            projectDataLoading: true,
             connectorDataLoading: false,
             disableTest: false,
             pending: false,
@@ -290,23 +283,15 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 },
             },
         ];
-
-        this.usersOptions = this.getOptionsForUser(users, faramValues.users);
-        this.projectsOptions = this.getOptionsForProjects(userProjects, faramValues.projects);
     }
 
     componentDidMount() {
         const {
-            activeUser,
             connectorSource: { key },
             connectorDetails: { faramValues = {} },
         } = this.props;
 
         this.startUsersListGetRequest();
-
-        if (activeUser) {
-            this.startUserProjectsGetRequest(this.props.activeUser.userId);
-        }
 
         if (xmlConnectorTypes.includes(key)) {
             const urlFeed = ConnectorDetailsForm.getFeedUrl(faramValues);
@@ -323,30 +308,19 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             connectorDetails: {
                 faramValues: newFaramValues = {},
             },
-            users: newUsers,
-            userProjects: newProjects,
         } = nextProps;
+
         const {
             connectorSource: oldConnectorSource,
             connectorDetails: {
                 faramValues: oldFaramValues = {},
             },
-            users: oldUsers,
-            userProjects: oldProjects,
         } = this.props;
 
         if (oldConnectorSource !== newConnectorSource) {
             this.setState({
                 schema: this.createSchema(newConnectorSource),
             });
-        }
-
-        if (oldFaramValues.users !== newFaramValues.users || newUsers !== oldUsers) {
-            this.usersOptions = this.getOptionsForUser(newUsers, newFaramValues.users);
-        }
-
-        if (oldFaramValues.projects !== newFaramValues.projects || newProjects !== oldProjects) {
-            this.projectsOptions = this.getOptionsForProjects(newProjects, newFaramValues.projects);
         }
 
         if (xmlConnectorTypes.includes(newConnectorSource.key)) {
@@ -369,16 +343,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         if (this.connectorDeleteRequest) {
             this.connectorDeleteRequest.stop();
         }
-        if (this.projectsRequest) {
-            this.projectsRequest.stop();
-        }
         if (this.requestForConnectorDetails) {
             this.requestForConnectorDetails.stop();
         }
     }
 
-    // FIXME: create static function
-    getOptionsForUser = (users, members) => {
+    getOptionsForUser = memoize((users, members) => {
         if (!members) {
             return emptyList;
         }
@@ -406,10 +376,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         });
 
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
-    }
+    })
 
-    // FIXME: create static function
-    getOptionsForProjects = (allProjects, connectorProjects) => {
+    getOptionsForProjects = memoize((allProjects, connectorProjects) => {
         if (!connectorProjects) {
             return emptyList;
         }
@@ -439,10 +408,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         });
 
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
-    }
+    })
 
-    // FIXME: create static function
-    createSchema = (props) => {
+    createSchema = memoize((props) => {
         // FIXME: potential problem here with params,
         // it should be empty array not empty object
         const { connectorSource = {} } = props;
@@ -467,19 +435,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         });
         schema.fields.params.fields = paramFields;
         return schema;
-    }
-
-    startUserProjectsGetRequest = (userId) => {
-        if (this.projectsRequest) {
-            this.projectsRequest.stop();
-        }
-        const projectsRequest = new UserProjectsGetRequest({
-            setUserProjects: this.props.setUserProjects,
-            setState: v => this.setState(v),
-        });
-        this.projectsRequest = projectsRequest.create(userId);
-        this.projectsRequest.start();
-    }
+    })
 
     startConnectorPatchRequest = (connectorId, connectorDetails) => {
         if (this.requestForConnectorPatch) {
@@ -744,10 +700,17 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
     render() {
         const {
+            users,
+            userProjects,
+            className,
+            connectorSource,
+            connectorTestLoading,
+        } = this.props;
+
+        const {
             schema,
             pending,
             connectorDataLoading,
-            projectDataLoading,
             userDataLoading,
             disableTest,
         } = this.state;
@@ -759,22 +722,21 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         } = this.props.connectorDetails;
 
         const {
-            className,
-            connectorSource,
-            connectorTestLoading,
-        } = this.props;
+            users: faramValuesUsers,
+            projects: faramValuesProjects,
+        } = faramValues;
+
+        const usersOptions = this.getOptionsForUser(users, faramValuesUsers);
+        const projectsOptions = this.getOptionsForProjects(userProjects, faramValuesProjects);
 
         const {
             usersHeader,
             projectsHeader,
-            usersOptions,
-            projectsOptions,
         } = this;
 
         const loading =
             userDataLoading ||
             connectorDataLoading ||
-            projectDataLoading ||
             pending;
 
         const disableTestButton =

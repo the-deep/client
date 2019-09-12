@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
+import { _cs } from '@togglecorp/fujs';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -13,7 +14,6 @@ import {
     setUserConnectorDetailsAction,
 } from '#redux';
 import _ts from '#ts';
-import _cs from '#cs';
 
 import ConnectorDetailsGetRequest from '../requests/ConnectorDetailsGetRequest';
 
@@ -97,14 +97,6 @@ export default class ConnectorDetails extends React.PureComponent {
         }
     }
 
-    getClassName = () => {
-        const { className } = this.props;
-        return _cs(
-            styles.details,
-            className,
-        );
-    }
-
     handleConnectorTestClick = (paramsForTest) => {
         this.setState({
             showTestResults: true,
@@ -182,13 +174,15 @@ export default class ConnectorDetails extends React.PureComponent {
 
     render() {
         const { connectorDataLoading } = this.state;
-        const { connectorDetails } = this.props;
+        const {
+            connectorDetails,
+            className,
+        } = this.props;
 
-        const className = this.getClassName();
         const Details = this.renderDetails;
 
         return (
-            <div className={className}>
+            <div className={_cs(styles.details, className)}>
                 <Prompt
                     when={connectorDetails.pristine === true}
                     message={_ts('common', 'youHaveUnsavedChanges')}

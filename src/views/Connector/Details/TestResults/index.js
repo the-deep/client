@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { _cs } from '@togglecorp/fujs';
 
 import Table from '#rscv/Table';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -129,7 +130,7 @@ export default class ConnectorTestResults extends React.PureComponent {
         const { tableHeader } = this;
 
         return (
-            <div className={`${className} ${styles.testResults}`} >
+            <div className={_cs(className, styles.testResults)} >
                 {connectorTestLoading && <LoadingAnimation /> }
                 <header className={styles.header} >
                     <h4>
