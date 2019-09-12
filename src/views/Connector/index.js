@@ -24,6 +24,7 @@ import {
 import {
     connectorsListSelector,
     connectorIdFromRouteSelector,
+    connectorSourcesSelector,
 
     setConnectorSourcesAction,
     setUserConnectorsAction,
@@ -45,6 +46,7 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setConnectorSources: PropTypes.func.isRequired,
     connectorsList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    connectorSources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -54,6 +56,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     connectorsList: connectorsListSelector(state),
     connectorId: connectorIdFromRouteSelector(state),
+    connectorSources: connectorSourcesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -144,6 +147,8 @@ export default class Connector extends React.PureComponent {
 
     static connectorKeySelector = c => c.id;
 
+    static connectorSourceSelector = c => c.source;
+
     constructor(props) {
         super(props);
 
@@ -176,6 +181,14 @@ export default class Connector extends React.PureComponent {
         connectorId: key,
         title: data.title,
     })
+
+    connectorGroupRendererParams = (groupKey) => {
+        const { connectorSources } = this.props;
+
+        return {
+            children: connectorSources[groupKey] ? connectorSources[groupKey].title : groupKey,
+        };
+    }
 
     renderHeader = () => {
         const { searchInputValue } = this.state;
@@ -289,7 +302,10 @@ export default class Connector extends React.PureComponent {
                         <ListView
                             className={styles.connectorsList}
                             data={displayConnectorsList}
+                            groupRendererClassName={styles.group}
                             keySelector={Connector.connectorKeySelector}
+                            groupKeySelector={Connector.connectorSourceSelector}
+                            groupRendererParams={this.connectorGroupRendererParams}
                             rendererParams={this.connectorRendererParams}
                             renderer={ConnectorListItem}
                         />

@@ -29,6 +29,8 @@ import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import update from '#rsu/immutable-update';
 
+import Badge from '#components/viewer/Badge';
+
 import {
     connectorDetailsSelector,
     connectorSourceSelector,
@@ -780,9 +782,13 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 disabled={loading}
             >
                 { loading && <LoadingAnimation /> }
-                <header className={styles.header} >
-                    <h3 className={styles.heading} >
+                <header className={styles.header}>
+                    <h3 className={styles.heading}>
                         {faramValues.title}
+                        <Badge
+                            className={styles.badge}
+                            title={connectorSource.title}
+                        />
                     </h3>
                     <div className={styles.actionButtons}>
                         <AccentModalButton

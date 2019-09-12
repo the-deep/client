@@ -14,28 +14,34 @@
             justify-content: space-between;
             border-bottom: var(--width-separator-thin) solid var(--color-separator);
             background-color: var(--color-background-header);
-            padding: var(--spacing-small);
+            padding: var(--spacing-medium);
             color: var(--color-text-on-background-header);
 
             .heading {
                 flex-grow: 1;
+                text-transform: capitalize;
             }
 
             .search-input {
                 flex-basis: 100%;
-                padding: 0;
+                margin-top: var(--spacing-medium);
             }
         }
 
         .connectors-list {
             flex-grow: 1;
             overflow-y: auto;
+
+            .group {
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            }
         }
     }
 
     .main-content {
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
 
         .connector-details {
             flex-grow: 1;

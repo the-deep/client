@@ -12,8 +12,16 @@
         padding: var(--spacing-small);
 
         .heading {
+            display: flex;
+            align-items: center;
             flex-grow: 1;
             margin: 0;
+            text-transform: capitalize;
+
+            .badge {
+                display: inline-block;
+                margin-left: var(--spacing-small);
+            }
         }
 
         .action-buttons {
