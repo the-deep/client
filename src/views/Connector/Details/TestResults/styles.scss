@@ -1,11 +1,6 @@
-:root {
-    --height-modal-body: 80vh;
-    --width-modal-large: 96vw;
-}
-
 .test-results {
-    width: var(--width-modal-large);
-    height: var(--height-modal-body);
+    width: var(--width-connector-test-modal);
+    height: var(--height-connector-test-modal);
 
     .header {
         :global {

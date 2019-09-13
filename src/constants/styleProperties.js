@@ -21,6 +21,9 @@ const styleProperties = {
         widthUserItemPicture: '30px',
         heightUserItemPicture: '30px',
         widthErrorPaneStringManagement: '320px',
+
+        widthConnectorTestModal: '96vw',
+        heightConnectorTestModal: '96vh',
     },
 };
 

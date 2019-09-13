@@ -33,7 +33,10 @@
             overflow-y: auto;
 
             .group {
-                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                margin-top: var(--spacing-small-alt);
+                border-left: var(--width-separator-thick) solid transparent;
+                padding: var(--spacing-extra-small-alt) var(--spacing-medium);
+                // border-bottom: var(--width-separator-thin) solid var(--color-separator);
             }
         }
     }
