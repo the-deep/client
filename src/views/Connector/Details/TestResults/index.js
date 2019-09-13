@@ -2,11 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isValidUrl,
+} from '@togglecorp/fujs';
 
 import Table from '#rscv/Table';
 import Modal from '#rscv/Modal';
 import Button from '#rsca/Button';
+import ListView from '#rscv/List/ListView';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import FormattedDate from '#rscv/FormattedDate';
@@ -19,11 +23,15 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+import EmmTrigger from '#components/viewer/EmmTrigger';
+import EmmEntity from '#components/viewer/EmmEntity';
 
 import notify from '#notify';
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const EmptyComponent = () => '';
 
 const propTypes = {
     className: PropTypes.string,
@@ -79,6 +87,19 @@ const requests = {
     },
 };
 
+const emmTriggerRendererParams = (key, data) => ({
+    keyword: data.emmKeyword,
+    riskFactor: data.emmRiskFactor,
+    count: data.count,
+});
+
+const emmEntitiesRendererParams = (key, data) => ({
+    name: data.name,
+});
+
+const emmTriggerKeySelector = t => t.keyword;
+const emmEntitiesKeySelector = t => t.name;
+
 @connect(mapStateToProps)
 @RequestClient(requests)
 export default class ConnectorTestResults extends React.PureComponent {
@@ -88,8 +109,9 @@ export default class ConnectorTestResults extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        const { connectorSource } = this.props;
 
-        this.tableHeader = [
+        let tableHeader = [
             {
                 key: 'title',
                 label: _ts('connector', 'titleLabel'),
@@ -110,11 +132,51 @@ export default class ConnectorTestResults extends React.PureComponent {
                 key: 'website',
                 label: _ts('connector', 'websiteLabel'),
                 order: 3,
+                modifier: row => (
+                    isValidUrl(row.website) ? (
+                        <a
+                            title={row.website}
+                            href={row.website}
+                            className={styles.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {row.website}
+                        </a>
+                    ) : (
+                        <div
+                            className={styles.link}
+                            title={row.website}
+                        >
+                            {row.website}
+                        </div>
+                    )
+                ),
             },
             {
                 key: 'url',
                 label: _ts('connector', 'urlLabel'),
                 order: 4,
+                modifier: row => (
+                    isValidUrl(row.url) ? (
+                        <a
+                            title={row.url}
+                            href={row.url}
+                            className={styles.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {row.url}
+                        </a>
+                    ) : (
+                        <div
+                            className={styles.link}
+                            title={row.url}
+                        >
+                            {row.url}
+                        </div>
+                    )
+                ),
             },
             {
                 key: 'source',
@@ -122,6 +184,43 @@ export default class ConnectorTestResults extends React.PureComponent {
                 order: 5,
             },
         ];
+        if (connectorSource.key === 'emm') {
+            tableHeader = [
+                ...tableHeader,
+                {
+                    key: 'emmTriggers',
+                    label: _ts('connector', 'emmTriggerTitle'),
+                    order: 6,
+                    modifier: row => (
+                        <ListView
+                            className={styles.emmTriggers}
+                            renderer={EmmTrigger}
+                            data={row.emmTriggers}
+                            keySelector={emmTriggerKeySelector}
+                            rendererParams={emmTriggerRendererParams}
+                            emptyComponent={EmptyComponent}
+                        />
+                    ),
+                },
+                {
+                    key: 'emmEntities',
+                    label: _ts('connector', 'emmEntitiesTitle'),
+                    order: 7,
+                    modifier: row => (
+                        <ListView
+                            className={styles.emmEntity}
+                            renderer={EmmEntity}
+                            data={row.emmEntities}
+                            keySelector={emmEntitiesKeySelector}
+                            rendererParams={emmEntitiesRendererParams}
+                            emptyComponent={EmptyComponent}
+                        />
+                    ),
+                },
+            ];
+        }
+
+        this.tableHeader = tableHeader;
     }
 
     getFilteredLeads = memoize(leads => leads.filter(r => r.key));

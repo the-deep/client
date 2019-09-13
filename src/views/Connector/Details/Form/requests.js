@@ -1,29 +1,13 @@
-import { isValidUrl } from '@togglecorp/fujs';
 import { requestMethods } from '#request';
 import _ts from '#ts';
 import notify from '#notify';
+import {
+    getFeedUrl,
+    needToFetchOptions,
+} from './connector-utils';
 
-export const xmlConnectorTypes = [
-    'rss-feed',
-    'atom-feed',
-    'emm',
-];
-
-export const getFeedUrl = ({ faramValues = {} }) => {
-    const { params: { 'feed-url': feedUrl } = {} } = faramValues;
-    return feedUrl;
-};
-
-export const needToFetchOptions = (sourceKey, connectorDetails) => {
-    if (!xmlConnectorTypes.includes(sourceKey)) {
-        return false;
-    }
-    const feedUrl = getFeedUrl(connectorDetails);
-    return feedUrl && isValidUrl(feedUrl);
-};
-
-export const requests = {
-    rssOptionsRequest: {
+const requests = {
+    xmlFieldOptionsRequest: {
         url: ({ props: { connectorSource } }) => `/connector-sources/${connectorSource.key}/fields/`,
         query: ({ props: { connectorDetails } }) => ({ 'feed-url': getFeedUrl(connectorDetails) }),
         onMount: ({
@@ -35,11 +19,19 @@ export const requests = {
             needToFetchOptions(connectorSource.key, connectorDetails),
         onPropsChanged: {
             connectorDetails: ({
+                prevProps: {
+                    connectorDetails: prevConnectorDetails,
+                },
                 props: {
                     connectorDetails,
                     connectorSource,
                 },
-            }) => needToFetchOptions(connectorSource.key, connectorDetails),
+            }) => {
+                if (getFeedUrl(connectorDetails) === getFeedUrl(prevConnectorDetails)) {
+                    return false;
+                }
+                return needToFetchOptions(connectorSource.key, connectorDetails);
+            },
         },
         method: requestMethods.GET,
         onFailure: ({
@@ -66,7 +58,7 @@ export const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'rssOptions',
+        schemaName: 'xmlFieldOptions',
     },
     connectorDeleteRequest: {
         url: ({ props: { connectorId } }) => `/connectors/${connectorId}/`,
@@ -97,3 +89,5 @@ export const requests = {
         },
     },
 };
+
+export default requests;

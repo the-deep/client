@@ -51,7 +51,7 @@ export default class ProjectList extends React.PureComponent {
         this.state = { searchInputValue: '' };
     }
 
-    filterProjects = memoize((userProjects, searchInputValue) => {
+    getFilteredProjects = memoize((userProjects, searchInputValue) => {
         const displayUserProjects = userProjects
             .filter(project => caseInsensitiveSubmatch(project.title, searchInputValue))
             .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
@@ -84,7 +84,7 @@ export default class ProjectList extends React.PureComponent {
         } = this.props;
 
         const { searchInputValue } = this.state;
-        const displayUserProjects = this.filterProjects(
+        const displayUserProjects = this.getFilteredProjects(
             userProjects,
             searchInputValue,
         );

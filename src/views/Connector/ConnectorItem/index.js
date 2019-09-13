@@ -16,7 +16,8 @@ const ConnectorListItem = ({
     connectorId,
     currentConnectorId,
 }) => (
-    <div
+    <Link
+        to={reverseRoute(pathNames.connectors, { connectorId })}
         className={
             _cs(
                 className,
@@ -26,13 +27,8 @@ const ConnectorListItem = ({
             )
         }
     >
-        <Link
-            to={reverseRoute(pathNames.connectors, { connectorId })}
-            className={styles.link}
-        >
-            {title}
-        </Link>
-    </div>
+        {title}
+    </Link>
 );
 
 ConnectorListItem.propTypes = {

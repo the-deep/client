@@ -50,10 +50,7 @@ export default class Badge extends React.PureComponent {
                 }
             >
                 {isTruthyString(icon) &&
-                    <Icon
-                        className={styles.icon}
-                        name={icon}
-                    />
+                    <Icon name={icon} />
                 }
                 {isTruthyString(title) &&
                     <div className={styles.title}>

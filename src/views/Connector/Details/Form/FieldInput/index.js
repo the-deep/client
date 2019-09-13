@@ -8,20 +8,20 @@ import SelectInput from '#rsci/SelectInput';
 import DateInput from '#rsci/DateInput';
 import NumberInput from '#rsci/NumberInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { xmlConnectorTypes } from '../requests';
+import { xmlConnectorTypes } from '../connector-utils';
 
 import styles from './styles.scss';
 
 const propTypes = {
     field: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     connectorSourceKey: PropTypes.string.isRequired,
-    rssOptions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    pendingRssFields: PropTypes.bool,
+    xmlFieldOptions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    pendingXmlFieldOptions: PropTypes.bool,
 };
 
 const defaultProps = {
-    rssOptions: undefined,
-    pendingRssFields: false,
+    xmlFieldOptions: undefined,
+    pendingXmlFieldOptions: false,
 };
 
 export default class ConnectorFormFieldInput extends React.PureComponent {
@@ -32,76 +32,78 @@ export default class ConnectorFormFieldInput extends React.PureComponent {
         const {
             field: data,
             connectorSourceKey,
-            rssOptions,
-            pendingRssFields,
+            xmlFieldOptions,
+            pendingXmlFieldOptions,
         } = this.props;
 
-        if (data.fieldType === 'string' || data.fieldType === 'url') {
-            if (data.key === 'feed-url') {
+        switch (data.fieldType) {
+            case 'string':
+            case 'url':
+                if (data.key === 'feed-url') {
+                    return (
+                        <div className={styles.feedUrlContainer}>
+                            <TextInput
+                                key={data.key}
+                                className={styles.feedUrl}
+                                faramElementName={data.key}
+                                label={data.title}
+                            />
+                            { pendingXmlFieldOptions &&
+                                <div className={styles.loadingAnimationContainer} >
+                                    <LoadingAnimation className={styles.loadingAnimation} />
+                                </div>
+                            }
+                        </div>
+                    );
+                }
                 return (
-                    <div className={styles.feedUrlContainer}>
-                        <TextInput
+                    <TextInput
+                        key={data.key}
+                        faramElementName={data.key}
+                        label={data.title}
+                    />
+                );
+            case 'select':
+                if (xmlConnectorTypes.includes(connectorSourceKey)) {
+                    if (isFalsy(xmlFieldOptions)) {
+                        return null;
+                    }
+                    return (
+                        <SelectInput
                             key={data.key}
-                            className={styles.feedUrl}
                             faramElementName={data.key}
                             label={data.title}
+                            options={xmlFieldOptions}
+                            disabled={pendingXmlFieldOptions}
                         />
-                        { pendingRssFields &&
-                            <div className={styles.loadingAnimationContainer} >
-                                <LoadingAnimation className={styles.loadingAnimation} />
-                            </div>
-                        }
-                    </div>
-                );
-            }
-            return (
-                <TextInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                />
-            );
-        } else if (data.fieldType === 'select') {
-            if (xmlConnectorTypes.includes(connectorSourceKey)) {
-                if (isFalsy(rssOptions)) {
-                    return null;
+                    );
                 }
                 return (
                     <SelectInput
                         key={data.key}
                         faramElementName={data.key}
                         label={data.title}
-                        options={rssOptions}
-                        disabled={pendingRssFields}
+                        options={data.options}
                     />
                 );
-            }
-            return (
-                <SelectInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                    options={data.options}
-                />
-            );
-        } else if (data.fieldType === 'date') {
-            return (
-                <DateInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                />
-            );
-        } else if (data.fieldType === 'number') {
-            return (
-                <NumberInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                />
-            );
+            case 'date':
+                return (
+                    <DateInput
+                        key={data.key}
+                        faramElementName={data.key}
+                        label={data.title}
+                    />
+                );
+            case 'number':
+                return (
+                    <NumberInput
+                        key={data.key}
+                        faramElementName={data.key}
+                        label={data.title}
+                    />
+                );
+            default:
+                return null;
         }
-        return null;
     }
 }
-

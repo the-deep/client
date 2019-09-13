@@ -1,25 +1,21 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import Faram, { FaramGroup, requiredCondition, urlCondition } from '@togglecorp/faram';
 import {
     _cs,
     compareString,
-    compareDate,
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
-import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 import TextInput from '#rsci/TextInput';
-import FormattedDate from '#rscv/FormattedDate';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import update from '#rsu/immutable-update';
@@ -45,9 +41,14 @@ import _ts from '#ts';
 import ConnectorDetailsGetRequest from '../../requests/ConnectorDetailsGetRequest';
 import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
 import UserListGetRequest from '../../requests/UserListGetRequest';
+
 import TestResults from '../TestResults';
 import FieldInput from './FieldInput';
-import { requests } from './requests';
+import requests from './requests';
+import {
+    getUsersTableHeader,
+    getProjectsTableHeader,
+} from './connector-utils';
 
 import styles from './styles.scss';
 
@@ -78,7 +79,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     connectorDeleteRequest: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
-    rssOptionsRequest: PropTypes.object.isRequired,
+    xmlFieldOptionsRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -128,137 +129,15 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             pending: false,
         };
 
-        this.usersHeader = [
-            {
-                key: 'displayName',
-                label: _ts('connector', 'tableHeaderName'),
-                order: 1,
-                sortable: true,
-                comparator: (a, b) => compareString(a.displayName, b.displayName),
-            },
-            {
-                key: 'email',
-                label: _ts('connector', 'tableHeaderEmail'),
-                order: 2,
-                sortable: true,
-                comparator: (a, b) => compareString(a.email, b.email),
-            },
-            {
-                key: 'role',
-                label: _ts('connector', 'tableHeaderRights'),
-                order: 3,
-                sortable: true,
-                comparator: (a, b) => compareString(a.role, b.role),
-            },
-            {
-                key: 'addedAt',
-                label: _ts('connector', 'tableHeaderJoinedAt'),
-                order: 4,
-                sortable: true,
-                comparator: (a, b) => compareDate(a.addedAt, b.addedAt),
-                modifier: row => (
-                    <FormattedDate date={row.addedAt} mode="dd-MM-yyyy hh:mm" />
-                ),
-            },
-            {
-                key: 'actions',
-                label: _ts('connector', 'tableHeaderActions'),
-                order: 5,
-                modifier: (row) => {
-                    const isAdmin = row.role === 'admin';
-                    return (
-                        <Fragment>
-                            <PrimaryButton
-                                smallVerticalPadding
-                                key="role-change"
-                                title={
-                                    isAdmin
-                                        ? _ts('connector', 'revokeAdminRightsTitle')
-                                        : _ts('connector', 'grantAdminRightsTitle')
-                                }
-                                onClick={() => this.handleToggleUserRoleClick(row)}
-                                iconName={isAdmin ? 'locked' : 'person'}
-                                transparent
-                            />
-                            <DangerButton
-                                smallVerticalPadding
-                                key="delete-member"
-                                title={_ts('connector', 'deleteMemberLinkTitle')}
-                                onClick={() => this.handleDeleteUserClick(row)}
-                                iconName="delete"
-                                transparent
-                            />
-                        </Fragment>
-                    );
-                },
-            },
-        ];
+        this.usersHeader = getUsersTableHeader(
+            this.handleToggleUserRoleClick,
+            this.handleDeleteUserClick,
+        );
 
-        this.projectsHeader = [
-            {
-                key: 'title',
-                label: _ts('connector', 'tableHeaderTitle'),
-                order: 1,
-                sortable: true,
-                comparator: (a, b) => compareString(a.title, b.title),
-            },
-            {
-                key: 'role',
-                label: _ts('connector', 'tableHeaderVisibility'),
-                order: 2,
-                sortable: true,
-                comparator: (a, b) => compareString(a.role, b.role),
-                modifier: (row) => {
-                    const isGlobal = row.role === 'global';
-                    if (isGlobal) {
-                        return _ts('connector', 'globalVisibilityLabel');
-                    }
-                    return _ts('connector', 'selfVisibilityLabel');
-                },
-            },
-            {
-                key: 'actions',
-                label: _ts('connector', 'tableHeaderActions'),
-                order: 3,
-                modifier: (row) => {
-                    const isGlobal = row.role === 'global';
-                    const isProjectAdmin = row.admin === 'admin';
-                    let toggleTitle = '';
-                    let deleteTitle = _ts('connector', 'removeProjectTitle');
-                    if (isGlobal) {
-                        toggleTitle = _ts('connector', 'setLocalVisibilityTitle');
-                    } else {
-                        toggleTitle = _ts('connector', 'setGlobalVisibilityTitle');
-                    }
-                    if (!isProjectAdmin) {
-                        toggleTitle = _ts('connector', 'needAdminRightsTitle');
-                        deleteTitle = _ts('connector', 'needAdminRightsTitle');
-                    }
-
-                    return (
-                        <Fragment>
-                            <PrimaryButton
-                                smallVerticalPadding
-                                key="role-change"
-                                title={toggleTitle}
-                                onClick={() => this.handleToggleProjectRoleClick(row)}
-                                iconName={isGlobal ? 'globe' : 'locked'}
-                                disabled={!isProjectAdmin}
-                                transparent
-                            />
-                            <DangerButton
-                                smallVerticalPadding
-                                key="delete-member"
-                                title={deleteTitle}
-                                onClick={() => this.handleDeleteProjectClick(row)}
-                                iconName="delete"
-                                transparent
-                            />
-                        </Fragment>
-                    );
-                },
-            },
-        ];
+        this.projectsHeader = getProjectsTableHeader(
+            this.handleToggleProjectRoleClick,
+            this.handleDeleteProjectClick,
+        );
     }
 
     componentDidMount() {
@@ -584,10 +463,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     fieldInputRendererParams = (key, data) => {
         const {
             connectorSource: { key: connectorSourceKey },
-            rssOptionsRequest: {
+            xmlFieldOptionsRequest: {
                 pending,
                 response: {
-                    results: rssOptions,
+                    results: xmlFieldOptions,
                 } = {},
             },
         } = this.props;
@@ -595,8 +474,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         return ({
             field: data,
             connectorSourceKey,
-            rssOptions,
-            pendingRssFields: pending,
+            xmlFieldOptions,
+            pendingXmlFieldOptions: pending,
         });
     }
 
@@ -609,7 +488,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 pending: deletePending,
             },
             connectorSource,
-            connectorDetails,
+            connectorDetails: {
+                faramValues = {},
+                faramErrors,
+                pristine,
+            },
             connectorId,
         } = this.props;
 
@@ -620,12 +503,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         } = this.state;
 
         const {
-            faramValues = {},
-            faramErrors,
-            pristine,
-        } = connectorDetails;
-
-        const {
             users: faramValuesUsers,
             projects: faramValuesProjects,
             params,
@@ -633,18 +510,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         const usersOptions = this.getOptionsForUser(users, faramValuesUsers);
         const projectsOptions = this.getOptionsForProjects(userProjects, faramValuesProjects);
-
-        const {
-            usersHeader,
-            projectsHeader,
-        } = this;
-
-        const loading =
-            userDataLoading ||
-            connectorDataLoading ||
-            pending;
-
         const schema = this.createSchema(connectorSource);
+
+        const loading = userDataLoading || connectorDataLoading || pending;
 
         return (
             <Faram
@@ -735,7 +603,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 label={_ts('connector', 'connectorUsersLabel')}
                                 labelSelector={ConnectorDetailsForm.userLabelSelector}
                                 keySelector={ConnectorDetailsForm.userKeySelector}
-                                tableHeaders={usersHeader}
+                                tableHeaders={this.usersHeader}
                                 hideRemoveFromListButton
                                 hideSelectAllButton
                             />
@@ -745,7 +613,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 label={_ts('connector', 'connectorProjectsLabel')}
                                 labelSelector={ConnectorDetailsForm.projectLabelSelector}
                                 keySelector={ConnectorDetailsForm.projectKeySelector}
-                                tableHeaders={projectsHeader}
+                                tableHeaders={this.projectsHeader}
                                 hideRemoveFromListButton
                             />
                         </div>

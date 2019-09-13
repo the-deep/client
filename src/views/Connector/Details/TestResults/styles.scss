@@ -1,6 +1,6 @@
 :root {
     --height-modal-body: 80vh;
-    --width-modal-large: 90vw;
+    --width-modal-large: 96vw;
 }
 
 .test-results {
@@ -26,9 +26,47 @@
             overflow-y: auto;
 
             :global {
+                .header {
+                    z-index: 1;
+                }
+
                 .row {
                     border-bottom: var(--width-separator-thin) solid var(--color-separator);
                 }
+
+                .publishedOn {
+                    min-width: 84px;
+                }
+
+                .title {
+                    min-width: 480px;
+                }
+
+                .emmEntities {
+                    min-width: 480px;
+                }
+
+                .emmTriggers {
+                    min-width: 240px;
+                }
+            }
+
+            .emm-entity,
+            .emm-triggers {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .link {
+                display: block;
+                min-width: 120px;
+                max-width: 240px;
+                overflow: hidden;
+                text-transform: initial;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: var(--color-primary);
+                font-size: var(--font-size-small);
             }
         }
     }
