@@ -39,14 +39,6 @@ const defaultProps = {
     userProjects: [],
 };
 
-const filterProjects = memoize((userProjects, searchInputValue) => {
-    const displayUserProjects = userProjects
-        .filter(project => caseInsensitiveSubmatch(project.title, searchInputValue))
-        .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-
-    return displayUserProjects;
-});
-
 const keySelector = project => project.id;
 
 export default class ProjectList extends React.PureComponent {
@@ -58,6 +50,14 @@ export default class ProjectList extends React.PureComponent {
 
         this.state = { searchInputValue: '' };
     }
+
+    getFilteredProjects = memoize((userProjects, searchInputValue) => {
+        const displayUserProjects = userProjects
+            .filter(project => caseInsensitiveSubmatch(project.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
+
+        return displayUserProjects;
+    });
 
     handleSearchInputChange = (searchInputValue) => {
         this.setState({ searchInputValue });
@@ -84,7 +84,7 @@ export default class ProjectList extends React.PureComponent {
         } = this.props;
 
         const { searchInputValue } = this.state;
-        const displayUserProjects = filterProjects(
+        const displayUserProjects = this.getFilteredProjects(
             userProjects,
             searchInputValue,
         );

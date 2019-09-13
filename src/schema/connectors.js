@@ -71,11 +71,11 @@ const connectorsSchema = [];
 }
 
 {
-    const name = 'rssOption';
+    const name = 'xmlFieldOption';
     const schema = {
         doc: {
-            name: 'RSS fields option',
-            description: 'Option for rss fields',
+            name: 'XML fields option',
+            description: 'Option for xml fields',
         },
         fields: {
             label: { type: 'string', required: true },
@@ -86,15 +86,15 @@ const connectorsSchema = [];
 }
 
 {
-    const name = 'rssOptions';
+    const name = 'xmlFieldOptions';
     const schema = {
         doc: {
-            name: 'RSS fields options',
-            description: 'Options for rss fields',
+            name: 'XML fields options',
+            description: 'Options for xml fields',
         },
         fields: {
             count: { type: 'int', required: true },
-            results: { type: 'array.rssOption', required: true },
+            results: { type: 'array.xmlFieldOption', required: true },
         },
     };
     connectorsSchema.push({ name, schema });

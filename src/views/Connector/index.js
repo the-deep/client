@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
+import {
+    caseInsensitiveSubmatch,
+    compareStringSearch,
+} from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import Modal from '#rscv/Modal';
@@ -10,35 +14,39 @@ import ModalHeader from '#rscv/Modal/Header';
 import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rscv/List/ListView';
+
 import {
-    reverseRoute,
-    caseInsensitiveSubmatch,
-    compareStringSearch,
-} from '@togglecorp/fujs';
+    RequestCoordinator,
+    RequestClient,
+    requestMethods,
+} from '#request';
 
 import {
     connectorsListSelector,
     connectorIdFromRouteSelector,
+    connectorSourcesSelector,
 
     setConnectorSourcesAction,
     setUserConnectorsAction,
 } from '#redux';
-import { pathNames } from '#constants';
-import _ts from '#ts';
-import _cs from '#cs';
 
-import ConnectorsGetRequest from './requests/ConnectorsGetRequest';
-import ConnectorSourcesGetRequest from './requests/ConnectorSourcesGetRequest';
+import notify from '#notify';
+import _ts from '#ts';
+
 import AddConnectorForm from './AddForm';
 import ConnectorDetails from './Details';
+import ConnectorListItem from './ConnectorItem';
 
 import styles from './styles.scss';
 
 const propTypes = {
     connectorId: PropTypes.number,
+    // eslint-disable-next-line react/no-unused-prop-types
     setUserConnectors: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     setConnectorSources: PropTypes.func.isRequired,
     connectorsList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    connectorSources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -48,6 +56,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     connectorsList: connectorsListSelector(state),
     connectorId: connectorIdFromRouteSelector(state),
+    connectorSources: connectorSourcesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -55,91 +64,108 @@ const mapDispatchToProps = dispatch => ({
     setConnectorSources: params => dispatch(setConnectorSourcesAction(params)),
 });
 
-const emptyObject = {};
 const emptyList = [];
 
+const requests = {
+    connectorsGet: {
+        url: '/connectors/',
+        method: requestMethods.GET,
+        onMount: true,
+        query: {
+            role: ['admin'],
+            fields: ['id', 'title', 'version_id', 'source', 'role', 'filters'],
+        },
+        onSuccess: ({ response, props: { setUserConnectors } }) => {
+            const connectors = response.results || emptyList;
+            const formattedConnectors = {};
+            connectors.forEach((c) => {
+                formattedConnectors[c.id] = {
+                    id: c.id,
+                    versionId: c.versionId,
+                    source: c.source,
+                    title: c.title,
+                };
+            });
+            setUserConnectors({ connectors: formattedConnectors });
+        },
+        onFailure: ({ response }) => {
+            const message = response.$internal.join(' ');
+            notify.send({
+                title: _ts('connector', 'connectorTitle'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('connector', 'connectorTitle'),
+                type: notify.type.ERROR,
+                message: _ts('connector', 'connectorGetFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        schemaName: 'connectors',
+    },
+    connectorSourcesGet: {
+        url: '/connector-sources/',
+        method: requestMethods.GET,
+        onMount: true,
+        onSuccess: ({
+            response,
+            props: { setConnectorSources },
+        }) => {
+            setConnectorSources({ connectorSources: response.results });
+        },
+        onFailure: ({ response }) => {
+            notify.send({
+                title: _ts('connector', 'connectorSourcesTitle'),
+                type: notify.type.ERROR,
+                message: response.error,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('connector', 'connectorSourcesTitle'),
+                type: notify.type.ERROR,
+                message: _ts('connector', 'connectorSourcesGetFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        schemaName: 'connectorSources',
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requests)
 export default class Connector extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
+
     static connectorKeySelector = c => c.id;
+
+    static connectorSourceSelector = c => c.source;
 
     constructor(props) {
         super(props);
+
         this.state = {
             searchInputValue: '',
-            displayConnectorsList: props.connectorsList || emptyList,
             showAddConnectorModal: false,
         };
     }
 
-    componentWillMount() {
-        this.startConnectorsRequest();
-        this.startConnectorSourcesGetRequest();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { connectorsList } = nextProps;
-        const { searchInputValue } = this.state;
-
-        if (this.props.connectorsList !== connectorsList) {
-            const displayConnectorsList = connectorsList
-                .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
-                .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-            this.setState({ displayConnectorsList });
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.requestForConnectors) {
-            this.requestForConnectors.stop();
-        }
-        if (this.requestForConnectorSources) {
-            this.requestForConnectorSources.stop();
-        }
-    }
-
-    getStyleName = (connectorId) => {
-        const { connectorId: connectorIdFromUrl } = this.props;
-        return _cs(
-            styles.listItem,
-            connectorId === connectorIdFromUrl && styles.active,
-        );
-    }
-
-    startConnectorsRequest = () => {
-        if (this.requestForConnectors) {
-            this.requestForConnectors.stop();
-        }
-        const requestForConnectors = new ConnectorsGetRequest({
-            setState: v => this.setState(v),
-            setUserConnectors: this.props.setUserConnectors,
-        });
-        this.requestForConnectors = requestForConnectors.create();
-        this.requestForConnectors.start();
-    }
-
-    startConnectorSourcesGetRequest = () => {
-        if (this.requestForConnectorSources) {
-            this.requestForConnectorSources.stop();
-        }
-        const requestForConnectorSources = new ConnectorSourcesGetRequest({
-            setState: v => this.setState(v),
-            setConnectorSources: this.props.setConnectorSources,
-        });
-        this.requestForConnectorSources = requestForConnectorSources.create();
-        this.requestForConnectorSources.start();
-    }
+    getListAfterSearch = memoize((connectorsList, searchInputValue) => (
+        connectorsList
+            .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue))
+    ))
 
     handleSearchInputChange = (searchInputValue) => {
-        const displayConnectorsList = this.props.connectorsList
-            .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
-            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-
-        this.setState({
-            displayConnectorsList,
-            searchInputValue,
-        });
+        this.setState({ searchInputValue });
     };
 
     handleAddConnectorClick = () => {
@@ -150,19 +176,19 @@ export default class Connector extends React.PureComponent {
         this.setState({ showAddConnectorModal: false });
     }
 
-    renderConnectorListItem = (key, data = {}) => (
-        <div
-            key={key}
-            className={this.getStyleName(data.id)}
-        >
-            <Link
-                to={reverseRoute(pathNames.connectors, { connectorId: data.id })}
-                className={styles.link}
-            >
-                {data.title}
-            </Link>
-        </div>
-    )
+    connectorRendererParams = (key, data) => ({
+        currentConnectorId: this.props.connectorId,
+        connectorId: key,
+        title: data.title,
+    })
+
+    connectorGroupRendererParams = (groupKey) => {
+        const { connectorSources } = this.props;
+
+        return {
+            children: connectorSources[groupKey] ? connectorSources[groupKey].title : groupKey,
+        };
+    }
 
     renderHeader = () => {
         const { searchInputValue } = this.state;
@@ -224,9 +250,12 @@ export default class Connector extends React.PureComponent {
     renderDetails = () => {
         const {
             connectorId,
+            connectorsList,
         } = this.props;
 
-        const { displayConnectorsList } = this.state;
+        const { searchInputValue } = this.state;
+
+        const displayConnectorsList = this.getListAfterSearch(connectorsList, searchInputValue);
 
         if (displayConnectorsList.length === 0) {
             return (
@@ -255,7 +284,10 @@ export default class Connector extends React.PureComponent {
     }
 
     render() {
-        const { displayConnectorsList } = this.state;
+        const { connectorsList } = this.props;
+        const { searchInputValue } = this.state;
+
+        const displayConnectorsList = this.getListAfterSearch(connectorsList, searchInputValue);
 
         const Header = this.renderHeader;
         const Details = this.renderDetails;
@@ -270,8 +302,12 @@ export default class Connector extends React.PureComponent {
                         <ListView
                             className={styles.connectorsList}
                             data={displayConnectorsList}
+                            groupRendererClassName={styles.group}
                             keySelector={Connector.connectorKeySelector}
-                            modifier={this.renderConnectorListItem}
+                            groupKeySelector={Connector.connectorSourceSelector}
+                            groupRendererParams={this.connectorGroupRendererParams}
+                            rendererParams={this.connectorRendererParams}
+                            renderer={ConnectorListItem}
                         />
                     </React.Fragment>
                 }

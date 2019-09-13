@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
+import { _cs } from '@togglecorp/fujs';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -13,12 +14,10 @@ import {
     setUserConnectorDetailsAction,
 } from '#redux';
 import _ts from '#ts';
-import _cs from '#cs';
 
 import ConnectorDetailsGetRequest from '../requests/ConnectorDetailsGetRequest';
 
 import DetailsForm from './Form';
-import TestResults from './TestResults';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -55,11 +54,8 @@ export default class ConnectorDetails extends React.PureComponent {
         super(props);
 
         this.state = {
-            showTestResults: false,
             connectorDataLoading: true,
-            connectorTestLoading: false,
             requestFailure: false,
-            paramsForTest: {},
         };
     }
 
@@ -97,25 +93,6 @@ export default class ConnectorDetails extends React.PureComponent {
         }
     }
 
-    getClassName = () => {
-        const { className } = this.props;
-        return _cs(
-            styles.details,
-            className,
-        );
-    }
-
-    handleConnectorTestClick = (paramsForTest) => {
-        this.setState({
-            showTestResults: true,
-            paramsForTest,
-        });
-    }
-
-    handleConnectorTestLoading = (connectorTestLoading) => {
-        this.setState({ connectorTestLoading });
-    }
-
     handleConnectorDelete = () => {
         this.setState({ connectorDeleted: true });
     }
@@ -137,9 +114,6 @@ export default class ConnectorDetails extends React.PureComponent {
     renderDetails = () => {
         const {
             requestFailure,
-            showTestResults,
-            paramsForTest,
-            connectorTestLoading,
             connectorDeleted,
         } = this.state;
 
@@ -153,53 +127,36 @@ export default class ConnectorDetails extends React.PureComponent {
             );
         }
 
-        const className = _cs(
-            styles.form,
-            showTestResults && styles.formWithTest,
-        );
-
         return (
-            <Fragment>
-                <DetailsForm
-                    className={className}
-                    connectorId={connectorId}
-                    onTestButtonClick={this.handleConnectorTestClick}
-                    onConnectorDelete={this.handleConnectorDelete}
-                    connectorTestLoading={connectorTestLoading}
-                />
-                { showTestResults &&
-                    <TestResults
-                        className={styles.testResults}
-                        connectorId={connectorId}
-                        paramsForTest={paramsForTest}
-                        onConnectorTestLoading={this.handleConnectorTestLoading}
-                    />
-                }
-            </Fragment>
+            <DetailsForm
+                className={styles.form}
+                connectorId={connectorId}
+                onConnectorDelete={this.handleConnectorDelete}
+            />
         );
     }
 
 
     render() {
         const { connectorDataLoading } = this.state;
-        const { connectorDetails } = this.props;
+        const {
+            connectorDetails,
+            className,
+        } = this.props;
 
-        const className = this.getClassName();
         const Details = this.renderDetails;
 
         return (
-            <div className={className}>
+            <div className={_cs(styles.details, className)}>
                 <Prompt
                     when={connectorDetails.pristine === true}
                     message={_ts('common', 'youHaveUnsavedChanges')}
                 />
-                {
-                    connectorDataLoading ? (
-                        <LoadingAnimation />
-                    ) : (
-                        <Details />
-                    )
-                }
+                {connectorDataLoading ? (
+                    <LoadingAnimation />
+                ) : (
+                    <Details />
+                )}
             </div>
         );
     }

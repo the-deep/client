@@ -24,16 +24,5 @@
     .form {
         flex-basis: 100%;
         flex-shrink: 0;
-
-        &.form-with-test {
-            flex-basis: 70%;
-        }
     }
-
-    .test-results {
-        flex-basis: 30%;
-        flex-shrink: 0;
-        overflow-y: auto;
-    }
-
 }

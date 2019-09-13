@@ -10,21 +10,32 @@ import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import { alterResponseErrorToFaramError } from '#rest';
+
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
+
+import { pathNames } from '#constants';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import _ts from '#ts';
+import notify from '#notify';
 import {
     connectorSourcesListSelector,
     addUserConnectorAction,
 } from '#redux';
-
-import ConnectorCreateRequest from '../requests/ConnectorCreateRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
     onModalClose: PropTypes.func.isRequired,
     addUserConnector: PropTypes.func.isRequired,
-    connectorSourcesList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    connectorSourcesList: PropTypes.array.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    connectorCreateRequest: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -35,7 +46,29 @@ const mapDispatchToProps = dispatch => ({
     addUserConnector: params => dispatch(addUserConnectorAction(params)),
 });
 
+const requests = {
+    connectorCreateRequest: {
+        url: '/connectors/',
+        method: requestMethods.POST,
+        body: ({ params: { values } }) => values,
+        onSuccess: ({ response, params: { handleConnectorAdd } }) => {
+            handleConnectorAdd(response);
+        },
+        onFailure: ({
+            response,
+            params: { handleFaramErrors },
+        }) => {
+            handleFaramErrors(response);
+        },
+        onFatal: ({ params: { handleRequestFatal } }) => {
+            handleRequestFatal();
+        },
+        schemaName: 'connector',
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requests)
 export default class ConnectorAddForm extends React.PureComponent {
     static propTypes = propTypes;
     static keySelector = s => s.key;
@@ -48,7 +81,6 @@ export default class ConnectorAddForm extends React.PureComponent {
             faramErrors: {},
             faramValues: { source: 'rss-feed' },
             pending: false,
-            dataLoading: false,
             pristine: false,
         };
 
@@ -60,10 +92,52 @@ export default class ConnectorAddForm extends React.PureComponent {
         };
     }
 
-    componentWillUnmount() {
-        if (this.requestForConnectorCreate) {
-            this.requestForConnectorCreate.stop();
-        }
+    handleConnectorAdd = (response) => {
+        const connector = {
+            id: response.id,
+            versionId: response.versionId,
+            source: response.source,
+            faramValues: {
+                title: response.title,
+                users: response.users,
+                params: response.params,
+                projects: response.projects,
+            },
+            faramErrors: {},
+            pristine: false,
+        };
+
+        this.props.addUserConnector({ connector });
+
+        notify.send({
+            title: _ts('connector', 'connectorCreateTitle'),
+            type: notify.type.SUCCESS,
+            message: _ts('connector', 'connectorCreateSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+
+        this.setState({
+            redirectTo: reverseRoute(
+                pathNames.connectors, { connectorId: response.id },
+            ),
+        });
+
+        this.handleModalClose();
+    }
+
+    handleFaramErrors = (response) => {
+        const faramErrors = alterResponseErrorToFaramError(response.errors);
+
+        this.setState({
+            faramErrors,
+            pending: false,
+        });
+    }
+
+    handleRequestFatal = () => {
+        this.setState({
+            faramErrors: { $internal: [_ts('connector', 'connectorCreateFailure')] },
+        });
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -78,21 +152,15 @@ export default class ConnectorAddForm extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    startConnectorCreateRequest = (newConnector) => {
-        if (this.requestForConnectorCreate) {
-            this.requestForConnectorCreate.stop();
-        }
-        const requestForConnectorCreate = new ConnectorCreateRequest({
-            setState: v => this.setState(v),
-            handleModalClose: this.handleModalClose,
-            addUserConnector: this.props.addUserConnector,
-        });
-        this.requestForConnectorCreate = requestForConnectorCreate.create(newConnector);
-        this.requestForConnectorCreate.start();
-    }
-
     handleValidationSuccess = (values) => {
-        this.startConnectorCreateRequest(values);
+        const { connectorCreateRequest } = this.props;
+
+        connectorCreateRequest.do({
+            handleFaramErrors: this.handleFaramErrors,
+            handleRequestFatal: this.handleRequestFatal,
+            handleConnectorAdd: this.handleConnectorAdd,
+            values,
+        });
     };
 
     // BUTTONS
@@ -107,11 +175,13 @@ export default class ConnectorAddForm extends React.PureComponent {
             pending,
             pristine,
             redirectTo,
-            dataLoading,
         } = this.state;
 
         const {
             connectorSourcesList = [],
+            connectorCreateRequest: {
+                pending: dataLoading,
+            },
         } = this.props;
 
         const loading = pending || dataLoading;

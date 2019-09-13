@@ -475,7 +475,7 @@
         "1135": "Test",
         "1136": "This url is already added.",
         "1137": "Failed to test connector.",
-        "1138": "Test results",
+        "1138": "{title} sample leads",
         "1139": "Filters not available",
         "1200": "User",
         "1206": "Search gallery files",
@@ -979,7 +979,9 @@
         "-36668463": "e.g. Ernest Hemingway",
         "-30790313": "Same as publisher",
         "-67237579": "Focus",
-        "-63009300": "Selected geo-areas"
+        "-63009300": "Selected geo-areas",
+        "-28548476": "EMM Entities",
+        "-35842630": "EMM Triggers"
     },
     "links": {
         "browserExtension": {
@@ -2052,7 +2054,9 @@
             "selfVisibilityLabel": -18776228,
             "connectorDetailDeleteLabel": -94736495,
             "deleteConnectorConfirmText": -53914293,
-            "connectorDeleteFailure": -22187575
+            "connectorDeleteFailure": -22187575,
+            "emmEntitiesTitle": -28548476,
+            "emmTriggerTitle": -35842630
         },
         "userGroup": {
             "tableHeaderName": 103,
