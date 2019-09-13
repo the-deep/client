@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
@@ -195,9 +196,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
         return views;
     }
 
-    getFlatSelectedLeads = () => {
-        const { selectedLeads } = this.state;
-
+    getFlatSelectedLeads = memoize((selectedLeads) => {
         const leads = Object.values(selectedLeads).reduce(
             (acc, selectedLead) => ([
                 ...acc,
@@ -212,7 +211,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
             return null;
         });
         return filteredLeads;
-    }
+    })
 
     setConnectorLeads = ({
         leads,
@@ -303,7 +302,6 @@ export default class ConnectorSelectModal extends React.PureComponent {
         this.setState(update(this.state, settings));
     }
 
-
     handleSelectAllLead = ({ connectorId, isSelected }) => {
         const { connectorsLeads: {
             [connectorId]: {
@@ -365,7 +363,8 @@ export default class ConnectorSelectModal extends React.PureComponent {
     handleConnectorSelectModalClose = () => this.props.onModalClose();
 
     handleLeadsSelect = () => {
-        const selectedLeads = this.getFlatSelectedLeads();
+        const { selectedLeads: selectedLeadsFromState } = this.state;
+        const selectedLeads = this.getFlatSelectedLeads(selectedLeadsFromState);
 
         if (selectedLeads.length > 0) {
             this.props.onLeadsSelect(selectedLeads);
@@ -451,12 +450,15 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     render() {
-        const { dataLoading } = this.state;
+        const {
+            selectedLeads,
+            dataLoading,
+        } = this.state;
 
         const Sidebar = this.renderSidebar;
         const Content = this.renderConnectorContent;
 
-        const isSelectionEmpty = this.getFlatSelectedLeads().length <= 0;
+        const isSelectionEmpty = this.getFlatSelectedLeads(selectedLeads).length <= 0;
 
         return (
             <Modal className={styles.modal} >
