@@ -135,6 +135,8 @@ export default class LeadForm extends React.PureComponent {
             project: [requiredCondition],
             tabularBook: [],
             leadGroup: [],
+            emmEntities: [],
+            emmTriggers: [],
         };
 
         this.schema = {

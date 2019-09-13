@@ -116,6 +116,36 @@ const connectorsSchema = [];
 }
 
 {
+    const name = 'emmEntity';
+    const schema = {
+        doc: {
+            name: 'EMM Entity',
+            description: 'EMM entity',
+        },
+        fields: {
+            name: { type: 'string' },
+        },
+    };
+    connectorsSchema.push({ name, schema });
+}
+
+{
+    const name = 'emmTrigger';
+    const schema = {
+        doc: {
+            name: 'EMM Trigger',
+            description: 'EMM trigger',
+        },
+        fields: {
+            emmKeyword: { type: 'string' },
+            emmRiskFactor: { type: 'string' },
+            count: { type: 'number' },
+        },
+    };
+    connectorsSchema.push({ name, schema });
+}
+
+{
     const name = 'connectorLead';
     const schema = {
         doc: {
@@ -131,6 +161,8 @@ const connectorsSchema = [];
             sourceType: { type: 'string' },
             source: { type: 'string' },
             existing: { type: 'boolean' },
+            emmEntities: { type: 'array.emmEntity' },
+            emmTriggers: { type: 'array.emmTrigger' },
         },
     };
     connectorsSchema.push({ name, schema });
