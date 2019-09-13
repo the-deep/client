@@ -7,6 +7,14 @@
     width: var(--width-modal-large);
     height: var(--height-modal-body);
 
+    .header {
+        :global {
+            .modal-header {
+                text-transform: capitalize;
+            }
+        }
+    }
+
     .modal-body {
         display: flex;
         flex-direction: column;
@@ -20,7 +28,6 @@
             :global {
                 .row {
                     border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                    background-color: var(--color-foreground);
                 }
             }
         }

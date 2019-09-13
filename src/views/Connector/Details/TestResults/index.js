@@ -27,6 +27,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    title: PropTypes.string,
     leadsGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     connectorSource: PropTypes.object,
@@ -38,6 +39,7 @@ const propTypes = {
 const defaultProps = {
     closeModal: () => {},
     className: '',
+    title: '',
     connectorSource: {},
     paramsForTest: {},
 };
@@ -127,6 +129,7 @@ export default class ConnectorTestResults extends React.PureComponent {
     render() {
         const {
             className,
+            title,
             leadsGet: {
                 pending,
                 response: {
@@ -145,7 +148,8 @@ export default class ConnectorTestResults extends React.PureComponent {
                 onClose={closeModal}
             >
                 <ModalHeader
-                    title={_ts('connector', 'testResultsHeading')}
+                    className={styles.header}
+                    title={_ts('connector', 'testResultsHeading', { title })}
                     rightComponent={
                         <Button
                             iconName="close"

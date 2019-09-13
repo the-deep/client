@@ -7,8 +7,6 @@ import {
     _cs,
     compareString,
     compareDate,
-    isFalsy,
-    isValidUrl,
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
@@ -21,13 +19,12 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 import TextInput from '#rsci/TextInput';
-import SelectInput from '#rsci/SelectInput';
-import DateInput from '#rsci/DateInput';
-import NumberInput from '#rsci/NumberInput';
 import FormattedDate from '#rscv/FormattedDate';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import update from '#rsu/immutable-update';
+
+import { RequestClient } from '#request';
 
 import Badge from '#components/viewer/Badge';
 
@@ -42,14 +39,15 @@ import {
     setErrorUserConnectorDetailsAction,
     setUserConnectorDetailsAction,
 } from '#redux';
+
 import _ts from '#ts';
 
 import ConnectorDetailsGetRequest from '../../requests/ConnectorDetailsGetRequest';
 import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
-import RssFieldsGet from '../../requests/RssFieldsGet';
-import ConnectorDeleteRequest from '../../requests/ConnectorDeleteRequest';
 import UserListGetRequest from '../../requests/UserListGetRequest';
 import TestResults from '../TestResults';
+import FieldInput from './FieldInput';
+import { requests } from './requests';
 
 import styles from './styles.scss';
 
@@ -70,9 +68,17 @@ const propTypes = {
     setErrorUserConnectorDetails: PropTypes.func.isRequired,
     setUserConnectorDetails: PropTypes.func.isRequired,
     setUsers: PropTypes.func.isRequired,
+    // These are used in requests put in another file
+    // eslint-disable-next-line react/no-unused-prop-types
     deleteConnector: PropTypes.func.isRequired,
+    // These are used in requests put in another file
+    // eslint-disable-next-line react/no-unused-prop-types
     onConnectorDelete: PropTypes.func.isRequired,
     className: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    connectorDeleteRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    rssOptionsRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -100,56 +106,27 @@ const mapDispatchToProps = dispatch => ({
 
 const emptyList = [];
 
-const xmlConnectorTypes = [
-    'rss-feed',
-    'atom-feed',
-    'emm',
-];
-
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requests)
 export default class ConnectorDetailsForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keySelector = s => s.key;
-    static labelSelector = s => s.title;
+    static fieldKeySelector = s => s.key;
+
     static userLabelSelector = (d = {}) => d.displayName;
     static userKeySelector = (d = {}) => d.user;
     static projectLabelSelector = (d = {}) => d.title;
     static projectKeySelector = (d = {}) => d.project;
 
-    static getFeedUrl = (faramValues = {}) => {
-        const { params: { 'feed-url': feedUrl } = {} } = faramValues;
-        return feedUrl;
-    }
-
     constructor(props) {
         super(props);
-
-        const {
-            connectorId,
-            setErrorUserConnectorDetails,
-        } = this.props;
 
         this.state = {
             userDataLoading: true,
             connectorDataLoading: false,
             pending: false,
-            rssOptions: undefined,
-            schema: this.createSchema(props),
         };
-
-        this.rssFieldGetRequest = new RssFieldsGet({
-            setState: params => this.setState(params),
-            connectorId,
-            setConnectorError: setErrorUserConnectorDetails,
-        });
-
-        this.connectorDeleteRequest = new ConnectorDeleteRequest({
-            setState: params => this.setState(params),
-            deleteConnector: this.props.deleteConnector,
-            onConnectorDelete: this.props.onConnectorDelete,
-        });
 
         this.usersHeader = [
             {
@@ -216,6 +193,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 },
             },
         ];
+
         this.projectsHeader = [
             {
                 key: 'title',
@@ -284,51 +262,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     }
 
     componentDidMount() {
-        const {
-            connectorSource: { key },
-            connectorDetails: { faramValues = {} },
-        } = this.props;
-
         this.startUsersListGetRequest();
-
-        if (xmlConnectorTypes.includes(key)) {
-            const urlFeed = ConnectorDetailsForm.getFeedUrl(faramValues);
-            if (urlFeed && isValidUrl(urlFeed)) {
-                this.rssFieldGetRequest.init(urlFeed, key);
-                this.rssFieldGetRequest.start();
-            }
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            connectorSource: newConnectorSource,
-            connectorDetails: {
-                faramValues: newFaramValues = {},
-            },
-        } = nextProps;
-
-        const {
-            connectorSource: oldConnectorSource,
-            connectorDetails: {
-                faramValues: oldFaramValues = {},
-            },
-        } = this.props;
-
-        if (oldConnectorSource !== newConnectorSource) {
-            this.setState({
-                schema: this.createSchema(newConnectorSource),
-            });
-        }
-
-        if (xmlConnectorTypes.includes(newConnectorSource.key)) {
-            const newFeedUrl = ConnectorDetailsForm.getFeedUrl(newFaramValues);
-            const oldFeedUrl = ConnectorDetailsForm.getFeedUrl(oldFaramValues);
-            if (newFeedUrl !== oldFeedUrl && newFeedUrl && isValidUrl(newFeedUrl)) {
-                this.rssFieldGetRequest.init(newFeedUrl, newConnectorSource.key);
-                this.rssFieldGetRequest.start();
-            }
-        }
     }
 
     componentWillUnmount() {
@@ -337,9 +271,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         }
         if (this.requestForUserList) {
             this.requestForUserList.stop();
-        }
-        if (this.connectorDeleteRequest) {
-            this.connectorDeleteRequest.stop();
         }
         if (this.requestForConnectorDetails) {
             this.requestForConnectorDetails.stop();
@@ -408,10 +339,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     })
 
-    createSchema = memoize((props) => {
+    createSchema = memoize((connectorSource) => {
         // FIXME: potential problem here with params,
         // it should be empty array not empty object
-        const { connectorSource = {} } = props;
         const schema = {
             fields: {
                 title: [requiredCondition],
@@ -648,84 +578,26 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     };
 
     handleConnectorDelete = () => {
-        const { connectorId } = this.props;
-        this.connectorDeleteRequest.init(connectorId);
-        this.connectorDeleteRequest.start();
+        this.props.connectorDeleteRequest.do();
     };
 
-    renderParamInput = (key, data) => {
-        const { connectorSource: { key: connectorKey } } = this.props;
+    fieldInputRendererParams = (key, data) => {
         const {
-            rssOptions,
-            pendingRssFields,
-        } = this.state;
+            connectorSource: { key: connectorSourceKey },
+            rssOptionsRequest: {
+                pending,
+                response: {
+                    results: rssOptions,
+                } = {},
+            },
+        } = this.props;
 
-        if (data.fieldType === 'string' || data.fieldType === 'url') {
-            if (data.key === 'feed-url') {
-                return (
-                    <div className={styles.feedUrlContainer}>
-                        <TextInput
-                            key={data.key}
-                            className={styles.feedUrl}
-                            faramElementName={data.key}
-                            label={data.title}
-                        />
-                        { pendingRssFields &&
-                            <div className={styles.loadingAnimationContainer} >
-                                <LoadingAnimation className={styles.loadingAnimation} />
-                            </div>
-                        }
-                    </div>
-                );
-            }
-            return (
-                <TextInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                />
-            );
-        } else if (data.fieldType === 'select') {
-            if (xmlConnectorTypes.includes(connectorKey)) {
-                if (isFalsy(rssOptions)) {
-                    return null;
-                }
-                return (
-                    <SelectInput
-                        key={data.key}
-                        faramElementName={data.key}
-                        label={data.title}
-                        options={rssOptions}
-                        disabled={pendingRssFields}
-                    />
-                );
-            }
-            return (
-                <SelectInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                    options={data.options}
-                />
-            );
-        } else if (data.fieldType === 'date') {
-            return (
-                <DateInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                />
-            );
-        } else if (data.fieldType === 'number') {
-            return (
-                <NumberInput
-                    key={data.key}
-                    faramElementName={data.key}
-                    label={data.title}
-                />
-            );
-        }
-        return null;
+        return ({
+            field: data,
+            connectorSourceKey,
+            rssOptions,
+            pendingRssFields: pending,
+        });
     }
 
     render() {
@@ -733,13 +605,15 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             users,
             userProjects,
             className,
+            connectorDeleteRequest: {
+                pending: deletePending,
+            },
             connectorSource,
             connectorDetails,
             connectorId,
         } = this.props;
 
         const {
-            schema,
             pending,
             connectorDataLoading,
             userDataLoading,
@@ -770,6 +644,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             connectorDataLoading ||
             pending;
 
+        const schema = this.createSchema(connectorSource);
+
         return (
             <Faram
                 className={_cs(styles.connectorDetailsForm, className)}
@@ -794,6 +670,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                         <AccentModalButton
                             modal={
                                 <TestResults
+                                    title={faramValues.title}
                                     connectorId={connectorId}
                                     paramsForTest={params}
                                     onConnectorTestLoading={this.handleConnectorTestLoading}
@@ -803,6 +680,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                             {_ts('connector', 'connectorDetailTestLabel')}
                         </AccentModalButton>
                         <DangerConfirmButton
+                            pending={deletePending}
                             confirmationMessage={_ts(
                                 'connector',
                                 'deleteConnectorConfirmText',
@@ -842,7 +720,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                         <FaramGroup faramElementName="params">
                             <List
                                 data={connectorSource.options}
-                                modifier={this.renderParamInput}
+                                rendererParams={this.fieldInputRendererParams}
+                                keySelector={ConnectorDetailsForm.fieldKeySelector}
+                                renderer={FieldInput}
                             />
                         </FaramGroup>
                     </div>
