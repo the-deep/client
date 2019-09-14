@@ -6,18 +6,16 @@ import {
     Redirect,
 } from 'react-router-dom';
 import {
+    mapToList,
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
-import AccentButton from '#rsca/Button/AccentButton';
 import Button from '#rsca/Button';
-import FormattedDate from '#rscv/FormattedDate';
 import SelectInput from '#rsci/SelectInput';
 import Pager from '#rscv/Pager';
-import modalize from '#rscg/Modalize';
 import { RequestCoordinator } from '#request';
 
 import Cloak from '#components/general/Cloak';
@@ -28,7 +26,6 @@ import {
     pathNames,
     viewsAcl,
 } from '#constants';
-import { mimeTypeToIconMap } from '#entities/lead';
 import {
     activeProjectIdFromStateSelector,
     totalLeadsCountForProjectSelector,
@@ -57,9 +54,6 @@ import {
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
 import _ts from '#ts';
 
-import ActionButtons from './ActionButtons';
-import LeadPreview from './LeadPreview';
-
 import DeleteLeadRequest from './requests/DeleteLeadRequest';
 import LeadsRequest from './requests/LeadsRequest';
 import PatchLeadRequest from './requests/PatchLeadRequest';
@@ -79,9 +73,6 @@ const EmptyComponent = TableEmptyComponent({
         ),
     }),
 });
-
-
-const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -117,7 +108,6 @@ const mapStateToProps = state => ({
     leadsPerPage: leadPageLeadsPerPageSelector(state),
     filters: leadPageFilterSelector(state),
     view: leadPageViewSelector(state),
-
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -132,6 +122,68 @@ const mapDispatchToProps = dispatch => ({
     setLeadPageFilter: params => dispatch(setLeadPageFilterAction(params)),
     setLeadsPerPage: params => dispatch(setLeadPageLeadsPerPageAction(params)),
 });
+
+// This map is required for Grid view page, previously all the headers were in this
+// page wich doesn't make sense and complicates the process
+const tableHeadersMap = {
+    attachment_mime_type: {
+        label: _ts('leads', 'filterSourceType'),
+        sortable: false,
+    },
+    title: {
+        label: _ts('leads', 'titleLabel'),
+        sortable: true,
+    },
+    page_count: {
+        label: _ts('leads', 'pageCountTitle'),
+        sortable: true,
+    },
+    source: {
+        label: _ts('leads', 'tableHeaderPublisher'),
+        sortable: true,
+    },
+    author: {
+        label: _ts('leads', 'tableHeaderAuthor'),
+        sortable: true,
+    },
+    published_on: {
+        label: _ts('leads', 'tableHeaderDatePublished'),
+        sortable: true,
+    },
+    created_by: {
+        label: _ts('leads', 'tableHeaderOwner'),
+        sortable: true,
+    },
+    assignee: {
+        label: _ts('leads', 'assignee'),
+        sortable: true,
+    },
+    created_at: {
+        label: _ts('leads', 'tableHeaderDateCreated'),
+        sortable: true,
+    },
+    confidentiality: {
+        label: _ts('leads', 'tableHeaderConfidentiality'),
+        sortable: true,
+    },
+    status: {
+        label: _ts('leads', 'tableHeaderStatus'),
+        sortable: true,
+    },
+    no_of_entries: {
+        label: _ts('leads', 'tableHeaderNoOfEntries'),
+        sortable: true,
+    },
+    actions: {
+        label: _ts('leads', 'tableHeaderActions'),
+        sortable: false,
+    },
+};
+
+const tableHeaders = mapToList(
+    tableHeadersMap,
+    (k, d) => d,
+);
 
 const TABLE_VIEW = 'table';
 const GRID_VIEW = 'grid';
@@ -157,151 +209,6 @@ export default class Leads extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
-        this.headers = [
-            {
-                key: 'attachment_mime_type',
-                label: _ts('leads', 'filterSourceType'),
-                order: 1,
-                sortable: false,
-                modifier: (row) => {
-                    const MimeType = this.renderMimeType;
-                    return (
-                        <MimeType row={row} />
-                    );
-                },
-            },
-            {
-                key: 'title',
-                label: _ts('leads', 'titleLabel'),
-                order: 2,
-                sortable: true,
-            },
-            {
-                key: 'page_count',
-                label: _ts('leads', 'pageCountTitle'),
-                order: 3,
-                sortable: true,
-                modifier: row => row.pageCount,
-            },
-            {
-                key: 'source',
-                label: _ts('leads', 'tableHeaderPublisher'),
-                order: 4,
-                sortable: true,
-            },
-            {
-                key: 'author',
-                label: _ts('leads', 'tableHeaderAuthor'),
-                order: 5,
-                sortable: true,
-            },
-            {
-                key: 'published_on',
-                label: _ts('leads', 'tableHeaderDatePublished'),
-                order: 6,
-                sortable: true,
-                modifier: row => (
-                    <FormattedDate
-                        date={row.publishedOn}
-                        mode="dd-MM-yyyy"
-                    />
-                ),
-            },
-            {
-                key: 'created_by',
-                label: _ts('leads', 'tableHeaderOwner'),
-                order: 7,
-                sortable: true,
-                modifier: row => (
-                    <Link
-                        key={row.createdBy}
-                        className="created-by-link"
-                        to={reverseRoute(pathNames.userProfile, { userId: row.createdBy })}
-                    >
-                        {row.createdByName}
-                    </Link>
-                ),
-            },
-            {
-                key: 'assignee',
-                label: _ts('leads', 'assignee'),
-                order: 8,
-                sortable: true,
-                modifier: ({ assignee, assigneeDetails }) => (
-                    assignee ? (
-                        <Link
-                            key={assignee}
-                            className="assignee-link"
-                            to={reverseRoute(pathNames.userProfile, { userId: assignee })}
-                        >
-                            {assigneeDetails.displayName}
-                        </Link>
-                    ) : null
-                ),
-            },
-            {
-                key: 'created_at',
-                label: _ts('leads', 'tableHeaderDateCreated'),
-                order: 9,
-                sortable: true,
-                modifier: row => (
-                    <FormattedDate
-                        date={row.createdAt}
-                        mode="dd-MM-yyyy hh:mm"
-                    />
-                ),
-            },
-            {
-                key: 'confidentiality',
-                label: _ts('leads', 'tableHeaderConfidentiality'),
-                sortable: true,
-                order: 10,
-                modifier: row => (
-                    <div className="confidentiality">
-                        {row.confidentiality}
-                    </div>
-                ),
-            },
-            {
-                key: 'status',
-                label: _ts('leads', 'tableHeaderStatus'),
-                sortable: true,
-                order: 11,
-                modifier: row => (
-                    <div className="status">
-                        {row.status}
-                    </div>
-                ),
-            },
-            {
-                key: 'no_of_entries',
-                label: _ts('leads', 'tableHeaderNoOfEntries'),
-                order: 12,
-                sortable: true,
-                modifier: row => row.noOfEntries,
-            },
-            {
-                key: 'actions',
-                label: _ts('leads', 'tableHeaderActions'),
-                order: 13,
-                sortable: false,
-                modifier: row => (
-                    <ActionButtons
-                        row={row}
-                        onSearchSimilarLead={this.handleSearchSimilarLead}
-
-                        onRemoveLead={this.handleLeadDelete}
-                        onMarkProcessed={this.handleMarkAsProcessed}
-                        onMarkPending={this.handleMarkAsPending}
-
-                        activeProject={this.props.activeProject}
-                    />
-                ),
-            },
-        ];
-
-        this.sortableHeaders = this.headers.filter(h => h.sortable);
 
         this.state = {
             loadingLeads: true,
@@ -524,36 +431,6 @@ export default class Leads extends React.PureComponent {
         this.props.setLeadPageView({ view });
     }
 
-    renderMimeType = ({ row }) => {
-        const {
-            attachment,
-            url: rowUrl,
-            tabularBook,
-        } = row;
-
-        const icon = (tabularBook && 'tabularIcon')
-            || (attachment && mimeTypeToIconMap[attachment.mimeType])
-            || (rowUrl && 'globe')
-            || 'documentText';
-
-        const url = (attachment && attachment.file) || rowUrl;
-        return (
-            <div className="icon-wrapper">
-                { url ? (
-                    <AccentModalButton
-                        iconName={icon}
-                        transparent
-                        modal={
-                            <LeadPreview value={row} />
-                        }
-                    />
-                ) : (
-                    <Icon name={icon} />
-                )}
-            </div>
-        );
-    }
-
     renderHeader = () => {
         const addLeadLink = reverseRoute(
             pathNames.addLeads,
@@ -676,7 +553,7 @@ export default class Leads extends React.PureComponent {
                                 labelSelector={this.sortLabelSelector}
                                 showLabel={false}
                                 value={sortKey}
-                                options={this.sortableHeaders}
+                                options={tableHeaders}
                                 onChange={this.handleSortItemClick}
                                 placeholder={_ts('leads', 'placeholderAnybody')}
                                 showHintAndError={false}
@@ -699,18 +576,28 @@ export default class Leads extends React.PureComponent {
         const {
             activeSort,
             setLeadPageActiveSort,
+            activeProject,
         } = this.props;
+
         const { loadingLeads } = this.state;
 
         return (
             <Table
-                headers={this.headers}
+                headersMap={tableHeadersMap}
                 activeSort={activeSort}
                 onHeaderClick={this.handleTableHeaderClick}
                 loading={loadingLeads}
                 setLeadPageActiveSort={setLeadPageActiveSort}
                 emptyComponent={EmptyComponent}
                 isFilterEmpty={isFilterEmpty}
+
+                onSearchSimilarLead={this.handleSearchSimilarLead}
+
+                onRemoveLead={this.handleLeadDelete}
+                onMarkProcessed={this.handleMarkAsProcessed}
+                onMarkPending={this.handleMarkAsPending}
+
+                activeProject={activeProject}
             />
         );
     }
