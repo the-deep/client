@@ -54,11 +54,11 @@ import {
     removeLeadAction,
     patchLeadAction,
 } from '#redux';
+import FilterLeadsForm from '#components/other/FilterLeadsForm';
 import _ts from '#ts';
 
 import ActionButtons from './ActionButtons';
 import LeadPreview from './LeadPreview';
-import FilterLeadsForm from './FilterLeadsForm';
 
 import DeleteLeadRequest from './requests/DeleteLeadRequest';
 import LeadsRequest from './requests/LeadsRequest';

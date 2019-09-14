@@ -20,6 +20,7 @@ import RadialDendrogram from '#rscz/RadialDendrogram';
 import SunBurst from '#rscz/SunBurst';
 import wrapViz from '#rscz/VizWrapper';
 import ZoomableTreeMap from '#rscz/ZoomableTreeMap';
+import { RequestCoordinator } from '#request';
 import {
     projectDetailsSelector,
     leadPageFilterSelector,
@@ -37,6 +38,7 @@ import { pathNames } from '#constants/';
 
 import VizError from '#components/error/VizError';
 import BackLink from '#components/general/BackLink';
+import FilterLeadsForm from '#components/other/FilterLeadsForm';
 
 import _ts from '#ts';
 import _cs from '#cs';
@@ -47,7 +49,6 @@ import LeadTopicModelingRequest from './requests/LeadTopicModelingRequest';
 import LeadCDIdRequest from './requests/LeadCDIdRequest';
 import LeadNerRequest from './requests/LeadNerRequest';
 
-import FilterLeadsForm from '../Leads/FilterLeadsForm';
 import styles from './styles.scss';
 
 // FIXME: looks like activeProject is not needed here, projectId would do
@@ -96,6 +97,7 @@ const ForceDirectedGraphView = decorate(ForceDirectedGraph);
 const CollapsibleTreeView = decorate(CollapsibleTree);
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
 export default class LeadsViz extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
