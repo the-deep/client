@@ -3,21 +3,23 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Faram from '@togglecorp/faram';
 import {
+    _cs,
     isTruthy,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
-import { FgRestBuilder } from '#rsu/rest';
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
+
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 
-import {
-    createParamsForGet,
-    createUrlForLeadFilterOptions,
-} from '#rest';
 import {
     activeProjectIdFromStateSelector,
     leadFilterOptionsForProjectSelector,
@@ -28,11 +30,13 @@ import {
     setLeadFilterOptionsAction,
     unsetLeadPageFilterAction,
 } from '#redux';
-import _ts from '#ts';
-import schema from '#schema';
 
+import _ts from '#ts';
+
+import styles from './styles.scss';
 
 const propTypes = {
+    // eslint-disable-next-line react/no-unused-prop-types
     activeProject: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     leadFilterOptions: PropTypes.object.isRequired,
@@ -42,9 +46,13 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     filters: PropTypes.object.isRequired,
 
+    // eslint-disable-next-line react/no-unused-prop-types
     setLeadFilterOptions: PropTypes.func.isRequired,
     setLeadPageFilter: PropTypes.func.isRequired,
     unsetLeadPageFilter: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    leadOptionsRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -65,7 +73,35 @@ const mapDispatchToProps = dispatch => ({
     unsetLeadPageFilter: params => dispatch(unsetLeadPageFilterAction(params)),
 });
 
+const emptyList = [];
+
+const requests = {
+    leadOptionsRequest: {
+        url: '/lead-options/',
+        method: requestMethods.GET,
+        query: ({ props: { activeProject } }) => ({
+            project: activeProject,
+        }),
+        onPropsChanged: ['activeProject'],
+        onMount: true,
+        schemaName: 'projectLeadFilterOptions',
+        onSuccess: ({
+            response,
+            props: {
+                setLeadFilterOptions,
+                activeProject,
+            },
+        }) => {
+            setLeadFilterOptions({
+                projectId: activeProject,
+                leadFilterOptions: response,
+            });
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requests)
 export default class FilterLeadsForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -75,8 +111,9 @@ export default class FilterLeadsForm extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const { similar, ...values } = this.props.filters;
+
         this.state = {
             faramValues: values,
             pristine: true,
@@ -90,86 +127,33 @@ export default class FilterLeadsForm extends React.PureComponent {
                 published_on: [],
                 confidentiality: [],
                 status: [],
+                emmRiskFactors: [],
+                emmTriggers: [],
+                emmEntities: [],
             },
         };
     }
 
-    componentWillMount() {
-        const { activeProject } = this.props;
-        this.requestProjectLeadFilterOptions(activeProject);
-    }
-
     componentWillReceiveProps(nextProps) {
-        const { filters, activeProject } = nextProps;
-        if (this.props.filters !== filters) {
-            // eslint-disable-next-line no-unused-vars
-            const { similar, ...values } = filters;
+        const { filters: newFilters } = nextProps;
+        const { filters: oldFilters } = this.props;
+
+        if (newFilters !== oldFilters) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+            const { similar, ...values } = newFilters;
+
             this.setState({
                 faramValues: values,
                 pristine: true,
             });
         }
-
-        if (this.props.activeProject !== activeProject) {
-            this.requestProjectLeadFilterOptions(activeProject);
-        }
     }
-
-    componentWillUnmount() {
-        if (this.leadFilterOptionsRequest) {
-            this.leadFilterOptionsRequest.stop();
-        }
-    }
-
-    // REST
-
-    requestProjectLeadFilterOptions = (activeProject) => {
-        if (this.leadFilterOptionsRequest) {
-            this.leadFilterOptionsRequest.stop();
-        }
-
-        // eslint-disable-next-line max-len
-        this.leadFilterOptionsRequest = this.createRequestForProjectLeadFilterOptions(activeProject);
-        this.leadFilterOptionsRequest.start();
-    }
-
-    createRequestForProjectLeadFilterOptions = (activeProject) => {
-        const urlForProjectFilterOptions = createUrlForLeadFilterOptions(activeProject);
-
-        const leadFilterOptionsRequest = new FgRestBuilder()
-            .url(urlForProjectFilterOptions)
-            .params(createParamsForGet)
-            .preLoad(() => {
-                this.setState({ loadingLeadFilters: true });
-            })
-            .postLoad(() => {
-                this.setState({ loadingLeadFilters: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'projectLeadFilterOptions');
-                    this.props.setLeadFilterOptions({
-                        projectId: activeProject,
-                        leadFilterOptions: response,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
-            })
-            .build();
-
-        return leadFilterOptionsRequest;
-    }
-
-    // UI
 
     handleFaramChange = (values) => {
-        this.setState(
-            {
-                faramValues: values,
-                pristine: false,
-            },
-        );
+        this.setState({
+            faramValues: values,
+            pristine: false,
+        });
     }
 
     handleFaramValidationSuccess = (_, values) => {
@@ -193,12 +177,20 @@ export default class FilterLeadsForm extends React.PureComponent {
     }
 
     handleClearFilters = () => {
-        if (doesObjectHaveNoData(this.props.filters, [''])) {
+        const {
+            filters,
+            unsetLeadPageFilter,
+        } = this.props;
+
+        if (doesObjectHaveNoData(filters, [''])) {
             // NOTE: Only clear component state,
             // as the filters in global state is already empty
-            this.setState({ faramValues: {}, pristine: true });
+            this.setState({
+                faramValues: {},
+                pristine: true,
+            });
         } else {
-            this.props.unsetLeadPageFilter();
+            unsetLeadPageFilter();
         }
     }
 
@@ -209,6 +201,12 @@ export default class FilterLeadsForm extends React.PureComponent {
                 confidentiality,
                 status,
                 assignee,
+                emmEntities = emptyList,
+                emmTriggers = emptyList,
+                emmRiskFactors = emptyList,
+            },
+            leadOptionsRequest: {
+                pending: loadingLeadFilters,
             },
             filters,
         } = this.props;
@@ -216,7 +214,6 @@ export default class FilterLeadsForm extends React.PureComponent {
         const {
             faramValues,
             pristine,
-            loadingLeadFilters,
         } = this.state;
 
         const isApplyDisabled = pristine;
@@ -224,9 +221,13 @@ export default class FilterLeadsForm extends React.PureComponent {
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
         const isClearDisabled = isFilterEmpty && pristine;
 
+        const showEmmFilters = emmEntities.length > 0
+            || emmTriggers.length > 0
+            || emmRiskFactors.length > 0;
+
         return (
             <Faram
-                className={`leads-filters ${className}`}
+                className={_cs(styles.leadsFilters, className)}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
                 schema={this.schema}
@@ -239,7 +240,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     placeholder={_ts('leads', 'placeholderSearch')}
                     showHintAndError={false}
                     showLabel
-                    className="leads-filter"
+                    className={styles.leadsFilter}
                 />
                 <DateFilter
                     faramElementName="published_on"
@@ -247,7 +248,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     placeholder={_ts('leads', 'placeholderAnytime')}
                     showHintAndError={false}
                     showLabel
-                    className="leads-filter"
+                    className={styles.leadsFilter}
                 />
                 <MultiSelectInput
                     faramElementName="assignee"
@@ -258,7 +259,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     placeholder={_ts('leads', 'placeholderAnybody')}
                     showHintAndError={false}
                     showLabel
-                    className="leads-filter"
+                    className={styles.leadsFilter}
                 />
                 <DateFilter
                     faramElementName="created_at"
@@ -266,7 +267,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     placeholder={_ts('leads', 'placeholderAnytime')}
                     showHintAndError={false}
                     showLabel
-                    className="leads-filter"
+                    className={styles.leadsFilter}
                 />
                 <MultiSelectInput
                     faramElementName="confidentiality"
@@ -277,7 +278,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     placeholder={_ts('leads', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
-                    className="leads-filter"
+                    className={styles.leadsFilter}
                 />
                 <MultiSelectInput
                     faramElementName="status"
@@ -288,17 +289,54 @@ export default class FilterLeadsForm extends React.PureComponent {
                     placeholder={_ts('leads', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
-                    className="leads-filter"
+                    className={styles.leadsFilter}
                 />
+                {showEmmFilters && (
+                    <React.Fragment>
+                        <SearchMultiSelectInput
+                            faramElementName="emmRiskFactors"
+                            keySelector={FilterLeadsForm.emmRiskFactorsKeySelector}
+                            label={_ts('leads', 'filterEmmRiskFactors')}
+                            labelSelector={FilterLeadsForm.emmRiskFactorsLabelSelector}
+                            options={emmRiskFactors}
+                            placeholder={_ts('leads', 'placeholderAny')}
+                            showHintAndError={false}
+                            showLabel
+                            className={styles.leadsFilter}
+                        />
+                        <SearchMultiSelectInput
+                            faramElementName="emmTriggers"
+                            keySelector={FilterLeadsForm.emmTriggerKeySelector}
+                            label={_ts('leads', 'filterEmmTriggers')}
+                            labelSelector={FilterLeadsForm.emmTriggerOptionsSelector}
+                            options={emmTriggers}
+                            placeholder={_ts('leads', 'placeholderAny')}
+                            showHintAndError={false}
+                            showLabel
+                            className={styles.leadsFilter}
+                        />
+                        <SearchMultiSelectInput
+                            faramElementName="emmEntities"
+                            keySelector={FilterLeadsForm.emmEntitiesKeySelector}
+                            label={_ts('leads', 'filterEmmEntities')}
+                            labelSelector={FilterLeadsForm.emmEntitiesLabelSelector}
+                            options={emmEntities}
+                            placeholder={_ts('leads', 'placeholderAny')}
+                            showHintAndError={false}
+                            showLabel
+                            className={styles.leadsFilter}
+                        />
+                    </React.Fragment>
+                )}
                 <Button
-                    className="button apply-filter-button"
+                    className={styles.button}
                     disabled={isApplyDisabled || loadingLeadFilters}
                     type="submit"
                 >
                     {_ts('leads', 'filterApplyFilter')}
                 </Button>
                 <DangerButton
-                    className="button clear-filter-button"
+                    className={styles.button}
                     disabled={isClearDisabled || loadingLeadFilters}
                     onClick={this.handleClearFilters}
                 >
@@ -307,7 +345,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 {
                     isTruthy(filters.similar) && (
                         <DangerButton
-                            className="button clear-similar-filter-button"
+                            className={styles.button}
                             onClick={this.handleClearSimilarSelection}
                         >
                             {_ts('leads', 'filterClearSimilarFilter')}

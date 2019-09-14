@@ -639,7 +639,6 @@
         "9017": "Select at least {count} sectors in methodology",
         "9018": "Cross sector",
         "9019": "Humanitarian access",
-        "9020": "Basic information",
         "9021": "Additional documents",
         "9022": "Executive summary",
         "9023": "Assessment database",
@@ -1009,7 +1008,8 @@
         "-84296296": "Comment status",
         "-76163429": "I want to receive updates on entry comments by email",
         "-51206611": "Language",
-        "-70720392": "View edit history"
+        "-70720392": "View edit history",
+        "-97734309": "EMM Risk Factors"
     },
     "links": {
         "browserExtension": {
@@ -1616,7 +1616,10 @@
             "Preview": -77224022,
             "exportToOtherProjectsButtonTitle": -16703906,
             "pageCountTitle": -59011405,
-            "tableHeaderAuthor": -31511044
+            "tableHeaderAuthor": -31511044,
+            "filterEmmEntities": -28548476,
+            "filterEmmRiskFactors": -97734309,
+            "filterEmmTriggers": -35842630
         },
         "leadsGrid": {
             "publisherLabel": 5,

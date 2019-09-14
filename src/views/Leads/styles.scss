@@ -16,25 +16,9 @@
             padding: var(--spacing-small) var(--spacing-medium-alt);
         }
 
-        :global {
-            .leads-filters {
-                >.button {
-                    align-self: flex-end;
-                    flex-shrink: 0;
-                    margin: var(--spacing-small);
-                }
-            }
-        }
-
         .filters {
             display: flex;
             flex-grow: 1;
-
-            :global {
-                .leads-filter {
-                    margin: var(--spacing-small);
-                }
-            }
         }
 
         .tabs {
