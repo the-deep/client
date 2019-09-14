@@ -182,8 +182,8 @@ const tableHeadersMap = {
 
 const tableHeaders = mapToList(
     tableHeadersMap,
-    (k, d) => d,
-);
+    (data, key) => ({ key, ...data }),
+).filter(d => d.sortable);
 
 const TABLE_VIEW = 'table';
 const GRID_VIEW = 'grid';

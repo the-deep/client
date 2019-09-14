@@ -5,6 +5,7 @@ import Faram from '@togglecorp/faram';
 import {
     _cs,
     isTruthy,
+    isTruthyString,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
@@ -78,9 +79,9 @@ const emptyList = [];
 const requests = {
     leadOptionsRequest: {
         url: '/lead-options/',
-        method: requestMethods.GET,
-        query: ({ props: { activeProject } }) => ({
-            project: activeProject,
+        method: requestMethods.POST,
+        body: ({ props: { activeProject } }) => ({
+            projects: [activeProject],
         }),
         onPropsChanged: ['activeProject'],
         onMount: true,
@@ -109,6 +110,18 @@ export default class FilterLeadsForm extends React.PureComponent {
     static optionLabelSelector = (d = {}) => d.value;
     static optionKeySelector = (d = {}) => d.key;
 
+    static emmRiskFactorsKeySelector = (d = {}) => (isTruthyString(d.key) ? d.key : 'None');
+    static emmRiskFactorsLabelSelector = (d = {}) => (isTruthyString(d.emmRiskFactor)
+        ? `${d.emmRiskFactor} (${d.totalCount})`
+        : `None (${d.totalCount})`
+    );
+
+    static emmEntitiesKeySelector = (d = {}) => d.key;
+    static emmEntitiesLabelSelector = (d = {}) => `${d.key} (${d.count})`;
+
+    static emmTriggerKeySelector = (d = {}) => d.key;
+    static emmTriggerLabelSelector = (d = {}) => `${d.key} (${d.totalCount})`;
+
     constructor(props) {
         super(props);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
@@ -127,9 +140,9 @@ export default class FilterLeadsForm extends React.PureComponent {
                 published_on: [],
                 confidentiality: [],
                 status: [],
-                emmRiskFactors: [],
-                emmTriggers: [],
-                emmEntities: [],
+                emm_risk_factors: [],
+                emm_keywords: [],
+                emm_entities: [],
             },
         };
     }
@@ -202,7 +215,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 status,
                 assignee,
                 emmEntities = emptyList,
-                emmTriggers = emptyList,
+                emmKeywords = emptyList,
                 emmRiskFactors = emptyList,
             },
             leadOptionsRequest: {
@@ -222,7 +235,7 @@ export default class FilterLeadsForm extends React.PureComponent {
         const isClearDisabled = isFilterEmpty && pristine;
 
         const showEmmFilters = emmEntities.length > 0
-            || emmTriggers.length > 0
+            || emmKeywords.length > 0
             || emmRiskFactors.length > 0;
 
         return (
@@ -294,7 +307,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 {showEmmFilters && (
                     <React.Fragment>
                         <SearchMultiSelectInput
-                            faramElementName="emmRiskFactors"
+                            faramElementName="emm_risk_factors"
                             keySelector={FilterLeadsForm.emmRiskFactorsKeySelector}
                             label={_ts('leads', 'filterEmmRiskFactors')}
                             labelSelector={FilterLeadsForm.emmRiskFactorsLabelSelector}
@@ -305,18 +318,18 @@ export default class FilterLeadsForm extends React.PureComponent {
                             className={styles.leadsFilter}
                         />
                         <SearchMultiSelectInput
-                            faramElementName="emmTriggers"
+                            faramElementName="emm_keywords"
                             keySelector={FilterLeadsForm.emmTriggerKeySelector}
                             label={_ts('leads', 'filterEmmTriggers')}
-                            labelSelector={FilterLeadsForm.emmTriggerOptionsSelector}
-                            options={emmTriggers}
+                            labelSelector={FilterLeadsForm.emmTriggerLabelSelector}
+                            options={emmKeywords}
                             placeholder={_ts('leads', 'placeholderAny')}
                             showHintAndError={false}
                             showLabel
                             className={styles.leadsFilter}
                         />
                         <SearchMultiSelectInput
-                            faramElementName="emmEntities"
+                            faramElementName="emm_entities"
                             keySelector={FilterLeadsForm.emmEntitiesKeySelector}
                             label={_ts('leads', 'filterEmmEntities')}
                             labelSelector={FilterLeadsForm.emmEntitiesLabelSelector}

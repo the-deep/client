@@ -170,8 +170,6 @@ export default class EntryCommentModal extends React.PureComponent {
             .filter(t => !t.isResolved)
             .sort((a, b) => compareDate(getParentDate(a), getParentDate(b)));
 
-        console.warn(resolvedThreads, unresolvedThreads);
-
         return { resolvedThreads, unresolvedThreads };
     }
 

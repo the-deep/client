@@ -32,11 +32,12 @@ const propTypes = {
     onRemoveLead: PropTypes.func.isRequired,
     onMarkProcessed: PropTypes.func.isRequired,
     onMarkPending: PropTypes.func.isRequired,
-    activeProject: PropTypes.func.isRequired,
+    activeProject: PropTypes.number,
 };
 
 const defaultProps = {
     className: undefined,
+    activeProject: undefined,
     isFilterEmpty: false,
 };
 
