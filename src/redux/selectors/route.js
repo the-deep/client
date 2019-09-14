@@ -8,6 +8,10 @@ export const routeUrlSelector = ({ route }) => (
     route.url
 );
 
+export const routeSelector = ({ route }) => (
+    route
+);
+
 const routePathSelector = ({ route }) => (
     route.path
 );

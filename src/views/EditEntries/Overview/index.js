@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isFalsy } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
+import EntryCommentModal from '#components/general/EntryCommentModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
+import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import Button from '#rsca/Button';
 
 import {
     entryAccessor,
@@ -16,14 +21,14 @@ import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
     editEntriesStatusesSelector,
-    // editEntriesSelectedEntryTabularDataSelector,
 
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
+    editEntriesSetEntryCommentsCountAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
-    // editEntriesTabularDataSelector,
     fieldsMapForTabularBookSelector,
+    routeSelector,
 } from '#redux';
 import { VIEW } from '#widgets';
 
@@ -34,27 +39,31 @@ import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
+
 const propTypes = {
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    // tabularDataForSelectedEntry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
+    routeUrl: PropTypes.string.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
+    setEntryCommentsCount: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     entry: undefined,
-    // tabularDataForSelectedEntry: undefined,
-    // tabularData: {},
     widgets: [],
     entries: [],
     statuses: {},
+    tabularFields: {},
+    entryStates: {},
     selectedEntryKey: undefined,
 };
 
@@ -63,8 +72,7 @@ const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
-    // tabularDataForSelectedEntry: editEntriesSelectedEntryTabularDataSelector(state),
-    // tabularData: editEntriesTabularDataSelector(state),
+    routeUrl: routeSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
     statuses: editEntriesStatusesSelector(state),
@@ -73,6 +81,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
@@ -86,6 +95,25 @@ export default class Overview extends React.PureComponent {
 
     static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
 
+    componentDidMount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryIdFromRoute = urlParams.get('entry_id');
+        const {
+            setSelectedEntryKey,
+            leadId,
+            entries,
+        } = this.props;
+        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
+        const entryLocalId = entryAccessor.key(entry);
+
+        if (entryLocalId) {
+            setSelectedEntryKey({
+                leadId,
+                key: entryLocalId,
+            });
+        }
+    }
+
     entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
         const fieldId = entryAccessor.tabularField(entry);
@@ -96,7 +124,9 @@ export default class Overview extends React.PureComponent {
         }
 
         if (fieldId) {
-            const field = this.props.tabularFields[fieldId];
+            const { tabularFields } = this.props;
+
+            const field = tabularFields[fieldId];
             // FIXME: use strings
             return (field && field.title) || `Column ${fieldId}`;
         }
@@ -107,7 +137,6 @@ export default class Overview extends React.PureComponent {
     shouldHideEntryDelete = ({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
     )
-
     handleEntrySelect = (entryKey) => {
         this.props.setSelectedEntryKey({
             leadId: this.props.leadId,
@@ -132,21 +161,40 @@ export default class Overview extends React.PureComponent {
         });
     }
 
+    handleCommentsCountChange = (unresolvedCommentCount, resolvedCommentCount, entryId) => {
+        const {
+            leadId,
+            setEntryCommentsCount,
+        } = this.props;
+
+        const entry = {
+            unresolvedCommentCount,
+            resolvedCommentCount,
+            entryId,
+        };
+
+        setEntryCommentsCount({ entry, leadId });
+    }
+
     render() {
         const {
             entry,
-            // tabularDataForSelectedEntry,
-            // tabularData, // eslint-disable-line no-unused-vars
-            leadId, // eslint-disable-line no-unused-vars
-            entries, // eslint-disable-line no-unused-vars
+            leadId, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            entries, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
             statuses,
-            selectedEntryKey, // eslint-disable-line no-unused-vars
+            selectedEntryKey,
             entryStates,
+            routeUrl, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
             tabularFields,
 
             ...otherProps
         } = this.props;
+        const {
+            serverData: {
+                unresolvedCommentCount = 0,
+            } = {},
+        } = entry;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
@@ -184,7 +232,6 @@ export default class Overview extends React.PureComponent {
                                         <DangerButton
                                             onClick={this.handleEntryDelete}
                                             disabled={pending}
-                                            // disabled={!entry || pending}
                                             iconName="remove"
                                             title={_ts('editEntry.overview', 'deleteExcerptTooltip')}
                                         />
@@ -198,11 +245,28 @@ export default class Overview extends React.PureComponent {
                                 labelSelector={this.entryLabelSelector}
                                 onChange={this.handleEntrySelect}
                                 options={this.props.entries}
-                                value={this.props.selectedEntryKey}
+                                value={selectedEntryKey}
                                 showHintAndError={false}
                                 showLabel={false}
                                 hideClearButton
                             />
+                            <ModalButton
+                                className={styles.entryCommentButton}
+                                disabled={isFalsy(entryAccessor.serverId(entry))}
+                                modal={
+                                    <EntryCommentModal
+                                        entryServerId={entryAccessor.serverId(entry)}
+                                        onCommentsCountChange={this.handleCommentsCountChange}
+                                    />
+                                }
+                            >
+                                <Icon name="chat" />
+                                {unresolvedCommentCount > 0 &&
+                                    <div className={styles.commentCount}>
+                                        {unresolvedCommentCount}
+                                    </div>
+                                }
+                            </ModalButton>
                         </header>
                         <WidgetFaram
                             className={styles.content}

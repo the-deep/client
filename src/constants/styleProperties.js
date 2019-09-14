@@ -7,6 +7,7 @@ const styleProperties = {
         colorNavbarActiveMenuItemBorder: defaultColors.colorAccent,
         colorNavbarActiveMenuItem: defaultColors.colorAccent,
         colorNavbarMenuItemHover: defaultColors.colorAccent,
+        colorBackgroundPrimaryHint: '#ecf3fa',
         colorHighlight: '#ffff8d',
         colorTextSuccess: '#43a047',
         colorTextOnHightlight: defaultColors.colorTextOnLight,
@@ -24,6 +25,11 @@ const styleProperties = {
 
         widthConnectorTestModal: '96vw',
         heightConnectorTestModal: '96vh',
+
+        entryCommentMaxHeightCommentHistory: '60vh',
+        entryCommentDropdownWidth: '96px',
+        entryCommentModalMaxHeight: '80vh',
+        entryCommentModalWidth: '360px',
     },
 };
 

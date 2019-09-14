@@ -1,0 +1,18 @@
+.thread {
+    border: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-small);
+
+    .form {
+        padding-top: var(--spacing-small-alt);
+    }
+
+    .new-comment {
+        padding: var(--spacing-medium);
+        padding-bottom: calc(var(--spacing-medium) - var(--spacing-small));
+        text-align: right;
+
+        .button {
+            font-size: var(--font-size-small);
+        }
+    }
+}

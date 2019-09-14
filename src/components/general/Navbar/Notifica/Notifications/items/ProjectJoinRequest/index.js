@@ -11,7 +11,7 @@ import {
     setNotificationAction,
 } from '#redux';
 
-import { reverseRoute } from '@togglecorp/fujs';
+import { reverseRoute, _cs } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
@@ -20,6 +20,7 @@ import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Notification from '../Notification';
+import LinkItem from '../LinkItem';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -33,6 +34,7 @@ const propTypes = {
     projectJoinRejectRequest: PropTypes.object,
 
     className: PropTypes.string,
+    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -148,6 +150,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
             projectJoinRejectRequest: {
                 pending: pendingProjectJoinRejectRequest,
             },
+            closeModal,
         } = this.props;
 
         if (!projectId) {
@@ -155,11 +158,6 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
         }
 
         const pending = pendingProjectJoinAcceptRequest || pendingProjectJoinRejectRequest;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.projectJoinRequestNotification}
-        `;
 
         const requestorProfileLink = reverseRoute(
             pathNames.userProfile,
@@ -173,7 +171,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
 
         return (
             <Notification
-                className={className}
+                className={_cs(classNameFromProps, styles.projectJoinRequestNotification)}
                 icon={
                     <DisplayPicture
                         className={styles.displayPicture}
@@ -181,23 +179,21 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                     />
                 }
                 message={
-                    <div className={styles.message}>
+                    <div>
                         {_ts('notifications.projectJoinRequest', 'message', {
                             requestorName: (
-                                <a
-                                    className={styles.requestorName}
-                                    href={requestorProfileLink}
-                                >
-                                    {requestorName}
-                                </a>
+                                <LinkItem
+                                    link={requestorProfileLink}
+                                    title={requestorName}
+                                    closeModal={closeModal}
+                                />
                             ),
                             projectTitle: (
-                                <a
-                                    className={styles.projectTitle}
-                                    href={projectLink}
-                                >
-                                    {projectTitle}
-                                </a>
+                                <LinkItem
+                                    link={projectLink}
+                                    title={projectTitle}
+                                    closeModal={closeModal}
+                                />
                             ),
                         })}
                     </div>

@@ -1,6 +1,8 @@
 @import '~base-scss/utils';
 
 .lead-grouped-entries {
+    position: relative;
+
     .header {
         display: flex;
         align-items: center;

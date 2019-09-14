@@ -22,6 +22,8 @@ const entrySchema = [];
             project: { type: 'uint' },
             clientId: { type: 'string' },
             lead: { type: 'uint', required: true },
+            resolvedCommentCount: { type: 'uint' },
+            unresolvedCommentCount: { type: 'uint' },
             entryType: { type: 'string', required: true },
             informationDate: { type: 'string' },
             /*

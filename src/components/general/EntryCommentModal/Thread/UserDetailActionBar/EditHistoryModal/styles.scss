@@ -1,0 +1,36 @@
+.modal {
+    z-index: 11;
+    width: var(--entry-comment-modal-width);
+
+    .heading {
+        text-transform: capitalize;
+    }
+
+    .modal-body {
+        max-height: var(--entry-comment-max-height-comment-history);
+        overflow-y: auto;
+
+        .history-item {
+            font-size: var(--font-size-normal);
+
+            .date {
+                padding-bottom: var(--spacing-extra-small);
+                font-size: var(--font-size-small);
+
+                .date-time {
+                    color: var(--color-text-label);
+                }
+            }
+
+            .value {
+                color: var(--color-text);
+                font-size: var(--font-size-normal);
+                font-weight: var(--font-weight-normal);
+            }
+
+            &:not(:last-child) {
+                margin-bottom: var(--spacing-medium);
+            }
+        }
+    }
+}

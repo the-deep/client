@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestCoordinator,
@@ -30,7 +31,7 @@ const propTypes = {
 
 const defaultProps = {
     notificationsCountRequest: {},
-    className: '',
+    className: undefined,
 };
 
 const requests = {
@@ -120,13 +121,8 @@ export default class Notifica extends React.PureComponent {
             } = {},
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.notifica}
-        `;
-
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.notifica)}>
                 { unseenNotificationCount > 0 && (
                     <div className={styles.count}>
                         { unseenNotificationCount }

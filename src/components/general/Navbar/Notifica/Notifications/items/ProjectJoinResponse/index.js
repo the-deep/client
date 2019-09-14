@@ -8,12 +8,15 @@ import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Notification from '../Notification';
+import LinkItem from '../LinkItem';
+
 import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     notification: PropTypes.object,
     className: PropTypes.string,
+    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -52,6 +55,7 @@ export default class ProjectJoinResponseItem extends React.PureComponent {
                 },
                 timestamp,
             },
+            closeModal,
         } = this.props;
 
         const className = `
@@ -74,50 +78,38 @@ export default class ProjectJoinResponseItem extends React.PureComponent {
             { projectId },
         );
 
-        if (status === PROJECT_JOIN_ACCEPTED) {
-            return (
-                <Notification
-                    className={className}
-                    icon={
-                        <DisplayPicture
-                            className={styles.displayPicture}
-                            galleryId={responderDisplayPictureId}
-                        />
-                    }
-                    message={
-                        <div className={styles.message}>
-                            {_ts('notifications.projectJoinResponse', 'acceptText', {
-                                responderName: (
-                                    <a
-                                        className={styles.responderName}
-                                        href={responderProfileLink}
-                                    >
-                                        {responderName}
-                                    </a>
-                                ),
-                                requestorName: (
-                                    <a
-                                        className={styles.requestorName}
-                                        href={requestorProfileLink}
-                                    >
-                                        {requestorName}
-                                    </a>
-                                ),
-                                projectTitle: (
-                                    <a
-                                        className={styles.projectTitle}
-                                        href={projectLink}
-                                    >
-                                        {projectTitle}
-                                    </a>
-                                ),
-                            })}
-                        </div>
-                    }
-                    timestamp={timestamp}
+        const stringParams = {
+            responderName: (
+                <LinkItem
+                    link={responderProfileLink}
+                    title={responderName}
+                    closeModal={closeModal}
                 />
-            );
+            ),
+            requestorName: (
+                <LinkItem
+                    link={requestorProfileLink}
+                    title={requestorName}
+                    closeModal={closeModal}
+                />
+            ),
+            projectTitle: (
+                <LinkItem
+                    link={projectLink}
+                    title={projectTitle}
+                    closeModal={closeModal}
+                />
+            ),
+        };
+
+        let messageText = '';
+        if (status === PROJECT_JOIN_ACCEPTED) {
+            messageText = _ts('notifications.projectJoinResponse', 'acceptText', stringParams);
         } else if (status === PROJECT_JOIN_REJECTED) {
+            messageText = _ts('notifications.projectJoinResponse', 'rejectText', stringParams);
+        }
+
+        if (status === PROJECT_JOIN_REJECTED || status === PROJECT_JOIN_ACCEPTED) {
             return (
                 <Notification
                     className={className}
@@ -128,33 +120,8 @@ export default class ProjectJoinResponseItem extends React.PureComponent {
                         />
                     }
                     message={
-                        <div className={styles.message}>
-                            {_ts('notifications.projectJoinResponse', 'rejectText', {
-                                responderName: (
-                                    <a
-                                        className={styles.responderName}
-                                        href={responderProfileLink}
-                                    >
-                                        {responderName}
-                                    </a>
-                                ),
-                                requestorName: (
-                                    <a
-                                        className={styles.requestorName}
-                                        href={requestorProfileLink}
-                                    >
-                                        {requestorName}
-                                    </a>
-                                ),
-                                projectTitle: (
-                                    <a
-                                        className={styles.projectTitle}
-                                        href={projectLink}
-                                    >
-                                        {projectTitle}
-                                    </a>
-                                ),
-                            })}
+                        <div>
+                            {messageText}
                         </div>
                     }
                     timestamp={timestamp}

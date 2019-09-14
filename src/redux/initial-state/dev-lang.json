@@ -981,7 +981,35 @@
         "-67237579": "Focus",
         "-63009300": "Selected geo-areas",
         "-28548476": "EMM Entities",
-        "-35842630": "EMM Triggers"
+        "-35842630": "EMM Triggers",
+        "-127936": "Assigned to {name}",
+        "-88121745": "(edited)",
+        "-17414549": "Are you sure you want to delete this comment? This will delete all its replies as well.",
+        "-82620920": "Are you sure you want to delete this reply?",
+        "-1007390": "Resolve",
+        "-39910172": "Reply",
+        "-37497941": "Comment",
+        "-13999983": "Comment...",
+        "-49537479": "Reply...",
+        "-89194894": "New thread",
+        "-1874062": "Comment History",
+        "-2991833": "Comments",
+        "-40879299": "Resolved Comments",
+        "-54226779": "({count} resolved)",
+        "-34360343": "Active ({count})",
+        "-177898": "Resolved ({count})",
+        "-7178898": "You are assigned to a {comment} in entry of project {project} by {userName}.",
+        "-12333226": "{userName} replied to a {comment} you are following in project {project}.",
+        "-32902609": "{userName} modified a {comment} you are following in project {project}.",
+        "-63285888": "{userName} modified a reply in a {comment} you are following in project {project}.",
+        "-74972973": "{userName} resolved a {comment} you were following in project {project}.",
+        "-28028216": "Resolved",
+        "-93432291": "Comment Assigned To",
+        "-95143967": "Comment created by",
+        "-84296296": "Comment status",
+        "-76163429": "I want to receive updates on entry comments by email",
+        "-51206611": "Language",
+        "-70720392": "View edit history"
     },
     "links": {
         "browserExtension": {
@@ -1409,7 +1437,14 @@
             "multiselectRangePlaceholder": 14,
             "timePlaceholder": 18,
             "numberOfEntriesTooltip": 15011,
-            "includeSubRegionsTitle": -11188842
+            "includeSubRegionsTitle": -11188842,
+            "resolvedCommentLabel": -28028216,
+            "unresolvedCommentLabel": -57442233,
+            "commentAssignedToFilterLabel": -93432291,
+            "commentCreatedByFilterLabel": -95143967,
+            "commentCreatedByPlaceholder": 17,
+            "commentStatusOptionsFilterLabel": -84296296,
+            "commentStatusPlaceholder": 8
         },
         "export": {
             "headerExport": 600,
@@ -1490,7 +1525,6 @@
             "emptyLinkMessage": -52524002
         },
         "editAssessment.metadata": {
-            "additionalDocumentsTitle": 9021,
             "executiveSummaryTitle": 9022,
             "assessmentDatabaseTitle": 9023,
             "questionnaireTitle": 9024,
@@ -2159,7 +2193,10 @@
             "userGroupPostFatal": 204,
             "userPatchFatal": -71533605,
             "userProfileTitle": 5566,
-            "logoUploadFailureMessage": -57281759
+            "logoUploadFailureMessage": -57281759,
+            "entryCommentsInfo": -76163429,
+            "languageLabel": -51206611,
+            "languagePlaceholder": -82545000
         },
         "notifications": {
             "notificationHeaderTitle": 1929,
@@ -2802,6 +2839,39 @@
         },
         "editFramework": {
             "dummyExcerptPlaceholder": -66973833
+        },
+        "entryComment": {},
+        "entryComments": {
+            "assignedTo": -127936,
+            "deleteLabel": -94736495,
+            "editLabel": 363,
+            "editedFlagLabel": -88121745,
+            "parentDeleteConfirmMessage": -17414549,
+            "replyDeleteConfirmMessage": -82620920,
+            "resolveLabel": -1007390,
+            "editFaramCancelButtonLabel": 61,
+            "editFaramSaveButtonLabel": 25,
+            "replyButtonLabel": -39910172,
+            "replyFaramCancelButtonLabel": 61,
+            "replyFaramReplyButtonLabel": -39910172,
+            "commentFaramClearButtonLabel": 528,
+            "commentFaramCommentButtonLabel": -37497941,
+            "commentFaramCancelButtonLabel": 61,
+            "replyAreaPlaceholder": -49537479,
+            "commentAreaPlaceholder": -13999983,
+            "newThreadButtonLabel": -89194894,
+            "textHistoryTitle": -1874062,
+            "unresolvedTitle": -34360343,
+            "resolvedTitle": -177898,
+            "commentsHeader": -2991833,
+            "viewEditHistoryLabel": -70720392
+        },
+        "entryComments.notifications": {
+            "entryCommentAdd": -7178898,
+            "entryCommentReplyAdd": -12333226,
+            "entryCommentModified": -32902609,
+            "entryCommentReplyModified": -63285888,
+            "entryCommentResolved": -74972973
         }
     }
 }

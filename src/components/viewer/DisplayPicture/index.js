@@ -1,18 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import InternalGallery from '#components/viewer/InternalGallery';
+import GalleryImage from '#components/viewer/GalleryViewer/GalleryImage';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     galleryId: PropTypes.number,
+    url: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     galleryId: undefined,
+    url: undefined,
 };
 
 export default class DisplayPicture extends React.PureComponent {
@@ -23,23 +27,32 @@ export default class DisplayPicture extends React.PureComponent {
         const {
             className,
             galleryId,
+            url,
         } = this.props;
 
+        if (url) {
+            return (
+                <GalleryImage
+                    className={_cs(className, styles.displayPicture)}
+                    imageUrl={url}
+                    imageClassName={styles.image}
+                />
+            );
+        }
+
         if (galleryId) {
-            const classNames = `${className} ${styles.displayPicture}`;
             return (
                 <InternalGallery
-                    className={classNames}
+                    className={_cs(className, styles.displayPicture)}
                     galleryId={galleryId}
                     imageClassName={styles.image}
                 />
             );
         }
 
-        const classNames = `${className} ${styles.defaultUser}`;
         return (
             <Icon
-                className={classNames}
+                className={_cs(className, styles.defaultUser)}
                 name="defaultUser"
             />
         );

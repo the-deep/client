@@ -4,8 +4,8 @@ import {
     randomString,
     getDefinedElementAround,
     formatPdfText,
-    listToMap,
 } from '@togglecorp/fujs';
+import produce from 'immer';
 
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
 import update from '#rsu/immutable-update';
@@ -31,6 +31,8 @@ const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
 
 export const EEB__SET_LEAD = 'siloDomainData/EEB__SET_LEAD';
 export const EEB__SET_ENTRIES = 'siloDomainData/EEB__SET_ENTRIES';
+export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
+export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
 export const EEB__UPDATE_ENTRIES_BULK = 'siloDomainData/EEB__UPDATE_ENTRIES_BULK';
 export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
@@ -114,6 +116,18 @@ export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
     leadId,
 });
 
+export const editEntriesSetEntriesCommentsCountAction = ({ entries, leadId }) => ({
+    type: EEB__SET_ENTRIES_COMMENTS_COUNT,
+    entries,
+    leadId,
+});
+
+export const editEntriesSetEntryCommentsCountAction = ({ entry, leadId }) => ({
+    type: EEB__SET_ENTRY_COMMENTS_COUNT,
+    entry,
+    leadId,
+});
+
 export const editEntriesUpdateEntriesBulkAction = ({ leadId, bulkData }) => ({
     type: EEB__UPDATE_ENTRIES_BULK,
     leadId,
@@ -181,6 +195,92 @@ const setLead = (state, action) => {
         } },
     };
     return update(state, settings);
+};
+
+const setEntriesCommentsCount = (state, action) => {
+    const {
+        leadId,
+        entries: entriesFromServer,
+    } = action;
+
+    const {
+        editEntries: {
+            [leadId]: {
+                entries = [],
+            } = {},
+        } = {},
+    } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.editEntries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries = {};
+        }
+        if (!safeState.editEntries[leadId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId] = {};
+        }
+        if (!safeState.editEntries[leadId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries = [];
+        }
+        entriesFromServer.forEach((es) => {
+            const index = entries.findIndex(e => es.id === entryAccessor.serverId(e));
+
+            if (index > -1) {
+                const safeEntry = safeState.editEntries[leadId].entries[index];
+                // eslint-disable-next-line no-param-reassign
+                safeEntry.serverData.unresolvedCommentCount = es.unresolvedCommentCount;
+
+                // eslint-disable-next-line no-param-reassign
+                safeEntry.serverData.resolvedCommentCount = es.resolvedCommentCount;
+            }
+        });
+    });
+
+    return newState;
+};
+
+const setEntryCommentsCount = (state, action) => {
+    const {
+        leadId,
+        entry,
+    } = action;
+
+    const {
+        editEntries: {
+            [leadId]: {
+                entries = [],
+            } = {},
+        } = {},
+    } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.editEntries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries = {};
+        }
+        if (!safeState.editEntries[leadId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId] = {};
+        }
+        if (!safeState.editEntries[leadId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries = [];
+        }
+        const index = entries.findIndex(e => entry.entryId === entryAccessor.serverId(e));
+        if (index > -1) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries[index]
+                .serverData.unresolvedCommentCount = entry.unresolvedCommentCount;
+
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries[index]
+                .serverData.resolvedCommentCount = entry.resolvedCommentCount;
+        }
+    });
+
+    return newState;
 };
 
 const setEntries = (state, action) => {
@@ -735,6 +835,8 @@ const formatAllEntries = (state, { leadId, modifiable }) => {
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
+    [EEB__SET_ENTRIES_COMMENTS_COUNT]: setEntriesCommentsCount,
+    [EEB__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
     [EEB__UPDATE_ENTRIES_BULK]: updateEntriesBulk,
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,

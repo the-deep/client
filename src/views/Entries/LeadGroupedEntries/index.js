@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    _cs,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import FormattedDate from '#rscv/FormattedDate';
@@ -44,10 +47,22 @@ export default class LeadGroupedEntries extends React.PureComponent {
         !entryPermissions.modify && !entryPermissions.create && !entryPermissions.delete
     )
 
-    getEntryParams = (_, entry) => ({
-        entry,
-        widgets: this.props.widgets,
-    });
+    getEntryParams = (_, entry) => {
+        const {
+            projectId,
+            widgets,
+            lead: {
+                id: leadId,
+            },
+        } = this.props;
+
+        return ({
+            entry,
+            leadId,
+            projectId,
+            widgets,
+        });
+    }
 
     render() {
         const { className: classNameFromProps } = this.props;
@@ -67,20 +82,10 @@ export default class LeadGroupedEntries extends React.PureComponent {
             leadId,
         });
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.leadGroupedEntries}
-        `;
-
-        const headerClassName = `
-            ${headerClassNameFromProps}
-            ${styles.header}
-        `;
-
         // {_ts('entries', 'editEntryButtonLabel')}
         return (
-            <div className={className}>
-                <header className={headerClassName}>
+            <div className={_cs(classNameFromProps, styles.leadGroupedEntries)}>
+                <header className={_cs(headerClassNameFromProps, styles.header)}>
                     <h3
                         title={leadTitle}
                         className={styles.heading}
