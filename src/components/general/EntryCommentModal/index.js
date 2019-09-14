@@ -4,6 +4,7 @@ import {
     isDefined,
     isNotDefined,
     listToGroupList,
+    compareDate,
 } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 import React from 'react';
@@ -100,6 +101,11 @@ const threadsKeySelector = d => d.key;
 const emptyObject = {};
 const emptyList = [];
 
+const getParentDate = (thread = emptyObject) =>
+    (((thread.parent || emptyObject)
+        .textHistory || emptyList)[0] || emptyObject)
+        .createdAt;
+
 @connect(mapStateToProps)
 @RequestCoordinator
 @RequestClient(requests)
@@ -156,8 +162,15 @@ export default class EntryCommentModal extends React.PureComponent {
             children: childrenGroup[p.id],
         }));
 
-        const resolvedThreads = threads.filter(t => t.isResolved);
-        const unresolvedThreads = threads.filter(t => !t.isResolved);
+        const resolvedThreads = threads
+            .filter(t => t.isResolved)
+            .sort((a, b) => compareDate(getParentDate(a), getParentDate(b)));
+
+        const unresolvedThreads = threads
+            .filter(t => !t.isResolved)
+            .sort((a, b) => compareDate(getParentDate(a), getParentDate(b)));
+
+        console.warn(resolvedThreads, unresolvedThreads);
 
         return { resolvedThreads, unresolvedThreads };
     }
