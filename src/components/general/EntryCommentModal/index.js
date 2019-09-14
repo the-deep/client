@@ -53,7 +53,7 @@ const defaultProps = {
 };
 
 const RESOLVED = 'resolved';
-const UNRESOLVED = 'unResolved';
+const UNRESOLVED = 'unresolved';
 
 const WINDOW_PADDING = 24;
 
@@ -128,9 +128,9 @@ export default class EntryCommentModal extends React.PureComponent {
         };
     }
 
-    getTabs = (resolvedThreads, unResolvedThreads) => {
+    getTabs = (resolvedThreads, unresolvedThreads) => {
         const tabs = {
-            [UNRESOLVED]: _ts('entryComments', 'unResolvedTitle', { count: unResolvedThreads.length }),
+            [UNRESOLVED]: _ts('entryComments', 'unresolvedTitle', { count: unresolvedThreads.length }),
         };
 
         if (resolvedThreads.length > 0) {
@@ -157,9 +157,9 @@ export default class EntryCommentModal extends React.PureComponent {
         }));
 
         const resolvedThreads = threads.filter(t => t.isResolved);
-        const unResolvedThreads = threads.filter(t => !t.isResolved);
+        const unresolvedThreads = threads.filter(t => !t.isResolved);
 
-        return { resolvedThreads, unResolvedThreads };
+        return { resolvedThreads, unresolvedThreads };
     }
 
     handleTabClick = (tab) => {
@@ -167,7 +167,6 @@ export default class EntryCommentModal extends React.PureComponent {
     }
 
     handleInvalidate = (container) => {
-        // Note: pass through prop
         const {
             // eslint-disable-next-line react/prop-types
             parentBCR: {
@@ -240,9 +239,9 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleClearClick = () => {
         const { comments } = this.state;
-        const { unResolvedThreads } = this.getCommentsByThreads(comments);
+        const { unresolvedThreads } = this.getCommentsByThreads(comments);
 
-        if (unResolvedThreads.length === 0) {
+        if (unresolvedThreads.length === 0) {
             this.setState({
                 faramValues: {},
                 pristine: true,
@@ -279,10 +278,10 @@ export default class EntryCommentModal extends React.PureComponent {
 
         const {
             resolvedThreads,
-            unResolvedThreads,
+            unresolvedThreads,
         } = this.getCommentsByThreads(newComments);
 
-        onCommentsCountChange(unResolvedThreads.length, resolvedThreads.length, entryServerId);
+        onCommentsCountChange(unresolvedThreads.length, resolvedThreads.length, entryServerId);
     }
 
     handleDeleteComment = (commentId) => {
@@ -297,10 +296,10 @@ export default class EntryCommentModal extends React.PureComponent {
 
         const {
             resolvedThreads,
-            unResolvedThreads,
+            unresolvedThreads,
         } = this.getCommentsByThreads(newComments);
 
-        onCommentsCountChange(unResolvedThreads.length, resolvedThreads.length, entryServerId);
+        onCommentsCountChange(unresolvedThreads.length, resolvedThreads.length, entryServerId);
     }
 
     handleCommentAdd = (comment) => {
@@ -324,10 +323,10 @@ export default class EntryCommentModal extends React.PureComponent {
 
         const {
             resolvedThreads,
-            unResolvedThreads,
+            unresolvedThreads,
         } = this.getCommentsByThreads(newComments);
 
-        onCommentsCountChange(unResolvedThreads.length, resolvedThreads.length, entryServerId);
+        onCommentsCountChange(unresolvedThreads.length, resolvedThreads.length, entryServerId);
     }
 
     handleCurrentEditChange = (currentEdit) => {
@@ -399,19 +398,19 @@ export default class EntryCommentModal extends React.PureComponent {
 
         const {
             resolvedThreads,
-            unResolvedThreads,
+            unresolvedThreads,
         } = this.getCommentsByThreads(allComments);
 
         const showCommentForm =
             activeTabKey === UNRESOLVED &&
-            (unResolvedThreads.length === 0 || currentEdit === 'new-thread');
+            (unresolvedThreads.length === 0 || currentEdit === 'new-thread');
 
-        const cancelButtonLabel = unResolvedThreads.length === 0
+        const cancelButtonLabel = unresolvedThreads.length === 0
             ? _ts('entryComments', 'commentFaramClearButtonLabel')
             : _ts('entryComments', 'commentFaramCancelButtonLabel');
 
-        const tabs = this.getTabs(resolvedThreads, unResolvedThreads);
-        const threads = activeTabKey === UNRESOLVED ? unResolvedThreads : resolvedThreads;
+        const tabs = this.getTabs(resolvedThreads, unresolvedThreads);
+        const threads = activeTabKey === UNRESOLVED ? unresolvedThreads : resolvedThreads;
         const rendererParams = activeTabKey === UNRESOLVED
             ? this.threadRendererParams
             : this.resolvedThreadRendererParams;
@@ -444,7 +443,7 @@ export default class EntryCommentModal extends React.PureComponent {
                         onClick={this.handleTabClick}
                     >
                         <div className={styles.buttons}>
-                            {unResolvedThreads.length > 0 &&
+                            {unresolvedThreads.length > 0 &&
                                 <Button
                                     onClick={this.handleNewThreadClick}
                                     iconName="add"

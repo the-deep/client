@@ -1,7 +1,3 @@
-:root {
-    --width-action-item: 96px;
-}
-
 .user-detail-action-bar {
     display: flex;
     align-items: center;
@@ -80,7 +76,7 @@
         margin: 0;
         border: 0!important;
         padding: var(--spacing-small);
-        min-width: var(--width-action-item);
+        min-width: var(--entry-comment-dropdown-width);
         text-align: left;
         text-transform: capitalize;
         font-size: var(--font-size-normal);

@@ -39,7 +39,7 @@ const defaultProps = {
     entryId: undefined,
     threadId: undefined,
     className: undefined,
-    onCurrentEditChange: () => {},
+    onCurrentEditChange: undefined,
     onAdd: () => {},
     onEdit: () => {},
     onDelete: () => {},
@@ -149,7 +149,9 @@ export default class EntryCommentThread extends React.PureComponent {
         } = this.props;
 
         onAdd(response);
-        onCurrentEditChange(undefined);
+        if (onCurrentEditChange) {
+            onCurrentEditChange(undefined);
+        }
 
         this.setState({
             faramValues: {},
@@ -166,11 +168,19 @@ export default class EntryCommentThread extends React.PureComponent {
     }
 
     handleReplyClick = () => {
-        this.props.onCurrentEditChange(this.threadReplyId);
+        const { onCurrentEditChange } = this.props;
+
+        if (onCurrentEditChange) {
+            onCurrentEditChange(this.threadReplyId);
+        }
     }
 
     handleReplyCancelClick = () => {
-        this.props.onCurrentEditChange(undefined);
+        const { onCurrentEditChange } = this.props;
+
+        if (onCurrentEditChange) {
+            onCurrentEditChange(undefined);
+        }
     }
 
     render() {

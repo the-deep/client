@@ -45,12 +45,13 @@ const propTypes = {
     onDelete: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     currentEdit: PropTypes.string,
-    onCurrentEditChange: PropTypes.func.isRequired,
+    onCurrentEditChange: PropTypes.func,
 };
 
 const defaultProps = {
     currentEdit: undefined,
     className: undefined,
+    onCurrentEditChange: undefined,
     text: '',
     isParent: false,
     isResolved: false,
@@ -131,7 +132,11 @@ export default class Comment extends React.PureComponent {
     }
 
     handleEditClick = () => {
-        this.props.onCurrentEditChange(this.commentEditId);
+        const { onCurrentEditChange } = this.props;
+
+        if (onCurrentEditChange) {
+            onCurrentEditChange(this.commentEditId);
+        }
     };
 
     handleResolveClick = () => {
@@ -191,7 +196,10 @@ export default class Comment extends React.PureComponent {
         } = this.props;
 
         onEdit(commentId, values, isParent);
-        onCurrentEditChange(undefined);
+
+        if (onCurrentEditChange) {
+            onCurrentEditChange(undefined);
+        }
 
         this.setState({
             pristine: true,
@@ -206,7 +214,11 @@ export default class Comment extends React.PureComponent {
     }
 
     handleCancelClick = () => {
-        this.props.onCurrentEditChange(undefined);
+        const { onCurrentEditChange } = this.props;
+
+        if (onCurrentEditChange) {
+            onCurrentEditChange(undefined);
+        }
     };
 
     render() {

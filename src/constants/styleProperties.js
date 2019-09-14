@@ -25,6 +25,9 @@ const styleProperties = {
 
         widthConnectorTestModal: '96vw',
         heightConnectorTestModal: '96vh',
+
+        entryCommentMaxHeightCommentHistory: '60vh',
+        entryCommentDropdownWidth: '96px',
     },
 };
 
