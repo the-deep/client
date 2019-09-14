@@ -33,7 +33,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import ConnectorsGetRequest from '../requests/ConnectorsGetRequest';
+import ConnectorsGetRequest from './requests/ConnectorsGetRequest';
 
 import ConnectorContent from './Content';
 import styles from './styles.scss';

@@ -2,7 +2,6 @@ import createReducerWithMap from '#utils/createReducerWithMap';
 
 import commonReducers from './common';
 import discoverProjectsReducers from './discoverProjects';
-import addLeadsReducers from './addLeads';
 import analysisFrameworkReducers from './analysisFramework';
 import assessmentRegistryReducers from './assessmentRegistry';
 import categoryEditorReducers from './categoryEditor';
@@ -25,7 +24,6 @@ import tabularReducers from './tabular';
 import initialSiloDomainData from '../../initial-state/siloDomainData';
 
 const reducers = {
-    ...addLeadsReducers,
     ...analysisFrameworkReducers,
     ...assessmentRegistryReducers,
     ...categoryEditorReducers,

@@ -14,7 +14,6 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ImageInput from '#rsci/FileInput/ImageInput';
-import Checkbox from '#rsci/Checkbox';
 import Label from '#rsci/Label';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
@@ -39,17 +38,24 @@ import {
 
 import styles from './styles.scss';
 
-// FIXME: Use strings everywhere, define all the props
-// FIXME: No inline functions
-// FIXME: Donot define props inline in image input
-
 const propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    addOrganizationRequest: PropTypes.object.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    organizationTypeList: PropTypes.array,
 };
 
 const defaultProps = {
+    organizationTypeList: [],
 };
 
+// TODO: load organization type; don't get it from sources.organizationType
+// TODO: set new organization should be injected (not by redux)
+// TODO: projectId should also be injected
+
 const idSelector = foo => foo.id;
+
 const titleSelector = foo => foo.title;
 
 const requests = {
@@ -184,7 +190,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                     },
                 });
             })
-            .failure((response) => {
+            .failure(() => {
                 notify.send({
                     title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                     type: notify.type.ERROR,
@@ -192,7 +198,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                     duration: notify.duration.SLOW,
                 });
             })
-            .fatal((response) => {
+            .fatal(() => {
                 notify.send({
                     title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                     type: notify.type.ERROR,
@@ -204,10 +210,10 @@ export default class AddOrganizationModal extends React.PureComponent {
 
         this.logoUploader.start();
     }
+
     render() {
         const {
             closeModal,
-            children,
             organizationTypeList,
             addOrganizationRequest: {
                 pending: pendingAddOrganizationRequest,

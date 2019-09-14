@@ -1,473 +1,72 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { isTruthy } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import Checkbox from '#rsci/Checkbox';
-import DropdownMenu from '#rsca/DropdownMenu';
-import Confirm from '#rscv/Modal/Confirm';
 
-import LeadCopyModal from '#components/general/LeadCopyModal';
 import _ts from '#ts';
-import notify from '#notify';
-import {
-    addLeadViewActiveLeadIdSelector,
-
-    addLeadViewCanNextSelector,
-    addLeadViewCanPrevSelector,
-    addLeadViewLeadNextAction,
-    addLeadViewLeadPrevAction,
-    addLeadViewButtonStatesSelector,
-    addLeadViewLeadStatesSelector,
-    addLeadViewLeadRemoveAction,
-    addLeadViewLeadKeysSelector,
-    addLeadViewFilteredLeadKeysSelector,
-    addLeadViewCompletedLeadKeysSelector,
-    addLeadViewCompletedServerIdsSelector,
-    addLeadViewSetRemoveModalStateAction,
-    addLeadViewUnsetRemoveModalStateAction,
-    addLeadViewRemoveModalStateSelector,
-    addLeadViewActiveLeadServerIdSelector,
-
-    addLeadViewHidePreviewSelector,
-    addLeadViewSetPreviewAction,
-} from '#redux';
 
 import styles from './styles.scss';
 
-// 5544735
-
 const defaultProps = {
-    activeLeadId: undefined,
-    hidePreview: false,
-    activeLeadServerId: undefined,
+    leadNextDisabled: true,
+    leadPrevDisabled: true,
+    leadPreviewHidden: false,
 };
 
 const propTypes = {
-    addLeadViewCanNext: PropTypes.bool.isRequired,
-    addLeadViewCanPrev: PropTypes.bool.isRequired,
-    addLeadViewLeadNext: PropTypes.func.isRequired,
-    addLeadViewLeadPrev: PropTypes.func.isRequired,
-
-    pendingSubmitAll: PropTypes.bool.isRequired,
-
-    buttonStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    leadStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    activeLeadId: PropTypes.string,
-
-    addLeadViewLeadRemove: PropTypes.func.isRequired,
-    activeLeadServerId: PropTypes.number,
-    leadKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-    filteredLeadKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-    completedLeadKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-    completedServerIds: PropTypes.arrayOf(PropTypes.number).isRequired,
-
-    setRemoveModalState: PropTypes.func.isRequired,
-    unsetRemoveModalState: PropTypes.func.isRequired,
-    removeModalState: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    // eslint-disable-next-line react/forbid-prop-types
-    uploadCoordinator: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    formCoordinator: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    leadFormSubmitters: PropTypes.object.isRequired,
-
-    hidePreview: PropTypes.bool,
-    setPreview: PropTypes.func.isRequired,
+    leadNextDisabled: PropTypes.bool,
+    leadPrevDisabled: PropTypes.bool,
+    leadPreviewHidden: PropTypes.bool,
+    onLeadNext: PropTypes.func.isRequired,
+    onLeadPrev: PropTypes.func.isRequired,
+    onLeadPreviewHiddenChange: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-    addLeadViewCanNext: addLeadViewCanNextSelector(state),
-    addLeadViewCanPrev: addLeadViewCanPrevSelector(state),
-    buttonStates: addLeadViewButtonStatesSelector(state),
-    leadStates: addLeadViewLeadStatesSelector(state),
-    activeLeadId: addLeadViewActiveLeadIdSelector(state),
-    activeLeadServerId: addLeadViewActiveLeadServerIdSelector(state),
-
-    leadKeys: addLeadViewLeadKeysSelector(state),
-    filteredLeadKeys: addLeadViewFilteredLeadKeysSelector(state),
-    completedLeadKeys: addLeadViewCompletedLeadKeysSelector(state),
-    completedServerIds: addLeadViewCompletedServerIdsSelector(state),
-    removeModalState: addLeadViewRemoveModalStateSelector(state),
-    hidePreview: addLeadViewHidePreviewSelector(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-    addLeadViewLeadNext: params => dispatch(addLeadViewLeadNextAction(params)),
-    addLeadViewLeadPrev: params => dispatch(addLeadViewLeadPrevAction(params)),
-
-    addLeadViewLeadRemove: params => dispatch(addLeadViewLeadRemoveAction(params)),
-    setRemoveModalState: params => dispatch(addLeadViewSetRemoveModalStateAction(params)),
-    unsetRemoveModalState: params => dispatch(addLeadViewUnsetRemoveModalStateAction(params)),
-    setPreview: params => dispatch(addLeadViewSetPreviewAction(params)),
-});
-
-export const DELETE_MODE = {
-    all: 'all',
-    filtered: 'filtered',
-    single: 'single',
-    saved: 'saved',
-};
-
-const emptyList = [];
-
-@connect(mapStateToProps, mapDispatchToProps)
-export default class LeadFilter extends React.PureComponent {
+export default class LeadActions extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            leadsToExport: [],
-            leadCopyModalShow: false,
-        };
-    }
-
-    handleNextButtonClick = () => {
-        this.props.addLeadViewLeadNext();
-    }
-
-    handlePrevButtonClick = () => {
-        this.props.addLeadViewLeadPrev();
-    }
-
-    handleRemoveButtonClick = () => {
-        this.props.setRemoveModalState({
-            show: true,
-            mode: DELETE_MODE.single,
-            leadId: this.props.activeLeadId,
-        });
-    }
-
-    handleFilteredRemoveButtonClick = () => {
-        this.props.setRemoveModalState({
-            show: true,
-            mode: DELETE_MODE.filtered,
-        });
-    }
-
-    handleSavedRemoveButtonClick = () => {
-        this.props.setRemoveModalState({
-            show: true,
-            mode: DELETE_MODE.saved,
-        });
-    }
-
-    handleBulkRemoveButtonClick = () => {
-        this.props.setRemoveModalState({
-            show: true,
-            mode: DELETE_MODE.all,
-        });
-    }
-
-    handleExportButtonClick = () => {
-        const { activeLeadServerId } = this.props;
-
-        if (isTruthy(activeLeadServerId)) {
-            this.setState({
-                leadsToExport: [activeLeadServerId],
-                leadCopyModalShow: true,
-            });
-        }
-    }
-
-    handleCompletedExportButtonClick = () => {
-        const { completedServerIds = emptyList } = this.props;
-
-        this.setState({
-            leadCopyModalShow: true,
-            leadsToExport: completedServerIds,
-        });
-    }
-
-    handleLeadCopyClose = () => {
-        this.setState({
-            leadCopyModalShow: false,
-            leadsToExport: [],
-        });
-    }
-
-    removeSelected = (leadId) => {
-        this.props.uploadCoordinator.remove(leadId);
-        this.props.addLeadViewLeadRemove([leadId]);
-
-        notify.send({
-            title: _ts('addLeads.actions', 'leadDiscard'),
-            type: notify.type.SUCCESS,
-            message: _ts('addLeads.actions', 'leadDiscardSuccess'),
-            duration: notify.duration.MEDIUM,
-        });
-    }
-
-    removeFiltered = () => {
-        this.props.filteredLeadKeys.forEach((leadId) => {
-            this.props.uploadCoordinator.remove(leadId);
-        });
-        this.props.addLeadViewLeadRemove(this.props.filteredLeadKeys);
-
-        notify.send({
-            title: _ts('addLeads.actions', 'leadsDiscard'),
-            type: notify.type.SUCCESS,
-            message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
-            duration: notify.duration.MEDIUM,
-        });
-    }
-
-    removeCompleted = () => {
-        this.props.completedLeadKeys.forEach((leadId) => {
-            this.props.uploadCoordinator.remove(leadId);
-        });
-        this.props.addLeadViewLeadRemove(this.props.completedLeadKeys);
-
-        notify.send({
-            title: _ts('addLeads.actions', 'leadsDiscard'),
-            type: notify.type.SUCCESS,
-            message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
-            duration: notify.duration.MEDIUM,
-        });
-    }
-
-    removeBulk = () => {
-        this.props.leadKeys.forEach((leadId) => {
-            this.props.uploadCoordinator.remove(leadId);
-        });
-        this.props.addLeadViewLeadRemove(this.props.leadKeys);
-
-        notify.send({
-            title: _ts('addLeads.actions', 'leadsDiscard'),
-            type: notify.type.SUCCESS,
-            message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
-            duration: notify.duration.MEDIUM,
-        });
-    }
-
-    handleRemoveLeadModalClose = (confirm) => {
-        if (confirm) {
-            const {
-                leadId,
-                mode,
-            } = this.props.removeModalState;
-
-            switch (mode) {
-                case DELETE_MODE.single:
-                    this.removeSelected(leadId);
-                    break;
-                case DELETE_MODE.filtered:
-                    this.removeFiltered();
-                    break;
-                case DELETE_MODE.all:
-                    this.removeBulk();
-                    break;
-                case DELETE_MODE.saved:
-                    this.removeCompleted();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        this.props.unsetRemoveModalState();
-    }
-
-    handleSaveButtonClick = () => {
-        const leadId = this.props.activeLeadId;
-        this.props.formCoordinator.add(leadId, this.props.leadFormSubmitters[leadId]);
-        this.props.formCoordinator.start();
-    }
-
-    handleFilteredSaveButtonClick = () => {
-        this.props.filteredLeadKeys.forEach((id) => {
-            this.props.formCoordinator.add(id, this.props.leadFormSubmitters[id]);
-        });
-        this.props.formCoordinator.start();
-    }
-
-    handleBulkSaveButtonClick = () => {
-        this.props.leadKeys.forEach((id) => {
-            this.props.formCoordinator.add(id, this.props.leadFormSubmitters[id]);
-        });
-        this.props.formCoordinator.start();
-    }
-
-    handlePreviewHide = () => {
+    handleHideLeadPreviewChange = () => {
         const {
-            setPreview,
-            hidePreview,
+            onLeadPreviewHiddenChange,
+            leadPreviewHidden,
         } = this.props;
 
-        setPreview(!hidePreview);
+        onLeadPreviewHiddenChange(!leadPreviewHidden);
     }
 
     render() {
         const {
-            addLeadViewCanNext,
-            addLeadViewCanPrev,
-            pendingSubmitAll,
-
-            buttonStates,
-            leadStates,
-            activeLeadId,
-            removeModalState,
+            leadPreviewHidden,
+            onLeadPrev,
+            onLeadNext,
+            leadPrevDisabled,
+            leadNextDisabled,
         } = this.props;
-
-        const {
-            leadsToExport,
-            leadCopyModalShow,
-        } = this.state;
-
-        const { show } = removeModalState;
-
-        const {
-            isSaveEnabledForAll,
-            isRemoveEnabledForAll,
-            isSaveEnabledForFiltered,
-            isRemoveEnabledForFiltered,
-            isRemoveEnabledForCompleted,
-        } = buttonStates;
-
-        // FIXME: doesn't require pulling all leadStates
-        const {
-            isSaveDisabled: isSaveDisabledForActive,
-            isRemoveDisabled: isRemoveDisabledForActive,
-            isLeadCopyDisabled: isLeadCopyDisabledForActive,
-        } = leadStates[activeLeadId] || {};
 
         return (
             <div className={styles.actionButtons}>
                 <Checkbox
-                    value={!this.props.hidePreview}
-                    onChange={this.handlePreviewHide}
+                    value={!leadPreviewHidden}
+                    onChange={this.handleHideLeadPreviewChange}
                     label={_ts('addLeads.actions', 'showLeadPreviewLabel')}
                 />
                 <div className={styles.movementButtons}>
                     <Button
-                        disabled={!addLeadViewCanPrev}
-                        onClick={this.handlePrevButtonClick}
+                        disabled={leadPrevDisabled}
+                        onClick={onLeadPrev}
                         iconName="prev"
                         title={_ts('addLeads.actions', 'previousButtonLabel')}
                     />
                     <Button
-                        disabled={!addLeadViewCanNext}
-                        onClick={this.handleNextButtonClick}
+                        disabled={leadNextDisabled}
+                        onClick={onLeadNext}
                         iconName="next"
                         title={_ts('addLeads.actions', 'nextButtonLabel')}
                     />
                 </div>
-                {/* FIXME: use ConfirmButton */}
-                <Confirm
-                    onClose={this.handleRemoveLeadModalClose}
-                    show={!!show}
-                >
-                    <p>
-                        {
-                            /* TODO: different message for delete modes */
-                            _ts('addLeads.actions', 'deleteLeadConfirmText')
-                        }
-                    </p>
-                </Confirm>
-                <DropdownMenu
-                    iconName="openLink"
-                    className={styles.exportButtons}
-                    title={_ts('addLeads.actions', 'exportButtonTitle')}
-                    closeOnClick
-                >
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleExportButtonClick}
-                        disabled={isLeadCopyDisabledForActive}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'exportCurrentButtonTitle')}
-                    </button>
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleCompletedExportButtonClick}
-                        disabled={!isRemoveEnabledForCompleted}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'exportAllCompletedButtonTitle')}
-                    </button>
-                </DropdownMenu>
-                <DropdownMenu
-                    iconName="delete"
-                    className={styles.removeButtons}
-                    title={_ts('addLeads.actions', 'removeButtonTitle')}
-                    closeOnClick
-                >
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleRemoveButtonClick}
-                        disabled={isRemoveDisabledForActive}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'removeCurrentButtonTitle')}
-                    </button>
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleFilteredRemoveButtonClick}
-                        disabled={!isRemoveEnabledForFiltered}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'removeAllFilteredButtonTitle')}
-                    </button>
-                    <button
-                        className={styles.dropdownButton}
-                        disabled={!isRemoveEnabledForCompleted}
-                        onClick={this.handleSavedRemoveButtonClick}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'removeAllCompletedButtonTitle')}
-                    </button>
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleBulkRemoveButtonClick}
-                        disabled={!isRemoveEnabledForAll}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'removeAllButtonTitle')}
-                    </button>
-                </DropdownMenu>
-                <DropdownMenu
-                    iconName="save"
-                    className={styles.saveButtons}
-                    title={_ts('addLeads.actions', 'saveButtonTitle')}
-                    closeOnClick
-                >
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleSaveButtonClick}
-                        disabled={isSaveDisabledForActive}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'saveCurrentButtonTitle')}
-                    </button>
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleFilteredSaveButtonClick}
-                        disabled={pendingSubmitAll || !isSaveEnabledForFiltered}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'saveAllFilteredButtonTitle')}
-                    </button>
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleBulkSaveButtonClick}
-                        disabled={pendingSubmitAll || !isSaveEnabledForAll}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'saveAllButtonTitle')}
-                    </button>
-                </DropdownMenu>
-                {leadCopyModalShow &&
-                    <LeadCopyModal
-                        leads={leadsToExport}
-                        closeModal={this.handleLeadCopyClose}
-                    />
-                }
             </div>
         );
     }

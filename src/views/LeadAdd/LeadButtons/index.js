@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { randomString, formatDateToString } from '@togglecorp/fujs';
+import { formatDateToString } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
@@ -9,227 +8,104 @@ import FileInput from '#rsci/FileInput';
 
 import DropboxChooser from '#components/importer/DropboxChooser';
 import GooglePicker from '#components/importer/GooglePicker';
+
 import { dropboxAppKey } from '#config/dropbox';
 import {
     googleDriveClientId,
     googleDriveDeveloperKey,
 } from '#config/google-drive';
-import { LEAD_TYPE, leadAccessor } from '#entities/lead';
+
 import notify from '#notify';
-import {
-    addLeadViewAddLeadsAction,
-    activeProjectIdFromStateSelector,
-
-    addLeadViewLeadChangeAction,
-
-    addLeadViewSetLeadUploadsAction,
-    addLeadViewSetLeadDriveRestsAction,
-    addLeadViewSetLeadDropboxRestsAction,
-    addLeadViewLeadsSelector,
-} from '#redux';
 import _ts from '#ts';
 
-import ConnectorSelectModal from '../ConnectorSelectModal';
+import {
+    LEAD_TYPE,
+    supportedGoogleDriveMimeTypes,
+    supportedDropboxExtension,
+    supportedFileTypes,
+} from '../utils';
 
-import DropboxRequest from '../requests/DropboxRequest';
-import FileUploadRequest from '../requests/FileUploadRequest';
-import GoogleDriveRequest from '../requests/GoogleDriveRequest';
+import ConnectorSelectModal from './ConnectorSelectModal';
 
 import styles from './styles.scss';
-
-const supportedGoogleDriveMimeTypes = [
-    'application/json', 'application/xml', 'application/msword',
-    'application/rtf', 'text/plain', 'font/otf', 'application/pdf',
-    'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/wps-office.xlsx',
-    'application/vnd.oasis.opendocument.spreadsheet',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'image/fig',
-    'image/jpeg',
-    'image/png',
-    'text/csv',
-];
-
-const supportedDropboxExtension = [
-    '.doc', '.docx', '.rtf', '.txt',
-    '.otf', '.pdf', '.ppt', '.pptx',
-    '.xls', '.xlsx', '.ods', '.csv', '.png',
-    '.jpg', '.gif', '.json', '.xml',
-];
-
-const acceptFileTypes = '.pdf, .ppt, .pptx, .csv, .ods, .xls, .xlsx, .doc, .docx, .odt, .rtf, image/*';
 
 const defaultProps = {
 };
 
 const propTypes = {
-    addLeads: PropTypes.func.isRequired,
-    activeProject: PropTypes.number.isRequired,
-
-    addLeadViewLeadChange: PropTypes.func.isRequired,
-
-    setLeadUploads: PropTypes.func.isRequired,
-    setLeadDriveRests: PropTypes.func.isRequired,
-    setLeadDropboxRests: PropTypes.func.isRequired,
-
-    // eslint-disable-next-line react/forbid-prop-types
-    uploadCoordinator: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    driveUploadCoordinator: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    dropboxUploadCoordinator: PropTypes.object.isRequired,
-
-    addLeadViewLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    onLeadsAdd: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-    activeProject: activeProjectIdFromStateSelector(state),
-    addLeadViewLeads: addLeadViewLeadsSelector(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-    addLeads: leads => dispatch(addLeadViewAddLeadsAction(leads)),
-    addLeadViewLeadChange: params => dispatch(addLeadViewLeadChangeAction(params)),
-    setLeadUploads: params => dispatch(addLeadViewSetLeadUploadsAction(params)),
-    setLeadDriveRests: params => dispatch(addLeadViewSetLeadDriveRestsAction(params)),
-    setLeadDropboxRests: params => dispatch(addLeadViewSetLeadDropboxRestsAction(params)),
-});
-
-@connect(mapStateToProps, mapDispatchToProps)
 export default class LeadButtons extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
-        // NOTE: dropbox button must be manullay disabled and enabled unlike
-        // google-drive which creates an overlay and disables everything in bg
         this.state = {
+            // NOTE: dropbox button must be manually disabled and enabled unlike
+            // google-drive which creates an overlay and disables everything in bg
             dropboxDisabled: false,
+
             connectorSelectModalShow: false,
         };
+
         // NOTE: google drive access token is received at start
         this.googleDriveAccessToken = undefined;
     }
 
-    getLeadFromId = id => (
-        this.props.addLeadViewLeads.find(l => id === leadAccessor.getKey(l))
-    )
-
-    handleLeadAddFromGoogleDrive = (response) => {
-        const { docs, action } = response;
-        if (action !== 'picked') {
-            return;
+    handleGoogleDriveOnAuthenticated = (accessToken) => {
+        if (accessToken) {
+            // NOTE: use this token later during upload
+            this.googleDriveAccessToken = accessToken;
+        } else {
+            // FIXME: use strings
+            notify.send({
+                title: 'Google Drive',
+                type: notify.type.ERROR,
+                message: 'Authentication with google drive failed!',
+                duration: notify.duration.SLOW,
+            });
         }
-
-        const { activeProject } = this.props;
-
-        const newLeads = [];
-        const uploads = [];
-        docs.forEach((doc) => {
-            const uid = randomString();
-            const newLeadId = `lead-${uid}`;
-
-            newLeads.unshift({
-                id: newLeadId,
-                faramValues: {
-                    title: doc.name,
-                    project: activeProject,
-                    sourceType: LEAD_TYPE.drive,
-                },
-
-                pristine: false,
-            });
-
-            uploads.unshift({
-                leadId: newLeadId,
-                accessToken: this.googleDriveAccessToken,
-                title: doc.name,
-                fileId: doc.id,
-                mimeType: doc.mimeType,
-            });
-        });
-
-        // ADD LEADS
-        this.props.addLeads(newLeads);
-
-        // CREATE REQUEST
-        const googleDriveRequest = new GoogleDriveRequest({
-            driveUploadCoordinator: this.props.driveUploadCoordinator,
-            addLeadViewLeadChange: this.props.addLeadViewLeadChange,
-            getLeadFromId: this.getLeadFromId,
-            setLeadDriveRests: this.props.setLeadDriveRests,
-        });
-        uploads.forEach((upload) => {
-            const request = googleDriveRequest.create(upload);
-            this.props.driveUploadCoordinator.add(upload.leadId, request);
-        });
-        this.props.driveUploadCoordinator.start();
-
-        // SET STATE
-        this.props.setLeadDriveRests({
-            leadIds: uploads.map(upload => upload.leadId),
-            value: true,
-        });
     }
 
-    handleLeadAddFromDropbox = (response) => {
-        if (response.length <= 0) {
-            console.warn('Empty response from dropbox');
-            return;
-        }
-        const { activeProject } = this.props;
+    handleDropboxChooserClick = () => this.setState({ dropboxDisabled: true });
 
-        const newLeads = [];
-        const uploads = [];
-        response.forEach((doc) => {
-            const uid = randomString();
-            const newLeadId = `lead-${uid}`;
+    handleDropboxChooserClose = () => this.setState({ dropboxDisabled: false });
 
-            newLeads.unshift({
-                id: newLeadId,
-                faramValues: {
-                    title: doc.name,
-                    project: activeProject,
-                    sourceType: LEAD_TYPE.dropbox,
-                },
+    handleConnectorSelectButtonClick = () => this.setState({ connectorSelectModalShow: true });
 
-                pristine: false,
-            });
+    handleConnectorSelectModalClose = () => this.setState({ connectorSelectModalShow: false });
 
-            uploads.unshift({
-                leadId: newLeadId,
-                title: doc.name,
-                fileUrl: doc.link,
-            });
-        });
+    handleLeadAddFromText = () => {
+        const {
+            onLeadsAdd,
+        } = this.props;
 
-        // ADD LEADS
-        this.props.addLeads(newLeads);
+        const lead = {
+            faramValues: {
+                title: `Lead ${(new Date()).toLocaleTimeString()}`,
+                sourceType: LEAD_TYPE.text,
+            },
+        };
 
-        // CREATE REQUEST
-        const dropboxRequest = new DropboxRequest({
-            dropboxUploadCoordinator: this.props.dropboxUploadCoordinator,
-            addLeadViewLeadChange: this.props.addLeadViewLeadChange,
-            getLeadFromId: this.getLeadFromId,
-            setLeadDropboxRests: this.props.setLeadDropboxRests,
-        });
+        onLeadsAdd([lead]);
+    }
 
-        uploads.forEach((upload) => {
-            const request = dropboxRequest.create(upload);
-            this.props.dropboxUploadCoordinator.add(upload.leadId, request);
-        });
-        this.props.dropboxUploadCoordinator.start();
+    handleLeadAddFromWebsite = () => {
+        const {
+            onLeadsAdd,
+        } = this.props;
 
-        // SET STATE
-        this.props.setLeadDropboxRests({
-            leadIds: uploads.map(upload => upload.leadId),
-            value: true,
-        });
+        const lead = {
+            faramValues: {
+                title: `Lead ${(new Date()).toLocaleTimeString()}`,
+                sourceType: LEAD_TYPE.website,
+            },
+        };
 
-        this.setState({ dropboxDisabled: false });
+        onLeadsAdd([lead]);
     }
 
     handleLeadAddFromDisk = (files, options) => {
@@ -244,149 +120,105 @@ export default class LeadButtons extends React.PureComponent {
         }
 
         if (files.length <= 0) {
-            console.warn('No files selected');
+            console.error('No files selected to upload');
             return;
         }
 
-        const { activeProject } = this.props;
+        const {
+            onLeadsAdd,
+        } = this.props;
 
-        const newLeads = [];
-        const uploads = [];
-        files.forEach((file) => {
-            const uid = randomString();
-            const newLeadId = `lead-${uid}`;
-
-            newLeads.unshift({
-                id: newLeadId,
+        const leads = files.map((file) => {
+            const lead = {
                 faramValues: {
                     title: file.name,
-                    project: activeProject,
                     sourceType: LEAD_TYPE.file,
                 },
-
-                pristine: false,
-            });
-
-            uploads.unshift({
                 file,
-                leadId: newLeadId,
-            });
+            };
+            return lead;
         });
-
-        // ADD LEADS
-        this.props.addLeads(newLeads);
-
-        // CREATE REQUEST
-        const fileUploadRequest = new FileUploadRequest({
-            uploadCoordinator: this.props.uploadCoordinator,
-            addLeadViewLeadChange: this.props.addLeadViewLeadChange,
-            getLeadFromId: this.getLeadFromId,
-            setLeadUploads: this.props.setLeadUploads,
-        });
-        uploads.forEach((upload) => {
-            const request = fileUploadRequest.create(upload);
-            this.props.uploadCoordinator.add(upload.leadId, request);
-        });
-        this.props.uploadCoordinator.start();
-
-        // SET STATE
-        this.props.setLeadUploads({
-            leadIds: uploads.map(upload => upload.leadId),
-            value: 0,
-        });
+        onLeadsAdd(leads);
     }
 
-    handleLeadAddFromWebsite = () => {
-        const { activeProject } = this.props;
-        const newLeads = [];
+    handleLeadAddFromGoogleDrive = (response) => {
+        const { docs, action } = response;
+        if (action !== 'picked') {
+            console.error('No files selected to upload');
+            return;
+        }
 
-        const uid = randomString();
-        const newLeadId = `lead-${uid}`;
+        const {
+            onLeadsAdd,
+        } = this.props;
 
-        newLeads.push({
-            id: newLeadId,
+        const leads = docs.map(doc => ({
             faramValues: {
-                title: `Lead ${(new Date()).toLocaleTimeString()}`,
-                project: activeProject,
-                sourceType: LEAD_TYPE.website,
+                title: doc.name,
+                sourceType: LEAD_TYPE.drive,
             },
-
-            pristine: false,
-        });
-
-        this.props.addLeads(newLeads);
+            drive: {
+                accessToken: this.googleDriveAccessToken,
+                title: doc.name,
+                fileId: doc.id,
+                mimeType: doc.mimeType,
+            },
+        }));
+        onLeadsAdd(leads);
     }
 
-    handleLeadAddFromText = () => {
-        const { activeProject } = this.props;
-        const newLeads = [];
+    handleLeadAddFromDropbox = (response) => {
+        if (response.length <= 0) {
+            console.error('No files selected to upload');
+            return;
+        }
+        const {
+            onLeadsAdd,
+        } = this.props;
 
-        const uid = randomString();
-        const newLeadId = `lead-${uid}`;
-
-        newLeads.push({
-            id: newLeadId,
+        const leads = response.map(doc => ({
             faramValues: {
-                title: `Lead ${(new Date()).toLocaleTimeString()}`,
-                project: activeProject,
-                sourceType: LEAD_TYPE.text,
+                title: doc.name,
+                sourceType: LEAD_TYPE.dropbox,
             },
+            drive: {
+                title: doc.name,
+                fileUrl: doc.link,
+            },
+        }));
 
-            pristine: false,
-        });
-
-        this.props.addLeads(newLeads);
+        onLeadsAdd(leads);
+        this.handleDropboxChooserClose();
     }
 
     handleLeadAddFromConnectors = (selectedLeads) => {
-        const { activeProject } = this.props;
-        const newLeads = [];
+        if (selectedLeads.length <= 0) {
+            console.error('No files selected to upload');
+            this.handleConnectorSelectModalClose();
+            return;
+        }
 
-        selectedLeads.forEach((l) => {
-            const newLeadId = `lead-${l.key}`;
-            newLeads.push({
-                id: newLeadId,
-                faramValues: {
-                    title: l.title,
-                    website: l.website,
-                    url: l.url,
-                    publishedOn: formatDateToString(new Date(l.publishedOn), 'yyyy-MM-dd'),
-                    source: l.source,
-                    sourceType: LEAD_TYPE.website,
-                    project: activeProject,
-                    emmEntities: l.emmEntities,
-                    emmTriggers: l.emmTriggers,
-                },
-                pristine: false,
-            });
-        });
+        const {
+            onLeadsAdd,
+        } = this.props;
 
-        this.props.addLeads(newLeads);
+        const leads = selectedLeads.map(lead => ({
+            faramValues: {
+                title: lead.title,
+                website: lead.website,
+                url: lead.url,
+                publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
+                source: lead.source,
+                sourceType: LEAD_TYPE.website,
+                emmEntities: lead.emmEntities,
+                emmTriggers: lead.emmTriggers,
+            },
+        }));
+
+        onLeadsAdd(leads);
+
         this.handleConnectorSelectModalClose();
     }
-
-    handleGoogleDriveOnAuthenticated = (accessToken) => {
-        if (accessToken) {
-            // NOTE: use this token later during upload
-            this.googleDriveAccessToken = accessToken;
-        } else {
-            // FIXME: use strings
-            notify.send({
-                title: 'Google Drive',
-                type: notify.type.ERROR,
-                message: 'Authentication with google drive failed. Try again.',
-                duration: notify.duration.SLOW,
-            });
-        }
-    }
-
-    handleDropboxChooserClick = () => this.setState({ dropboxDisabled: true });
-
-    handleDropboxChooserCancel = () => this.setState({ dropboxDisabled: false });
-
-    handleConnectorSelectButtonClick = () => this.setState({ connectorSelectModalShow: true });
-
-    handleConnectorSelectModalClose = () => this.setState({ connectorSelectModalShow: false });
 
     render() {
         const {
@@ -399,6 +231,7 @@ export default class LeadButtons extends React.PureComponent {
                 <h3 className={styles.heading}>
                     {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
                 </h3>
+
                 <GooglePicker
                     className={styles.addLeadBtn}
                     clientId={googleDriveClientId}
@@ -414,27 +247,29 @@ export default class LeadButtons extends React.PureComponent {
                         {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
                     </p>
                 </GooglePicker>
+
                 <DropboxChooser
                     className={styles.addLeadBtn}
                     appKey={dropboxAppKey}
                     multiselect
                     extensions={supportedDropboxExtension}
                     success={this.handleLeadAddFromDropbox}
-                    onClick={this.handleDropboxChooserClick}
-                    cancel={this.handleDropboxChooserCancel}
                     disabled={dropboxDisabled}
+                    onClick={this.handleDropboxChooserClick}
+                    cancel={this.handleDropboxChooserClose}
                 >
                     <Icon name="dropbox" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'dropboxLabel')}
                     </p>
                 </DropboxChooser>
+
                 <FileInput
                     className={styles.addLeadBtn}
                     onChange={this.handleLeadAddFromDisk}
                     showStatus={false}
                     multiple
-                    accept={acceptFileTypes}
+                    accept={supportedFileTypes}
                 >
                     <Icon name="upload" />
                     <p>
@@ -471,7 +306,8 @@ export default class LeadButtons extends React.PureComponent {
                         {_ts('addLeads.sourceButtons', 'connectorsLabel')}
                     </p>
                 </Button>
-                {connectorSelectModalShow &&
+                {/* FIXME: use modalize, after khatri's merge */}
+                { connectorSelectModalShow &&
                     <ConnectorSelectModal
                         onModalClose={this.handleConnectorSelectModalClose}
                         onLeadsSelect={this.handleLeadAddFromConnectors}

@@ -1,4 +1,3 @@
-
 .lead-list-item {
     position: relative;
 
@@ -96,7 +95,7 @@
         }
     }
 
-    .remove-button-container {
+    .button-container {
         display: none;
         position: absolute;
         top: 50%;
@@ -111,10 +110,13 @@
             }
         }
 
-        .remove-button-container {
+        .button-container {
             display: initial;
             opacity: 1;
-            animation: fade .5s linear;
+
+            .button {
+                margin-left: var(--spacing-small);
+            }
         }
     }
 }
