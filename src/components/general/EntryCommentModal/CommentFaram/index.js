@@ -131,13 +131,6 @@ export default class CommentFaram extends React.PureComponent {
                         />
                     )}
                     <div className={styles.actionButtons}>
-                        <PrimaryButton
-                            type="submit"
-                            className={styles.button}
-                            disabled={pristine || pending}
-                        >
-                            {commentButtonLabel}
-                        </PrimaryButton>
                         <DangerButton
                             onClick={onCancelClick}
                             className={styles.button}
@@ -145,6 +138,13 @@ export default class CommentFaram extends React.PureComponent {
                         >
                             {cancelButtonLabel}
                         </DangerButton>
+                        <PrimaryButton
+                            type="submit"
+                            className={styles.button}
+                            disabled={pristine || pending}
+                        >
+                            {commentButtonLabel}
+                        </PrimaryButton>
                     </div>
                 </Faram>
             </div>

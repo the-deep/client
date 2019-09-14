@@ -2,7 +2,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    padding-top: var(--spacing-small);
+    padding: var(--spacing-small) 0;
 
     .comment-text {
         padding: var(--spacing-small) var(--spacing-medium);
@@ -10,11 +10,11 @@
 
     .assignee {
         padding: var(--spacing-extra-small) var(--spacing-medium) var(--spacing-small);
+        color: var(--color-text-label);
         font-size: var(--font-size-small);
-        font-style: italic;
     }
 
-    &:not(:first-child) {
+    &.child {
         border-top: var(--width-separator-thin) solid var(--color-separator);
     }
 }

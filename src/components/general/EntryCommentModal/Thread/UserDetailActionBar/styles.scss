@@ -37,21 +37,8 @@
                 color: var(--color-text-label);
             }
 
-            .edited-button {
-                margin: 0 var(--spacing-small);
-                border: 0!important;
-                background-color: transparent!important;
-                padding: 0;
-                text-transform: lowercase;
-                color: var(--color-primary);
-
-                &:hover {
-                    background-color: transparent;
-                }
-
-                &:active {
-                    transform: translateY(0)!important;
-                }
+            .edited {
+                color: var(--color-text-disabled);
             }
         }
     }
@@ -88,10 +75,6 @@
 
         &:active {
             transform: translateY(0);
-        }
-
-        &:not(:last-child) {
-            border-bottom: var(--width-separator-thin) solid var(--color-separator)!important;
         }
     }
 }

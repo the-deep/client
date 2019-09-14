@@ -260,7 +260,15 @@ export default class Comment extends React.PureComponent {
         const editMode = currentEdit === this.commentEditId;
 
         return (
-            <div className={_cs(className, styles.comment)}>
+            <div
+                className={
+                    _cs(
+                        className,
+                        styles.comment,
+                        !isParent && styles.child,
+                    )
+                }
+            >
                 {deletePending && <LoadingAnimation />}
                 <UserDetailActionBar
                     userDetails={userDetails}

@@ -33,8 +33,9 @@ export default class EditHistoryModal extends React.PureComponent {
     historyRendererParams = (key, data) => ({
         label: (
             <FormattedDate
+                className={styles.dateTime}
                 value={data.createdAt}
-                mode="dd-MM-yyyy hh:mm aaa"
+                mode="dd-MM-yyyy, hh:mm aaa"
             />
         ),
         labelClassName: styles.date,
@@ -58,6 +59,7 @@ export default class EditHistoryModal extends React.PureComponent {
                 onClose={closeModal}
             >
                 <ModalHeader
+                    headingClassName={styles.heading}
                     title={_ts('entryComments', 'textHistoryTitle')}
                     rightComponent={
                         <Button

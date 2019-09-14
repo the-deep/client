@@ -1008,7 +1008,8 @@
         "-95143967": "Comment created by",
         "-84296296": "Comment status",
         "-76163429": "I want to receive updates on entry comments by email",
-        "-51206611": "Language"
+        "-51206611": "Language",
+        "-70720392": "View edit history"
     },
     "links": {
         "browserExtension": {
@@ -2862,7 +2863,8 @@
             "textHistoryTitle": -1874062,
             "unresolvedTitle": -34360343,
             "resolvedTitle": -177898,
-            "commentsHeader": -2991833
+            "commentsHeader": -2991833,
+            "viewEditHistoryLabel": -70720392
         },
         "entryComments.notifications": {
             "entryCommentAdd": -7178898,

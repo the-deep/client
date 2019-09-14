@@ -1,14 +1,10 @@
-:root {
-    --max-height-modal: 60vh;
-}
-
 .container {
     display: flex;
     flex-direction: column;
     z-index: 1;
     background-color: var(--color-foreground-alt);
-    width: 360px;
-    max-height: 80vh;
+    width: var(--entry-comment-modal-width);
+    max-height: var(--entry-comment-modal-max-height);
     overflow-y: auto;
 
     .header {
@@ -78,4 +74,3 @@
         }
     }
 }
-

@@ -16,8 +16,6 @@ import EditHistoryModal from './EditHistoryModal';
 
 import styles from './styles.scss';
 
-const ModalButton = modalize(Button);
-
 const ButtonWrapper = (props) => {
     const {
         closeModal, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -60,9 +58,25 @@ export default class UserDetailActionBar extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showHistory: false,
+        };
+    }
+
     getSortedHistory = memoize(history => (
         [...history].sort((a, b) => compareDate(b.createdAt, a.createdAt))
     ));
+
+    handleViewHistoryClick = () => {
+        this.setState({ showHistory: true });
+    }
+
+    handleCloseHistoryClick = () => {
+        this.setState({ showHistory: false });
+    }
 
     render() {
         const {
@@ -78,6 +92,8 @@ export default class UserDetailActionBar extends React.PureComponent {
             isParent,
             hideActions,
         } = this.props;
+
+        const { showHistory } = this.state;
 
         const isModified = textHistory.length > 1;
         const sortedHistory = this.getSortedHistory(textHistory);
@@ -102,14 +118,10 @@ export default class UserDetailActionBar extends React.PureComponent {
                             mode="dd-MM-yyyy hh:mm aaa"
                         />
                         {isModified && (
-                            <ModalButton
-                                className={styles.editedButton}
-                                modal={
-                                    <EditHistoryModal history={sortedHistory} />
-                                }
-                            >
+                            <div className={styles.edited}>
+                                &nbsp;
                                 {_ts('entryComments', 'editedFlagLabel')}
-                            </ModalButton>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -142,8 +154,22 @@ export default class UserDetailActionBar extends React.PureComponent {
                             >
                                 {_ts('entryComments', 'deleteLabel')}
                             </ButtonWrapper>
+                            {isModified && (
+                                <ButtonWrapper
+                                    className={styles.button}
+                                    onClick={this.handleViewHistoryClick}
+                                >
+                                    {_ts('entryComments', 'viewEditHistoryLabel')}
+                                </ButtonWrapper>
+                            )}
                         </DropdownMenu>
                     </div>
+                )}
+                {showHistory && (
+                    <EditHistoryModal
+                        history={sortedHistory}
+                        closeModal={this.handleCloseHistoryClick}
+                    />
                 )}
             </div>
         );
