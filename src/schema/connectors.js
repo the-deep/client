@@ -159,7 +159,7 @@ const connectorsSchema = [];
             url: { type: 'string' },
             publishedOn: { type: 'string' },
             sourceType: { type: 'string' },
-            source: { type: 'string' },
+            source: { type: 'number' },
             existing: { type: 'boolean' },
             emmEntities: { type: 'array.emmEntity' },
             emmTriggers: { type: 'array.emmTrigger' },
