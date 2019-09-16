@@ -988,6 +988,7 @@ class LeadCreate extends React.PureComponent {
                         render={
                             <LeadButtons
                                 onLeadsAdd={this.handleLeadsAdd}
+                                leads={leads}
                             />
                         }
                     />

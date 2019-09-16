@@ -8,7 +8,7 @@ import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
 
-export default class ConnectorsGetRequest {
+export default class UserListGetRequest {
     constructor(props) {
         this.props = props;
     }
