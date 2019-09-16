@@ -1,161 +1,232 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isTruthy } from '@togglecorp/fujs';
+import {
+    isNotDefined,
+    isDefined,
+} from '@togglecorp/fujs';
+
 
 import Icon from '#rscg/Icon';
+import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+
+import Jumper from '#components/general/Jumper';
+
+import _cs from '#cs';
 
 import {
     LEAD_TYPE,
     LEAD_STATUS,
-    leadAccessor,
-} from '#entities/lead';
+    leadKeySelector,
+    leadSourceTypeSelector,
+    leadFaramValuesSelector,
+    leadIdSelector,
 
-import _cs from '#cs';
+    isLeadExportDisabled,
+    isLeadRemoveDisabled,
+    isLeadSaveDisabled,
+} from '../../utils';
 
 import styles from './styles.scss';
+
+
+const UploadProgress = ({ leadState, progress }) => {
+    const completed = leadState !== LEAD_STATUS.uploading;
+    const hide = completed || isNotDefined(progress);
+
+    const className = _cs(
+        styles.progressBar,
+        hide && styles.hide,
+        completed && styles.completed,
+    );
+
+    const style = { width: `${progress || 0}%` };
+
+    return (
+        <span className={className}>
+            <span
+                className={styles.progress}
+                style={style}
+            />
+        </span>
+    );
+};
+UploadProgress.propTypes = {
+    leadState: PropTypes.string.isRequired,
+    progress: PropTypes.number,
+};
+UploadProgress.defaultProps = {
+    progress: undefined,
+};
+
+const leadTypeToIconClassMap = {
+    [LEAD_TYPE.drive]: 'googleDrive',
+    [LEAD_TYPE.dropbox]: 'dropbox',
+    [LEAD_TYPE.file]: 'upload',
+    [LEAD_TYPE.website]: 'globe',
+    [LEAD_TYPE.text]: 'clipboard',
+};
+
+const styleMap = {
+    [LEAD_STATUS.warning]: styles.warning,
+    [LEAD_STATUS.requesting]: styles.pending,
+    [LEAD_STATUS.uploading]: styles.pending,
+    [LEAD_STATUS.invalid]: styles.error,
+    [LEAD_STATUS.nonPristine]: styles.pristine,
+    [LEAD_STATUS.complete]: styles.complete,
+};
+
+const iconMap = {
+    [LEAD_STATUS.warning]: 'warning',
+    [LEAD_STATUS.requesting]: 'loading',
+    [LEAD_STATUS.uploading]: 'loading',
+    [LEAD_STATUS.invalid]: 'error',
+    [LEAD_STATUS.nonPristine]: 'codeWorking',
+    [LEAD_STATUS.complete]: 'checkCircle',
+};
 
 const propTypes = {
     className: PropTypes.string,
 
-    leadKey: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired,
+    leadState: PropTypes.string,
+    progress: PropTypes.number,
 
-    lead: PropTypes.shape({
-        dummy: PropTypes.string,
-    }).isRequired,
-
-    leadState: PropTypes.string.isRequired,
-    upload: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-
-    onClick: PropTypes.func.isRequired,
-    onRemove: PropTypes.func.isRequired,
-
+    onLeadSelect: PropTypes.func.isRequired,
+    onLeadRemove: PropTypes.func.isRequired,
+    onLeadExport: PropTypes.func.isRequired,
+    onLeadSave: PropTypes.func.isRequired,
     active: PropTypes.bool,
-    isRemoveDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
     active: false,
-    isRemoveDisabled: true,
-    className: '',
-    upload: undefined,
+    className: undefined,
+    leadState: undefined,
+    progress: undefined,
 };
 
 export default class LeadListItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static leadTypeToIconClassMap = {
-        [LEAD_TYPE.drive]: 'googleDrive',
-        [LEAD_TYPE.dropbox]: 'dropbox',
-        [LEAD_TYPE.file]: 'upload',
-        [LEAD_TYPE.website]: 'globe',
-        [LEAD_TYPE.text]: 'clipboard',
-    };
-
-    static styleMap = {
-        [LEAD_STATUS.warning]: styles.warning,
-        [LEAD_STATUS.requesting]: styles.pending,
-        [LEAD_STATUS.uploading]: styles.pending,
-        [LEAD_STATUS.invalid]: styles.error,
-        [LEAD_STATUS.nonPristine]: styles.pristine,
-        [LEAD_STATUS.complete]: styles.complete,
-    };
-
-    static iconMap = {
-        [LEAD_STATUS.warning]: 'warning',
-        [LEAD_STATUS.requesting]: 'loading',
-        [LEAD_STATUS.uploading]: 'loading',
-        [LEAD_STATUS.invalid]: 'error',
-        [LEAD_STATUS.nonPristine]: 'codeWorking',
-        [LEAD_STATUS.complete]: 'checkCircle',
-    };
-
-    // HANDLE
-
     handleClick = () => {
-        this.props.onClick(this.props.leadKey);
+        const {
+            onLeadSelect,
+            lead,
+        } = this.props;
+        const leadKey = leadKeySelector(lead);
+        onLeadSelect(leadKey);
+    }
+
+    handleSaveClick = () => {
+        const {
+            onLeadSave,
+            lead,
+        } = this.props;
+        const leadKey = leadKeySelector(lead);
+        onLeadSave(leadKey);
     }
 
     handleRemoveClick = () => {
-        this.props.onRemove(this.props.leadKey);
+        const {
+            onLeadRemove,
+            lead,
+        } = this.props;
+        const leadKey = leadKeySelector(lead);
+        onLeadRemove(leadKey);
     }
 
-    renderUploadProgress = ({ leadState, upload = {} }) => {
-        const hide = leadState !== LEAD_STATUS.uploading || !upload;
-
-        const progress = isTruthy(upload.progress) ? upload.progress : 0;
-
-        const className = _cs(
-            styles.progressBar,
-            progress >= 100 && styles.completed,
-            hide && styles.hide,
-        );
-
-        const style = { width: `${progress}%` };
-
-        return (
-            <span className={className}>
-                <span
-                    className={styles.progress}
-                    style={style}
-                />
-            </span>
-        );
+    handleExportClick = () => {
+        const {
+            onLeadExport,
+            lead,
+        } = this.props;
+        const leadId = leadIdSelector(lead);
+        onLeadExport(leadId);
     }
 
     render() {
         const {
             active,
-            leadState,
             className,
-            isRemoveDisabled,
             lead,
-            upload,
+            leadState,
+            progress,
         } = this.props;
 
-        const type = leadAccessor.getType(lead);
-        const { title } = leadAccessor.getFaramValues(lead);
-
-        const UploadProgress = this.renderUploadProgress;
+        const type = leadSourceTypeSelector(lead);
+        const { title } = leadFaramValuesSelector(lead);
 
         const stateIconClassName = _cs(
             styles.statusIcon,
-            LeadListItem.styleMap[leadState],
+            styleMap[leadState],
         );
 
+        const exportShown = isDefined(leadIdSelector(lead));
+
+        const exportDisabled = isLeadExportDisabled(leadState);
+        const removeDisabled = isLeadRemoveDisabled(leadState);
+        const saveDisabled = isLeadSaveDisabled(leadState);
+
+        // TODO: STYLING loading doesn't rotate
         return (
-            <div className={styles.leadListItem}>
+            <Jumper
+                active={active}
+                className={styles.leadListItem}
+            >
                 <button
-                    className={`${styles.addLeadListItem} ${active ? styles.active : ''} ${className}`}
+                    className={
+                        _cs(
+                            className,
+                            styles.addLeadListItem,
+                            active && styles.active,
+                        )
+                    }
                     onClick={this.handleClick}
                     type="button"
                 >
                     <Icon
                         className={styles.icon}
-                        name={LeadListItem.leadTypeToIconClassMap[type]}
+                        name={leadTypeToIconClassMap[type]}
                     />
                     <span className={styles.title} >
                         { title }
                     </span>
                     <Icon
                         className={stateIconClassName}
-                        name={LeadListItem.iconMap[leadState]}
+                        name={iconMap[leadState]}
                     />
                     <UploadProgress
                         leadState={leadState}
-                        upload={upload}
+                        progress={progress}
                     />
                 </button>
-                <div className={styles.removeButtonContainer}>
+                <div className={styles.buttonContainer}>
+                    { exportShown &&
+                        <Button
+                            className={styles.button}
+                            disabled={exportDisabled}
+                            onClick={this.handleExportClick}
+                            iconName="openLink"
+                        />
+                    }
                     <WarningButton
-                        className={styles.removeButton}
-                        disabled={isRemoveDisabled}
+                        className={styles.button}
+                        disabled={removeDisabled}
                         onClick={this.handleRemoveClick}
                         iconName="delete"
                     />
+                    <PrimaryButton
+                        className={styles.button}
+                        disabled={saveDisabled}
+                        onClick={this.handleSaveClick}
+                        iconName="save"
+                    />
                 </div>
-            </div>
+            </Jumper>
         );
     }
 }

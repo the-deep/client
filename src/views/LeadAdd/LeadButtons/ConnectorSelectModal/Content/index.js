@@ -13,7 +13,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
-import ConnectorLeadsGetRequest from '../../requests/ConnectorLeadsGetRequest';
+import ConnectorLeadsGetRequest from '../requests/ConnectorLeadsGetRequest';
 import Filters from './Filters';
 import styles from './styles.scss';
 

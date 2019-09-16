@@ -19,18 +19,6 @@ const migrations = {
 
 const myTransform = createTransform(
     inboundState => produce(inboundState, (state) => {
-        if (state.addLeadView) {
-            // eslint-disable-next-line no-param-reassign
-            delete state.addLeadView.leadRests;
-            // eslint-disable-next-line no-param-reassign
-            delete state.addLeadView.leadUploads;
-            // eslint-disable-next-line no-param-reassign
-            delete state.addLeadView.leadDriveRests;
-            // eslint-disable-next-line no-param-reassign
-            delete state.addLeadView.leadDropboxRests;
-            // eslint-disable-next-line no-param-reassign
-            delete state.addLeadView.removeModalState;
-        }
         if (state.editEntries) {
             Object.keys(state.editEntries).forEach((key) => {
                 if (state.editEntries[key]) {

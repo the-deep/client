@@ -13,7 +13,7 @@ const ApplyAll = ({
     className,
     disabled,
     children,
-    identiferName,
+    identifierName,
     onApplyAllClick,
     onApplyAllBelowClick,
     extraButtons,
@@ -27,7 +27,7 @@ const ApplyAll = ({
                 transparent
                 title={_ts('addLeads', 'applyAllButtonTitle')}
                 disabled={disabled}
-                onClick={() => onApplyAllClick(identiferName)}
+                onClick={() => onApplyAllClick(identifierName)}
                 tabIndex="-1"
                 iconName="applyAll"
                 confirmationMessage={_ts('addLeads', 'applyToAll')}
@@ -37,7 +37,7 @@ const ApplyAll = ({
                 transparent
                 title={_ts('addLeads', 'applyAllBelowButtonTitle')}
                 disabled={disabled}
-                onClick={() => onApplyAllBelowClick(identiferName)}
+                onClick={() => onApplyAllBelowClick(identifierName)}
                 tabIndex="-1"
                 iconName="applyAllBelow"
                 confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
@@ -50,7 +50,7 @@ ApplyAll.propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool.isRequired,
     children: PropTypes.node.isRequired,
-    identiferName: PropTypes.string.isRequired,
+    identifierName: PropTypes.string.isRequired,
     onApplyAllClick: PropTypes.func.isRequired,
     onApplyAllBelowClick: PropTypes.func.isRequired,
     extraButtons: PropTypes.node,

@@ -201,8 +201,7 @@ export default class GooglePicker extends React.Component {
             <Button
                 className={className}
                 onClick={this.handleChoose}
-                disabled={disabled}
-                pending={!ready}
+                disabled={disabled || !ready}
                 transparent
             >
                 { children || _ts('components.googlePicker', 'openGoogleChooserText') }

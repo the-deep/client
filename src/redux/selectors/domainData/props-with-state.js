@@ -28,6 +28,8 @@ import {
     aryTemplatesSelector,
     regionsListSelector,
     userExportsSelector,
+
+    projectRolesSelector,
 } from './state';
 
 
@@ -118,7 +120,7 @@ export const currentUserInformationSelector = createSelector(
     user => (user.information || emptyObject),
 );
 
-// activeUser
+// NOTE: this doesn't depend on props though
 export const currentUserProjectsSelector = createSelector(
     projectsSelector,
     projects => Object.keys(projects).map(
@@ -129,6 +131,19 @@ export const currentUserProjectsSelector = createSelector(
             b.title,
         ),
     ),
+);
+
+export const currentUserLeadChangeableProjectsSelector = createSelector(
+    currentUserProjectsSelector,
+    projectRolesSelector,
+    (projects, roles) => projects.filter((project) => {
+        const role = roles[project.role];
+        if (!role) {
+            return false;
+        }
+        const { leadPermissions } = role;
+        return leadPermissions.create || leadPermissions.modify;
+    }),
 );
 
 // activeUser

@@ -1,37 +1,20 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
+import Faram from '@togglecorp/faram';
 
-import { BgRestBuilder } from '#rsu/rest';
-import MultiSelectInput from '#rsci/MultiSelectInput';
-import SelectInput from '#rsci/SelectInput';
-import TextInput from '#rsci/TextInput';
-import SearchInput from '#rsci/SearchInput';
 import DangerButton from '#rsca/Button/DangerButton';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchInput from '#rsci/SearchInput';
+import SelectInput from '#rsci/SelectInput';
+// import TextInput from '#rsci/TextInput';
 
-import {
-    activeProjectIdFromStateSelector,
-    addLeadViewSetFiltersAction,
-    addLeadViewUnsetFiltersAction,
-    addLeadViewFiltersSelector,
-    addLeadViewIsFilterEmptySelector,
-    setLeadFilterOptionsAction,
-} from '#redux';
-import {
-    createParamsForGet,
-    createUrlForLeadFilterOptions,
-} from '#rest';
+import _ts from '#ts';
+
 import {
     LEAD_TYPE,
     LEAD_FILTER_STATUS,
-} from '#entities/lead';
-import _ts from '#ts';
-import schema from '#schema';
+} from '../utils';
 
 import styles from './styles.scss';
 
@@ -49,144 +32,78 @@ const leadStatusFilterOptions = [
     { key: LEAD_FILTER_STATUS.unsaved, label: 'Unsaved' },
 ];
 
-const defaultProps = { };
-
 const propTypes = {
-    isFilterEmpty: PropTypes.bool.isRequired,
-    filters: PropTypes.object.isRequired, // eslint-disable-line
-    activeProject: PropTypes.number.isRequired,
-    setLeadViewFilters: PropTypes.func.isRequired,
-    unsetLeadViewFilters: PropTypes.func.isRequired,
-    setLeadFilterOptions: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    filters: PropTypes.object.isRequired,
+    onFilterChange: PropTypes.func.isRequired,
+    onFilterClear: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-    activeProject: activeProjectIdFromStateSelector(state),
-    filters: addLeadViewFiltersSelector(state),
-    isFilterEmpty: addLeadViewIsFilterEmptySelector(state),
-});
+const defaultProps = {
+};
 
-const mapDispatchToProps = dispatch => ({
-    setLeadViewFilters: filters => dispatch(addLeadViewSetFiltersAction(filters)),
-    unsetLeadViewFilters: () => dispatch(addLeadViewUnsetFiltersAction()),
-    setLeadFilterOptions: params => dispatch(setLeadFilterOptionsAction(params)),
-});
+const faramSchema = {
+    fields: {},
+};
 
-@connect(mapStateToProps, mapDispatchToProps)
 export default class LeadFilter extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
 
-    componentWillMount() {
-        const { activeProject } = this.props;
-        this.leadFilterOptionsRequest = this.createRequestForProjectLeadFilterOptions(
-            activeProject,
-        );
-        this.leadFilterOptionsRequest.start();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { activeProject } = nextProps;
-
-        if (this.props.activeProject !== activeProject) {
-            if (this.leadFilterOptionsRequest) {
-                this.leadFilterOptionsRequest.stop();
-            }
-
-            this.leadFilterOptionsRequest = this.createRequestForProjectLeadFilterOptions(
-                activeProject,
-            );
-            this.leadFilterOptionsRequest.start();
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.leadFilterOptionsRequest) {
-            this.leadFilterOptionsRequest.stop();
-        }
-    }
-
-    createRequestForProjectLeadFilterOptions = (activeProject) => {
-        const leadFilterOptionsRequest = new BgRestBuilder()
-            .url(createUrlForLeadFilterOptions(activeProject))
-            .params(createParamsForGet)
-            .success((response) => {
-                try {
-                    schema.validate(response, 'projectLeadFilterOptions');
-                    this.props.setLeadFilterOptions({
-                        projectId: activeProject,
-                        leadFilterOptions: response,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
-            })
-            .build();
-
-        return leadFilterOptionsRequest;
-    }
-
-
-    handleSearchChange = (value) => {
-        this.props.setLeadViewFilters({ search: value });
-    }
-
-    handleLeadTypeFilterChange = (value) => {
-        this.props.setLeadViewFilters({ type: value });
-    }
-
-    handleLeadSourceFilterChange = (value) => {
-        this.props.setLeadViewFilters({ source: value });
-    }
-
-    handleLeadStatusFilterChange = (value) => {
-        this.props.setLeadViewFilters({ status: value });
-    }
-
-    handleClearFilters = () => {
-        this.props.unsetLeadViewFilters();
-    }
-
     render() {
-        const { filters, isFilterEmpty } = this.props;
+        const {
+            filters,
+            onFilterChange,
+            onFilterClear,
+        } = this.props;
+
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (
-            <div className={styles.leadFilters}>
-                <SearchInput
-                    label={_ts('addLeads.filters', 'placeholderSearch')}
-                    onChange={this.handleSearchChange}
-                    value={filters.search}
-                    placeholder={_ts('addLeads.filters', 'placeholderSearch')}
-                    showHintAndError={false}
-                />
-                <TextInput
-                    label={_ts('addLeads.filters', 'filterPublisher')}
-                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
-                    value={filters.source}
-                    onChange={this.handleLeadSourceFilterChange}
-                    showHintAndError={false}
-                />
-                <SelectInput
-                    label={_ts('addLeads.filters', 'filterStatus')}
-                    showLabel
-                    options={leadStatusFilterOptions}
-                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
-                    value={filters.status}
-                    onChange={this.handleLeadStatusFilterChange}
-                    showHintAndError={false}
-                />
-                <MultiSelectInput
-                    label={_ts('addLeads.filters', 'filterSourceType')}
-                    showLabel
-                    options={leadTypeOptions}
-                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
-                    value={filters.type}
-                    onChange={this.handleLeadTypeFilterChange}
-                    showHintAndError={false}
-                />
+            <div
+                className={styles.leadFilters}
+            >
+                <Faram
+                    className={styles.container}
+                    value={filters}
+                    onChange={onFilterChange}
+                    schema={faramSchema}
+                >
+                    <SearchInput
+                        faramElementName="search"
+                        label={_ts('addLeads.filters', 'placeholderSearch')}
+                        placeholder={_ts('addLeads.filters', 'placeholderSearch')}
+                        showHintAndError={false}
+                    />
+                    {/*
+                    <TextInput
+                        faramElementName="source"
+                        label={_ts('addLeads.filters', 'filterPublisher')}
+                        placeholder={_ts('addLeads.filters', 'placeholderAny')}
+                        showHintAndError={false}
+                    />
+                    */}
+                    <MultiSelectInput
+                        faramElementName="type"
+                        label={_ts('addLeads.filters', 'filterSourceType')}
+                        showLabel
+                        options={leadTypeOptions}
+                        placeholder={_ts('addLeads.filters', 'placeholderAny')}
+                        showHintAndError={false}
+                    />
+                    <SelectInput
+                        faramElementName="status"
+                        label={_ts('addLeads.filters', 'filterStatus')}
+                        showLabel
+                        options={leadStatusFilterOptions}
+                        placeholder={_ts('addLeads.filters', 'placeholderAny')}
+                        showHintAndError={false}
+                    />
+                </Faram>
                 <DangerButton
                     disabled={isFilterEmpty}
-                    onClick={this.handleClearFilters}
+                    onClick={onFilterClear}
                 >
                     {_ts('addLeads.filters', 'filterClearFilter')}
                 </DangerButton>

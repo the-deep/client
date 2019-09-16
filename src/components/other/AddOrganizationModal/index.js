@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 import Faram, {
     requiredCondition,
     urlCondition,
@@ -14,14 +13,9 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ImageInput from '#rsci/FileInput/ImageInput';
-import Checkbox from '#rsci/Checkbox';
 import Label from '#rsci/Label';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
-import {
-    projectIdFromRoute,
-    setNewOrganizationAction,
-} from '#redux';
 import _ts from '#ts';
 import notify from '#notify';
 
@@ -39,20 +33,37 @@ import {
 
 import styles from './styles.scss';
 
-// FIXME: Use strings everywhere, define all the props
-// FIXME: No inline functions
-// FIXME: Donot define props inline in image input
-
 const propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    addOrganizationRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    organizationTypesRequest: PropTypes.object.isRequired,
+
+    closeModal: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/no-unused-prop-types
+    onOrganizationAdd: PropTypes.func.isRequired,
+    loadOrganizationList: PropTypes.bool,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    organizationTypeList: PropTypes.array,
 };
 
 const defaultProps = {
+    organizationTypeList: [],
+    loadOrganizationList: false,
 };
 
-const idSelector = foo => foo.id;
-const titleSelector = foo => foo.title;
+const idSelector = item => item.id;
+
+const titleSelector = item => item.title;
 
 const requests = {
+    organizationTypesRequest: {
+        url: '/organization-types/',
+        method: requestMethods.GET,
+        onMount: ({ props }) => props.loadOrganizationList,
+    },
     addOrganizationRequest: {
         url: '/organizations/',
         method: requestMethods.POST,
@@ -60,23 +71,12 @@ const requests = {
         body: ({ params: { body } }) => body,
         onSuccess: ({
             props: {
-                setNewOrganization,
-                projectId,
+                onOrganizationAdd,
                 closeModal,
             },
             response,
         }) => {
-            const newOrganization = {
-                key: response.id,
-                label: response.title,
-                shortName: response.shortName,
-                logo: response.logoUrl,
-            };
-
-            setNewOrganization({
-                projectId,
-                organization: newOrganization,
-            });
+            onOrganizationAdd(response);
 
             notify.send({
                 title: 'Organization add',
@@ -84,20 +84,12 @@ const requests = {
                 message: 'Organization added successfully.',
                 duration: notify.duration.FAST,
             });
+
             closeModal();
         },
     },
 };
 
-const mapStateToProps = state => ({
-    projectId: projectIdFromRoute(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-    setNewOrganization: params => dispatch(setNewOrganizationAction(params)),
-});
-
-@connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requests)
 export default class AddOrganizationModal extends React.PureComponent {
@@ -184,7 +176,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                     },
                 });
             })
-            .failure((response) => {
+            .failure(() => {
                 notify.send({
                     title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                     type: notify.type.ERROR,
@@ -192,7 +184,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                     duration: notify.duration.SLOW,
                 });
             })
-            .fatal((response) => {
+            .fatal(() => {
                 notify.send({
                     title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                     type: notify.type.ERROR,
@@ -204,14 +196,21 @@ export default class AddOrganizationModal extends React.PureComponent {
 
         this.logoUploader.start();
     }
+
     render() {
         const {
             closeModal,
-            children,
-            organizationTypeList,
+            organizationTypeList: organizationTypeListFromProps,
             addOrganizationRequest: {
                 pending: pendingAddOrganizationRequest,
             },
+            organizationTypesRequest: {
+                pending: pendingOrganizationTypesRequest,
+                response: {
+                    results: organizationTypeListFromResponse,
+                } = {},
+            } = {},
+            loadOrganizationList,
         } = this.props;
 
         const {
@@ -221,7 +220,15 @@ export default class AddOrganizationModal extends React.PureComponent {
             pendingLogoUpload,
         } = this.state;
 
-        const pending = pendingLogoUpload || pendingAddOrganizationRequest;
+        const pending = (
+            pendingLogoUpload
+            || pendingAddOrganizationRequest
+            || (loadOrganizationList && pendingOrganizationTypesRequest)
+        );
+
+        const organizationTypeList = loadOrganizationList
+            ? organizationTypeListFromResponse
+            : organizationTypeListFromProps;
 
         return (
             <Modal

@@ -11,12 +11,16 @@ import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
 import {
     addLeadGroupOfProjectAction,
 } from '#redux';
-
+import notify from '#notify';
 import _ts from '#ts';
-import LeadGroupCreateRequest from '../../requests/LeadGroupCreateRequest';
 
 import styles from './styles.scss';
 
@@ -24,8 +28,12 @@ const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number,
     onModalClose: PropTypes.func.isRequired,
-    addLeadGroup: PropTypes.func.isRequired,
-    onLeadGroupAdd: PropTypes.func.isRequired,
+
+    addLeadGroup: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onLeadGroupAdd: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+
+    // eslint-disable-next-line react/forbid-prop-types
+    createLeadGroupRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -37,8 +45,51 @@ const mapDispatchToProps = dispatch => ({
     addLeadGroup: params => dispatch(addLeadGroupOfProjectAction(params)),
 });
 
-@connect(undefined, mapDispatchToProps)
-export default class AddLeadGroup extends React.PureComponent {
+const requests = {
+    createLeadGroupRequest: {
+        schemaName: 'leadGroup',
+        url: '/lead-groups/',
+        // NOTE: only pull what we post
+        query: {
+            fields: ['id', 'title', 'project', 'version_id'],
+        },
+        method: requestMethods.POST,
+        body: ({ params }) => params.body,
+        onSuccess: ({ props, response }) => {
+            props.addLeadGroup({
+                projectId: response.project,
+                newLeadGroup: {
+                    key: response.id,
+                    value: response.title,
+                },
+            });
+
+            props.onLeadGroupAdd(response);
+
+            props.onModalClose();
+
+            notify.send({
+                title: _ts('addLeads', 'leadGroupTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('addLeads', 'leadGroupCreateSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFailure: ({ faramErrors, params }) => {
+            params.setState({
+                faramErrors,
+                pending: false,
+            });
+        },
+        onFatal: ({ params }) => {
+            params.setState({
+                faramErrors: { $internal: [_ts('addLeads', 'leadGroupCreateFailure')] },
+            });
+        },
+    },
+};
+
+class AddLeadGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -59,21 +110,6 @@ export default class AddLeadGroup extends React.PureComponent {
         };
     }
 
-    startLeadGroupCreateRequest = (newLeadGroup) => {
-        if (this.requestForLeadGroupCreate) {
-            this.requestForLeadGroupCreate.stop();
-        }
-        const requestForLeadGroupCreate = new LeadGroupCreateRequest({
-            setState: v => this.setState(v),
-            handleModalClose: this.props.onModalClose,
-            addLeadGroup: this.props.addLeadGroup,
-            onLeadGroupAdd: this.props.onLeadGroupAdd,
-        });
-        this.requestForLeadGroupCreate = requestForLeadGroupCreate.create(newLeadGroup);
-        this.requestForLeadGroupCreate.start();
-    }
-
-    // faram RELATED
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
             faramValues,
@@ -87,11 +123,20 @@ export default class AddLeadGroup extends React.PureComponent {
     };
 
     handleValidationSuccess = (values) => {
+        const {
+            projectId,
+            createLeadGroupRequest,
+        } = this.props;
+
         const newLeadGroup = {
             ...values,
-            project: this.props.projectId,
+            project: projectId,
         };
-        this.startLeadGroupCreateRequest(newLeadGroup);
+
+        createLeadGroupRequest.do({
+            body: newLeadGroup,
+            setState: v => this.setState(v),
+        });
     };
 
     render() {
@@ -143,3 +188,7 @@ export default class AddLeadGroup extends React.PureComponent {
         );
     }
 }
+
+export default connect(undefined, mapDispatchToProps)(
+    RequestClient(requests)(AddLeadGroup),
+);
