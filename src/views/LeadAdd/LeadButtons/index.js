@@ -354,6 +354,8 @@ export default class LeadButtons extends React.PureComponent {
                     source: l.source,
                     sourceType: LEAD_TYPE.website,
                     project: activeProject,
+                    emmEntities: l.emmEntities,
+                    emmTriggers: l.emmTriggers,
                 },
                 pristine: false,
             });

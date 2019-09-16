@@ -96,6 +96,8 @@ export default class ActionButtons extends React.PureComponent {
                     url: row.url,
                     text: row.text,
                     tabularBook: row.tabularBook,
+                    emmTriggers: row.emmTriggers,
+                    emmEntities: row.emmEntities,
                 },
             },
         };

@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-    _cs,
-    isTruthyString,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import Badge from '#components/viewer/Badge';
 
 import styles from './styles.scss';

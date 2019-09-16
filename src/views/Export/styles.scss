@@ -71,24 +71,11 @@
                 overflow: auto;
 
                 .lead-attributes {
-                    :global {
-                        .leads-filters {
-                            display: flex;
-                            align-items: flex-end;
-                            flex-shrink: 0;
-                            flex-wrap: wrap;
-                            padding: var(--spacing-small);
-
-                            .leads-filter {
-                                margin: var(--spacing-small);
-                            }
-
-                            .button {
-                                align-self: flex-end;
-                                flex-shrink: 0;
-                                margin: var(--spacing-small);
-                            }
-                        }
+                    .leads-filter-form {
+                        display: flex;
+                        align-items: flex-end;
+                        flex-shrink: 0;
+                        padding: var(--spacing-small);
                     }
                 }
 
@@ -101,6 +88,7 @@
                     overflow-y: auto;
 
                     .leads-table {
+                        border-top: var(--width-separator-thin) solid var(--color-separator);
                         overflow: auto;
 
                         :global {

@@ -34,11 +34,13 @@ import {
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
 } from '#redux';
+import { RequestCoordinator } from '#request';
+import FilterLeadsForm from '#components/other/FilterLeadsForm';
+
 import notify from '#notify';
 import schema from '#schema';
-
 import _ts from '#ts';
-import FilterLeadsForm from '../Leads/FilterLeadsForm';
+
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
 
 import ExportHeader from './ExportHeader';
@@ -73,6 +75,7 @@ const defaultProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
 export default class Export extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -482,7 +485,9 @@ export default class Export extends React.PureComponent {
                                     <h4 className={styles.heading}>
                                         {_ts('export', 'leadAttributesLabel')}
                                     </h4>
-                                    <FilterLeadsForm />
+                                    <FilterLeadsForm
+                                        className={styles.leadsFilterForm}
+                                    />
                                 </div>
                                 <div className={styles.leadsTableContainer}>
                                     { pendingLeads && <LoadingAnimation /> }
