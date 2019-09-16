@@ -73,9 +73,13 @@ export default class LeadButtons extends React.PureComponent {
         }
     }
 
-    handleDropboxChooserClick = () => this.setState({ dropboxDisabled: true });
+    handleDropboxChooserClick = () => {
+        this.setState({ dropboxDisabled: true });
+    }
 
-    handleDropboxChooserClose = () => this.setState({ dropboxDisabled: false });
+    handleDropboxChooserClose = () => {
+        this.setState({ dropboxDisabled: false });
+    }
 
     handleLeadAddFromText = () => {
         const {
@@ -109,6 +113,7 @@ export default class LeadButtons extends React.PureComponent {
 
     handleLeadAddFromDisk = (files, options) => {
         const { invalidFiles } = options;
+
         if (invalidFiles > 0) {
             notify.send({
                 title: _ts('addLeads.sourceButtons', 'fileSelection'),
@@ -141,7 +146,11 @@ export default class LeadButtons extends React.PureComponent {
     }
 
     handleLeadAddFromGoogleDrive = (response) => {
-        const { docs, action } = response;
+        const {
+            docs,
+            action,
+        } = response;
+
         if (action !== 'picked') {
             console.error('No files selected to upload');
             return;
