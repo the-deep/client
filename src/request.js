@@ -17,8 +17,21 @@ import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
 import notify from '#notify';
 
+
+function getVersionedUrl(endpoint, url) {
+    const oldVersionString = '/v1';
+    const versionString = '/v2';
+    if (!url.startsWith(versionString)) {
+        return `${endpoint}${url}`;
+    }
+    const startIndex = 0;
+    const endIndex = endpoint.search(oldVersionString);
+    const newEndpoint = endpoint.slice(startIndex, endIndex);
+    return `${newEndpoint}${url}`;
+}
+
 const mapStateToProps = state => ({
-    token: tokenSelector(state),
+    myToken: tokenSelector(state),
 });
 
 const CustomRequestCoordinator = createRequestCoordinator({
@@ -32,7 +45,9 @@ const CustomRequestCoordinator = createRequestCoordinator({
             return {};
         }
 
-        const { access } = props.token;
+        const {
+            myToken: { access },
+        } = props;
         if (!access) {
             return params;
         }
@@ -48,7 +63,7 @@ const CustomRequestCoordinator = createRequestCoordinator({
 
     transformProps: (props) => {
         const {
-            token, // eslint-disable-line no-unused-vars
+            myToken, // eslint-disable-line no-unused-vars
             ...otherProps
         } = props;
         return otherProps;
@@ -58,8 +73,7 @@ const CustomRequestCoordinator = createRequestCoordinator({
         if (/^https?:\/\//i.test(url)) {
             return url;
         }
-
-        return `${wsEndpoint}${url}`;
+        return getVersionedUrl(wsEndpoint, url);
     },
 
     transformResponse: (body, request) => {
