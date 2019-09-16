@@ -220,6 +220,7 @@ export default class LeadButtons extends React.PureComponent {
     }
 
     render() {
+        const { leads } = this.props;
         const { dropboxDisabled } = this.state;
 
         return (
@@ -297,7 +298,7 @@ export default class LeadButtons extends React.PureComponent {
                     transparent
                     modal={
                         <ConnectorSelectModal
-                            leads={this.props.leads}
+                            leads={leads}
                             onLeadsSelect={this.handleLeadAddFromConnectors}
                         />
                     }

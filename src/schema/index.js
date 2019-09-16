@@ -3,6 +3,7 @@ import Dict, { basicTypes } from '@togglecorp/ravl';
 import leads from './leads';
 import leadsViz from './leadsViz';
 import entries from './entries';
+import emm from './emm';
 import entryComments from './entryComments';
 import projects from './projects';
 import regions from './regions';
@@ -99,6 +100,7 @@ const dict = new Dict(
 [
     ...basicTypeSchemas,
     ...userDefinedSchemas,
+    ...emm,
     ...leads,
     ...leadsViz,
     ...entries,

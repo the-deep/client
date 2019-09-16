@@ -51,6 +51,8 @@ const propTypes = {
     setLeadFilterOptions: PropTypes.func.isRequired,
     setLeadPageFilter: PropTypes.func.isRequired,
     unsetLeadPageFilter: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onEmmStatusReceive: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     leadOptionsRequest: PropTypes.object.isRequired,
@@ -92,12 +94,14 @@ const requests = {
             props: {
                 setLeadFilterOptions,
                 activeProject,
+                onEmmStatusReceive,
             },
         }) => {
             setLeadFilterOptions({
                 projectId: activeProject,
                 leadFilterOptions: response,
             });
+            onEmmStatusReceive(response.hasEmmLeads);
         },
     },
 };

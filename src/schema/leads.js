@@ -53,54 +53,6 @@ const leadSchema = [];
 }
 
 {
-    const name = 'emmEntityExtra';
-    const schema = {
-        doc: {
-            name: 'Emm entity in extra of leads',
-            description: 'Emm entity in extra of leads',
-        },
-        fields: {
-            key: { type: 'number' },
-            name: { type: 'string' },
-            totalCount: { type: 'number' },
-        },
-    };
-    leadSchema.push({ name, schema });
-}
-
-{
-    const name = 'emmRiskFactors';
-    const schema = {
-        doc: {
-            name: 'Emm risk factors in extra of leads',
-            description: 'Emm entity in extra of leads',
-        },
-        fields: {
-            key: { type: 'string' },
-            name: { type: 'string' },
-            totalCount: { type: 'number' },
-        },
-    };
-    leadSchema.push({ name, schema });
-}
-
-{
-    const name = 'emmKeywordsExtra';
-    const schema = {
-        doc: {
-            name: 'Emm keywords extra of leads',
-            description: 'Emm keywords in extra of leads',
-        },
-        fields: {
-            key: { type: 'string' },
-            name: { type: 'string' },
-            totalCount: { type: 'number' },
-        },
-    };
-    leadSchema.push({ name, schema });
-}
-
-{
     const name = 'leadsGetResponse';
     const schema = {
         doc: {
@@ -108,13 +60,6 @@ const leadSchema = [];
             description: 'Response for GET /leads/?params',
         },
         fields: {
-            extra: {
-                type: {
-                    emmEntities: { type: 'array.emmEntityExtra' },
-                    emmRiskFactors: { type: 'array.emmRiskFactors' },
-                    emmKeywords: { type: 'array.emmKeywordsExtra' },
-                },
-            },
             count: { type: 'uint', required: true },
             next: { type: 'string' },
             previous: { type: 'string' },
