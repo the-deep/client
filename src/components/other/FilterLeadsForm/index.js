@@ -111,16 +111,16 @@ export default class FilterLeadsForm extends React.PureComponent {
     static optionKeySelector = (d = {}) => d.key;
 
     static emmRiskFactorsKeySelector = (d = {}) => (isTruthyString(d.key) ? d.key : 'None');
-    static emmRiskFactorsLabelSelector = (d = {}) => (isTruthyString(d.emmRiskFactor)
-        ? `${d.emmRiskFactor} (${d.totalCount})`
+    static emmRiskFactorsLabelSelector = (d = {}) => (isTruthyString(d.label)
+        ? `${d.label} (${d.totalCount})`
         : `None (${d.totalCount})`
     );
 
     static emmEntitiesKeySelector = (d = {}) => d.key;
-    static emmEntitiesLabelSelector = (d = {}) => `${d.key} (${d.count})`;
+    static emmEntitiesLabelSelector = (d = {}) => `${d.label} (${d.totalCount})`;
 
     static emmTriggerKeySelector = (d = {}) => d.key;
-    static emmTriggerLabelSelector = (d = {}) => `${d.key} (${d.totalCount})`;
+    static emmTriggerLabelSelector = (d = {}) => `${d.label} (${d.totalCount})`;
 
     constructor(props) {
         super(props);
