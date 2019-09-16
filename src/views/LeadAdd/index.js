@@ -625,7 +625,10 @@ class LeadCreate extends React.PureComponent {
             const activeLeadKey = leadKeySelector(newLeads[newLeads.length - 1]);
 
             return {
-                leads: [...leads, ...newLeads],
+                leads: [
+                    ...newLeads,
+                    ...leads,
+                ],
                 activeLeadKey,
             };
         }, () => {
