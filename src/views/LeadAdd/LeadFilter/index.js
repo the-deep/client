@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { doesObjectHaveNoData } from '@togglecorp/fujs';
 import Faram from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
@@ -37,9 +36,11 @@ const propTypes = {
     filters: PropTypes.object.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     onFilterClear: PropTypes.func.isRequired,
+    clearDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
+    clearDisabled: false,
 };
 
 const faramSchema = {
@@ -56,9 +57,8 @@ export default class LeadFilter extends React.PureComponent {
             filters,
             onFilterChange,
             onFilterClear,
+            clearDisabled,
         } = this.props;
-
-        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (
             <div
@@ -102,7 +102,7 @@ export default class LeadFilter extends React.PureComponent {
                     />
                 </Faram>
                 <DangerButton
-                    disabled={isFilterEmpty}
+                    disabled={clearDisabled}
                     onClick={onFilterClear}
                 >
                     {_ts('addLeads.filters', 'filterClearFilter')}

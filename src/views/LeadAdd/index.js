@@ -5,13 +5,15 @@ import { Prompt } from 'react-router-dom';
 import produce from 'immer';
 import memoize from 'memoize-one';
 import {
+    _cs,
+    caseInsensitiveSubmatch,
+    doesObjectHaveNoData,
+    getDefinedElementAround,
     isDefined,
     isNotDefined,
-    reverseRoute,
-    getDefinedElementAround,
-    _cs,
     listToMap,
     randomString,
+    reverseRoute,
 } from '@togglecorp/fujs';
 import {
     accumulateDifferentialErrors,
@@ -19,13 +21,13 @@ import {
     detachedFaram,
 } from '@togglecorp/faram';
 
-import { CoordinatorBuilder } from '#rsu/coordinate';
-import { UploadBuilder } from '#rsu/upload';
-import { FgRestBuilder } from '#rsu/rest';
-import ResizableV from '#rscv/Resizable/ResizableV';
 import Message from '#rscv/Message';
+import Confirm from '#rscv/Modal/Confirm';
 import Page from '#rscv/Page';
-
+import ResizableV from '#rscv/Resizable/ResizableV';
+import { CoordinatorBuilder } from '#rsu/coordinate';
+import { FgRestBuilder } from '#rsu/rest';
+import { UploadBuilder } from '#rsu/upload';
 
 import LeadCopyModal from '#components/general/LeadCopyModal';
 import { pathNames } from '#constants';
@@ -66,16 +68,16 @@ import LeadDetail from './LeadDetail';
 import schema from './LeadDetail/faramSchema';
 
 import {
-    leadKeySelector,
-    leadIdSelector,
-    leadFaramValuesSelector,
-    leadFaramErrorsSelector,
-    leadSourceTypeSelector,
+    LEAD_FILTER_STATUS,
+    LEAD_STATUS,
     LEAD_TYPE,
-    getLeadState,
     fakeLeads,
-
-    isLeadSaveDisabled,
+    getLeadState,
+    leadFaramErrorsSelector,
+    leadFaramValuesSelector,
+    leadIdSelector,
+    leadKeySelector,
+    leadSourceTypeSelector,
 } from './utils';
 import styles from './styles.scss';
 
@@ -134,6 +136,53 @@ function getNewLeadKey(prefix = 'lead') {
     return `${prefix}-${uid}`;
 }
 
+function statusMatches(leadState, filterStatus) {
+    switch (filterStatus) {
+        case LEAD_FILTER_STATUS.invalid:
+            return (
+                leadState === LEAD_STATUS.invalid ||
+                leadState === LEAD_STATUS.warning
+            );
+        case LEAD_FILTER_STATUS.saved:
+            return leadState === LEAD_STATUS.complete;
+        case LEAD_FILTER_STATUS.unsaved:
+            return (
+                leadState === LEAD_STATUS.nonPristine ||
+                leadState === LEAD_STATUS.uploading ||
+                leadState === LEAD_STATUS.requesting
+            );
+        default:
+            return false;
+    }
+}
+
+function leadFilterMethod(lead, filters, leadState) {
+    // NOTE: removed filter by publisher
+    const {
+        search,
+        type,
+        // source,
+        status,
+    } = filters;
+
+    const leadType = leadSourceTypeSelector(lead);
+    const {
+        title: leadTitle = '',
+        // source: leadSource = '',
+    } = leadFaramValuesSelector(lead);
+
+    if (search && !caseInsensitiveSubmatch(leadTitle, search)) {
+        return false;
+    // } else if (source && !caseInsensitiveSubmatch(leadSource, source)) {
+    //     return false;
+    } else if (type && type.length > 0 && type.indexOf(leadType) === -1) {
+        return false;
+    } else if (status && status.length > 0 && !statusMatches(leadState, status)) {
+        return false;
+    }
+    return true;
+}
+
 class LeadCreate extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -159,6 +208,9 @@ class LeadCreate extends React.PureComponent {
 
             leadsToExport: [],
             leadExportModalShown: false,
+
+            leadsToRemove: [],
+            leadRemoveConfirmShown: false,
         };
 
         this.formCoordinator = new CoordinatorBuilder()
@@ -260,6 +312,27 @@ class LeadCreate extends React.PureComponent {
             ),
         )
     ));
+
+    // local
+    getFilteredLeads = memoize((leads, leadFilters, leadStates) => (
+        leads.filter(
+            (lead) => {
+                const key = leadKeySelector(lead);
+                const leadState = leadStates[key];
+                return leadFilterMethod(lead, leadFilters, leadState);
+            },
+        )
+    ))
+
+    getCompletedLeads = memoize((leads, leadStates) => (
+        leads.filter(
+            (lead) => {
+                const key = leadKeySelector(lead);
+                const leadState = leadStates[key];
+                return leadState === LEAD_STATUS.complete;
+            },
+        )
+    ))
 
     // LEAD CREATION PROGRESS
 
@@ -552,7 +625,10 @@ class LeadCreate extends React.PureComponent {
             const activeLeadKey = leadKeySelector(newLeads[newLeads.length - 1]);
 
             return {
-                leads: [...leads, ...newLeads],
+                leads: [
+                    ...newLeads,
+                    ...leads,
+                ],
                 activeLeadKey,
             };
         }, () => {
@@ -648,6 +724,54 @@ class LeadCreate extends React.PureComponent {
         this.formCoordinator.start();
     }
 
+    // local
+    handleLeadRemoveConfirmClose = (confirm) => {
+        if (confirm) {
+            const { leadsToRemove } = this.state;
+
+            console.warn(leadsToRemove);
+
+            this.handleLeadsRemove(leadsToRemove);
+
+            if (leadsToRemove.length === 1) {
+                notify.send({
+                    title: _ts('addLeads.actions', 'leadDiscard'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('addLeads.actions', 'leadDiscardSuccess'),
+                    duration: notify.duration.MEDIUM,
+                });
+            } else if (leadsToRemove.length > 1) {
+                notify.send({
+                    title: _ts('addLeads.actions', 'leadsDiscard'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
+                    duration: notify.duration.MEDIUM,
+                });
+            }
+        }
+
+        this.setState({
+            leadsToRemove: [],
+            leadRemoveConfirmShown: false,
+        });
+    }
+
+    // local
+    handleLeadsToRemoveSet = (leadKeys) => {
+        this.setState({
+            leadsToRemove: leadKeys,
+            leadRemoveConfirmShown: true,
+        });
+    }
+
+    // local
+    handleLeadToRemoveSet = (leadKey) => {
+        this.setState({
+            leadsToRemove: [leadKey],
+            leadRemoveConfirmShown: true,
+        });
+    }
+
     // redux
     handleLeadsRemove = (leadKeys) => {
         this.setState((state) => {
@@ -686,11 +810,6 @@ class LeadCreate extends React.PureComponent {
                 activeLeadKey: newActiveLeadKey,
             };
         });
-    }
-
-    // local
-    handleLeadRemove = (leadKey) => {
-        this.handleLeadsRemove([leadKey]);
     }
 
     // redux
@@ -897,6 +1016,7 @@ class LeadCreate extends React.PureComponent {
 
             leadsToExport,
             leadExportModalShown,
+            leadRemoveConfirmShown,
         } = this.state;
 
         const leadStates = this.getLeadStates(
@@ -919,19 +1039,18 @@ class LeadCreate extends React.PureComponent {
             ? leadStates[activeLeadKey]
             : undefined;
 
-        const atLeastOneLead = leads.length > 0;
-
-        // can only save unsaved leads
-        const saveUnsavedLeadsEnabled = atLeastOneLead && leads.some(
-            lead => !isLeadSaveDisabled(leadStates[leadKeySelector(lead)]),
+        const completedLeads = this.getCompletedLeads(
+            leads,
+            leadStates,
         );
 
-        // can only export saved leads
-        const exportSavedLeadsEnabled = atLeastOneLead && leads.some(
-            lead => isLeadSaveDisabled(leadStates[leadKeySelector(lead)]),
+        const filteredLeads = this.getFilteredLeads(
+            leads,
+            leadFilters,
+            leadStates,
         );
 
-        // can remove all, saved, unsaved, invalid
+        const isFilterEmpty = doesObjectHaveNoData(leadFilters, ['']);
 
         const headerComponent = (
             <React.Fragment>
@@ -945,19 +1064,39 @@ class LeadCreate extends React.PureComponent {
                         onFilterChange={this.handleFilterChange}
                         onFilterClear={this.handleFilterClear}
                         filters={leadFilters}
+                        clearDisabled={isFilterEmpty}
                     />
                 </div>
-                <LeadActions
-                    onLeadPrev={this.handleLeadPrev}
-                    onLeadNext={this.handleLeadNext}
-                    onLeadPreviewHiddenChange={this.handleLeadPreviewHiddenChange}
+                { hasActiveLead &&
+                    <LeadActions
+                        onLeadPrev={this.handleLeadPrev}
+                        onLeadNext={this.handleLeadNext}
+                        onLeadPreviewHiddenChange={this.handleLeadPreviewHiddenChange}
 
-                    leadPreviewHidden={leadPreviewHidden}
-                    leadPrevDisabled={isLeadPrevDisabled(leads, activeLeadKey)}
-                    leadNextDisabled={isLeadNextDisabled(leads, activeLeadKey)}
-                />
+                        leadPreviewHidden={leadPreviewHidden}
+                        leadPrevDisabled={isLeadPrevDisabled(leads, activeLeadKey)}
+                        leadNextDisabled={isLeadNextDisabled(leads, activeLeadKey)}
+
+                        leadStates={leadStates}
+                        leads={leads}
+                        completedLeads={completedLeads}
+                        filteredLeads={filteredLeads}
+                        activeLead={activeLead}
+
+                        submitAllPending={submitAllPending}
+
+                        onLeadsSave={this.handleLeadsSave}
+                        onLeadsRemove={this.handleLeadsToRemoveSet}
+                        onLeadsExport={this.handleLeadsExport}
+
+                        filteredDisabled={isFilterEmpty}
+                    />
+                }
             </React.Fragment>
         );
+
+        // TODO:
+        const saveEnabledForAll = false;
 
         // TODO: STYLING use similar styling for 'hide lead preview' and 'text lead'
 
@@ -965,20 +1104,16 @@ class LeadCreate extends React.PureComponent {
             <React.Fragment>
                 <div className={styles.left}>
                     <LeadList
-                        // leads={filteredLeads}
-                        leads={leads}
-                        leadFilters={leadFilters}
+                        leads={filteredLeads}
                         activeLeadKey={activeLeadKey}
                         onLeadSelect={this.handleLeadSelect}
-                        onLeadRemove={this.handleLeadRemove}
+                        onLeadRemove={this.handleLeadToRemoveSet}
                         onLeadExport={this.handleLeadExport}
                         onLeadSave={this.handleLeadSave}
 
-                        onLeadsRemove={this.handleLeadsRemove}
+                        onLeadsRemove={this.handleLeadsToRemoveSet}
                         onLeadsExport={this.handleLeadsExport}
                         onLeadsSave={this.handleLeadsSave}
-                        saveUnsavedLeadsEnabled={saveUnsavedLeadsEnabled}
-                        exportSavedLeadsEnabled={exportSavedLeadsEnabled}
 
                         leadStates={leadStates}
                         fileUploadStatuses={fileUploadStatuses}
@@ -1015,10 +1150,6 @@ class LeadCreate extends React.PureComponent {
                                     leadState={activeLeadState}
 
                                     bulkActionDisabled={submitAllPending}
-
-                                    onLeadRemove={this.handleLeadRemove}
-                                    onLeadExport={this.handleLeadsExport}
-                                    onLeadSave={this.handleLeadSave}
                                 />
                             }
                             bottomChild={
@@ -1048,7 +1179,7 @@ class LeadCreate extends React.PureComponent {
                             const { routeUrl } = this.props;
                             if (location.pathname === routeUrl) {
                                 return true;
-                            } else if (!saveUnsavedLeadsEnabled) {
+                            } else if (!saveEnabledForAll) {
                                 return true;
                             }
                             return _ts('common', 'youHaveUnsavedChanges');
@@ -1067,6 +1198,19 @@ class LeadCreate extends React.PureComponent {
                         leads={leadsToExport}
                         closeModal={this.handleLeadsExportCancel}
                     />
+                }
+                { leadRemoveConfirmShown &&
+                    <Confirm
+                        onClose={this.handleLeadRemoveConfirmClose}
+                        show
+                    >
+                        <p>
+                            {
+                                /* FIXME: different message for delete modes */
+                                _ts('addLeads.actions', 'deleteLeadConfirmText')
+                            }
+                        </p>
+                    </Confirm>
                 }
             </React.Fragment>
         );

@@ -18,8 +18,6 @@ import Faram, {
 import produce from 'immer';
 
 import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import WarningButton from '#rsca/Button/WarningButton';
 import Modalize from '#rscg/Modalize';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -44,11 +42,8 @@ import _ts from '#ts';
 import {
     ATTACHMENT_TYPES,
     LEAD_TYPE,
-    isLeadExportDisabled,
     isLeadFormDisabled,
     isLeadFormLoading,
-    isLeadRemoveDisabled,
-    isLeadSaveDisabled,
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
     leadIdSelector,
@@ -80,9 +75,9 @@ const propTypes = {
     onApplyAllClick: PropTypes.func.isRequired,
     onApplyAllBelowClick: PropTypes.func.isRequired,
 
-    onLeadSave: PropTypes.func.isRequired,
-    onLeadRemove: PropTypes.func.isRequired,
-    onLeadExport: PropTypes.func.isRequired,
+    // onLeadSave: PropTypes.func.isRequired,
+    // onLeadRemove: PropTypes.func.isRequired,
+    // onLeadExport: PropTypes.func.isRequired,
 
     leadState: PropTypes.string.isRequired,
 
@@ -311,34 +306,6 @@ class LeadForm extends React.PureComponent {
 
     handleAddLeadGroupModalClose = () => {
         this.setState({ showAddLeadGroupModal: false });
-    }
-
-    handleSaveClick = () => {
-        const {
-            lead,
-            onLeadSave,
-        } = this.props;
-
-        const key = leadKeySelector(lead);
-        onLeadSave(key);
-    }
-
-    handleRemoveClick = () => {
-        const {
-            onLeadRemove,
-            lead,
-        } = this.props;
-        const leadKey = leadKeySelector(lead);
-        onLeadRemove(leadKey);
-    }
-
-    handleExportClick = () => {
-        const {
-            onLeadExport,
-            lead,
-        } = this.props;
-        const leadId = leadIdSelector(lead);
-        onLeadExport(leadId);
     }
 
     handleExtractClick = () => {
@@ -603,12 +570,6 @@ class LeadForm extends React.PureComponent {
         );
         const projectIsSelected = isTruthy(projectId);
 
-        const saveDisabled = isLeadSaveDisabled(leadState);
-        const exportDisabled = isLeadExportDisabled(leadState);
-        const removeDisabled = isLeadRemoveDisabled(leadState);
-
-        const exportShown = isDefined(leadIdSelector(lead));
-
         const isApplyAllDisabled = formDisabled || bulkActionDisabled;
 
         return (
@@ -624,31 +585,6 @@ class LeadForm extends React.PureComponent {
                 { pending && <LoadingAnimation /> }
                 <header className={styles.header}>
                     <NonFieldErrors faramElement />
-                    <div className={styles.buttonContainer}>
-                        { exportShown &&
-                            <Button
-                                className={styles.button}
-                                disabled={exportDisabled}
-                                onClick={this.handleExportClick}
-                            >
-                                {_ts('addLeads.actions', 'exportButtonTitle')}
-                            </Button>
-                        }
-                        <WarningButton
-                            className={styles.button}
-                            disabled={removeDisabled}
-                            onClick={this.handleRemoveClick}
-                        >
-                            {_ts('addLeads.actions', 'removeButtonTitle')}
-                        </WarningButton>
-                        <PrimaryButton
-                            className={styles.button}
-                            onClick={this.handleSaveClick}
-                            disabled={saveDisabled}
-                        >
-                            {_ts('addLeads.actions', 'saveButtonTitle')}
-                        </PrimaryButton>
-                    </div>
                 </header>
                 { type === LEAD_TYPE.website && (
                     <React.Fragment>
