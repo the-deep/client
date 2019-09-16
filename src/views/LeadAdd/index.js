@@ -422,9 +422,7 @@ class LeadCreate extends React.PureComponent {
                         .success((response) => {
                             const { id: attachment } = response;
 
-                            console.warn('setting attachment', attachment);
                             this.handleAttachmentSet(key, attachment);
-                            console.warn('setting progress to 100');
                             this.handleFileUploadProgressChange(key, 100);
                             this.uploadCoordinator.notifyComplete(key);
                         })

@@ -35,8 +35,6 @@ const UploadProgress = ({ leadState, progress }) => {
     const completed = leadState !== LEAD_STATUS.uploading;
     const hide = completed || isNotDefined(progress);
 
-    console.warn(leadState, progress);
-
     const className = _cs(
         styles.progressBar,
         hide && styles.hide,
