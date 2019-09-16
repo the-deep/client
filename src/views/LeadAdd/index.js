@@ -21,13 +21,13 @@ import {
     detachedFaram,
 } from '@togglecorp/faram';
 
-import { CoordinatorBuilder } from '#rsu/coordinate';
-import { UploadBuilder } from '#rsu/upload';
-import { FgRestBuilder } from '#rsu/rest';
-import ResizableV from '#rscv/Resizable/ResizableV';
 import Message from '#rscv/Message';
+import Confirm from '#rscv/Modal/Confirm';
 import Page from '#rscv/Page';
-
+import ResizableV from '#rscv/Resizable/ResizableV';
+import { CoordinatorBuilder } from '#rsu/coordinate';
+import { FgRestBuilder } from '#rsu/rest';
+import { UploadBuilder } from '#rsu/upload';
 
 import LeadCopyModal from '#components/general/LeadCopyModal';
 import { pathNames } from '#constants';
@@ -208,6 +208,9 @@ class LeadCreate extends React.PureComponent {
 
             leadsToExport: [],
             leadExportModalShown: false,
+
+            leadsToRemove: [],
+            leadRemoveConfirmShown: false,
         };
 
         this.formCoordinator = new CoordinatorBuilder()
@@ -718,6 +721,54 @@ class LeadCreate extends React.PureComponent {
         this.formCoordinator.start();
     }
 
+    // local
+    handleLeadRemoveConfirmClose = (confirm) => {
+        if (confirm) {
+            const { leadsToRemove } = this.state;
+
+            console.warn(leadsToRemove);
+
+            this.handleLeadsRemove(leadsToRemove);
+
+            if (leadsToRemove.length === 1) {
+                notify.send({
+                    title: _ts('addLeads.actions', 'leadDiscard'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('addLeads.actions', 'leadDiscardSuccess'),
+                    duration: notify.duration.MEDIUM,
+                });
+            } else if (leadsToRemove.length > 1) {
+                notify.send({
+                    title: _ts('addLeads.actions', 'leadsDiscard'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
+                    duration: notify.duration.MEDIUM,
+                });
+            }
+        }
+
+        this.setState({
+            leadsToRemove: [],
+            leadRemoveConfirmShown: false,
+        });
+    }
+
+    // local
+    handleLeadsToRemoveSet = (leadKeys) => {
+        this.setState({
+            leadsToRemove: leadKeys,
+            leadRemoveConfirmShown: true,
+        });
+    }
+
+    // local
+    handleLeadToRemoveSet = (leadKey) => {
+        this.setState({
+            leadsToRemove: [leadKey],
+            leadRemoveConfirmShown: true,
+        });
+    }
+
     // redux
     handleLeadsRemove = (leadKeys) => {
         this.setState((state) => {
@@ -756,11 +807,6 @@ class LeadCreate extends React.PureComponent {
                 activeLeadKey: newActiveLeadKey,
             };
         });
-    }
-
-    // local
-    handleLeadRemove = (leadKey) => {
-        this.handleLeadsRemove([leadKey]);
     }
 
     // redux
@@ -967,6 +1013,7 @@ class LeadCreate extends React.PureComponent {
 
             leadsToExport,
             leadExportModalShown,
+            leadRemoveConfirmShown,
         } = this.state;
 
         const leadStates = this.getLeadStates(
@@ -1036,7 +1083,7 @@ class LeadCreate extends React.PureComponent {
                         submitAllPending={submitAllPending}
 
                         onLeadsSave={this.handleLeadsSave}
-                        onLeadsRemove={this.handleLeadsRemove}
+                        onLeadsRemove={this.handleLeadsToRemoveSet}
                         onLeadsExport={this.handleLeadsExport}
 
                         filteredDisabled={isFilterEmpty}
@@ -1057,11 +1104,11 @@ class LeadCreate extends React.PureComponent {
                         leads={filteredLeads}
                         activeLeadKey={activeLeadKey}
                         onLeadSelect={this.handleLeadSelect}
-                        onLeadRemove={this.handleLeadRemove}
+                        onLeadRemove={this.handleLeadToRemoveSet}
                         onLeadExport={this.handleLeadExport}
                         onLeadSave={this.handleLeadSave}
 
-                        onLeadsRemove={this.handleLeadsRemove}
+                        onLeadsRemove={this.handleLeadsToRemoveSet}
                         onLeadsExport={this.handleLeadsExport}
                         onLeadsSave={this.handleLeadsSave}
 
@@ -1148,6 +1195,19 @@ class LeadCreate extends React.PureComponent {
                         leads={leadsToExport}
                         closeModal={this.handleLeadsExportCancel}
                     />
+                }
+                { leadRemoveConfirmShown &&
+                    <Confirm
+                        onClose={this.handleLeadRemoveConfirmClose}
+                        show
+                    >
+                        <p>
+                            {
+                                /* FIXME: different message for delete modes */
+                                _ts('addLeads.actions', 'deleteLeadConfirmText')
+                            }
+                        </p>
+                    </Confirm>
                 }
             </React.Fragment>
         );
