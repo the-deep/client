@@ -5,6 +5,7 @@ import {
     Link,
     Redirect,
 } from 'react-router-dom';
+import { getFiltersForRequest } from '#entities/lead';
 import {
     mapToList,
     reverseRoute,
@@ -16,7 +17,11 @@ import Page from '#rscv/Page';
 import Button from '#rsca/Button';
 import SelectInput from '#rsci/SelectInput';
 import Pager from '#rscv/Pager';
-import { RequestCoordinator } from '#request';
+import {
+    RequestCoordinator,
+    RequestClient,
+    requestMethods,
+} from '#request';
 
 import Cloak from '#components/general/Cloak';
 import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
@@ -53,9 +58,9 @@ import {
 } from '#redux';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
 import _ts from '#ts';
+import notify from '#notify';
 
 import DeleteLeadRequest from './requests/DeleteLeadRequest';
-import LeadsRequest from './requests/LeadsRequest';
 import PatchLeadRequest from './requests/PatchLeadRequest';
 
 import Table from './Table';
@@ -93,6 +98,7 @@ const propTypes = {
     setLeadsPerPage: PropTypes.func.isRequired,
     setLeadPageView: PropTypes.func.isRequired,
     view: PropTypes.string.isRequired,
+    leadsGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -193,8 +199,72 @@ const tabsIcons = {
     [GRID_VIEW]: 'grid',
 };
 
+const requests = {
+    leadsGetRequest: {
+        url: '/leads/filter/',
+        method: requestMethods.POST,
+        onMount: true,
+        query: ({
+            props: {
+                activePage,
+                leadsPerPage,
+            },
+        }) => ({
+            offset: (activePage - 1) * leadsPerPage,
+            limit: leadsPerPage,
+        }),
+        body: ({
+            props: {
+                activeProject,
+                activeSort,
+                filters,
+            },
+        }) => ({
+            ordering: activeSort,
+            project: [activeProject],
+            ...getFiltersForRequest(filters),
+        }),
+        /*
+         * Skipping this for now due to lead grid view
+        onPropsChanged: [
+            'activeProject',
+            'activePage',
+            'activeSort',
+            'filters',
+            'leadsPerPage',
+        ], */
+        onSuccess: ({
+            response,
+            props: { setLeads: setLeadsFromProps },
+            params: { setLeads: setLeadsFromParams },
+        }) => {
+            const setLeads = setLeadsFromParams || setLeadsFromProps;
+
+            setLeads({
+                leads: response.results,
+                totalLeadsCount: response.count,
+            });
+        },
+        onFailure: ({ error: { response } }) => {
+            const message = response.errors
+                .formErrors
+                .errors
+                .join(' ');
+
+            notify.send({
+                title: _ts('leads', 'leads'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        schemaName: 'leadsGetResponse',
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
+@RequestClient(requests)
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -210,10 +280,7 @@ export default class Leads extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            loadingLeads: true,
-            redirectTo: undefined,
-        };
+        this.state = { redirectTo: undefined };
 
         this.views = {
             [TABLE_VIEW]: {
@@ -240,30 +307,6 @@ export default class Leads extends React.PureComponent {
         this.lastProject = {};
     }
 
-    componentWillMount() {
-        const {
-            activeProject,
-            activeSort,
-            filters,
-            activePage,
-            leadsPerPage,
-        } = this.props;
-
-        const request = new LeadsRequest({
-            setState: params => this.setState(params),
-            setLeads: this.props.setLeads,
-        });
-
-        this.leadRequest = request.create({
-            activeProject,
-            activePage,
-            activeSort,
-            filters,
-            leadsPerPage,
-        });
-        this.leadRequest.start();
-    }
-
     componentWillReceiveProps(nextProps) {
         const {
             activeProject,
@@ -272,6 +315,7 @@ export default class Leads extends React.PureComponent {
             activePage,
             leadsPerPage,
             view,
+            leadsGetRequest,
         } = nextProps;
 
         if (
@@ -286,8 +330,6 @@ export default class Leads extends React.PureComponent {
                 this.props.view === view
             )
         ) {
-            this.leadRequest.stop();
-
             // append in case of next page reached in gridview
             const shouldAppend = this.props.view === GRID_VIEW &&
                 view === GRID_VIEW &&
@@ -301,19 +343,7 @@ export default class Leads extends React.PureComponent {
             const setLeads = shouldAppend ?
                 this.props.appendLeads : this.props.setLeads;
 
-            const request = new LeadsRequest({
-                setState: params => this.setState(params),
-                setLeads,
-            });
-
-            this.leadRequest = request.create({
-                activeProject,
-                activePage,
-                activeSort,
-                filters,
-                leadsPerPage,
-            });
-            this.leadRequest.start();
+            leadsGetRequest.do({ setLeads });
 
             this.lastFilters[view] = filters;
             this.lastProject[view] = activeProject;
@@ -321,17 +351,19 @@ export default class Leads extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        this.leadRequest.stop();
-
         if (this.leadDeleteRequest) {
             this.leadDeleteRequest.stop();
         }
     }
 
-    // UI
-
     onGridEndReached = () => {
-        if (this.state.loadingLeads) {
+        const {
+            leadsGetRequest: {
+                pending,
+            },
+        } = this.props;
+
+        if (pending) {
             return;
         }
         const { activePage, leadsPerPage, totalLeadsCount } = this.props;
@@ -577,16 +609,17 @@ export default class Leads extends React.PureComponent {
             activeSort,
             setLeadPageActiveSort,
             activeProject,
+            leadsGetRequest: {
+                pending,
+            },
         } = this.props;
-
-        const { loadingLeads } = this.state;
 
         return (
             <Table
                 headersMap={tableHeadersMap}
                 activeSort={activeSort}
                 onHeaderClick={this.handleTableHeaderClick}
-                loading={loadingLeads}
+                loading={pending}
                 setLeadPageActiveSort={setLeadPageActiveSort}
                 emptyComponent={EmptyComponent}
                 isFilterEmpty={isFilterEmpty}
