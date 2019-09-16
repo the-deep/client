@@ -75,6 +75,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const emptyList = [];
+const emptyObject = {};
 
 const requests = {
     leadOptionsRequest: {
@@ -219,6 +220,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 emmRiskFactors = emptyList,
             },
             leadOptionsRequest: {
+                response: { hasEmmLeads } = emptyObject,
                 pending: loadingLeadFilters,
             },
             filters,
@@ -233,10 +235,6 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
         const isClearDisabled = isFilterEmpty && pristine;
-
-        const showEmmFilters = emmEntities.length > 0
-            || emmKeywords.length > 0
-            || emmRiskFactors.length > 0;
 
         return (
             <Faram
@@ -304,7 +302,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     showLabel
                     className={styles.leadsFilter}
                 />
-                {showEmmFilters && (
+                {hasEmmLeads && (
                     <React.Fragment>
                         <SearchMultiSelectInput
                             faramElementName="emm_risk_factors"
