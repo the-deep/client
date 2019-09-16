@@ -3,6 +3,7 @@ import React from 'react';
 import { formatDateToString } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
+import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
 
@@ -29,11 +30,15 @@ import ConnectorSelectModal from './ConnectorSelectModal';
 
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
+
 const defaultProps = {
+    leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const propTypes = {
     onLeadsAdd: PropTypes.func.isRequired,
+    leads: [],
 };
 
 export default class LeadButtons extends React.PureComponent {
@@ -47,8 +52,6 @@ export default class LeadButtons extends React.PureComponent {
             // NOTE: dropbox button must be manually disabled and enabled unlike
             // google-drive which creates an overlay and disables everything in bg
             dropboxDisabled: false,
-
-            connectorSelectModalShow: false,
         };
 
         // NOTE: google drive access token is received at start
@@ -73,10 +76,6 @@ export default class LeadButtons extends React.PureComponent {
     handleDropboxChooserClick = () => this.setState({ dropboxDisabled: true });
 
     handleDropboxChooserClose = () => this.setState({ dropboxDisabled: false });
-
-    handleConnectorSelectButtonClick = () => this.setState({ connectorSelectModalShow: true });
-
-    handleConnectorSelectModalClose = () => this.setState({ connectorSelectModalShow: false });
 
     handleLeadAddFromText = () => {
         const {
@@ -221,10 +220,7 @@ export default class LeadButtons extends React.PureComponent {
     }
 
     render() {
-        const {
-            dropboxDisabled,
-            connectorSelectModalShow,
-        } = this.state;
+        const { dropboxDisabled } = this.state;
 
         return (
             <div className={styles.addLeadButtons}>
@@ -296,23 +292,21 @@ export default class LeadButtons extends React.PureComponent {
                         {_ts('addLeads.sourceButtons', 'textLabel')}
                     </p>
                 </Button>
-                <Button
+                <ModalButton
                     className={styles.addLeadBtn}
                     transparent
-                    onClick={this.handleConnectorSelectButtonClick}
+                    modal={
+                        <ConnectorSelectModal
+                            leads={this.props.leads}
+                            onLeadsSelect={this.handleLeadAddFromConnectors}
+                        />
+                    }
                 >
                     <Icon name="link" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'connectorsLabel')}
                     </p>
-                </Button>
-                {/* FIXME: use modalize, after khatri's merge */}
-                { connectorSelectModalShow &&
-                    <ConnectorSelectModal
-                        onModalClose={this.handleConnectorSelectModalClose}
-                        onLeadsSelect={this.handleLeadAddFromConnectors}
-                    />
-                }
+                </ModalButton>
             </div>
         );
     }
