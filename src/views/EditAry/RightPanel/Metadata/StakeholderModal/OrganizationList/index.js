@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import { connect } from 'react-redux';
 
 import {
     _cs,
@@ -13,21 +14,27 @@ import Modalize from '#rscg/Modalize';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
-
 import SearchInput from '#rsci/SearchInput';
-import AddOrganizationModal from '../AddOrganizationModal';
+
+import {
+    projectIdFromRoute,
+    setNewOrganizationAction,
+} from '#redux';
+
+import AddOrganizationModal from '#components/other/AddOrganizationModal';
 
 import OrganizationItem from './OrganizationItem';
 import styles from './styles.scss';
-
-// FIXME: Use strings everywhere, define all the props
-// FIXME: No inline functions
 
 const propTypes = {
     className: PropTypes.string,
 
     // eslint-disable-next-line react/forbid-prop-types
     sources: PropTypes.object,
+
+    projectId: PropTypes.number.isRequired,
+
+    setNewOrganization: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -42,6 +49,15 @@ const organizationKeySelector = item => item.key;
 
 const PrimaryModalButton = Modalize(PrimaryButton);
 
+const mapStateToProps = state => ({
+    projectId: projectIdFromRoute(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setNewOrganization: params => dispatch(setNewOrganizationAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class OrganizationList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -111,6 +127,24 @@ export default class OrganizationList extends React.PureComponent {
         };
     });
 
+    handleOrganizationAdd = (organization) => {
+        const {
+            projectId,
+            setNewOrganization,
+        } = this.props;
+
+        const newOrganization = {
+            key: organization.id,
+            label: organization.title,
+            shortName: organization.shortName,
+            logo: organization.logoUrl,
+        };
+
+        setNewOrganization({
+            projectId,
+            organization: newOrganization,
+        });
+    }
 
     handleSearch = (value) => {
         this.setState({ searchValue: value });
@@ -152,6 +186,7 @@ export default class OrganizationList extends React.PureComponent {
                             modal={
                                 <AddOrganizationModal
                                     organizationTypeList={sources.organizationType}
+                                    onOrganizationAdd={this.handleOrganizationAdd}
                                 />
                             }
                         >

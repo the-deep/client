@@ -1,64 +1,70 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-    formatDateToString,
     _cs,
-    isTruthy,
+    formatDateToString,
     isDefined,
-    listToMap,
     isFalsyString,
+    isTruthy,
+    listToMap,
     unique,
 } from '@togglecorp/fujs';
 import Faram, {
+    FaramInputElement,
     accumulateDifferentialErrors,
     requiredCondition,
     urlCondition,
-    FaramInputElement,
 } from '@togglecorp/faram';
 import produce from 'immer';
 
-import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
+import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import Button from '#rsca/Button';
+import Modalize from '#rscg/Modalize';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
 
 import {
-    RequestCoordinator,
     RequestClient,
+    RequestCoordinator,
     requestMethods,
 } from '#request';
+
 import Cloak from '#components/general/Cloak';
+import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
+
 import _ts from '#ts';
 
 import {
-    LEAD_TYPE,
     ATTACHMENT_TYPES,
+    LEAD_TYPE,
+    isLeadExportDisabled,
+    isLeadFormDisabled,
+    isLeadFormLoading,
+    isLeadRemoveDisabled,
+    isLeadSaveDisabled,
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
     leadIdSelector,
     leadKeySelector,
     leadSourceTypeSelector,
-    isLeadFormLoading,
-    isLeadFormDisabled,
-    isLeadSaveDisabled,
-    isLeadExportDisabled,
-    isLeadRemoveDisabled,
 } from '../utils';
 
 import AddLeadGroup from './AddLeadGroup';
 import ApplyAll, { ExtractThis } from './ApplyAll';
+
 import schema from './faramSchema';
 import styles from './styles.scss';
 
 
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
+const ModalButton = Modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -288,38 +294,62 @@ class LeadForm extends React.PureComponent {
         this.setState({ organizations });
     }
 
-    handleSameAsPublisherButtonClick = () => {
+    shouldHideLeadGroupInput = () => {
         const {
             lead,
-            onChange,
+            projects,
+        } = this.props;
+        const values = leadFaramValuesSelector(lead);
+        const { project: projectId } = values;
+        const project = projects.find(p => idSelector(p) === projectId);
+        return !project || !project.assessmentTemplate;
+    };
+
+    handleAddLeadGroupClick = () => {
+        this.setState({ showAddLeadGroupModal: true });
+    }
+
+    handleAddLeadGroupModalClose = () => {
+        this.setState({ showAddLeadGroupModal: false });
+    }
+
+    handleSaveClick = () => {
+        const {
+            lead,
+            onLeadSave,
         } = this.props;
 
+        const key = leadKeySelector(lead);
+        onLeadSave(key);
+    }
+
+    handleRemoveClick = () => {
+        const {
+            onLeadRemove,
+            lead,
+        } = this.props;
+        const leadKey = leadKeySelector(lead);
+        onLeadRemove(leadKey);
+    }
+
+    handleExportClick = () => {
+        const {
+            onLeadExport,
+            lead,
+        } = this.props;
+        const leadId = leadIdSelector(lead);
+        onLeadExport(leadId);
+    }
+
+    handleExtractClick = () => {
+        const { lead } = this.props;
         const values = leadFaramValuesSelector(lead);
+        const { url } = values;
 
-        const newValues = produce(values, (safeValues) => {
-            const {
-                source,
-                author,
-            } = values;
-            if (source !== author) {
-                // eslint-disable-next-line no-param-reassign
-                safeValues.author = source;
-            }
+        this.props.webInfoRequest.do({
+            url,
+            handleWebInfoFill: this.handleWebInfoFill,
         });
-
-        if (values !== newValues) {
-            const key = leadKeySelector(lead);
-            const errors = leadFaramErrorsSelector(lead);
-
-            const newErrors = accumulateDifferentialErrors(
-                values,
-                newValues,
-                errors,
-                schema,
-            );
-
-            onChange(key, newValues, newErrors);
-        }
     }
 
     handleApplyAllClick = (attrName) => {
@@ -366,29 +396,18 @@ class LeadForm extends React.PureComponent {
         }
     }
 
-    handleAddLeadGroupClick = () => {
-        this.setState({ showAddLeadGroupModal: true });
-    }
-
-    handleAddLeadGroupModalClose = () => {
-        this.setState({ showAddLeadGroupModal: false });
-    }
-
-    handleLeadGroupAdd = (leadGroup) => {
+    // private
+    handleLeadValueChange = (newValues) => {
         const {
             lead,
             onChange,
         } = this.props;
-
         const values = leadFaramValuesSelector(lead);
-        const newValues = produce(values, (safeValues) => {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.leadGroup = leadGroup.id;
-        });
 
-        if (values !== newValues) {
+        if (newValues !== values) {
             const key = leadKeySelector(lead);
             const errors = leadFaramErrorsSelector(lead);
+
             const newErrors = accumulateDifferentialErrors(
                 values,
                 newValues,
@@ -400,60 +419,9 @@ class LeadForm extends React.PureComponent {
         }
     }
 
-    shouldHideLeadGroupInput = () => {
-        const {
-            lead,
-            projects,
-        } = this.props;
-        const values = leadFaramValuesSelector(lead);
-        const { project: projectId } = values;
-        const project = projects.find(p => idSelector(p) === projectId);
-        return !project || !project.assessmentTemplate;
-    };
-
-    handleSaveClick = () => {
-        const {
-            lead,
-            onLeadSave,
-        } = this.props;
-
-        const key = leadKeySelector(lead);
-        onLeadSave(key);
-    }
-
-    handleRemoveClick = () => {
-        const {
-            onLeadRemove,
-            lead,
-        } = this.props;
-        const leadKey = leadKeySelector(lead);
-        onLeadRemove(leadKey);
-    }
-
-    handleExportClick = () => {
-        const {
-            onLeadExport,
-            lead,
-        } = this.props;
-        const leadId = leadIdSelector(lead);
-        onLeadExport(leadId);
-    }
-
-    handleExtractClick = () => {
-        const { lead } = this.props;
-        const values = leadFaramValuesSelector(lead);
-        const { url } = values;
-
-        this.props.webInfoRequest.do({
-            url,
-            handleWebInfoFill: this.handleWebInfoFill,
-        });
-    }
-
     handleExtraInfoFill = (leadOptions) => {
         const {
             lead,
-            onChange,
             activeUserId,
         } = this.props;
 
@@ -467,24 +435,12 @@ class LeadForm extends React.PureComponent {
 
         const values = leadFaramValuesSelector(lead);
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
-        if (values !== newValues) {
-            const key = leadKeySelector(lead);
-            const errors = leadFaramErrorsSelector(lead);
-            const newErrors = accumulateDifferentialErrors(
-                values,
-                newValues,
-                errors,
-                schema,
-            );
-
-            onChange(key, newValues, newErrors);
-        }
+        this.handleLeadValueChange(newValues);
     }
 
     handleWebInfoFill = (webInfo) => {
         const {
             lead,
-            onChange,
         } = this.props;
 
         const newOrgs = [];
@@ -502,18 +458,73 @@ class LeadForm extends React.PureComponent {
 
         const values = leadFaramValuesSelector(lead);
         const newValues = fillWebInfo(values, webInfo);
-        if (values !== newValues) {
-            const key = leadKeySelector(lead);
-            const errors = leadFaramErrorsSelector(lead);
-            const newErrors = accumulateDifferentialErrors(
-                values,
-                newValues,
-                errors,
-                schema,
-            );
+        this.handleLeadValueChange(newValues);
+    }
 
-            onChange(key, newValues, newErrors);
-        }
+    handlePublisherAdd = (organization) => {
+        const {
+            lead,
+        } = this.props;
+
+        this.setState(state => ({
+            organizations: mergeLists(state.organizations, [organization]),
+        }));
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = {
+            ...values,
+            source: organization.id,
+        };
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleAuthorAdd = (organization) => {
+        this.setState(state => ({
+            organizations: mergeLists(state.organizations, [organization]),
+        }));
+
+        const { lead } = this.props;
+        const values = leadFaramValuesSelector(lead);
+        const newValues = {
+            ...values,
+            author: organization.id,
+        };
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleSameAsPublisherButtonClick = () => {
+        const {
+            lead,
+        } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+
+        const newValues = produce(values, (safeValues) => {
+            const {
+                source,
+                author,
+            } = values;
+            if (source !== author) {
+                // eslint-disable-next-line no-param-reassign
+                safeValues.author = source;
+            }
+        });
+
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleLeadGroupAdd = (leadGroup) => {
+        const {
+            lead,
+        } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = produce(values, (safeValues) => {
+            // eslint-disable-next-line no-param-reassign
+            safeValues.leadGroup = leadGroup.id;
+        });
+
+        this.handleLeadValueChange(newValues);
     }
 
     handleOrganizationSearchValueChange = (searchText) => {
@@ -735,11 +746,17 @@ class LeadForm extends React.PureComponent {
                     onApplyAllClick={this.handleApplyAllClick}
                     onApplyAllBelowClick={this.handleApplyAllBelowClick}
                     extraButtons={
-                        <Button
+                        <ModalButton
                             className={styles.smallButton}
                             title="Add Publisher"
                             iconName="addPerson"
                             transparent
+                            modal={
+                                <AddOrganizationModal
+                                    loadOrganizationList
+                                    onOrganizationAdd={this.handlePublisherAdd}
+                                />
+                            }
                         />
                     }
                 >
@@ -774,11 +791,17 @@ class LeadForm extends React.PureComponent {
                                 title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
                                 onClick={this.handleSameAsPublisherButtonClick}
                             />
-                            <Button
+                            <ModalButton
                                 className={styles.smallButton}
                                 title="Add Author"
                                 iconName="addPerson"
                                 transparent
+                                modal={
+                                    <AddOrganizationModal
+                                        loadOrganizationList
+                                        onOrganizationAdd={this.handleAuthorAdd}
+                                    />
+                                }
                             />
                         </React.Fragment>
                     }
