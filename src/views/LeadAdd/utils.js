@@ -197,8 +197,7 @@ export const isLeadFormDisabled = leadState => (
 );
 
 export const isLeadSaveDisabled = leadState => (
-    leadState !== LEAD_STATUS.nonPristine
-    && leadState !== LEAD_STATUS.invalid
+    leadState !== LEAD_STATUS.nonPristine && leadState !== LEAD_STATUS.invalid
 );
 
 export const isLeadExportDisabled = leadState => (
@@ -209,3 +208,44 @@ export const isLeadRemoveDisabled = leadState => (
     leadState === LEAD_STATUS.requesting
 );
 
+export function isExportEnabledForLeads(leads, leadStates) {
+    if (leads.length <= 0) {
+        return false;
+    }
+    return leads.some(lead => !isLeadExportDisabled(leadStates[leadKeySelector(lead)]));
+}
+
+export function isSaveEnabledForLeads(leads, leadStates) {
+    if (leads.length <= 0) {
+        return false;
+    }
+    return leads.some(lead => !isLeadSaveDisabled(leadStates[leadKeySelector(lead)]));
+}
+
+export function isRemoveEnabledForLeads(leads, leadStates) {
+    if (leads.length <= 0) {
+        return false;
+    }
+    return leads.some(lead => !isLeadRemoveDisabled(leadStates[leadKeySelector(lead)]));
+}
+
+export function getExportEnabledForLeads(leads, leadStates) {
+    if (leads.length <= 0) {
+        return [];
+    }
+    return leads.filter(lead => !isLeadExportDisabled(leadStates[leadKeySelector(lead)]));
+}
+
+export function getSaveEnabledForLeads(leads, leadStates) {
+    if (leads.length <= 0) {
+        return false;
+    }
+    return leads.filter(lead => !isLeadSaveDisabled(leadStates[leadKeySelector(lead)]));
+}
+
+export function getRemoveEnabledForLeads(leads, leadStates) {
+    if (leads.length <= 0) {
+        return false;
+    }
+    return leads.filter(lead => !isLeadRemoveDisabled(leadStates[leadKeySelector(lead)]));
+}
