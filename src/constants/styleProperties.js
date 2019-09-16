@@ -30,6 +30,8 @@ const styleProperties = {
         entryCommentDropdownWidth: '96px',
         entryCommentModalMaxHeight: '80vh',
         entryCommentModalWidth: '360px',
+
+        heightModalMedium: '70vh',
     },
 };
 
