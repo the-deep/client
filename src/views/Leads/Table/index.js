@@ -86,7 +86,7 @@ export default class Table extends React.Component {
                             {title}
                             {showEmm &&
                                 <ModalButton
-                                    transparent
+                                    className={styles.emmButton}
                                     modal={
                                         <EmmStatsModal
                                             emmTriggers={emmTriggers}

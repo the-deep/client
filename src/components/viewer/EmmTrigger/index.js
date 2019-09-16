@@ -35,8 +35,8 @@ export default class EmmTrigger extends React.PureComponent {
         } = this.props;
 
         const title = isTruthyString(riskFactor)
-            ? `${riskFactor}: ${keyword} | ${count}`
-            : `${keyword} | ${count}`;
+            ? `${riskFactor}: ${keyword} (${count})`
+            : `${keyword} (${count})`;
 
         return (
             <Badge

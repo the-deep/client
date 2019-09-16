@@ -56,8 +56,15 @@ export default class EmmStatsModal extends React.PureComponent {
             emmTriggers,
         } = this.props;
 
+        const showEntities = emmEntities.length > 0;
+        const showTriggers = emmTriggers.length > 0;
+
         return (
-            <Modal className={_cs(className, styles.emmStatsModal)}>
+            <Modal
+                className={_cs(className, styles.emmStatsModal)}
+                closeOnEscape
+                onClose={closeModal}
+            >
                 <ModalHeader
                     title={_ts('emmStatsModal', 'emmStatsModalTitle')}
                     headingClassName={styles.heading}
@@ -70,36 +77,40 @@ export default class EmmStatsModal extends React.PureComponent {
                     }
                 />
                 <ModalBody className={styles.body}>
-                    <div className={styles.content}>
-                        <header className={styles.header}>
-                            <h3 className={styles.heading}>
-                                {_ts('emmStatsModal', 'emmTriggersTitle')}
-                            </h3>
-                        </header>
-                        <ListView
-                            className={styles.list}
-                            renderer={EmmTrigger}
-                            data={emmTriggers}
-                            keySelector={emmTriggerKeySelector}
-                            rendererParams={emmTriggerRendererParams}
-                            emptyComponent={EmptyComponent}
-                        />
-                    </div>
-                    <div className={styles.content}>
-                        <header className={styles.header}>
-                            <h3 className={styles.heading}>
-                                {_ts('emmStatsModal', 'emmEntitiesTitle')}
-                            </h3>
-                        </header>
-                        <ListView
-                            className={styles.list}
-                            renderer={EmmEntity}
-                            data={emmEntities}
-                            keySelector={emmEntitiesKeySelector}
-                            rendererParams={emmEntitiesRendererParams}
-                            emptyComponent={EmptyComponent}
-                        />
-                    </div>
+                    {showTriggers && (
+                        <div className={styles.content}>
+                            <header className={styles.header}>
+                                <h4 className={styles.heading}>
+                                    {_ts('emmStatsModal', 'emmTriggersTitle')}
+                                </h4>
+                            </header>
+                            <ListView
+                                className={styles.list}
+                                renderer={EmmTrigger}
+                                data={emmTriggers}
+                                keySelector={emmTriggerKeySelector}
+                                rendererParams={emmTriggerRendererParams}
+                                emptyComponent={EmptyComponent}
+                            />
+                        </div>
+                    )}
+                    {showEntities && (
+                        <div className={styles.content}>
+                            <header className={styles.header}>
+                                <h4 className={styles.heading}>
+                                    {_ts('emmStatsModal', 'emmEntitiesTitle')}
+                                </h4>
+                            </header>
+                            <ListView
+                                className={styles.list}
+                                renderer={EmmEntity}
+                                data={emmEntities}
+                                keySelector={emmEntitiesKeySelector}
+                                rendererParams={emmEntitiesRendererParams}
+                                emptyComponent={EmptyComponent}
+                            />
+                        </div>
+                    )}
                 </ModalBody>
             </Modal>
         );
