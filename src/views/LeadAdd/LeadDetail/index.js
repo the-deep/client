@@ -535,9 +535,9 @@ class LeadForm extends React.PureComponent {
             webInfoRequest: {
                 pending: webInfoRequestPending,
                 response: {
-                    sourceRaw,
+                    sourceRaw: suggestedSourceTitle,
                     source,
-                    authorRaw,
+                    authorRaw: suggestedAuthorTitle,
                     author,
                 } = {},
             } = {},
@@ -564,6 +564,9 @@ class LeadForm extends React.PureComponent {
         const {
             project: projectId,
             url,
+
+            sourceRaw: oldSourceTitle,
+            authorRaw: oldAuthorTitle,
         } = values;
 
         const pending = (
@@ -583,6 +586,20 @@ class LeadForm extends React.PureComponent {
         const projectIsSelected = isTruthy(projectId);
 
         const isApplyAllDisabled = formDisabled || bulkActionDisabled;
+
+        let sourceHint;
+        if (oldSourceTitle) {
+            sourceHint = `Previously: ${oldSourceTitle}`;
+        } else if (!source) {
+            sourceHint = `Suggestion: ${suggestedSourceTitle}`;
+        }
+
+        let authorHint;
+        if (oldAuthorTitle) {
+            authorHint = `Previously: ${oldAuthorTitle}`;
+        } else if (!author) {
+            authorHint = `Suggestion: ${suggestedAuthorTitle}`;
+        }
 
         return (
             <Faram
@@ -715,7 +732,7 @@ class LeadForm extends React.PureComponent {
                         keySelector={idSelector}
                         labelSelector={titleSelector}
                         disabled={leadOptionsPending || formDisabled || !projectIsSelected}
-                        hint={!source && sourceRaw ? `Suggestion: ${sourceRaw}` : undefined}
+                        hint={sourceHint}
 
                         searchOptions={searchedOrganizations}
                         searchOptionsPending={pendingSearchedOrganizations}
@@ -762,7 +779,7 @@ class LeadForm extends React.PureComponent {
                         keySelector={idSelector}
                         labelSelector={titleSelector}
                         disabled={leadOptionsPending || formDisabled || !projectIsSelected}
-                        hint={!author && authorRaw ? `Suggestion: ${authorRaw}` : undefined}
+                        hint={authorHint}
 
                         searchOptions={searchedOrganizations}
                         searchOptionsPending={pendingSearchedOrganizations}
