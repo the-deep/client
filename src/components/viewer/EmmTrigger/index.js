@@ -12,7 +12,7 @@ const propTypes = {
     className: PropTypes.string,
     keyword: PropTypes.string,
     riskFactor: PropTypes.string,
-    count: PropTypes.string,
+    count: PropTypes.number,
 };
 
 const defaultProps = {

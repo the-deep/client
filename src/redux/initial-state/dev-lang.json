@@ -1009,7 +1009,10 @@
         "-76163429": "I want to receive updates on entry comments by email",
         "-51206611": "Language",
         "-70720392": "View edit history",
-        "-97734309": "EMM Risk Factors"
+        "-97734309": "EMM Risk Factors",
+        "-5561855": "EMM stats",
+        "-26433055": "EMM",
+        "-54804860": "{triggersCount} EMM triggers, {entitiesCount} EMM entities"
     },
     "links": {
         "browserExtension": {
@@ -1619,7 +1622,9 @@
             "tableHeaderAuthor": -31511044,
             "filterEmmEntities": -28548476,
             "filterEmmRiskFactors": -97734309,
-            "filterEmmTriggers": -35842630
+            "filterEmmTriggers": -35842630,
+            "emmButtonLabel": -26433055,
+            "emmCountButtonLabel": -54804860
         },
         "leadsGrid": {
             "publisherLabel": 5,
@@ -2876,6 +2881,11 @@
             "entryCommentModified": -32902609,
             "entryCommentReplyModified": -63285888,
             "entryCommentResolved": -74972973
+        },
+        "emmStatsModal": {
+            "emmEntitiesTitle": -28548476,
+            "emmTriggersTitle": -35842630,
+            "emmStatsModalTitle": -5561855
         }
     }
 }

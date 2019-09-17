@@ -22,29 +22,28 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import update from '#rsu/immutable-update';
+import { transformAndCombineResponseErrors } from '#rest';
 
 import { pathNames } from '#constants';
 import {
-    addLeadViewConnectorsListSelector,
-    projectIdFromRouteSelector,
+    RequestClient,
+    requestMethods,
+} from '#request';
+import { projectIdFromRouteSelector } from '#redux';
 
-    addLeadViewSetConnectorsAction,
-    addLeadViewLeadsSelector,
-} from '#redux';
+import notify from '#notify';
 import _ts from '#ts';
-
-import ConnectorsGetRequest from './requests/ConnectorsGetRequest';
 
 import ConnectorContent from './Content';
 import styles from './styles.scss';
 
 const propTypes = {
-    onModalClose: PropTypes.func.isRequired,
-    connectorsList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    setConnectorsOfProject: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
     onLeadsSelect: PropTypes.func.isRequired,
     leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    connectorsGetRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -52,86 +51,78 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     projectId: projectIdFromRouteSelector(state),
-    connectorsList: addLeadViewConnectorsListSelector(state),
-    leads: addLeadViewLeadsSelector(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-    setConnectorsOfProject: params => dispatch(addLeadViewSetConnectorsAction(params)),
 });
 
 const emptyList = [];
 const emptyObject = {};
 
-@connect(mapStateToProps, mapDispatchToProps)
+const requests = {
+    connectorsGetRequest: {
+        url: '/connectors/',
+        onMount: true,
+        method: requestMethods.GET,
+        query: ({ props: { projectId } }) => ({
+            projects: [projectId],
+            fields: [
+                'id',
+                'title',
+                'version_id',
+                'source',
+                'role',
+                'filters',
+            ],
+        }),
+        onSuccess: ({
+            response: { results = [] },
+            params: { selectConnector },
+        }) => {
+            selectConnector(results[0] && results[0].id);
+        },
+        onFailure: ({ errros: { response } }) => {
+            const message = transformAndCombineResponseErrors(response.errors);
+            notify.send({
+                title: _ts('addLeads', 'connectorTitle'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        schemaName: 'connectors',
+    },
+};
+
+@connect(mapStateToProps)
+@RequestClient(requests)
 export default class ConnectorSelectModal extends React.PureComponent {
     static propTypes = propTypes;
+
     static defaultProps = defaultProps;
+
     static connectorKeySelector = c => c.id;
 
     constructor(props) {
         super(props);
 
-        const {
-            connectorsList = emptyList,
-            leads,
-        } = props;
+        const { connectorsGetRequest } = props;
 
-        const displayConnectorsList = connectorsList;
-        const selectedConnector = displayConnectorsList.length > 0 ?
-            displayConnectorsList[0].id : undefined;
+        connectorsGetRequest.setDefaultParams({ selectConnector: this.selectConnector });
 
         this.state = {
             searchInputValue: '',
-            dataLoading: true,
-            displayConnectorsList,
-            selectedConnector,
+            selectedConnector: undefined,
             selectedLeads: emptyObject,
             connectorsLeads: emptyObject,
             filtersData: emptyObject,
         };
-
-        this.views = this.getContentViews(connectorsList);
-        this.leadsUrlMap = this.getLeadsUrlMap(leads);
     }
 
-    componentWillMount() {
-        if (this.props.projectId) {
-            this.startConnectorsRequest(this.props.projectId);
-        }
-    }
+    getListAfterSearch = memoize((connectorsList = emptyList, searchInputValue) => (
+        connectorsList
+            .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue))
+    ))
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            connectorsList: newConnectorsList,
-            leads: newLeads,
-        } = nextProps;
-        const {
-            connectorsList: oldConnectorsList,
-            leads: oldLeads,
-        } = this.props;
-        const { searchInputValue } = this.state;
-
-        if (newConnectorsList !== oldConnectorsList) {
-            this.views = this.getContentViews(newConnectorsList);
-            const displayConnectorsList = newConnectorsList
-                .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
-                .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-            this.setState({ displayConnectorsList });
-        }
-
-        if (newLeads !== oldLeads) {
-            this.leadsUrlMap = this.getLeadsUrlMap(newLeads);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.requestForConnectors) {
-            this.requestForConnectors.stop();
-        }
-    }
-
-    getLeadsUrlMap = (leads) => {
+    getLeadsUrlMap = memoize((leads) => {
         const leadsUrlMap = {};
         leads.forEach((l) => {
             const { faramValues: leadData = {} } = l;
@@ -140,9 +131,9 @@ export default class ConnectorSelectModal extends React.PureComponent {
             }
         });
         return leadsUrlMap;
-    }
+    })
 
-    getContentViews = (connectors) => {
+    getContentViews = memoize((connectors) => {
         const views = {};
         connectors.forEach((c) => {
             const view = {
@@ -159,9 +150,18 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         } = {},
                         filtersData,
                     } = this.state;
+
                     const {
-                        connectorsList = [],
+                        connectorsGetRequest: {
+                            response: {
+                                results: connectorsList = emptyList,
+                            } = {},
+                        },
+                        leads: leadsFromProps,
+                        projectId,
                     } = this.props;
+
+                    const leadsUrlMap = this.getLeadsUrlMap(leadsFromProps);
 
                     const selectedConnectorDetails = connectorsList
                         .find(l => l.id === selectedConnector) || {};
@@ -171,7 +171,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             filtersData={filtersData[selectedConnector]}
                             connectorId={selectedConnector}
                             filters={selectedConnectorDetails.filters}
-                            projectId={this.props.projectId}
+                            projectId={projectId}
                             connectorLeads={leads}
                             leadsCount={count}
                             countPerPage={countPerPage}
@@ -183,7 +183,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             selectedLeads={this.state.selectedLeads[selectedConnector]}
                             setConnectorLeadSelection={this.setConnectorLeadSelection}
                             onSelectAllClick={this.handleSelectAllLead}
-                            leadsUrlMap={this.leadsUrlMap}
+                            leadsUrlMap={leadsUrlMap}
                         />
                     );
                 },
@@ -194,9 +194,9 @@ export default class ConnectorSelectModal extends React.PureComponent {
             views[c.id] = view;
         });
         return views;
-    }
+    })
 
-    getFlatSelectedLeads = memoize((selectedLeads) => {
+    getFlatSelectedLeads = memoize((selectedLeads, leadsUrlMap) => {
         const leads = Object.values(selectedLeads).reduce(
             (acc, selectedLead) => ([
                 ...acc,
@@ -205,7 +205,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
             [],
         );
         const filteredLeads = leads.filter((l) => {
-            if (!l.existing && !this.leadsUrlMap[l.url]) {
+            if (!l.existing && !leadsUrlMap[l.url]) {
                 return l;
             }
             return null;
@@ -288,6 +288,10 @@ export default class ConnectorSelectModal extends React.PureComponent {
         this.setState(update(this.state, settings));
     }
 
+    selectConnector = (selectedConnector) => {
+        this.setState({ selectedConnector });
+    }
+
     handleFiltersApply = (value, connectorId) => {
         const settings = {
             filtersData: {
@@ -337,34 +341,19 @@ export default class ConnectorSelectModal extends React.PureComponent {
         }
     }
 
-    startConnectorsRequest = (projectId) => {
-        if (this.requestForConnectors) {
-            this.requestForConnectors.stop();
-        }
-        const requestForConnectors = new ConnectorsGetRequest({
-            setState: v => this.setState(v),
-            setConnectorsOfProject: this.props.setConnectorsOfProject,
-        });
-        this.requestForConnectors = requestForConnectors.create(projectId);
-        this.requestForConnectors.start();
-    }
-
     handleSearchInputChange = (searchInputValue) => {
-        const displayConnectorsList = this.props.connectorsList
-            .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
-            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-
-        this.setState({
-            displayConnectorsList,
-            searchInputValue,
-        });
+        this.setState({ searchInputValue });
     };
 
-    handleConnectorSelectModalClose = () => this.props.onModalClose();
+    handleConnectorSelectModalClose = () => {
+        this.props.closeModal();
+    }
 
     handleLeadsSelect = () => {
+        const { leads } = this.props;
         const { selectedLeads: selectedLeadsFromState } = this.state;
-        const selectedLeads = this.getFlatSelectedLeads(selectedLeadsFromState);
+        const leadsUrlMap = this.getLeadsUrlMap(leads);
+        const selectedLeads = this.getFlatSelectedLeads(selectedLeadsFromState, leadsUrlMap);
 
         if (selectedLeads.length > 0) {
             this.props.onLeadsSelect(selectedLeads);
@@ -392,9 +381,16 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     renderSidebar = () => {
         const {
-            displayConnectorsList,
-            searchInputValue,
-        } = this.state;
+            connectorsGetRequest: {
+                response: {
+                    results: connectorsList,
+                } = {},
+            },
+        } = this.props;
+
+        const { searchInputValue } = this.state;
+
+        const displayConnectorsList = this.getListAfterSearch(connectorsList, searchInputValue);
 
         return (
             <div className={styles.sidebar}>
@@ -421,7 +417,11 @@ export default class ConnectorSelectModal extends React.PureComponent {
     renderConnectorContent = () => {
         const { selectedConnector } = this.state;
         const {
-            connectorsList,
+            connectorsGetRequest: {
+                response: {
+                    results: connectorsList = emptyList,
+                } = {},
+            },
         } = this.props;
 
         if (connectorsList.length <= 0) {
@@ -451,14 +451,24 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     render() {
         const {
-            selectedLeads,
-            dataLoading,
-        } = this.state;
+            connectorsGetRequest: {
+                pending: dataLoading,
+                response: {
+                    results: connectorsList = emptyList,
+                } = {},
+            },
+            leads,
+        } = this.props;
+
+        const { selectedLeads } = this.state;
 
         const Sidebar = this.renderSidebar;
         const Content = this.renderConnectorContent;
 
-        const isSelectionEmpty = this.getFlatSelectedLeads(selectedLeads).length <= 0;
+        const leadsUrlMap = this.getLeadsUrlMap(leads);
+        const isSelectionEmpty = this.getFlatSelectedLeads(selectedLeads, leadsUrlMap).length <= 0;
+
+        this.views = this.getContentViews(connectorsList);
 
         return (
             <Modal className={styles.modal} >

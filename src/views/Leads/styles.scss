@@ -70,7 +70,7 @@
             justify-content: center;
         }
 
-        .link-container {
+        .left-container {
             display: flex;
 
             .link {
@@ -80,17 +80,22 @@
             }
         }
 
-        .pager-container {
-            display: flex;
-            align-items: baseline;
-        }
-
-        .sorting-container {
+        .right-container {
             display: flex;
             align-items: center;
 
-            .text {
-                padding: 0 var(--spacing-medium);
+            .pager-container {
+                display: flex;
+                align-items: baseline;
+            }
+
+            .sorting-container {
+                display: flex;
+                align-items: center;
+
+                .text {
+                    padding: 0 var(--spacing-medium);
+                }
             }
         }
     }

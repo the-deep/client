@@ -51,6 +51,8 @@ const propTypes = {
     setLeadFilterOptions: PropTypes.func.isRequired,
     setLeadPageFilter: PropTypes.func.isRequired,
     unsetLeadPageFilter: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onEmmStatusReceive: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     leadOptionsRequest: PropTypes.object.isRequired,
@@ -75,6 +77,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const emptyList = [];
+const emptyObject = {};
 
 const requests = {
     leadOptionsRequest: {
@@ -91,12 +94,14 @@ const requests = {
             props: {
                 setLeadFilterOptions,
                 activeProject,
+                onEmmStatusReceive,
             },
         }) => {
             setLeadFilterOptions({
                 projectId: activeProject,
                 leadFilterOptions: response,
             });
+            onEmmStatusReceive(response.hasEmmLeads);
         },
     },
 };
@@ -219,6 +224,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 emmRiskFactors = emptyList,
             },
             leadOptionsRequest: {
+                response: { hasEmmLeads } = emptyObject,
                 pending: loadingLeadFilters,
             },
             filters,
@@ -233,10 +239,6 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
         const isClearDisabled = isFilterEmpty && pristine;
-
-        const showEmmFilters = emmEntities.length > 0
-            || emmKeywords.length > 0
-            || emmRiskFactors.length > 0;
 
         return (
             <Faram
@@ -304,7 +306,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     showLabel
                     className={styles.leadsFilter}
                 />
-                {showEmmFilters && (
+                {hasEmmLeads && (
                     <React.Fragment>
                         <SearchMultiSelectInput
                             faramElementName="emm_risk_factors"

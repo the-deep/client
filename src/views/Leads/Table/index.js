@@ -7,6 +7,8 @@ import {
 } from '@togglecorp/fujs';
 
 import RawTable from '#rscv/RawTable';
+import modalize from '#rscg/Modalize';
+import AccentButton from '#rsca/Button/AccentButton';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import { Link } from 'react-router-dom';
@@ -14,10 +16,14 @@ import {
     leadsForProjectTableViewSelector,
 } from '#redux';
 import { pathNames } from '#constants';
+import EmmStatsModal from '#components/viewer/EmmStatsModal';
+import _ts from '#ts';
 
 import ActionButtons from '../ActionButtons';
 import FileTypeViewer from './FileTypeViewer';
 import styles from './styles.scss';
+
+const ModalButton = modalize(AccentButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -65,6 +71,35 @@ export default class Table extends React.Component {
             {
                 key: 'title',
                 order: 2,
+                modifier: (row) => {
+                    const {
+                        emmEntities,
+                        emmTriggers,
+                        title,
+                    } = row;
+
+                    const showEmm = emmEntities.length > 0
+                        || emmTriggers.length > 0;
+
+                    return (
+                        <React.Fragment>
+                            {title}
+                            {showEmm &&
+                                <ModalButton
+                                    className={styles.emmButton}
+                                    modal={
+                                        <EmmStatsModal
+                                            emmTriggers={emmTriggers}
+                                            emmEntities={emmEntities}
+                                        />
+                                    }
+                                >
+                                    {_ts('leads', 'emmButtonLabel')}
+                                </ModalButton>
+                            }
+                        </React.Fragment>
+                    );
+                },
             },
             {
                 key: 'page_count',

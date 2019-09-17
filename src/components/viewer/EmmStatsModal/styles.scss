@@ -1,0 +1,30 @@
+.emm-stats-modal {
+    .heading {
+        text-transform: capitalize;
+    }
+
+    .body {
+        width: var(--width-modal-medium);
+        max-height: var(--height-modal-medium);
+        overflow-y: auto;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+
+            .header {
+                flex-shrink: 0;
+                padding-bottom: var(--spacing-small);
+            }
+
+            .list {
+                flex-grow: 1;
+                overflow-y: auto;
+            }
+
+            &:not(:last-child) {
+                padding-bottom: var(--spacing-large);
+            }
+        }
+    }
+}

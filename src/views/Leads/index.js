@@ -65,6 +65,7 @@ import PatchLeadRequest from './requests/PatchLeadRequest';
 
 import Table from './Table';
 import Grid from './Grid';
+import EmmStatusBar from './EmmStatusBar';
 
 import styles from './styles.scss';
 
@@ -280,7 +281,10 @@ export default class Leads extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = { redirectTo: undefined };
+        this.state = {
+            redirectTo: undefined,
+            hasEmmFields: false,
+        };
 
         this.views = {
             [TABLE_VIEW]: {
@@ -463,6 +467,10 @@ export default class Leads extends React.PureComponent {
         this.props.setLeadPageView({ view });
     }
 
+    handleEmmStatusReceive = (hasEmmFields) => {
+        this.setState({ hasEmmFields });
+    }
+
     renderHeader = () => {
         const addLeadLink = reverseRoute(
             pathNames.addLeads,
@@ -471,7 +479,10 @@ export default class Leads extends React.PureComponent {
 
         return (
             <React.Fragment>
-                <FilterLeadsForm className={styles.filters} />
+                <FilterLeadsForm
+                    className={styles.filters}
+                    onEmmStatusReceive={this.handleEmmStatusReceive}
+                />
                 <ScrollTabs
                     tabs={this.tabs}
                     useHash
@@ -505,7 +516,10 @@ export default class Leads extends React.PureComponent {
             totalLeadsCount,
             activePage,
             leadsPerPage,
+            view,
         } = this.props;
+
+        const { hasEmmFields } = this.state;
 
         const showVisualizationLink = reverseRoute(
             pathNames.leadsViz,
@@ -527,7 +541,7 @@ export default class Leads extends React.PureComponent {
 
         return (
             <React.Fragment>
-                <div className={styles.linkContainer}>
+                <div className={styles.leftContainer}>
                     <Cloak
                         {...viewsAcl.leadsViz}
                         render={
@@ -563,42 +577,47 @@ export default class Leads extends React.PureComponent {
                         }
                     />
                 </div>
-                { this.props.view === TABLE_VIEW ?
-                    (
-                        <div className={styles.pagerContainer}>
-                            <Pager
-                                activePage={activePage}
-                                className={styles.pager}
-                                itemsCount={totalLeadsCount}
-                                maxItemsPerPage={this.props.leadsPerPage}
-                                onPageClick={this.handlePageClick}
-                                onItemsPerPageChange={this.handleLeadsPerPageChange}
-                            />
-                        </div>
-                    ) : (
-                        <div className={styles.sortingContainer}>
-                            <div className={styles.text}>{_ts('leadsGrid', 'leadsRange', { leadsCount, totalLeadsCount })}</div>
-                            <div className={styles.text}>{_ts('leadsGrid', 'sortedByLabel')}:</div>
-                            <SelectInput
-                                faramElementName="assignee"
-                                keySelector={this.sortKeySelector}
-                                labelSelector={this.sortLabelSelector}
-                                showLabel={false}
-                                value={sortKey}
-                                options={tableHeaders}
-                                onChange={this.handleSortItemClick}
-                                placeholder={_ts('leads', 'placeholderAnybody')}
-                                showHintAndError={false}
-                            />
-                            <Button
-                                tabIndex="-1"
-                                iconName={sortDirIcon}
-                                onClick={this.handleSortOrderClick}
-                                transparent
-                            />
-                        </div>
-                    )
-                }
+                <div className={styles.rightContainer}>
+                    {hasEmmFields && (
+                        <EmmStatusBar />
+                    )}
+                    { view === TABLE_VIEW ?
+                        (
+                            <div className={styles.pagerContainer}>
+                                <Pager
+                                    activePage={activePage}
+                                    className={styles.pager}
+                                    itemsCount={totalLeadsCount}
+                                    maxItemsPerPage={this.props.leadsPerPage}
+                                    onPageClick={this.handlePageClick}
+                                    onItemsPerPageChange={this.handleLeadsPerPageChange}
+                                />
+                            </div>
+                        ) : (
+                            <div className={styles.sortingContainer}>
+                                <div className={styles.text}>{_ts('leadsGrid', 'leadsRange', { leadsCount, totalLeadsCount })}</div>
+                                <div className={styles.text}>{_ts('leadsGrid', 'sortedByLabel')}:</div>
+                                <SelectInput
+                                    faramElementName="assignee"
+                                    keySelector={this.sortKeySelector}
+                                    labelSelector={this.sortLabelSelector}
+                                    showLabel={false}
+                                    value={sortKey}
+                                    options={tableHeaders}
+                                    onChange={this.handleSortItemClick}
+                                    placeholder={_ts('leads', 'placeholderAnybody')}
+                                    showHintAndError={false}
+                                />
+                                <Button
+                                    tabIndex="-1"
+                                    iconName={sortDirIcon}
+                                    onClick={this.handleSortOrderClick}
+                                    transparent
+                                />
+                            </div>
+                        )
+                    }
+                </div>
             </React.Fragment>
         );
     }
