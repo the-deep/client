@@ -202,7 +202,6 @@ export default class LeadButtons extends React.PureComponent {
     handleLeadAddFromConnectors = (selectedLeads) => {
         if (selectedLeads.length <= 0) {
             console.error('No files selected to upload');
-            this.handleConnectorSelectModalClose();
             return;
         }
 
@@ -217,6 +216,11 @@ export default class LeadButtons extends React.PureComponent {
                 url: lead.url,
                 publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
                 source: lead.source,
+                author: lead.author,
+                // sourceDetail: lead.sourceDetail,
+                // authorDetail: lead.authorDetail,
+                sourceRaw: lead.sourceRaw,
+                authorRaw: lead.authorRaw,
                 sourceType: LEAD_TYPE.website,
                 emmEntities: lead.emmEntities,
                 emmTriggers: lead.emmTriggers,
@@ -224,8 +228,6 @@ export default class LeadButtons extends React.PureComponent {
         }));
 
         onLeadsAdd(leads);
-
-        this.handleConnectorSelectModalClose();
     }
 
     render() {

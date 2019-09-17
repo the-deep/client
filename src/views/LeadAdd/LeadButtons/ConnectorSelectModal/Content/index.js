@@ -6,14 +6,18 @@ import Icon from '#rscg/Icon';
 import {
     _cs,
     reverseRoute,
-    mapToList,
+    listToMap,
+    isTruthy,
+    unique,
 } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
 import Checkbox from '#rsci/Checkbox';
+import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
+import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import { pathNames } from '#constants';
 import { alterAndCombineResponseError } from '#rest';
 import {
@@ -26,6 +30,8 @@ import notify from '#notify';
 
 import Filters from './Filters';
 import styles from './styles.scss';
+
+const ModalButton = modalize(AccentButton);
 
 const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -65,7 +71,7 @@ const defaultProps = {
 
 const requests = {
     connectorLeadsRequest: {
-        url: ({ props: { connectorId } }) => `/connectors/${connectorId}/leads/`,
+        url: ({ props: { connectorId } }) => `/v2/connectors/${connectorId}/leads/`,
         method: requestMethods.POST,
         onMount: true,
         body: ({
@@ -97,20 +103,23 @@ const requests = {
                 setConnectorLeads,
             },
         }) => {
+            const selectedLeadsMap = listToMap(
+                selectedLeads,
+                l => l.key,
+                l => l,
+            );
             const leads = results.map((l) => {
-                const isSelected = selectedLeads.findIndex(s => s.key === l.key) !== -1;
+                const isSelected = isTruthy(selectedLeadsMap[l.key]);
 
                 return {
                     ...l,
                     isSelected,
                 };
             });
-            const leadsMap = {};
-            leads.forEach((l) => { leadsMap[l.key] = l; });
 
-            const uniqueLeads = mapToList(
-                leadsMap,
-                lead => lead,
+            const uniqueLeads = unique(
+                leads,
+                lead => lead.id,
             );
 
             setConnectorLeads({
@@ -224,6 +233,35 @@ export default class ConnectorContent extends React.PureComponent {
                 key: 'title',
                 label: _ts('addLeads.connectorsSelect', 'titleLabel'),
                 order: 2,
+                modifier: (row) => {
+                    const {
+                        emmEntities,
+                        emmTriggers,
+                        title,
+                    } = row;
+
+                    const showEmm = emmEntities.length > 0
+                        || emmTriggers.length > 0;
+
+                    return (
+                        <React.Fragment>
+                            {title}
+                            {showEmm &&
+                                <ModalButton
+                                    className={styles.emmButton}
+                                    modal={
+                                        <EmmStatsModal
+                                            emmTriggers={emmTriggers}
+                                            emmEntities={emmEntities}
+                                        />
+                                    }
+                                >
+                                    {_ts('leads', 'emmButtonLabel')}
+                                </ModalButton>
+                            }
+                        </React.Fragment>
+                    );
+                },
             },
             {
                 key: 'publishedOn',
@@ -242,7 +280,7 @@ export default class ConnectorContent extends React.PureComponent {
 
     handleRefreshButtonClick = () => {
         const {
-            connectorLeadsRequest,
+            connectorLeadsRequest = {},
             connectorId,
         } = this.props;
 
@@ -321,7 +359,7 @@ export default class ConnectorContent extends React.PureComponent {
             connectorLeads = [],
             connectorLeadsRequest: {
                 pending,
-            },
+            } = {},
             className,
             leadsCount,
             countPerPage,

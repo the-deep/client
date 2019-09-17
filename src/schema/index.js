@@ -62,6 +62,22 @@ const userDefinedSchemas = [];
     };
     userDefinedSchemas.push({ name, schema });
 }
+
+{
+    const name = 'idTitlePair';
+    const schema = {
+        doc: {
+            name: 'Id title pair',
+            description: 'Id title pair',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+        },
+    };
+    userDefinedSchemas.push({ name, schema });
+}
+
 {
     const name = 'keyValuePairSS';
     const schema = {

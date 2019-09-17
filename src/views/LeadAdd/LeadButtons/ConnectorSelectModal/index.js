@@ -29,6 +29,7 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+
 import { projectIdFromRouteSelector } from '#redux';
 
 import notify from '#notify';
@@ -350,14 +351,18 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     handleLeadsSelect = () => {
-        const { leads } = this.props;
+        const {
+            leads,
+            onLeadsSelect,
+            closeModal,
+        } = this.props;
+
         const { selectedLeads: selectedLeadsFromState } = this.state;
         const leadsUrlMap = this.getLeadsUrlMap(leads);
         const selectedLeads = this.getFlatSelectedLeads(selectedLeadsFromState, leadsUrlMap);
 
-        if (selectedLeads.length > 0) {
-            this.props.onLeadsSelect(selectedLeads);
-        }
+        onLeadsSelect(selectedLeads);
+        closeModal();
     }
 
     handleConnectorClick = (selectedConnector) => {
