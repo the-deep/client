@@ -18,6 +18,7 @@ export * from './reducers/route';
 export * from './reducers/siloDomainData/common';
 export * from './reducers/siloDomainData/discoverProjects';
 export * from './reducers/siloDomainData/leads';
+export * from './reducers/siloDomainData/leadAdd';
 export * from './reducers/siloDomainData/entries';
 export * from './reducers/siloDomainData/editEntries';
 export * from './reducers/siloDomainData/analysisFramework';

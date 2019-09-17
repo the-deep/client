@@ -93,6 +93,13 @@ const initialSiloDomainData = {
         */
     },
 
+    leadAddPage: {
+        activeLeadKey: undefined,
+        leadsFilters: {},
+        leadPreviewHidden: false,
+        leads: [],
+    },
+
     leadGroupsView: {
         /*
         1: {
@@ -536,6 +543,7 @@ const initialSiloDomainData = {
         },
         */
     },
+
     regions: {
         // index is regionId
         /*

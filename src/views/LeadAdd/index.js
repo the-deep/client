@@ -2,24 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
-import produce from 'immer';
 import memoize from 'memoize-one';
 import {
     _cs,
-    caseInsensitiveSubmatch,
     doesObjectHaveNoData,
-    getDefinedElementAround,
     isDefined,
     isNotDefined,
     listToMap,
-    randomString,
     reverseRoute,
 } from '@togglecorp/fujs';
-import {
-    accumulateDifferentialErrors,
-    analyzeErrors,
-    detachedFaram,
-} from '@togglecorp/faram';
+import { detachedFaram } from '@togglecorp/faram';
 
 import Message from '#rscv/Message';
 import Confirm from '#rscv/Modal/Confirm';
@@ -41,6 +33,28 @@ import {
     projectIdFromRouteSelector,
     currentUserLeadChangeableProjectsSelector,
     activeUserSelector,
+
+
+    leadAddPageLeadsSelector,
+    leadAddPageActiveLeadKeySelector,
+    leadAddPageActiveLeadSelector,
+    leadAddPageLeadFiltersSelector,
+    leadAddPageLeadPreviewHiddenSelector,
+
+    leadAddSetLeadPreviewHiddenAction,
+    leadAddSetLeadFiltersAction,
+    leadAddClearLeadFiltersAction,
+    leadAddSetActiveLeadKeyAction,
+    leadAddNextLeadAction,
+    leadAddPrevLeadAction,
+    leadAddAppendLeadsAction,
+    leadAddRemoveLeadsAction,
+    leadAddSetLeadTabularBookAction,
+    leadAddSetLeadAttachmentAction,
+    leadAddChangeLeadAction,
+    leadAddSaveLeadAction,
+    leadAddApplyLeadsAllBelowAction,
+    leadAddApplyLeadsAllAction,
 } from '#redux';
 import {
     urlForUpload,
@@ -68,16 +82,17 @@ import LeadDetail from './LeadDetail';
 import schema from './LeadDetail/faramSchema';
 
 import {
-    LEAD_FILTER_STATUS,
     LEAD_STATUS,
     LEAD_TYPE,
-    fakeLeads,
     getLeadState,
-    leadFaramErrorsSelector,
     leadFaramValuesSelector,
     leadIdSelector,
     leadKeySelector,
     leadSourceTypeSelector,
+    leadFilterMethod,
+    getNewLeadKey,
+    isLeadPrevDisabled,
+    isLeadNextDisabled,
 } from './utils';
 import styles from './styles.scss';
 
@@ -88,6 +103,29 @@ const mapStateToProps = state => ({
     projectId: projectIdFromRouteSelector(state),
     projects: currentUserLeadChangeableProjectsSelector(state),
     activeUser: activeUserSelector(state),
+
+    leads: leadAddPageLeadsSelector(state),
+    activeLeadKey: leadAddPageActiveLeadKeySelector(state),
+    activeLead: leadAddPageActiveLeadSelector(state),
+    leadFilters: leadAddPageLeadFiltersSelector(state),
+    leadPreviewHidden: leadAddPageLeadPreviewHiddenSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setLeadPreviewHidden: params => dispatch(leadAddSetLeadPreviewHiddenAction(params)),
+    setLeadFilters: params => dispatch(leadAddSetLeadFiltersAction(params)),
+    clearLeadFilters: params => dispatch(leadAddClearLeadFiltersAction(params)),
+    setActiveLeadKey: params => dispatch(leadAddSetActiveLeadKeyAction(params)),
+    nextLead: params => dispatch(leadAddNextLeadAction(params)),
+    prevLead: params => dispatch(leadAddPrevLeadAction(params)),
+    appendLeads: params => dispatch(leadAddAppendLeadsAction(params)),
+    removeLeads: params => dispatch(leadAddRemoveLeadsAction(params)),
+    setLeadTabularBook: params => dispatch(leadAddSetLeadTabularBookAction(params)),
+    setLeadAttachment: params => dispatch(leadAddSetLeadAttachmentAction(params)),
+    changeLead: params => dispatch(leadAddChangeLeadAction(params)),
+    saveLead: params => dispatch(leadAddSaveLeadAction(params)),
+    applyLeadsAllBelow: params => dispatch(leadAddApplyLeadsAllBelowAction(params)),
+    applyLeadsAll: params => dispatch(leadAddApplyLeadsAllAction(params)),
 });
 
 const propTypes = {
@@ -106,82 +144,40 @@ const propTypes = {
     history: PropTypes.shape({
         replace: PropTypes.func,
     }).isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    leads: PropTypes.aray,
+    activeLeadKey: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    activeLead: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types
+    leadFilters: PropTypes.object.isRequired,
+    leadPreviewHidden: PropTypes.bool,
+
+    setLeadPreviewHidden: PropTypes.func.isRequired,
+    setLeadFilters: PropTypes.func.isRequired,
+    clearLeadFilters: PropTypes.func.isRequired,
+    setActiveLeadKey: PropTypes.func.isRequired,
+    nextLead: PropTypes.func.isRequired,
+    prevLead: PropTypes.func.isRequired,
+    appendLeads: PropTypes.func.isRequired,
+    removeLeads: PropTypes.func.isRequired,
+    setLeadTabularBook: PropTypes.func.isRequired,
+    setLeadAttachment: PropTypes.func.isRequired,
+    changeLead: PropTypes.func.isRequired,
+    saveLead: PropTypes.func.isRequired,
+    applyLeadsAllBelow: PropTypes.func.isRequired,
+    applyLeadsAll: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     projectId: undefined,
     projects: [],
+    leads: [],
+    activeLeadKey: undefined,
+    activeLead: undefined,
+    leadPreviewHidden: false,
 };
-
-function findLeadIndex(leads, activeLeadKey) {
-    if (leads.length <= 0 || isNotDefined(activeLeadKey)) {
-        return -1;
-    }
-    const index = leads.findIndex(lead => activeLeadKey === leadKeySelector(lead));
-    return index;
-}
-
-function isLeadPrevDisabled(leads, activeLeadKey) {
-    const index = findLeadIndex(leads, activeLeadKey);
-    return index === -1 || index === 0;
-}
-
-function isLeadNextDisabled(leads, activeLeadKey) {
-    const index = findLeadIndex(leads, activeLeadKey);
-    return index === -1 || index === (leads.length - 1);
-}
-
-function getNewLeadKey(prefix = 'lead') {
-    const uid = randomString();
-    return `${prefix}-${uid}`;
-}
-
-function statusMatches(leadState, filterStatus) {
-    switch (filterStatus) {
-        case LEAD_FILTER_STATUS.invalid:
-            return (
-                leadState === LEAD_STATUS.invalid ||
-                leadState === LEAD_STATUS.warning
-            );
-        case LEAD_FILTER_STATUS.saved:
-            return leadState === LEAD_STATUS.complete;
-        case LEAD_FILTER_STATUS.unsaved:
-            return (
-                leadState === LEAD_STATUS.nonPristine ||
-                leadState === LEAD_STATUS.uploading ||
-                leadState === LEAD_STATUS.requesting
-            );
-        default:
-            return false;
-    }
-}
-
-function leadFilterMethod(lead, filters, leadState) {
-    // NOTE: removed filter by publisher
-    const {
-        search,
-        type,
-        // source,
-        status,
-    } = filters;
-
-    const leadType = leadSourceTypeSelector(lead);
-    const {
-        title: leadTitle = '',
-        // source: leadSource = '',
-    } = leadFaramValuesSelector(lead);
-
-    if (search && !caseInsensitiveSubmatch(leadTitle, search)) {
-        return false;
-    // } else if (source && !caseInsensitiveSubmatch(leadSource, source)) {
-    //     return false;
-    } else if (type && type.length > 0 && type.indexOf(leadType) === -1) {
-        return false;
-    } else if (status && status.length > 0 && !statusMatches(leadState, status)) {
-        return false;
-    }
-    return true;
-}
 
 class LeadCreate extends React.PureComponent {
     static propTypes = propTypes;
@@ -194,11 +190,6 @@ class LeadCreate extends React.PureComponent {
         super(props);
 
         this.state = {
-            activeLeadKey: undefined,
-            leadFilters: {},
-            leadPreviewHidden: false,
-            leads: fakeLeads,
-
             leadSaveStatuses: {},
             fileUploadStatuses: {},
             driveUploadStatuses: {},
@@ -249,8 +240,15 @@ class LeadCreate extends React.PureComponent {
     }
 
     componentDidMount() {
-        const { routeState } = this.props;
+        const {
+            routeState,
+            location: {
+                path,
+            },
+            history,
+        } = this.props;
         const { serverId, faramValues } = routeState;
+
         if (isDefined(serverId)) {
             const lead = {
                 faramValues,
@@ -262,18 +260,10 @@ class LeadCreate extends React.PureComponent {
             // location.state is not cleared on replace so you lose your
             // progress for the lead that was added as edit
             // So clear location.state
-            const {
-                location: {
-                    path,
-                },
-                history,
-            } = this.props;
             history.replace(path, {});
         }
     }
 
-
-    // redux
     getDefaultProjectId = memoize((projects, projectId) => {
         const defaultProjectId = projects.find(project => project.id === projectId)
             ? projectId
@@ -281,14 +271,6 @@ class LeadCreate extends React.PureComponent {
         return defaultProjectId;
     })
 
-    // redux
-    getActiveLead = memoize((activeLeadKey, leads) => (
-        isDefined(activeLeadKey)
-            ? leads.find(lead => leadKeySelector(lead) === activeLeadKey)
-            : undefined
-    ))
-
-    // local
     getLeadStates = memoize((
         leads,
         driveUploadStatuses,
@@ -313,7 +295,6 @@ class LeadCreate extends React.PureComponent {
         )
     ));
 
-    // local
     getFilteredLeads = memoize((leads, leadFilters, leadStates) => (
         leads.filter(
             (lead) => {
@@ -334,9 +315,6 @@ class LeadCreate extends React.PureComponent {
         )
     ))
 
-    // LEAD CREATION PROGRESS
-
-    // local
     handleFileUploadProgressChange = (key, progress) => {
         this.setState(state => ({
             fileUploadStatuses: {
@@ -346,7 +324,6 @@ class LeadCreate extends React.PureComponent {
         }));
     };
 
-    // local
     handleDropboxUploadPendingChange = (key, pending) => {
         this.setState(state => ({
             dropboxUploadStatuses: {
@@ -356,7 +333,6 @@ class LeadCreate extends React.PureComponent {
         }));
     };
 
-    // local
     handleDriveUploadPendingChange = (key, pending) => {
         this.setState(state => ({
             driveUploadStatuses: {
@@ -366,9 +342,6 @@ class LeadCreate extends React.PureComponent {
         }));
     };
 
-    // LEAD SAVE PROGRESS
-
-    // local
     handleLeadSavePendingChange = (key, pending) => {
         this.setState(state => ({
             leadSaveStatuses: {
@@ -378,77 +351,14 @@ class LeadCreate extends React.PureComponent {
         }));
     };
 
-    // LEAD PREVIEW
-
-    // redux
-    handleLeadPreviewHiddenChange = (value) => {
-        this.setState({
-            leadPreviewHidden: value,
-        });
-    }
-
-    // LEAD FILTER
-
-    // redux
-    handleFilterChange = (filters) => {
-        this.setState({ leadFilters: filters });
-    }
-
-    // redux
-    handleFilterClear = () => {
-        this.setState({ leadFilters: {} });
-    }
-
-    // LEAD SELECTION
-
-    // redux
-    handleLeadSelect = (key) => {
-        this.setState({ activeLeadKey: key });
-    }
-
-    // redux
-    handleLeadPrev = () => {
-        const {
-            leads,
-            activeLeadKey,
-        } = this.state;
-
-        const index = findLeadIndex(leads, activeLeadKey);
-        if (index === -1 || index === 0) {
-            return;
-        }
-        const newLead = leads[index - 1];
-        const newLeadKey = leadKeySelector(newLead);
-        this.setState({
-            activeLeadKey: newLeadKey,
-        });
-    }
-
-    // redux
-    handleLeadNext = () => {
-        const {
-            leads,
-            activeLeadKey,
-        } = this.state;
-
-        const index = findLeadIndex(leads, activeLeadKey);
-        if (index === -1 || index === leads.length - 1) {
-            return;
-        }
-        const newLead = leads[index + 1];
-        const newLeadKey = leadKeySelector(newLead);
-        this.setState({
-            activeLeadKey: newLeadKey,
-        });
-    }
-
-    // LEAD MANIPULATION
-
-    // local
     handleLeadsAdd = (leadsInfo) => {
         const {
             projectId,
             projects,
+
+            setLeadAttachment,
+            changeLead,
+            appendLeads,
         } = this.props;
 
         const defaultProjectId = this.getDefaultProjectId(projects, projectId);
@@ -495,25 +405,34 @@ class LeadCreate extends React.PureComponent {
                         .success((response) => {
                             const { id: attachment } = response;
 
-                            this.handleAttachmentSet(key, attachment);
+                            setLeadAttachment({
+                                leadKey: key,
+                                attachmentId: attachment,
+                            });
                             this.handleFileUploadProgressChange(key, 100);
                             this.uploadCoordinator.notifyComplete(key);
                         })
                         .failure((response) => {
                             this.handleFileUploadProgressChange(key, undefined);
-                            this.handleLeadChange(key, undefined, {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                ],
+                            changeLead({
+                                leadKey: key,
+                                faramErrors: {
+                                    $internal: [
+                                        `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
+                                    ],
+                                },
                             });
                             this.uploadCoordinator.notifyComplete(key, true);
                         })
                         .fatal(() => {
                             this.handleFileUploadProgressChange(key, undefined);
-                            this.handleLeadChange(key, undefined, {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')}`,
-                                ],
+                            changeLead({
+                                leadKey: key,
+                                faramErrors: {
+                                    $internal: [
+                                        `${_ts('addLeads', 'fileUploadFailText')}`,
+                                    ],
+                                },
                             });
                             this.uploadCoordinator.notifyComplete(key, true);
                         })
@@ -538,26 +457,39 @@ class LeadCreate extends React.PureComponent {
                         .success((response) => {
                             const { id: attachment } = response;
 
-                            this.handleAttachmentSet(key, attachment);
+                            setLeadAttachment({
+                                leadKey: key,
+                                attachmentId: attachment,
+                            });
                             this.handleDriveUploadPendingChange(key, undefined);
                             this.driveUploadCoordinator.notifyComplete(key);
                         })
                         .failure((response) => {
                             this.handleDriveUploadPendingChange(key, undefined);
-                            this.handleLeadChange(key, undefined, {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                ],
+
+                            changeLead({
+                                leadKey: key,
+                                faramErrors: {
+                                    $internal: [
+                                        `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
+                                    ],
+                                },
                             });
+
                             this.driveUploadCoordinator.notifyComplete(key, true);
                         })
                         .fatal(() => {
                             this.handleDriveUploadPendingChange(key, undefined);
-                            this.handleLeadChange(key, undefined, {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')}`,
-                                ],
+
+                            changeLead({
+                                leadKey: key,
+                                faramErrors: {
+                                    $internal: [
+                                        `${_ts('addLeads', 'fileUploadFailText')}`,
+                                    ],
+                                },
                             });
+
                             this.driveUploadCoordinator.notifyComplete(key, true);
                         })
                         .build();
@@ -579,26 +511,39 @@ class LeadCreate extends React.PureComponent {
                         .success((response) => {
                             const { id: attachment } = response;
 
-                            this.handleAttachmentSet(key, attachment);
+                            setLeadAttachment({
+                                leadKey: key,
+                                attachmentId: attachment,
+                            });
                             this.handleDropboxUploadPendingChange(key, undefined);
                             this.dropboxUploadCoordinator.notifyComplete(key);
                         })
                         .failure((response) => {
                             this.handleDropboxUploadPendingChange(key, undefined);
-                            this.handleLeadChange(key, undefined, {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                ],
+
+                            changeLead({
+                                leadKey: key,
+                                faramErrors: {
+                                    $internal: [
+                                        `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
+                                    ],
+                                },
                             });
+
                             this.dropboxUploadCoordinator.notifyComplete(key, true);
                         })
                         .fatal(() => {
                             this.handleDropboxUploadPendingChange(key, undefined);
-                            this.handleLeadChange(key, undefined, {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')}`,
-                                ],
+
+                            changeLead({
+                                leadKey: key,
+                                faramErrors: {
+                                    $internal: [
+                                        `${_ts('addLeads', 'fileUploadFailText')}`,
+                                    ],
+                                },
                             });
+
                             this.dropboxUploadCoordinator.notifyComplete(key, true);
                         })
                         .build();
@@ -614,42 +559,29 @@ class LeadCreate extends React.PureComponent {
             return newLead;
         });
 
-        this.handleAppendLeads(newLeads);
+
+        appendLeads(newLeads);
+        this.uploadCoordinator.start();
+        this.driveUploadCoordinator.start();
+        this.dropboxUploadCoordinator.start();
     }
 
-    // redux
-    handleAppendLeads = (newLeads) => {
-        this.setState((state) => {
-            const { leads } = state;
-
-            const activeLeadKey = leadKeySelector(newLeads[newLeads.length - 1]);
-
-            return {
-                leads: [
-                    ...newLeads,
-                    ...leads,
-                ],
-                activeLeadKey,
-            };
-        }, () => {
-            this.uploadCoordinator.start();
-            this.driveUploadCoordinator.start();
-            this.dropboxUploadCoordinator.start();
-        });
-    }
-
-    // local
     handleLeadSave = (key) => {
         this.handleLeadsSave([key]);
     }
 
-    // local
     handleLeadsSave = (leadKeys) => {
         leadKeys.forEach((leadKey) => {
-            const { leads } = this.state;
+            const {
+                leads,
+                changeLead,
+                saveLead,
+            } = this.props;
+
+            // FIXME: use leadKeysMapping
             const lead = leads.find(l => leadKeySelector(l) === leadKey);
             if (!lead) {
-                console.error('Lead not found by id', leadKey);
+                console.error(`Lead with key ${leadKey} not found.`);
                 return;
             }
 
@@ -663,7 +595,11 @@ class LeadCreate extends React.PureComponent {
                             value,
                             schema,
                             onValidationFailure: (faramErrors) => {
-                                this.handleLeadChange(leadKey, undefined, faramErrors);
+                                changeLead({
+                                    leadKey,
+                                    faramErrors,
+                                });
+
                                 this.formCoordinator.notifyComplete(leadKey, true);
                             },
                             onValidationSuccess: (faramValues) => {
@@ -686,27 +622,33 @@ class LeadCreate extends React.PureComponent {
                                     })
                                     .success((response) => {
                                         this.handleLeadSavePendingChange(leadKey, false);
-                                        this.handleLeadSaveChange(leadKey, response);
+                                        saveLead({
+                                            leadKey,
+                                            lead: response,
+                                        });
                                         this.formCoordinator.notifyComplete(leadKey);
                                     })
                                     .failure((response) => {
                                         const faramErrors = alterResponseErrorToFaramError(
                                             response.errors,
                                         );
-                                        this.handleLeadChange(
+
+                                        changeLead({
                                             leadKey,
-                                            undefined,
                                             faramErrors,
-                                        );
+                                        });
+
                                         this.handleLeadSavePendingChange(leadKey, false);
                                         this.formCoordinator.notifyComplete(leadKey, true);
                                     })
                                     .fatal(() => {
-                                        this.handleLeadChange(
+                                        changeLead({
                                             leadKey,
-                                            undefined,
-                                            { $internal: ['Error while trying to save lead.'] },
-                                        );
+                                            faramErrors: {
+                                                $internal: ['Error while trying to save lead.'],
+                                            },
+                                        });
+
                                         this.handleLeadSavePendingChange(leadKey, false);
                                         this.formCoordinator.notifyComplete(leadKey, true);
                                     })
@@ -724,14 +666,12 @@ class LeadCreate extends React.PureComponent {
         this.formCoordinator.start();
     }
 
-    // local
     handleLeadRemoveConfirmClose = (confirm) => {
         if (confirm) {
             const { leadsToRemove } = this.state;
+            const { removeLeads } = this.props;
 
-            console.warn(leadsToRemove);
-
-            this.handleLeadsRemove(leadsToRemove);
+            removeLeads(leadsToRemove);
 
             if (leadsToRemove.length === 1) {
                 notify.send({
@@ -756,7 +696,6 @@ class LeadCreate extends React.PureComponent {
         });
     }
 
-    // local
     handleLeadsToRemoveSet = (leadKeys) => {
         this.setState({
             leadsToRemove: leadKeys,
@@ -764,7 +703,6 @@ class LeadCreate extends React.PureComponent {
         });
     }
 
-    // local
     handleLeadToRemoveSet = (leadKey) => {
         this.setState({
             leadsToRemove: [leadKey],
@@ -772,206 +710,26 @@ class LeadCreate extends React.PureComponent {
         });
     }
 
-    // redux
-    handleLeadsRemove = (leadKeys) => {
-        this.setState((state) => {
-            const {
-                leads,
-                activeLeadKey,
-            } = state;
-
-            const leadKeysMapping = listToMap(
-                leadKeys,
-                item => item,
-                () => true,
-            );
-
-            const mappedLeads = leads.map(
-                lead => (leadKeysMapping[leadKeySelector(lead)] ? undefined : lead),
-            );
-
-            const filteredLeads = mappedLeads.filter(isDefined);
-
-            let newActiveLeadKey;
-            if (filteredLeads.find(lead => leadKeySelector(lead) === activeLeadKey)) {
-                newActiveLeadKey = activeLeadKey;
-            } else {
-                const leadIndex = leads.findIndex(
-                    lead => leadKeySelector(lead) === activeLeadKey,
-                );
-                const newActiveLead = getDefinedElementAround(mappedLeads, leadIndex);
-                if (newActiveLead) {
-                    newActiveLeadKey = leadKeySelector(newActiveLead);
-                }
-            }
-
-            return {
-                leads: filteredLeads,
-                activeLeadKey: newActiveLeadKey,
-            };
-        });
-    }
-
-    // redux
-    handleTabularBookSet = (leadKey, tabularBook) => {
-        const {
-            leads,
-        } = this.state;
-        const index = findLeadIndex(leads, leadKey);
-        if (index === -1) {
-            console.error(`Lead with key ${leadKey} not found during tabular set`);
-            return;
-        }
-        this.setState(state => produce(state, (safeState) => {
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].tabularBook = tabularBook;
-        }));
-    }
-
-    // redux
-    handleAttachmentSet = (leadKey, attachmentId) => {
-        const {
-            leads,
-        } = this.state;
-        const index = findLeadIndex(leads, leadKey);
-        if (index === -1) {
-            console.error(`Lead with key ${leadKey} not found during attachment set`);
-            return;
-        }
-        this.setState(state => produce(state, (safeState) => {
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].faramValues.attachment = {
-                id: attachmentId,
-            };
-        }));
-    }
-
-    // redux
-    handleLeadChange = (leadKey, faramValues, faramErrors) => {
-        const {
-            leads,
-        } = this.state;
-        const index = findLeadIndex(leads, leadKey);
-        if (index === -1) {
-            console.error(`Lead with key ${leadKey} not found during lead change`);
-            return;
-        }
-        this.setState(state => produce(state, (safeState) => {
-            if (isDefined(faramValues)) {
-                // eslint-disable-next-line no-param-reassign
-                safeState.leads[index].faramValues = faramValues;
-                // eslint-disable-next-line no-param-reassign
-                safeState.leads[index].faramInfo.pristine = false;
-            }
-
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].faramErrors = faramErrors;
-
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].faramInfo.error = analyzeErrors(faramErrors);
-        }));
-    }
-
-    // redux
-    handleLeadSaveChange = (leadKey, response) => {
-        const {
-            leads,
-        } = this.state;
-        const index = findLeadIndex(leads, leadKey);
-        if (index === -1) {
-            console.error(`Lead with key ${leadKey} not found during lead change`);
-            return;
-        }
-
-        this.setState(state => produce(state, (safeState) => {
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].serverId = response.id;
-
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].faramErrors = {};
-
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].faramInfo.pristine = true;
-
-            // eslint-disable-next-line no-param-reassign
-            safeState.leads[index].faramInfo.error = false;
-        }));
-    }
-
-    // redux
-    handleLeadApply = (behavior, key, values, attrName, attrValue) => {
-        this.setState((state) => {
-            const oldLeads = state.leads;
-
-            const newLeads = produce(oldLeads, (safeLeads) => {
-                const leadIndex = safeLeads.findIndex(lead => leadKeySelector(lead) === key);
-                const start = (behavior === 'below') ? (leadIndex + 1) : 0;
-                for (let i = start; i < safeLeads.length; i += 1) {
-                    const oldFaramValues = leadFaramValuesSelector(safeLeads[i]);
-                    const oldFaramErrors = leadFaramErrorsSelector(safeLeads[i]);
-
-                    if (
-                        (
-                            values.project === undefined
-                            || oldFaramValues.project === undefined
-                            || oldFaramValues.project !== values.project
-                        ) && (
-                            attrName === 'assignee'
-                            || attrName === 'leadGroup'
-                        )
-                    ) {
-                        // eslint-disable-next-line no-continue
-                        continue;
-                    }
-
-                    if (oldFaramValues[attrName] === attrValue) {
-                        // eslint-disable-next-line no-continue
-                        continue;
-                    }
-
-                    const newFaramValues = {
-                        ...oldFaramValues,
-                        [attrName]: attrValue,
-                    };
-
-                    const newFaramErrors = accumulateDifferentialErrors(
-                        oldFaramValues,
-                        newFaramValues,
-                        oldFaramErrors,
-                        schema,
-                    );
-
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[i].faramValues = newFaramValues;
-
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[i].faramErrors = newFaramErrors;
-
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[i].faramInfo.pristine = false;
-
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[i].faramInfo.error = analyzeErrors(newFaramErrors);
-                }
-            });
-
-            return {
-                leads: newLeads,
-            };
-        });
-    }
-
-    // local
     handleLeadApplyAllBelowClick = (key, values, attrName, attrValue) => {
-        this.handleLeadApply('below', key, values, attrName, attrValue);
+        const { applyLeadsAllBelow } = this.props;
+        applyLeadsAllBelow({
+            leadKey: key,
+            values,
+            attrName,
+            attrValue,
+        });
     }
 
-    // local
     handleLeadApplyAllClick = (key, values, attrName, attrValue) => {
-        this.handleLeadApply('all', key, values, attrName, attrValue);
+        const { applyLeadsAll } = this.props;
+        applyLeadsAll({
+            leadKey: key,
+            values,
+            attrName,
+            attrValue,
+        });
     }
 
-    // local
     handleLeadsExportCancel = () => {
         this.setState({
             leadExportModalShown: false,
@@ -979,7 +737,6 @@ class LeadCreate extends React.PureComponent {
         });
     }
 
-    // local
     handleLeadsExport = (leadIds) => {
         this.setState({
             leadExportModalShown: true,
@@ -987,7 +744,6 @@ class LeadCreate extends React.PureComponent {
         });
     }
 
-    // local
     handleLeadExport = (leadId) => {
         this.handleLeadsExport([leadId]);
     }
@@ -999,14 +755,23 @@ class LeadCreate extends React.PureComponent {
             activeUser: {
                 userId,
             },
-        } = this.props;
-
-        const {
-            leads,
             activeLeadKey,
             leadFilters,
             leadPreviewHidden,
+            leads,
+            activeLead,
 
+            setLeadFilters,
+            clearLeadFilters,
+            prevLead,
+            nextLead,
+            setLeadPreviewHidden,
+            setActiveLeadKey,
+            changeLead,
+            setLeadTabularBook,
+        } = this.props;
+
+        const {
             leadSaveStatuses,
             fileUploadStatuses,
             driveUploadStatuses,
@@ -1026,8 +791,6 @@ class LeadCreate extends React.PureComponent {
             fileUploadStatuses,
             leadSaveStatuses,
         );
-
-        const activeLead = this.getActiveLead(activeLeadKey, leads);
 
         const hasActiveLead = isDefined(activeLead);
 
@@ -1061,17 +824,17 @@ class LeadCreate extends React.PureComponent {
                         }
                     />
                     <LeadFilter
-                        onFilterChange={this.handleFilterChange}
-                        onFilterClear={this.handleFilterClear}
+                        onFilterChange={setLeadFilters}
+                        onFilterClear={clearLeadFilters}
                         filters={leadFilters}
                         clearDisabled={isFilterEmpty}
                     />
                 </div>
                 { hasActiveLead &&
                     <LeadActions
-                        onLeadPrev={this.handleLeadPrev}
-                        onLeadNext={this.handleLeadNext}
-                        onLeadPreviewHiddenChange={this.handleLeadPreviewHiddenChange}
+                        onLeadPrev={prevLead}
+                        onLeadNext={nextLead}
+                        onLeadPreviewHiddenChange={setLeadPreviewHidden}
 
                         leadPreviewHidden={leadPreviewHidden}
                         leadPrevDisabled={isLeadPrevDisabled(leads, activeLeadKey)}
@@ -1106,7 +869,7 @@ class LeadCreate extends React.PureComponent {
                     <LeadList
                         leads={filteredLeads}
                         activeLeadKey={activeLeadKey}
-                        onLeadSelect={this.handleLeadSelect}
+                        onLeadSelect={setActiveLeadKey}
                         onLeadRemove={this.handleLeadToRemoveSet}
                         onLeadExport={this.handleLeadExport}
                         onLeadSave={this.handleLeadSave}
@@ -1143,8 +906,9 @@ class LeadCreate extends React.PureComponent {
                             topChild={
                                 <LeadDetail
                                     projects={projects}
+                                    key={activeLeadKey}
                                     lead={activeLead}
-                                    onChange={this.handleLeadChange}
+                                    onChange={changeLead}
                                     activeUserId={userId}
                                     onApplyAllBelowClick={this.handleLeadApplyAllBelowClick}
                                     onApplyAllClick={this.handleLeadApplyAllClick}
@@ -1158,7 +922,7 @@ class LeadCreate extends React.PureComponent {
                                     <LeadPreview
                                         lead={activeLead}
                                         className={styles.leadPreview}
-                                        onTabularBookSet={this.handleTabularBookSet}
+                                        onTabularBookSet={setLeadTabularBook}
                                     />
                                 )
                             }
@@ -1218,6 +982,6 @@ class LeadCreate extends React.PureComponent {
     }
 }
 
-export default connect(mapStateToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
     RequestCoordinator(LeadCreate),
 );

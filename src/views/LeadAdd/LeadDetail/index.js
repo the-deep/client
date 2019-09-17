@@ -357,9 +357,17 @@ class LeadForm extends React.PureComponent {
             !faramValues.project
             || (oldFaramValues.project && oldFaramValues.project !== faramValues.project)
         ) {
-            onChange(key, { ...faramValues, leadGroup: undefined }, faramErrors);
+            onChange({
+                leadKey: key,
+                faramValues: { ...faramValues, leadGroup: undefined },
+                faramErrors,
+            });
         } else {
-            onChange(key, faramValues, faramErrors);
+            onChange({
+                leadKey: key,
+                faramValues,
+                faramErrors,
+            });
         }
     }
 
@@ -382,7 +390,11 @@ class LeadForm extends React.PureComponent {
                 schema,
             );
 
-            onChange(key, newValues, newErrors);
+            onChange({
+                leadKey: key,
+                faramValues: newValues,
+                faramErrors: newErrors,
+            });
         }
     }
 
