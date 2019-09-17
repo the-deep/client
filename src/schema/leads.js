@@ -18,8 +18,12 @@ const leadSchema = [];
             noOfEntries: { type: 'int' },
             project: { type: 'uint' },
             publishedOn: { type: 'string' },
-            source: { type: 'string' }, // url
-            author: { type: 'string' },
+            sourceRaw: { type: 'string' },
+            authorRaw: { type: 'string' },
+            sourceDetail: { type: 'idTitlePair' },
+            authorDetail: { type: 'idTitlePair' },
+            source: { type: 'uint' }, // url
+            author: { type: 'uint' },
             status: { type: 'string', required: true },
             text: { type: 'string' },
             title: { type: 'string', required: true },

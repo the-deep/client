@@ -202,7 +202,7 @@ const tabsIcons = {
 
 const requests = {
     leadsGetRequest: {
-        url: '/leads/filter/',
+        url: '/v2/leads/filter/',
         method: requestMethods.POST,
         onMount: true,
         query: ({

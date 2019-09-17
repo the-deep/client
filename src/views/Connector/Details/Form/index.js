@@ -123,6 +123,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const { xmlFieldOptionsRequest } = this.props;
+        xmlFieldOptionsRequest.setDefaultParams({
+            setFaramError: this.setFaramError,
+        });
+
         this.state = {
             userDataLoading: true,
             connectorDataLoading: false,
@@ -217,6 +222,26 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     })
+
+    setFaramError = () => {
+        const {
+            changeUserConnectorDetails,
+            connectorDetails: {
+                faramValues = {},
+            },
+            connectorId,
+        } = this.props;
+
+        const faramErrors = {
+            $internal: ['None of the items in this EMM have triggers or entities'],
+        };
+
+        changeUserConnectorDetails({
+            faramValues,
+            faramErrors,
+            connectorId,
+        });
+    }
 
     createSchema = memoize((connectorSource) => {
         // FIXME: potential problem here with params,

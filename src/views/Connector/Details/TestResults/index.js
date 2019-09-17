@@ -59,7 +59,7 @@ const mapStateToProps = state => ({
 
 const requests = {
     leadsGet: {
-        url: ({ props: { connectorSource } }) => `/connector-sources/${connectorSource.key}/leads/`,
+        url: ({ props: { connectorSource } }) => `/v2/connector-sources/${connectorSource.key}/leads/`,
         query: {
             limit: 10,
         },
@@ -97,7 +97,7 @@ const emmEntitiesRendererParams = (key, data) => ({
     name: data.name,
 });
 
-const emmTriggerKeySelector = t => t.keyword;
+const emmTriggerKeySelector = t => t.emmKeyword;
 const emmEntitiesKeySelector = t => t.name;
 
 @connect(mapStateToProps)
@@ -182,6 +182,10 @@ export default class ConnectorTestResults extends React.PureComponent {
                 key: 'source',
                 label: _ts('connector', 'sourceLabel'),
                 order: 5,
+                modifier: ({
+                    sourceDetail = {},
+                    sourceRaw,
+                }) => sourceDetail.title || sourceRaw,
             },
         ];
         if (connectorSource.key === 'emm') {
