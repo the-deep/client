@@ -920,6 +920,7 @@ class LeadCreate extends React.PureComponent {
                             bottomChild={
                                 !leadPreviewHidden && (
                                     <LeadPreview
+                                        key={activeLeadKey}
                                         lead={activeLead}
                                         className={styles.leadPreview}
                                         onTabularBookSet={setLeadTabularBook}
