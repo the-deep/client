@@ -589,16 +589,16 @@ class LeadForm extends React.PureComponent {
 
         let sourceHint;
         if (oldSourceTitle) {
-            sourceHint = `Previously: ${oldSourceTitle}`;
+            sourceHint = _ts('addLeads', 'previousOrganization', { organization: oldSourceTitle });
         } else if (!source && suggestedSourceTitle) {
-            sourceHint = `Suggestion: ${suggestedSourceTitle}`;
+            sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: oldSourceTitle });
         }
 
         let authorHint;
         if (oldAuthorTitle) {
-            authorHint = `Previously: ${oldAuthorTitle}`;
+            authorHint = _ts('addLeads', 'previousOrganization', { organization: oldAuthorTitle });
         } else if (!author && suggestedAuthorTitle) {
-            authorHint = `Suggestion: ${suggestedAuthorTitle}`;
+            authorHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedAuthorTitle });
         }
 
         return (

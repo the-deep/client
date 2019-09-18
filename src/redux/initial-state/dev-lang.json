@@ -35,7 +35,6 @@
         "39": "e.g. Nepal Monitoring",
         "40": "e.g. Lead 12:21:00 PM",
         "41": "e.g. https://deeper.togglecorp.com",
-        "43": "e.g. Newspaper",
         "44": "e.g. 12/12/2012",
         "45": "Enter text description here",
         "47": "Clear similar filter",
@@ -975,7 +974,6 @@
         "-86287086": "No framework is currently selected.",
         "-28816005": "To be started",
         "-31511044": "Author",
-        "-36668463": "e.g. Ernest Hemingway",
         "-30790313": "Same as publisher",
         "-67237579": "Focus",
         "-63009300": "Selected geo-areas",
@@ -1012,7 +1010,9 @@
         "-97734309": "EMM Risk Factors",
         "-5561855": "EMM stats",
         "-26433055": "EMM",
-        "-54804860": "{triggersCount} EMM triggers, {entitiesCount} EMM entities"
+        "-54804860": "{triggersCount} EMM triggers, {entitiesCount} EMM entities",
+        "-66844061": "Previously: {organization}",
+        "-66386006": "Suggested: {organization}"
     },
     "links": {
         "browserExtension": {
@@ -1689,7 +1689,6 @@
             "projectPlaceholderLabel": 39,
             "titlePlaceHolderLabel": 40,
             "urlPlaceholderLabel": 41,
-            "publisherPlaceHolderLabel": 43,
             "datePublishedPlaceholderLabel": 44,
             "textareaPlaceholderLabel": 45,
             "sourcePreview": 48,
@@ -1712,8 +1711,9 @@
             "tabularButtonTitle": -4174557,
             "extractTabularButtonTitle": -61649895,
             "authorLabel": -31511044,
-            "authorPlaceHolderLabel": -36668463,
-            "sameAsPublisherButtonTitle": -30790313
+            "sameAsPublisherButtonTitle": -30790313,
+            "previousOrganization": -66844061,
+            "suggestedOrganization": -66386006
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
