@@ -1012,7 +1012,10 @@
         "-26433055": "EMM",
         "-54804860": "{triggersCount} EMM triggers, {entitiesCount} EMM entities",
         "-66844061": "Previously: {organization}",
-        "-66386006": "Suggested: {organization}"
+        "-66386006": "Suggested: {organization}",
+        "-38487272": "Looks like none of the items in this EMM feed have neither EMM triggers nor EMM entities. You may continue to use the feed, however special EMM features will not be available",
+        "-84151378": "Looks like none of the items in this EMM feed have any EMM entities.",
+        "-63611552": "Looks like none of the items in this EMM feed have any EMM triggers."
     },
     "links": {
         "browserExtension": {
@@ -2099,7 +2102,10 @@
             "deleteConnectorConfirmText": -53914293,
             "connectorDeleteFailure": -22187575,
             "emmEntitiesTitle": -28548476,
-            "emmTriggerTitle": -35842630
+            "emmTriggerTitle": -35842630,
+            "noEmmWarning": -38487272,
+            "noEntitiesWarning": -84151378,
+            "noTriggersWarning": -63611552
         },
         "userGroup": {
             "tableHeaderName": 103,

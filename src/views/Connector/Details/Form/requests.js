@@ -35,12 +35,15 @@ const requests = {
         },
         method: requestMethods.GET,
         onSuccess: ({
-            response: { hasEmm },
-            params: { setFaramError },
+            response: {
+                hasEmmTriggers,
+                hasEmmEntities,
+            },
+            params: { setNoEmmWarning },
             props: { connectorSource },
         }) => {
-            if (connectorSource.key === 'emm' && !hasEmm) {
-                setFaramError();
+            if (connectorSource.key === 'emm' && !(hasEmmTriggers && hasEmmEntities)) {
+                setNoEmmWarning(hasEmmTriggers, hasEmmEntities);
             }
         },
         onFailure: ({
@@ -61,7 +64,7 @@ const requests = {
         },
         onFatal: () => {
             notify.send({
-                title: _ts('entries', 'entriesTabLabel'),
+                title: _ts('connector', 'connectorTitle'),
                 type: notify.type.ERROR,
                 message: _ts('connector', 'connectorGetFailure'),
                 duration: notify.duration.MEDIUM,
