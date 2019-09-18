@@ -34,6 +34,9 @@ export const entryAccessor = {
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,
 
+    unresolvedCommentCount: (entry = {}) =>
+        (entry.serverData || {}).unresolvedCommentCount || 0,
+
     versionId: (entry = {}) => (entry.serverData || {}).versionId,
 };
 
