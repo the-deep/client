@@ -36,6 +36,7 @@ import {
 import Cloak from '#components/general/Cloak';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
+import { organizationTitleSelector } from '#entities/organization';
 
 import _ts from '#ts';
 
@@ -106,13 +107,6 @@ const labelSelector = item => item.value;
 const titleSelector = item => item.title;
 
 const displayNameSelector = item => item.displayName;
-
-const organizationTitleSelector = (org) => {
-    if (org.mergedAs) {
-        return org.mergedAs.title;
-    }
-    return org.title;
-};
 
 function fillExtraInfo(values, leadOptions, activeUserId) {
     const newValues = produce(values, (safeValues) => {

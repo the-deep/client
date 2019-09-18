@@ -93,7 +93,8 @@ const connectorsSchema = [];
             description: 'Options for xml fields',
         },
         fields: {
-            hasEmm: { type: 'boolean' },
+            hasEmmEntities: { type: 'boolean' },
+            hasEmmTriggers: { type: 'boolean' },
             count: { type: 'int', required: true },
             results: { type: 'array.xmlFieldOption', required: true },
         },
@@ -139,6 +140,8 @@ const connectorsSchema = [];
             existing: { type: 'boolean' },
             emmEntities: { type: 'array.emmEntity' },
             emmTriggers: { type: 'array.emmTrigger' },
+            hasEmmEntities: { type: 'boolean' },
+            hasEmmTriggers: { type: 'boolean' },
         },
     };
     connectorsSchema.push({ name, schema });
