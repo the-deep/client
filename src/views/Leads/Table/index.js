@@ -18,6 +18,7 @@ import {
     leadsForProjectTableViewSelector,
 } from '#redux';
 import { pathNames } from '#constants';
+import { organizationTitleSelector } from '#entities/organization';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import _ts from '#ts';
 
@@ -124,7 +125,7 @@ export default class Table extends React.Component {
                 modifier: ({
                     sourceDetail,
                     sourceRaw,
-                }) => (sourceDetail ? sourceDetail.title : sourceRaw),
+                }) => (sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw),
             },
             {
                 key: 'author',
@@ -132,7 +133,7 @@ export default class Table extends React.Component {
                 modifier: ({
                     authorDetail,
                     authorRaw,
-                }) => (authorDetail ? authorDetail.title : authorRaw),
+                }) => (authorDetail ? organizationTitleSelector(authorDetail) : authorRaw),
             },
             {
                 key: 'published_on',

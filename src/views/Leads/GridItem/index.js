@@ -18,6 +18,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Cloak from '#components/general/Cloak';
 import LeadCopyModal from '#components/general/LeadCopyModal';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
+import { organizationTitleSelector } from '#entities/organization';
 import {
     pathNames,
 } from '#constants';
@@ -311,8 +312,8 @@ export default class GridItem extends React.PureComponent {
             emmEntities,
         } = lead;
 
-        const source = sourceDetail ? sourceDetail.title : sourceRaw;
-        const author = authorDetail ? authorDetail.title : authorRaw;
+        const source = sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw;
+        const author = authorDetail ? organizationTitleSelector(authorDetail) : authorRaw;
 
         const showEmm = (isDefined(emmEntities) && emmEntities.length > 0)
             || (isDefined(emmTriggers) && emmTriggers.length > 0);

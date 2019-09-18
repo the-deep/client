@@ -13,6 +13,7 @@ import Button from '#rsca/Button';
 import ListView from '#rscv/List/ListView';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
+import { organizationTitleSelector } from '#entities/organization';
 import FormattedDate from '#rscv/FormattedDate';
 import {
     connectorIdFromRouteSelector,
@@ -185,7 +186,7 @@ export default class ConnectorTestResults extends React.PureComponent {
                 modifier: ({
                     sourceDetail,
                     sourceRaw,
-                }) => (sourceDetail ? sourceDetail.title : sourceRaw),
+                }) => (sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw),
             },
         ];
         if (connectorSource.key === 'emm') {
