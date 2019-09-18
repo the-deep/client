@@ -107,6 +107,13 @@ const titleSelector = item => item.title;
 
 const displayNameSelector = item => item.displayName;
 
+const organizationTitleSelector = (org) => {
+    if (org.mergedAs) {
+        return org.mergedAs.title;
+    }
+    return org.title;
+};
+
 function fillExtraInfo(values, leadOptions, activeUserId) {
     const newValues = produce(values, (safeValues) => {
         if (!safeValues.assignee) {
@@ -192,7 +199,7 @@ function mergeLists(foo, bar) {
 
 const requests = {
     webInfoRequest: {
-        url: '/web-info-extract/',
+        url: '/v2/web-info-extract/',
         body: ({ params: { url } }) => ({ url }),
         method: requestMethods.POST,
         onSuccess: ({ params, response }) => {
@@ -730,7 +737,7 @@ class LeadForm extends React.PureComponent {
                         label={_ts('addLeads', 'publisherLabel')}
                         options={organizations}
                         keySelector={idSelector}
-                        labelSelector={titleSelector}
+                        labelSelector={organizationTitleSelector}
                         disabled={leadOptionsPending || formDisabled || !projectIsSelected}
                         hint={sourceHint}
 
@@ -777,7 +784,7 @@ class LeadForm extends React.PureComponent {
 
                         options={organizations}
                         keySelector={idSelector}
-                        labelSelector={titleSelector}
+                        labelSelector={organizationTitleSelector}
                         disabled={leadOptionsPending || formDisabled || !projectIsSelected}
                         hint={authorHint}
 
