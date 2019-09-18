@@ -3,10 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
+    isDefined,
     reverseRoute,
 } from '@togglecorp/fujs';
 
 import RawTable from '#rscv/RawTable';
+import Numeral from '#rscv/Numeral';
 import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
 import TableHeader from '#rscv/TableHeader';
@@ -78,8 +80,8 @@ export default class Table extends React.Component {
                         title,
                     } = row;
 
-                    const showEmm = emmEntities.length > 0
-                        || emmTriggers.length > 0;
+                    const showEmm = (isDefined(emmEntities) && emmEntities.length > 0)
+                        || (isDefined(emmTriggers) && emmTriggers.length > 0);
 
                     return (
                         <React.Fragment>
@@ -104,7 +106,17 @@ export default class Table extends React.Component {
             {
                 key: 'page_count',
                 order: 3,
-                modifier: row => row.pageCount,
+                modifier: ({ pageCount }) => {
+                    if (pageCount === 0) {
+                        return '-';
+                    }
+                    return (
+                        <Numeral
+                            value={pageCount}
+                            precision={0}
+                        />
+                    );
+                },
             },
             {
                 key: 'source',

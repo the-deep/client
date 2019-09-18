@@ -8,6 +8,7 @@ import {
     reverseRoute,
     listToMap,
     isTruthy,
+    isDefined,
     unique,
 } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -240,8 +241,8 @@ export default class ConnectorContent extends React.PureComponent {
                         title,
                     } = row;
 
-                    const showEmm = emmEntities.length > 0
-                        || emmTriggers.length > 0;
+                    const showEmm = (isDefined(emmEntities) && emmEntities.length > 0)
+                        || (isDefined(emmTriggers) && emmTriggers.length > 0);
 
                     return (
                         <React.Fragment>
