@@ -82,8 +82,8 @@ const emptyObject = {};
 const requests = {
     leadOptionsRequest: {
         url: '/lead-options/',
-        method: requestMethods.POST,
-        body: ({ props: { activeProject } }) => ({
+        method: requestMethods.GET,
+        query: ({ props: { activeProject } }) => ({
             projects: [activeProject],
         }),
         onPropsChanged: ['activeProject'],

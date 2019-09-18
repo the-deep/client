@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import Faram, { FaramGroup, requiredCondition, urlCondition } from '@togglecorp/faram';
+import Toast, { NOTIFICATION } from '#rscv/Toast';
 import {
     _cs,
     compareString,
@@ -116,22 +117,28 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     static fieldKeySelector = s => s.key;
 
     static userLabelSelector = (d = {}) => d.displayName;
+
     static userKeySelector = (d = {}) => d.user;
+
     static projectLabelSelector = (d = {}) => d.title;
+
     static projectKeySelector = (d = {}) => d.project;
 
     constructor(props) {
         super(props);
 
         const { xmlFieldOptionsRequest } = this.props;
+
         xmlFieldOptionsRequest.setDefaultParams({
-            setFaramError: this.setFaramError,
+            setNoEmmWarning: this.setNoEmmWarning,
         });
 
         this.state = {
             userDataLoading: true,
             connectorDataLoading: false,
             pending: false,
+            notification: {},
+            hasEmmWarning: false,
         };
 
         this.usersHeader = getUsersTableHeader(
@@ -223,23 +230,26 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     })
 
-    setFaramError = () => {
-        const {
-            changeUserConnectorDetails,
-            connectorDetails: {
-                faramValues = {},
-            },
-            connectorId,
-        } = this.props;
+    setNoEmmWarning = (hasEmmTriggers, hasEmmEntities) => {
+        let message = _ts('connector', 'noEmmWarning');
 
-        const faramErrors = {
-            $internal: ['None of the items in this EMM have triggers or entities'],
+        if (hasEmmTriggers && !hasEmmEntities) {
+            message = _ts('connector', 'noEntitiesWarning');
+        } else if (!hasEmmTriggers && hasEmmEntities) {
+            message = _ts('connector', 'noTriggersWarning');
+        }
+
+        const notification = {
+            title: _ts('connector', 'connectorTitle'),
+            message,
+            type: NOTIFICATION.WARNING,
+            duration: Infinity,
+            dismissable: true,
         };
 
-        changeUserConnectorDetails({
-            faramValues,
-            faramErrors,
-            connectorId,
+        this.setState({
+            notification,
+            hasEmmWarning: true,
         });
     }
 
@@ -485,6 +495,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         this.props.connectorDeleteRequest.do();
     };
 
+    handleWarningClose = () => {
+        this.setState({ hasEmmWarning: false });
+    }
+
     fieldInputRendererParams = (key, data) => {
         const {
             connectorSource: { key: connectorSourceKey },
@@ -525,6 +539,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             pending,
             connectorDataLoading,
             userDataLoading,
+            hasEmmWarning,
+            notification,
         } = this.state;
 
         const {
@@ -644,6 +660,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                         </div>
                     }
                 </div>
+                {hasEmmWarning && (
+                    <Toast
+                        notification={notification}
+                        onClose={this.handleWarningClose}
+                    />
+                )}
             </Faram>
         );
     }
