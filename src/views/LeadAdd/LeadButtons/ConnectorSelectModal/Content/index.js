@@ -120,7 +120,7 @@ const requests = {
 
             const uniqueLeads = unique(
                 leads,
-                lead => lead.id,
+                lead => lead.key,
             );
 
             setConnectorLeads({
