@@ -1,76 +1,84 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
+import _ts from '#ts';
+import { p } from '#config/rest';
 
-import ListView from '#rscv/List/ListView';
+import {
+    RequestCoordinator,
+    RequestClient,
+} from '#request';
 
-import EntryAdder from './EntryAdder';
-import EntryRemover from './EntryRemover';
+import Spinner from '#rscv/Spinner';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 
+import requests from './requests';
 import styles from './styles.scss';
 
-// Component to show entry
-const EntryItem = ({ id }) => (
-    <div className={styles.entry}>
-        Entry {id}
-    </div>
-);
-EntryItem.propTypes = {
-    id: PropTypes.number.isRequired,
+
+const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://matthewsmawfield.github.io/deepviz/';
+
+const emptyObject = {};
+
+const propTypes = {
+    // eslint-disable-next-line react/no-unused-prop-types
+    projectId: PropTypes.number.isRequired, // used by request
+    // eslint-disable-next-line react/forbid-prop-types
+    entriesVizGetRequest: PropTypes.object.isRequired,
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
-// function to get key from entry
-const entryKeySelector = entry => entry.id;
-
+@RequestCoordinator
+@RequestClient(requests)
 export default class EntriesViz extends React.PureComponent {
+    static propTypes = propTypes;
+
     constructor(props) {
         super(props);
 
-        // This is the global entries state that is shared between the two input components
         this.state = {
-            entries: [
-                { id: 101 },
-                { id: 102 },
-                { id: 103 },
-            ],
+            dataUrl: undefined,
         };
+        this.props.setDefaultRequestParams({
+            setState: params => this.setState(params),
+        });
     }
 
-    entryRendererParams = (key, entry) => ({
-        id: entry.id,
-    })
-
-    handleEntryChange = (entries) => {
-        this.setState({ entries });
-    }
+    getVizRendererUrl = memoize(dataUrl => (
+        `${vizRendererUrl}?${p({ dataUrl })}`
+    ))
 
     render() {
-        const { entries } = this.state;
+        const {
+            entriesVizGetRequest: {
+                pending,
+                responseError,
+            } = emptyObject,
+        } = this.props;
+        const { dataUrl } = this.state;
+
+        // NOTE: Show old data even if pending
+        if (pending && !dataUrl) {
+            return <LoadingAnimation />;
+        // NOTE: Show error if responseError or dataUrl is not defined
+        } else if (responseError || !dataUrl) {
+            return (
+                <Message>
+                    {_ts('project', 'entriesVizErrorMessage')}
+                </Message>
+            );
+        }
 
         return (
             <div className={styles.content}>
-                {/* Component 1 */}
-                <EntryAdder
-                    className={styles.adder}
-                    value={entries}
-                    onChange={this.handleEntryChange}
+                {pending && <Spinner />}
+                <iframe
+                    className={styles.iframe}
+                    title="Visualization"
+                    src={this.getVizRendererUrl(dataUrl)}
+                    sandbox="allow-scripts allow-same-origin"
                 />
-                {/* Component 2 */}
-                <EntryRemover
-                    className={styles.remover}
-                    value={entries}
-                    onChange={this.handleEntryChange}
-                    disabled={entries.length <= 1}
-                />
-                {/* Components in parent */}
-                <ListView
-                    data={entries}
-                    keySelector={entryKeySelector}
-                    renderer={EntryItem}
-                    rendererParams={this.entryRendererParams}
-                />
-                <div>
-                    <b>Total Entries:</b> { entries.length }
-                </div>
             </div>
         );
     }

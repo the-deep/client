@@ -1,18 +1,11 @@
 .content {
-    padding: var(--spacing-small);
-    .adder {
-        margin-left: var(--spacing-small);
-    }
+    display: flex;
+    flex-grow: 1;
 
-    .remover {
-        margin-left: var(--spacing-small);
-    }
-
-    .entry {
-        display: inline-block;
-        margin: var(--spacing-small);
-        border-radius: 3px;
-        background-color: var(--color-background-accent-hint);
-        padding: var(--spacing-small);
+    .iframe {
+        flex-grow: 1;
+        border: 0;
+        object-fit: contain;
+        object-position: center center;
     }
 }

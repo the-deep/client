@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
 import { pathNames } from '#constants/';
 import {
+    _cs,
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
@@ -16,7 +18,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import Page from '#rscv/Page';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
@@ -49,6 +51,40 @@ import FilterEntriesForm from './FilterEntriesForm';
 import LeadGroupedEntries from './LeadGroupedEntries';
 
 import styles from './styles.scss';
+
+const LIST_VIEW = 'list';
+const VIZ_VIEW = 'viz';
+
+const tabsIcons = {
+    [LIST_VIEW]: 'list',
+    [VIZ_VIEW]: 'grid',
+};
+
+
+const Tab = ({
+    className,
+    view,
+    onClick,
+}) => (
+    <button
+        type="button"
+        className={_cs(styles.tab, className)}
+        onClick={onClick}
+    >
+        <Icon name={tabsIcons[view]} />
+    </button>
+);
+
+Tab.propTypes = {
+    className: PropTypes.string,
+    view: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
+};
+
+Tab.defaultProps = {
+    className: '',
+    onClick: undefined,
+};
 
 const mapStateToProps = state => ({
     activePage: entriesViewActivePageSelector(state),
@@ -100,28 +136,11 @@ const leadKeySelector = d => d.id;
 
 const MAX_ENTRIES_PER_REQUEST = 50;
 
-const LIST_VIEW = 'list';
-const VIZ_VIEW = 'viz';
-
-const tabsIcons = {
-    [LIST_VIEW]: 'list',
-    [VIZ_VIEW]: 'grid',
-};
-
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Entries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static tabsModifier = key => (
-        <Icon name={tabsIcons[key]} />
-    );
-
-    static tabs = {
-        [LIST_VIEW]: LIST_VIEW,
-        [VIZ_VIEW]: VIZ_VIEW,
-    };
 
     constructor(props) {
         super(props);
@@ -141,15 +160,17 @@ export default class Entries extends React.PureComponent {
             [LIST_VIEW]: {
                 component: this.renderListView,
                 wrapContainer: true,
-                mount: true,
-                lazyMount: true,
+                // mount: true,
+                // lazyMount: true,
             },
-
             [VIZ_VIEW]: {
                 component: EntriesViz,
                 wrapContainer: true,
-                mount: true,
-                lazyMount: true,
+                // mount: true,
+                // lazyMount: false,
+                rendererParams: () => ({
+                    projectId: this.props.projectId,
+                }),
             },
         };
 
@@ -242,6 +263,23 @@ export default class Entries extends React.PureComponent {
 
         window.removeEventListener('scroll', this.handleScroll, true);
     }
+
+    getTabs = memoize((framework) => {
+        if (framework.properties && framework.properties.statsConfig) {
+            return {
+                [LIST_VIEW]: LIST_VIEW,
+                [VIZ_VIEW]: VIZ_VIEW,
+            };
+        }
+        return {
+            [LIST_VIEW]: LIST_VIEW,
+        };
+    })
+
+
+    tabRendererParams = key => ({
+        view: key,
+    });
 
     startEntriesRequest = () => {
         const { successFramework, successGeoOptions } = this.state;
@@ -366,7 +404,12 @@ export default class Entries extends React.PureComponent {
             geoOptions,
         } = this.props;
 
-        const { pendingFramework } = this.state;
+        const {
+            pendingFramework,
+            view,
+        } = this.state;
+
+        const tabs = this.getTabs(framework);
 
         return (
             <Page
@@ -374,19 +417,26 @@ export default class Entries extends React.PureComponent {
                 headerClassName={styles.header}
                 header={
                     <React.Fragment>
-                        <FilterEntriesForm
-                            pending={pendingFramework}
-                            filters={framework.filters}
-                            geoOptions={geoOptions}
-                        />
-                        <FixedTabs
-                            tabs={Entries.tabs}
+                        {
+                            // FIXME: Doesn't work if page is refreshed with VIZ_VIEW
+                            this.state.view === LIST_VIEW &&
+                                <FilterEntriesForm
+                                    pending={pendingFramework}
+                                    filters={framework.filters}
+                                    geoOptions={geoOptions}
+                                />
+                        }
+                        <ScrollTabs
+                            tabs={tabs}
                             useHash
                             replaceHistory
-                            modifier={Entries.tabsModifier}
+                            renderer={Tab}
+                            blankClassName={styles.blank}
+                            activeClassName={styles.activeTab}
+                            rendererParams={this.tabRendererParams}
                             className={styles.tabs}
                             onClick={this.handleTabClick}
-                            defaultHash={this.state.view}
+                            defaultHash={view}
                         />
                     </React.Fragment>
                 }
@@ -395,8 +445,7 @@ export default class Entries extends React.PureComponent {
                     <MultiViewContainer
                         views={this.views}
                         useHash
-                        // activeClassName={styles.active}
-                        // containerClassName={styles.container}
+                        containerClassName={styles.container}
                     />
                 }
                 footerClassName={styles.footer}

@@ -8,21 +8,39 @@
             margin-right: var(--spacing-extra-large);
             background-color: transparent;
 
-            :global {
-                .fixed-tab {
-                    border-bottom: none;
-                    font-size: var(--font-size-extra-large);
+            .tab {
+                border: none;
+                outline: 0;
+                padding: var(--spacing-small);
+                font-size: var(--font-size-extra-large);
+                background-color: transparent;
 
-                    &.active {
-                        background-color: var(--color-background-hover);
-                        color: var(--color-accent);
-                    }
+                &:hover,
+                &.active-tab {
+                    background-color: var(--color-background-hover);
+                    color: var(--color-accent);
                 }
+            }
+
+            .blank {
+                border: 0;
             }
         }
     }
 
     .lead-grouped-entries-list {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
         .lead-grouped-header {
             position: sticky;
             top: 0;
