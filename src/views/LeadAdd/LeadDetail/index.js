@@ -590,14 +590,14 @@ class LeadForm extends React.PureComponent {
         let sourceHint;
         if (oldSourceTitle) {
             sourceHint = `Previously: ${oldSourceTitle}`;
-        } else if (!source) {
+        } else if (!source && suggestedSourceTitle) {
             sourceHint = `Suggestion: ${suggestedSourceTitle}`;
         }
 
         let authorHint;
         if (oldAuthorTitle) {
             authorHint = `Previously: ${oldAuthorTitle}`;
-        } else if (!author) {
+        } else if (!author && suggestedAuthorTitle) {
             authorHint = `Suggestion: ${suggestedAuthorTitle}`;
         }
 
