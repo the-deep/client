@@ -598,7 +598,7 @@ class LeadDetail extends React.PureComponent {
         if (oldSourceTitle) {
             sourceHint = _ts('addLeads', 'previousOrganization', { organization: oldSourceTitle });
         } else if (!source && suggestedSourceTitle) {
-            sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: oldSourceTitle });
+            sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedSourceTitle });
         }
 
         let authorHint;
