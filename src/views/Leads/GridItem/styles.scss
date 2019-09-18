@@ -112,6 +112,18 @@
             font-size: var(--font-size-large-alt);
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+
+            .emm-button {
+                margin-right: var(--spacing-small);
+                padding: var(--spacing-extra-small) var(--spacing-small);
+
+                &:disabled,
+                &:focus,
+                &:active,
+                &:hover {
+                    background-color: var(--color-foreground-alt);
+                }
+            }
         }
 
         p {

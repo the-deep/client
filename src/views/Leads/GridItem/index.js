@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import {
     reverseRoute,
+    isDefined,
     isTruthy,
 } from '@togglecorp/fujs';
 
@@ -16,6 +17,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import Cloak from '#components/general/Cloak';
 import LeadCopyModal from '#components/general/LeadCopyModal';
+import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import {
     pathNames,
 } from '#constants';
@@ -70,6 +72,8 @@ export default class GridItem extends React.PureComponent {
     static shouldHideEntryAdd = ({ hasAnalysisFramework, entryPermissions }) => (
         !hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify)
     )
+
+    static shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.modify
 
     static shouldHideLeadCopy = ({ leadPermissions }) =>
         !leadPermissions.modify || !leadPermissions.create
@@ -237,25 +241,33 @@ export default class GridItem extends React.PureComponent {
                             />
                         }
                     />
-                    {/* FIXME: cloak this */}
-                    <Link
-                        className={styles.actionButton}
-                        title={_ts('leads', 'editLeadButtonTitle')}
-                        to={this.links.editLead}
-                    >
-                        <Icon
-                            className={styles.icon}
-                            name="edit"
-                        />
-                    </Link>
-                    {/* FIXME: cloak this */}
-                    <DangerConfirmButton
-                        tabIndex="-1"
-                        title={_ts('leads', 'removeLeadLeadButtonTitle')}
-                        onClick={this.handleRemoveLeadClick}
-                        transparent
-                        iconName="trash"
-                        confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                    <Cloak
+                        hide={GridItem.shouldHideLeadEdit}
+                        render={
+                            <Link
+                                className={styles.actionButton}
+                                title={_ts('leads', 'editLeadButtonTitle')}
+                                to={this.links.editLead}
+                            >
+                                <Icon
+                                    className={styles.icon}
+                                    name="edit"
+                                />
+                            </Link>
+                        }
+                    />
+                    <Cloak
+                        hide={GridItem.shouldHideLeadEdit}
+                        render={
+                            <DangerConfirmButton
+                                tabIndex="-1"
+                                title={_ts('leads', 'removeLeadLeadButtonTitle')}
+                                onClick={this.handleRemoveLeadClick}
+                                transparent
+                                iconName="trash"
+                                confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                            />
+                        }
                     />
                 </div>
             </React.Fragment>
@@ -275,9 +287,19 @@ export default class GridItem extends React.PureComponent {
                 id: assigneeId,
                 displayName: assigneeDisplayName,
             } = {},
-            source,
-            author,
+            sourceDetail,
+            authorDetail,
+            sourceRaw,
+            authorRaw,
+            emmTriggers,
+            emmEntities,
         } = lead;
+
+        const source = sourceDetail ? sourceDetail.title : sourceRaw;
+        const author = authorDetail ? authorDetail.title : authorRaw;
+
+        const showEmm = (isDefined(emmEntities) && emmEntities.length > 0)
+            || (isDefined(emmTriggers) && emmTriggers.length > 0);
 
         return (
             <div
@@ -300,6 +322,19 @@ export default class GridItem extends React.PureComponent {
                         {timeFrom(lead.createdAt)}
                     </span>
                     <p className={styles.title}>
+                        {showEmm &&
+                            <ModalButton
+                                className={styles.emmButton}
+                                modal={
+                                    <EmmStatsModal
+                                        emmTriggers={emmTriggers}
+                                        emmEntities={emmEntities}
+                                    />
+                                }
+                            >
+                                {_ts('leads', 'emmButtonLabel')}
+                            </ModalButton>
+                        }
                         {lead.title}
                     </p>
                     <div className={styles.leadInfoExtra}>

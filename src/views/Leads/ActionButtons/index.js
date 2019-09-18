@@ -87,6 +87,7 @@ export default class ActionButtons extends React.PureComponent {
                     sourceType: row.sourceType,
                     project: row.project,
                     source: row.source,
+                    author: row.author,
                     confidentiality: row.confidentiality,
                     assignee: row.assignee,
                     publishedOn: row.publishedOn,

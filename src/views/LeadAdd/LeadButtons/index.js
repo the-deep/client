@@ -32,12 +32,12 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
-const defaultProps = {
+const propTypes = {
+    onLeadsAdd: PropTypes.func.isRequired,
     leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
-const propTypes = {
-    onLeadsAdd: PropTypes.func.isRequired,
+const defaultProps = {
     leads: [],
 };
 

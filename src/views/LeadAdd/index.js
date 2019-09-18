@@ -146,7 +146,7 @@ const propTypes = {
     }).isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
-    leads: PropTypes.aray,
+    leads: PropTypes.array,
     activeLeadKey: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     activeLead: PropTypes.object,
@@ -179,7 +179,7 @@ const defaultProps = {
     leadPreviewHidden: false,
 };
 
-class LeadCreate extends React.PureComponent {
+class LeadAdd extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -882,7 +882,7 @@ class LeadCreate extends React.PureComponent {
                         fileUploadStatuses={fileUploadStatuses}
                     />
                     <Cloak
-                        hide={LeadCreate.shouldHideButtons}
+                        hide={LeadAdd.shouldHideButtons}
                         render={
                             <LeadButtons
                                 onLeadsAdd={this.handleLeadsAdd}
@@ -984,5 +984,5 @@ class LeadCreate extends React.PureComponent {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    RequestCoordinator(LeadCreate),
+    RequestCoordinator(LeadAdd),
 );
