@@ -53,10 +53,10 @@ import {
 
 import AddLeadGroup from './AddLeadGroup';
 import ApplyAll, { ExtractThis } from './ApplyAll';
+import EmmStats from './EmmStats';
 
 import schema from './faramSchema';
 import styles from './styles.scss';
-
 
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
 const ModalButton = Modalize(Button);
@@ -574,6 +574,9 @@ class LeadDetail extends React.PureComponent {
 
             sourceRaw: oldSourceTitle,
             authorRaw: oldAuthorTitle,
+
+            emmEntities,
+            emmTriggers,
         } = values;
 
         const pending = (
@@ -609,75 +612,86 @@ class LeadDetail extends React.PureComponent {
         }
 
         return (
-            <Faram
+            <div
                 // TODO: STYLING the faram doesn't take full height and loading-animation is offset
-                className={_cs(classNameFromProps, styles.addLeadForm)}
-                onChange={this.handleFaramChange}
-                schema={schema}
-                value={values}
-                error={errors}
-                disabled={formDisabled}
+                className={_cs(classNameFromProps, styles.leadItem)}
             >
-                { pending && <LoadingAnimation /> }
-                <header className={styles.header}>
-                    <NonFieldErrors faramElement />
-                </header>
-                { type === LEAD_TYPE.website && (
-                    <React.Fragment>
-                        <ExtractThis
-                            key="url"
-                            className={styles.url}
-                            disabled={formDisabled || extractionDisabled}
-                            onClick={this.handleExtractClick}
-                        >
+                <Faram
+                    className={styles.addLeadForm}
+                    onChange={this.handleFaramChange}
+                    schema={schema}
+                    value={values}
+                    error={errors}
+                    disabled={formDisabled}
+                >
+                    { pending && <LoadingAnimation /> }
+                    <header className={styles.header}>
+                        <NonFieldErrors faramElement />
+                    </header>
+                    { type === LEAD_TYPE.website && (
+                        <React.Fragment>
+                            <ExtractThis
+                                key="url"
+                                className={styles.url}
+                                disabled={formDisabled || extractionDisabled}
+                                onClick={this.handleExtractClick}
+                            >
+                                <TextInput
+                                    faramElementName="url"
+                                    label={_ts('addLeads', 'urlLabel')}
+                                    placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                                    autoFocus
+                                />
+                            </ExtractThis>
                             <TextInput
-                                faramElementName="url"
-                                label={_ts('addLeads', 'urlLabel')}
+                                faramElementName="website"
+                                key="website"
+                                label={_ts('addLeads', 'websiteLabel')}
                                 placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
-                                autoFocus
+                                className={styles.website}
                             />
-                        </ExtractThis>
-                        <TextInput
-                            faramElementName="website"
-                            key="website"
-                            label={_ts('addLeads', 'websiteLabel')}
-                            placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
-                            className={styles.website}
+                        </React.Fragment>
+                    ) }
+                    { type === LEAD_TYPE.text && (
+                        <TextArea
+                            faramElementName="text"
+                            label={_ts('addLeads', 'textLabel')}
+                            placeholder={_ts('addLeads', 'textareaPlaceholderLabel')}
+                            rows="3"
+                            className={styles.text}
+                            autoFocus
                         />
-                    </React.Fragment>
-                ) }
-                { type === LEAD_TYPE.text && (
-                    <TextArea
-                        faramElementName="text"
-                        label={_ts('addLeads', 'textLabel')}
-                        placeholder={_ts('addLeads', 'textareaPlaceholderLabel')}
-                        rows="3"
-                        className={styles.text}
-                        autoFocus
+                    ) }
+                    <SelectInput
+                        faramElementName="project"
+                        keySelector={idSelector}
+                        label={_ts('addLeads', 'projectLabel')}
+                        labelSelector={titleSelector}
+                        options={projects}
+                        placeholder={_ts('addLeads', 'projectPlaceholderLabel')}
+                        className={styles.project}
+                        disabled={formDisabled || !!serverId}
                     />
-                ) }
-                <SelectInput
-                    faramElementName="project"
-                    keySelector={idSelector}
-                    label={_ts('addLeads', 'projectLabel')}
-                    labelSelector={titleSelector}
-                    options={projects}
-                    placeholder={_ts('addLeads', 'projectPlaceholderLabel')}
-                    className={styles.project}
-                    disabled={formDisabled || !!serverId}
-                />
 
-                <Cloak
-                    // TODO: STYLING when cloaked
-                    hide={this.shouldHideLeadGroupInput}
-                    render={
-                        <div className={styles.leadGroupContainer}>
+                    <Cloak
+                        // TODO: STYLING when cloaked
+                        hide={this.shouldHideLeadGroupInput}
+                        render={
                             <ApplyAll
                                 className={styles.leadGroup}
                                 disabled={isApplyAllDisabled}
                                 identifierName="leadGroup"
                                 onApplyAllClick={this.handleApplyAllClick}
                                 onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                                extraButtons={
+                                    <Button
+                                        className={styles.smallButton}
+                                        onClick={this.handleAddLeadGroupClick}
+                                        iconName="add"
+                                        transparent
+                                        disabled={!projectIsSelected}
+                                    />
+                                }
                             >
                                 <SelectInput
                                     faramElementName="leadGroup"
@@ -688,174 +702,176 @@ class LeadDetail extends React.PureComponent {
                                     placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
                                 />
                             </ApplyAll>
-                            <Button
-                                onClick={this.handleAddLeadGroupClick}
-                                iconName="add"
-                                transparent
-                                disabled={!projectIsSelected}
-                            />
-                        </div>
-                    }
-                />
-                { showAddLeadGroupModal && (
-                    <AddLeadGroup
-                        onModalClose={this.handleAddLeadGroupModalClose}
-                        onLeadGroupAdd={this.handleLeadGroupAdd}
-                        projectId={projectId}
+                        }
+                        renderOnHide={
+                            <div className={styles.leadGroup} />
+                        }
                     />
-                ) }
-                <TextInput
-                    className={styles.title}
-                    faramElementName="title"
-                    label={_ts('addLeads', 'titleLabel')}
-                    placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
-                />
-
-                <ApplyAll
-                    className={styles.source}
-                    disabled={isApplyAllDisabled}
-                    identifierName="source"
-                    onApplyAllClick={this.handleApplyAllClick}
-                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    extraButtons={
-                        <ModalButton
-                            className={styles.smallButton}
-                            title="Add Publisher"
-                            iconName="addPerson"
-                            transparent
-                            modal={
-                                <AddOrganizationModal
-                                    loadOrganizationList
-                                    onOrganizationAdd={this.handlePublisherAdd}
-                                />
-                            }
+                    { showAddLeadGroupModal && (
+                        <AddLeadGroup
+                            onModalClose={this.handleAddLeadGroupModalClose}
+                            onLeadGroupAdd={this.handleLeadGroupAdd}
+                            projectId={projectId}
                         />
-                    }
-                >
-                    <FaramBasicSelectInput
-                        faramElementName="source"
-                        label={_ts('addLeads', 'publisherLabel')}
-                        options={organizations}
-                        keySelector={idSelector}
-                        labelSelector={organizationTitleSelector}
-                        disabled={leadOptionsPending || formDisabled || !projectIsSelected}
-                        hint={sourceHint}
-
-                        searchOptions={searchedOrganizations}
-                        searchOptionsPending={pendingSearchedOrganizations}
-                        onOptionsChange={this.setOrganizations}
-                        onSearchValueChange={this.handleOrganizationSearchValueChange}
+                    ) }
+                    <TextInput
+                        className={styles.title}
+                        faramElementName="title"
+                        label={_ts('addLeads', 'titleLabel')}
+                        placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
                     />
-                </ApplyAll>
 
-                <ApplyAll
-                    className={styles.source}
-                    disabled={isApplyAllDisabled}
-                    identifierName="author"
-                    onApplyAllClick={this.handleApplyAllClick}
-                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    extraButtons={
-                        <React.Fragment>
-                            <Button
-                                className={styles.smallButton}
-                                iconName="copyOutline"
-                                transparent
-                                title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
-                                onClick={this.handleSameAsPublisherButtonClick}
-                            />
+                    <ApplyAll
+                        className={styles.source}
+                        disabled={isApplyAllDisabled}
+                        identifierName="source"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                        extraButtons={
                             <ModalButton
                                 className={styles.smallButton}
-                                title="Add Author"
+                                title="Add Publisher"
                                 iconName="addPerson"
                                 transparent
                                 modal={
                                     <AddOrganizationModal
                                         loadOrganizationList
-                                        onOrganizationAdd={this.handleAuthorAdd}
+                                        onOrganizationAdd={this.handlePublisherAdd}
                                     />
                                 }
                             />
-                        </React.Fragment>
-                    }
-                >
-                    <FaramBasicSelectInput
-                        faramElementName="author"
-                        label={_ts('addLeads', 'authorLabel')}
+                        }
+                    >
+                        <FaramBasicSelectInput
+                            faramElementName="source"
+                            label={_ts('addLeads', 'publisherLabel')}
+                            options={organizations}
+                            keySelector={idSelector}
+                            labelSelector={organizationTitleSelector}
+                            disabled={leadOptionsPending || formDisabled || !projectIsSelected}
+                            hint={sourceHint}
 
-                        options={organizations}
-                        keySelector={idSelector}
-                        labelSelector={organizationTitleSelector}
-                        disabled={leadOptionsPending || formDisabled || !projectIsSelected}
-                        hint={authorHint}
+                            searchOptions={searchedOrganizations}
+                            searchOptionsPending={pendingSearchedOrganizations}
+                            onOptionsChange={this.setOrganizations}
+                            onSearchValueChange={this.handleOrganizationSearchValueChange}
+                        />
+                    </ApplyAll>
 
-                        searchOptions={searchedOrganizations}
-                        searchOptionsPending={pendingSearchedOrganizations}
-                        onOptionsChange={this.setOrganizations}
-                        onSearchValueChange={this.handleOrganizationSearchValueChange}
-                    />
-                </ApplyAll>
-
-                <ApplyAll
-                    className={styles.confidentiality}
-                    disabled={isApplyAllDisabled}
-                    identifierName="confidentiality"
-                    onApplyAllClick={this.handleApplyAllClick}
-                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                >
-                    <SelectInput
-                        faramElementName="confidentiality"
-                        keySelector={keySelector}
-                        label={_ts('addLeads', 'confidentialityLabel')}
-                        labelSelector={labelSelector}
-                        options={leadOptions.confidentiality}
-                        placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                    />
-                </ApplyAll>
-
-                <ApplyAll
-                    className={styles.user}
-                    disabled={isApplyAllDisabled}
-                    identifierName="assignee"
-                    onApplyAllClick={this.handleApplyAllClick}
-                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                >
-                    <SelectInput
-                        faramElementName="assignee"
-                        keySelector={idSelector}
-                        label={_ts('addLeads', 'assigneeLabel')}
-                        labelSelector={displayNameSelector}
-                        options={leadOptions.members}
-                        placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                    />
-                </ApplyAll>
-
-                <ApplyAll
-                    className={styles.date}
-                    disabled={isApplyAllDisabled}
-                    identifierName="publishedOn"
-                    onApplyAllClick={this.handleApplyAllClick}
-                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                >
-                    <DateInput
-                        faramElementName="publishedOn"
-                        label={_ts('addLeads', 'datePublishedLabel')}
-                        placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
-                    />
-                </ApplyAll>
-
-                {
-                    ATTACHMENT_TYPES.indexOf(type) !== -1 && (
-                        <div className={styles.fileTitle}>
-                            { values.attachment &&
-                                <InternalGallery
-                                    onlyFileName
-                                    galleryId={values.attachment.id}
+                    <ApplyAll
+                        className={styles.source}
+                        disabled={isApplyAllDisabled}
+                        identifierName="author"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                        extraButtons={
+                            <React.Fragment>
+                                <Button
+                                    className={styles.smallButton}
+                                    iconName="copyOutline"
+                                    transparent
+                                    title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
+                                    onClick={this.handleSameAsPublisherButtonClick}
                                 />
-                            }
-                        </div>
-                    )
-                }
-            </Faram>
+                                <ModalButton
+                                    className={styles.smallButton}
+                                    title="Add Author"
+                                    iconName="addPerson"
+                                    transparent
+                                    modal={
+                                        <AddOrganizationModal
+                                            loadOrganizationList
+                                            onOrganizationAdd={this.handleAuthorAdd}
+                                        />
+                                    }
+                                />
+                            </React.Fragment>
+                        }
+                    >
+                        <FaramBasicSelectInput
+                            faramElementName="author"
+                            label={_ts('addLeads', 'authorLabel')}
+
+                            options={organizations}
+                            keySelector={idSelector}
+                            labelSelector={organizationTitleSelector}
+                            disabled={leadOptionsPending || formDisabled || !projectIsSelected}
+                            hint={authorHint}
+
+                            searchOptions={searchedOrganizations}
+                            searchOptionsPending={pendingSearchedOrganizations}
+                            onOptionsChange={this.setOrganizations}
+                            onSearchValueChange={this.handleOrganizationSearchValueChange}
+                        />
+                    </ApplyAll>
+
+                    <ApplyAll
+                        className={styles.confidentiality}
+                        disabled={isApplyAllDisabled}
+                        identifierName="confidentiality"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    >
+                        <SelectInput
+                            faramElementName="confidentiality"
+                            keySelector={keySelector}
+                            label={_ts('addLeads', 'confidentialityLabel')}
+                            labelSelector={labelSelector}
+                            options={leadOptions.confidentiality}
+                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                        />
+                    </ApplyAll>
+
+                    <ApplyAll
+                        className={styles.user}
+                        disabled={isApplyAllDisabled}
+                        identifierName="assignee"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    >
+                        <SelectInput
+                            faramElementName="assignee"
+                            keySelector={idSelector}
+                            label={_ts('addLeads', 'assigneeLabel')}
+                            labelSelector={displayNameSelector}
+                            options={leadOptions.members}
+                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                        />
+                    </ApplyAll>
+
+                    <ApplyAll
+                        className={styles.date}
+                        disabled={isApplyAllDisabled}
+                        identifierName="publishedOn"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    >
+                        <DateInput
+                            faramElementName="publishedOn"
+                            label={_ts('addLeads', 'datePublishedLabel')}
+                            placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
+                        />
+                    </ApplyAll>
+
+                    {
+                        ATTACHMENT_TYPES.indexOf(type) !== -1 && (
+                            <div className={styles.fileTitle}>
+                                { values.attachment &&
+                                    <InternalGallery
+                                        onlyFileName
+                                        galleryId={values.attachment.id}
+                                    />
+                                }
+                            </div>
+                        )
+                    }
+                </Faram>
+                <EmmStats
+                    className={styles.emmStatsContainer}
+                    emmTriggers={emmTriggers}
+                    emmEntities={emmEntities}
+                />
+            </div>
         );
     }
 }

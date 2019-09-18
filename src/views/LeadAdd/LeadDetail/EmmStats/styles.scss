@@ -1,0 +1,24 @@
+.body {
+    .content {
+        display: flex;
+        flex-direction: column;
+
+        .header {
+            flex-shrink: 0;
+            padding-bottom: var(--spacing-small);
+
+            .heading {
+                text-transform: capitalize;
+            }
+        }
+
+        .list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        &:not(:last-child) {
+            padding-bottom: var(--spacing-large);
+        }
+    }
+}
