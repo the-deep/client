@@ -263,7 +263,7 @@ const requests = {
     },
 };
 
-class LeadForm extends React.PureComponent {
+class LeadDetail extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
@@ -862,6 +862,6 @@ class LeadForm extends React.PureComponent {
 
 export default RequestCoordinator(
     RequestClient(requests)(
-        LeadForm,
+        LeadDetail,
     ),
 );
