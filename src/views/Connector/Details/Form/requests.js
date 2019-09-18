@@ -34,6 +34,15 @@ const requests = {
             },
         },
         method: requestMethods.GET,
+        onSuccess: ({
+            response: { hasEmm },
+            params: { setFaramError },
+            props: { connectorSource },
+        }) => {
+            if (connectorSource.key === 'emm' && !hasEmm) {
+                setFaramError();
+            }
+        },
         onFailure: ({
             response,
             props: {

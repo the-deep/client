@@ -109,10 +109,18 @@ export default class Table extends React.Component {
             {
                 key: 'source',
                 order: 4,
+                modifier: ({
+                    sourceDetail,
+                    sourceRaw,
+                }) => (sourceDetail ? sourceDetail.title : sourceRaw),
             },
             {
                 key: 'author',
                 order: 5,
+                modifier: ({
+                    authorDetail,
+                    authorRaw,
+                }) => (authorDetail ? authorDetail.title : authorRaw),
             },
             {
                 key: 'published_on',

@@ -1,6 +1,7 @@
 .feed-url-container {
     display: flex;
     align-items: center;
+    padding-bottom: var(--spacing-extra-small);
 
     .feed-url {
         flex-grow: 1;
