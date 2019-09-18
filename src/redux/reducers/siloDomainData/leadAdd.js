@@ -12,6 +12,7 @@ import {
 } from '@togglecorp/faram';
 
 import {
+    leadIdSelector,
     leadKeySelector,
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
@@ -230,7 +231,32 @@ const prevLead = (state) => {
 };
 
 const appendLeads = (state, action) => {
+    const {
+        leadAddPage: {
+            leads: oldLeads = emptyArray,
+        } = {},
+    } = state;
     const { leads } = action;
+
+    const serverIdMapping = listToMap(
+        oldLeads.filter(leadIdSelector),
+        leadIdSelector,
+        () => true,
+    );
+
+    // NOTE: Do not add new lead if there is already a lead with same serverId
+    const filteredLeads = leads.filter(
+        (lead) => {
+            const leadId = leadIdSelector(lead);
+            return !serverIdMapping[leadId];
+        },
+    );
+
+    if (filteredLeads.length <= 0) {
+        // TODO: we should set active lead anyway
+        return state;
+    }
+
     const newState = produce(state, (safeState) => {
         if (!safeState.leadAddPage) {
             // eslint-disable-next-line no-param-reassign
@@ -240,9 +266,13 @@ const appendLeads = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage.leads = [];
         }
-        safeState.leadAddPage.leads.unshift(...leads);
+
+        safeState.leadAddPage.leads.unshift(...filteredLeads);
+
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.activeLeadKey = leadKeySelector(leads[leads.length - 1]);
+        safeState.leadAddPage.activeLeadKey = leadKeySelector(
+            filteredLeads[filteredLeads.length - 1],
+        );
     });
     return newState;
 };
