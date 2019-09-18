@@ -78,7 +78,7 @@ class LeadPreview extends React.PureComponent {
             onTabularBookSet,
         } = this.props;
         const leadKey = leadKeySelector(lead);
-        onTabularBookSet(leadKey, undefined);
+        onTabularBookSet({ leadKey, tabularBook: undefined });
         this.handleTabularModalClose();
     }
 
@@ -88,7 +88,7 @@ class LeadPreview extends React.PureComponent {
             onTabularBookSet,
         } = this.props;
         const leadKey = leadKeySelector(lead);
-        onTabularBookSet(leadKey, tabularBook);
+        onTabularBookSet({ leadKey, tabularBook });
     }
 
     render() {

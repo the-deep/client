@@ -20,9 +20,6 @@ const commonFields = {
     tabularBook: [],
 
     leadGroup: [],
-
-    emmEntities: [],
-    emmTriggers: [],
 };
 
 const schema = {
@@ -44,6 +41,8 @@ const schema = {
             ...commonFields,
             url: [requiredCondition, urlCondition],
             website: [requiredCondition],
+            emmEntities: [],
+            emmTriggers: [],
         },
         [LEAD_TYPE.text]: {
             ...commonFields,

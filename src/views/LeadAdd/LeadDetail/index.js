@@ -107,6 +107,13 @@ const titleSelector = item => item.title;
 
 const displayNameSelector = item => item.displayName;
 
+const organizationTitleSelector = (org) => {
+    if (org.mergedAs) {
+        return org.mergedAs.title;
+    }
+    return org.title;
+};
+
 function fillExtraInfo(values, leadOptions, activeUserId) {
     const newValues = produce(values, (safeValues) => {
         if (!safeValues.assignee) {
@@ -192,7 +199,7 @@ function mergeLists(foo, bar) {
 
 const requests = {
     webInfoRequest: {
-        url: '/web-info-extract/',
+        url: '/v2/web-info-extract/',
         body: ({ params: { url } }) => ({ url }),
         method: requestMethods.POST,
         onSuccess: ({ params, response }) => {
@@ -357,9 +364,17 @@ class LeadForm extends React.PureComponent {
             !faramValues.project
             || (oldFaramValues.project && oldFaramValues.project !== faramValues.project)
         ) {
-            onChange(key, { ...faramValues, leadGroup: undefined }, faramErrors);
+            onChange({
+                leadKey: key,
+                faramValues: { ...faramValues, leadGroup: undefined },
+                faramErrors,
+            });
         } else {
-            onChange(key, faramValues, faramErrors);
+            onChange({
+                leadKey: key,
+                faramValues,
+                faramErrors,
+            });
         }
     }
 
@@ -382,7 +397,11 @@ class LeadForm extends React.PureComponent {
                 schema,
             );
 
-            onChange(key, newValues, newErrors);
+            onChange({
+                leadKey: key,
+                faramValues: newValues,
+                faramErrors: newErrors,
+            });
         }
     }
 
@@ -523,9 +542,9 @@ class LeadForm extends React.PureComponent {
             webInfoRequest: {
                 pending: webInfoRequestPending,
                 response: {
-                    sourceRaw,
+                    sourceRaw: suggestedSourceTitle,
                     source,
-                    authorRaw,
+                    authorRaw: suggestedAuthorTitle,
                     author,
                 } = {},
             } = {},
@@ -552,6 +571,9 @@ class LeadForm extends React.PureComponent {
         const {
             project: projectId,
             url,
+
+            sourceRaw: oldSourceTitle,
+            authorRaw: oldAuthorTitle,
         } = values;
 
         const pending = (
@@ -571,6 +593,20 @@ class LeadForm extends React.PureComponent {
         const projectIsSelected = isTruthy(projectId);
 
         const isApplyAllDisabled = formDisabled || bulkActionDisabled;
+
+        let sourceHint;
+        if (oldSourceTitle) {
+            sourceHint = _ts('addLeads', 'previousOrganization', { organization: oldSourceTitle });
+        } else if (!source && suggestedSourceTitle) {
+            sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: oldSourceTitle });
+        }
+
+        let authorHint;
+        if (oldAuthorTitle) {
+            authorHint = _ts('addLeads', 'previousOrganization', { organization: oldAuthorTitle });
+        } else if (!author && suggestedAuthorTitle) {
+            authorHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedAuthorTitle });
+        }
 
         return (
             <Faram
@@ -701,9 +737,9 @@ class LeadForm extends React.PureComponent {
                         label={_ts('addLeads', 'publisherLabel')}
                         options={organizations}
                         keySelector={idSelector}
-                        labelSelector={titleSelector}
+                        labelSelector={organizationTitleSelector}
                         disabled={leadOptionsPending || formDisabled || !projectIsSelected}
-                        hint={!source && sourceRaw ? `Suggestion: ${sourceRaw}` : undefined}
+                        hint={sourceHint}
 
                         searchOptions={searchedOrganizations}
                         searchOptionsPending={pendingSearchedOrganizations}
@@ -748,9 +784,9 @@ class LeadForm extends React.PureComponent {
 
                         options={organizations}
                         keySelector={idSelector}
-                        labelSelector={titleSelector}
+                        labelSelector={organizationTitleSelector}
                         disabled={leadOptionsPending || formDisabled || !projectIsSelected}
-                        hint={!author && authorRaw ? `Suggestion: ${authorRaw}` : undefined}
+                        hint={authorHint}
 
                         searchOptions={searchedOrganizations}
                         searchOptionsPending={pendingSearchedOrganizations}

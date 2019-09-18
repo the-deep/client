@@ -1,3 +1,9 @@
+import {
+    caseInsensitiveSubmatch,
+    isNotDefined,
+    randomString,
+} from '@togglecorp/fujs';
+
 export const leadKeySelector = lead => lead.id;
 export const leadIdSelector = lead => lead.serverId;
 export const leadFaramValuesSelector = lead => lead.faramValues;
@@ -104,89 +110,6 @@ export const supportedDropboxExtension = [
 
 export const supportedFileTypes = '.pdf, .ppt, .pptx, .csv, .ods, .xls, .xlsx, .doc, .docx, .odt, .rtf, image/*';
 
-export const fakeLeads = [
-    {
-        id: 'lead-v25847n4',
-        faramValues: {
-            title: '5W.xlsx',
-            project: 1,
-            sourceType: 'disk',
-            confidentiality: 'unprotected',
-            assignee: 2,
-            publishedOn: '2019-09-11',
-            attachment: {
-                id: 898,
-            },
-            // author: 'My Author',
-            // source: 'His Author',
-        },
-        faramErrors: {},
-        faramInfo: {
-            error: false,
-            pristine: false,
-            serverError: false,
-        },
-    },
-    {
-        id: 'lead-dssyx1uz',
-        faramValues: {
-            title: 'Lead 8:01:23 PM',
-            project: 1,
-            sourceType: 'text',
-            publishedOn: '2019-09-11',
-            text: 'This is a test!',
-        },
-        faramErrors: {},
-        faramInfo: {
-            error: false,
-            pristine: false,
-            serverError: false,
-        },
-    },
-    {
-        id: 'lead-dssyx1uh',
-        faramValues: {
-            title: 'Lead 8:01:24 PM',
-            project: 1,
-            sourceType: 'text',
-            confidentiality: 'protected',
-            assignee: 2,
-            publishedOn: '2019-09-11',
-            text: 'This is a test!',
-            // source: 'Test',
-            // author: 'Test',
-        },
-        faramErrors: {},
-        faramInfo: {
-            error: false,
-            pristine: false,
-            serverError: false,
-        },
-    },
-    {
-        id: 'lead-1jkvobim',
-        serverId: 85,
-        faramValues: {
-            title: 'set chrome eslint - Google Search',
-            sourceType: 'website',
-            project: 1,
-            confidentiality: 'unprotected',
-            assignee: 2,
-            publishedOn: '2019-09-06',
-            website: 'www.google.com',
-            url: 'https://www.google.com/search?hl=en&ei=0-xxXcjvAszNvgSZ04CACA&q=set+chrome+eslint&oq=set+chrome+eslint&gs_l=psy-ab.3..33i160.44296.47906..48377...0.2..1.317.2345.0j10j1j1......0....1..gws-wiz.......0i71j0i67j0j0i22i30.RzsmYxnD610&ved=0ahUKEwiIpZ3fubvkAhXMpo8KHZkpAIAQ4dUDCAs&uact=5',
-            text: '',
-        },
-        faramErrors: {},
-        faramInfo: {
-            error: false,
-            pristine: true,
-            serverError: false,
-        },
-    },
-];
-
-
 export const isLeadFormLoading = leadState => (
     leadState === LEAD_STATUS.requesting
 );
@@ -248,4 +171,74 @@ export function getRemoveEnabledForLeads(leads, leadStates) {
         return false;
     }
     return leads.filter(lead => !isLeadRemoveDisabled(leadStates[leadKeySelector(lead)]));
+}
+
+function findLeadIndex(leads, activeLeadKey) {
+    if (leads.length <= 0 || isNotDefined(activeLeadKey)) {
+        return -1;
+    }
+    const index = leads.findIndex(lead => activeLeadKey === leadKeySelector(lead));
+    return index;
+}
+
+export function isLeadPrevDisabled(leads, activeLeadKey) {
+    const index = findLeadIndex(leads, activeLeadKey);
+    return index === -1 || index === 0;
+}
+
+export function isLeadNextDisabled(leads, activeLeadKey) {
+    const index = findLeadIndex(leads, activeLeadKey);
+    return index === -1 || index === (leads.length - 1);
+}
+
+export function getNewLeadKey(prefix = 'lead') {
+    const uid = randomString();
+    return `${prefix}-${uid}`;
+}
+
+function statusMatches(leadState, filterStatus) {
+    switch (filterStatus) {
+        case LEAD_FILTER_STATUS.invalid:
+            return (
+                leadState === LEAD_STATUS.invalid ||
+                leadState === LEAD_STATUS.warning
+            );
+        case LEAD_FILTER_STATUS.saved:
+            return leadState === LEAD_STATUS.complete;
+        case LEAD_FILTER_STATUS.unsaved:
+            return (
+                leadState === LEAD_STATUS.nonPristine ||
+                leadState === LEAD_STATUS.uploading ||
+                leadState === LEAD_STATUS.requesting
+            );
+        default:
+            return false;
+    }
+}
+
+export function leadFilterMethod(lead, filters, leadState) {
+    // NOTE: removed filter by publisher
+    const {
+        search,
+        type,
+        // source,
+        status,
+    } = filters;
+
+    const leadType = leadSourceTypeSelector(lead);
+    const {
+        title: leadTitle = '',
+        // source: leadSource = '',
+    } = leadFaramValuesSelector(lead);
+
+    if (search && !caseInsensitiveSubmatch(leadTitle, search)) {
+        return false;
+    // } else if (source && !caseInsensitiveSubmatch(leadSource, source)) {
+    //     return false;
+    } else if (type && type.length > 0 && type.indexOf(leadType) === -1) {
+        return false;
+    } else if (status && status.length > 0 && !statusMatches(leadState, status)) {
+        return false;
+    }
+    return true;
 }

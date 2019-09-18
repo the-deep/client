@@ -105,6 +105,8 @@ export default class LeadButtons extends React.PureComponent {
             faramValues: {
                 title: `Lead ${(new Date()).toLocaleTimeString()}`,
                 sourceType: LEAD_TYPE.website,
+                emmTriggers: [],
+                emmEntities: [],
             },
         };
 

@@ -17,8 +17,7 @@ import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
 import notify from '#notify';
 
-
-function getVersionedUrl(endpoint, url) {
+export function getVersionedUrl(endpoint, url) {
     const oldVersionString = '/v1';
     const versionString = '/v2';
     if (!url.startsWith(versionString)) {

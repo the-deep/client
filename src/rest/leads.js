@@ -7,12 +7,16 @@ import {
     commonHeaderForPost,
     p,
 } from '#config/rest';
+import {
+    getVersionedUrl,
+} from '#request';
 
 // do no use this, use urlForLead instead
-export const urlForLead = `${wsEndpoint}/leads/`;
+export const urlForLead = getVersionedUrl(wsEndpoint, '/v2/leads/');
+export const createUrlForLead = leadId => getVersionedUrl(wsEndpoint, `/v2/leads/${leadId}/`);
+export const createUrlForLeadDelete = leadId => getVersionedUrl(wsEndpoint, `/v2/leads/${leadId}/`);
+
 export const urlForWebsiteFetch = `${wsEndpoint}/lead-website-fetch/`;
-export const createUrlForLead = leadId => `${urlForLead}${leadId}/`;
-export const createUrlForLeadDelete = leadId => `${urlForLead}${leadId}/`;
 
 // GET [For cache response]
 export const createUrlForWebsiteFetch = url => `${wsEndpoint}/lead-website-fetch/?${p({ url })}`;
@@ -42,11 +46,11 @@ export const createParamsForLeadDelete = () => ({
 });
 
 export const createUrlForLeadsOfProject = params => (
-    `${wsEndpoint}/leads/?${p(params)}`
+    getVersionedUrl(wsEndpoint, `/v2/leads/?${p(params)}`)
 );
 
 export const createUrlForLeadEdit = leadId => (
-    `${wsEndpoint}/leads/${leadId}/`
+    getVersionedUrl(wsEndpoint, `/v2/leads/${leadId}/`)
 );
 
 export const createParamsForWebsiteFetch = url => ({
@@ -63,7 +67,8 @@ export const createUrlForLeadExtractionTrigger = leadId => (
     `${wsEndpoint}/lead-extraction-trigger/${leadId}/`
 );
 
-export const urlForWebInfo = `${wsEndpoint}/web-info-extract/`;
+export const urlForWebInfo = getVersionedUrl(wsEndpoint, '/v2/web-info-extract/');
+
 export const createParamsForWebInfo = ({ url }) => ({
     method: POST,
     headers: commonHeaderForPost,
