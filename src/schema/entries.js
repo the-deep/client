@@ -121,9 +121,9 @@ const entrySchema = [];
                                 },
                                 fields: {
                                     createdAt: { type: 'string', required: true }, // date
-                                    createdBy: { type: 'uint' },
+                                    // createdBy: { type: 'uint' },
                                     id: { type: 'uint', required: true },
-                                    source: { type: 'string' },
+                                    // source: { type: 'string' },
                                     title: { type: 'string' },
                                 },
                             },
