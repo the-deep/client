@@ -3,12 +3,15 @@ import React from 'react';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import {
+    isNotDefined,
     caseInsensitiveSubmatch,
     compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import Modal from '#rscv/Modal';
+import Message from '#rscv/Message';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import SearchInput from '#rsci/SearchInput';
@@ -47,6 +50,7 @@ const propTypes = {
     setConnectorSources: PropTypes.func.isRequired,
     connectorsList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     connectorSources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    connectorSourcesGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -251,28 +255,48 @@ export default class Connector extends React.PureComponent {
         const {
             connectorId,
             connectorsList,
+            connectorSourcesGet: {
+                pending: connectorSourcesPending,
+            },
+            connectorSources,
         } = this.props;
 
         const { searchInputValue } = this.state;
 
         const displayConnectorsList = this.getListAfterSearch(connectorsList, searchInputValue);
 
+        if (connectorSourcesPending) {
+            return (
+                <LoadingAnimation className={styles.noConnector} />
+            );
+        }
+
         if (displayConnectorsList.length === 0) {
             return (
-                <p className={styles.noConnector}>
+                <Message className={styles.noConnector}>
                     {_ts('connector', 'noConnectorsLabel')}
-                </p>
+                </Message>
             );
         }
 
         if (!connectorId) {
             return (
-                // TODO: Use message component
-                <p className={styles.noConnector}>
+                <Message className={styles.noConnector}>
                     {_ts('connector', 'noConnectorSelectedTitle')}
-                </p>
+                </Message>
             );
         }
+
+        const selectedConnector = connectorsList.find(c => c.id === connectorId);
+
+        if (isNotDefined(connectorSources[selectedConnector.source])) {
+            return (
+                <Message className={styles.noConnector}>
+                    {_ts('connector', 'errorFetchingConnectorSources')}
+                </Message>
+            );
+        }
+
         return (
             <ConnectorDetails
                 // clears local state when connectorId is changed
