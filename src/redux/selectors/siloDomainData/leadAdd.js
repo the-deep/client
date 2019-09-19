@@ -25,7 +25,7 @@ export const leadAddPageLeadPreviewHiddenSelector = createSelector(
 
 export const leadAddPageActiveLeadKeySelector = createSelector(
     leadAddPageSelector,
-    leadAddPage => leadAddPage.activeLeadKey || emptyArray,
+    leadAddPage => leadAddPage.activeLeadKey || undefined,
 );
 
 export const leadAddPageActiveLeadSelector = createSelector(
