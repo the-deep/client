@@ -98,10 +98,14 @@ const leadSchema = [];
         },
         fields: {
             status: { type: 'array.keyValuePairSS' },
-            project: { type: 'array.keyValuePair' },
-            assignee: { type: 'array.keyValuePair' },
-            leadGroup: { type: 'array.keyValuePair' },
+            project: { type: 'array.keyValuePairSS' },
+            assignee: { type: 'array.keyValuePairSS' },
+            leadGroup: { type: 'array.keyValuePairSS' },
             confidentiality: { type: 'array.keyValuePairSS' },
+            hasEmmLeads: { type: 'boolean' },
+            emmEntities: { type: 'array.emmEntityFilterOption' },
+            emmRiskFactors: { type: 'array.emmTriggerFilterOption' },
+            emmKeywords: { type: 'array.emmTriggerFilterOption' },
         },
     };
     leadSchema.push({ name, schema });

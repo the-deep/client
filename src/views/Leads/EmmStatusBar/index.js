@@ -124,6 +124,7 @@ export default class EmmStatsBar extends React.PureComponent {
 
         const entitiesCount = emmEntities.length;
         const triggersCount = emmTriggers.length;
+        const disableButton = entitiesCount === 0 && triggersCount === 0;
 
         return (
             <div className={_cs(styles.emmStatusBar, className)} >
@@ -131,6 +132,7 @@ export default class EmmStatsBar extends React.PureComponent {
                 <ModalButton
                     className={styles.button}
                     transparent
+                    disabled={disableButton}
                     modal={
                         <EmmStatsModal
                             emmTriggers={emmTriggers}

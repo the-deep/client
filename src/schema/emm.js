@@ -1,6 +1,38 @@
 const emmSchema = [];
 
 {
+    const name = 'emmEntityFilterOption';
+    const schema = {
+        doc: {
+            name: 'EMM Entity Filter Option',
+            description: 'EMM entity fitler option',
+        },
+        fields: {
+            key: { type: 'uint' },
+            label: { type: 'string' },
+            totalCount: { type: 'uint' },
+        },
+    };
+    emmSchema.push({ name, schema });
+}
+
+{
+    const name = 'emmTriggerFilterOption';
+    const schema = {
+        doc: {
+            name: 'EMM Trigger Filter Option',
+            description: 'EMM trigger fitler option',
+        },
+        fields: {
+            key: { type: 'string' },
+            label: { type: 'string' },
+            totalCount: { type: 'uint' },
+        },
+    };
+    emmSchema.push({ name, schema });
+}
+
+{
     const name = 'emmEntity';
     const schema = {
         doc: {

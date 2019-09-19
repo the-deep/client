@@ -261,17 +261,13 @@ export default class Connector extends React.PureComponent {
             connectorSources,
         } = this.props;
 
-        const { searchInputValue } = this.state;
-
-        const displayConnectorsList = this.getListAfterSearch(connectorsList, searchInputValue);
-
         if (connectorSourcesPending) {
             return (
                 <LoadingAnimation className={styles.noConnector} />
             );
         }
 
-        if (displayConnectorsList.length === 0) {
+        if (connectorsList.length === 0) {
             return (
                 <Message className={styles.noConnector}>
                     {_ts('connector', 'noConnectorsLabel')}
@@ -288,6 +284,14 @@ export default class Connector extends React.PureComponent {
         }
 
         const selectedConnector = connectorsList.find(c => c.id === connectorId);
+
+        if (isNotDefined(selectedConnector)) {
+            return (
+                <Message className={styles.noConnector}>
+                    {_ts('connector', 'errorFetchingSelectedConnector')}
+                </Message>
+            );
+        }
 
         if (isNotDefined(connectorSources[selectedConnector.source])) {
             return (
