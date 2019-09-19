@@ -64,6 +64,8 @@ const requests = {
                 onEmmStatsGet,
             },
         }) => {
+            // NOTE: These transformations are performed as this is only for summary
+            // and in general cases triggers have count not totalCount
             const emmTriggersWithCount = emmTriggers.map(t => ({
                 ...t,
                 count: t.totalCount,
