@@ -85,8 +85,10 @@ export default class Table extends React.Component {
                         || (isDefined(emmTriggers) && emmTriggers.length > 0);
 
                     return (
-                        <React.Fragment>
-                            {title}
+                        <div className={styles.titleContainer}>
+                            <div className={styles.title}>
+                                {title}
+                            </div>
                             {showEmm &&
                                 <ModalButton
                                     className={styles.emmButton}
@@ -100,7 +102,7 @@ export default class Table extends React.Component {
                                     {_ts('leads', 'emmButtonLabel')}
                                 </ModalButton>
                             }
-                        </React.Fragment>
+                        </div>
                     );
                 },
             },

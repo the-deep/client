@@ -1778,7 +1778,9 @@
             "datePublishedLabel": 3,
             "titleLabel": 13,
             "applyFilterLabel": 427,
-            "noFiltersMessage": 1139
+            "noFiltersMessage": 1139,
+            "authorTitle": -31511044,
+            "sourceTitle": 5
         },
         "addLeads.tabular": {
             "title": -2259039,

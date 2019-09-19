@@ -64,7 +64,17 @@ const requests = {
                 onEmmStatsGet,
             },
         }) => {
-            onEmmStatsGet(emmEntities, emmTriggers);
+            const emmTriggersWithCount = emmTriggers.map(t => ({
+                ...t,
+                count: t.totalCount,
+            }));
+
+            const emmEntitiesWithCount = emmEntities.map(e => ({
+                ...e,
+                count: e.totalCount,
+            }));
+
+            onEmmStatsGet(emmEntitiesWithCount, emmTriggersWithCount);
         },
         schemaName: 'emmSummary',
     },

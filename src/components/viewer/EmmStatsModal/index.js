@@ -39,6 +39,7 @@ const emmTriggerRendererParams = (key, data) => ({
 
 const emmEntitiesRendererParams = (key, data) => ({
     name: data.name,
+    count: data.count,
 });
 
 const emmTriggerKeySelector = t => t.emmKeyword;

@@ -20,6 +20,7 @@ import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import { pathNames } from '#constants';
+import { organizationTitleSelector } from '#entities/organization';
 import { alterAndCombineResponseError } from '#rest';
 import {
     RequestClient,
@@ -245,8 +246,10 @@ export default class ConnectorContent extends React.PureComponent {
                         || (isDefined(emmTriggers) && emmTriggers.length > 0);
 
                     return (
-                        <React.Fragment>
-                            {title}
+                        <div className={styles.titleContainer}>
+                            <div className={styles.title}>
+                                {title}
+                            </div>
                             {showEmm &&
                                 <ModalButton
                                     className={styles.emmButton}
@@ -260,14 +263,32 @@ export default class ConnectorContent extends React.PureComponent {
                                     {_ts('leads', 'emmButtonLabel')}
                                 </ModalButton>
                             }
-                        </React.Fragment>
+                        </div>
                     );
                 },
             },
             {
+                key: 'source',
+                label: _ts('addLeads.connectorsSelect', 'sourceTitle'),
+                order: 3,
+                modifier: ({
+                    sourceDetail,
+                    sourceRaw,
+                }) => (sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw),
+            },
+            {
+                key: 'author',
+                label: _ts('addLeads.connectorsSelect', 'authorTitle'),
+                order: 4,
+                modifier: ({
+                    authorDetail,
+                    authorRaw,
+                }) => (authorDetail ? organizationTitleSelector(authorDetail) : authorRaw),
+            },
+            {
                 key: 'publishedOn',
                 label: _ts('addLeads.connectorsSelect', 'datePublishedLabel'),
-                order: 3,
+                order: 5,
                 modifier: row => (
                     <FormattedDate
                         className={styles.publishedDate}
