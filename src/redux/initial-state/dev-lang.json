@@ -1015,7 +1015,9 @@
         "-66386006": "Suggested: {organization}",
         "-38487272": "Looks like none of the items in this EMM feed have neither EMM triggers nor EMM entities. You may continue to use the feed, however special EMM features will not be available",
         "-84151378": "Looks like none of the items in this EMM feed have any EMM entities.",
-        "-63611552": "Looks like none of the items in this EMM feed have any EMM triggers."
+        "-63611552": "Looks like none of the items in this EMM feed have any EMM triggers.",
+        "-74207738": "There was a problem fetching options for this connector.",
+        "-39191362": "Selected connector was not found."
     },
     "links": {
         "browserExtension": {
@@ -2107,7 +2109,9 @@
             "emmTriggerTitle": -35842630,
             "noEmmWarning": -38487272,
             "noEntitiesWarning": -84151378,
-            "noTriggersWarning": -63611552
+            "noTriggersWarning": -63611552,
+            "errorFetchingConnectorSources": -74207738,
+            "errorFetchingSelectedConnector": -39191362
         },
         "userGroup": {
             "tableHeaderName": 103,

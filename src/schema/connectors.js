@@ -140,8 +140,6 @@ const connectorsSchema = [];
             existing: { type: 'boolean' },
             emmEntities: { type: 'array.emmEntity' },
             emmTriggers: { type: 'array.emmTrigger' },
-            hasEmmEntities: { type: 'boolean' },
-            hasEmmTriggers: { type: 'boolean' },
         },
     };
     connectorsSchema.push({ name, schema });
@@ -156,6 +154,8 @@ const connectorsSchema = [];
         },
         fields: {
             count: { type: 'uint', required: true },
+            hasEmmEntities: { type: 'boolean' },
+            hasEmmTriggers: { type: 'boolean' },
             results: { type: 'array.connectorLead', required: true },
             countPerPage: { type: 'uint' },
         },

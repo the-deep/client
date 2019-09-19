@@ -8,32 +8,12 @@ import memoize from 'memoize-one';
 
 import DisplayPicture from '#components/viewer/DisplayPicture';
 import FormattedDate from '#rscv/FormattedDate';
-import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';
 import _ts from '#ts';
 import EditHistoryModal from './EditHistoryModal';
 
 import styles from './styles.scss';
-
-const ButtonWrapper = (props) => {
-    const {
-        closeModal, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-        ...otherProps
-    } = props;
-
-    return (
-        <Button {...otherProps} />
-    );
-};
-
-ButtonWrapper.propTypes = {
-    closeModal: PropTypes.func,
-};
-
-ButtonWrapper.defaultProps = {
-    closeModal: undefined,
-};
 
 const propTypes = {
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -135,32 +115,32 @@ export default class UserDetailActionBar extends React.PureComponent {
                             closeOnClick
                         >
                             {isParent && (
-                                <ButtonWrapper
+                                <Button
                                     className={styles.button}
                                     onClick={onResolveClick}
                                 >
                                     {_ts('entryComments', 'resolveLabel')}
-                                </ButtonWrapper>
+                                </Button>
                             )}
-                            <ButtonWrapper
+                            <Button
                                 className={styles.button}
                                 onClick={onEditClick}
                             >
                                 {_ts('entryComments', 'editLabel')}
-                            </ButtonWrapper>
-                            <ButtonWrapper
+                            </Button>
+                            <Button
                                 className={styles.button}
                                 onClick={onDeleteClick}
                             >
                                 {_ts('entryComments', 'deleteLabel')}
-                            </ButtonWrapper>
+                            </Button>
                             {isModified && (
-                                <ButtonWrapper
+                                <Button
                                     className={styles.button}
                                     onClick={this.handleViewHistoryClick}
                                 >
                                     {_ts('entryComments', 'viewEditHistoryLabel')}
-                                </ButtonWrapper>
+                                </Button>
                             )}
                         </DropdownMenu>
                     </div>
