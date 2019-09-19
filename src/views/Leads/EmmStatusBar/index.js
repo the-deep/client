@@ -64,7 +64,19 @@ const requests = {
                 onEmmStatsGet,
             },
         }) => {
-            onEmmStatsGet(emmEntities, emmTriggers);
+            // NOTE: These transformations are performed as this is only for summary
+            // and in general cases triggers have count not totalCount
+            const emmTriggersWithCount = emmTriggers.map(t => ({
+                ...t,
+                count: t.totalCount,
+            }));
+
+            const emmEntitiesWithCount = emmEntities.map(e => ({
+                ...e,
+                count: e.totalCount,
+            }));
+
+            onEmmStatsGet(emmEntitiesWithCount, emmTriggersWithCount);
         },
         schemaName: 'emmSummary',
     },
