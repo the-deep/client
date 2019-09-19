@@ -6,9 +6,11 @@ import {
     p,
     commonHeaderForPost,
 } from '#config/rest';
+import { getVersionedUrl } from '#request';
 
 export const urlForEntry = `${wsEndpoint}/entries/`;
 export const urlForEntryCreate = `${wsEndpoint}/entries/`;
+
 export const createUrlForFilteredEntries = params => (
     `${wsEndpoint}/entries/filter/?${p(params)}`
 );
@@ -51,5 +53,5 @@ export const createParamsForDeleteEntry = () => ({
 });
 
 export const createUrlEditEntryGet = leadId => (
-    `${wsEndpoint}/edit-entries-data/${leadId}/`
+    getVersionedUrl(wsEndpoint, `/v2/edit-entries-data/${leadId}/`)
 );

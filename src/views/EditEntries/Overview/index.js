@@ -190,15 +190,12 @@ export default class Overview extends React.PureComponent {
 
             ...otherProps
         } = this.props;
-        const {
-            serverData: {
-                unresolvedCommentCount = 0,
-            } = {},
-        } = entry;
+
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
 
+        const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
         const field = tabularFields[fieldId];
 
