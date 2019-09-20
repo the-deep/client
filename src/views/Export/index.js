@@ -33,6 +33,7 @@ import {
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
+    activeProjectRoleSelector,
 } from '#redux';
 import { RequestCoordinator } from '#request';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
@@ -53,6 +54,7 @@ const mapStateToProps = state => ({
     entriesFilters: entriesViewFilterSelector(state),
     filters: leadPageFilterSelector(state),
     geoOptions: geoOptionsForProjectSelector(state),
+    projectRole: activeProjectRoleSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -61,6 +63,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setAnalysisFramework: PropTypes.func.isRequired,
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
@@ -71,6 +74,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    projectRole: {},
     geoOptions: {},
 };
 
@@ -331,7 +335,20 @@ export default class Export extends React.PureComponent {
     }
 
     createRequestForProjectLeads = ({ activeProject, filters }) => {
+        const {
+            projectRole: {
+                exportPermissions = {},
+            },
+        } = this.props;
+
+        const onlyUnprotected = exportPermissions.create_only_unprotected;
+
         const sanitizedFilters = getFiltersForRequest(filters);
+
+        if (onlyUnprotected) {
+            sanitizedFilters.confidentiality = ['unprotected'];
+        }
+
         const urlForProjectLeads = createUrlForLeadsOfProject({
             project: activeProject,
             fields: ['id', 'title', 'created_at'],
@@ -455,8 +472,12 @@ export default class Export extends React.PureComponent {
             entriesFilters,
             projectId,
             geoOptions,
+            projectRole: {
+                exportPermissions = {},
+            },
         } = this.props;
         const { filters } = analysisFramework || {};
+        const onlyUnprotected = exportPermissions.create_only_unprotected;
 
         return (
             <Page
@@ -487,6 +508,7 @@ export default class Export extends React.PureComponent {
                                     </h4>
                                     <FilterLeadsForm
                                         className={styles.leadsFilterForm}
+                                        onlyUnprotected={onlyUnprotected}
                                     />
                                 </div>
                                 <div className={styles.leadsTableContainer}>
