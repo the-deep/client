@@ -34,6 +34,7 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
+    title: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     addOrganizationRequest: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -50,6 +51,8 @@ const propTypes = {
 };
 
 const defaultProps = {
+    // FIXME: Use strings
+    title: 'Add Organization',
     organizationTypeList: [],
     loadOrganizationList: false,
 };
@@ -211,6 +214,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                 } = {},
             } = {},
             loadOrganizationList,
+            title,
         } = this.props;
 
         const {
@@ -246,17 +250,20 @@ export default class AddOrganizationModal extends React.PureComponent {
                     error={faramErrors}
                     disabled={pendingAddOrganizationRequest}
                 >
-                    <ModalHeader title="Add Organization" />
+                    <ModalHeader title={title} />
                     <ModalBody className={styles.modalBody}>
                         {pendingAddOrganizationRequest &&
                             <LoadingAnimation />
                         }
                         <TextInput
                             faramElementName="title"
+                            // FIXME: Use strings
                             label="Organization Name"
+                            // FIXME: Use strings
                             placeholder="eg. People In Need"
                         />
                         <TextInput
+                            // FIXME: Use strings
                             faramElementName="shortName"
                             label="Abbreviation/Acronym"
                             placeholder="eg. UN OCHA"
@@ -270,11 +277,13 @@ export default class AddOrganizationModal extends React.PureComponent {
                         />
                         */}
                         <TextInput
+                            // FIXME: Use strings
                             faramElementName="url"
                             label="URL"
                             placeholder="https://www.unicef.org"
                         />
                         <SelectInput
+                            // FIXME: Use strings
                             faramElementName="organizationType"
                             label="Organization Type"
                             options={organizationTypeList}

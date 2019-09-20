@@ -30,7 +30,12 @@ export const needToFetchOptions = (sourceKey, connectorDetails) => {
     return feedUrl && isValidUrl(feedUrl);
 };
 
-export const getUsersTableHeader = (handleToggleUserRoleClick, handleDeleteUserClick) => ([
+export const getUsersTableHeader = (
+    handleToggleUserRoleClick,
+    handleDeleteUserClick,
+    userId,
+    getDisabled,
+) => ([
     {
         key: 'displayName',
         label: _ts('connector', 'tableHeaderName'),
@@ -68,6 +73,9 @@ export const getUsersTableHeader = (handleToggleUserRoleClick, handleDeleteUserC
         order: 5,
         modifier: (row) => {
             const isAdmin = row.role === 'admin';
+            const isSelf = row.user === userId;
+            const disabled = getDisabled();
+
             return (
                 <React.Fragment>
                     <PrimaryButton
@@ -79,6 +87,7 @@ export const getUsersTableHeader = (handleToggleUserRoleClick, handleDeleteUserC
                                 : _ts('connector', 'grantAdminRightsTitle')
                         }
                         onClick={() => handleToggleUserRoleClick(row)}
+                        disabled={isSelf || disabled}
                         iconName={isAdmin ? 'locked' : 'person'}
                         transparent
                     />
@@ -86,6 +95,7 @@ export const getUsersTableHeader = (handleToggleUserRoleClick, handleDeleteUserC
                         smallVerticalPadding
                         key="delete-member"
                         title={_ts('connector', 'deleteMemberLinkTitle')}
+                        disabled={isSelf || disabled}
                         onClick={() => handleDeleteUserClick(row)}
                         iconName="delete"
                         transparent
@@ -96,7 +106,11 @@ export const getUsersTableHeader = (handleToggleUserRoleClick, handleDeleteUserC
     },
 ]);
 
-export const getProjectsTableHeader = (handleToggleProjectRoleClick, handleDeleteProjectClick) => ([
+export const getProjectsTableHeader = (
+    handleToggleProjectRoleClick,
+    handleDeleteProjectClick,
+    getDisabled,
+) => ([
     {
         key: 'title',
         label: _ts('connector', 'tableHeaderTitle'),
@@ -125,6 +139,8 @@ export const getProjectsTableHeader = (handleToggleProjectRoleClick, handleDelet
         modifier: (row) => {
             const isGlobal = row.role === 'global';
             const isProjectAdmin = row.admin === 'admin';
+            const disabled = getDisabled();
+
             let toggleTitle = '';
             let deleteTitle = _ts('connector', 'removeProjectTitle');
             if (isGlobal) {
@@ -145,7 +161,7 @@ export const getProjectsTableHeader = (handleToggleProjectRoleClick, handleDelet
                         title={toggleTitle}
                         onClick={() => handleToggleProjectRoleClick(row)}
                         iconName={isGlobal ? 'globe' : 'locked'}
-                        disabled={!isProjectAdmin}
+                        disabled={!isProjectAdmin || disabled}
                         transparent
                     />
                     <DangerButton
@@ -153,6 +169,7 @@ export const getProjectsTableHeader = (handleToggleProjectRoleClick, handleDelet
                         key="delete-member"
                         title={deleteTitle}
                         onClick={() => handleDeleteProjectClick(row)}
+                        disabled={disabled}
                         iconName="delete"
                         transparent
                     />

@@ -103,6 +103,7 @@ export default class ConnectorAddForm extends React.PureComponent {
                 params: response.params,
                 projects: response.projects,
             },
+            role: response.role,
             faramErrors: {},
             pristine: false,
         };

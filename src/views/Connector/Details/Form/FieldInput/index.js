@@ -17,11 +17,13 @@ const propTypes = {
     connectorSourceKey: PropTypes.string.isRequired,
     xmlFieldOptions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pendingXmlFieldOptions: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     xmlFieldOptions: undefined,
     pendingXmlFieldOptions: false,
+    disabled: false,
 };
 
 export default class ConnectorFormFieldInput extends React.PureComponent {
@@ -34,6 +36,7 @@ export default class ConnectorFormFieldInput extends React.PureComponent {
             connectorSourceKey,
             xmlFieldOptions,
             pendingXmlFieldOptions,
+            disabled,
         } = this.props;
 
         switch (data.fieldType) {
@@ -74,7 +77,7 @@ export default class ConnectorFormFieldInput extends React.PureComponent {
                             faramElementName={data.key}
                             label={data.title}
                             options={xmlFieldOptions}
-                            disabled={pendingXmlFieldOptions}
+                            disabled={pendingXmlFieldOptions || disabled}
                         />
                     );
                 }
