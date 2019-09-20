@@ -55,7 +55,7 @@ export default class TabularSheetPreview extends React.PureComponent {
         fieldId: field.id,
         title: field.title,
         // type,
-        options: field.optinos,
+        options: field.options,
         healthStats: field.cache.healthStats,
         tabularFieldData: field,
         color: (this.props.highlights[field.id] || {}).color,

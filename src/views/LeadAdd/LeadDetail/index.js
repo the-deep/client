@@ -206,6 +206,10 @@ const requests = {
         url: '/lead-options/',
         method: requestMethods.POST,
 
+        options: {
+            delay: 1000,
+        },
+
         body: ({ props: { lead } }) => {
             const inputValues = leadFaramValuesSelector(lead);
             return {
