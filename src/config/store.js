@@ -15,6 +15,19 @@ const migrations = {
     // NOTE: clear out domainData and siloDomainData only
     2: ({ auth, lang }) => ({ auth, lang }),
     3: () => ({}),
+    4: (state) => {
+        // Clearing out siloDomainData.connectorsView
+        if (state && state.siloDomainData && state.siloDomainData.connectorsView) {
+            return {
+                ...state,
+                siloDomainData: {
+                    ...state.siloDomainData,
+                    connectorsView: {},
+                },
+            };
+        }
+        return state;
+    },
 };
 
 const myTransform = createTransform(
@@ -37,7 +50,7 @@ const myTransform = createTransform(
 const storeConfig = {
     blacklist: ['notify', 'route', 'app'],
     key: 'deeper',
-    version: 3,
+    version: 4,
     storage: localforage,
     transforms: [myTransform],
     migrate: createMigrate(migrations, { debug: !isBeta }),

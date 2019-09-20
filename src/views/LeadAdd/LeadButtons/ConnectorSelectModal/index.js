@@ -188,8 +188,6 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         />
                     );
                 },
-                mount: true,
-                lazyMount: true,
                 wrapContainer: true,
             };
             views[c.id] = view;

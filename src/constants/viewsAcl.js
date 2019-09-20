@@ -40,7 +40,9 @@ const notAssessmentViewable = ({ isLoggedIn, hasAssessmentTemplate, assessmentPe
 );
 
 const notExportCreatable = ({ isLoggedIn, hasAnalysisFramework, exportPermissions }) => (
-    !isLoggedIn || !hasAnalysisFramework || !exportPermissions.create
+    !isLoggedIn
+    || !hasAnalysisFramework
+    || !(exportPermissions.create || exportPermissions.create_only_unprotected)
 );
 
 // NOTE: route related to a project should either have

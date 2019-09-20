@@ -11,6 +11,7 @@ import {
 import {
     activeUserSelector,
 } from '#redux';
+import notify from '#notify';
 
 import Confirm from '#rscv/Modal/Confirm';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -75,6 +76,14 @@ const requests = {
         }) => {
             onEditSuccess(response);
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
         schemaName: 'entryComment',
     },
     commentDeleteRequest: {
@@ -89,6 +98,14 @@ const requests = {
         }) => {
             onDelete(commentId, isParent);
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
     },
     commentResolveRequest: {
         url: ({ props: { commentId } }) => `/entry-comments/${commentId}/resolve/`,
@@ -100,6 +117,14 @@ const requests = {
             onEditSuccess(response);
         },
         schemaName: 'entryComment',
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
     },
 };
 

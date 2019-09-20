@@ -221,7 +221,7 @@ const requests = {
                 filters,
             },
         }) => ({
-            order_by: activeSort,
+            ordering: activeSort,
             project: [activeProject],
             ...getFiltersForRequest(filters),
         }),

@@ -8,6 +8,8 @@ import {
 } from '#request';
 import ListView from '#rscv/List/ListView';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+
+import notify from '#notify';
 import _ts from '#ts';
 
 import CommentFaram from '../CommentFaram';
@@ -57,6 +59,14 @@ const requests = {
             params: { onAddSuccess },
         }) => {
             onAddSuccess(response);
+        },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
         },
         schemaName: 'entryComment',
     },

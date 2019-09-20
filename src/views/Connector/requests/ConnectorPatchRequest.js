@@ -28,6 +28,7 @@ export default class ConnectorPatchRequest {
                     users: response.users,
                     projects: response.projects,
                 },
+                role: response.role,
                 faramErrors: {},
                 pristine: false,
             };

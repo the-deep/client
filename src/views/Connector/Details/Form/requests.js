@@ -47,15 +47,16 @@ const requests = {
             }
         },
         onFailure: ({
-            response,
+            error: {
+                faramErrors: faramErrorsFromServer,
+            },
             props: {
                 setErrorUserConnectorDetails,
                 connectorId,
             },
         }) => {
             const faramErrors = {
-                params: response,
-                $internal: response.$internal,
+                params: faramErrorsFromServer,
             };
             setErrorUserConnectorDetails({
                 faramErrors,

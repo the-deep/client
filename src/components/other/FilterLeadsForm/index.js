@@ -56,12 +56,14 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     leadOptionsRequest: PropTypes.object.isRequired,
+    filterOnlyUnprotected: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     filters: {},
     leadFilterOptions: {},
+    filterOnlyUnprotected: false,
 };
 
 const mapStateToProps = state => ({
@@ -101,7 +103,9 @@ const requests = {
                 projectId: activeProject,
                 leadFilterOptions: response,
             });
-            onEmmStatusReceive(response.hasEmmLeads);
+            if (onEmmStatusReceive) {
+                onEmmStatusReceive(response.hasEmmLeads);
+            }
         },
     },
 };
@@ -228,6 +232,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 pending: loadingLeadFilters,
             },
             filters,
+            filterOnlyUnprotected,
         } = this.props;
 
         const {
@@ -237,7 +242,24 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         const isApplyDisabled = pristine;
 
-        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
+        let isFilterEmpty;
+
+        if (filterOnlyUnprotected) {
+            let newFilter = {
+                ...filters,
+                confidentiality: undefined,
+            };
+
+            isFilterEmpty = doesObjectHaveNoData(newFilter, ['']);
+
+            newFilter = {
+                ...filters,
+                confidentiality: ['unprotected'],
+            };
+        } else {
+            isFilterEmpty = doesObjectHaveNoData(filters, ['']);
+        }
+
         const isClearDisabled = isFilterEmpty && pristine;
 
         return (
@@ -284,17 +306,19 @@ export default class FilterLeadsForm extends React.PureComponent {
                     showLabel
                     className={styles.leadsFilter}
                 />
-                <MultiSelectInput
-                    faramElementName="confidentiality"
-                    keySelector={FilterLeadsForm.optionKeySelector}
-                    label={_ts('leads', 'filterConfidentiality')}
-                    labelSelector={FilterLeadsForm.optionLabelSelector}
-                    options={confidentiality}
-                    placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
+                {!filterOnlyUnprotected && (
+                    <MultiSelectInput
+                        faramElementName="confidentiality"
+                        keySelector={FilterLeadsForm.optionKeySelector}
+                        label={_ts('leads', 'filterConfidentiality')}
+                        labelSelector={FilterLeadsForm.optionLabelSelector}
+                        options={confidentiality}
+                        placeholder={_ts('leads', 'placeholderAny')}
+                        showHintAndError={false}
+                        showLabel
+                        className={styles.leadsFilter}
+                    />
+                )}
                 <MultiSelectInput
                     faramElementName="status"
                     keySelector={FilterLeadsForm.optionKeySelector}

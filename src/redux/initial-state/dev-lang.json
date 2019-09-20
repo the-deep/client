@@ -1017,7 +1017,10 @@
         "-84151378": "Looks like none of the items in this EMM feed have any EMM entities.",
         "-63611552": "Looks like none of the items in this EMM feed have any EMM triggers.",
         "-74207738": "There was a problem fetching options for this connector.",
-        "-39191362": "Selected connector was not found."
+        "-39191362": "Selected connector was not found.",
+        "-56022972": "Add Author",
+        "-44615843": "Add Publisher",
+        "-33383753": "Entry Comments"
     },
     "links": {
         "browserExtension": {
@@ -1718,7 +1721,11 @@
             "authorLabel": -31511044,
             "sameAsPublisherButtonTitle": -30790313,
             "previousOrganization": -66844061,
-            "suggestedOrganization": -66386006
+            "suggestedOrganization": -66386006,
+            "addAuthorModalTitle": -56022972,
+            "addAuthorTitle": -56022972,
+            "addPublisherModalTitle": -44615843,
+            "addPublisherTitle": -44615843
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -2083,7 +2090,7 @@
             "modalCreate": 179,
             "datePublishedLabel": 3,
             "websiteLabel": 33,
-            "sourceLabel": 83,
+            "sourceLabel": 5,
             "urlLabel": 32,
             "titleLabel": 13,
             "testResultsHeading": 1138,
@@ -2111,7 +2118,8 @@
             "noEntitiesWarning": -84151378,
             "noTriggersWarning": -63611552,
             "errorFetchingConnectorSources": -74207738,
-            "errorFetchingSelectedConnector": -39191362
+            "errorFetchingSelectedConnector": -39191362,
+            "authorLabel": -31511044
         },
         "userGroup": {
             "tableHeaderName": 103,
@@ -2885,7 +2893,8 @@
             "unresolvedTitle": -34360343,
             "resolvedTitle": -177898,
             "commentsHeader": -2991833,
-            "viewEditHistoryLabel": -70720392
+            "viewEditHistoryLabel": -70720392,
+            "entryCommentTitle": -33383753
         },
         "entryComments.notifications": {
             "entryCommentAdd": -7178898,

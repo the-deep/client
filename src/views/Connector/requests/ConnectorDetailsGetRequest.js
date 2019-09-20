@@ -38,6 +38,8 @@ export default class ConnectorDetailsGetRequest {
                 id: response.id,
                 versionId: response.versionId,
                 source: response.source,
+                // NOTE: When user role is 'normal', the server doesn't send 'role' field
+                role: response.role || 'normal',
                 faramValues: {
                     title: response.title,
                     params: response.params,

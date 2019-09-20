@@ -206,6 +206,10 @@ const requests = {
         url: '/lead-options/',
         method: requestMethods.POST,
 
+        options: {
+            delay: 1000,
+        },
+
         body: ({ props: { lead } }) => {
             const inputValues = leadFaramValuesSelector(lead);
             return {
@@ -724,11 +728,12 @@ class LeadDetail extends React.PureComponent {
                         extraButtons={
                             <ModalButton
                                 className={styles.smallButton}
-                                title="Add Publisher"
+                                title={_ts('addLeads', 'addPublisherTitle')}
                                 iconName="addPerson"
                                 transparent
                                 modal={
                                     <AddOrganizationModal
+                                        title={_ts('addLeads', 'addPublisherModalTitle')}
                                         loadOrganizationList
                                         onOrganizationAdd={this.handlePublisherAdd}
                                     />
@@ -769,11 +774,12 @@ class LeadDetail extends React.PureComponent {
                                 />
                                 <ModalButton
                                     className={styles.smallButton}
-                                    title="Add Author"
+                                    title={_ts('addLeads', 'addAuthorTitle')}
                                     iconName="addPerson"
                                     transparent
                                     modal={
                                         <AddOrganizationModal
+                                            title={_ts('addLeads', 'addAuthorModalTitle')}
                                             loadOrganizationList
                                             onOrganizationAdd={this.handleAuthorAdd}
                                         />

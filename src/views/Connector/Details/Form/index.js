@@ -26,6 +26,7 @@ import { RequestClient } from '#request';
 import Badge from '#components/viewer/Badge';
 
 import {
+    activeUserSelector,
     connectorDetailsSelector,
     connectorSourceSelector,
     usersInformationListSelector,
@@ -58,6 +59,7 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     connectorId: PropTypes.number,
     connectorDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    activeUser: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     connectorSource: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     users: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     userProjects: PropTypes.arrayOf(
@@ -86,6 +88,7 @@ const propTypes = {
 const defaultProps = {
     connectorDetails: {},
     connectorSource: {},
+    activeUser: {},
     userProjects: [],
     className: '',
     connectorId: undefined,
@@ -93,6 +96,7 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     connectorDetails: connectorDetailsSelector(state),
+    activeUser: activeUserSelector(state),
     users: usersInformationListSelector(state),
     userProjects: currentUserProjectsSelector(state),
     connectorSource: connectorSourceSelector(state),
@@ -127,7 +131,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { xmlFieldOptionsRequest } = this.props;
+        const {
+            xmlFieldOptionsRequest,
+            activeUser: {
+                userId,
+            },
+        } = this.props;
 
         xmlFieldOptionsRequest.setDefaultParams({
             setNoEmmWarning: this.setNoEmmWarning,
@@ -144,11 +153,14 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         this.usersHeader = getUsersTableHeader(
             this.handleToggleUserRoleClick,
             this.handleDeleteUserClick,
+            userId,
+            this.getDisabled,
         );
 
         this.projectsHeader = getProjectsTableHeader(
             this.handleToggleProjectRoleClick,
             this.handleDeleteProjectClick,
+            this.getDisabled,
         );
     }
 
@@ -230,6 +242,16 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     })
 
+    getDisabled = () => {
+        const {
+            connectorDetails: {
+                role,
+            },
+        } = this.props;
+
+        return role !== 'admin';
+    }
+
     setNoEmmWarning = (hasEmmTriggers, hasEmmEntities) => {
         let message = _ts('connector', 'noEmmWarning');
 
@@ -270,6 +292,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         const paramFields = {};
         connectorSource.options.forEach((o) => {
             const validation = [];
+            if (o.key === 'feed-url') {
+                validation.push(requiredCondition);
+            }
             if (o.fieldType === 'url') {
                 validation.push(urlCondition);
             }
@@ -502,6 +527,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     fieldInputRendererParams = (key, data) => {
         const {
             connectorSource: { key: connectorSourceKey },
+            connectorDetails: { role },
             xmlFieldOptionsRequest: {
                 pending,
                 response: {
@@ -510,11 +536,14 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             },
         } = this.props;
 
+        const disabled = role !== 'admin';
+
         return ({
             field: data,
             connectorSourceKey,
             xmlFieldOptions,
             pendingXmlFieldOptions: pending,
+            disabled,
         });
     }
 
@@ -531,6 +560,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 faramValues = {},
                 faramErrors,
                 pristine,
+                role,
             },
             connectorId,
         } = this.props;
@@ -553,6 +583,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         const projectsOptions = this.getOptionsForProjects(userProjects, faramValuesProjects);
         const schema = this.createSchema(connectorSource);
 
+        const disabledForm = role !== 'admin';
+
         const loading = userDataLoading || connectorDataLoading || pending;
 
         return (
@@ -564,7 +596,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 schema={schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={loading}
+                disabled={loading || disabledForm}
             >
                 { loading && <LoadingAnimation /> }
                 <header className={styles.header}>
@@ -596,7 +628,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 { connector: faramValues.title },
                             )}
                             onClick={this.handleConnectorDelete}
-                            disabled={loading}
+                            disabled={loading || disabledForm}
                         >
                             {_ts('connector', 'connectorDetailDeleteLabel')}
                         </DangerConfirmButton>

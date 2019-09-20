@@ -38,12 +38,14 @@ export default class Jumper extends React.Component {
     }
 
     handleAutoScroll = () => {
-        if (this.divRef.current) {
-            this.divRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-            });
-        }
+        setTimeout(() => {
+            if (this.divRef.current) {
+                this.divRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+            }
+        }, 0);
     }
 
     render() {

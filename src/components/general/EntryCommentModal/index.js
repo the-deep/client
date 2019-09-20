@@ -21,6 +21,8 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+
+import notify from '#notify';
 import _ts from '#ts';
 
 import Thread from './Thread';
@@ -69,6 +71,14 @@ const requests = {
         onSuccess: ({ params: { onCommentsGet }, response }) => {
             onCommentsGet(response.results);
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
         onPropsChanged: ['entryServerId'],
         schemaName: 'entryComments',
     },
@@ -82,6 +92,14 @@ const requests = {
         }) => {
             onAddSuccess(response);
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
         schemaName: 'entryComment',
     },
     projectMembersGet: {
@@ -92,6 +110,14 @@ const requests = {
         },
         onMount: true,
         onPropsChanged: ['project'],
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('entryComments', 'entryCommentTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
         schemaName: 'projectMembers',
     },
 };
