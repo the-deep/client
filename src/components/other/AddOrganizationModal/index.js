@@ -257,16 +257,13 @@ export default class AddOrganizationModal extends React.PureComponent {
                         }
                         <TextInput
                             faramElementName="title"
-                            // FIXME: Use strings
-                            label="Organization Name"
-                            // FIXME: Use strings
-                            placeholder="eg. People In Need"
+                            label={_ts('organization.addModal', 'nameLabel')}
+                            placeholder={_ts('organization.addModal', 'namePlaceholder')}
                         />
                         <TextInput
-                            // FIXME: Use strings
                             faramElementName="shortName"
-                            label="Abbreviation/Acronym"
-                            placeholder="eg. UN OCHA"
+                            label={_ts('organization.addModal', 'acronymLabel')}
+                            placeholder={_ts('organization.addModal', 'acronymPlaceholder')}
                         />
                         {/*
                         <TextInput
@@ -277,22 +274,20 @@ export default class AddOrganizationModal extends React.PureComponent {
                         />
                         */}
                         <TextInput
-                            // FIXME: Use strings
                             faramElementName="url"
-                            label="URL"
-                            placeholder="https://www.unicef.org"
+                            label={_ts('organization.addModal', 'urlLabel')}
+                            placeholder={_ts('organization.addModal', 'urlPlaceholder')}
                         />
                         <SelectInput
-                            // FIXME: Use strings
                             faramElementName="organizationType"
-                            label="Organization Type"
+                            label={_ts('organization.addModal', 'organizationTypeLabel')}
                             options={organizationTypeList}
                             keySelector={idSelector}
                             labelSelector={titleSelector}
                         />
                         <Label
                             className={styles.logoTitle}
-                            text="Logo"
+                            text={_ts('organization.addModal', 'logoLabel')}
                         />
                         <ImageInput
                             className={styles.imageInput}
@@ -304,14 +299,14 @@ export default class AddOrganizationModal extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={closeModal} >
-                            Cancel
+                            {_ts('organization.addModal', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             pending={pending}
                             disabled={pristine}
                         >
-                            Save
+                            {_ts('organization.addModal', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>
