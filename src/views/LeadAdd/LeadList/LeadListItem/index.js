@@ -171,6 +171,7 @@ export default class LeadListItem extends React.PureComponent {
         const removeDisabled = isLeadRemoveDisabled(leadState);
         const saveDisabled = isLeadSaveDisabled(leadState);
 
+
         // TODO: STYLING loading doesn't rotate
         return (
             <Jumper
