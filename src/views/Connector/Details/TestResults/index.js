@@ -188,6 +188,15 @@ export default class ConnectorTestResults extends React.PureComponent {
                     sourceRaw,
                 }) => (sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw),
             },
+            {
+                key: 'author',
+                label: _ts('connector', 'authorLabel'),
+                order: 6,
+                modifier: ({
+                    authorDetail,
+                    authorRaw,
+                }) => (authorDetail ? organizationTitleSelector(authorDetail) : authorRaw),
+            },
         ];
         if (connectorSource.key === 'emm') {
             tableHeader = [
@@ -195,7 +204,7 @@ export default class ConnectorTestResults extends React.PureComponent {
                 {
                     key: 'emmTriggers',
                     label: _ts('connector', 'emmTriggerTitle'),
-                    order: 6,
+                    order: 7,
                     modifier: row => (
                         <ListView
                             className={styles.emmTriggers}
@@ -210,7 +219,7 @@ export default class ConnectorTestResults extends React.PureComponent {
                 {
                     key: 'emmEntities',
                     label: _ts('connector', 'emmEntitiesTitle'),
-                    order: 7,
+                    order: 8,
                     modifier: row => (
                         <ListView
                             className={styles.emmEntity}

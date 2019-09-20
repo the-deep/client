@@ -2089,7 +2089,7 @@
             "modalCreate": 179,
             "datePublishedLabel": 3,
             "websiteLabel": 33,
-            "sourceLabel": 83,
+            "sourceLabel": 5,
             "urlLabel": 32,
             "titleLabel": 13,
             "testResultsHeading": 1138,
@@ -2117,7 +2117,8 @@
             "noEntitiesWarning": -84151378,
             "noTriggersWarning": -63611552,
             "errorFetchingConnectorSources": -74207738,
-            "errorFetchingSelectedConnector": -39191362
+            "errorFetchingSelectedConnector": -39191362,
+            "authorLabel": -31511044
         },
         "userGroup": {
             "tableHeaderName": 103,
