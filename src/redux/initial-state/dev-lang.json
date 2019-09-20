@@ -1019,7 +1019,8 @@
         "-74207738": "There was a problem fetching options for this connector.",
         "-39191362": "Selected connector was not found.",
         "-56022972": "Add Author",
-        "-44615843": "Add Publisher"
+        "-44615843": "Add Publisher",
+        "-33383753": "Entry Comments"
     },
     "links": {
         "browserExtension": {
@@ -2892,7 +2893,8 @@
             "unresolvedTitle": -34360343,
             "resolvedTitle": -177898,
             "commentsHeader": -2991833,
-            "viewEditHistoryLabel": -70720392
+            "viewEditHistoryLabel": -70720392,
+            "entryCommentTitle": -33383753
         },
         "entryComments.notifications": {
             "entryCommentAdd": -7178898,

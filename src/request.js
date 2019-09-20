@@ -107,9 +107,17 @@ const CustomRequestCoordinator = createRequestCoordinator({
     */
     transformErrors: (response) => {
         const faramErrors = alterResponseErrorToFaramError(response.errors);
+        // FIXME: Use strings for this
+        const messageForNotification = (
+            faramErrors
+            && faramErrors.$internal
+            && faramErrors.$internal.join(' ')
+        ) || 'There was some error while performing this action. Please try again.';
+
         return {
             response,
             faramErrors,
+            messageForNotification,
         };
     },
 });
