@@ -35,7 +35,11 @@ import {
     geoOptionsForProjectSelector,
     activeProjectRoleSelector,
 } from '#redux';
-import { RequestCoordinator } from '#request';
+import {
+    RequestCoordinator,
+    RequestClient,
+    requestMethods,
+} from '#request';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
 
 import notify from '#notify';
@@ -66,6 +70,7 @@ const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setAnalysisFramework: PropTypes.func.isRequired,
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    leadsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -76,10 +81,68 @@ const propTypes = {
 const defaultProps = {
     projectRole: {},
     geoOptions: {},
+    leadsGetRequest: {},
+};
+
+const requests = {
+    leadsGetRequest: {
+        url: '/v2/leads/filter/',
+        method: requestMethods.POST,
+        onMount: true,
+        query: ({
+            fields: ['id', 'title', 'created_at'],
+        }),
+        body: ({
+            props: {
+                projectId,
+                filters,
+                projectRole: {
+                    exportPermissions = {},
+                },
+            },
+        }) => {
+            const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
+            const sanitizedFilters = getFiltersForRequest(filters);
+
+            // Unprotected filter is sent to request to fetch leads
+            // if user cannot create export for confidential documents
+            if (filterOnlyUnprotected) {
+                sanitizedFilters.confidentiality = ['unprotected'];
+            }
+
+            return ({
+                project: [projectId],
+                ...sanitizedFilters,
+            });
+        },
+        onPropsChanged: [
+            'activeProject',
+            'filters',
+        ],
+        onSuccess: ({
+            response,
+            params: { setLeads: setLeadsFromParams },
+        }) => {
+            setLeadsFromParams(response);
+        },
+        onFailure: ({ error: { response } }) => {
+            const message = transformResponseErrorToFormError(response.errors)
+                .formErrors
+                .errors
+                .join(' ');
+            notify.send({
+                title: _ts('export', 'leadsLabel'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
+@RequestClient(requests)
 export default class Export extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -89,6 +152,12 @@ export default class Export extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        const { leadsGetRequest } = this.props;
+
+        leadsGetRequest.setDefaultParams({
+            setLeads: this.handleSelectedLeadsSet,
+        });
 
         // TABLE component
         this.headers = [
@@ -147,19 +216,13 @@ export default class Export extends React.PureComponent {
             decoupledEntries: true,
 
             selectedLeads: {},
-            pendingLeads: true,
             pendingAf: true,
             pendingGeoOptions: true,
         };
     }
 
     componentWillMount() {
-        const { projectId, filters } = this.props;
-        this.leadRequest = this.createRequestForProjectLeads({
-            activeProject: projectId,
-            filters,
-        });
-        this.leadRequest.start();
+        const { projectId } = this.props;
 
         this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
             projectId,
@@ -182,17 +245,6 @@ export default class Export extends React.PureComponent {
             projectId: oldActiveProject,
         } = this.props;
 
-        if (newFilters !== oldFilters || newActiveProject !== oldActiveProject) {
-            if (this.leadRequest) {
-                this.leadRequest.stop();
-            }
-            this.leadRequest = this.createRequestForProjectLeads({
-                activeProject: newActiveProject,
-                filters: newFilters,
-            });
-            this.leadRequest.start();
-        }
-
         if (oldActiveProject !== newActiveProject) {
             // Reset everything
             this.setState({
@@ -202,7 +254,6 @@ export default class Export extends React.PureComponent {
                 decoupledEntries: true,
 
                 selectedLeads: {},
-                pendingLeads: true,
                 pendingAf: true,
                 pendingGeoOptions: true,
             });
@@ -226,9 +277,6 @@ export default class Export extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.leadRequest) {
-            this.leadRequest.stop();
-        }
         if (this.analysisFrameworkRequest) {
             this.analysisFrameworkRequest.stop();
         }
@@ -334,64 +382,6 @@ export default class Export extends React.PureComponent {
         return analysisFrameworkRequest;
     }
 
-    createRequestForProjectLeads = ({ activeProject, filters }) => {
-        const {
-            projectRole: {
-                exportPermissions = {},
-            },
-        } = this.props;
-
-        const onlyUnprotected = exportPermissions.create_only_unprotected;
-
-        const sanitizedFilters = getFiltersForRequest(filters);
-
-        if (onlyUnprotected) {
-            sanitizedFilters.confidentiality = ['unprotected'];
-        }
-
-        const urlForProjectLeads = createUrlForLeadsOfProject({
-            project: activeProject,
-            fields: ['id', 'title', 'created_at'],
-            ...sanitizedFilters,
-        });
-
-        const leadRequest = new FgRestBuilder()
-            .url(urlForProjectLeads)
-            .params(createParamsForGet)
-            .preLoad(() => {
-                this.setState({ pendingLeads: true });
-            })
-            .postLoad(() => {
-                this.setState({ pendingLeads: false });
-            })
-            .success((response) => {
-                // FIXME: write schema
-                this.handleSelectedLeadsSet(response);
-            })
-            .failure((response) => {
-                const message = transformResponseErrorToFormError(response.errors)
-                    .formErrors
-                    .errors
-                    .join(' ');
-                notify.send({
-                    title: _ts('export', 'leadsLabel'),
-                    type: notify.type.ERROR,
-                    message,
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('export', 'leadsLabel'),
-                    type: notify.type.ERROR,
-                    message: _ts('export', 'cantLoadLeads'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return leadRequest;
-    }
-
     handleSelectedLeadsSet = (response) => {
         const selectedLeads = listToMap(response.results, d => d.id, () => true);
 
@@ -462,7 +452,6 @@ export default class Export extends React.PureComponent {
             selectedLeads,
             leads = [],
 
-            pendingLeads,
             pendingAf,
             pendingGeoOptions,
         } = this.state;
@@ -475,9 +464,12 @@ export default class Export extends React.PureComponent {
             projectRole: {
                 exportPermissions = {},
             },
+            leadsGetRequest: {
+                pending: pendingLeads,
+            },
         } = this.props;
         const { filters } = analysisFramework || {};
-        const onlyUnprotected = exportPermissions.create_only_unprotected;
+        const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
 
         return (
             <Page
@@ -508,7 +500,7 @@ export default class Export extends React.PureComponent {
                                     </h4>
                                     <FilterLeadsForm
                                         className={styles.leadsFilterForm}
-                                        onlyUnprotected={onlyUnprotected}
+                                        filterOnlyUnprotected={filterOnlyUnprotected}
                                     />
                                 </div>
                                 <div className={styles.leadsTableContainer}>

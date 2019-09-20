@@ -56,14 +56,14 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     leadOptionsRequest: PropTypes.object.isRequired,
-    onlyUnprotected: PropTypes.bool,
+    filterOnlyUnprotected: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     filters: {},
     leadFilterOptions: {},
-    onlyUnprotected: false,
+    filterOnlyUnprotected: false,
 };
 
 const mapStateToProps = state => ({
@@ -232,7 +232,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 pending: loadingLeadFilters,
             },
             filters,
-            onlyUnprotected,
+            filterOnlyUnprotected,
         } = this.props;
 
         const {
@@ -242,9 +242,9 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         const isApplyDisabled = pristine;
 
-        let isFilterEmpty = doesObjectHaveNoData(filters, ['']);
+        let isFilterEmpty;
 
-        if (onlyUnprotected) {
+        if (filterOnlyUnprotected) {
             let newFilter = {
                 ...filters,
                 confidentiality: undefined,
@@ -256,6 +256,8 @@ export default class FilterLeadsForm extends React.PureComponent {
                 ...filters,
                 confidentiality: ['unprotected'],
             };
+        } else {
+            isFilterEmpty = doesObjectHaveNoData(filters, ['']);
         }
 
         const isClearDisabled = isFilterEmpty && pristine;
@@ -304,7 +306,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     showLabel
                     className={styles.leadsFilter}
                 />
-                {!onlyUnprotected && (
+                {!filterOnlyUnprotected && (
                     <MultiSelectInput
                         faramElementName="confidentiality"
                         keySelector={FilterLeadsForm.optionKeySelector}
