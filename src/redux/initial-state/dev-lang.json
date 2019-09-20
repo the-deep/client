@@ -1020,7 +1020,11 @@
         "-39191362": "Selected connector was not found.",
         "-56022972": "Add Author",
         "-44615843": "Add Publisher",
-        "-33383753": "Entry Comments"
+        "-33383753": "Entry Comments",
+        "-94149446": "Abbreviation/Acronym",
+        "-27756095": "e.g. UN OCHA",
+        "-12306980": "Logo",
+        "-91474494": "e.g. People In Need"
     },
     "links": {
         "browserExtension": {
@@ -2907,6 +2911,18 @@
             "emmEntitiesTitle": -28548476,
             "emmTriggersTitle": -35842630,
             "emmStatsModalTitle": -5561855
+        },
+        "organization.addModal": {
+            "acronymLabel": -94149446,
+            "acronymPlaceholder": -27756095,
+            "cancelButtonLabel": 61,
+            "logoLabel": -12306980,
+            "nameLabel": 103,
+            "namePlaceholder": -91474494,
+            "organizationTypeLabel": 21,
+            "saveButtonLabel": 25,
+            "urlLabel": 32,
+            "urlPlaceholder": 41
         }
     }
 }
