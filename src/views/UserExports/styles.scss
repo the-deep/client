@@ -38,7 +38,13 @@
                 flex-grow: 1;
 
                 :global {
-                    .raw-table {
+                    .file-download {
+                        display: flex;
+                        justify-content: center;
+                        color: var(--color-accent);
+                    }
+
+                    .table {
                         .headers {
                             .mime-type {
                                 width: 96px;
@@ -54,11 +60,19 @@
 
                             .row {
                                 &.highlighted {
-                                    background-color: var(--color-accent);
                                     color: var(--color-text-on-accent);
 
                                     .file-download {
-                                        color: inherit;
+                                        color: var(--color-text-on-accent);
+                                    }
+                                }
+
+                                &:hover {
+                                    background-color: var(--color-background-accent-hint);
+                                    color: var(--color-text);
+
+                                    .file-download {
+                                        color: var(--color-accent);
                                     }
                                 }
                             }
@@ -78,12 +92,6 @@
                         display: flex;
                         justify-content: center;
                         color: var(--color-danger);
-                    }
-
-                    .file-download {
-                        display: flex;
-                        justify-content: center;
-                        color: var(--color-accent);
                     }
                 }
             }
