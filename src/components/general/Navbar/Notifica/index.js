@@ -22,8 +22,8 @@ import styles from './styles.scss';
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setNotificationsCount: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    notificationsStatusUpdateRequest: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    notificationsStatusUpdateRequest: PropTypes.object.isRequired,
     notificationsCountRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     notificationsCount: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,

@@ -330,8 +330,8 @@ export default class Connector extends React.PureComponent {
                         <ListView
                             className={styles.connectorsList}
                             data={displayConnectorsList}
-                            groupRendererClassName={styles.group}
                             keySelector={Connector.connectorKeySelector}
+                            groupRendererClassName={styles.group}
                             groupKeySelector={Connector.connectorSourceSelector}
                             groupRendererParams={this.connectorGroupRendererParams}
                             rendererParams={this.connectorRendererParams}

@@ -449,7 +449,7 @@
         "1107": "Connector was successfully created.",
         "1109": "Connector sources",
         "1110": "There was a problem while fetching connector sources.",
-        "1111": "Select a connector to view its detail.",
+        "1111": "Select a connector to view its details.",
         "1112": "There was a problem while fetching connector.",
         "1114": "The connector you are looking for does not exist.",
         "1115": "There are no connectors.",
@@ -515,7 +515,7 @@
         "1935": "Project join failure",
         "1937": "Reject",
         "1940": "{requestorName} cancelled join request for the project {projectTitle}.",
-        "1941": "{responderName} accepted join request of {requestorName} for the project {projectTitle}.",
+        "1941": "{responderName} accepted the join request from {requestorName} for the project {projectTitle}.",
         "1942": "{responderName} rejected join request of {requestorName} for the project {projectTitle}.",
         "2000": "Browser extension",
         "2001": "Your extension has been successfully set up.",
@@ -995,7 +995,7 @@
         "-54226779": "({count} resolved)",
         "-34360343": "Active ({count})",
         "-177898": "Resolved ({count})",
-        "-7178898": "You are assigned to a {comment} in entry of project {project} by {userName}.",
+        "-7178898": "You were assigned to a {comment} for an entry by {userName}.",
         "-12333226": "{userName} replied to a {comment} you are following in project {project}.",
         "-32902609": "{userName} modified a {comment} you are following in project {project}.",
         "-63285888": "{userName} modified a reply in a {comment} you are following in project {project}.",
@@ -1024,7 +1024,8 @@
         "-94149446": "Abbreviation/Acronym",
         "-27756095": "e.g. UN OCHA",
         "-12306980": "Logo",
-        "-91474494": "e.g. People In Need"
+        "-91474494": "e.g. People In Need",
+        "-24340518": "No leads can be returned with your settings. Try adding a valid URL and try again."
     },
     "links": {
         "browserExtension": {
@@ -2123,7 +2124,8 @@
             "noTriggersWarning": -63611552,
             "errorFetchingConnectorSources": -74207738,
             "errorFetchingSelectedConnector": -39191362,
-            "authorLabel": -31511044
+            "authorLabel": -31511044,
+            "emptyTestResults": -24340518
         },
         "userGroup": {
             "tableHeaderName": 103,

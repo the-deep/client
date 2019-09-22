@@ -46,7 +46,7 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
-    routeUrl: PropTypes.string.isRequired,
+    routeUrl: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types

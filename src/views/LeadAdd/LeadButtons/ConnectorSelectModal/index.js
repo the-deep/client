@@ -4,12 +4,14 @@ import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
+    _cs,
     caseInsensitiveSubmatch,
     reverseRoute,
     compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SearchInput from '#rsci/SearchInput';
@@ -36,6 +38,8 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import ConnectorContent from './Content';
+import ConnectorListItem from './ConnectorItem';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -100,6 +104,9 @@ export default class ConnectorSelectModal extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static connectorKeySelector = c => c.id;
+
+    // FIXME: Change this to title of source
+    static connectorSourceSelector = c => c.source;
 
     constructor(props) {
         super(props);
@@ -367,20 +374,16 @@ export default class ConnectorSelectModal extends React.PureComponent {
         this.setState({ selectedConnector });
     }
 
-    renderConnectorListItem = (key, connector) => {
-        const { selectedConnector } = this.state;
-        const isActive = connector.id === selectedConnector;
+    connectorRendererParams = (key, data) => ({
+        currentConnectorId: this.state.selectedConnector,
+        connectorId: key,
+        title: data.title,
+        onConnectorClick: this.handleConnectorClick,
+    })
 
-        return (
-            <ListItem
-                active={isActive}
-                key={connector.id}
-                onClick={() => this.handleConnectorClick(connector.id)}
-            >
-                {connector.title}
-            </ListItem>
-        );
-    }
+    connectorGroupRendererParams = groupKey => ({
+        children: groupKey,
+    });
 
     renderSidebar = () => {
         const {
@@ -411,7 +414,11 @@ export default class ConnectorSelectModal extends React.PureComponent {
                     className={styles.connectorsList}
                     data={displayConnectorsList}
                     keySelector={ConnectorSelectModal.connectorKeySelector}
-                    modifier={this.renderConnectorListItem}
+                    groupRendererClassName={styles.group}
+                    groupKeySelector={ConnectorSelectModal.connectorSourceSelector}
+                    groupRendererParams={this.connectorGroupRendererParams}
+                    rendererParams={this.connectorRendererParams}
+                    renderer={ConnectorListItem}
                 />
             </div>
         );

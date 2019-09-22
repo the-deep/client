@@ -34,6 +34,8 @@ import styles from './styles.scss';
 
 const EmptyComponent = () => '';
 
+const TableEmptyComponent = () => _ts('connector', 'emptyTestResults');
+
 const propTypes = {
     className: PropTypes.string,
     title: PropTypes.string,
@@ -278,6 +280,7 @@ export default class ConnectorTestResults extends React.PureComponent {
                         headers={this.tableHeader}
                         keySelector={ConnectorTestResults.leadKeySelector}
                         pending={pending}
+                        emptyComponent={TableEmptyComponent}
                     />
                 </ModalBody>
             </Modal>
