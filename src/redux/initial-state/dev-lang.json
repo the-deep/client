@@ -1025,7 +1025,8 @@
         "-27756095": "e.g. UN OCHA",
         "-12306980": "Logo",
         "-91474494": "e.g. People In Need",
-        "-24340518": "No leads can be returned with your settings. Try adding a valid URL and try again."
+        "-24340518": "No leads can be returned with your settings. Try adding a valid URL and try again.",
+        "-24511724": "No matching results were found. You can add a new {title} from add button next to this input."
     },
     "links": {
         "browserExtension": {
@@ -1730,7 +1731,8 @@
             "addAuthorModalTitle": -56022972,
             "addAuthorTitle": -56022972,
             "addPublisherModalTitle": -44615843,
-            "addPublisherTitle": -44615843
+            "addPublisherTitle": -44615843,
+            "searchInputEmptyText": -24511724
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

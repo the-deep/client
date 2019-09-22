@@ -10,7 +10,7 @@ import {
 import RawTable from '#rscv/RawTable';
 import Numeral from '#rscv/Numeral';
 import modalize from '#rscg/Modalize';
-import AccentButton from '#rsca/Button/AccentButton';
+import Button from '#rsca/Button';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import { Link } from 'react-router-dom';
@@ -26,7 +26,7 @@ import ActionButtons from '../ActionButtons';
 import FileTypeViewer from './FileTypeViewer';
 import styles from './styles.scss';
 
-const ModalButton = modalize(AccentButton);
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,

@@ -19,9 +19,20 @@
         }
 
         .title,
+        .author,
         .source {
             flex-basis: calc(100% / 3 - var(--spacing-medium));
             padding: var(--spacing-medium) 0;
+        }
+
+        .source,
+        .author {
+            display: flex;
+            align-items: center;
+
+            .input {
+                flex-grow: 1;
+            }
         }
 
         .small-button {

@@ -18,6 +18,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import Checkbox from '#rsci/Checkbox';
 import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
+import Button from '#rsca/Button';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import { pathNames } from '#constants';
 import { organizationTitleSelector } from '#entities/organization';
@@ -33,7 +34,7 @@ import notify from '#notify';
 import Filters from './Filters';
 import styles from './styles.scss';
 
-const ModalButton = modalize(AccentButton);
+const ModalButton = modalize(Button);
 
 const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types

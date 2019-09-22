@@ -37,6 +37,7 @@ import Cloak from '#components/general/Cloak';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
+import Message from '#rscv/Message';
 
 import _ts from '#ts';
 
@@ -58,6 +59,18 @@ import EmmStats from './EmmStats';
 
 import schema from './faramSchema';
 import styles from './styles.scss';
+
+const PublisherEmptyComponent = () => (
+    <Message>
+        {_ts('addLeads', 'searchInputEmptyText', { title: 'publisher' })}
+    </Message>
+);
+
+const AuthorEmptyComponent = () => (
+    <Message>
+        {_ts('addLeads', 'searchInputEmptyText', { title: 'author' })}
+    </Message>
+);
 
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
 const ModalButton = Modalize(Button);
@@ -614,6 +627,7 @@ class LeadDetail extends React.PureComponent {
                 // TODO: STYLING the faram doesn't take full height and loading-animation is offset
                 className={_cs(classNameFromProps, styles.leadItem)}
             >
+                { pending && <LoadingAnimation /> }
                 <Faram
                     className={styles.addLeadForm}
                     onChange={this.handleFaramChange}
@@ -622,7 +636,6 @@ class LeadDetail extends React.PureComponent {
                     error={errors}
                     disabled={formDisabled}
                 >
-                    { pending && <LoadingAnimation /> }
                     <header className={styles.header}>
                         <NonFieldErrors faramElement />
                     </header>
@@ -725,28 +738,15 @@ class LeadDetail extends React.PureComponent {
                         identifierName="source"
                         onApplyAllClick={this.handleApplyAllClick}
                         onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                        extraButtons={
-                            <ModalButton
-                                className={styles.smallButton}
-                                title={_ts('addLeads', 'addPublisherTitle')}
-                                iconName="addPerson"
-                                transparent
-                                modal={
-                                    <AddOrganizationModal
-                                        title={_ts('addLeads', 'addPublisherModalTitle')}
-                                        loadOrganizationList
-                                        onOrganizationAdd={this.handlePublisherAdd}
-                                    />
-                                }
-                            />
-                        }
                     >
                         <FaramBasicSelectInput
                             faramElementName="source"
                             label={_ts('addLeads', 'publisherLabel')}
                             options={organizations}
                             keySelector={idSelector}
+                            className={styles.input}
                             labelSelector={organizationTitleSelector}
+                            emptyWhenFilterComponent={PublisherEmptyComponent}
                             disabled={leadOptionsPending || formDisabled || !projectIsSelected}
                             hint={sourceHint}
 
@@ -755,46 +755,46 @@ class LeadDetail extends React.PureComponent {
                             onOptionsChange={this.setOrganizations}
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                         />
+                        <ModalButton
+                            className={styles.largeButton}
+                            title={_ts('addLeads', 'addPublisherTitle')}
+                            iconName="addPerson"
+                            transparent
+                            modal={
+                                <AddOrganizationModal
+                                    title={_ts('addLeads', 'addPublisherModalTitle')}
+                                    loadOrganizationList
+                                    onOrganizationAdd={this.handlePublisherAdd}
+                                />
+                            }
+                        />
                     </ApplyAll>
 
                     <ApplyAll
-                        className={styles.source}
+                        className={styles.author}
                         disabled={isApplyAllDisabled}
                         identifierName="author"
                         onApplyAllClick={this.handleApplyAllClick}
                         onApplyAllBelowClick={this.handleApplyAllBelowClick}
                         extraButtons={
-                            <React.Fragment>
-                                <Button
-                                    className={styles.smallButton}
-                                    iconName="copyOutline"
-                                    transparent
-                                    title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
-                                    onClick={this.handleSameAsPublisherButtonClick}
-                                />
-                                <ModalButton
-                                    className={styles.smallButton}
-                                    title={_ts('addLeads', 'addAuthorTitle')}
-                                    iconName="addPerson"
-                                    transparent
-                                    modal={
-                                        <AddOrganizationModal
-                                            title={_ts('addLeads', 'addAuthorModalTitle')}
-                                            loadOrganizationList
-                                            onOrganizationAdd={this.handleAuthorAdd}
-                                        />
-                                    }
-                                />
-                            </React.Fragment>
+                            <Button
+                                className={styles.smallButton}
+                                iconName="copyOutline"
+                                transparent
+                                title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
+                                onClick={this.handleSameAsPublisherButtonClick}
+                            />
                         }
                     >
                         <FaramBasicSelectInput
                             faramElementName="author"
                             label={_ts('addLeads', 'authorLabel')}
 
+                            className={styles.input}
                             options={organizations}
                             keySelector={idSelector}
                             labelSelector={organizationTitleSelector}
+                            emptyWhenFilterComponent={AuthorEmptyComponent}
                             disabled={leadOptionsPending || formDisabled || !projectIsSelected}
                             hint={authorHint}
 
@@ -802,6 +802,19 @@ class LeadDetail extends React.PureComponent {
                             searchOptionsPending={pendingSearchedOrganizations}
                             onOptionsChange={this.setOrganizations}
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
+                        />
+                        <ModalButton
+                            className={styles.largeButton}
+                            title={_ts('addLeads', 'addAuthorTitle')}
+                            iconName="addPerson"
+                            transparent
+                            modal={
+                                <AddOrganizationModal
+                                    title={_ts('addLeads', 'addAuthorModalTitle')}
+                                    loadOrganizationList
+                                    onOrganizationAdd={this.handleAuthorAdd}
+                                />
+                            }
                         />
                     </ApplyAll>
 
