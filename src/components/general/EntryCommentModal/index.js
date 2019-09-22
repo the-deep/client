@@ -12,6 +12,7 @@ import React from 'react';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
 import Button from '#rsca/Button';
+import Confirm from '#rscv/Modal/Confirm';
 import ListView from '#rscv/List/ListView';
 import {
     projectIdFromRouteSelector,
@@ -52,7 +53,7 @@ const defaultProps = {
     className: undefined,
     projectId: undefined,
     entryServerId: undefined,
-    closeModal: () => {},
+    closeModal: undefined,
 };
 
 const RESOLVED = 'resolved';
@@ -157,6 +158,7 @@ export default class EntryCommentModal extends React.PureComponent {
             faramValues: {},
             faramErrors: {},
             pristine: true,
+            showConfirm: false,
         };
     }
 
@@ -201,6 +203,27 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleTabClick = (tab) => {
         this.setState({ activeTabKey: tab });
+    }
+
+    handleCommentsClose = () => {
+        const { currentEdit } = this.state;
+        const { closeModal } = this.props;
+
+        if (isDefined(currentEdit)) {
+            this.setState({ showConfirm: true });
+        } else if (isDefined(closeModal)) {
+            closeModal();
+        }
+    }
+
+    handleCloseConfirmation = (confirm) => {
+        const { closeModal } = this.props;
+
+        if (!confirm) {
+            this.setState({ showConfirm: false });
+        } else if (isDefined(closeModal)) {
+            closeModal();
+        }
     }
 
     handleInvalidate = (container) => {
@@ -431,6 +454,7 @@ export default class EntryCommentModal extends React.PureComponent {
             currentEdit,
             pristine,
             activeTabKey,
+            showConfirm,
         } = this.state;
 
         const {
@@ -453,74 +477,84 @@ export default class EntryCommentModal extends React.PureComponent {
             : this.resolvedThreadRendererParams;
 
         return (
-            <FloatingContainer
-                className={_cs(className, styles.container)}
-                onInvalidate={this.handleInvalidate}
-                onClose={closeModal}
-                focusTrap
-                closeOnEscape
-                showHaze
-            >
-                <div className={styles.header}>
-                    <div className={styles.topHeader}>
-                        <h3 className={styles.heading}>
-                            {_ts('entryComments', 'commentsHeader')}
-                        </h3>
-                        <Button
-                            iconName="close"
-                            onClick={closeModal}
-                            transparent
-                        />
-                    </div>
-                    <ScrollTabs
-                        className={styles.tabs}
-                        active={activeTabKey}
-                        tabs={tabs}
-                        itemClassName={styles.tab}
-                        onClick={this.handleTabClick}
-                    >
-                        <div className={styles.buttons}>
-                            {unresolvedThreads.length > 0 &&
-                                <Button
-                                    onClick={this.handleNewThreadClick}
-                                    iconName="add"
-                                    transparent
-                                    disabled={currentEdit === 'new-thread'}
-                                >
-                                    {_ts('entryComments', 'newThreadButtonLabel')}
-                                </Button>
-                            }
+            <React.Fragment>
+                <FloatingContainer
+                    className={_cs(className, styles.container)}
+                    onInvalidate={this.handleInvalidate}
+                    onClose={this.handleCommentsClose}
+                    focusTrap
+                    closeOnEscape
+                    showHaze
+                >
+                    <div className={styles.header}>
+                        <div className={styles.topHeader}>
+                            <h3 className={styles.heading}>
+                                {_ts('entryComments', 'commentsHeader')}
+                            </h3>
+                            <Button
+                                iconName="close"
+                                onClick={this.handleCommentsClose}
+                                transparent
+                            />
                         </div>
-                    </ScrollTabs>
-                </div>
-                <div className={styles.content}>
-                    <ListView
-                        className={styles.threads}
-                        data={threads}
-                        keySelector={threadsKeySelector}
-                        renderer={Thread}
-                        rendererParams={rendererParams}
-                        emptyComponent={EmptyComponent}
-                    />
-                    {showCommentForm && (
-                        <CommentFaram
-                            className={styles.newComment}
-                            pending={commentCreationPending}
-                            pristine={pristine}
-                            onChange={this.handleFaramChange}
-                            onValidationFailure={this.handleFaramValidationFailure}
-                            onValidationSuccess={this.handleFaramValidationSuccess}
-                            faramValues={faramValues}
-                            faramErrors={faramErrors}
-                            hasAssignee
-                            onCancelClick={this.handleClearClick}
-                            members={members}
-                            commentButtonLabel={_ts('entryComments', 'commentFaramCommentButtonLabel')}
-                            cancelButtonLabel={cancelButtonLabel}
+                        <ScrollTabs
+                            className={styles.tabs}
+                            active={activeTabKey}
+                            tabs={tabs}
+                            itemClassName={styles.tab}
+                            onClick={this.handleTabClick}
+                        >
+                            <div className={styles.buttons}>
+                                {unresolvedThreads.length > 0 &&
+                                    <Button
+                                        onClick={this.handleNewThreadClick}
+                                        iconName="add"
+                                        transparent
+                                        disabled={currentEdit === 'new-thread'}
+                                    >
+                                        {_ts('entryComments', 'newThreadButtonLabel')}
+                                    </Button>
+                                }
+                            </div>
+                        </ScrollTabs>
+                    </div>
+                    <div className={styles.content}>
+                        <ListView
+                            className={styles.threads}
+                            data={threads}
+                            keySelector={threadsKeySelector}
+                            renderer={Thread}
+                            rendererParams={rendererParams}
+                            emptyComponent={EmptyComponent}
                         />
-                    )}
-                </div>
-            </FloatingContainer>
+                        {showCommentForm && (
+                            <CommentFaram
+                                className={styles.newComment}
+                                pending={commentCreationPending}
+                                pristine={pristine}
+                                onChange={this.handleFaramChange}
+                                onValidationFailure={this.handleFaramValidationFailure}
+                                onValidationSuccess={this.handleFaramValidationSuccess}
+                                faramValues={faramValues}
+                                faramErrors={faramErrors}
+                                hasAssignee
+                                onCancelClick={this.handleClearClick}
+                                members={members}
+                                commentButtonLabel={_ts('entryComments', 'commentFaramCommentButtonLabel')}
+                                cancelButtonLabel={cancelButtonLabel}
+                            />
+                        )}
+                    </div>
+                </FloatingContainer>
+                <Confirm
+                    show={showConfirm}
+                    closeOnEscape={false}
+                    closeOnOutsideClick={false}
+                    onClose={this.handleCloseConfirmation}
+                >
+                    {_ts('common', 'youHaveUnsavedChanges')}
+                </Confirm>
+            </React.Fragment>
         );
     }
 }
