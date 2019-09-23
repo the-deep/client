@@ -6,6 +6,7 @@ import memoize from 'memoize-one';
 import {
     _cs,
     doesObjectHaveNoData,
+    formatDateToString,
     isDefined,
     isNotDefined,
     listToMap,
@@ -355,6 +356,9 @@ class LeadAdd extends React.PureComponent {
         const {
             projectId,
             projects,
+            activeUser: {
+                userId,
+            },
 
             setLeadAttachment,
             changeLead,
@@ -371,13 +375,25 @@ class LeadAdd extends React.PureComponent {
                 drive,
                 dropbox,
             } = leadInfo;
+
             const key = getNewLeadKey();
+
+            const now = new Date();
 
             const newLead = {
                 id: key,
                 serverId,
                 faramValues: {
+                    // NOTE: setting current project as project for lead
                     project: defaultProjectId,
+                    // NOTE: only projects where user can create lead should be listed
+                    // so, having current user as assignee shouldn't hurt
+                    assignee: userId,
+                    // NOTE: setting current date as published date if there is none
+                    publishedOn: formatDateToString(now, 'yyyy-MM-dd'),
+                    // NOTE: hard-coded confidentiality value
+                    confidentiality: 'unprotected',
+                    // Inject other values too
                     ...faramValues,
                 },
                 faramErrors: {},
@@ -752,9 +768,11 @@ class LeadAdd extends React.PureComponent {
         const {
             projectId,
             projects,
+            /*
             activeUser: {
                 userId,
             },
+            */
             activeLeadKey,
             leadFilters,
             leadPreviewHidden,
@@ -906,10 +924,10 @@ class LeadAdd extends React.PureComponent {
                             topChild={
                                 <LeadDetail
                                     projects={projects}
-                                    key={activeLeadKey}
+                                    // key={activeLeadKey}
+                                    // activeUserId={userId}
                                     lead={activeLead}
                                     onChange={changeLead}
-                                    activeUserId={userId}
                                     onApplyAllBelowClick={this.handleLeadApplyAllBelowClick}
                                     onApplyAllClick={this.handleLeadApplyAllClick}
                                     leadState={activeLeadState}
@@ -920,6 +938,8 @@ class LeadAdd extends React.PureComponent {
                             bottomChild={
                                 !leadPreviewHidden && (
                                     <LeadPreview
+                                        // NOTE: need to dismount LeadPreview
+                                        // because the children cannot handle change gracefully
                                         key={activeLeadKey}
                                         lead={activeLead}
                                         className={styles.leadPreview}

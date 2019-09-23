@@ -77,7 +77,7 @@ const ModalButton = Modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
-    activeUserId: PropTypes.number.isRequired,
+    // activeUserId: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     lead: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -121,6 +121,7 @@ const titleSelector = item => item.title;
 
 const displayNameSelector = item => item.displayName;
 
+/*
 function fillExtraInfo(values, leadOptions, activeUserId) {
     const newValues = produce(values, (safeValues) => {
         if (!safeValues.assignee) {
@@ -155,6 +156,7 @@ function fillExtraInfo(values, leadOptions, activeUserId) {
     });
     return newValues;
 }
+*/
 
 function fillWebInfo(values, webInfo) {
     const newValues = produce(values, (safeValues) => {
@@ -237,9 +239,11 @@ const requests = {
                 ),
             };
         },
+        /*
         onSuccess: ({ params, response }) => {
             params.handleExtraInfoFill(response);
         },
+        */
         onMount: ({ props: { lead } }) => {
             const initialProject = leadFaramValuesSelector(lead).project;
             return isDefined(initialProject);
@@ -290,6 +294,7 @@ class LeadDetail extends React.PureComponent {
             organizations: [],
         };
 
+        /*
         const {
             leadOptionsRequest,
         } = this.props;
@@ -297,6 +302,7 @@ class LeadDetail extends React.PureComponent {
         leadOptionsRequest.setDefaultParams({
             handleExtraInfoFill: this.handleExtraInfoFill,
         });
+        */
     }
 
     setSearchedOrganizations = (searchedOrganizations) => {
@@ -416,6 +422,7 @@ class LeadDetail extends React.PureComponent {
         }
     }
 
+    /*
     handleExtraInfoFill = (leadOptions) => {
         const {
             lead,
@@ -434,6 +441,7 @@ class LeadDetail extends React.PureComponent {
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
         this.handleLeadValueChange(newValues);
     }
+    */
 
     handleWebInfoFill = (webInfo) => {
         const {
@@ -553,9 +561,9 @@ class LeadDetail extends React.PureComponent {
             webInfoRequest: {
                 pending: webInfoRequestPending,
                 response: {
-                    sourceRaw: suggestedSourceTitle,
+                    sourceRaw,
                     source,
-                    authorRaw: suggestedAuthorTitle,
+                    authorRaw,
                     author,
                 } = {},
             } = {},
@@ -566,7 +574,6 @@ class LeadDetail extends React.PureComponent {
             organizationsRequest: {
                 pending: pendingSearchedOrganizations,
             } = {},
-
         } = this.props;
         const {
             showAddLeadGroupModal,
@@ -586,9 +593,16 @@ class LeadDetail extends React.PureComponent {
             sourceRaw: oldSourceTitle,
             authorRaw: oldAuthorTitle,
 
+            // NOTE: these values are set by connectors
+            sourceSuggestion,
+            authorSuggestion,
+
             emmEntities,
             emmTriggers,
         } = values;
+
+        const suggestedSourceTitle = sourceSuggestion || sourceRaw;
+        const suggestedAuthorTitle = authorSuggestion || authorRaw;
 
         const pending = (
             isLeadFormLoading(leadState)
