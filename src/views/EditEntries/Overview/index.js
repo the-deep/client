@@ -46,7 +46,7 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
-    routeUrl: PropTypes.string.isRequired,
+    routeUrl: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -95,7 +95,9 @@ export default class Overview extends React.PureComponent {
 
     static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
 
-    componentDidMount() {
+    constructor(props) {
+        super(props);
+
         const urlParams = new URLSearchParams(window.location.search);
         const entryIdFromRoute = urlParams.get('entry_id');
         const {
@@ -112,6 +114,7 @@ export default class Overview extends React.PureComponent {
                 key: entryLocalId,
             });
         }
+        this.showInitial = !!entryLocalId;
     }
 
     entryLabelSelector = (entry) => {
@@ -250,6 +253,7 @@ export default class Overview extends React.PureComponent {
                             <ModalButton
                                 className={styles.entryCommentButton}
                                 disabled={isFalsy(entryAccessor.serverId(entry))}
+                                initialShowModal={this.showInitial}
                                 modal={
                                     <EntryCommentModal
                                         entryServerId={entryAccessor.serverId(entry)}

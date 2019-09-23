@@ -20,6 +20,7 @@
 
 .default-user {
     border-radius: 50%;
+    overflow: hidden;
 
     path {
         fill: var(--color-text);
