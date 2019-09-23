@@ -95,7 +95,9 @@ export default class Overview extends React.PureComponent {
 
     static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
 
-    componentDidMount() {
+    constructor(props) {
+        super(props);
+
         const urlParams = new URLSearchParams(window.location.search);
         const entryIdFromRoute = urlParams.get('entry_id');
         const {
@@ -112,6 +114,7 @@ export default class Overview extends React.PureComponent {
                 key: entryLocalId,
             });
         }
+        this.showInitial = !!entryLocalId;
     }
 
     entryLabelSelector = (entry) => {
@@ -250,6 +253,7 @@ export default class Overview extends React.PureComponent {
                             <ModalButton
                                 className={styles.entryCommentButton}
                                 disabled={isFalsy(entryAccessor.serverId(entry))}
+                                initialShowModal={this.showInitial}
                                 modal={
                                     <EntryCommentModal
                                         entryServerId={entryAccessor.serverId(entry)}
