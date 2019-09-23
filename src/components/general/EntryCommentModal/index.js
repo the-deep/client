@@ -157,9 +157,14 @@ export default class EntryCommentModal extends React.PureComponent {
             currentEdit: undefined,
             faramValues: {},
             faramErrors: {},
+            globalPristine: true,
             pristine: true,
             showConfirm: false,
         };
+    }
+
+    setGlobalPristine = (globalPristine) => {
+        this.setState({ globalPristine });
     }
 
     getTabs = (resolvedThreads, unresolvedThreads) => {
@@ -206,10 +211,10 @@ export default class EntryCommentModal extends React.PureComponent {
     }
 
     handleCommentsClose = () => {
-        const { currentEdit } = this.state;
+        const { globalPristine } = this.state;
         const { closeModal } = this.props;
 
-        if (isDefined(currentEdit)) {
+        if (!globalPristine) {
             this.setState({ showConfirm: true });
         } else if (isDefined(closeModal)) {
             closeModal();
@@ -268,6 +273,7 @@ export default class EntryCommentModal extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine: false,
+            globalPristine: false,
         });
     }
 
@@ -290,6 +296,7 @@ export default class EntryCommentModal extends React.PureComponent {
         this.setState({
             currentEdit: undefined,
             pristine: true,
+            globalPristine: true,
         });
     }
 
@@ -305,9 +312,15 @@ export default class EntryCommentModal extends React.PureComponent {
             this.setState({
                 faramValues: {},
                 pristine: true,
+                globalPristine: true,
             });
         } else {
-            this.setState({ currentEdit: undefined });
+            this.setState({
+                faramValues: {},
+                pristine: true,
+                globalPristine: true,
+                currentEdit: undefined,
+            });
         }
     }
 
@@ -379,6 +392,7 @@ export default class EntryCommentModal extends React.PureComponent {
             faramValues: {},
             faramErrors: {},
             pristine: true,
+            globalPristine: true,
         });
 
         const {
@@ -410,6 +424,7 @@ export default class EntryCommentModal extends React.PureComponent {
             entryId: entryServerId,
             threadId: key,
             onCurrentEditChange: this.handleCurrentEditChange,
+            setGlobalPristine: this.setGlobalPristine,
             comments: thread,
             currentEdit,
             members,
@@ -428,7 +443,6 @@ export default class EntryCommentModal extends React.PureComponent {
     render() {
         const {
             className,
-            closeModal,
             entryCommentsGet: {
                 pending: commentsPending,
             },
@@ -505,28 +519,30 @@ export default class EntryCommentModal extends React.PureComponent {
                             onClick={this.handleTabClick}
                         >
                             <div className={styles.buttons}>
-                                {unresolvedThreads.length > 0 &&
-                                    <Button
-                                        onClick={this.handleNewThreadClick}
-                                        iconName="add"
-                                        transparent
-                                        disabled={currentEdit === 'new-thread'}
-                                    >
-                                        {_ts('entryComments', 'newThreadButtonLabel')}
-                                    </Button>
-                                }
+                                <Button
+                                    onClick={this.handleNewThreadClick}
+                                    iconName="add"
+                                    transparent
+                                    disabled={
+                                        isDefined(currentEdit) || unresolvedThreads.length === 0
+                                    }
+                                >
+                                    {_ts('entryComments', 'newThreadButtonLabel')}
+                                </Button>
                             </div>
                         </ScrollTabs>
                     </div>
                     <div className={styles.content}>
-                        <ListView
-                            className={styles.threads}
-                            data={threads}
-                            keySelector={threadsKeySelector}
-                            renderer={Thread}
-                            rendererParams={rendererParams}
-                            emptyComponent={EmptyComponent}
-                        />
+                        {threads.length > 0 && (
+                            <ListView
+                                className={styles.threads}
+                                data={threads}
+                                keySelector={threadsKeySelector}
+                                renderer={Thread}
+                                rendererParams={rendererParams}
+                                emptyComponent={EmptyComponent}
+                            />
+                        )}
                         {showCommentForm && (
                             <CommentFaram
                                 className={styles.newComment}
