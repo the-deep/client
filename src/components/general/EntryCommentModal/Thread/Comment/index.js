@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -47,10 +50,12 @@ const propTypes = {
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     currentEdit: PropTypes.string,
     onCurrentEditChange: PropTypes.func,
+    setGlobalPristine: PropTypes.func,
 };
 
 const defaultProps = {
     currentEdit: undefined,
+    setGlobalPristine: undefined,
     className: undefined,
     onCurrentEditChange: undefined,
     text: '',
@@ -191,6 +196,7 @@ export default class Comment extends React.PureComponent {
         const {
             text,
             assigneeDetail,
+            setGlobalPristine,
         } = this.props;
 
         // NOTE: This is to prevent unnecessary edits
@@ -201,6 +207,10 @@ export default class Comment extends React.PureComponent {
             faramErrors: errors,
             pristine,
         });
+
+        if (setGlobalPristine) {
+            setGlobalPristine(pristine);
+        }
     }
 
     handleFaramValidationSuccess = (_, values) => {
@@ -218,6 +228,7 @@ export default class Comment extends React.PureComponent {
             isParent,
             onEdit,
             onCurrentEditChange,
+            setGlobalPristine,
         } = this.props;
 
         onEdit(commentId, values, isParent);
@@ -229,20 +240,42 @@ export default class Comment extends React.PureComponent {
         this.setState({
             pristine: true,
         });
+
+        if (setGlobalPristine) {
+            setGlobalPristine(true);
+        }
     }
 
     handleFaramValidationFailure = (faramErrors) => {
+        const { setGlobalPristine } = this.props;
+
         this.setState({
             faramErrors,
             pristine: true,
         });
+
+        if (setGlobalPristine) {
+            setGlobalPristine(true);
+        }
     }
 
     handleCancelClick = () => {
-        const { onCurrentEditChange } = this.props;
+        const {
+            onCurrentEditChange,
+            setGlobalPristine,
+        } = this.props;
+
+        this.setState({
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
 
         if (onCurrentEditChange) {
             onCurrentEditChange(undefined);
+        }
+        if (setGlobalPristine) {
+            setGlobalPristine(true);
         }
     };
 
@@ -283,6 +316,7 @@ export default class Comment extends React.PureComponent {
 
         const hideActions = (activeUserId !== userDetails.id) || isResolved;
         const editMode = currentEdit === this.commentEditId;
+        const hideEdit = isDefined(currentEdit);
 
         return (
             <div
@@ -303,6 +337,7 @@ export default class Comment extends React.PureComponent {
                     onDeleteClick={this.handleDeleteClick}
                     isParent={isParent}
                     hideActions={hideActions}
+                    hideEdit={hideEdit}
                 />
                 {editMode ? (
                     <CommentFaram

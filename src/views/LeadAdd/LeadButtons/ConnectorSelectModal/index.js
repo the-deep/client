@@ -75,6 +75,7 @@ const requests = {
                 'source',
                 'role',
                 'filters',
+                'source_title',
             ],
         }),
         onSuccess: ({
@@ -105,8 +106,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     static connectorKeySelector = c => c.id;
 
-    // FIXME: Change this to title of source
-    static connectorSourceSelector = c => c.source;
+    static connectorSourceSelector = c => c.sourceTitle;
 
     constructor(props) {
         super(props);

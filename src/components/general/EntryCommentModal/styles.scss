@@ -67,7 +67,7 @@
 
         .new-comment {
             flex-shrink: 0;
-            margin: 0 var(--spacing-medium) var(--spacing-medium);
+            margin: var(--spacing-medium);
             border: var(--width-separator-thin) solid var(--color-separator);
             background-color: var(--color-foreground);
             padding-top: var(--spacing-small);

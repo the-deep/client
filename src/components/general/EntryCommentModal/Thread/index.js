@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -33,10 +36,12 @@ const propTypes = {
     isResolved: PropTypes.bool,
     currentEdit: PropTypes.string,
     onCurrentEditChange: PropTypes.func,
+    setGlobalPristine: PropTypes.func,
 };
 
 const defaultProps = {
     currentEdit: undefined,
+    setGlobalPristine: undefined,
     isResolved: false,
     entryId: undefined,
     threadId: undefined,
@@ -104,10 +109,12 @@ export default class EntryCommentThread extends React.PureComponent {
             isResolved,
             currentEdit,
             onCurrentEditChange,
+            setGlobalPristine,
         } = this.props;
 
         return ({
             onCurrentEditChange,
+            setGlobalPristine,
             currentEdit,
             commentId: key,
             userDetails: data.createdByDetail,
@@ -122,11 +129,17 @@ export default class EntryCommentThread extends React.PureComponent {
     }
 
     handleFaramChange = (values, errors) => {
+        const { setGlobalPristine } = this.props;
+
         this.setState({
             faramValues: values,
             faramErrors: errors,
             pristine: false,
         });
+
+        if (setGlobalPristine) {
+            setGlobalPristine(false);
+        }
     }
 
     handleFaramValidationSuccess = (values) => {
@@ -156,6 +169,7 @@ export default class EntryCommentThread extends React.PureComponent {
         const {
             onAdd,
             onCurrentEditChange,
+            setGlobalPristine,
         } = this.props;
 
         onAdd(response);
@@ -168,13 +182,22 @@ export default class EntryCommentThread extends React.PureComponent {
             faramErrors: {},
             pristine: true,
         });
+
+        if (setGlobalPristine) {
+            setGlobalPristine(true);
+        }
     }
 
     handleFaramValidationFailure = (faramErrors) => {
+        const { setGlobalPristine } = this.props;
+
         this.setState({
             faramErrors,
             pristine: true,
         });
+        if (setGlobalPristine) {
+            setGlobalPristine(true);
+        }
     }
 
     handleReplyClick = () => {
@@ -186,10 +209,22 @@ export default class EntryCommentThread extends React.PureComponent {
     }
 
     handleReplyCancelClick = () => {
-        const { onCurrentEditChange } = this.props;
+        const {
+            onCurrentEditChange,
+            setGlobalPristine,
+        } = this.props;
+
+        this.setState({
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
 
         if (onCurrentEditChange) {
             onCurrentEditChange(undefined);
+        }
+        if (setGlobalPristine) {
+            setGlobalPristine(true);
         }
     }
 
@@ -209,6 +244,7 @@ export default class EntryCommentThread extends React.PureComponent {
             onDelete,
             currentEdit,
             onCurrentEditChange,
+            setGlobalPristine,
         } = this.props;
 
         const {
@@ -226,6 +262,7 @@ export default class EntryCommentThread extends React.PureComponent {
         } = parent;
 
         const showReplyBox = currentEdit === this.threadReplyId;
+        const disableButton = isDefined(currentEdit);
 
         return (
             <div className={_cs(className, styles.thread)}>
@@ -238,6 +275,7 @@ export default class EntryCommentThread extends React.PureComponent {
                     userDetails={createdByDetail}
                     assigneeDetail={assigneeDetail}
                     text={text}
+                    setGlobalPristine={setGlobalPristine}
                     textHistory={textHistory}
                     members={members}
                     isParent
@@ -245,12 +283,6 @@ export default class EntryCommentThread extends React.PureComponent {
                 />
                 <ListView
                     data={children}
-                    className={
-                        _cs(
-                            styles.childrenList,
-                            children.length > 0 && styles.isNotEmpty,
-                        )
-                    }
                     keySelector={childrenKeySelector}
                     rendererParams={this.childRendererParams}
                     renderer={Comment}
@@ -273,11 +305,12 @@ export default class EntryCommentThread extends React.PureComponent {
                         cancelButtonLabel={_ts('entryComments', 'replyFaramCancelButtonLabel')}
                     />
                 )}
-                {!(showReplyBox || isResolved) && (
+                {!(isResolved || showReplyBox) && (
                     <div className={styles.newComment}>
                         <PrimaryButton
                             onClick={this.handleReplyClick}
                             className={styles.button}
+                            disabled={disableButton}
                             type="button"
                         >
                             {_ts('entryComments', 'replyButtonLabel')}

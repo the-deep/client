@@ -24,6 +24,7 @@ const propTypes = {
     textHistory: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     isParent: PropTypes.bool,
     hideActions: PropTypes.bool.isRequired,
+    hideEdit: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -71,6 +72,7 @@ export default class UserDetailActionBar extends React.PureComponent {
             textHistory,
             isParent,
             hideActions,
+            hideEdit,
         } = this.props;
 
         const { showHistory } = this.state;
@@ -124,6 +126,7 @@ export default class UserDetailActionBar extends React.PureComponent {
                             )}
                             <Button
                                 className={styles.button}
+                                disabled={hideEdit}
                                 onClick={onEditClick}
                             >
                                 {_ts('entryComments', 'editLabel')}
