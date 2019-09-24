@@ -35,11 +35,21 @@
 
             .entry-comment-button {
                 display: flex;
+                align-items: center;
                 margin-right: var(--spacing-medium);
                 padding: var(--spacing-extra-small) var(--spacing-small);
 
                 .comment-count {
                     padding-left: var(--spacing-small);
+                }
+
+                .comment-icon {
+                    font-size: var(--font-size-large);
+                }
+
+                &.accented {
+                    border-color: var(--color-accent);
+                    color: var(--color-accent);
                 }
             }
 

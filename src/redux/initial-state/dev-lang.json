@@ -3,7 +3,7 @@
         "1": "Owner",
         "2": "Created",
         "3": "Published",
-        "5": "Publisher",
+        "5": "Publishing Organization",
         "6": "Assignee",
         "7": "Confidentiality",
         "8": "Status",
@@ -22,7 +22,7 @@
         "22": "Prev",
         "23": "Next",
         "25": "Save",
-        "28": "We cannot currently preview this publisher. Please open it in a new tab or copy the URL.",
+        "28": "We cannot currently preview this publishing organization. Please open it in a new tab or copy the URL.",
         "30": "Invalid URL",
         "31": "Project",
         "32": "URL",
@@ -34,7 +34,7 @@
         "38": "Select one",
         "39": "e.g. Nepal Monitoring",
         "40": "e.g. Lead 12:21:00 PM",
-        "41": "e.g. https://deeper.togglecorp.com",
+        "41": "e.g. https://bbc.com",
         "44": "e.g. 12/12/2012",
         "45": "Enter text description here",
         "47": "Clear similar filter",
@@ -973,8 +973,8 @@
         "-59011405": "No. of Pages",
         "-86287086": "No framework is currently selected.",
         "-28816005": "To be started",
-        "-31511044": "Author",
-        "-30790313": "Same as publisher",
+        "-31511044": "Authoring Organization",
+        "-30790313": "Same as publishing organization",
         "-67237579": "Focus",
         "-63009300": "Selected geo-areas",
         "-28548476": "EMM Entities",
@@ -1018,15 +1018,16 @@
         "-63611552": "Looks like none of the items in this EMM feed have any EMM triggers.",
         "-74207738": "There was a problem fetching options for this connector.",
         "-39191362": "Selected connector was not found.",
-        "-56022972": "Add Author",
-        "-44615843": "Add Publisher",
+        "-56022972": "Add Authoring Organization",
+        "-44615843": "Add Publishing Organization",
         "-33383753": "Entry Comments",
         "-94149446": "Abbreviation/Acronym",
         "-27756095": "e.g. UN OCHA",
         "-12306980": "Logo",
         "-91474494": "e.g. People In Need",
         "-24340518": "No leads can be returned with your settings. Try adding a valid URL and try again.",
-        "-24511724": "No matching results were found. You can add a new {title} from add button next to this input."
+        "-24511724": "No matching results were found. Add a new {title} using the add button.",
+        "-91461742": "Are you sure you want to leave? You will lose your unsaved changes."
     },
     "links": {
         "browserExtension": {
@@ -1327,7 +1328,8 @@
         },
         "common": {
             "underConstructionLabel": 253,
-            "youHaveUnsavedChanges": 1300
+            "youHaveUnsavedChanges": 1300,
+            "youHaveUnsavedChanges2": -91461742
         },
         "countries": {
             "countriesLabel": 51,

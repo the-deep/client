@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isFalsy } from '@togglecorp/fujs';
+import {
+    _cs,
+    isFalsy,
+} from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
@@ -108,6 +111,10 @@ export default class Overview extends React.PureComponent {
         const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
         const entryLocalId = entryAccessor.key(entry);
 
+        this.state = {
+            mountModalButton: false,
+        };
+
         if (entryLocalId) {
             setSelectedEntryKey({
                 leadId,
@@ -115,6 +122,16 @@ export default class Overview extends React.PureComponent {
             });
         }
         this.showInitial = !!entryLocalId;
+    }
+
+    componentDidMount() {
+        this.entryCommentTimeout = setTimeout(() => {
+            this.setState({ mountModalButton: true });
+        }, 200);
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.entryCommentTimeout);
     }
 
     entryLabelSelector = (entry) => {
@@ -140,6 +157,7 @@ export default class Overview extends React.PureComponent {
     shouldHideEntryDelete = ({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
     )
+
     handleEntrySelect = (entryKey) => {
         this.props.setSelectedEntryKey({
             leadId: this.props.leadId,
@@ -194,6 +212,7 @@ export default class Overview extends React.PureComponent {
             ...otherProps
         } = this.props;
 
+        const { mountModalButton } = this.state;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
@@ -250,24 +269,34 @@ export default class Overview extends React.PureComponent {
                                 showLabel={false}
                                 hideClearButton
                             />
-                            <ModalButton
-                                className={styles.entryCommentButton}
-                                disabled={isFalsy(entryAccessor.serverId(entry))}
-                                initialShowModal={this.showInitial}
-                                modal={
-                                    <EntryCommentModal
-                                        entryServerId={entryAccessor.serverId(entry)}
-                                        onCommentsCountChange={this.handleCommentsCountChange}
+                            {mountModalButton && (
+                                <ModalButton
+                                    className={
+                                        _cs(
+                                            styles.entryCommentButton,
+                                            unresolvedCommentCount > 0 && styles.accented,
+                                        )
+                                    }
+                                    disabled={isFalsy(entryAccessor.serverId(entry))}
+                                    initialShowModal={this.showInitial}
+                                    modal={
+                                        <EntryCommentModal
+                                            entryServerId={entryAccessor.serverId(entry)}
+                                            onCommentsCountChange={this.handleCommentsCountChange}
+                                        />
+                                    }
+                                >
+                                    <Icon
+                                        name="chat"
+                                        className={styles.commentIcon}
                                     />
-                                }
-                            >
-                                <Icon name="chat" />
-                                {unresolvedCommentCount > 0 &&
-                                    <div className={styles.commentCount}>
-                                        {unresolvedCommentCount}
-                                    </div>
-                                }
-                            </ModalButton>
+                                    {unresolvedCommentCount > 0 &&
+                                        <div className={styles.commentCount}>
+                                            {unresolvedCommentCount}
+                                        </div>
+                                    }
+                                </ModalButton>
+                            )}
                         </header>
                         <WidgetFaram
                             className={styles.content}

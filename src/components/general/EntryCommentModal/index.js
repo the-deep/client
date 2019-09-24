@@ -563,12 +563,13 @@ export default class EntryCommentModal extends React.PureComponent {
                     </div>
                 </FloatingContainer>
                 <Confirm
+                    className={styles.confirm}
                     show={showConfirm}
                     closeOnEscape={false}
                     closeOnOutsideClick={false}
                     onClose={this.handleCloseConfirmation}
                 >
-                    {_ts('common', 'youHaveUnsavedChanges')}
+                    {_ts('common', 'youHaveUnsavedChanges2')}
                 </Confirm>
             </React.Fragment>
         );

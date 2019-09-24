@@ -46,7 +46,7 @@ export default class Community extends React.PureComponent {
             <DropdownMenu
                 className={className}
                 dropdownClassName={styles.communityDropdown}
-                dropdownIcon="chat"
+                dropdownIcon="chatOutline"
                 dropdownIconClassName={styles.icon}
                 closeOnClick
             >
