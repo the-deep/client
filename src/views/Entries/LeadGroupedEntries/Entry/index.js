@@ -176,7 +176,12 @@ export default class Entry extends React.PureComponent {
             <React.Fragment>
                 <header className={_cs('entry-container-header', styles.entryHeader)}>
                     <ModalButton
-                        className={styles.button}
+                        className={
+                            _cs(
+                                styles.button,
+                                commentCount > 0 && styles.accented,
+                            )
+                        }
                         disabled={isFalsy(entryId)}
                         modal={
                             <EntryCommentModal
@@ -185,7 +190,10 @@ export default class Entry extends React.PureComponent {
                             />
                         }
                     >
-                        <Icon name="chat" />
+                        <Icon
+                            className={styles.icon}
+                            name="chat"
+                        />
                         {commentCount > 0 &&
                             <div className={styles.commentCount}>
                                 {commentCount}
