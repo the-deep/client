@@ -239,11 +239,9 @@ const requests = {
                 ),
             };
         },
-        /*
         onSuccess: ({ params, response }) => {
             params.handleExtraInfoFill(response);
         },
-        */
         onMount: ({ props: { lead } }) => {
             const initialProject = leadFaramValuesSelector(lead).project;
             return isDefined(initialProject);
@@ -294,7 +292,6 @@ class LeadDetail extends React.PureComponent {
             organizations: [],
         };
 
-        /*
         const {
             leadOptionsRequest,
         } = this.props;
@@ -302,7 +299,6 @@ class LeadDetail extends React.PureComponent {
         leadOptionsRequest.setDefaultParams({
             handleExtraInfoFill: this.handleExtraInfoFill,
         });
-        */
     }
 
     setSearchedOrganizations = (searchedOrganizations) => {
@@ -422,7 +418,6 @@ class LeadDetail extends React.PureComponent {
         }
     }
 
-    /*
     handleExtraInfoFill = (leadOptions) => {
         const {
             lead,
@@ -437,11 +432,12 @@ class LeadDetail extends React.PureComponent {
             }));
         }
 
+        /*
         const values = leadFaramValuesSelector(lead);
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
         this.handleLeadValueChange(newValues);
+        */
     }
-    */
 
     handleWebInfoFill = (webInfo) => {
         const {
