@@ -13,6 +13,7 @@ module.exports = {
     },
     'plugins': [
         'react',
+        'react-hooks',
         'import',
         'css-modules',
         '@typescript-eslint',
@@ -76,5 +77,8 @@ module.exports = {
         'react/default-props-match-prop-types': ['warn', {
             'allowRequiredDefaults': true,
         }],
+
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'warn',
     },
 };
