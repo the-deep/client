@@ -104,7 +104,7 @@ export default class AddOrganizationModal extends React.PureComponent {
             title: [requiredCondition],
             shortName: [requiredCondition],
             // longName: [requiredCondition],
-            url: [urlCondition, requiredCondition],
+            url: [urlCondition],
             organizationType: [requiredCondition],
             logo: [],
         },
@@ -273,17 +273,17 @@ export default class AddOrganizationModal extends React.PureComponent {
                             for Coordination of Humanitarian Affairs"
                         />
                         */}
-                        <TextInput
-                            faramElementName="url"
-                            label={_ts('organization.addModal', 'urlLabel')}
-                            placeholder={_ts('organization.addModal', 'urlPlaceholder')}
-                        />
                         <SelectInput
                             faramElementName="organizationType"
                             label={_ts('organization.addModal', 'organizationTypeLabel')}
                             options={organizationTypeList}
                             keySelector={idSelector}
                             labelSelector={titleSelector}
+                        />
+                        <TextInput
+                            faramElementName="url"
+                            label={_ts('organization.addModal', 'urlLabel')}
+                            placeholder={_ts('organization.addModal', 'urlPlaceholder')}
                         />
                         <Label
                             className={styles.logoTitle}

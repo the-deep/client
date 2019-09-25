@@ -161,7 +161,12 @@ export default class WidgetFaramContainer extends React.PureComponent {
                     />
                     <ModalButton
                         disabled={isFalsy(entryServerId)}
-                        className={styles.entryCommentButton}
+                        className={
+                            _cs(
+                                styles.entryCommentButton,
+                                unresolvedCommentCount > 0 && styles.accented,
+                            )
+                        }
                         modal={
                             <EntryCommentModal
                                 entryServerId={entryServerId}
@@ -169,7 +174,10 @@ export default class WidgetFaramContainer extends React.PureComponent {
                             />
                         }
                     >
-                        <Icon name="chat" />
+                        <Icon
+                            className={styles.icon}
+                            name="chat"
+                        />
                         {unresolvedCommentCount > 0 &&
                             <div className={styles.commentCount}>
                                 {unresolvedCommentCount}

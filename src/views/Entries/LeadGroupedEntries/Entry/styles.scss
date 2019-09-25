@@ -11,10 +11,20 @@
         position: sticky;
         top: var(--spacing-small);
         right: var(--spacing-medium);
+        align-items: center;
         padding: var(--spacing-extra-small) var(--spacing-small);
 
         .comment-count {
             padding-left: var(--spacing-small);
+        }
+
+        .icon {
+            font-size: var(--font-size-large);
+        }
+
+        &.accented {
+            border-color: var(--color-accent)!important;
+            color: var(--color-accent);
         }
     }
 }
@@ -26,7 +36,6 @@
     &:not(:last-child) {
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
-
 
     .widget {
         @extend %widget;
