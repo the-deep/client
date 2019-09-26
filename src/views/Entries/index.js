@@ -136,6 +136,8 @@ const leadKeySelector = d => d.id;
 
 const MAX_ENTRIES_PER_REQUEST = 50;
 
+const getHashFromBrowser = () => window.location.hash.substr(2);
+
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Entries extends React.PureComponent {
@@ -267,12 +269,18 @@ export default class Entries extends React.PureComponent {
     getTabs = memoize((framework) => {
         if (framework.properties && framework.properties.statsConfig) {
             return {
-                [LIST_VIEW]: LIST_VIEW,
-                [VIZ_VIEW]: VIZ_VIEW,
+                tabs: {
+                    [LIST_VIEW]: LIST_VIEW,
+                    [VIZ_VIEW]: VIZ_VIEW,
+                },
+                showTabs: true,
             };
         }
         return {
-            [LIST_VIEW]: LIST_VIEW,
+            tabs: {
+                [LIST_VIEW]: LIST_VIEW,
+            },
+            showTabs: false,
         };
     })
 
@@ -300,7 +308,7 @@ export default class Entries extends React.PureComponent {
         this.props.setEntriesViewActivePage({ activePage: page });
     }
 
-    handleTabClick = (view) => {
+    handleHashChange = (view) => {
         this.setState({ view });
     }
 
@@ -409,7 +417,10 @@ export default class Entries extends React.PureComponent {
             view,
         } = this.state;
 
-        const tabs = this.getTabs(framework);
+        const {
+            tabs,
+            showTabs,
+        } = this.getTabs(framework);
 
         return (
             <Page
@@ -418,25 +429,25 @@ export default class Entries extends React.PureComponent {
                 header={
                     <React.Fragment>
                         {
-                            // FIXME: Doesn't work if page is refreshed with VIZ_VIEW
-                            this.state.view === LIST_VIEW &&
+                            view === LIST_VIEW &&
                                 <FilterEntriesForm
+                                    className={styles.filters}
                                     pending={pendingFramework}
                                     filters={framework.filters}
                                     geoOptions={geoOptions}
                                 />
                         }
                         <ScrollTabs
+                            className={_cs(styles.tabs, !showTabs && styles.hideTabs)}
                             tabs={tabs}
                             useHash
                             replaceHistory
                             renderer={Tab}
                             blankClassName={styles.blank}
+                            onHashChange={this.handleHashChange}
                             activeClassName={styles.activeTab}
                             rendererParams={this.tabRendererParams}
-                            className={styles.tabs}
-                            onClick={this.handleTabClick}
-                            defaultHash={view}
+                            defaultHash={LIST_VIEW}
                         />
                     </React.Fragment>
                 }
@@ -450,7 +461,7 @@ export default class Entries extends React.PureComponent {
                 }
                 footerClassName={styles.footer}
                 footer={
-                    totalEntriesCount > 0 && this.state.view === LIST_VIEW &&
+                    totalEntriesCount > 0 && view === LIST_VIEW &&
                     <Pager
                         activePage={activePage}
                         itemsCount={totalEntriesCount}

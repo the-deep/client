@@ -2,18 +2,29 @@
 .entries-view {
     display: flex;
     flex-direction: column;
+    overflow: auto;
 
     .header {
+        display: flex;
+        justify-content: flex-end;
+
+        .filters {
+            flex-grow: 1;
+            flex-shrink: auto;
+        }
+
         .tabs {
+            align-self: flex-end;
+            flex-shrink: 0;
             margin-right: var(--spacing-extra-large);
             background-color: transparent;
 
             .tab {
-                border: none;
                 outline: 0;
+                border: none;
+                background-color: transparent;
                 padding: var(--spacing-small);
                 font-size: var(--font-size-extra-large);
-                background-color: transparent;
 
                 &:hover,
                 &.active-tab {
@@ -24,6 +35,10 @@
 
             .blank {
                 border: 0;
+            }
+
+            &.hide-tabs {
+                display: none;
             }
         }
     }

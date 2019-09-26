@@ -3,7 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { doesObjectHaveNoData } from '@togglecorp/fujs';
+import {
+    doesObjectHaveNoData,
+    _cs,
+} from '@togglecorp/fujs';
 import SearchInput from '#rsci/SearchInput';
 import SelectInput from '#rsci/SelectInput';
 import DateFilter from '#rsci/DateFilter';
@@ -50,6 +53,7 @@ const propTypes = {
     applyOnChange: PropTypes.bool,
     filters: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
+    className: PropTypes.string,
 
     activeProject: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -63,6 +67,7 @@ const propTypes = {
 
 const defaultProps = {
     pending: true,
+    className: undefined,
     filters: [],
     geoOptions: {},
     applyOnChange: false,
@@ -277,6 +282,7 @@ export default class FilterEntriesForm extends React.PureComponent {
     render() {
         const {
             pending,
+            className,
             entryFilterOptions,
             applyOnChange,
         } = this.props;
@@ -290,7 +296,7 @@ export default class FilterEntriesForm extends React.PureComponent {
         const { createdBy } = entryFilterOptions;
 
         return (
-            <div className={styles.entriesFilters} >
+            <div className={_cs(styles.entriesFilters, className)} >
                 <SearchInput
                     className={styles.entriesFilter}
                     label={_ts('entries', 'searchFilterLabel')}
