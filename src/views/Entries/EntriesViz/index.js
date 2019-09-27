@@ -17,7 +17,7 @@ import requests from './requests';
 import styles from './styles.scss';
 
 
-const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://matthewsmawfield.github.io/deepviz/';
+const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz/';
 
 const emptyObject = {};
 
@@ -60,7 +60,11 @@ export default class EntriesViz extends React.PureComponent {
 
         // NOTE: Show old data even if pending
         if (pending && !dataUrl) {
-            return <LoadingAnimation />;
+            return (
+                <div className={styles.content}>
+                    <LoadingAnimation />
+                </div>
+            );
         // NOTE: Show error if responseError or dataUrl is not defined
         } else if (responseError || !dataUrl) {
             return (
@@ -72,7 +76,7 @@ export default class EntriesViz extends React.PureComponent {
 
         return (
             <div className={styles.content}>
-                {pending && <Spinner />}
+                {pending && <LoadingAnimation />}
                 <iframe
                     className={styles.iframe}
                     title="Visualization"

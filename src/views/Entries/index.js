@@ -57,7 +57,7 @@ const VIZ_VIEW = 'viz';
 
 const tabsIcons = {
     [LIST_VIEW]: 'list',
-    [VIZ_VIEW]: 'grid',
+    [VIZ_VIEW]: 'histogram',
 };
 
 
