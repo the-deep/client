@@ -110,6 +110,7 @@ const iconNames = {
     user: 'ion-android-contact',
     userGroup: 'ion-android-contacts',
     verticalBar: 'ion-connection-bars',
+    visualization: 'ion-stats-bars',
     menuDots: 'ion-android-more-vertical',
     warning: 'ion-alert-circled',
     widget: 'ion-cube',

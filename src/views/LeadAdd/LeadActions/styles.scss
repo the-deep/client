@@ -12,7 +12,7 @@
 .action-buttons {
     display: flex;
     align-items: center;
-    flex-shrink: 0;
+    flex-wrap: wrap;
 
     .movement-buttons {
         flex-shrink: 0;

@@ -2,8 +2,60 @@
 .entries-view {
     display: flex;
     flex-direction: column;
+    overflow: auto;
+
+    .header {
+        display: flex;
+        justify-content: flex-end;
+
+        .filters {
+            flex-grow: 1;
+            flex-shrink: initial;
+        }
+
+        .tabs {
+            align-self: flex-end;
+            flex-shrink: 0;
+            margin-right: var(--spacing-extra-large);
+            background-color: transparent;
+
+            .tab {
+                outline: 0;
+                border: none;
+                background-color: transparent;
+                padding: var(--spacing-small);
+                font-size: var(--font-size-extra-large);
+
+                &:hover,
+                &.active-tab {
+                    background-color: var(--color-background-hover);
+                    color: var(--color-accent);
+                }
+            }
+
+            .blank {
+                border: 0;
+            }
+
+            &.hide-tabs {
+                display: none;
+            }
+        }
+    }
 
     .lead-grouped-entries-list {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
         .lead-grouped-header {
             position: sticky;
             top: 0;
