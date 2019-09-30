@@ -2935,6 +2935,11 @@
             "saveButtonLabel": 25,
             "urlLabel": 32,
             "urlPlaceholder": 41
+        },
+        "entries.visualization": {
+            "entriesViz": -9524324,
+            "entriesVizFailure": -9524324,
+            "entriesVizFatal": -9524324
         }
     }
 }
