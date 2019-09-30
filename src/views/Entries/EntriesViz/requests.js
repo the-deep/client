@@ -1,11 +1,9 @@
 import notify from '#notify';
 import _ts from '#ts';
 
-
 const requests = {
     entriesVizGetRequest: {
         onMount: true,
-        // TODO: Don't send request if EntriesViz is hidden (Depends on framework)
         onPropsChanged: ['projectId'],
         schemaName: 'entriesVizGetResponse',
         url: ({ props: { projectId } }) => `/projects/${projectId}/entries-viz/`,
@@ -22,26 +20,26 @@ const requests = {
         onSuccess: ({ response }) => {
             if (response.status === 'failure') {
                 notify.send({
-                    title: _ts('project', 'entriesViz'),
+                    title: _ts('entries.visualization', 'entriesViz'),
                     type: notify.type.WARNING,
-                    message: _ts('project', 'entriesVizFailure'),
+                    message: _ts('entries.visualization', 'entriesVizFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             }
         },
         onFailure: () => {
             notify.send({
-                title: _ts('project', 'entriesViz'),
+                title: _ts('entries.visualization', 'entriesViz'),
                 type: notify.type.WARNING,
-                message: _ts('project', 'entriesVizFailure'),
+                message: _ts('entries.visualization', 'entriesVizFailure'),
                 duration: notify.duration.MEDIUM,
             });
         },
         onFatal: () => {
             notify.send({
-                title: _ts('project', 'entriesViz'),
+                title: _ts('entries.visualization', 'entriesViz'),
                 type: notify.type.ERROR,
-                message: _ts('project', 'entriesVizFatal'),
+                message: _ts('entries.visualization', 'entriesVizFatal'),
                 duration: notify.duration.SLOW,
             });
         },

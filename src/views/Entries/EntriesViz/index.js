@@ -9,7 +9,6 @@ import {
     RequestClient,
 } from '#request';
 
-import Spinner from '#rscv/Spinner';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 

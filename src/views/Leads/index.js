@@ -476,6 +476,7 @@ export default class Leads extends React.PureComponent {
             pathNames.addLeads,
             { projectId: this.props.activeProject },
         );
+        const { view } = this.props;
 
         return (
             <React.Fragment>
@@ -483,29 +484,31 @@ export default class Leads extends React.PureComponent {
                     className={styles.filters}
                     onEmmStatusReceive={this.handleEmmStatusReceive}
                 />
-                <ScrollTabs
-                    tabs={this.tabs}
-                    useHash
-                    replaceHistory
-                    className={styles.tabs}
-                    // FIXME: isActive is passed inside Icon
-                    renderer={Icon}
-                    rendererParams={Leads.tabIconRendererParams}
-                    onClick={this.handleTabClick}
-                    defaultHash={this.props.view}
-                />
-                <Cloak
-                    {...viewsAcl.addLeads}
-                    render={
-                        <Link
-                            to={addLeadLink}
-                            className={styles.addLeadLink}
-                        >
-                            {/* TODO: add icon aswell */}
-                            {_ts('leads', 'addSourcesButtonLabel')}
-                        </Link>
-                    }
-                />
+                <div className={styles.rightContainer}>
+                    <ScrollTabs
+                        tabs={this.tabs}
+                        useHash
+                        replaceHistory
+                        className={styles.tabs}
+                        // FIXME: isActive is passed inside Icon
+                        renderer={Icon}
+                        rendererParams={Leads.tabIconRendererParams}
+                        onClick={this.handleTabClick}
+                        defaultHash={view}
+                    />
+                    <Cloak
+                        {...viewsAcl.addLeads}
+                        render={
+                            <Link
+                                to={addLeadLink}
+                                className={styles.addLeadLink}
+                            >
+                                {/* TODO: add icon aswell */}
+                                {_ts('leads', 'addSourcesButtonLabel')}
+                            </Link>
+                        }
+                    />
+                </div>
             </React.Fragment>
         );
     }

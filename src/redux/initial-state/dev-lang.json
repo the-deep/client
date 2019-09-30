@@ -1027,7 +1027,9 @@
         "-91474494": "e.g. People In Need",
         "-24340518": "No leads can be returned with your settings. Try adding a valid URL and try again.",
         "-24511724": "No matching results were found. Add a new {title} using the add button.",
-        "-91461742": "Are you sure you want to leave? You will lose your unsaved changes."
+        "-91461742": "Are you sure you want to leave? You will lose your unsaved changes.",
+        "-3697040": "Entries visualization",
+        "-9524324": "Failed to load entries visualization data. "
     },
     "links": {
         "browserExtension": {
@@ -2059,7 +2061,11 @@
             "afClone": 12502,
             "afCloneSuccess": -8045218,
             "afCloneFatal": -48269508,
-            "noAfSelectedText": -86287086
+            "noAfSelectedText": -86287086,
+            "entriesViz": -3697040,
+            "entriesVizErrorMessage": -9524324,
+            "entriesVizFailure": -9524324,
+            "entriesVizFatal": -9524324
         },
         "connector": {
             "noConnectorsLabel": 1115,

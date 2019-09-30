@@ -1,15 +1,10 @@
-.lead-filters {
+.container {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
-    .container {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
-
-        >* {
-            margin: var(--spacing-small);
-        }
+    >* {
+        margin: var(--spacing-small);
     }
 }

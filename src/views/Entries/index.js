@@ -57,7 +57,7 @@ const VIZ_VIEW = 'viz';
 
 const tabsIcons = {
     [LIST_VIEW]: 'list',
-    [VIZ_VIEW]: 'histogram',
+    [VIZ_VIEW]: 'visualization',
 };
 
 
@@ -135,9 +135,6 @@ const defaultProps = {
 const leadKeySelector = d => d.id;
 
 const MAX_ENTRIES_PER_REQUEST = 50;
-
-const getHashFromBrowser = () => window.location.hash.substr(2);
-
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Entries extends React.PureComponent {

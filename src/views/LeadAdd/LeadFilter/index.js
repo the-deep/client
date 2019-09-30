@@ -61,53 +61,49 @@ export default class LeadFilter extends React.PureComponent {
         } = this.props;
 
         return (
-            <div
-                className={styles.leadFilters}
+            <Faram
+                className={styles.container}
+                value={filters}
+                onChange={onFilterChange}
+                schema={faramSchema}
             >
-                <Faram
-                    className={styles.container}
-                    value={filters}
-                    onChange={onFilterChange}
-                    schema={faramSchema}
-                >
-                    <SearchInput
-                        faramElementName="search"
-                        label={_ts('addLeads.filters', 'placeholderSearch')}
-                        placeholder={_ts('addLeads.filters', 'placeholderSearch')}
-                        showHintAndError={false}
-                    />
-                    {/*
+                <SearchInput
+                    faramElementName="search"
+                    label={_ts('addLeads.filters', 'placeholderSearch')}
+                    placeholder={_ts('addLeads.filters', 'placeholderSearch')}
+                    showHintAndError={false}
+                />
+                {/*
                     <TextInput
                         faramElementName="source"
                         label={_ts('addLeads.filters', 'filterPublisher')}
                         placeholder={_ts('addLeads.filters', 'placeholderAny')}
                         showHintAndError={false}
                     />
-                    */}
-                    <MultiSelectInput
-                        faramElementName="type"
-                        label={_ts('addLeads.filters', 'filterSourceType')}
-                        showLabel
-                        options={leadTypeOptions}
-                        placeholder={_ts('addLeads.filters', 'placeholderAny')}
-                        showHintAndError={false}
-                    />
-                    <SelectInput
-                        faramElementName="status"
-                        label={_ts('addLeads.filters', 'filterStatus')}
-                        showLabel
-                        options={leadStatusFilterOptions}
-                        placeholder={_ts('addLeads.filters', 'placeholderAny')}
-                        showHintAndError={false}
-                    />
-                </Faram>
+                */}
+                <MultiSelectInput
+                    faramElementName="type"
+                    label={_ts('addLeads.filters', 'filterSourceType')}
+                    showLabel
+                    options={leadTypeOptions}
+                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
+                    showHintAndError={false}
+                />
+                <SelectInput
+                    faramElementName="status"
+                    label={_ts('addLeads.filters', 'filterStatus')}
+                    showLabel
+                    options={leadStatusFilterOptions}
+                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
+                    showHintAndError={false}
+                />
                 <DangerButton
                     disabled={clearDisabled}
                     onClick={onFilterClear}
                 >
                     {_ts('addLeads.filters', 'filterClearFilter')}
                 </DangerButton>
-            </div>
+            </Faram>
         );
     }
 }
