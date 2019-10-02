@@ -90,6 +90,11 @@ const propTypes = {
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     row: PropTypes.shape({
         role: PropTypes.string,
+        member: PropTypes.number,
+        memberName: PropTypes.string,
+        memberEmail: PropTypes.string,
+        linkedGroup: PropTypes.string,
+        userGroupOptions: PropTypes.object,
     }).isRequired,
     projectRoleList: PropTypes.shape({
         title: PropTypes.string,
@@ -239,7 +244,7 @@ export default class Actions extends React.PureComponent {
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    disabled={readOnly || pending}
+                    disabled={readOnly || pending || activeUserId === memberId}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',
