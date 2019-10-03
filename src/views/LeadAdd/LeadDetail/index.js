@@ -603,11 +603,11 @@ class LeadDetail extends React.PureComponent {
         const pending = (
             isLeadFormLoading(leadState)
             || leadOptionsPending
+            || webInfoRequestPending
         );
         const formDisabled = (
             isLeadFormDisabled(leadState)
             || pending
-            || webInfoRequestPending
         );
         const extractionDisabled = (
             isLeadFormDisabled(leadState)
