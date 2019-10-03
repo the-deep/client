@@ -31,7 +31,7 @@ export default class Community extends React.PureComponent {
             className,
         } = this.props;
 
-        const slackLink = 'https://goo.gl/13pcuA';
+        const slackLink = 'https://bit.ly/2oCFFab';
         const skypeLink = 'https://join.skype.com/idYxL8ozLDOD';
 
         const slackLinkTitle = _ts('components.navbar', 'slackLinkTitle');

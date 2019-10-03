@@ -164,27 +164,27 @@ function fillWebInfo(values, webInfo) {
             // eslint-disable-next-line no-param-reassign
             safeValues.project = [webInfo.project];
         }
-        if (!safeValues.date && webInfo.date) {
+        if (webInfo.date) {
             // eslint-disable-next-line no-param-reassign
             safeValues.publishedOn = webInfo.date;
         }
-        if (!safeValues.website && webInfo.website) {
+        if (webInfo.website) {
             // eslint-disable-next-line no-param-reassign
             safeValues.website = webInfo.website;
         }
-        if (!safeValues.title && webInfo.title) {
+        if (webInfo.title) {
             // eslint-disable-next-line no-param-reassign
             safeValues.title = webInfo.title;
         }
-        if (!safeValues.url && webInfo.url) {
+        if (webInfo.url) {
             // eslint-disable-next-line no-param-reassign
             safeValues.url = webInfo.url;
         }
-        if (!safeValues.source && webInfo.source) {
+        if (webInfo.source) {
             // eslint-disable-next-line no-param-reassign
             safeValues.source = webInfo.source.id;
         }
-        if (!safeValues.author && webInfo.author) {
+        if (webInfo.author) {
             // eslint-disable-next-line no-param-reassign
             safeValues.author = webInfo.author.id;
         }
@@ -603,11 +603,11 @@ class LeadDetail extends React.PureComponent {
         const pending = (
             isLeadFormLoading(leadState)
             || leadOptionsPending
+            || webInfoRequestPending
         );
         const formDisabled = (
             isLeadFormDisabled(leadState)
             || pending
-            || webInfoRequestPending
         );
         const extractionDisabled = (
             isLeadFormDisabled(leadState)

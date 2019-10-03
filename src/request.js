@@ -105,6 +105,7 @@ const CustomRequestCoordinator = createRequestCoordinator({
         body: alterResponseErrorToFaramError(errors),
     }),
     */
+
     transformErrors: (response) => {
         const faramErrors = alterResponseErrorToFaramError(response.errors);
         // FIXME: Use strings for this
@@ -135,18 +136,15 @@ RequestClient.propType = PropTypes.shape({
     error: PropTypes.object,
 });
 
-// TODO: Fix handling of errors both in frontend and backend
 export const notifyOnFailure = title => ({
     error: {
-        body,
+        messageForNotification,
     } = {},
 }) => {
-    const message = body.$internal.join(' ');
-
     notify.send({
         title,
         type: notify.type.ERROR,
-        message,
+        message: messageForNotification,
         duration: notify.duration.MEDIUM,
     });
 };
