@@ -2,18 +2,18 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
-import produce from 'immer';
+// import produce from 'immer';
 
+import { _cs } from '@togglecorp/fujs';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 
-import modalize from '#rscg/Modalize';
+import Message from '#rscv/Message';
 import WarningButton from '#rsca/Button/WarningButton';
 import Icon from '#rscg/Icon';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rscv/GridLayoutEditor';
 
 import {
-    updateAfViewWidgetAction,
     updateAfViewWidgetLayoutAction,
     removeAfViewWidgetAction,
 } from '#redux';
@@ -32,13 +32,10 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const ModalButton = modalize(WarningButton);
-
 const propTypes = {
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
 
-    updateWidget: PropTypes.func.isRequired,
     updateWidgetLayout: PropTypes.func.isRequired,
     removeWidget: PropTypes.func.isRequired,
 
@@ -51,7 +48,6 @@ const defaultProps = {
 
 const mapDispatchToProps = dispatch => ({
     removeWidget: params => dispatch(removeAfViewWidgetAction(params)),
-    updateWidget: params => dispatch(updateAfViewWidgetAction(params)),
     updateWidgetLayout: params => dispatch(updateAfViewWidgetLayoutAction(params)),
 });
 
@@ -65,6 +61,7 @@ export default class WidgetEditor extends React.PureComponent {
     static schema = {};
     static value = {};
 
+    /*
     constructor(props) {
         super(props);
 
@@ -72,7 +69,9 @@ export default class WidgetEditor extends React.PureComponent {
             temporaryWidgetState: undefined,
         };
     }
+    */
 
+    /*
     getModifiedWidget = memoize((widget, temporaryWidgetState) => (
         produce(widget, (safeWidget) => {
             // eslint-disable-next-line no-param-reassign
@@ -81,6 +80,7 @@ export default class WidgetEditor extends React.PureComponent {
             safeWidget.properties.data = temporaryWidgetState.data;
         })
     ))
+    */
 
     getWidgets = memoize((widgets, widgetType) => (
         widgets.filter(
@@ -95,10 +95,13 @@ export default class WidgetEditor extends React.PureComponent {
         return minSize;
     }
 
+    /*
     handleItemCancel = () => {
         this.setState({ temporaryWidgetState: undefined });
     }
+    */
 
+    /*
     handleItemSave = (key, data, title) => {
         const {
             analysisFrameworkId,
@@ -124,6 +127,7 @@ export default class WidgetEditor extends React.PureComponent {
             },
         });
     }
+    */
 
     handleItemRemove = (widgetId) => {
         const {
@@ -171,22 +175,23 @@ export default class WidgetEditor extends React.PureComponent {
             key,
             properties: { addedFrom },
         } = widget;
-        const { widgetType } = this.props;
-        const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
+        const {
+            widgetType,
+            widgetsDisabled,
+        } = this.props;
+
         const hideButtons = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
 
         const layout = this.layoutSelector(widget);
         const widthBlocks = Math.ceil(layout.width / gridSize.width);
         const heightBlocks = Math.ceil(layout.height / gridSize.height);
 
-        const headerTitle = isDevelopment
-            ? `${title} [${widthBlocks} ⨯ ${heightBlocks}]`
-            : title;
+        const headingClassName = _cs(
+            styles.heading,
+            hideButtons && styles.disabled,
+        );
 
-        const headingClassName = `
-            ${styles.heading}
-            ${hideButtons ? styles.disabled : ''}
-        `;
+        // const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
 
         return (
             <div className={styles.header}>
@@ -194,46 +199,51 @@ export default class WidgetEditor extends React.PureComponent {
                     title={title}
                     className={headingClassName}
                 >
-                    {headerTitle}
+                    {title}
+                    {isDevelopment && `[${widthBlocks} ⨯ ${heightBlocks}]`}
                 </h5>
                 <div className={styles.actionButtons}>
-                    {
-                        !hideButtons ? (
-                            <Fragment>
-                                <ModalButton
-                                    iconName="edit"
-                                    title={_ts('framework.widgetEditor', 'editTooltip')}
-                                    tabIndex="-1"
-                                    transparent
-                                    onClose={this.handleItemCancel}
-                                    modal={
-                                        <Widget
-                                            widgetKey={widget.key}
-                                            title={widget.title}
-                                            data={widget.properties.data}
-                                            properties={widget.properties}
-                                            onSave={this.handleItemSave}
-                                            onChange={this.handleItemChange}
-                                        />
-                                    }
-                                />
-                                <DangerConfirmButton
-                                    iconName="delete"
-                                    title={_ts('framework.widgetEditor', 'deleteTooltip')}
-                                    tabIndex="-1"
-                                    confirmationMessage={_ts('framework.widgetEditor', 'deleteConfirmDetail')}
-                                    transparent
-                                    onClick={() => this.handleItemRemove(key)}
-                                />
-                            </Fragment>
-                        ) : (
-                            <Icon
-                                name="info"
-                                className={styles.infoIcon}
-                                title={_ts('framework.widgetEditor', 'infoTooltip', { addedFrom })}
+                    {!hideButtons ? (
+                        <Fragment>
+                            <WarningButton
+                                iconName="edit"
+                                title={_ts('framework.widgetEditor', 'editTooltip')}
+                                tabIndex="-1"
+                                transparent
+                                onClick={() => this.props.onWidgetEditClick(key, widget)}
+                                disabled={widgetsDisabled}
+                                // TODO: add onClick handler
+                                /*
+                                onClose={this.handleItemCancel}
+                                modal={
+                                    <Widget
+                                        widgetKey={widget.key}
+                                        title={widget.title}
+                                        data={widget.properties.data}
+                                        properties={widget.properties}
+                                        onSave={this.handleItemSave}
+                                        onChange={this.handleItemChange}
+                                    />
+                                }
+                                */
                             />
-                        )
-                    }
+                            <DangerConfirmButton
+                                iconName="delete"
+                                title={_ts('framework.widgetEditor', 'deleteTooltip')}
+                                tabIndex="-1"
+                                confirmationMessage={_ts('framework.widgetEditor', 'deleteConfirmDetail')}
+                                transparent
+                                onClick={() => this.handleItemRemove(key)}
+                                disabled={widgetsDisabled}
+                            />
+                        </Fragment>
+                    ) : (
+                        <Icon
+                            name="info"
+                            className={styles.infoIcon}
+                            title={_ts('framework.widgetEditor', 'infoTooltip', { addedFrom })}
+                        />
+                    )}
                 </div>
             </div>
         );
@@ -256,21 +266,7 @@ export default class WidgetEditor extends React.PureComponent {
 
         const { widgetType } = this.props;
 
-        let disablerMaskText;
-        let fontSize;
-
         const isDisabled = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
-
-        if (isDisabled) {
-            disablerMaskText = _ts('framework.widgetEditor', 'disablerMastText', { title });
-            fontSize = Math.min(
-                18,
-                Math.max(
-                    9,
-                    Math.round(width * Math.sqrt(height) * 0.006),
-                ),
-            );
-        }
 
         const Widget = fetchWidgetFrameworkComponent(
             widgetId,
@@ -278,11 +274,12 @@ export default class WidgetEditor extends React.PureComponent {
             addedFrom,
         );
 
-        const className = `
-            ${styles.content}
-            ${isDisabled ? styles.disabled : ''}
-        `;
+        const className = _cs(
+            styles.content,
+            isDisabled && styles.disabled,
+        );
 
+        /*
         const {
             temporaryWidgetState,
         } = this.state;
@@ -290,6 +287,7 @@ export default class WidgetEditor extends React.PureComponent {
         const modifiedWidget = temporaryWidgetState && key === temporaryWidgetState.key
             ? this.getModifiedWidget(widget, temporaryWidgetState)
             : widget;
+        */
 
         return (
             <div className={className}>
@@ -298,7 +296,8 @@ export default class WidgetEditor extends React.PureComponent {
                         <Widget
                             widgetName={widgetId}
                             widgetType={widgetType}
-                            widget={modifiedWidget}
+                            // widget={modifiedWidget}
+                            widget={widget}
 
                             entryType="excerpt"
                             excerpt=""
@@ -309,14 +308,9 @@ export default class WidgetEditor extends React.PureComponent {
                     </FaramGroup>
                 </FaramGroup>
                 { isDisabled && ( // FIXME: use Message component?
-                    <div
-                        className={styles.disablerMask}
-                        style={{
-                            fontSize: `${fontSize}px`,
-                        }}
-                    >
-                        { disablerMaskText }
-                    </div>
+                    <Message className={styles.disablerMask}>
+                        {_ts('framework.widgetEditor', 'disablerMastText', { title })}
+                    </Message>
                 )}
             </div>
         );

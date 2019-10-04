@@ -565,7 +565,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const TabsWithButton = this.renderTabsWithButton;
 
         return (
-            <Modal className={styles.editModal}>
+            <div>
+                <h2>{title}</h2>
                 <Faram
                     className={styles.form}
                     onChange={this.handleFaramChange}
@@ -575,8 +576,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    <ModalHeader title={title} />
-                    <ModalBody className={styles.body}>
+                    <div className={styles.body}>
                         <NonFieldErrors
                             faramElement
                             className={styles.error}
@@ -595,8 +595,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             containerClassName={styles.modalUnitContainer}
                             active={selectedTab}
                         />
-                    </ModalBody>
-                    <ModalFooter>
+                    </div>
+                    <div>
                         <DangerConfirmButton
                             onClick={closeModal}
                             confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
@@ -610,9 +610,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         >
                             {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
                         </PrimaryButton>
-                    </ModalFooter>
+                    </div>
                 </Faram>
-            </Modal>
+            </div>
         );
     }
 }
