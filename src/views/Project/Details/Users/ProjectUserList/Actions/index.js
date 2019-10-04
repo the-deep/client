@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compareNumber } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -145,7 +146,7 @@ export default class Actions extends React.PureComponent {
     filterProjectRole = memoize((projectRoleList, level) => (
         projectRoleList.filter(
             projectRole => projectRole.level >= level,
-        )
+        ).sort((a, b) => compareNumber(a.level, b.level))
     ))
 
     handleRoleSelectInputChange = (newRole) => {
