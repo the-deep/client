@@ -154,9 +154,9 @@ export default class OrganizationList extends React.PureComponent {
         // FIXME: use strings
         <div className={styles.emptyComponent}>
             { this.state.searchValue.length === 0 ? (
-                'Start typing above to search for the organization'
+                'Start typing above to search for organizations'
             ) : (
-                'No result found, try different search text'
+                'No results found, try different search text'
             )}
         </div>
     )

@@ -88,8 +88,8 @@ const getComparator = (func, key) => (a, b) => func(a[key], b[key]);
 const userListKeySelector = d => d.id;
 
 const mapStateToProps = state => ({
-    memberships: projectMembershipListSelector(state),
     usergroups: projectUsergroupListSelector(state),
+    memberships: projectMembershipListSelector(state),
     projectRoleList: projectRoleListSelector(state),
     activeUser: activeUserSelector(state),
 });

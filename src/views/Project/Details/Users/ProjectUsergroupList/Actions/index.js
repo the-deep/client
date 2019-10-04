@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+import { compareNumber } from '@togglecorp/fujs';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
@@ -28,6 +30,7 @@ const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
+    activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectRoleList: PropTypes.shape({
         title: PropTypes.string,
     }).isRequired,
@@ -91,11 +94,26 @@ const mapDispatchToProps = dispatch => ({
 const projectRoleKeySelector = d => d.id;
 const projectRoleLabelSelector = d => d.title;
 
+const emptyObject = {};
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getUserRoleLevel = memoize((projectRoleList, role) => {
+        const userProjectRole = projectRoleList.find(
+            projectRole => projectRole.id === role,
+        );
+        return userProjectRole ? userProjectRole.level : undefined;
+    })
+
+    filterProjectRole = memoize((projectRoleList, level) => (
+        projectRoleList.filter(
+            projectRole => projectRole.level >= level,
+        ).sort((a, b) => compareNumber(a.level, b.level))
+    ))
 
     handleRoleSelectInputChange = (newRole) => {
         const {
@@ -131,6 +149,7 @@ export default class Actions extends React.PureComponent {
             readOnly,
             projectRoleList,
             row,
+            activeUserRole = emptyObject,
             removeUsergroupMembershipRequest: {
                 pending = false,
             } = {},
@@ -148,6 +167,10 @@ export default class Actions extends React.PureComponent {
             },
         );
 
+        const isSuperior = this.getUserRoleLevel(projectRoleList, role) < activeUserRole.level;
+        const filteredProjectRoleList = isSuperior ?
+            projectRoleList : this.filterProjectRole(projectRoleList, activeUserRole.level);
+
         return (
             <div className={styles.actions} >
                 {pending && <LoadingAnimation />}
@@ -156,13 +179,13 @@ export default class Actions extends React.PureComponent {
                     placeholder=""
                     hideClearButton
                     value={role}
-                    options={projectRoleList}
+                    options={filteredProjectRoleList}
                     onChange={this.handleRoleSelectInputChange}
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
-                    disabled={pending}
+                    disabled={isSuperior || pending}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding
@@ -171,7 +194,7 @@ export default class Actions extends React.PureComponent {
                     onClick={this.handleRemoveMembershipButtonClick}
                     confirmationMessage={removeUG}
                     transparent
-                    disabled={readOnly || pending}
+                    disabled={isSuperior || readOnly || pending}
                 />
             </div>
         );

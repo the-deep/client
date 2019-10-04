@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
-import { compareString } from '@togglecorp/fujs';
+import {
+    _cs,
+    compareString,
+} from '@togglecorp/fujs';
 import { FaramListElement } from '@togglecorp/faram';
 
 import {
@@ -15,6 +18,9 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import NormalTable from '#rscv/Table';
 
 import {
+    projectMembershipListSelector,
+    projectRoleListSelector,
+    activeUserSelector,
     setProjectUsergroupsAction,
     projectUsergroupListSelector,
 } from '#redux';
@@ -40,6 +46,9 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectUsergroups: PropTypes.func.isRequired,
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
@@ -82,6 +91,9 @@ const getComparator = (func, key) => (a, b) => func(a[key], b[key]);
 
 const mapStateToProps = state => ({
     usergroups: projectUsergroupListSelector(state),
+    memberships: projectMembershipListSelector(state),
+    projectRoleList: projectRoleListSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -113,12 +125,26 @@ export default class ProjectUsergroupList extends React.PureComponent {
                     <Actions
                         projectId={this.props.projectId}
                         readOnly={this.props.readOnly}
+                        activeUserRole={
+                            this.getActiveUserRole(
+                                this.props.projectRoleList,
+                                this.props.memberships,
+                                this.props.activeUser.userId,
+                            )}
                         row={row}
                     />
                 ),
             },
         ];
     }
+
+    getActiveUserRole = memoize((projectRoleList, memberships, memberId) => (
+        projectRoleList.find(
+            p => p.id === memberships.find(
+                m => m.member === memberId,
+            ).role,
+        )
+    ))
 
     filterGroups = memoize((allMembers = [], searchValue) => {
         const lowerSearchValue = searchValue.toLowerCase();
@@ -144,15 +170,11 @@ export default class ProjectUsergroupList extends React.PureComponent {
             emptyComponent: emptyComponentFromProps,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.projectUsergroupList}
-        `;
         const filteredGroups = this.filterGroups(usergroups, searchInputValue);
         const emptyComponent = searchInputValue === '' ? emptyComponentFromProps : searchEmptyComponent;
 
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.projectUsergroupList)}>
                 <header className={styles.header}>
                     <h4 className={styles.heading}>
                         { _ts('project.users', 'usergroupsTitle') }

@@ -245,7 +245,7 @@ export default class Actions extends React.PureComponent {
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    disabled={readOnly || pending || activeUserId === memberId}
+                    disabled={isSuperior || readOnly || pending || activeUserId === memberId}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',
