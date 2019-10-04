@@ -11,6 +11,12 @@
         width: 30%;
     }
 
+    .edit-widget-pane {
+        border-right: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        width: 30%;
+    }
+
     .grid-layout-container {
         background-color: var(--color-background-alt);
         width: 70%;

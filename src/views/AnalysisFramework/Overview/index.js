@@ -53,13 +53,15 @@ export default class Overview extends React.PureComponent {
         const {
             editComponent: Widget,
         } = fetchWidget(VIEW.overview, widget.widgetId);
+
         const {
             onWidgetSave,
             onWidgetChange,
             onWidgetCancel,
         } = this.props;
+
         return (
-            <div className={styles.widgetList}>
+            <div className={styles.editWidgetPane}>
                 <Widget
                     widgetKey={widget.key}
                     title={widget.title}

@@ -9,10 +9,6 @@ import {
 import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
-import ModalFooter from '#rscv/Modal/Footer';
-import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -565,54 +561,54 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const TabsWithButton = this.renderTabsWithButton;
 
         return (
-            <div>
-                <h2>{title}</h2>
-                <Faram
-                    className={styles.form}
-                    onChange={this.handleFaramChange}
-                    onValidationFailure={this.handleFaramValidationFailure}
-                    onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={Matrix2dEditWidget.schema}
-                    value={faramValues}
-                    error={faramErrors}
-                >
-                    <div className={styles.body}>
-                        <NonFieldErrors
-                            faramElement
-                            className={styles.error}
-                        />
-                        <TextInput
-                            className={styles.titleInput}
-                            faramElementName="title"
-                            autoFocus
-                            label={_ts('widgets.editor.matrix2d', 'titleLabel')}
-                            placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
-                            selectOnFocus
-                        />
-                        <TabsWithButton />
-                        <MultiViewContainer
-                            views={this.views}
-                            containerClassName={styles.modalUnitContainer}
-                            active={selectedTab}
-                        />
-                    </div>
-                    <div>
-                        <DangerConfirmButton
-                            onClick={closeModal}
-                            confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
-                            skipConfirmation={pristine}
-                        >
-                            {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
-                        </DangerConfirmButton>
-                        <PrimaryButton
-                            type="submit"
-                            disabled={pristine || hasError}
-                        >
-                            {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
-                        </PrimaryButton>
-                    </div>
-                </Faram>
-            </div>
+            <Faram
+                className={styles.editContainer}
+                onChange={this.handleFaramChange}
+                onValidationFailure={this.handleFaramValidationFailure}
+                onValidationSuccess={this.handleFaramValidationSuccess}
+                schema={Matrix2dEditWidget.schema}
+                value={faramValues}
+                error={faramErrors}
+            >
+                <div className={styles.header}>
+                    <h2 className={styles.heading}>{title}</h2>
+                    <DangerConfirmButton
+                        className={styles.button}
+                        onClick={closeModal}
+                        confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
+                        skipConfirmation={pristine}
+                    >
+                        {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
+                    </DangerConfirmButton>
+                    <PrimaryButton
+                        className={styles.button}
+                        type="submit"
+                        disabled={pristine || hasError}
+                    >
+                        {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
+                    </PrimaryButton>
+                </div>
+                <div className={styles.body}>
+                    <NonFieldErrors
+                        faramElement
+                        className={styles.error}
+                    />
+                    <TextInput
+                        className={styles.titleInput}
+                        faramElementName="title"
+                        autoFocus
+                        label={_ts('widgets.editor.matrix2d', 'titleLabel')}
+                        placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
+                        selectOnFocus
+                    />
+                    <TabsWithButton />
+                    <MultiViewContainer
+                        views={this.views}
+                        containerClassName={styles.modalUnitContainer}
+                        active={selectedTab}
+                    />
+                </div>
+            </Faram>
         );
     }
 }
