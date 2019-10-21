@@ -49,8 +49,8 @@ export default class Column extends React.PureComponent {
 
         return {
             ...widgetProps,
-            fieldType,
-            readOnly: isStakeholder,
+            fieldType: isStakeholder ? 'listInput' : fieldType,
+            disabled: isStakeholder,
         };
     }
 
