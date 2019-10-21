@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
 import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
@@ -14,9 +15,12 @@ import {
     categoryEditorProjectsSelector,
 } from '#redux';
 import DeepGalleryFileSelect from '#components/general/DeepGalleryFileSelect';
+import { _cs } from '@togglecorp/fujs';
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -56,7 +60,6 @@ export default class DocumentSelect extends React.PureComponent {
             selectedFiles: props.selectedFiles,
             pending: false,
             pristine: false,
-            showGallerySelectModal: false,
         };
     }
 
@@ -82,10 +85,6 @@ export default class DocumentSelect extends React.PureComponent {
                 pristine: true,
             });
         }
-
-        this.setState({
-            showGallerySelectModal: false,
-        });
     }
 
     handleRemoveFiles = (id) => {
@@ -108,10 +107,6 @@ export default class DocumentSelect extends React.PureComponent {
             files: selectedFiles,
             categoryEditorId,
         });
-    }
-
-    handleSelectFromGallery = () => {
-        this.setState({ showGallerySelectModal: true });
     }
 
     keySelectorForGalleryFiles = file => file.id
@@ -147,11 +142,10 @@ export default class DocumentSelect extends React.PureComponent {
             pending,
             pristine,
             selectedFiles,
-            showGallerySelectModal,
         } = this.state;
 
         return (
-            <div className={`${styles.documentTab} ${className}`}>
+            <div className={_cs(styles.documentTab, className)}>
                 <ListView
                     className={styles.fileListView}
                     modifier={this.renderGalleryFilesListItem}
@@ -159,12 +153,17 @@ export default class DocumentSelect extends React.PureComponent {
                     keySelector={this.keySelectorForGalleryFiles}
                 />
                 <div className={styles.bottomBar}>
-                    <Button
+                    <ModalButton
                         className={styles.button}
-                        onClick={this.handleSelectFromGallery}
+                        onClose={this.handleModalClose}
+                        modal={
+                            <DeepGalleryFileSelect
+                                projects={projects}
+                            />
+                        }
                     >
                         {_ts('categoryEditor', 'selectFromGalleryButtonLabel')}
-                    </Button>
+                    </ModalButton>
                     <PrimaryButton
                         className={styles.button}
                         onClick={this.handleApply}
@@ -173,11 +172,6 @@ export default class DocumentSelect extends React.PureComponent {
                         {_ts('categoryEditor', 'applyButtonLabel')}
                     </PrimaryButton>
                 </div>
-                <DeepGalleryFileSelect
-                    show={showGallerySelectModal}
-                    onClose={this.handleModalClose}
-                    projects={projects}
-                />
             </div>
         );
     }

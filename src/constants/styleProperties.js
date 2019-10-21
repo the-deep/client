@@ -31,7 +31,12 @@ const styleProperties = {
         entryCommentModalMaxHeight: '80vh',
         entryCommentModalWidth: '360px',
 
+        widthModalLarge: '80vw',
         heightModalMedium: '70vh',
+
+        widthTableCheckbox: '56px',
+        widthTableDateTime: '120px',
+        widthTableIcon: '56px',
     },
 };
 
