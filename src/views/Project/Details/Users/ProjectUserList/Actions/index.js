@@ -78,7 +78,7 @@ const requests = {
 };
 
 const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool.isRequired,
+    pending: PropTypes.bool,
 });
 
 const propTypes = {
@@ -207,7 +207,13 @@ export default class Actions extends React.PureComponent {
             linkedGroup,
             userGroupOptions,
         } = row;
+
         const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
+
+        // NOTE: If user's role is superior than that of row's user, than we
+        // need to filter the options so that they can change it to lower roles only
+        // if not all the options are shown but it is disabled
+        // isSuperior means whether or not the row's user role is superior to active user role
         const isSuperior = this.getUserRoleLevel(projectRoleList, role) < activeUserRole.level;
         const filteredProjectRoleList = isSuperior ?
             projectRoleList : this.filterProjectRole(projectRoleList, activeUserRole.level);

@@ -168,13 +168,13 @@ export default class ProjectUserList extends React.PureComponent {
         ];
     }
 
-    getActiveUserRole = memoize((projectRoleList, memberships, memberId) => (
-        projectRoleList.find(
-            p => p.id === memberships.find(
-                m => m.member === memberId,
-            ).role,
-        )
-    ))
+    getActiveUserRole = memoize((projectRoleList, memberships, memberId) => {
+        const membership = memberships.find(m => m.member === memberId);
+        if (!membership) {
+            return undefined;
+        }
+        return projectRoleList.find(p => p.id === membership.role);
+    })
 
     filterMembers = memoize((allMembers = [], searchValue) => {
         if (searchValue === '') {

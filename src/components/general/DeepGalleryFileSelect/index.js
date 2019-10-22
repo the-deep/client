@@ -281,10 +281,7 @@ export default class DgSelect extends React.PureComponent {
             searchInputValue,
         } = this.state;
 
-        const {
-            galleryFiles,
-            closeModal,
-        } = this.props;
+        const { galleryFiles } = this.props;
 
         const tableData = this.getTableData(
             galleryFiles,
@@ -295,7 +292,7 @@ export default class DgSelect extends React.PureComponent {
         return (
             <Modal
                 className={styles.addGalleryFileModal}
-                onClose={closeModal}
+                onClose={this.onClose}
             >
                 <ModalHeader
                     className={styles.modalHeader}
