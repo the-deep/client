@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compareNumber } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -77,7 +78,7 @@ const requests = {
 };
 
 const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool.isRequired,
+    pending: PropTypes.bool,
 });
 
 const propTypes = {
@@ -145,7 +146,7 @@ export default class Actions extends React.PureComponent {
     filterProjectRole = memoize((projectRoleList, level) => (
         projectRoleList.filter(
             projectRole => projectRole.level >= level,
-        )
+        ).sort((a, b) => compareNumber(a.level, b.level))
     ))
 
     handleRoleSelectInputChange = (newRole) => {
@@ -206,7 +207,13 @@ export default class Actions extends React.PureComponent {
             linkedGroup,
             userGroupOptions,
         } = row;
+
         const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
+
+        // NOTE: If user's role is superior than that of row's user, than we
+        // need to filter the options so that they can change it to lower roles only
+        // if not all the options are shown but it is disabled
+        // isSuperior means whether or not the row's user role is superior to active user role
         const isSuperior = this.getUserRoleLevel(projectRoleList, role) < activeUserRole.level;
         const filteredProjectRoleList = isSuperior ?
             projectRoleList : this.filterProjectRole(projectRoleList, activeUserRole.level);
@@ -244,7 +251,7 @@ export default class Actions extends React.PureComponent {
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    disabled={readOnly || pending || activeUserId === memberId}
+                    disabled={isSuperior || readOnly || pending || activeUserId === memberId}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',

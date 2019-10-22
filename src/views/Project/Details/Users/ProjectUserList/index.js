@@ -88,8 +88,8 @@ const getComparator = (func, key) => (a, b) => func(a[key], b[key]);
 const userListKeySelector = d => d.id;
 
 const mapStateToProps = state => ({
-    memberships: projectMembershipListSelector(state),
     usergroups: projectUsergroupListSelector(state),
+    memberships: projectMembershipListSelector(state),
     projectRoleList: projectRoleListSelector(state),
     activeUser: activeUserSelector(state),
 });
@@ -168,13 +168,13 @@ export default class ProjectUserList extends React.PureComponent {
         ];
     }
 
-    getActiveUserRole = memoize((projectRoleList, memberships, memberId) => (
-        projectRoleList.find(
-            p => p.id === memberships.find(
-                m => m.member === memberId,
-            ).role,
-        )
-    ))
+    getActiveUserRole = memoize((projectRoleList, memberships, memberId) => {
+        const membership = memberships.find(m => m.member === memberId);
+        if (!membership) {
+            return undefined;
+        }
+        return projectRoleList.find(p => p.id === membership.role);
+    })
 
     filterMembers = memoize((allMembers = [], searchValue) => {
         if (searchValue === '') {

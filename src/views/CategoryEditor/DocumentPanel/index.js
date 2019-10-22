@@ -14,7 +14,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 import SimplifiedFilePreview from '#components/other/SimplifiedFilePreview';
-import _cs from '#cs';
+import { _cs } from '@togglecorp/fujs';
 
 import DocumentNGram from './DocumentNGram';
 import DocumentSelect from './DocumentSelect';
@@ -187,10 +187,10 @@ export default class DocumentPanel extends React.PureComponent {
                 </header>
                 <div className={styles.content}>
                     { pending && <LoadingAnimation /> }
-                    <div className={`${styles.tabContent} ${this.getTabContentClassName(0)}`}>
+                    <div className={_cs(styles.tabContent, this.getTabContentClassName(0))}>
                         <DocumentSelect className={styles.documentTab} />
                     </div>
-                    <div className={`${styles.tabContent} ${this.getTabContentClassName(1)}`}>
+                    <div className={_cs(styles.tabContent, this.getTabContentClassName(1))}>
                         <SimplifiedFilePreview
                             fileIds={fileIds}
                             previewId={previewId}
@@ -199,7 +199,7 @@ export default class DocumentPanel extends React.PureComponent {
                             postLoad={this.handlePostLoad}
                         />
                     </div>
-                    <div className={`${styles.tabContent} ${this.getTabContentClassName(2)}`}>
+                    <div className={_cs(styles.tabContent, this.getTabContentClassName(2))}>
                         <DocumentNGram className={styles.ngramsTab} />
                     </div>
                 </div>
