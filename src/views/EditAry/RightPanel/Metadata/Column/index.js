@@ -31,6 +31,7 @@ export default class Column extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    // FIXME: should identify using identifier
     isStakeholderColumn = () => {
         const { title } = this.props;
         return title.toLowerCase() === 'stakeholders';
@@ -47,9 +48,13 @@ export default class Column extends React.PureComponent {
         const isStakeholder = this.isStakeholderColumn();
         const widgetProps = getProps(data, sources);
 
+        const newFieldType = isStakeholder && fieldType === 'multiselect'
+            ? 'listInput'
+            : fieldType;
+
         return {
             ...widgetProps,
-            fieldType,
+            fieldType: newFieldType,
             readOnly: isStakeholder,
         };
     }
