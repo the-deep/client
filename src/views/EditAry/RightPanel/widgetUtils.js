@@ -136,7 +136,9 @@ export const renderDroppableWidget = (key, data, sources, otherProps = {}) => {
     } = data;
 
     if (isDroppableWidget(sourceType, fieldType)) {
-        const newFieldType = fieldType === 'multiselect' ? 'listInput' : fieldType;
+        const newFieldType = fieldType === 'multiselect'
+            ? 'listInput'
+            : fieldType;
         const renderer = widgets[newFieldType];
         const props = getProps(data, sources);
 
