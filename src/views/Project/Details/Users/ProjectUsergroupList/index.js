@@ -39,7 +39,7 @@ const propTypes = {
     className: PropTypes.string,
 
     usergroupListRequest: PropTypes.shape({
-        pending: PropTypes.bool.isRequired,
+        pending: PropTypes.bool,
     }).isRequired,
     searchEmptyComponent: PropTypes.func.isRequired,
     emptyComponent: PropTypes.func.isRequired,
@@ -47,7 +47,11 @@ const propTypes = {
     setProjectUsergroups: PropTypes.func.isRequired,
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectRoleList: PropTypes.arrayOf(
+        PropTypes.shape({
+            title: PropTypes.string,
+        }),
+    ).isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // eslint-disable-next-line react/no-unused-prop-types

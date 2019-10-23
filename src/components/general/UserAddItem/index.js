@@ -16,7 +16,7 @@ const propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     onAddButtonClick: PropTypes.func,
-    userId: PropTypes.number.isRequired,
+    userId: PropTypes.number,
 };
 
 const defaultProps = {
@@ -27,6 +27,7 @@ const defaultProps = {
     firstName: '',
     lastName: '',
     pending: false,
+    userId: undefined,
     onAddButtonClick: undefined,
 };
 

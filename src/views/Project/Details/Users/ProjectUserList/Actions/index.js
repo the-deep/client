@@ -90,16 +90,18 @@ const propTypes = {
     removeProjectMembership: PropTypes.func.isRequired,
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     row: PropTypes.shape({
-        role: PropTypes.string,
+        role: PropTypes.number,
         member: PropTypes.number,
         memberName: PropTypes.string,
         memberEmail: PropTypes.string,
-        linkedGroup: PropTypes.string,
-        userGroupOptions: PropTypes.object,
+        linkedGroup: PropTypes.number,
+        userGroupOptions: PropTypes.array,
     }).isRequired,
-    projectRoleList: PropTypes.shape({
-        title: PropTypes.string,
-    }).isRequired,
+    projectRoleList: PropTypes.arrayOf(
+        PropTypes.shape({
+            title: PropTypes.string,
+        }),
+    ).isRequired,
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }).isRequired,

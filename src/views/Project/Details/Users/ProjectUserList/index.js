@@ -36,12 +36,16 @@ const Table = FaramListElement(NormalTable);
 const propTypes = {
     className: PropTypes.string,
     userListRequest: PropTypes.shape({
-        pending: PropTypes.bool.isRequired,
+        pending: PropTypes.bool,
     }).isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectMemberships: PropTypes.func.isRequired,
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectRoleList: PropTypes.arrayOf(
+        PropTypes.shape({
+            title: PropTypes.string,
+        }),
+    ).isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     searchEmptyComponent: PropTypes.func.isRequired,
     emptyComponent: PropTypes.func.isRequired,

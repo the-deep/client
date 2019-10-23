@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { compareString } from '@togglecorp/fujs';
+import {
+    _cs,
+    compareString,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import SearchInput from '#rsci/SearchInput';
@@ -24,7 +27,7 @@ import SearchListItem from './SearchListItem';
 import styles from './styles.scss';
 
 const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool.isRequired,
+    pending: PropTypes.bool,
 });
 
 const propTypes = {
@@ -309,13 +312,8 @@ export default class SearchList extends React.PureComponent {
         const { pending: userSearchPending } = userSearchRequest;
         const UserList = this.renderUserList;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.searchList}
-        `;
-
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.searchList)}>
                 <header className={styles.header}>
                     <h4 className={styles.heading}>
                         {_ts('project.users', 'userListHeading')}

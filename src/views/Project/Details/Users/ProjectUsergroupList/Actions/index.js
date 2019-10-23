@@ -28,14 +28,16 @@ const RequestPropType = PropTypes.shape({
 
 const propTypes = {
     row: PropTypes.shape({
-        role: PropTypes.string,
+        role: PropTypes.number,
         title: PropTypes.string,
         id: PropTypes.number,
     }).isRequired,
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    projectRoleList: PropTypes.shape({
-        title: PropTypes.string,
-    }).isRequired,
+    projectRoleList: PropTypes.arrayOf(
+        PropTypes.shape({
+            title: PropTypes.string,
+        }),
+    ).isRequired,
     removeUsergroupMembershipRequest: RequestPropType.isRequired,
     changeUserGroupRoleRequest: RequestPropType.isRequired,
     readOnly: PropTypes.bool,

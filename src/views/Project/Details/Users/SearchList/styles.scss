@@ -1,6 +1,7 @@
 .search-list {
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 
     .header {
         flex-shrink: 0;
@@ -17,6 +18,7 @@
         position: relative;
         flex-direction: column;
         flex-grow: 1;
+        overflow-y: auto;
 
         .list {
             flex-grow: 1;
