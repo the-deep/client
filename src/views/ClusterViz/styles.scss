@@ -25,13 +25,14 @@
     .main-content {
         display: flex;
         flex-direction: column;
-        overflow: auto;
+        overflow-y: auto;
 
         .error-container {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
             background-color: var(--color-foreground);
+            overflow-y: auto;
 
             .message {
                 display: inline-block;
@@ -58,6 +59,7 @@
             display: flex;
             position: relative;
             flex-grow: 1;
+            overflow-y: auto;
 
             .forced-directed-graph {
                 flex-grow: 1;
@@ -81,6 +83,7 @@
                         display: flex;
                         position: sticky;
                         top: 0;
+                        z-index: 1;
                         border-bottom: var(--width-separator-thin) solid var(--color-separator);
                         background-color: var(--color-background-header);
                         padding: var(--spacing-small-alt) 0;

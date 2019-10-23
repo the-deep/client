@@ -19,6 +19,7 @@ import OldForceDirectedGraph from '#rscz/ForceDirectedGraph';
 import wrapViz from '#rscz/VizWrapper';
 
 import {
+    _cs,
     reverseRoute,
     mapToList,
     listToGroupList,
@@ -27,7 +28,6 @@ import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
 import VizError from '#components/error/VizError';
 
-import _cs from '#cs';
 import _ts from '#ts';
 
 import {
@@ -228,11 +228,6 @@ export default class ClusterViz extends PureComponent {
         this.stopRequestForClusterData();
     }
 
-    getClusterDetailClassName = isActive => _cs(
-        styles.clusterDetail,
-        isActive && styles.activeCluster,
-    )
-
     clearState = () => {
         this.setState({
             clusterSize: 5,
@@ -345,7 +340,6 @@ export default class ClusterViz extends PureComponent {
 
         const isActive = activeCluster && String(activeCluster.group) === String(data.id);
 
-        const className = this.getClusterDetailClassName(isActive);
         const clusterIndex = Number(key) + 1;
 
         const {
@@ -391,7 +385,10 @@ export default class ClusterViz extends PureComponent {
 
         return (
             <div
-                className={className}
+                className={_cs(
+                    styles.clusterDetail,
+                    isActive && styles.activeCluster,
+                )}
                 key={key}
             >
                 <header className={styles.header}>
@@ -514,11 +511,6 @@ export default class ClusterViz extends PureComponent {
             activeProject,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.clusterVisualization}
-        `;
-
         const graphHeaderText = _ts(
             'clusterViz',
             'clusterTitle',
@@ -536,7 +528,7 @@ export default class ClusterViz extends PureComponent {
         return (
             <Page
                 containerRef={this.containerRef}
-                className={className}
+                className={_cs(classNameFromProps, styles.clusterVisualization)}
                 headerClassName={styles.header}
                 header={
                     <React.Fragment>
