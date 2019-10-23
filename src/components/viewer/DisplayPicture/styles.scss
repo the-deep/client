@@ -17,7 +17,7 @@
     .image {
         flex-grow: 1;
         overflow: hidden;
-        object-fit: cover;
+        object-fit: cover!important;
         object-position: center center;
     }
 
