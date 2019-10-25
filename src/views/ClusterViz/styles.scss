@@ -41,7 +41,6 @@
                 text-align: center;
 
                 .link {
-                    // @extend %accent-color-link;
                     margin: 0 var(--spacing-extra-small-alt);
                     padding: 0;
                     text-transform: lowercase;
@@ -57,18 +56,17 @@
 
         .cluster-container {
             display: flex;
-            position: relative;
             flex-grow: 1;
             overflow-y: auto;
 
             .forced-directed-graph {
                 flex-grow: 1;
-                background-color: var(--color-foreground);
-                height: auto;
-                overflow: auto;
+                background-color: var(--color-foreground-alt);
+                color: var(--color-text-on-foreground-alt);
             }
 
             .cluster-details {
+                position: relative;
                 flex-basis: var(--width-cluster-details);
                 flex-shrink: 0;
                 border-left: var(--width-separator-thin) solid var(--color-separator);
@@ -135,9 +133,10 @@
                     }
 
                     .leads-table {
+                        border-top: var(--width-separator-thin) solid var(--color-separator);
+
                         :global {
                             .header {
-                                top: var(--height-cluster-header);
                                 background-color: var(--color-foreground);
                             }
                             .body {

@@ -64,7 +64,8 @@ const mapDispatchToProps = dispatch => ({
     setProjectClusterData: params => dispatch(setProjectClusterDataAction(params)),
 });
 
-const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph));
+const decorate = component => BoundError(VizError)(wrapViz(component));
+const ForceDirectedGraphView = decorate(ForceDirectedGraph);
 
 const noOfClusters = 5;
 
@@ -409,22 +410,24 @@ export default class ClusterViz extends PureComponent {
                         modifier={this.renderKeyword}
                     />
                 </div>
-                <div className={styles.leadList}>
-                    <h5 className={styles.heading}>
-                        {_ts('clusterViz', 'leadsTitle')}
-                    </h5>
-                    <Table
-                        className={styles.leadsTable}
-                        data={documents}
-                        headers={this.leadsTableHeader}
-                        onBodyHover={handleHover}
-                        onBodyHoverOut={this.handleTableHoverOut}
-                        onBodyClick={this.handleBodyClick}
-                        highlightRowKey={highlightTableId}
-                        keySelector={ClusterViz.leadsTableKeyExtractor}
-                        emptyComponent={leadsEmptyComponent}
-                    />
-                </div>
+                {documents.length > 0 && (
+                    <div className={styles.leadList}>
+                        <h5 className={styles.heading}>
+                            {_ts('clusterViz', 'leadsTitle')}
+                        </h5>
+                        <Table
+                            className={styles.leadsTable}
+                            data={documents}
+                            headers={this.leadsTableHeader}
+                            onBodyHover={handleHover}
+                            onBodyHoverOut={this.handleTableHoverOut}
+                            onBodyClick={this.handleBodyClick}
+                            highlightRowKey={highlightTableId}
+                            keySelector={ClusterViz.leadsTableKeyExtractor}
+                            emptyComponent={leadsEmptyComponent}
+                        />
+                    </div>
+                )}
             </div>
         );
     }
