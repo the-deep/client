@@ -10,11 +10,13 @@ import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import SuccessButton from '#rsca/Button/SuccessButton';
+import Button from '#rsca/Button';
 import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import ScrollTabs from '#rscv/ScrollTabs';
 import Message from '#rscv/Message';
 import BackLink from '#components/general/BackLink';
+import modalize from '#rscg/Modalize';
 
 import { VIEW } from '#widgets';
 import {
@@ -38,7 +40,10 @@ import GeoOptionsRequest from './requests/GeoOptionsRequest';
 import FrameworkSaveRequest from './requests/FrameworkSave';
 import Overview from './Overview';
 import List from './List';
+import EditVizSettingsModal from './EditVizSettingsModal';
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -308,6 +313,7 @@ export default class AnalysisFramework extends React.PureComponent {
     render() {
         const {
             analysisFramework = {},
+            analysisFrameworkId,
             projectId,
             pristine,
         } = this.props;
@@ -335,6 +341,11 @@ export default class AnalysisFramework extends React.PureComponent {
                 </Message>
             );
         }
+
+        const {
+            widgets = [],
+            properties = {},
+        } = analysisFramework;
 
         const exitPath = reverseRoute(pathNames.projects, { projectId });
         const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
@@ -364,6 +375,18 @@ export default class AnalysisFramework extends React.PureComponent {
                                 disabled={!!selectedWidgetKey}
                             />
                             <div className={styles.actionButtons}>
+                                <ModalButton
+                                    title="Edit Viz Settings"
+                                    transparent
+                                    modal={(
+                                        <EditVizSettingsModal
+                                            widgets={widgets}
+                                            analysisFrameworkId={analysisFrameworkId}
+                                        />
+                                    )}
+                                >
+                                    Edit Viz Settings
+                                </ModalButton>
                                 <DangerConfirmButton
                                     confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
                                     onClick={this.handleCancel}

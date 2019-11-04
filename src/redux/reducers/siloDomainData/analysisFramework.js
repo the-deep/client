@@ -11,6 +11,7 @@ export const AF__REMOVE_WIDGET = 'siloDomainData/AF__REMOVE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET = 'siloDomainData/AF__VIEW_UPDATE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET_LAYOUT = 'siloDomainData/AF__VIEW_UPDATE_WIDGET_LAYOUT';
 export const AF__SET_GEO = 'siloDomainData/AF__SET_GEO';
+export const AF__VIEW__SET_PROPERTY = 'siloDomainData/AF__VIEW__SET_PROPERTY';
 
 export const AFP__SET_ANALYSIS_FRAMEWORKS = 'siloDomainData/AFP__SET_ANALYSIS_FRAMEWORKS';
 
@@ -61,6 +62,15 @@ export const updateAfViewWidgetAction = ({
     widgetKey,
     widgetData,
     widgetTitle,
+});
+
+export const setAfViewPropertiesAction = ({
+    analysisFrameworkId,
+    properties,
+}) => ({
+    type: AF__VIEW__SET_PROPERTY,
+    analysisFrameworkId,
+    properties,
 });
 
 export const updateAfViewWidgetLayoutAction = ({
@@ -240,6 +250,24 @@ const afViewUpdateWidget = (state, action) => {
     return update(state, settings);
 };
 
+const afViewSetProperties = (state, action) => {
+    const { analysisFrameworkId, properties } = action;
+
+    const settings = {
+        analysisFrameworkView: {
+            [analysisFrameworkId]: {
+                data: {
+                    properties: {
+                        $set: properties,
+                    },
+                },
+            },
+        },
+    };
+
+    return update(state, settings);
+};
+
 const afViewUpdateWidgetLayout = (state, action) => {
     const {
         analysisFrameworkId,
@@ -327,6 +355,7 @@ const reducers = {
     [AF__REMOVE_WIDGET]: afViewRemoveWidget,
     [AF__VIEW_UPDATE_WIDGET]: afViewUpdateWidget,
     [AF__VIEW_UPDATE_WIDGET_LAYOUT]: afViewUpdateWidgetLayout,
+    [AF__VIEW__SET_PROPERTY]: afViewSetProperties,
     [AF__SET_GEO]: afViewSetGeo,
 };
 export default reducers;

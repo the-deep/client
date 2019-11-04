@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
 import { mapToList } from '@togglecorp/fujs';
+import { getAllWidgets } from '#entities/analysisFramework';
 import { afIdFromRoute } from '../domainData';
+
 
 const emptyObject = {};
 const emptyArray = [];
@@ -47,4 +49,31 @@ export const afViewGeoOptionsSelector = createSelector(
 export const afViewAnalysisFrameworkWidgetsSelector = createSelector(
     afViewAnalysisFrameworkSelector,
     afView => afView.widgets || emptyArray,
+);
+
+export const afViewWidgetsForVizSelector = createSelector(
+    afViewAnalysisFrameworkSelector,
+    (afView) => {
+        const { widgets = [], properties: { statsConfig = {} } = {} } = afView;
+        const allWidgets = getAllWidgets(widgets);
+
+        const selectedWidgets = Object.entries(statsConfig).map(([key, value]) => {
+            const { pk, isConditionalWidget } = value;
+
+            if (isConditionalWidget) {
+                const { selectors } = value;
+                const widgetIndex = selectors[1];
+                const newId = `${pk}-${widgetIndex}`;
+                const conditionalWidget = allWidgets.find(widget => widget.id === newId);
+                const { id } = conditionalWidget;
+
+                return { [key]: id };
+            }
+            const widget = allWidgets.find(w => w.id === pk);
+            const { id } = widget;
+            return { [key]: id };
+        });
+
+        return Object.assign({}, ...selectedWidgets);
+    },
 );
