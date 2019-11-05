@@ -1,6 +1,8 @@
 import notify from '#notify';
 import _ts from '#ts';
 
+const ENTRIES_VIZ_POLL_TIME = 3000;
+
 const requests = {
     entriesVizGetRequest: {
         onMount: true,
@@ -8,7 +10,7 @@ const requests = {
         schemaName: 'entriesVizGetResponse',
         url: ({ props: { projectId } }) => `/projects/${projectId}/entries-viz/`,
         options: ({ params: { setState } }) => ({
-            pollTime: 20000,
+            pollTime: ENTRIES_VIZ_POLL_TIME,
             maxPollAttempts: 10,
             shouldPoll: (r) => {
                 if (r.data) {

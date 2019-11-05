@@ -10,7 +10,7 @@ import {
 const commonFields = {
     title: [requiredCondition],
     source: [requiredCondition],
-    author: [requiredCondition],
+    author: [],
     confidentiality: [requiredCondition],
     assignee: [requiredCondition],
     publishedOn: [requiredCondition, dateCondition],
