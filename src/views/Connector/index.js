@@ -77,19 +77,30 @@ const requests = {
         onMount: true,
         query: {
             role: ['admin'],
-            fields: ['id', 'title', 'version_id', 'source', 'role', 'filters'],
+            fields: [
+                'id',
+                'title',
+                'version_id',
+                'source',
+                'role',
+                'filters',
+                'status',
+            ],
         },
         onSuccess: ({ response, props: { setUserConnectors } }) => {
             const connectors = response.results || emptyList;
             const formattedConnectors = {};
-            connectors.forEach((c) => {
-                formattedConnectors[c.id] = {
-                    id: c.id,
-                    versionId: c.versionId,
-                    source: c.source,
-                    title: c.title,
-                };
-            });
+
+            connectors
+                .filter(c => c.status === 'working')
+                .forEach((c) => {
+                    formattedConnectors[c.id] = {
+                        id: c.id,
+                        versionId: c.versionId,
+                        source: c.source,
+                        title: c.title,
+                    };
+                });
             setUserConnectors({ connectors: formattedConnectors });
         },
         onFailure: ({ response }) => {
@@ -119,7 +130,8 @@ const requests = {
             response,
             props: { setConnectorSources },
         }) => {
-            setConnectorSources({ connectorSources: response.results });
+            const connectorSources = response.results.filter(s => s.status === 'working');
+            setConnectorSources({ connectorSources });
         },
         onFailure: ({ response }) => {
             notify.send({
