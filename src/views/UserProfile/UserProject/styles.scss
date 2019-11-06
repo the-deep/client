@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    background-color: var(--color-foreground);
     grid-area: projects;
 
     >.header {
@@ -10,7 +9,6 @@
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        background-color: var(--color-background-header);
         padding: var(--spacing-small) var(--spacing-medium);
         height: var(--height-navbar);
     }
@@ -23,6 +21,7 @@
 
         .table {
             flex-grow: 1;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
         }
 
         .link {

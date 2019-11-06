@@ -3,6 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import {
+    listToMap,
     isNotDefined,
     caseInsensitiveSubmatch,
     compareStringSearch,
@@ -89,18 +90,18 @@ const requests = {
         },
         onSuccess: ({ response, props: { setUserConnectors } }) => {
             const connectors = response.results || emptyList;
-            const formattedConnectors = {};
 
-            connectors
-                .filter(c => c.status === 'working')
-                .forEach((c) => {
-                    formattedConnectors[c.id] = {
-                        id: c.id,
-                        versionId: c.versionId,
-                        source: c.source,
-                        title: c.title,
-                    };
-                });
+            const formattedConnectors = listToMap(
+                connectors.filter(c => c.status === 'working'),
+                c => c.id,
+                c => ({
+                    id: c.id,
+                    versionId: c.versionId,
+                    source: c.source,
+                    title: c.title,
+                }),
+            );
+
             setUserConnectors({ connectors: formattedConnectors });
         },
         onFailure: ({ response }) => {

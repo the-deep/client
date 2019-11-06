@@ -1,8 +1,8 @@
-
 .add-region-form {
     display: flex;
     position: relative;
     flex-direction: column;
+    overflow-y: auto;
 
     .tabular-select {
         flex-grow: 1;

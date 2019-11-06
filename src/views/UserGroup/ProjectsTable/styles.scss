@@ -8,7 +8,6 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        background-color: var(--color-background-header);
         padding: var(--spacing-small) var(--spacing-medium);
         height: var(--height-navbar);
 
@@ -30,11 +29,11 @@
         flex-basis: 100%;
         flex-direction: column;
         flex-grow: 1;
-        background-color: var(--color-foreground);
         overflow-y: auto;
 
         .table {
             flex-grow: 1;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
         }
 
         .link {

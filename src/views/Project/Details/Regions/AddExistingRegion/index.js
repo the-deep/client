@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import Faram, {
     requiredCondition,
 } from '@togglecorp/faram';
-import { compareString, compareNumber } from '@togglecorp/fujs';
+import {
+    _cs,
+    compareString,
+    compareNumber,
+} from '@togglecorp/fujs';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -167,7 +171,7 @@ export default class AddExistingRegion extends React.PureComponent {
 
         return (
             <Faram
-                className={`${className} ${styles.addRegionForm}`}
+                className={_cs(className, styles.addRegionForm)}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}

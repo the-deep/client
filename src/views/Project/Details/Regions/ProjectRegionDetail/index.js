@@ -36,6 +36,7 @@ import RegionGetRequest from '../../../requests/RegionGetRequest';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     activeProject: PropTypes.number,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     countryId: PropTypes.number.isRequired,
@@ -56,6 +57,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: undefined,
     activeProject: undefined,
     onRegionClone: undefined,
     regionDetail: {
@@ -358,18 +360,13 @@ export default class ProjectRegionDetail extends React.PureComponent {
             },
         } = this.props;
 
-        const className = `
-            ${styles.regionDetailsContainer}
-            ${classNameFromProps}
-        `;
-
         const loading = projectPatchPending ||
             regionClonePending ||
             regionDetailPatchPending;
 
         return (
             <Faram
-                className={className}
+                className={_cs(styles.regionDetailsContainer, classNameFromProps)}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}

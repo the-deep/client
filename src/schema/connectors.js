@@ -12,8 +12,10 @@ const connectorsSchema = [];
             versionId: { type: 'uint', required: true },
             title: { type: 'string', required: true },
             source: { type: 'string', required: true },
+            sourceTitle: { type: 'string' },
             role: { type: 'string' },
             filters: { type: 'array' },
+            status: { type: 'string' },
         },
     };
     connectorsSchema.push({ name, schema });
@@ -34,6 +36,8 @@ const connectorsSchema = [];
             params: { type: 'object' },
             users: { type: 'array' },
             filters: { type: 'array' },
+            sourceTitle: { type: 'string' },
+            status: { type: 'string' },
         },
     };
     connectorsSchema.push({ name, schema });
@@ -65,6 +69,7 @@ const connectorsSchema = [];
             title: { type: 'string', required: true },
             key: { type: 'string', required: true },
             options: { type: 'array', required: true },
+            status: { type: 'string' },
         },
     };
     connectorsSchema.push({ name, schema });

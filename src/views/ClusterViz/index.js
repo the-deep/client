@@ -567,7 +567,7 @@ export default class ClusterViz extends PureComponent {
                                 onMouseOut={this.handleMouseOut}
                                 clusterSize={clusterSize}
                                 onClusterSizeChange={this.handleClusterSizeChange}
-                                backButton
+                                showBackButton
                             />
                             <ListView
                                 className={styles.clusterDetails}
