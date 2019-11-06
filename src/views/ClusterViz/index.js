@@ -9,6 +9,7 @@ import { Link, Redirect } from 'react-router-dom';
 import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import BoundError from '#rscg/BoundError';
+import Badge from '#components/viewer/Badge';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Table from '#rscv/Table';
@@ -135,7 +136,7 @@ export default class ClusterViz extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            clusterSize: 5,
+            clusterSize: 7,
             createClusterPending: true,
             clusterDataPending: true,
             highlightClusterId: undefined,
@@ -231,7 +232,7 @@ export default class ClusterViz extends PureComponent {
 
     clearState = () => {
         this.setState({
-            clusterSize: 5,
+            clusterSize: 7,
             createClusterPending: true,
             clusterDataPending: true,
             highlightClusterId: undefined,
@@ -324,12 +325,11 @@ export default class ClusterViz extends PureComponent {
         } = cluster;
 
         return (
-            <div
+            <Badge
                 key={keyword}
                 className={styles.keyword}
-            >
-                { keyword }
-            </div>
+                title={keyword}
+            />
         );
     }
 
@@ -567,6 +567,7 @@ export default class ClusterViz extends PureComponent {
                                 onMouseOut={this.handleMouseOut}
                                 clusterSize={clusterSize}
                                 onClusterSizeChange={this.handleClusterSizeChange}
+                                backButton
                             />
                             <ListView
                                 className={styles.clusterDetails}

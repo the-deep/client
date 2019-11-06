@@ -57,11 +57,11 @@
         .cluster-container {
             display: flex;
             flex-grow: 1;
+            background-color: var(--color-foreground);
             overflow-y: auto;
 
             .forced-directed-graph {
                 flex-grow: 1;
-                background-color: var(--color-foreground-alt);
                 color: var(--color-text-on-foreground-alt);
             }
 
@@ -74,13 +74,12 @@
 
                 .cluster-detail {
                     transition: var(--duration-transition-medium) border-color ease-in-out;
-                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    margin: var(--spacing-medium);
+                    border: var(--width-separator-thin) solid var(--color-separator);
                     background-color: var(--color-foreground);
 
                     .header {
                         display: flex;
-                        position: sticky;
-                        top: 0;
                         z-index: 1;
                         border-bottom: var(--width-separator-thin) solid var(--color-separator);
                         background-color: var(--color-background-header);
@@ -102,7 +101,6 @@
                             .number {
                                 flex-shrink: 0;
                                 padding-right: var(--spacing-small);
-                                font-family: var(--font-family-monospace);
                             }
                         }
                     }
@@ -117,17 +115,10 @@
                         .keywords {
                             display: flex;
                             flex-wrap: wrap;
-                            padding-bottom: var(--spacing-medium);
+                            padding: var(--spacing-extra-small) var(--spacing-small);
 
                             .keyword {
-                                transition: var(--duration-transition-medium) border-color, var(--duration-transition-medium) color;
-                                border: var(--width-separator-thin) solid transparent;
-                                padding: var(--spacing-extra-small) var(--spacing-small);
-                                font-family: var(--font-family-monospace);
-
-                                &:not(:last-child):after {
-                                    content: ',';
-                                }
+                                margin: var(--spacing-extra-small);
                             }
                         }
                     }
@@ -141,20 +132,11 @@
                             }
                             .body {
                                 .row {
-                                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                                    background-color: var(--color-foreground-alt);
                                     cursor: pointer;
 
-                                    &:nth-child(odd) {
-                                        background-color: var(--color-foreground-alt);
-                                    }
-
                                     &.highlighted {
-                                        background-color: var(--color-accent);
-
-                                        .link {
-                                            color: get-text-color(var(--color-accent));
-                                        }
+                                        background-color: var(--color-background-accent-hint);
+                                        color: var(--color-text);
                                     }
 
                                     .cell {

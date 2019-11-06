@@ -1,6 +1,5 @@
 import { FgRestBuilder } from '#rsu/rest';
 import { unique } from '#rsu/common';
-import notify from '#notify';
 import {
     createUrlForProjectClusterData,
     createParamsForProjectClusterData,
@@ -59,22 +58,16 @@ export default class ProjectClusterDataRequest {
     }
 
     failure = (response) => {
-        this.setState({ clusterDataFailure: true });
-        notify.send({
-            title: _ts('clusterViz', 'clusterVizTitle'),
-            type: notify.type.ERROR,
-            message: response.message,
-            duration: notify.duration.MEDIUM,
+        this.setState({
+            clusterDataFailure: true,
+            errorMessage: response.message,
         });
     }
 
     fatal = () => {
-        this.setState({ clusterDataFailure: true });
-        notify.send({
-            title: _ts('clusterViz', 'clusterVizTitle'),
-            type: notify.type.ERROR,
-            message: _ts('clusterViz', 'clusterDataRequestFatal'),
-            duration: notify.duration.MEDIUM,
+        this.setState({
+            clusterDataFailure: true,
+            errorMessage: _ts('clusterViz', 'clusterDataRequestFatal'),
         });
     }
 
