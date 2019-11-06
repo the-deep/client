@@ -1039,7 +1039,17 @@
         "-84669549": "Title column width",
         "-9443338": "Horizontal",
         "-33841680": "Vertical",
-        "-88566646": "Matrix Orientation"
+        "-88566646": "Matrix Orientation",
+        "-578569": "Unselect all",
+        "-1354429": "Edit entries visualization settings",
+        "-98565636": "Geo widget",
+        "-85754874": "Reliability Widget",
+        "-15595592": "Severity widget",
+        "-73918406": "Specific needs widget",
+        "-40962553": "Matrix 1D widget",
+        "-94382324": "Matrix 2D widget",
+        "-71212616": "Affected groups widget",
+        "-42014525": "Edit visualization settings"
     },
     "links": {
         "browserExtension": {
@@ -1102,7 +1112,9 @@
             "cancelConfirmDetail": -58972891,
             "successConfirmDetail": -44183195,
             "privateFrameworkBadgeTitle": -92759559,
-            "privateFrameworkBadgeTooltip": -13698917
+            "privateFrameworkBadgeTooltip": -13698917,
+            "editVizSettingsButtonTitle": -1354429,
+            "editVizSettingsButtonLabel": -42014525
         },
         "widgets.editor.date": {
             "informationDateCheckboxLabel": 777,
@@ -2131,8 +2143,6 @@
             "connectorUpdateOverriden": 982,
             "usersTitle": 1119,
             "usersListGetFailure": 999,
-            "projectsTitle": 31,
-            "projectsGetFailure": 1125,
             "globalVisibilityLabel": -84222321,
             "selfVisibilityLabel": -18776228,
             "connectorDetailDeleteLabel": -94736495,
@@ -2966,6 +2976,18 @@
             "unselectAllLeadsTitle": -578569,
             "selectLeadTitle": 643,
             "unselectLeadTitle": 644
+        },
+        "framework.editVizSettings": {
+            "closeModalLabel": 61,
+            "editVizSettingsModalTitle": -1354429,
+            "geoWidgetLabel": -98565636,
+            "reliabilityWidgetLabel": -85754874,
+            "severityWidgetLabel": -15595592,
+            "specificNeedsWidgetLabel": -73918406,
+            "submitModalLabel": 826,
+            "widget1dLabel": -40962553,
+            "widget2dLabel": -94382324,
+            "affectedGroupsWidgetLabel": -71212616
         }
     }
 }

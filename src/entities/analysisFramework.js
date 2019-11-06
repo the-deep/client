@@ -1,17 +1,19 @@
 // eslint-disable-next-line import/prefer-default-export
 export const getAllWidgets = (widgets = []) => {
-    const conditionalWidget = widgets.filter(widget => widget.widgetId === 'conditionalWidget');
+    const conditionalWidgets = widgets.filter(widget => widget.widgetId === 'conditionalWidget');
 
-    const values = conditionalWidget.map((conditionals, conditionalId) => {
+    const values = conditionalWidgets.map((conditional) => {
         const {
-            properties: { data: { widgets: conditionalWidgets = [] } = {} } = {},
-        } = conditionals;
-        const widgetsWithId = conditionalWidgets.map(({ widget }, index) => (
+            properties: { data: { widgets: widgetsInsideConditional = [] } = {} } = {},
+        } = conditional;
+
+        const widgetsWithId = widgetsInsideConditional.map(({ widget }, index) => (
             {
-                id: `${conditionalId}-${index}`,
+                id: `${conditional.id}-${index}`,
                 ...widget,
+                title: `${conditional.title} > ${widget.title}`,
                 isConditional: true,
-                conditionalId,
+                conditionalId: conditional.id,
                 widgetIndex: index,
             }
         ));

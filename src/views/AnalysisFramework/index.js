@@ -10,7 +10,7 @@ import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -43,7 +43,7 @@ import List from './List';
 import EditVizSettingsModal from './EditVizSettingsModal';
 import styles from './styles.scss';
 
-const ModalButton = modalize(Button);
+const ModalButton = modalize(AccentButton);
 
 const propTypes = {
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -376,8 +376,7 @@ export default class AnalysisFramework extends React.PureComponent {
                             />
                             <div className={styles.actionButtons}>
                                 <ModalButton
-                                    title="Edit Viz Settings"
-                                    transparent
+                                    title={_ts('framework', 'editVizSettingsButtonTitle')}
                                     modal={(
                                         <EditVizSettingsModal
                                             widgets={widgets}
@@ -385,7 +384,7 @@ export default class AnalysisFramework extends React.PureComponent {
                                         />
                                     )}
                                 >
-                                    Edit Viz Settings
+                                    {_ts('framework', 'editVizSettingsButtonLabel')}
                                 </ModalButton>
                                 <DangerConfirmButton
                                     confirmationMessage={_ts('framework', 'cancelConfirmDetail')}

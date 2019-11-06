@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import {
+    _cs,
     listToGroupList,
 } from '@togglecorp/fujs';
 
@@ -19,7 +20,7 @@ import SelectInput from '#rsci/SelectInput';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import {
@@ -35,7 +36,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    selectedWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    selectedWidgets: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
     setAfViewProperties: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -58,7 +59,7 @@ const requests = {
     editFrameworkSettingsRequest: {
         url: ({ props: { analysisFrameworkId } }) => `/analysis-frameworks/${analysisFrameworkId}/`,
         body: ({ params: { body } }) => body,
-        method: requestMethods.PATCH,
+        method: methods.PATCH,
         onSuccess: ({
             props: {
                 closeModal,
@@ -217,6 +218,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
 
         return (
             <Modal
+                className={_cs(className, styles.modal)}
                 onClose={closeModal}
                 closeOnEscape
             >
@@ -228,54 +230,61 @@ export default class EditVizSettingsModal extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    <ModalHeader title="Edit Visualization Settings" />
+                    <ModalHeader title={_ts('framework.editVizSettings', 'editVizSettingsModalTitle')} />
                     <ModalBody>
                         <NonFieldErrors faramElement />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="widget1d"
-                            label="Widget 1D"
+                            label={_ts('framework.editVizSettings', 'widget1dLabel')}
                             options={groupedWidgets.matrix1dWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="widget2d"
-                            label="Widget 2D"
+                            label={_ts('framework.editVizSettings', 'widget2dLabel')}
                             options={groupedWidgets.matrix2dWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="geoWidget"
-                            label="Geo Widget"
+                            label={_ts('framework.editVizSettings', 'geoWidgetLabel')}
                             options={groupedWidgets.geoWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="severityWidget"
-                            label="Severity Widget"
+                            label={_ts('framework.editVizSettings', 'severityWidgetLabel')}
                             options={groupedWidgets.scaleWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="reliabilityWidget"
-                            label="Reliability Widget"
+                            label={_ts('framework.editVizSettings', 'reliabilityWidgetLabel')}
                             options={groupedWidgets.scaleWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="affectedGroupsWidget"
-                            label="Affected Groups Widget"
+                            label={_ts('framework.editVizSettings', 'affectedGroupsWidgetLabel')}
                             options={groupedWidgets.multiselectWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
                         <SelectInput
+                            className={styles.input}
                             faramElementName="specificNeedsGroupsWidget"
-                            label="Specific Needs Groups Widget"
+                            label={_ts('framework.editVizSettings', 'specificNeedsWidgetLabel')}
                             options={groupedWidgets.multiselectWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
@@ -283,14 +292,14 @@ export default class EditVizSettingsModal extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={closeModal}>
-                            Close
+                            {_ts('framework.editVizSettings', 'closeModalLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={pristine}
                             pending={pending}
                         >
-                            Submit
+                            {_ts('framework.editVizSettings', 'submitModalLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

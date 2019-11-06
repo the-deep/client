@@ -3,7 +3,6 @@ import { mapToList } from '@togglecorp/fujs';
 import { getAllWidgets } from '#entities/analysisFramework';
 import { afIdFromRoute } from '../domainData';
 
-
 const emptyObject = {};
 const emptyArray = [];
 
