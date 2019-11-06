@@ -47,10 +47,15 @@ export default class SubdimensionRow extends React.PureComponent {
             children,
         } = this.props;
 
+        const style = subdimension.fontSize ? ({ fontSize: `${subdimension.fontSize}px` }) : undefined;
+
         return (
             <tr style={rowStyle}>
                 { children }
-                <td title={subdimension.tooltip}>
+                <td
+                    title={subdimension.tooltip}
+                    style={style}
+                >
                     {subdimension.title}
                 </td>
                 <List

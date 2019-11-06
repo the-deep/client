@@ -1,35 +1,38 @@
+// Note: kept out because the item gets attached to the body when moving
 .item {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     border-top: var(--width-separator-thin) solid var(--color-separator);
     border-bottom: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
-    padding: 0;
 
     .drag-handle {
         flex-shrink: 0;
         background-color: var(--color-foreground);
         cursor: move;
         padding: var(--spacing-small);
+    }
 
-        &.active {
-            background-color: var(--color-background-accent-hint);
-        }
+    .dimension-content {
+        flex-grow: 1;
     }
 }
 
 .edit-container {
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-foreground);
     overflow: auto;
 
     .header {
         display: flex;
+        flex-shrink: 0;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-medium);
 
         .heading {
             flex-grow: 1;
+            border: 1px solid red;
         }
 
         .button {
@@ -89,12 +92,12 @@
 
             .panels {
                 display: flex;
+                flex-direction: column;
                 flex-grow: 1;
                 overflow: auto;
 
                 .left-panel {
-                    flex-basis: 30%;
-                    border-right: var(--width-separator-thin) solid var(--color-separator);
+                    flex-grow: 1;
                     overflow: auto;
 
                     .item {
@@ -104,8 +107,8 @@
 
                 .right-panel {
                     display: flex;
-                    flex-basis: 70%;
                     flex-direction: column;
+                    flex-grow: 1;
                     overflow: auto;
                 }
             }

@@ -4,9 +4,10 @@ import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
 import {
     getDuplicates,
     randomString,
+    _cs,
+    isDefined,
 } from '@togglecorp/fujs';
 
-import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -18,7 +19,6 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import TabTitle from '#components/general/TabTitle';
 import _ts from '#ts';
-import _cs from '#cs';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -207,13 +207,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             pristine: true,
             hasError: false,
 
-            selectedDimensionKey: dimensions[0]
-                ? Matrix2dEditWidget.keySelector(dimensions[0])
-                : undefined,
-
-            selectedSectorKey: sectors[0]
-                ? Matrix2dEditWidget.keySelector(sectors[0])
-                : undefined,
+            selectedDimensionKey: undefined,
+            selectedSectorKey: undefined,
 
             selectedTab: 'dimensions',
         };
@@ -247,20 +242,26 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             keySelector={Matrix2dEditWidget.keySelector}
                         >
                             <div className={styles.panels}>
-                                <SortableListView
-                                    className={styles.leftPanel}
-                                    dragHandleModifier={this.renderDragHandle}
-                                    faramElement
-                                    rendererParams={this.rendererParams}
-                                    itemClassName={styles.item}
-                                    renderer={DimensionTitle}
-                                />
-                                { dimensionsFromState.length > 0 && selectedDimensionIndex !== -1 &&
-                                    <DimensionContent
-                                        index={selectedDimensionIndex}
-                                        className={styles.rightPanel}
-                                        widgetKey={this.props.widgetKey}
-                                    />
+                                { (isDefined(selectedDimensionIndex)
+                                    && selectedDimensionIndex !== -1) ? (
+                                        <DimensionContent
+                                            index={selectedDimensionIndex}
+                                            onBackButtonClick={
+                                                this.handleDimensionContentBackButtonClick
+                                            }
+                                            className={styles.rightPanel}
+                                            widgetKey={this.props.widgetKey}
+                                        />
+                                    ) : (
+                                        <SortableListView
+                                            className={styles.leftPanel}
+                                            faramElement
+                                            rendererParams={this.dimensionItemRendererParams}
+                                            itemClassName={styles.item}
+                                            renderer={DimensionTitle}
+                                            dragHandleClassName={styles.dragHandle}
+                                        />
+                                    )
                                 }
                             </div>
                         </FaramList>
@@ -291,22 +292,24 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             keySelector={Matrix2dEditWidget.keySelector}
                         >
                             <div className={styles.panels}>
-                                <SortableListView
-                                    className={styles.leftPanel}
-                                    dragHandleModifier={this.renderDragHandleSector}
-                                    faramElement
-                                    rendererParams={this.rendererParamsSector}
-                                    itemClassName={styles.item}
-                                    renderer={SectorTitle}
-                                />
-                                { sectorsFromState.length > 0 && selectedSectorIndex !== -1 &&
+                                { isDefined(selectedSectorKey) && selectedSectorIndex !== -1 ? (
                                     <SectorContent
                                         index={selectedSectorIndex}
                                         className={styles.rightPanel}
+                                        onBackButtonClick={this.handleSectorContentBackButtonClick}
                                         widgetKey={this.props.widgetKey}
                                         onNestedModalChange={this.handleNestedModalChange}
                                     />
-                                }
+                                ) : (
+                                    <SortableListView
+                                        className={styles.leftPanel}
+                                        faramElement
+                                        rendererParams={this.sectorItemRendererParams}
+                                        itemClassName={styles.item}
+                                        renderer={SectorTitle}
+                                        dragHandleClassName={styles.dragHandle}
+                                    />
+                                )}
                             </div>
                         </FaramList>
                     );
@@ -314,6 +317,14 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                 wrapContainer: true,
             },
         };
+    }
+
+    handleDimensionContentBackButtonClick = () => {
+        this.setState({ selectedDimensionKey: undefined });
+    }
+
+    handleSectorContentBackButtonClick = () => {
+        this.setState({ selectedSectorKey: undefined });
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
@@ -419,6 +430,28 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         this.setState({ selectedTab });
     }
 
+    dimensionItemRendererParams = (key, elem, i) => ({
+        className: styles.dimensionContent,
+        index: i,
+        faramElementName: String(i),
+        data: elem,
+        onEditButtonClick: () => {
+            this.setState({ selectedDimensionKey: key });
+        },
+        keySelector: Matrix2dEditWidget.keySelector,
+    })
+
+    sectorItemRendererParams = (key, elem, i) => ({
+        index: i,
+        faramElementName: String(i),
+        data: elem,
+        onEditButtonClick: () => {
+            this.setState({ selectedSectorKey: key });
+        },
+        isSelected: this.state.selectedSectorKey === key,
+        keySelector: Matrix2dEditWidget.keySelector,
+    })
+
     renderTabsWithButton = () => {
         const { selectedTab } = this.state;
 
@@ -492,58 +525,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         );
     }
 
-    rendererParams = (key, elem, i) => ({
-        index: i,
-        faramElementName: String(i),
-        data: elem,
-        setSelectedDimension: (k) => {
-            this.setState({ selectedDimensionKey: k });
-        },
-        isSelected: this.state.selectedDimensionKey === key,
-        keySelector: Matrix2dEditWidget.keySelector,
-    })
-
-    rendererParamsSector = (key, elem, i) => ({
-        index: i,
-        faramElementName: String(i),
-        data: elem,
-        setSelectedSector: (k) => {
-            this.setState({ selectedSectorKey: k });
-        },
-        isSelected: this.state.selectedSectorKey === key,
-        keySelector: Matrix2dEditWidget.keySelector,
-    })
-
-    renderDragHandle = (key) => {
-        const { selectedDimensionKey } = this.state;
-        const dragHandleClassName = _cs(
-            styles.dragHandle,
-            selectedDimensionKey === key && styles.active,
-        );
-
-        return (
-            <Icon
-                className={dragHandleClassName}
-                name="hamburger"
-            />
-        );
-    };
-
-    renderDragHandleSector = (key) => {
-        const { selectedSectorKey } = this.state;
-        const dragHandleClassName = _cs(
-            styles.dragHandle,
-            selectedSectorKey === key && styles.active,
-        );
-
-        return (
-            <Icon
-                className={dragHandleClassName}
-                name="hamburger"
-            />
-        );
-    };
-
     render() {
         const {
             faramValues,
@@ -556,13 +537,14 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const {
             closeModal,
             title,
+            className,
         } = this.props;
 
         const TabsWithButton = this.renderTabsWithButton;
 
         return (
             <Faram
-                className={styles.editContainer}
+                className={_cs(className, styles.editContainer)}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
                 onValidationSuccess={this.handleFaramValidationSuccess}
@@ -571,7 +553,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                 error={faramErrors}
             >
                 <div className={styles.header}>
-                    <h2 className={styles.heading}>{title}</h2>
+                    <h2 className={styles.heading}>
+                        {title}
+                    </h2>
                     <DangerConfirmButton
                         className={styles.button}
                         onClick={closeModal}

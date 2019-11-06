@@ -19,6 +19,8 @@ import WidgetEditor from '../WidgetEditor';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 const overviewWidgets = widgetList.filter(
     w => widgetListingVisibility(w.widgetId, VIEW.overview),
 );
@@ -63,6 +65,7 @@ export default class Overview extends React.PureComponent {
         return (
             <div className={styles.editWidgetPane}>
                 <Widget
+                    className={styles.widget}
                     widgetKey={widget.key}
                     title={widget.title}
                     data={widget.properties.data}
@@ -117,6 +120,7 @@ export default class Overview extends React.PureComponent {
                         <SelectInput
                             className={styles.input}
                             placeholder={_ts('editFramework', 'dummyExcerptPlaceholder')}
+                            onChange={noOp}
                             disabled
                         />
                     </div>

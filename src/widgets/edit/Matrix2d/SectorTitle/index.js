@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramErrorIndicatorElement } from '@togglecorp/faram';
 
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import _ts from '#ts';
@@ -13,9 +14,7 @@ const propTypes = {
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     isSelected: PropTypes.bool,
     index: PropTypes.number.isRequired,
-    setSelectedSector: PropTypes.func.isRequired,
     hasError: PropTypes.bool,
-    keySelector: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: {},
@@ -28,29 +27,9 @@ export default class SectorTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    handleClick = () => {
-        const {
-            data,
-            keySelector,
-            setSelectedSector,
-        } = this.props;
-        const id = keySelector(data);
-        setSelectedSector(id);
-    }
-
     deleteClick = (options, index) => {
         const newOptions = [...options];
         newOptions.splice(index, 1);
-
-        const {
-            keySelector,
-            setSelectedSector,
-        } = this.props;
-        const newIndex = Math.min(index, newOptions.length - 1);
-        const newKey = newIndex !== -1
-            ? keySelector(newOptions[newIndex])
-            : undefined;
-        setSelectedSector(newKey);
 
         return newOptions;
     }
@@ -61,11 +40,13 @@ export default class SectorTitle extends React.PureComponent {
             data: { title },
             isSelected,
             hasError,
+            onEditButtonClick,
+            className,
         } = this.props;
 
         const sectorTitleClassName = _cs(
             styles.sectorTitle,
-            isSelected && styles.active,
+            className,
         );
 
         const titleClassName = _cs(
@@ -75,13 +56,15 @@ export default class SectorTitle extends React.PureComponent {
 
         return (
             <div className={sectorTitleClassName}>
-                <button
-                    className={titleClassName}
-                    onClick={this.handleClick}
-                    type="button"
-                >
+                <div className={titleClassName}>
                     {title || _ts('widgets.editor.matrix2d', 'unnamedSectorTitle', { index: index + 1 })}
-                </button>
+                </div>
+                <Button
+                    transparent
+                    className={styles.editButton}
+                    onClick={onEditButtonClick}
+                    iconName="edit"
+                />
                 <DangerButton
                     faramAction={this.deleteClick}
                     faramElementName={index}

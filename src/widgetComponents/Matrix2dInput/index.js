@@ -12,13 +12,16 @@ import styles from './styles.scss';
 const SectorTitle = ({
     title,
     tooltip,
+    fontSize,
 }) => (
     <th
         title={tooltip}
+        style={{ fontSize }}
     >
         {title}
     </th>
 );
+
 SectorTitle.propTypes = {
     title: PropTypes.string.isRequired,
     tooltip: PropTypes.string,
@@ -98,9 +101,10 @@ export default class Matrix2dInput extends React.PureComponent {
     titleRendererParams = (key, sector) => ({
         title: sector.title,
         tooltip: sector.tooltip,
+        fontSize: sector.fontSize ? `${sector.fontSize}px` : undefined,
     })
 
-    rendererParams = (key, dimension) => {
+    dimensionRendererParams = (key, dimension) => {
         const {
             dimensions, // eslint-disable-line no-unused-vars
             onChange, // eslint-disable-line no-unused-vars
@@ -142,7 +146,7 @@ export default class Matrix2dInput extends React.PureComponent {
                             data={dimensions}
                             keySelector={Matrix2dInput.keySelector}
                             renderer={DimensionRow}
-                            rendererParams={this.rendererParams}
+                            rendererParams={this.dimensionRendererParams}
                         />
                     </tbody>
                 </table>

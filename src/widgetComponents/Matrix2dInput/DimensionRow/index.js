@@ -88,9 +88,12 @@ export default class DimensionRow extends React.PureComponent {
                 subdimensions,
                 tooltip,
                 title,
+                fontSize,
             },
             ...otherProps
         } = this.props;
+
+        const style = fontSize ? ({ fontSize: `${fontSize}px` }) : undefined;
 
         const isFirstSubdimension = i === 0;
         const children = isFirstSubdimension ? (
@@ -98,6 +101,7 @@ export default class DimensionRow extends React.PureComponent {
                 rowSpan={subdimensions.length}
                 className={styles.dimensionTd}
                 title={tooltip}
+                style={style}
             >
                 {title}
             </td>
