@@ -49,6 +49,7 @@
             .projects-table {
                 flex-grow: 1;
                 border: none;
+                border-top: var(--width-separator-thin) solid var(--color-separator);
                 background-color: var(--color-foreground);
 
                 .header {

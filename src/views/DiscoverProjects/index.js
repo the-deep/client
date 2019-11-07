@@ -352,11 +352,16 @@ export default class DiscoverProjects extends React.PureComponent {
             return;
         }
 
-        let { activeSort } = this.props;
-        if (activeSort === key) {
-            activeSort = `-${key}`;
+        let { activeSort = '' } = this.props;
+        const isAsc = activeSort.charAt(0) !== '-';
+
+        const isCurrentHeaderSorted = activeSort === key
+            || (activeSort.substr(1) === key && !isAsc);
+
+        if (isCurrentHeaderSorted) {
+            activeSort = isAsc ? `-${key}` : key;
         } else {
-            activeSort = key;
+            activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
         }
         this.props.setActiveSort(activeSort);
     }

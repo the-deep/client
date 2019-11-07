@@ -109,6 +109,7 @@ export default class Table extends React.Component {
             {
                 key: 'page_count',
                 order: 3,
+                defaultSortOrder: 'dsc',
                 modifier: ({ pageCount }) => {
                     if (pageCount === 0) {
                         return '-';
@@ -206,6 +207,7 @@ export default class Table extends React.Component {
             {
                 key: 'no_of_entries',
                 order: 12,
+                defaultSortOrder: 'dsc',
                 modifier: row => row.noOfEntries,
             },
             {
@@ -273,12 +275,18 @@ export default class Table extends React.Component {
             return;
         }
 
-        let { activeSort } = this.props;
-        if (activeSort === key) {
-            activeSort = `-${key}`;
+        let { activeSort = '' } = this.props;
+        const isAsc = activeSort.charAt(0) !== '-';
+
+        const isCurrentHeaderSorted = activeSort === key
+            || (activeSort.substr(1) === key && !isAsc);
+
+        if (isCurrentHeaderSorted) {
+            activeSort = isAsc ? `-${key}` : key;
         } else {
-            activeSort = key;
+            activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
         }
+
         this.props.setLeadPageActiveSort({ activeSort });
     }
 
