@@ -32,6 +32,9 @@ const propTypes = {
 
     className: PropTypes.string,
     closeModal: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/no-unused-prop-types
+    onNotificationReload: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -55,6 +58,7 @@ const requestOptions = {
             props: {
                 updateNotification,
                 notification,
+                onNotificationReload,
             },
         }) => {
             updateNotification({
@@ -63,6 +67,7 @@ const requestOptions = {
                     data: response,
                 },
             });
+            onNotificationReload();
         },
     },
     projectJoinRejectRequest: {
@@ -73,6 +78,13 @@ const requestOptions = {
             },
         }) => `/projects/${projectId}/requests/${requestId}/reject/`,
         method: methods.POST,
+        onSuccess: ({
+            props: {
+                onNotificationReload,
+            },
+        }) => {
+            onNotificationReload();
+        },
     },
 };
 

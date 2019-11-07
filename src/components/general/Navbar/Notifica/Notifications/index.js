@@ -28,23 +28,77 @@ import EntryCommentItem from './items/EntryCommentItem';
 
 import styles from './styles.scss';
 
+const NOTIFICATION_STATUS_UNSEEN = 'unseen';
+const NOTIFICATION_STATUS_SEEN = 'seen';
+
+const notificationItems = {
+    project_join_request: ProjectJoinRequestItem,
+    project_join_response: ProjectJoinResponseItem,
+    project_join_request_abort: ProjectJoinRequestAbortItem,
+
+    entry_comment_add: EntryCommentItem,
+    entry_comment_reply_add: EntryCommentItem,
+    entry_comment_resolved: EntryCommentItem,
+    entry_comment_assignee_change: EntryCommentItem,
+    entry_comment_modify: EntryCommentItem,
+    entry_comment_reply_modify: EntryCommentItem,
+};
+
+const NotificationItem = ({ notification, closeModal, onNotificationReload }) => {
+    const Item = notificationItems[notification.notificationType];
+
+    if (Item) {
+        return (
+            <Item
+                closeModal={closeModal}
+                notification={notification}
+                notificationType={notification.notificationType}
+                onNotificationReload={onNotificationReload}
+            />
+        );
+    }
+
+    console.error(`Item not found for notification type: ${notification.notificationType}`);
+
+    return null;
+};
+
+NotificationItem.propTypes = {
+    notification: PropTypes.shape({
+        notificationType: PropTypes.string,
+    }).isRequired,
+    closeModal: PropTypes.func.isRequired,
+    onNotificationReload: PropTypes.func.isRequired,
+};
+
+const NotificationEmpty = () => (
+    <Message>
+        {_ts('notifications', 'noNotificationsText')}
+    </Message>
+);
+
 const propTypes = {
     className: PropTypes.string,
-    projectJoinApproveRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    projectJoinRejectRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
-    projectJoinApproveRequest: {},
-    projectJoinRejectRequest: {},
     notifications: [],
+    closeModal: undefined,
 };
 
-const NOTIFICATION_STATUS_UNSEEN = 'unseen';
-const NOTIFICATION_STATUS_SEEN = 'seen';
+const mapStateToProps = state => ({
+    notificationsCount: notificationsCountSelector(state),
+    notifications: notificationItemsSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setNotifications: params => dispatch(setNotificationsAction(params)),
+    updateNotification: params => dispatch(updateNotificationAction(params)),
+});
 
 const requestOptions = {
     notificationsGetRequest: {
@@ -92,73 +146,18 @@ const requestOptions = {
     },
 };
 
-const mapStateToProps = state => ({
-    notificationsCount: notificationsCountSelector(state),
-    notifications: notificationItemsSelector(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-    setNotifications: params => dispatch(setNotificationsAction(params)),
-    updateNotification: params => dispatch(updateNotificationAction(params)),
-});
-
-const notificationItems = {
-    project_join_request: ProjectJoinRequestItem,
-    project_join_response: ProjectJoinResponseItem,
-    project_join_request_abort: ProjectJoinRequestAbortItem,
-    entry_comment_add: EntryCommentItem,
-    entry_comment_reply_add: EntryCommentItem,
-    entry_comment_resolved: EntryCommentItem,
-    entry_comment_assignee_change: EntryCommentItem,
-    entry_comment_modify: EntryCommentItem,
-    entry_comment_reply_modify: EntryCommentItem,
-};
-
-const NotificationItem = ({ notification, closeModal }) => {
-    const Item = notificationItems[notification.notificationType];
-
-    if (Item) {
-        return (
-            <Item
-                closeModal={closeModal}
-                notification={notification}
-                notificationType={notification.notificationType}
-            />
-        );
-    }
-
-    return null;
-};
-
-NotificationItem.propTypes = {
-    notification: PropTypes.shape({
-        notificationTypes: PropTypes.string,
-    }).isRequired,
-};
-
-const NotificationEmpty = () => (
-    <Message>
-        {_ts('notifications', 'noNotificationsText')}
-    </Message>
-);
-
-const notificationKeySelector = n => n.id;
-
-// FIXME: this is probably breaking change
-const requestsToListen = [
-    'projectJoinApproveRequest',
-    'projectJoinRejectRequest',
-    'notificationsGetRequest',
-];
-
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requestOptions, requestsToListen)
+@RequestClient(requestOptions)
 export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static groupKeySelector = notification => (notification.data.status === 'pending' ? 'pending' : 'notPending');
+    static notificationKeySelector = n => n.id;
+
+    static groupKeySelector = notification => (
+        notification.data.status === 'pending' ? 'pending' : 'notPending'
+    );
 
     static pendingToNumber = a => (a === 'pending' ? 1 : 0);
 
@@ -166,32 +165,11 @@ export default class Notifications extends React.PureComponent {
         Notifications.pendingToNumber(b) - Notifications.pendingToNumber(a)
     )
 
-    componentWillReceiveProps(nextProps) {
-        // TODO: use request's onPropChange, once the feature gets implemented
-        const {
-            projectJoinApproveRequest: newProjectJoinApproveRequest,
-            projectJoinRejectRequest: newProjectJoinRejectRequest,
-            requests: {
-                notificationsGetRequest,
-            },
-        } = nextProps;
-
-        const {
-            projectJoinApproveRequest: oldProjectJoinApproveRequest,
-            projectJoinRejectRequest: oldProjectJoinRejectRequest,
-        } = this.props;
-
-        if (newProjectJoinApproveRequest.pending !== oldProjectJoinApproveRequest.pending
-            || newProjectJoinRejectRequest.pending !== oldProjectJoinRejectRequest.pending) {
-            notificationsGetRequest.do();
-        }
-    }
-
     notificationItemRendererParams = (_, d) => ({
         closeModal: this.props.closeModal,
         notification: d,
+        onNotificationReload: this.props.requests.notificationsGetRequest.do,
     });
-
 
     groupRendererParams = (groupKey) => {
         const pendingTitle = _ts('notifications', 'pendingHeaderTitle');
@@ -240,7 +218,7 @@ export default class Notifications extends React.PureComponent {
                 <ListView
                     className={styles.content}
                     data={notifications}
-                    keySelector={notificationKeySelector}
+                    keySelector={Notifications.notificationKeySelector}
                     renderer={NotificationItem}
                     rendererParams={this.notificationItemRendererParams}
                     groupKeySelector={Notifications.groupKeySelector}
