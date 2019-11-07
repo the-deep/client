@@ -13,6 +13,8 @@ import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
 import notify from '#notify';
 
+export { methods, RequestHandler } from '@togglecorp/react-rest-request';
+
 export function getVersionedUrl(endpoint, url) {
     const oldVersionString = '/v1';
     const versionString = '/v2';
@@ -67,7 +69,7 @@ const coordinatorOptions = {
         } = props;
 
         if (access && !doNotAuth) {
-            params.headers = `Bearer ${access}`;
+            params.headers.Authorization = `Bearer ${access}`;
         }
 
         return params;
@@ -92,7 +94,6 @@ const coordinatorOptions = {
         const {
             url,
             method,
-            schemaName,
             extras,
         } = request;
 
@@ -105,7 +106,7 @@ const coordinatorOptions = {
             }
         } else {
             try {
-                schema.validate(body, schemaName);
+                schema.validate(body, extras.schemaName);
             } catch (e) {
                 console.error(url, method, body, e.message);
                 throw (e);

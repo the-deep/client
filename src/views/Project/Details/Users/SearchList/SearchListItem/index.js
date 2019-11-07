@@ -22,10 +22,6 @@ import _cs from '#cs';
 
 import styles from './styles.scss';
 
-const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool,
-});
-
 const propTypes = {
     className: PropTypes.string,
     type: PropTypes.string.isRequired,

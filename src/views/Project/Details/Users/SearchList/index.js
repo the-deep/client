@@ -26,10 +26,6 @@ import noSearch from '#resources/img/no-filter.png';
 import SearchListItem from './SearchListItem';
 import styles from './styles.scss';
 
-const RequestPropType = PropTypes.shape({
-    pending: PropTypes.bool,
-});
-
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types

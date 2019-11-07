@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { RequestHandler as createRequestHandler } from '@togglecorp/react-rest-request';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { currentStyle } from '#rsu/styles';
@@ -14,6 +13,7 @@ import MapSource from '#rscz/Map/MapSource';
 import Numeral from '#rscv/Numeral';
 
 import {
+    RequestHandler,
     RequestClient,
     RequestCoordinator,
 } from '#request';
@@ -21,9 +21,6 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
-
-// FIXME: this may break
-const RequestHandler = createRequestHandler(RequestClient);
 
 const emptyObject = {};
 
