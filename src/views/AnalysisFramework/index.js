@@ -343,8 +343,7 @@ export default class AnalysisFramework extends React.PureComponent {
         }
 
         const {
-            widgets = [],
-            properties = {},
+            widgets,
         } = analysisFramework;
 
         const exitPath = reverseRoute(pathNames.projects, { projectId });

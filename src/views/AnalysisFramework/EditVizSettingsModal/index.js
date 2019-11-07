@@ -143,7 +143,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
 
     handleFaramValidationSuccess = (values) => {
         const {
-            widgets,
+            widgets = [],
             editFrameworkSettingsRequest,
         } = this.props;
 
@@ -151,7 +151,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
 
         const transformedValues = Object.entries(values).map(([key, value]) => {
             const widget = allWidgets.find(w => w.id === value);
-            if (widget.isConditional) {
+            if (widget && widget.isConditional) {
                 const {
                     conditionalId,
                     widgetIndex,
@@ -175,12 +175,10 @@ export default class EditVizSettingsModal extends React.PureComponent {
             }
 
             return ({ [key]: { pk: value } });
-        });
+        }).reduce((acc, widget) => ({ ...acc, ...widget }), {});
 
         const properties = {
-            statsConfig: {
-                ...Object.assign({}, ...transformedValues),
-            },
+            statsConfig: transformedValues,
         };
 
         editFrameworkSettingsRequest.do({
@@ -189,7 +187,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
         });
     };
 
-    groupWidgets = memoize((widgets) => {
+    groupWidgets = memoize((widgets = []) => {
         const allWidgets = this.getWidgets(widgets);
 
         return listToGroupList(

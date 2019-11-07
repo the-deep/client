@@ -19,9 +19,9 @@ export const getAllWidgets = (widgets = []) => {
         ));
 
         return widgetsWithId;
-    });
+    }).reduce((acc, widget) => acc.concat(widget), []);
 
-    const newWidgets = [...widgets, ...values.flat(2)];
+    const newWidgets = [...widgets, ...values];
 
     return newWidgets;
 };
