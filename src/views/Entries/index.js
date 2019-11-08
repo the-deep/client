@@ -159,14 +159,14 @@ export default class Entries extends React.PureComponent {
             [LIST_VIEW]: {
                 component: this.renderListView,
                 wrapContainer: true,
-                mount: true,
-                lazyMount: true,
+                // mount: true,
+                // lazyMount: true,
             },
             [VIZ_VIEW]: {
                 component: EntriesViz,
                 wrapContainer: true,
-                mount: true,
-                lazyMount: true,
+                // mount: true,
+                // lazyMount: true,
                 rendererParams: () => ({
                     projectId: this.props.projectId,
                 }),
