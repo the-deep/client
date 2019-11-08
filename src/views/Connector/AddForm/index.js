@@ -76,10 +76,18 @@ export default class ConnectorAddForm extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        const { connectorSourcesList } = this.props;
+
+        const hasRss = connectorSourcesList.find(c => c.key === 'rss-feed');
+        const firstOption = connectorSourcesList[0]
+            ? connectorSourcesList[0].key
+            : undefined;
 
         this.state = {
             faramErrors: {},
-            faramValues: { source: 'rss-feed' },
+            faramValues: {
+                source: hasRss ? 'rss-feed' : firstOption,
+            },
             pending: false,
             pristine: false,
         };

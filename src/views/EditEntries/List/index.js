@@ -76,7 +76,6 @@ export default class Listing extends React.PureComponent {
         const {
             entries, // eslint-disable-line
             statuses,
-            // tabularData,
             entryStates,
 
             tabularFields,

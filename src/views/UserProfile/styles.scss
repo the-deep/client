@@ -12,6 +12,7 @@
 
     .main-content {
         display: flex;
+        background-color: var(--color-foreground);
         overflow: auto;
 
         .left {
@@ -88,7 +89,6 @@
                 flex-grow: 0;
                 flex-shrink: 0;
                 border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                background-color: var(--color-background-row);
                 overflow: auto;
             }
 
@@ -96,12 +96,10 @@
                 flex-basis: 40%;
                 flex-grow: 0;
                 flex-shrink: 0;
-                background-color: var(--color-background-row);
                 overflow: auto;
             }
         }
     }
-
 }
 
 .user-profile-edit-modal {

@@ -2,24 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    listToMap,
-    compareString,
-    compareDate,
-} from '@togglecorp/fujs';
+import { listToMap } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';
 import { FgRestBuilder } from '#rsu/rest';
-import AccentButton from '#rsca/Button/AccentButton';
-import Table from '#rscv/Table';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import FormattedDate from '#rscv/FormattedDate';
 import ExportPreview from '#components/other/ExportPreview';
 import {
     createParamsForGet,
-    createUrlForLeadsOfProject,
     createUrlForProjectFramework,
     createUrlForGeoOptions,
 
@@ -49,6 +41,7 @@ import _ts from '#ts';
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
 
 import ExportHeader from './ExportHeader';
+import LeadsTable from './LeadsTable';
 import ExportTypePane from './ExportTypePane';
 import styles from './styles.scss';
 
@@ -158,56 +151,6 @@ export default class Export extends React.PureComponent {
         leadsGetRequest.setDefaultParams({
             setLeads: this.handleSelectedLeadsSet,
         });
-
-        // TABLE component
-        this.headers = [
-            {
-                key: 'select',
-                label: _ts('export', 'selectLabel'),
-                order: 1,
-                sortable: false,
-                modifier: (d) => {
-                    const key = Export.leadKeyExtractor(d);
-                    return (
-                        <AccentButton
-                            title={d.selected ? 'Unselect' : 'Select'}
-                            iconName={d.selected ? 'checkbox' : 'checkboxOutlineBlank'}
-                            onClick={() => this.handleSelectLeadChange(key, !d.selected)}
-                            smallVerticalPadding
-                            transparent
-                        />
-                    );
-                },
-            },
-            {
-                key: 'title',
-                label: _ts('export', 'titleLabel'),
-                order: 2,
-                sortable: true,
-                comparator: (a, b) => compareString(a.title, b.title),
-            },
-            {
-                key: 'createdAt',
-                label: _ts('export', 'createdAtLabel'),
-                order: 3,
-                sortable: true,
-                comparator: (a, b) => (
-                    compareDate(a.createdAt, b.createdAt) ||
-                    compareString(a.title, b.title)
-                ),
-                modifier: row => (
-                    <FormattedDate
-                        date={row.createdAt}
-                        mode="dd-MM-yyyy hh:mm"
-                    />
-                ),
-            },
-        ];
-
-        this.defaultSort = {
-            key: 'createdAt',
-            order: 'dsc',
-        };
 
         this.state = {
             activeExportTypeKey: 'word',
@@ -427,6 +370,24 @@ export default class Export extends React.PureComponent {
         });
     }
 
+    handleSelectAllLeads = (selectAll) => {
+        const {
+            leads: leadsFromState = [],
+        } = this.state;
+
+        const selectedLeads = listToMap(leadsFromState, d => d.id, () => selectAll);
+
+        const leads = leadsFromState.map(l => ({
+            ...l,
+            selected: selectAll,
+        }));
+
+        this.setState({
+            leads,
+            selectedLeads,
+        });
+    }
+
     handleReportStructureChange = (value) => {
         this.setState({ reportStructure: value });
     }
@@ -468,6 +429,7 @@ export default class Export extends React.PureComponent {
                 pending: pendingLeads,
             },
         } = this.props;
+
         const { filters } = analysisFramework || {};
         const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
 
@@ -505,12 +467,11 @@ export default class Export extends React.PureComponent {
                                 </div>
                                 <div className={styles.leadsTableContainer}>
                                     { pendingLeads && <LoadingAnimation /> }
-                                    <Table
+                                    <LeadsTable
                                         className={styles.leadsTable}
-                                        data={leads}
-                                        headers={this.headers}
-                                        defaultSort={this.defaultSort}
-                                        keySelector={Export.leadKeyExtractor}
+                                        leads={leads}
+                                        onSelectLeadChange={this.handleSelectLeadChange}
+                                        onSelectAllClick={this.handleSelectAllLeads}
                                     />
                                 </div>
                             </div>

@@ -1,5 +1,4 @@
 import { FgRestBuilder } from '#rsu/rest';
-import notify from '#notify';
 import schema from '#schema';
 
 import {
@@ -36,22 +35,16 @@ export default class InitProjectClusterRequest {
     }
 
     failure = (response) => {
-        this.setState({ createClusterFailure: true });
-        notify.send({
-            title: _ts('clusterViz', 'clusterVizTitle'),
-            type: notify.type.ERROR,
-            message: response.message,
-            duration: notify.duration.MEDIUM,
+        this.setState({
+            createClusterFailure: true,
+            errorMessage: response.message,
         });
     }
 
     fatal = () => {
-        this.setState({ createClusterFailure: true });
-        notify.send({
-            title: _ts('clusterViz', 'clusterVizTitle'),
-            type: notify.type.ERROR,
-            message: _ts('clusterViz', 'clusterInitRequestFatal'),
-            duration: notify.duration.MEDIUM,
+        this.setState({
+            createClusterFailure: true,
+            errorMessage: _ts('clusterViz', 'clusterInitRequestFatal'),
         });
     }
 

@@ -1,5 +1,10 @@
 import viewsAcl from './viewsAcl';
 
+// NOTE: This is done to only hide the button but it can be accessed through link
+const notClusteringViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
+    !isLoggedIn || !leadPermissions.view || isBeta
+);
+
 export const noLinks = {};
 export const allLinks = {
     leads: viewsAcl.leads,
@@ -10,6 +15,7 @@ export const allLinks = {
     userProfile: viewsAcl.userProfile,
     projects: viewsAcl.projects,
     countries: viewsAcl.countries,
+    clusterViz: { hide: notClusteringViewable },
     connectors: viewsAcl.connectors,
     apiDocs: viewsAcl.apiDocs,
     stringManagement: viewsAcl.stringManagement,

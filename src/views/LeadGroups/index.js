@@ -133,6 +133,7 @@ export default class LeadGroups extends React.PureComponent {
                 label: _ts('leadGroups', 'noOfLeadsTitle'),
                 order: 4,
                 sortable: true,
+                defaultSortOrder: 'dsc',
                 modifier: row => row.noOfLeads,
             },
             {
@@ -265,12 +266,18 @@ export default class LeadGroups extends React.PureComponent {
             return;
         }
 
-        let { activeSort } = this.props;
-        if (activeSort === key) {
-            activeSort = `-${key}`;
+        let { activeSort = '' } = this.props;
+        const isAsc = activeSort.charAt(0) !== '-';
+
+        const isCurrentHeaderSorted = activeSort === key
+            || (activeSort.substr(1) === key && !isAsc);
+
+        if (isCurrentHeaderSorted) {
+            activeSort = isAsc ? `-${key}` : key;
         } else {
-            activeSort = key;
+            activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
         }
+
         this.props.setLeadGroupsActiveSort({ activeSort });
     }
 

@@ -1,5 +1,4 @@
 import { FgRestBuilder } from '#rsu/rest';
-import notify from '#notify';
 import {
     createUrlForLeadsOfProject,
     createParamsForGet,
@@ -53,22 +52,16 @@ export default class LeadInfoForDocumentRequest {
     }
 
     failure = (response) => {
-        this.setState({ clusterDataFailure: true });
-        notify.send({
-            title: _ts('clusterViz', 'clusterVizTitle'),
-            type: notify.type.ERROR,
-            message: response.message,
-            duration: notify.duration.MEDIUM,
+        this.setState({
+            clusterDataFailure: true,
+            errorMessage: response.message,
         });
     }
 
     fatal = () => {
-        this.setState({ clusterDataFailure: true });
-        notify.send({
-            title: _ts('clusterViz', 'clusterVizTitle'),
-            type: notify.type.ERROR,
-            message: _ts('clusterViz', 'leadsInfoRequestFatal'),
-            duration: notify.duration.MEDIUM,
+        this.setState({
+            clusterDataFailure: true,
+            errorMessage: _ts('clusterViz', 'leadsInfoRequestFatal'),
         });
     }
 

@@ -4,18 +4,15 @@ import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
-    _cs,
     caseInsensitiveSubmatch,
     reverseRoute,
     compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
-import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SearchInput from '#rsci/SearchInput';
-import ListItem from '#rscv/List/ListItem';
 import ListView from '#rscv/List/ListView';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -76,13 +73,15 @@ const requests = {
                 'role',
                 'filters',
                 'source_title',
+                'status',
             ],
         }),
         onSuccess: ({
             response: { results = [] },
-            params: { selectConnector },
+            params: { setConnectorsList },
         }) => {
-            selectConnector(results[0] && results[0].id);
+            const filteredConnectorsList = results.filter(c => c.status === 'working');
+            setConnectorsList(filteredConnectorsList);
         },
         onFailure: ({ errros: { response } }) => {
             const message = transformAndCombineResponseErrors(response.errors);
@@ -113,10 +112,13 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
         const { connectorsGetRequest } = props;
 
-        connectorsGetRequest.setDefaultParams({ selectConnector: this.selectConnector });
+        connectorsGetRequest.setDefaultParams({
+            setConnectorsList: this.setConnectorsList,
+        });
 
         this.state = {
             searchInputValue: '',
+            connectorsList: [],
             selectedConnector: undefined,
             selectedLeads: emptyObject,
             connectorsLeads: emptyObject,
@@ -157,14 +159,10 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             } = {},
                         } = {},
                         filtersData,
+                        connectorsList,
                     } = this.state;
 
                     const {
-                        connectorsGetRequest: {
-                            response: {
-                                results: connectorsList = emptyList,
-                            } = {},
-                        },
                         leads: leadsFromProps,
                         projectId,
                     } = this.props;
@@ -294,8 +292,11 @@ export default class ConnectorSelectModal extends React.PureComponent {
         this.setState(update(this.state, settings));
     }
 
-    selectConnector = (selectedConnector) => {
-        this.setState({ selectedConnector });
+    setConnectorsList = (connectorsList) => {
+        this.setState({
+            connectorsList,
+            selectedConnector: connectorsList[0] && connectorsList[0].id,
+        });
     }
 
     handleFiltersApply = (value, connectorId) => {
@@ -387,14 +388,9 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     renderSidebar = () => {
         const {
-            connectorsGetRequest: {
-                response: {
-                    results: connectorsList,
-                } = {},
-            },
-        } = this.props;
-
-        const { searchInputValue } = this.state;
+            searchInputValue,
+            connectorsList,
+        } = this.state;
 
         const displayConnectorsList = this.getListAfterSearch(connectorsList, searchInputValue);
 
@@ -425,14 +421,10 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     renderConnectorContent = () => {
-        const { selectedConnector } = this.state;
         const {
-            connectorsGetRequest: {
-                response: {
-                    results: connectorsList = emptyList,
-                } = {},
-            },
-        } = this.props;
+            selectedConnector,
+            connectorsList,
+        } = this.state;
 
         if (connectorsList.length <= 0) {
             return (
@@ -463,14 +455,14 @@ export default class ConnectorSelectModal extends React.PureComponent {
         const {
             connectorsGetRequest: {
                 pending: dataLoading,
-                response: {
-                    results: connectorsList = emptyList,
-                } = {},
             },
             leads,
         } = this.props;
 
-        const { selectedLeads } = this.state;
+        const {
+            selectedLeads,
+            connectorsList,
+        } = this.state;
 
         const Sidebar = this.renderSidebar;
         const Content = this.renderConnectorContent;

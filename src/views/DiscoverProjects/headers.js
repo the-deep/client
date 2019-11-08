@@ -49,12 +49,14 @@ const headers = [
     {
         key: 'number_of_leads',
         title: _ts('discoverProjects.table', 'numberOfLeadsTitle'),
+        defaultSortOrder: 'dsc',
         order: 9,
         sortable: true,
     },
     {
         key: 'number_of_entries',
         title: _ts('discoverProjects.table', 'numberOfEntriesTitle'),
+        defaultSortOrder: 'dsc',
         order: 10,
         sortable: true,
     },

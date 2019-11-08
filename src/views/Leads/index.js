@@ -31,6 +31,7 @@ import {
     pathNames,
     viewsAcl,
 } from '#constants';
+import { allLinks } from '#constants/linksAcl';
 import {
     activeProjectIdFromStateSelector,
     totalLeadsCountForProjectSelector,
@@ -557,7 +558,7 @@ export default class Leads extends React.PureComponent {
                         }
                     />
                     <Cloak
-                        {...viewsAcl.clusterViz}
+                        {...allLinks.clusterViz}
                         render={
                             <Link
                                 className={styles.link}

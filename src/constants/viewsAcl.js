@@ -22,8 +22,9 @@ const notLeadEditable = ({ isLoggedIn, leadPermissions }) => (
 const notLeadVizViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
     !isLoggedIn || !leadPermissions.view || isBeta
 );
-const notClusteringViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
-    !isLoggedIn || !leadPermissions.view || isBeta
+
+const notClusteringViewable = ({ isLoggedIn, leadPermissions }) => (
+    !isLoggedIn || !leadPermissions.view
 );
 
 const notEntriesViewable = ({ isLoggedIn, hasAnalysisFramework, entryPermissions }) => (

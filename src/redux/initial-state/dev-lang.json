@@ -1028,7 +1028,9 @@
         "-24511724": "No matching results were found. Add a new {title} using the add button.",
         "-91461742": "Are you sure you want to leave? You will lose your unsaved changes.",
         "-3697040": "Entries visualization",
-        "-9524324": "Failed to load entries visualization data. "
+        "-9524324": "Failed to load entries visualization data. ",
+        "-58469334": "Select all",
+        "-578569": "Unselect all"
     },
     "links": {
         "browserExtension": {
@@ -2939,6 +2941,12 @@
             "entriesViz": -9524324,
             "entriesVizFailure": -9524324,
             "entriesVizFatal": -9524324
+        },
+        "export.leadsTable": {
+            "selectAllLeadsTitle": -58469334,
+            "unselectAllLeadsTitle": -578569,
+            "selectLeadTitle": 643,
+            "unselectLeadTitle": 644
         }
     }
 }

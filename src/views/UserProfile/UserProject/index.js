@@ -138,6 +138,7 @@ export default class UserProject extends React.PureComponent {
                 key: 'members',
                 label: _ts('userProfile', 'tableHeaderMembers'),
                 order: 6,
+                defaultSortOrder: 'dsc',
                 sortable: true,
                 comparator: (a, b) => compareLength(a.memberships, b.memberships),
                 modifier: d => (d.memberships || []).length,
