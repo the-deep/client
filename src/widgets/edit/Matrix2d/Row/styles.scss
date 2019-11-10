@@ -1,0 +1,78 @@
+// Note: kept out because the item gets attached to the body when moving
+.dimension-list-item {
+    display: flex;
+    align-items: center;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+
+    .drag-handle {
+        flex-shrink: 0;
+        background-color: var(--color-foreground);
+        cursor: move;
+        padding: var(--spacing-small);
+    }
+
+    .dimension-content {
+        flex-grow: 1;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    .header {
+        display: flex;
+        align-items: flex-start;
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
+        background-color: var(--color-foreground-alt);
+        padding: var(--spacing-medium) 0;
+
+        .title-row-height-input {
+            flex-shrink: 0;
+            margin: 0 var(--spacing-medium);
+            width: 80px; // FIXME: use vars
+        }
+
+        .right {
+            flex-grow: 1;
+
+            .label {
+                padding: 0 var(--spacing-medium);
+            }
+
+            .actions {
+                display: flex;
+                align-items: center;
+                padding: 0 var(--spacing-small);
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+
+        .dimension-list {
+            flex-grow: 1;
+            overflow: auto;
+
+            .dimension-list-item {
+                border-color: transparent;
+
+                &:not(:last-child) {
+                    border-bottom-color: var(--color-separator-light);
+                }
+            }
+        }
+
+        .dimension-details {
+            flex-grow: 1;
+            overflow: auto;
+        }
+    }
+}

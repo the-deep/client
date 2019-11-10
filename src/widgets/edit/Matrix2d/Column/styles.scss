@@ -1,0 +1,78 @@
+// Note: kept out because the item gets attached to the body when moving
+.sector-list-item {
+    display: flex;
+    align-items: center;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+
+    .drag-handle {
+        flex-shrink: 0;
+        background-color: var(--color-foreground);
+        cursor: move;
+        padding: var(--spacing-small);
+    }
+
+    .sector-content {
+        flex-grow: 1;
+    }
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
+    .header {
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
+        background-color: var(--color-foreground-alt);
+
+        .top {
+            display: flex;
+            padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
+
+            .title-column-width-input {
+                margin: 0 var(--spacing-small);
+            }
+
+            .sub-title-column-width-input {
+                margin: 0 var(--spacing-small);
+            }
+        }
+
+        .bottom {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-small) 0;
+
+            .label {
+                padding: 0 var(--spacing-medium);
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+
+        .sector-list {
+            flex-grow: 1;
+            overflow: auto;
+
+            .sector-list-item {
+                border-color: transparent;
+
+                &:not(:last-child) {
+                    border-bottom-color: var(--color-separator-light);
+                }
+            }
+
+            .sector-details {
+                flex-grow: 1;
+                overflow: auto;
+            }
+        }
+    }
+}

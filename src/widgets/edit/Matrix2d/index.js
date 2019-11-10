@@ -5,14 +5,11 @@ import {
     getDuplicates,
     randomString,
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 
-import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -20,13 +17,8 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 import TabTitle from '#components/general/TabTitle';
 import _ts from '#ts';
 
-import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
-import GeoLink from '#widgetComponents/GeoLink';
-
-import SectorTitle from './SectorTitle';
-import SectorContent from './SectorContent';
-import DimensionTitle from './DimensionTitle';
-import DimensionContent from './DimensionContent';
+import Row from './Row';
+import Column from './Column';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -220,101 +212,48 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
         this.views = {
             dimensions: {
-                component: () => {
-                    const {
-                        faramValues,
-                        selectedDimensionKey,
-                    } = this.state;
-
-                    const {
-                        dimensions: dimensionsFromState = [],
-                    } = faramValues || {};
-
-                    const selectedDimensionIndex = dimensionsFromState.findIndex(
-                        dimension => (
-                            Matrix2dEditWidget.keySelector(dimension) === selectedDimensionKey
-                        ),
-                    );
-
-                    return (
-                        <FaramList
-                            faramElementName="dimensions"
-                            keySelector={Matrix2dEditWidget.keySelector}
-                        >
-                            <div className={styles.panels}>
-                                { (isDefined(selectedDimensionIndex)
-                                    && selectedDimensionIndex !== -1) ? (
-                                        <DimensionContent
-                                            index={selectedDimensionIndex}
-                                            onBackButtonClick={
-                                                this.handleDimensionContentBackButtonClick
-                                            }
-                                            className={styles.rightPanel}
-                                            widgetKey={this.props.widgetKey}
-                                        />
-                                    ) : (
-                                        <SortableListView
-                                            className={styles.leftPanel}
-                                            faramElement
-                                            rendererParams={this.dimensionItemRendererParams}
-                                            itemClassName={styles.item}
-                                            renderer={DimensionTitle}
-                                            dragHandleClassName={styles.dragHandle}
-                                        />
-                                    )
-                                }
-                            </div>
-                        </FaramList>
-                    );
-                },
-                wrapContainer: true,
+                // TODO: use renderer params
+                component: () => (
+                    <Row
+                        className={styles.tabContent}
+                        dataModifier={Matrix2dEditWidget.dimensionDataModifier}
+                        faramValues={this.state.faramValues}
+                        keySelector={Matrix2dEditWidget.keySelector}
+                        onAddDimensionFaramAction={this.handleAddDimensionFaramAction}
+                        onGeoLinkModalVisiblityChange={this.handleModalVisiblityChange}
+                        onLinkWidgetModalVisiblityChange={this.handleModalVisiblityChange}
+                        onDimensionContentBackButtonClick={
+                            this.handleDimensionContentBackButtonClick
+                        }
+                        onDimensionEditButtonClick={this.handleDimensionEditButtonClick}
+                        dimensionItemRendererParams={this.dimensionItemRendererParams}
+                        selectedDimensionKey={this.state.selectedDimensionKey}
+                        titleSelector={Matrix2dEditWidget.titleSelector}
+                        widgetKey={this.props.widgetKey}
+                    />
+                ),
             },
             sectors: {
-                component: () => {
-                    const {
-                        faramValues,
-                        selectedSectorKey,
-                    } = this.state;
-
-                    const {
-                        sectors: sectorsFromState = [],
-                    } = faramValues || {};
-
-                    const selectedSectorIndex = sectorsFromState.findIndex(
-                        sector => (
-                            Matrix2dEditWidget.keySelector(sector) === selectedSectorKey
-                        ),
-                    );
-
-                    return (
-                        <FaramList
-                            faramElementName="sectors"
-                            keySelector={Matrix2dEditWidget.keySelector}
-                        >
-                            <div className={styles.panels}>
-                                { isDefined(selectedSectorKey) && selectedSectorIndex !== -1 ? (
-                                    <SectorContent
-                                        index={selectedSectorIndex}
-                                        className={styles.rightPanel}
-                                        onBackButtonClick={this.handleSectorContentBackButtonClick}
-                                        widgetKey={this.props.widgetKey}
-                                        onNestedModalChange={this.handleNestedModalChange}
-                                    />
-                                ) : (
-                                    <SortableListView
-                                        className={styles.leftPanel}
-                                        faramElement
-                                        rendererParams={this.sectorItemRendererParams}
-                                        itemClassName={styles.item}
-                                        renderer={SectorTitle}
-                                        dragHandleClassName={styles.dragHandle}
-                                    />
-                                )}
-                            </div>
-                        </FaramList>
-                    );
-                },
-                wrapContainer: true,
+                // TODO: use renderer params
+                component: () => (
+                    <Column
+                        className={styles.tabContent}
+                        dataModifier={Matrix2dEditWidget.sectorDataModifier}
+                        faramValues={this.state.faramValues}
+                        keySelector={Matrix2dEditWidget.keySelector}
+                        onAddSectorFaramAction={this.handleAddSectorFaramAction}
+                        onGeoLinkModalVisiblityChange={this.handleModalVisiblityChange}
+                        onLinkWidgetModalVisiblityChange={this.handleModalVisiblityChange}
+                        onSectorContentBackButtonClick={
+                            this.handleSectorContentBackButtonClick
+                        }
+                        onSectorEditButtonClick={this.handleSectorEditButtonClick}
+                        sectorItemRendererParams={this.sectorItemRendererParams}
+                        selectedSectorKey={this.state.selectedSectorKey}
+                        titleSelector={Matrix2dEditWidget.titleSelector}
+                        widgetKey={this.props.widgetKey}
+                    />
+                ),
             },
         };
     }
@@ -384,7 +323,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         closeModal();
     };
 
-    addDimensionClick = (options) => {
+    handleAddDimensionFaramAction = (options) => {
         const newDimension = {
             id: randomString(16),
             color: undefined,
@@ -403,7 +342,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
-    addSectorClick = (options) => {
+    handleAddSectorFaramAction = (options) => {
         const newSector = {
             id: randomString(16),
             title: '',
@@ -430,165 +369,91 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         this.setState({ selectedTab });
     }
 
-    dimensionItemRendererParams = (key, elem, i) => ({
-        className: styles.dimensionContent,
-        index: i,
-        faramElementName: String(i),
-        data: elem,
-        onEditButtonClick: () => {
-            this.setState({ selectedDimensionKey: key });
-        },
-        keySelector: Matrix2dEditWidget.keySelector,
-    })
+    handleDimensionEditButtonClick = (key) => {
+        this.setState({ selectedDimensionKey: key });
+    }
 
-    sectorItemRendererParams = (key, elem, i) => ({
-        index: i,
-        faramElementName: String(i),
-        data: elem,
-        onEditButtonClick: () => {
-            this.setState({ selectedSectorKey: key });
-        },
-        isSelected: this.state.selectedSectorKey === key,
-        keySelector: Matrix2dEditWidget.keySelector,
-    })
-
-    renderTabsWithButton = () => {
-        const { selectedTab } = this.state;
-
-        const dataModifier = selectedTab === 'dimensions'
-            ? Matrix2dEditWidget.dimensionDataModifier
-            : Matrix2dEditWidget.sectorDataModifier;
-
-        return (
-            <div className={styles.tabsContainer}>
-                <FaramList faramElementName={selectedTab}>
-                    <NonFieldErrors
-                        faramElement
-                        className={styles.error}
-                    />
-                </FaramList>
-                <ScrollTabs
-                    className={styles.tabs}
-                    tabs={this.tabs}
-                    active={selectedTab}
-                    onClick={this.handleTabSelect}
-                    renderer={TabTitle}
-                    rendererParams={this.tabRendererParams}
-                >
-                    <div className={styles.buttonContainer}>
-                        <h5>
-                            {selectedTab === 'dimensions' ? (
-                                _ts('widgets.editor.matrix2d', 'addDimensionsTitle')
-                            ) : (
-                                _ts('widgets.editor.matrix2d', 'addSectorsTitle')
-                            )}
-                        </h5>
-                        <GeoLink
-                            faramElementName={selectedTab}
-                            titleSelector={Matrix2dEditWidget.titleSelector}
-                            dataModifier={dataModifier}
-                            onModalVisibilityChange={this.handleModalVisiblityChange}
-                        />
-                        <LinkWidgetModalButton
-                            faramElementName={selectedTab}
-                            widgetKey={this.props.widgetKey}
-                            titleSelector={Matrix2dEditWidget.titleSelector}
-                            dataModifier={dataModifier}
-                            onModalVisibilityChange={this.handleModalVisiblityChange}
-                        />
-                        <FaramList faramElementName={selectedTab}>
-                            {
-                                selectedTab === 'dimensions' ? (
-                                    <AccentButton
-                                        faramElementName="add-dimension-btn"
-                                        faramAction={this.addDimensionClick}
-                                        iconName="add"
-                                        transparent
-                                    >
-                                        {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
-                                    </AccentButton>
-                                ) : (
-                                    <AccentButton
-                                        faramElementName="add-sector-btn"
-                                        faramAction={this.addSectorClick}
-                                        iconName="add"
-                                        transparent
-                                    >
-                                        {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
-                                    </AccentButton>
-                                )
-                            }
-                        </FaramList>
-                    </div>
-                </ScrollTabs>
-            </div>
-        );
+    handleSectorEditButtonClick = (key) => {
+        this.setState({ selectedSectorKey: key });
     }
 
     render() {
         const {
-            faramValues,
             faramErrors,
-            pristine,
+            faramValues,
             hasError,
+            pristine,
             selectedTab,
         } = this.state;
 
         const {
+            className,
             closeModal,
             title,
-            className,
         } = this.props;
-
-        const TabsWithButton = this.renderTabsWithButton;
 
         return (
             <Faram
-                className={_cs(className, styles.editContainer)}
+                className={_cs(className, styles.matrixTwoDEditWidget)}
+                error={faramErrors}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 schema={Matrix2dEditWidget.schema}
                 value={faramValues}
-                error={faramErrors}
             >
                 <div className={styles.header}>
                     <h2 className={styles.heading}>
                         {title}
                     </h2>
-                    <DangerConfirmButton
-                        className={styles.button}
-                        onClick={closeModal}
-                        confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
-                        skipConfirmation={pristine}
-                    >
-                        {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
-                    </DangerConfirmButton>
-                    <PrimaryButton
-                        className={styles.button}
-                        type="submit"
-                        disabled={pristine || hasError}
-                    >
-                        {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
-                    </PrimaryButton>
+                    <div className={styles.actions}>
+                        <DangerConfirmButton
+                            className={styles.button}
+                            confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
+                            onClick={closeModal}
+                            skipConfirmation={pristine}
+                        >
+                            {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
+                        </DangerConfirmButton>
+                        <PrimaryButton
+                            className={styles.button}
+                            disabled={pristine || hasError}
+                            type="submit"
+                        >
+                            {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
+                        </PrimaryButton>
+                    </div>
                 </div>
-                <div className={styles.body}>
+                <div className={styles.content}>
                     <NonFieldErrors
+                        className={styles.nonFieldErrors}
                         faramElement
-                        className={styles.error}
                     />
+                    <FaramList faramElementName={selectedTab}>
+                        <NonFieldErrors
+                            className={styles.nonFieldErrors}
+                            faramElement
+                        />
+                    </FaramList>
                     <TextInput
+                        autoFocus
                         className={styles.titleInput}
                         faramElementName="title"
-                        autoFocus
                         label={_ts('widgets.editor.matrix2d', 'titleLabel')}
                         placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
                         selectOnFocus
+                        persistantHintAndError={false}
                     />
-                    <TabsWithButton />
+                    <ScrollTabs
+                        active={selectedTab}
+                        className={styles.tabs}
+                        onClick={this.handleTabSelect}
+                        renderer={TabTitle}
+                        rendererParams={this.tabRendererParams}
+                        tabs={this.tabs}
+                    />
                     <MultiViewContainer
                         views={this.views}
-                        containerClassName={styles.modalUnitContainer}
                         active={selectedTab}
                     />
                 </div>

@@ -15,8 +15,10 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';
 import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
+import SegmentInput from '#rsci/SegmentInput';
 import TextArea from '#rsci/TextArea';
 import ColorInput from '#rsci/ColorInput';
+import Label from '#rsci/Label';
 
 import _ts from '#ts';
 
@@ -41,6 +43,21 @@ const propTypes = {
 const defaultProps = {
     className: '',
 };
+
+const orientationOptions = [
+    { key: 'leftToRight', label: 'A' },
+    { key: 'bottomToTop', label: 'A' },
+];
+
+const OrientationInputItem = ({
+    data,
+}) => (
+    data.key === 'bottomToTop' ? (
+        <div className={styles.rotatedText}>
+            { data.label }
+        </div>
+    ) : data.label
+);
 
 export default class DimensionContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -94,7 +111,7 @@ export default class DimensionContent extends React.PureComponent {
                         />
                     </header>
                     <NonFieldErrors
-                        className={styles.error}
+                        className={styles.nonFieldErrors}
                         faramElement
                     />
                     <div className={styles.editDimension}>
@@ -103,18 +120,36 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.colorInput}
                                 faramElementName="color"
                                 label={_ts('widgets.editor.matrix2d', 'colorLabel')}
+                                persistantHintAndError={false}
                             />
                             <TextInput
                                 className={styles.titleInput}
                                 faramElementName="title"
                                 label={_ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                                 autoFocus
+                                persistantHintAndError={false}
+                            />
+                            <SegmentInput
+                                label="Orientation"
+                                options={orientationOptions}
+                                renderer={OrientationInputItem}
+                                faramElementName="orientation"
+                                className={styles.orientationInput}
+                                persistantHintAndError={false}
                             />
                             <TextInput
                                 type="number"
                                 label="Font size"
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
+                                persistantHintAndError={false}
+                            />
+                            <TextInput
+                                type="number"
+                                label="Height"
+                                className={styles.heightInput}
+                                faramElementName="height"
+                                persistantHintAndError={false}
                             />
                         </div>
                         <div className={styles.bottom}>
@@ -122,6 +157,7 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.tooltipInput}
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
+                                persistantHintAndError={false}
                             />
                         </div>
                     </div>
@@ -130,7 +166,7 @@ export default class DimensionContent extends React.PureComponent {
                         keySelector={DimensionContent.keySelector}
                     >
                         <NonFieldErrors
-                            className={styles.error}
+                            className={styles.nonFieldErrors}
                             faramElement
                         />
                     </FaramList>
@@ -140,9 +176,9 @@ export default class DimensionContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
                             <div className={styles.right} >
-                                <h5 className={styles.heading}>
-                                    {_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
-                                </h5>
+                                <Label
+                                    text={_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
+                                />
                                 <GeoLink
                                     faramElementName="subdimensions"
                                     titleSelector={DimensionContent.rowTitleSelector}
@@ -177,9 +213,9 @@ export default class DimensionContent extends React.PureComponent {
                         >
                             <SortableListView
                                 faramElement
-                                className={styles.cellList}
+                                className={styles.subdimensionItemList}
                                 dragHandleClassName={styles.dragHandle}
-                                itemClassName={styles.item}
+                                itemClassName={styles.subdimensionItem}
                                 rendererParams={DimensionContent.rendererParams}
                                 renderer={SubdimensionRow}
                             />

@@ -1,117 +1,52 @@
-// Note: kept out because the item gets attached to the body when moving
-.item {
-    display: flex;
-    align-items: center;
-    border-top: var(--width-separator-thin) solid var(--color-separator);
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
-    background-color: var(--color-foreground);
-
-    .drag-handle {
-        flex-shrink: 0;
-        background-color: var(--color-foreground);
-        cursor: move;
-        padding: var(--spacing-small);
-    }
-
-    .dimension-content {
-        flex-grow: 1;
-    }
-}
-
-.edit-container {
+.matrix-two-d-edit-widget {
     display: flex;
     flex-direction: column;
+    border-right: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
     overflow: auto;
 
     .header {
         display: flex;
+        align-items: center;
         flex-shrink: 0;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-        padding: var(--spacing-medium);
+        padding: var(--spacing-small) 0;
 
         .heading {
             flex-grow: 1;
-            border: 1px solid red;
+            padding: 0 var(--spacing-medium);
         }
 
-        .button {
-            margin-left: var(--spacing-small);
+        .actions {
+            flex-shrink: 0;
+
+            .button {
+                margin-right: var(--spacing-medium);
+            }
         }
     }
 
-    .body {
+    .content {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        padding: 0;
         overflow: auto;
 
-        .error {
+        .non-field-errors {
             flex-shrink: 0;
         }
 
         .title-input {
             flex-shrink: 0;
-            padding: 0 var(--spacing-small);
+            margin: var(--spacing-medium);
         }
 
-        .tabs-container {
-            display: flex;
-            flex-direction: column;
+        .tabs {
             flex-shrink: 0;
-            overflow: auto;
-
-            .tabs {
-                flex-grow: 1;
-
-                .button-container {
-                    display: flex;
-                    align-items: center;
-
-                    h5 {
-                        padding-right: var(--spacing-small);
-
-                        &:after {
-                            content: ':';
-                        }
-                    }
-                }
-            }
         }
 
-        .modal-unit-container {
-            display: flex;
-            flex-direction: column;
+        .tab-content {
             flex-grow: 1;
             overflow: auto;
-
-            .error {
-                flex-shrink: 0;
-            }
-
-            .panels {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                overflow: auto;
-
-                .left-panel {
-                    flex-grow: 1;
-                    overflow: auto;
-
-                    .item {
-                        border-top: 0;
-                    }
-                }
-
-                .right-panel {
-                    display: flex;
-                    flex-direction: column;
-                    flex-grow: 1;
-                    overflow: auto;
-                }
-            }
         }
     }
 }

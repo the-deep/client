@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import List from '#rscv/List';
 import update from '#rsu/immutable-update';
@@ -54,6 +55,18 @@ export default class Matrix2dInput extends React.PureComponent {
     static keySelector = dimension => dimension.id;
 
     static titleKeyExtractor = sector => sector.id;
+
+    getHeadRowStyle = memoize(titleRowHeight => (
+        titleRowHeight ? ({ height: `${titleRowHeight}px` }) : undefined
+    ));
+
+    getTitleColumnStyle = memoize(titleColumnWidth => (
+        titleColumnWidth ? ({ width: `${titleColumnWidth}px` }) : undefined
+    ));
+
+    getSubTitleColumnStyle = memoize(subTitleColumnWidth => (
+        subTitleColumnWidth ? ({ width: `${subTitleColumnWidth}px` }) : undefined
+    ));
 
     handleCellClick = (dimensionId, subdimensionId, sectorId, isCellActive) => {
         const {
@@ -124,15 +137,23 @@ export default class Matrix2dInput extends React.PureComponent {
         const {
             dimensions,
             sectors,
+            meta,
         } = this.props;
+
+
+        const headRowStyle = this.getHeadRowStyle(dimensions.titleRowHeight);
+        const titleColumnStyle = this.getTitleColumnStyle(sectors.titleColumnWidth);
+        const subTitleColumnStyle = this.getSubTitleColumnStyle(sectors.subTitleColumnWidth);
+
+        console.warn(meta);
 
         return (
             <div className={styles.overview}>
                 <table className={styles.table}>
                     <thead>
-                        <tr>
-                            <th />
-                            <th />
+                        <tr style={headRowStyle}>
+                            <th style={titleColumnStyle} />
+                            <th style={subTitleColumnStyle} />
                             <List
                                 data={sectors}
                                 keySelector={Matrix2dInput.titleKeyExtractor}

@@ -66,6 +66,7 @@ module.exports = {
                     '#views': './src/views',
                     '#widgetComponents': './src/widgetComponents',
                     '#widgets': './src/widgets',
+                    '#typings': './src/typings',
                 },
             },
         ],

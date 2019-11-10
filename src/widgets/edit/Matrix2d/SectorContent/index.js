@@ -16,6 +16,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import Button from '#rsca/Button';
+import Label from '#rsci/Label';
 
 import _ts from '#ts';
 
@@ -134,9 +135,9 @@ export default class SectorContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
                             <div className={styles.right} >
-                                <h5 className={styles.heading}>
-                                    {_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
-                                </h5>
+                                <Label
+                                    text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
+                                />
                                 <GeoLink
                                     faramElementName="subsectors"
                                     titleSelector={SectorContent.rowTitleSelector}

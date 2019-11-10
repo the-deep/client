@@ -27,12 +27,14 @@ const SubsectorRow = ({ index, className }) => (
                         faramElementName="title"
                         autoFocus
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubsectorLabel', { index: index + 1 })}
+                        persistantHintAndError={false}
                     />
                     <TextInput
                         type="number"
                         label="Font size"
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
+                        persistantHintAndError={false}
                     />
                 </div>
                 <div className={styles.bottom}>
@@ -40,6 +42,7 @@ const SubsectorRow = ({ index, className }) => (
                         className={styles.tooltipInput}
                         faramElementName="tooltip"
                         label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
+                        persistantHintAndError={false}
                     />
                 </div>
             </div>

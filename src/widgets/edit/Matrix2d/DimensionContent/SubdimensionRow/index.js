@@ -27,19 +27,30 @@ const SubdimensionRow = ({ className, index }) => (
                         faramElementName="title"
                         autoFocus
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubdimensionLabel', { index: index + 1 })}
+                        persistantHintAndError={false}
                     />
                     <TextInput
                         type="number"
+                        // FIXME: string
                         label="Font size"
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
+                        persistantHintAndError={false}
+                    />
+                    <TextInput
+                        type="number"
+                        // FIXME: string
+                        label="Height"
+                        className={styles.heightInput}
+                        faramElementName="height"
+                        persistantHintAndError={false}
                     />
                 </div>
                 <div className={styles.bottom}>
                     <TextArea
-                        className={styles.tooltipInput}
                         faramElementName="tooltip"
                         label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
+                        persistantHintAndError={false}
                     />
                 </div>
             </div>

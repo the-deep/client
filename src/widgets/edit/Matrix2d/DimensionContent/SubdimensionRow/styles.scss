@@ -7,27 +7,33 @@
 
         .top {
             display: flex;
-            padding: var(--spacing-small) 0;
+            padding: var(--spacing-medium) 0;
 
             .title-input {
                 flex-grow: 1;
-                margin: 0 var(--spacing-small);
+                margin: 0 var(--spacing-medium);
             }
 
             .font-size-input {
                 flex-shrink: 0;
-                margin: 0 var(--spacing-small);
+                margin: 0 var(--spacing-medium);
+                width: 42px; // TODO: use vars
+            }
+
+            .height-input {
+                flex-shrink: 0;
+                margin: 0 var(--spacing-medium);
                 width: 42px; // TODO: use vars
             }
         }
 
         .bottom {
-            padding: var(--spacing-small);
+            padding: var(--spacing-medium);
         }
     }
 
     .delete-button {
         flex-shrink: 0;
-        margin: 0 var(--spacing-small);
+        margin: 0 var(--spacing-medium);
     }
 }

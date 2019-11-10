@@ -89,21 +89,49 @@ export default class DimensionRow extends React.PureComponent {
                 tooltip,
                 title,
                 fontSize,
+                orientation,
+                height,
             },
             ...otherProps
         } = this.props;
 
-        const style = fontSize ? ({ fontSize: `${fontSize}px` }) : undefined;
+        const style = {};
+        const tdStyle = {};
+
+        if (fontSize) {
+            style.fontSize = `${fontSize}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            style.writingMode = 'vertical-rl';
+            tdStyle.width = 0;
+            tdStyle.height = 0;
+            style.transform = 'rotate(180deg)';
+            style.width = '100%';
+            style.height = '100%';
+            style.display = 'flex';
+            style.alignItems = 'center';
+            style.justifyContent = 'center';
+        } else {
+            style.display = 'flex';
+            style.alignItems = 'center';
+        }
+
+        if (height) {
+            style.height = `${height}px`;
+        }
 
         const isFirstSubdimension = i === 0;
         const children = isFirstSubdimension ? (
             <td
                 rowSpan={subdimensions.length}
                 className={styles.dimensionTd}
+                style={tdStyle}
                 title={tooltip}
-                style={style}
             >
-                {title}
+                <div style={style}>
+                    {title}
+                </div>
             </td>
         ) : undefined;
 
