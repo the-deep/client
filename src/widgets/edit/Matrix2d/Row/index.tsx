@@ -1,5 +1,8 @@
 import React from 'react';
-import { FaramList } from '@togglecorp/faram';
+import {
+    FaramList,
+    FaramGroup,
+} from '@togglecorp/faram';
 import {
     _cs,
     isDefined,
@@ -65,13 +68,15 @@ export default class Row extends React.PureComponent<Props, State> {
         return (
             <div className={_cs(className, styles.row)}>
                 <header className={styles.header}>
-                    <TextInput
-                        className={styles.titleRowHeightInput}
-                        faramElementName="titleRowHeight"
-                        label="Title row height"
-                        type="number"
-                        persistantHintAndError={false}
-                    />
+                    <FaramGroup faramElementName="meta">
+                        <TextInput
+                            className={styles.titleRowHeightInput}
+                            faramElementName="titleRowHeight"
+                            label="Title row height"
+                            type="number"
+                            persistantHintAndError={false}
+                        />
+                    </FaramGroup>
                     <div className={styles.right}>
                         <Label
                             className={styles.label}

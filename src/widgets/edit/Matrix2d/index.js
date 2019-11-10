@@ -35,6 +35,7 @@ const defaultProps = {
 };
 
 const emptyArray = [];
+const emptyObject = {};
 
 export default class Matrix2dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
@@ -46,6 +47,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     static schema = {
         fields: {
             title: [requiredCondition],
+            meta: [],
             dimensions: {
                 validation: (dimensions) => {
                     const errors = [];
@@ -172,8 +174,17 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     }));
 
     static getDataFromFaramValues = (data) => {
-        const { dimensions, sectors } = data;
-        return { dimensions, sectors };
+        const {
+            dimensions,
+            sectors,
+            meta,
+        } = data;
+
+        return {
+            dimensions,
+            sectors,
+            meta,
+        };
     };
 
     static getTitleFromFaramValues = data => data.title;
@@ -184,6 +195,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const {
             title,
             data: {
+                meta = emptyObject,
                 dimensions = emptyArray,
                 sectors = emptyArray,
             },
@@ -192,6 +204,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         this.state = {
             faramValues: {
                 title,
+                meta,
                 dimensions,
                 sectors,
             },
@@ -294,6 +307,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             widgetKey,
             onChange,
         } = this.props;
+
         onChange(
             widgetKey,
             Matrix2dEditWidget.getDataFromFaramValues(faramValues),
