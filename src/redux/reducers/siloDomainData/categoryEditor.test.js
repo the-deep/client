@@ -413,21 +413,6 @@ test('should set active category', () => {
                             subcategories: [],
                         },
                     ],
-                    activeCategoryId: 13,
-                    categories: [
-                        {
-                            id: 13,
-                            title: 'shyam',
-                            selectedSubcategories: [],
-                            subcategories: [],
-                        },
-                        {
-                            id: 12,
-                            title: 'hari',
-                            selectedSubcategories: [],
-                            subcategories: [],
-                        },
-                    ],
                 },
             },
         },

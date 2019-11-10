@@ -24,6 +24,7 @@ export default class WordCategoryGetRequest extends Request {
         this.projectId = projectId;
 
         this.createDefault({
+            // FIXME: this url doesn't exist
             url: createUrlForWordCategoryGet(),
             params: createParamsForGet(),
         });

@@ -69,8 +69,8 @@ export default class FilterProjectsForm extends React.PureComponent {
     static optionLabelSelector = (d = {}) => d.value;
     static optionKeySelector = (d = {}) => d.key;
 
-    static statusTooltipSelector = (status) => {
-        const conditions = (status || emptyObject).conditions || emptyList;
+    static statusTooltipSelector = (status = emptyObject) => {
+        const conditions = status.conditions || emptyList;
         const isConditionsEmpty = conditions.length === 0;
 
         if (isConditionsEmpty) {
