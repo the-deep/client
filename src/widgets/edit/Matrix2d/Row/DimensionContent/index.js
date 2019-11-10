@@ -15,13 +15,13 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';
 import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
-import SegmentInput from '#rsci/SegmentInput';
 import TextArea from '#rsci/TextArea';
 import ColorInput from '#rsci/ColorInput';
 import Label from '#rsci/Label';
 
 import _ts from '#ts';
 
+import OrientationInput from '#components/general/OrientationInput';
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
@@ -43,21 +43,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
 };
-
-const orientationOptions = [
-    { key: 'leftToRight', label: 'A' },
-    { key: 'bottomToTop', label: 'A' },
-];
-
-const OrientationInputItem = ({
-    data,
-}) => (
-    data.key === 'bottomToTop' ? (
-        <div className={styles.rotatedText}>
-            { data.label }
-        </div>
-    ) : data.label
-);
 
 export default class DimensionContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -129,12 +114,9 @@ export default class DimensionContent extends React.PureComponent {
                                 autoFocus
                                 persistantHintAndError={false}
                             />
-                            <SegmentInput
-                                label="Orientation"
-                                options={orientationOptions}
-                                renderer={OrientationInputItem}
-                                faramElementName="orientation"
+                            <OrientationInput
                                 className={styles.orientationInput}
+                                faramElementName="orientation"
                                 persistantHintAndError={false}
                             />
                             <TextInput

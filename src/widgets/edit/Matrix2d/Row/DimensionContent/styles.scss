@@ -41,24 +41,6 @@
         }
     }
 
-    .rotated-text {
-        writing-mode: vertical-rl;
-        transform: rotate(180deg);
-    }
-
-    :global {
-        .segment-option {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 var(--spacing-small);
-
-            &:nth-child(2) {
-                padding: 0;
-            }
-        }
-    }
-
     .non-field-errors {
         flex-shrink: 0;
     }

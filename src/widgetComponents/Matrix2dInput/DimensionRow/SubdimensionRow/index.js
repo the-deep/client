@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 import List from '#rscv/List';
 
 import Cell from './Cell';
-
 
 const propTypes = {
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -25,6 +25,40 @@ export default class SubdimensionRow extends React.PureComponent {
 
     static keySelector = sector => sector.id;
 
+    getCellStyle = memoize((fontSize, orientation, height) => {
+        const style = {};
+        const tdStyle = {};
+
+        if (fontSize) {
+            style.fontSize = `${fontSize}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            style.writingMode = 'vertical-rl';
+            tdStyle.width = 0;
+            tdStyle.height = 0;
+            style.transform = 'rotate(180deg)';
+            style.width = '100%';
+            style.height = '100%';
+            style.display = 'flex';
+            style.alignItems = 'center';
+            style.justifyContent = 'center';
+        } else {
+            style.display = 'flex';
+            style.alignItems = 'center';
+            style.justifyContent = 'center';
+        }
+
+        if (height) {
+            style.height = `${height}px`;
+        }
+
+        return {
+            style,
+            tdStyle,
+        };
+    })
+
     rendererParams = (key) => {
         const {
             subdimension, // eslint-disable-line no-unused-vars
@@ -33,6 +67,7 @@ export default class SubdimensionRow extends React.PureComponent {
             children, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
         return {
             sectorId: key,
             ...otherProps,
@@ -47,16 +82,29 @@ export default class SubdimensionRow extends React.PureComponent {
             children,
         } = this.props;
 
-        const style = subdimension.fontSize ? ({ fontSize: `${subdimension.fontSize}px` }) : undefined;
+        const {
+            fontSize,
+            orientation,
+            height,
+            title,
+            tooltip,
+        } = subdimension;
+
+        const {
+            style,
+            tdStyle,
+        } = this.getCellStyle(fontSize, orientation, height);
 
         return (
             <tr style={rowStyle}>
                 { children }
                 <td
-                    title={subdimension.tooltip}
-                    style={style}
+                    title={tooltip}
+                    style={tdStyle}
                 >
-                    {subdimension.title}
+                    <div style={style}>
+                        {title}
+                    </div>
                 </td>
                 <List
                     data={sectors}

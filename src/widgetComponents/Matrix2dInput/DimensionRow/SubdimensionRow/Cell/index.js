@@ -126,6 +126,7 @@ export default class Cell extends React.PureComponent {
             readOnly,
             hoverStyle,
         } = this.props;
+
         const { isBeingDraggedOver } = this.state;
 
         let style = this.isCellActive() ? activeCellStyle : undefined;

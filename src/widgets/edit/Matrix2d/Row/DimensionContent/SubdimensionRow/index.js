@@ -7,6 +7,8 @@ import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 
+import OrientationInput from '#components/general/OrientationInput';
+
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -27,6 +29,11 @@ const SubdimensionRow = ({ className, index }) => (
                         faramElementName="title"
                         autoFocus
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubdimensionLabel', { index: index + 1 })}
+                        persistantHintAndError={false}
+                    />
+                    <OrientationInput
+                        className={styles.orientationInput}
+                        faramElementName="orientation"
                         persistantHintAndError={false}
                     />
                     <TextInput

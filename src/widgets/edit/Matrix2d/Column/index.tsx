@@ -1,5 +1,8 @@
 import React from 'react';
-import { FaramList } from '@togglecorp/faram';
+import {
+    FaramList,
+    FaramGroup,
+} from '@togglecorp/faram';
 import {
     _cs,
     isDefined,
@@ -15,8 +18,8 @@ import _ts from '#ts';
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
-import SectorTitle from '../SectorTitle';
-import SectorContent from '../SectorContent';
+import SectorTitle from './SectorTitle';
+import SectorContent from './SectorContent';
 
 import styles from './styles.scss';
 
@@ -65,20 +68,22 @@ export default class Column extends React.PureComponent<Props, State> {
             <div className={_cs(styles.column, className)}>
                 <header className={styles.header}>
                     <div className={styles.top}>
-                        <TextInput
-                            type="number"
-                            label="Title column width"
-                            className={styles.titleColumnWidthInput}
-                            faramElementName="titleColumnWidth"
-                            persistantHintAndError={false}
-                        />
-                        <TextInput
-                            type="number"
-                            label="Subtitle column width"
-                            className={styles.subTitleColumnWidthInput}
-                            faramElementName="subTitleColumnWidth"
-                            persistantHintAndError={false}
-                        />
+                        <FaramGroup faramElementName="meta">
+                            <TextInput
+                                type="number"
+                                label="Title column width"
+                                className={styles.titleColumnWidthInput}
+                                faramElementName="titleColumnWidth"
+                                persistantHintAndError={false}
+                            />
+                            <TextInput
+                                type="number"
+                                label="Subtitle column width"
+                                className={styles.subTitleColumnWidthInput}
+                                faramElementName="subTitleColumnWidth"
+                                persistantHintAndError={false}
+                            />
+                        </FaramGroup>
                     </div>
                     <div className={styles.bottom}>
                         <Label

@@ -14,6 +14,7 @@ const defaultProps = {
 };
 
 const emptyArray = [];
+const emptyObject = {};
 const getDimensions = (widget) => {
     const { properties: { data: { dimensions = emptyArray } = {} } = {} } = widget;
     return dimensions;
@@ -36,7 +37,7 @@ export default class Matrix2dOverviewWidget extends React.PureComponent {
                         titleRowHeight,
                         titleColumnWidth,
                         subTitleColumnWidth,
-                    },
+                    } = emptyObject,
                 },
             },
         } = widget;

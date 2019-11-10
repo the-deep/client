@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 import List from '#rscv/List';
 import {
@@ -20,6 +21,7 @@ const propTypes = {
 const defaultProps = {
     dimension: {},
 };
+
 
 export default class DimensionRow extends React.PureComponent {
     static propTypes = propTypes;
@@ -82,19 +84,7 @@ export default class DimensionRow extends React.PureComponent {
         }
     }
 
-    rendererParams = (key, subdimension, i) => {
-        const {
-            dimension: {
-                subdimensions,
-                tooltip,
-                title,
-                fontSize,
-                orientation,
-                height,
-            },
-            ...otherProps
-        } = this.props;
-
+    getCellStyle = memoize((fontSize, orientation, height) => {
         const style = {};
         const tdStyle = {};
 
@@ -121,19 +111,47 @@ export default class DimensionRow extends React.PureComponent {
             style.height = `${height}px`;
         }
 
+        return {
+            style,
+            tdStyle,
+        };
+    })
+
+    rendererParams = (key, subdimension, i) => {
+        const {
+            dimension: {
+                subdimensions,
+                tooltip,
+                title,
+                fontSize,
+                orientation,
+                height,
+            },
+            ...otherProps
+        } = this.props;
+
         const isFirstSubdimension = i === 0;
-        const children = isFirstSubdimension ? (
-            <td
-                rowSpan={subdimensions.length}
-                className={styles.dimensionTd}
-                style={tdStyle}
-                title={tooltip}
-            >
-                <div style={style}>
-                    {title}
-                </div>
-            </td>
-        ) : undefined;
+        let children;
+
+        if (isFirstSubdimension) {
+            const {
+                style,
+                tdStyle,
+            } = this.getCellStyle(fontSize, orientation, height);
+
+            children = (
+                <td
+                    rowSpan={subdimensions.length}
+                    className={styles.dimensionTd}
+                    style={tdStyle}
+                    title={tooltip}
+                >
+                    <div style={style}>
+                        {title}
+                    </div>
+                </td>
+            );
+        }
 
         return {
             subdimension,

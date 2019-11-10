@@ -18,6 +18,8 @@ import TextArea from '#rsci/TextArea';
 import Button from '#rsca/Button';
 import Label from '#rsci/Label';
 
+import OrientationInput from '#components/general/OrientationInput';
+
 import _ts from '#ts';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
@@ -105,11 +107,24 @@ export default class SectorContent extends React.PureComponent {
                                 label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
                                 autoFocus
                             />
+                            <OrientationInput
+                                className={styles.orientationInput}
+                                faramElementName="orientation"
+                                persistantHintAndError={false}
+                            />
                             <TextInput
                                 type="number"
+                                // FIXME: string
                                 label="Font size"
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
+                            />
+                            <TextInput
+                                type="number"
+                                // FIXME: string
+                                label="Width"
+                                className={styles.width}
+                                faramElementName="width"
                             />
                         </div>
                         <div className={styles.bottom}>
@@ -135,9 +150,7 @@ export default class SectorContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
                             <div className={styles.right} >
-                                <Label
-                                    text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
-                                />
+                                <Label text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')} />
                                 <GeoLink
                                     faramElementName="subsectors"
                                     titleSelector={SectorContent.rowTitleSelector}

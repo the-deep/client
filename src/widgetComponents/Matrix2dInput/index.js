@@ -6,31 +6,9 @@ import memoize from 'memoize-one';
 import List from '#rscv/List';
 import update from '#rsu/immutable-update';
 
+import SectorTitle from './SectorTitle';
 import DimensionRow from './DimensionRow';
 import styles from './styles.scss';
-
-
-const SectorTitle = ({
-    title,
-    tooltip,
-    fontSize,
-}) => (
-    <th
-        title={tooltip}
-        style={{ fontSize }}
-    >
-        {title}
-    </th>
-);
-
-SectorTitle.propTypes = {
-    title: PropTypes.string.isRequired,
-    tooltip: PropTypes.string,
-};
-
-SectorTitle.defaultProps = {
-    tooltip: '',
-};
 
 const propTypes = {
     dimensions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -114,7 +92,9 @@ export default class Matrix2dInput extends React.PureComponent {
     titleRendererParams = (key, sector) => ({
         title: sector.title,
         tooltip: sector.tooltip,
-        fontSize: sector.fontSize ? `${sector.fontSize}px` : undefined,
+        fontSize: sector.fontSize,
+        width: sector.width,
+        orientation: sector.orientation,
     })
 
     dimensionRendererParams = (key, dimension) => {
@@ -140,12 +120,9 @@ export default class Matrix2dInput extends React.PureComponent {
             meta,
         } = this.props;
 
-
-        const headRowStyle = this.getHeadRowStyle(dimensions.titleRowHeight);
-        const titleColumnStyle = this.getTitleColumnStyle(sectors.titleColumnWidth);
-        const subTitleColumnStyle = this.getSubTitleColumnStyle(sectors.subTitleColumnWidth);
-
-        console.warn(meta);
+        const headRowStyle = this.getHeadRowStyle(meta.titleRowHeight);
+        const titleColumnStyle = this.getTitleColumnStyle(meta.titleColumnWidth);
+        const subTitleColumnStyle = this.getSubTitleColumnStyle(meta.subTitleColumnWidth);
 
         return (
             <div className={styles.overview}>
