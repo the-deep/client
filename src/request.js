@@ -1,21 +1,19 @@
-import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-
 import {
     createRequestCoordinator,
     createRequestClient,
-    RestRequest,
+    methods,
 } from '@togglecorp/react-rest-request';
 
-import update from '#rsu/immutable-update';
 import { sanitizeResponse } from '#utils/common';
-
 import { wsEndpoint } from '#config/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
 import notify from '#notify';
+
+export { methods, RequestHandler } from '@togglecorp/react-rest-request';
 
 export function getVersionedUrl(endpoint, url) {
     const oldVersionString = '/v1';
@@ -29,35 +27,52 @@ export function getVersionedUrl(endpoint, url) {
     return `${newEndpoint}${url}`;
 }
 
+export const notifyOnFailure = title => ({
+    error: {
+        messageForNotification,
+    } = {},
+}) => {
+    notify.send({
+        title,
+        type: notify.type.ERROR,
+        message: messageForNotification,
+        duration: notify.duration.MEDIUM,
+    });
+};
+
 const mapStateToProps = state => ({
     myToken: tokenSelector(state),
 });
 
-const CustomRequestCoordinator = createRequestCoordinator({
-    transformParams: (params, props) => {
+const coordinatorOptions = {
+    transformParams: (data, props) => {
+        const {
+            body,
+            method,
+        } = data;
+
+        const params = {
+            method: method || methods.GET,
+            body: JSON.stringify(body),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
+            },
+        };
+
         // NOTE: This is a hack to bypass auth for S3 requests
         // Need to fix this through use of new react-rest-request@2
-        const { body: bodyAsString } = params;
-
-        const body = bodyAsString ? JSON.parse(bodyAsString) : undefined;
-        if (body && body.$noAuth) {
-            return {};
-        }
+        const doNotAuth = body && body.$noAuth;
 
         const {
             myToken: { access },
         } = props;
-        if (!access) {
-            return params;
+
+        if (access && !doNotAuth) {
+            params.headers.Authorization = `Bearer ${access}`;
         }
 
-        const settings = {
-            headers: { $auto: {
-                Authorization: { $set: `Bearer ${access}` },
-            } },
-        };
-
-        return update(params, settings);
+        return params;
     },
 
     transformProps: (props) => {
@@ -79,17 +94,19 @@ const CustomRequestCoordinator = createRequestCoordinator({
         const {
             url,
             method,
-            schemaName,
+            extras,
         } = request;
 
-        if (schemaName === undefined) {
+        // TODO: add null sanitization here
+
+        if (!extras || extras.schemaName === undefined) {
             // NOTE: usually there is no response body for DELETE
-            if (method !== 'DELETE') {
+            if (method !== methods.DELETE) {
                 console.error(`Schema is not defined for ${url} ${method}`);
             }
         } else {
             try {
-                schema.validate(body, schemaName);
+                schema.validate(body, extras.schemaName);
             } catch (e) {
                 console.error(url, method, body, e.message);
                 throw (e);
@@ -97,14 +114,6 @@ const CustomRequestCoordinator = createRequestCoordinator({
         }
         return sanitizeResponse(body);
     },
-
-    /*
-     * FIXME: Use this one
-    transformErrors: ({ errors, ...otherProps }) => ({
-        ...otherProps,
-        body: alterResponseErrorToFaramError(errors),
-    }),
-    */
 
     transformErrors: (response) => {
         const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -121,32 +130,11 @@ const CustomRequestCoordinator = createRequestCoordinator({
             messageForNotification,
         };
     },
-});
+};
 
 export const RequestCoordinator = compose(
     connect(mapStateToProps),
-    CustomRequestCoordinator,
+    createRequestCoordinator(coordinatorOptions),
 );
 
-export const RequestClient = createRequestClient();
-RequestClient.propType = PropTypes.shape({
-    do: PropTypes.func,
-    pending: PropTypes.bool,
-    response: PropTypes.object,
-    error: PropTypes.object,
-});
-
-export const notifyOnFailure = title => ({
-    error: {
-        messageForNotification,
-    } = {},
-}) => {
-    notify.send({
-        title,
-        type: notify.type.ERROR,
-        message: messageForNotification,
-        duration: notify.duration.MEDIUM,
-    });
-};
-
-export const requestMethods = RestRequest.methods;
+export const RequestClient = createRequestClient;

@@ -11,7 +11,7 @@ import {
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import Button from '#rsca/Button';
@@ -54,9 +54,9 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     onEmmStatusReceive: PropTypes.func.isRequired,
 
-    // eslint-disable-next-line react/forbid-prop-types
-    leadOptionsRequest: PropTypes.object.isRequired,
     filterOnlyUnprotected: PropTypes.bool,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -81,16 +81,18 @@ const mapDispatchToProps = dispatch => ({
 const emptyList = [];
 const emptyObject = {};
 
-const requests = {
+const requestOptions = {
     leadOptionsRequest: {
         url: '/lead-options/',
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({ props: { activeProject } }) => ({
             projects: [activeProject],
         }),
         onPropsChanged: ['activeProject'],
         onMount: true,
-        schemaName: 'projectLeadFilterOptions',
+        extras: {
+            schemaName: 'projectLeadFilterOptions',
+        },
         onSuccess: ({
             response,
             props: {
@@ -111,7 +113,7 @@ const requests = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class FilterLeadsForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -227,9 +229,11 @@ export default class FilterLeadsForm extends React.PureComponent {
                 emmKeywords = emptyList,
                 emmRiskFactors = emptyList,
             },
-            leadOptionsRequest: {
-                response: { hasEmmLeads } = emptyObject,
-                pending: loadingLeadFilters,
+            requests: {
+                leadOptionsRequest: {
+                    response: { hasEmmLeads } = emptyObject,
+                    pending: loadingLeadFilters,
+                },
             },
             filters,
             filterOnlyUnprotected,

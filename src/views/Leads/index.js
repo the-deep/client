@@ -20,7 +20,7 @@ import Pager from '#rscv/Pager';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import Cloak from '#components/general/Cloak';
@@ -100,7 +100,8 @@ const propTypes = {
     setLeadsPerPage: PropTypes.func.isRequired,
     setLeadPageView: PropTypes.func.isRequired,
     view: PropTypes.string.isRequired,
-    leadsGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -201,10 +202,10 @@ const tabsIcons = {
     [GRID_VIEW]: 'grid',
 };
 
-const requests = {
+const requestOptions = {
     leadsGetRequest: {
         url: '/v2/leads/filter/',
-        method: requestMethods.POST,
+        method: methods.POST,
         onMount: true,
         query: ({
             props: {
@@ -260,13 +261,15 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'leadsGetResponse',
+        extras: {
+            schemaName: 'leadsGetResponse',
+        },
     },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -320,7 +323,9 @@ export default class Leads extends React.PureComponent {
             activePage,
             leadsPerPage,
             view,
-            leadsGetRequest,
+            requests: {
+                leadsGetRequest,
+            },
         } = nextProps;
 
         if (
@@ -363,8 +368,8 @@ export default class Leads extends React.PureComponent {
 
     onGridEndReached = () => {
         const {
-            leadsGetRequest: {
-                pending,
+            requests: {
+                leadsGetRequest: { pending },
             },
         } = this.props;
 
@@ -632,8 +637,8 @@ export default class Leads extends React.PureComponent {
             activeSort,
             setLeadPageActiveSort,
             activeProject,
-            leadsGetRequest: {
-                pending,
+            requests: {
+                leadsGetRequest: { pending },
             },
         } = this.props;
 

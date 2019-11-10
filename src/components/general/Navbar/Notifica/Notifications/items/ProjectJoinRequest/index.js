@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import {
@@ -28,24 +28,22 @@ const propTypes = {
     notification: PropTypes.object,
 
     // eslint-disable-next-line react/forbid-prop-types
-    projectJoinApproveRequest: PropTypes.object,
-
-    // eslint-disable-next-line react/forbid-prop-types
-    projectJoinRejectRequest: PropTypes.object,
+    requests: PropTypes.object.isRequired,
 
     className: PropTypes.string,
     closeModal: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/no-unused-prop-types
+    onNotificationReload: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     notification: {},
     className: '',
-    projectJoinApproveRequest: {},
-    projectJoinRejectRequest: {},
 };
 
 // TODO: show error message for request failure
-const requests = {
+const requestOptions = {
     projectJoinApproveRequest: {
         url: ({
             params: {
@@ -53,13 +51,14 @@ const requests = {
                 requestId,
             },
         }) => `/projects/${projectId}/requests/${requestId}/accept/`,
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params: { role } }) => ({ role }),
         onSuccess: ({
             response,
             props: {
                 updateNotification,
                 notification,
+                onNotificationReload,
             },
         }) => {
             updateNotification({
@@ -68,6 +67,7 @@ const requests = {
                     data: response,
                 },
             });
+            onNotificationReload();
         },
     },
     projectJoinRejectRequest: {
@@ -77,7 +77,14 @@ const requests = {
                 requestId,
             },
         }) => `/projects/${projectId}/requests/${requestId}/reject/`,
-        method: requestMethods.POST,
+        method: methods.POST,
+        onSuccess: ({
+            props: {
+                onNotificationReload,
+            },
+        }) => {
+            onNotificationReload();
+        },
     },
 };
 
@@ -86,7 +93,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(undefined, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectJoinRequestItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -99,7 +106,9 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                     project: { id: projectId },
                 },
             },
-            projectJoinApproveRequest,
+            requests: {
+                projectJoinApproveRequest,
+            },
         } = this.props;
 
         projectJoinApproveRequest.do({
@@ -117,7 +126,9 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                     project: { id: projectId },
                 },
             },
-            projectJoinRejectRequest,
+            requests: {
+                projectJoinRejectRequest,
+            },
         } = this.props;
 
         projectJoinRejectRequest.do({
@@ -144,11 +155,9 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                 },
                 timestamp,
             },
-            projectJoinApproveRequest: {
-                pending: pendingProjectJoinAcceptRequest,
-            },
-            projectJoinRejectRequest: {
-                pending: pendingProjectJoinRejectRequest,
+            requests: {
+                projectJoinApproveRequest: { pending: pendingProjectJoinAcceptRequest },
+                projectJoinRejectRequest: { pending: pendingProjectJoinRejectRequest },
             },
             closeModal,
         } = this.props;

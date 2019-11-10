@@ -8,7 +8,7 @@ import {
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import {
@@ -39,18 +39,14 @@ const propTypes = {
     textHistory: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     members: PropTypes.array,
-    // eslint-disable-next-line react/forbid-prop-types
-    commentDeleteRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    commentEditRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    commentResolveRequest: PropTypes.object.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     currentEdit: PropTypes.string,
     onCurrentEditChange: PropTypes.func,
     setGlobalPristine: PropTypes.func,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -70,10 +66,10 @@ const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
 });
 
-const requests = {
+const requestOptions = {
     commentEditRequest: {
         url: ({ props: { commentId } }) => `/entry-comments/${commentId}/`,
-        method: requestMethods.PATCH,
+        method: methods.PATCH,
         body: ({ params: { body } }) => body,
         onSuccess: ({
             response,
@@ -89,11 +85,13 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'entryComment',
+        extras: {
+            schemaName: 'entryComment',
+        },
     },
     commentDeleteRequest: {
         url: ({ props: { commentId } }) => `/entry-comments/${commentId}/`,
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         onSuccess: ({
             params: { onDelete },
             props: {
@@ -114,14 +112,16 @@ const requests = {
     },
     commentResolveRequest: {
         url: ({ props: { commentId } }) => `/entry-comments/${commentId}/resolve/`,
-        method: requestMethods.POST,
+        method: methods.POST,
         onSuccess: ({
             params: { onEditSuccess },
             response,
         }) => {
             onEditSuccess(response);
         },
-        schemaName: 'entryComment',
+        extras: {
+            schemaName: 'entryComment',
+        },
         onFailure: ({ error: { messageForNotification } }) => {
             notify.send({
                 title: _ts('entryComments', 'entryCommentTitle'),
@@ -134,7 +134,7 @@ const requests = {
 };
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Comment extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -170,7 +170,11 @@ export default class Comment extends React.PureComponent {
     };
 
     handleResolveClick = () => {
-        const { commentResolveRequest } = this.props;
+        const {
+            requests: {
+                commentResolveRequest,
+            },
+        } = this.props;
         commentResolveRequest.do({
             onEditSuccess: this.handleEditSuccess,
         });
@@ -182,7 +186,9 @@ export default class Comment extends React.PureComponent {
 
     handleDeleteConfirmClose = (doDelete) => {
         const {
-            commentDeleteRequest,
+            requests: {
+                commentDeleteRequest,
+            },
             onDelete,
         } = this.props;
 
@@ -214,7 +220,11 @@ export default class Comment extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (_, values) => {
-        const { commentEditRequest } = this.props;
+        const {
+            requests: {
+                commentEditRequest,
+            },
+        } = this.props;
 
         commentEditRequest.do({
             body: values,
@@ -294,11 +304,9 @@ export default class Comment extends React.PureComponent {
             assigneeDetail: {
                 name: assigneeName,
             },
-            commentEditRequest: {
-                pending: editPending,
-            },
-            commentDeleteRequest: {
-                pending: deletePending,
+            requests: {
+                commentEditRequest: { pending: editPending },
+                commentDeleteRequest: { pending: deletePending },
             },
             currentEdit,
         } = this.props;

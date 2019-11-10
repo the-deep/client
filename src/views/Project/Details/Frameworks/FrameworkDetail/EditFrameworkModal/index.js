@@ -14,7 +14,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import notify from '#notify';
@@ -27,25 +27,24 @@ import styles from './styles.scss';
 const propTypes = {
     frameworkId: PropTypes.number,
     frameworkDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    frameworkPatchRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     closeModal: PropTypes.func,
     isPrivate: PropTypes.bool.isRequired,
     canEditMemberships: PropTypes.bool.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onFrameworkDetailsChange: PropTypes.func.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     frameworkDetails: {},
     frameworkId: undefined,
-    frameworkPatchRequest: {},
     closeModal: () => {},
 };
 
-const requests = {
+const requestOptions = {
     frameworkPatchRequest: {
         url: ({ props }) => `/analysis-frameworks/${props.frameworkId}/`,
-        method: requestMethods.PATCH,
+        method: methods.PATCH,
         body: ({ params: { body } } = {}) => body,
         query: {
             fields: [
@@ -90,12 +89,14 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'analysisFrameworkView',
+        extras: {
+            schemaName: 'analysisFrameworkView',
+        },
     },
 };
 
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EditFrameworkModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -144,7 +145,11 @@ export default class EditFrameworkModal extends React.PureComponent {
     }
 
     handleValidationSuccess = (_, body) => {
-        const { frameworkPatchRequest } = this.props;
+        const {
+            requests: {
+                frameworkPatchRequest,
+            },
+        } = this.props;
 
         frameworkPatchRequest.do({
             body,
@@ -186,8 +191,8 @@ export default class EditFrameworkModal extends React.PureComponent {
 
     render() {
         const {
-            frameworkPatchRequest: {
-                pending,
+            requests: {
+                frameworkPatchRequest: { pending },
             },
             closeModal,
             frameworkId,

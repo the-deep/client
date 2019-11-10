@@ -3,7 +3,7 @@ import _ts from '#ts';
 
 const ENTRIES_VIZ_POLL_TIME = 3000;
 
-const requests = {
+const requestOptions = {
     entriesVizGetRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
@@ -48,4 +48,4 @@ const requests = {
     },
 };
 
-export default requests;
+export default requestOptions;

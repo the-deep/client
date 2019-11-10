@@ -36,7 +36,7 @@ import _ts from '#ts';
 
 import ActivityLog from './ActivityLog';
 import Dashboard from './Dashboard';
-import requests from './requests';
+import requestOptions from './requests';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -56,10 +56,8 @@ const propTypes = {
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
     unsetProject: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    projectGetRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    projectPutRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -83,7 +81,7 @@ const mapDispatchToProps = dispatch => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectDetailsGeneral extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -123,7 +121,12 @@ export default class ProjectDetailsGeneral extends PureComponent {
     }
 
     handleFaramCancel = () => {
-        this.props.projectGetRequest.do({ isBeingCancelled: true });
+        const {
+            requests: {
+                projectGetRequest,
+            },
+        } = this.props;
+        projectGetRequest.do({ isBeingCancelled: true });
     }
 
     handleValidationFailure = (faramErrors) => {
@@ -139,7 +142,12 @@ export default class ProjectDetailsGeneral extends PureComponent {
     }
 
     handleValidationSuccess = (projectDetails) => {
-        this.props.projectPutRequest.do({ projectDetails });
+        const {
+            requests: {
+                projectPutRequest,
+            },
+        } = this.props;
+        projectPutRequest.do({ projectDetails });
     }
 
     renderUnsavedChangesPrompt = () => (
@@ -175,8 +183,10 @@ export default class ProjectDetailsGeneral extends PureComponent {
                 faramErrors,
                 pristine,
             },
-            projectGetRequest,
-            projectPutRequest,
+            requests: {
+                projectGetRequest,
+                projectPutRequest,
+            },
         } = this.props;
 
         const loading = (

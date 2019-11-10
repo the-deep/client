@@ -25,7 +25,7 @@ import { organizationTitleSelector } from '#entities/organization';
 import { alterAndCombineResponseError } from '#rest';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import _ts from '#ts';
@@ -50,13 +50,13 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setConnectorLeads: PropTypes.func.isRequired,
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/forbid-prop-types
-    connectorLeadsRequest: PropTypes.object.isRequired,
     setConnectorLeadSelection: PropTypes.func.isRequired,
     setConnectorActivePage: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
     onFiltersApply: PropTypes.func.isRequired,
     className: PropTypes.string,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const DEFAULT_MAX_LEADS_PER_REQUEST = 25;
@@ -72,10 +72,10 @@ const defaultProps = {
     countPerPage: DEFAULT_MAX_LEADS_PER_REQUEST,
 };
 
-const requests = {
+const requestOptions = {
     connectorLeadsRequest: {
         url: ({ props: { connectorId } }) => `/v2/connectors/${connectorId}/leads/`,
-        method: requestMethods.POST,
+        method: methods.POST,
         onMount: true,
         body: ({
             props: {
@@ -149,11 +149,13 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'connectorLeads',
+        extras: {
+            schemaName: 'connectorLeads',
+        },
     },
 };
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ConnectorContent extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -303,7 +305,9 @@ export default class ConnectorContent extends React.PureComponent {
 
     handleRefreshButtonClick = () => {
         const {
-            connectorLeadsRequest = {},
+            requests: {
+                connectorLeadsRequest,
+            },
             connectorId,
         } = this.props;
 
@@ -380,9 +384,9 @@ export default class ConnectorContent extends React.PureComponent {
     render() {
         const {
             connectorLeads = [],
-            connectorLeadsRequest: {
-                pending,
-            } = {},
+            requests: {
+                connectorLeadsRequest: { pending },
+            },
             className,
             leadsCount,
             countPerPage,

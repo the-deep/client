@@ -27,7 +27,7 @@ import {
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import _ts from '#ts';
@@ -59,6 +59,7 @@ const propTypes = {
     selectedLeads: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onPreview: PropTypes.func.isRequired,
     pending: PropTypes.bool.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -74,10 +75,9 @@ const EXPORT_TYPE = {
     entriesPreview: 'entries-preview',
 };
 
-const requests = {
+const requestOptions = {
     exportStatusGet: {
-        method: requestMethods.GET,
-        schemaName: 'exportStatusGetResponse',
+        method: methods.GET,
         url: ({ props }) => createUrlForExportStatus(props.projectId),
         onSuccess: ({ response, params: { handleExportStatus } }) => {
             const { tabularPendingFieldsCount: fieldsCount } = response;
@@ -89,11 +89,14 @@ const requests = {
         onFatal: () => {
             // No action needed on fatal
         },
+        extras: {
+            schemaName: 'exportStatusGetResponse',
+        },
     },
 };
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ExportHeader extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -209,7 +212,12 @@ export default class ExportHeader extends React.PureComponent {
                 });
             }
         };
-        this.props.exportStatusGet.do({
+        const {
+            requests: {
+                exportStatusGet,
+            },
+        } = this.props;
+        exportStatusGet.do({
             handleExportStatus: this.handleExportStatus,
         });
         this.export({ onSuccess });
@@ -248,7 +256,9 @@ export default class ExportHeader extends React.PureComponent {
     handlePreview = () => {
         const {
             onPreview,
-            exportStatusGet,
+            requests: {
+                exportStatusGet,
+            },
         } = this.props;
 
         exportStatusGet.do({

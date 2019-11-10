@@ -17,7 +17,7 @@ import Badge from '#components/viewer/Badge';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import {
     projectDetailsSelector,
@@ -48,9 +48,10 @@ const propTypes = {
     readOnly: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     frameworkList: PropTypes.array,
-    frameworkGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    setDefaultRequestParams: PropTypes.func.isRequired,
     patchAnalysisFramework: PropTypes.func.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -71,10 +72,10 @@ const mapDispatchToProps = dispatch => ({
 
 const emptyObject = {};
 
-const requests = {
+const requestOptions = {
     frameworkGetRequest: {
         url: ({ props }) => `/analysis-frameworks/${props.frameworkId}/`,
-        method: requestMethods.GET,
+        method: methods.GET,
         query: {
             fields: [
                 'id',
@@ -96,12 +97,14 @@ const requests = {
             };
             params.handleDetailsChange(editFrameworkDetails);
         },
-        schemaName: 'analysisFrameworkView',
+        extras: {
+            schemaName: 'analysisFrameworkView',
+        },
     },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class FrameworkDetail extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -288,9 +291,11 @@ export default class FrameworkDetail extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            frameworkGetRequest: {
-                pending: pendingFramework,
-                responseError: errorFramework,
+            requests: {
+                frameworkGetRequest: {
+                    pending: pendingFramework,
+                    responseError: errorFramework,
+                },
             },
             frameworkId,
             frameworkList,
@@ -344,8 +349,8 @@ export default class FrameworkDetail extends React.PureComponent {
         }
 
         const {
-            frameworkGetRequest: {
-                response: framework,
+            requests: {
+                frameworkGetRequest: { response: framework },
             },
         } = this.props;
 

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { RequestHandler as createRequestHandler } from '@togglecorp/react-rest-request';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { currentStyle } from '#rsu/styles';
@@ -14,6 +13,7 @@ import MapSource from '#rscz/Map/MapSource';
 import Numeral from '#rscv/Numeral';
 
 import {
+    RequestHandler,
     RequestClient,
     RequestCoordinator,
 } from '#request';
@@ -21,8 +21,6 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
-
-const RequestHandler = createRequestHandler(RequestClient);
 
 const emptyObject = {};
 
@@ -37,8 +35,8 @@ const propTypes = {
     onAdminLevelsFetched: PropTypes.func.isRequired,
     adminLevels: PropTypes.arrayOf(PropTypes.object),
     adminLevelId: PropTypes.string,
-    regionRequest: RequestClient.propType.isRequired,
     frequency: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     showLegend: PropTypes.bool,
 };
 
@@ -51,7 +49,7 @@ const defaultProps = {
 
 const noAuthBody = { $noAuth: true };
 
-const requests = {
+const requestOptions = {
     regionRequest: {
         onMount: true,
         onPropsChanged: ['regionId'],
@@ -137,7 +135,7 @@ LinearLegend.propTypes = {
 };
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Region extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -338,7 +336,9 @@ export default class Region extends React.PureComponent {
         const {
             className,
             adminLevelId,
-            regionRequest,
+            requests: {
+                regionRequest,
+            },
         } = this.props;
 
         const geoJsonKey = adminLevelId && `geoJson-${adminLevelId}`;

@@ -20,7 +20,7 @@ import {
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import notify from '#notify';
@@ -42,11 +42,8 @@ const propTypes = {
     closeModal: PropTypes.func,
     projectId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
     entryServerId: PropTypes.number,
-    entryCommentsGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    projectMembersGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/forbid-prop-types
-    commentCreateRequest: PropTypes.object.isRequired,
     onCommentsCountChange: PropTypes.func.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -61,10 +58,10 @@ const UNRESOLVED = 'unresolved';
 
 const WINDOW_PADDING = 24;
 
-const requests = {
+const requestOptions = {
     entryCommentsGet: {
         url: '/entry-comments/',
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({ props: { entryServerId } }) => ({
             entry: entryServerId,
         }),
@@ -81,11 +78,13 @@ const requests = {
             });
         },
         onPropsChanged: ['entryServerId'],
-        schemaName: 'entryComments',
+        extras: {
+            schemaName: 'entryComments',
+        },
     },
     commentCreateRequest: {
         url: '/entry-comments/',
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params: { body } }) => body,
         onSuccess: ({
             response,
@@ -101,11 +100,13 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'entryComment',
+        extras: {
+            schemaName: 'entryComment',
+        },
     },
     projectMembersGet: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/members/`,
-        method: requestMethods.GET,
+        method: methods.GET,
         query: {
             fields: ['id', 'display_name'],
         },
@@ -119,7 +120,9 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'projectMembers',
+        extras: {
+            schemaName: 'projectMembers',
+        },
     },
 };
 
@@ -135,7 +138,7 @@ const getParentDate = (thread = emptyObject) =>
 
 @connect(mapStateToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EntryCommentModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -144,7 +147,9 @@ export default class EntryCommentModal extends React.PureComponent {
         super(props);
 
         const {
-            entryCommentsGet,
+            requests: {
+                entryCommentsGet,
+            },
         } = this.props;
 
         entryCommentsGet.setDefaultParams({
@@ -280,7 +285,9 @@ export default class EntryCommentModal extends React.PureComponent {
     handleFaramValidationSuccess = (values) => {
         const {
             entryServerId,
-            commentCreateRequest,
+            requests: {
+                commentCreateRequest,
+            },
         } = this.props;
 
         const body = {
@@ -411,10 +418,12 @@ export default class EntryCommentModal extends React.PureComponent {
         const { currentEdit } = this.state;
 
         const {
-            projectMembersGet: {
-                response: {
-                    results: members = [],
-                } = {},
+            requests: {
+                projectMembersGet: {
+                    response: {
+                        results: members = [],
+                    } = {},
+                },
             },
             entryServerId,
         } = this.props;
@@ -443,17 +452,15 @@ export default class EntryCommentModal extends React.PureComponent {
     render() {
         const {
             className,
-            entryCommentsGet: {
-                pending: commentsPending,
-            },
-            commentCreateRequest: {
-                pending: commentCreationPending,
-            },
-            projectMembersGet: {
-                response: {
-                    results: members = emptyList,
-                } = emptyObject,
-                pending: membersPending,
+            requests: {
+                entryCommentsGet: { pending: commentsPending },
+                commentCreateRequest: { pending: commentCreationPending },
+                projectMembersGet: {
+                    response: {
+                        results: members = emptyList,
+                    } = emptyObject,
+                    pending: membersPending,
+                },
             },
         } = this.props;
 

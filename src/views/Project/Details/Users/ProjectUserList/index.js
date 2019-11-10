@@ -10,7 +10,7 @@ import {
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
     notifyOnFailure,
 } from '#request';
 import _ts from '#ts';
@@ -35,9 +35,6 @@ const Table = FaramListElement(NormalTable);
 
 const propTypes = {
     className: PropTypes.string,
-    userListRequest: PropTypes.shape({
-        pending: PropTypes.bool,
-    }).isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectMemberships: PropTypes.func.isRequired,
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -57,6 +54,8 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
     searchInputValue: PropTypes.string,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -65,12 +64,12 @@ const defaultProps = {
     readOnly: false,
 };
 
-const requests = {
+const requestOptions = {
     userListRequest: {
         onMount: true,
         onPropsChanged: ['projectId', 'usergroups'],
         url: '/project-memberships/',
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
@@ -103,7 +102,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectUserList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -198,7 +197,9 @@ export default class ProjectUserList extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            userListRequest,
+            requests: {
+                userListRequest,
+            },
             searchEmptyComponent,
             memberships = {},
             searchInputValue,

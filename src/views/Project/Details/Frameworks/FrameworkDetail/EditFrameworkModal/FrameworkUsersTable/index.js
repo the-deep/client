@@ -12,7 +12,7 @@ import {
 } from '@togglecorp/fujs';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import { activeUserSelector } from '#redux';
 
@@ -36,26 +36,23 @@ const propTypes = {
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }),
-    frameworkRolesRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    usersGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     // Close modal is used here to unmount modal if there is failure to get
     // memberships or roles
     // eslint-disable-next-line react/no-unused-prop-types
     closeModal: PropTypes.func.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     frameworkId: undefined,
     users: [],
     activeUser: {},
-    frameworkRolesRequest: {},
-    usersGetRequest: {},
 };
 
-const requests = {
+const requestOptions = {
     usersGetRequest: {
         url: ({ props }) => `/analysis-frameworks/${props.frameworkId}/memberships/`,
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
         onSuccess: ({
             response: { results } = {},
@@ -81,7 +78,9 @@ const requests = {
             });
             closeModal();
         },
-        schemaName: 'frameworkMembersList',
+        extras: {
+            schemaName: 'frameworkMembersList',
+        },
     },
     frameworkRolesRequest: {
         url: ({ props: { isPrivate } }) =>
@@ -90,9 +89,11 @@ const requests = {
                 : '/public-framework-roles/?is_default_role=false'),
         // FIXME: Query is not used as current behavior of react rest request
         // remove the query field as its value is false
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
-        schemaName: 'frameworkRolesList',
+        extras: {
+            schemaName: 'frameworkRolesList',
+        },
         onFailure: ({ props: { closeModal } }) => {
             notify.send({
                 title: _ts('project.framework.edit', 'afPatch'),
@@ -127,7 +128,7 @@ const getComparator = (func, key, subKey) => (a = emptyObject, b = emptyObject) 
 const keySelector = d => d.id;
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class FrameworkUsersTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -198,9 +199,11 @@ export default class FrameworkUsersTable extends React.PureComponent {
                     memberDetails,
                 }) => {
                     const {
-                        frameworkRolesRequest: {
-                            response: {
-                                results: roles,
+                        requests: {
+                            frameworkRolesRequest: {
+                                response: {
+                                    results: roles,
+                                },
                             },
                         },
                         onDeleteUser,
@@ -234,11 +237,9 @@ export default class FrameworkUsersTable extends React.PureComponent {
         const {
             frameworkId,
             onAddUser,
-            frameworkRolesRequest: {
-                pending: frameworkRolesPending,
-            },
-            usersGetRequest: {
-                pending: frameworkUsersPending,
+            requests: {
+                frameworkRolesRequest: { pending: frameworkRolesPending },
+                usersGetRequest: { pending: frameworkUsersPending },
             },
             users,
             canEditMemberships,

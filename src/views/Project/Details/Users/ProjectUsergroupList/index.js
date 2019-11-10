@@ -10,7 +10,7 @@ import { FaramListElement } from '@togglecorp/faram';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
     notifyOnFailure,
 } from '#request';
 import _ts from '#ts';
@@ -37,10 +37,6 @@ const Table = FaramListElement(NormalTable);
 
 const propTypes = {
     className: PropTypes.string,
-
-    usergroupListRequest: PropTypes.shape({
-        pending: PropTypes.bool,
-    }).isRequired,
     searchEmptyComponent: PropTypes.func.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
@@ -58,6 +54,8 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
     searchInputValue: PropTypes.string,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -68,12 +66,12 @@ const defaultProps = {
 
 const usergroupListKeySelector = d => d.id;
 
-const requests = {
+const requestOptions = {
     usergroupListRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
         url: '/project-usergroups/',
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
@@ -105,7 +103,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ProjectUsergroupList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -165,8 +163,8 @@ export default class ProjectUsergroupList extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            usergroupListRequest: {
-                pending: pendingUsergroupList,
+            requests: {
+                usergroupListRequest: { pending: pendingUsergroupList },
             },
             usergroups,
             searchInputValue,

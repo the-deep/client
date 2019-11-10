@@ -26,7 +26,7 @@ import { transformAndCombineResponseErrors } from '#rest';
 import { pathNames } from '#constants';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import { projectIdFromRouteSelector } from '#redux';
@@ -44,8 +44,8 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     onLeadsSelect: PropTypes.func.isRequired,
     leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/forbid-prop-types
-    connectorsGetRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -58,11 +58,11 @@ const mapStateToProps = state => ({
 const emptyList = [];
 const emptyObject = {};
 
-const requests = {
+const requestOptions = {
     connectorsGetRequest: {
         url: '/connectors/',
         onMount: true,
-        method: requestMethods.GET,
+        method: methods.GET,
         query: ({ props: { projectId } }) => ({
             projects: [projectId],
             fields: [
@@ -92,12 +92,14 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'connectors',
+        extras: {
+            schemaName: 'connectors',
+        },
     },
 };
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ConnectorSelectModal extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -110,7 +112,11 @@ export default class ConnectorSelectModal extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { connectorsGetRequest } = props;
+        const {
+            requests: {
+                connectorsGetRequest,
+            },
+        } = props;
 
         connectorsGetRequest.setDefaultParams({
             setConnectorsList: this.setConnectorsList,
@@ -453,8 +459,10 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     render() {
         const {
-            connectorsGetRequest: {
-                pending: dataLoading,
+            requests: {
+                connectorsGetRequest: {
+                    pending: dataLoading,
+                },
             },
             leads,
         } = this.props;

@@ -30,7 +30,7 @@ import {
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
 
@@ -63,24 +63,24 @@ const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setAnalysisFramework: PropTypes.func.isRequired,
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    leadsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setGeoOptions: PropTypes.func.isRequired,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     projectRole: {},
     geoOptions: {},
-    leadsGetRequest: {},
 };
 
-const requests = {
+const requestOptions = {
     leadsGetRequest: {
         url: '/v2/leads/filter/',
-        method: requestMethods.POST,
+        method: methods.POST,
         onMount: true,
         query: ({
             fields: ['id', 'title', 'created_at'],
@@ -135,7 +135,7 @@ const requests = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class Export extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -146,7 +146,11 @@ export default class Export extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { leadsGetRequest } = this.props;
+        const {
+            requests: {
+                leadsGetRequest,
+            },
+        } = this.props;
 
         leadsGetRequest.setDefaultParams({
             setLeads: this.handleSelectedLeadsSet,
@@ -425,8 +429,8 @@ export default class Export extends React.PureComponent {
             projectRole: {
                 exportPermissions = {},
             },
-            leadsGetRequest: {
-                pending: pendingLeads,
+            requests: {
+                leadsGetRequest: { pending: pendingLeads },
             },
         } = this.props;
 

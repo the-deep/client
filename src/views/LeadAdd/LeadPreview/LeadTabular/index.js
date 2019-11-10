@@ -22,7 +22,7 @@ import _cs from '#cs';
 import {
     RequestCoordinator,
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 
 import CsvSettings from './CsvSettings';
@@ -130,9 +130,9 @@ const createSchema = (meta, fileType) => {
 
 // fileId: attachment.id
 // fileType: get from mimetype
-const requests = {
+const requestOptions = {
     getMetaInfoRequest: {
-        method: requestMethods.GET,
+        method: methods.GET,
         onMount: true,
         url: ({ params: { fileId, fileType } }) => (
             `/meta-extraction/${fileId}/?file_type=${fileType}`
@@ -148,7 +148,7 @@ const requests = {
         },
     },
     createBookRequest: {
-        method: requestMethods.POST,
+        method: methods.POST,
         url: '/tabular-books/',
         body: ({ params: { body } }) => body,
         onSuccess: ({ params, response }) => {
@@ -171,6 +171,7 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setTabularBook: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -180,7 +181,7 @@ const defaultProps = {
 
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -190,7 +191,9 @@ export default class LeadTabular extends React.PureComponent {
 
         const {
             lead: { faramValues },
-            getMetaInfoRequest,
+            requests: {
+                getMetaInfoRequest,
+            },
             fileType,
         } = this.props;
 
@@ -241,7 +244,12 @@ export default class LeadTabular extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (faramValues) => {
-        this.props.createBookRequest.do({
+        const {
+            requests: {
+                createBookRequest,
+            },
+        } = this.props;
+        createBookRequest.do({
             body: faramValues,
             handleFaramError: this.handleFaramValidationFailure,
             onComplete: this.handleComplete,
@@ -256,8 +264,10 @@ export default class LeadTabular extends React.PureComponent {
                 } = {},
             },
             onCancel,
-            getMetaInfoRequest,
-            createBookRequest,
+            requests: {
+                getMetaInfoRequest,
+                createBookRequest,
+            },
         } = this.props;
         const {
             fileType,

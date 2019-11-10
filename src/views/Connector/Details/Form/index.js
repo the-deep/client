@@ -46,7 +46,7 @@ import UserListGetRequest from '../../requests/UserListGetRequest';
 
 import TestResults from '../TestResults';
 import FieldInput from './FieldInput';
-import requests from './requests';
+import requestOptions from './requests';
 import {
     getUsersTableHeader,
     getProjectsTableHeader,
@@ -79,10 +79,8 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     onConnectorDelete: PropTypes.func.isRequired,
     className: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    connectorDeleteRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    xmlFieldOptionsRequest: PropTypes.object.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -113,7 +111,7 @@ const mapDispatchToProps = dispatch => ({
 const emptyList = [];
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ConnectorDetailsForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -132,7 +130,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         super(props);
 
         const {
-            xmlFieldOptionsRequest,
+            requests: {
+                xmlFieldOptionsRequest,
+            },
             activeUser: {
                 userId,
             },
@@ -517,7 +517,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     };
 
     handleConnectorDelete = () => {
-        this.props.connectorDeleteRequest.do();
+        const {
+            requests: {
+                connectorDeleteRequest,
+            },
+        } = this.props;
+        connectorDeleteRequest.do();
     };
 
     handleWarningClose = () => {
@@ -528,11 +533,13 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         const {
             connectorSource: { key: connectorSourceKey },
             connectorDetails: { role },
-            xmlFieldOptionsRequest: {
-                pending,
-                response: {
-                    results: xmlFieldOptions,
-                } = {},
+            requests: {
+                xmlFieldOptionsRequest: {
+                    pending,
+                    response: {
+                        results: xmlFieldOptions,
+                    } = {},
+                },
             },
         } = this.props;
 
@@ -552,8 +559,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             users,
             userProjects,
             className,
-            connectorDeleteRequest: {
-                pending: deletePending,
+            requests: {
+                connectorDeleteRequest: {
+                    pending: deletePending,
+                },
             },
             connectorSource,
             connectorDetails: {

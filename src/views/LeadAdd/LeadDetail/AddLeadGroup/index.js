@@ -14,7 +14,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import {
     addLeadGroupOfProjectAction,
@@ -33,7 +33,7 @@ const propTypes = {
     onLeadGroupAdd: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     // eslint-disable-next-line react/forbid-prop-types
-    createLeadGroupRequest: PropTypes.object.isRequired,
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -45,15 +45,17 @@ const mapDispatchToProps = dispatch => ({
     addLeadGroup: params => dispatch(addLeadGroupOfProjectAction(params)),
 });
 
-const requests = {
+const requestOptions = {
     createLeadGroupRequest: {
-        schemaName: 'leadGroup',
+        extras: {
+            schemaName: 'leadGroup',
+        },
         url: '/lead-groups/',
         // NOTE: only pull what we post
         query: {
             fields: ['id', 'title', 'project', 'version_id'],
         },
-        method: requestMethods.POST,
+        method: methods.POST,
         body: ({ params }) => params.body,
         onSuccess: ({ props, response }) => {
             props.addLeadGroup({
@@ -125,7 +127,9 @@ class AddLeadGroup extends React.PureComponent {
     handleValidationSuccess = (values) => {
         const {
             projectId,
-            createLeadGroupRequest,
+            requests: {
+                createLeadGroupRequest,
+            },
         } = this.props;
 
         const newLeadGroup = {
@@ -190,5 +194,5 @@ class AddLeadGroup extends React.PureComponent {
 }
 
 export default connect(undefined, mapDispatchToProps)(
-    RequestClient(requests)(AddLeadGroup),
+    RequestClient(requestOptions)(AddLeadGroup),
 );

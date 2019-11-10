@@ -5,7 +5,7 @@ import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import _ts from '#ts';
 import notify from '#notify';
@@ -13,25 +13,25 @@ import notify from '#notify';
 const propTypes = {
     disabled: PropTypes.bool,
     frameworkTitle: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    useFrameworkRequest: PropTypes.object.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     frameworkId: PropTypes.number.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectFramework: PropTypes.func.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     disabled: false,
 };
 
-const requests = {
+const requestOptions = {
     useFrameworkRequest: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/`,
         body: ({ props: { frameworkId: analysisFramework } }) => ({ analysisFramework }),
-        method: requestMethods.PATCH,
+        method: methods.PATCH,
         onSuccess: ({
             props: {
                 projectId,
@@ -56,13 +56,17 @@ const requests = {
     },
 };
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class UseFrameworkButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     handleFrameworkConfirmClose = () => {
-        const { useFrameworkRequest } = this.props;
+        const {
+            requests: {
+                useFrameworkRequest,
+            },
+        } = this.props;
 
         useFrameworkRequest.do();
     }
@@ -71,7 +75,9 @@ export default class UseFrameworkButton extends React.PureComponent {
         const {
             frameworkTitle,
             disabled,
-            useFrameworkRequest: { pending },
+            requests: {
+                useFrameworkRequest: { pending },
+            },
         } = this.props;
 
         const useFrameworkButtonLabel = _ts('project.framework', 'useFrameworkButtonTitle');

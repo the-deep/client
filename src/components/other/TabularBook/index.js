@@ -55,7 +55,7 @@ import {
     createUrlForFieldEdit,
     createParamsForFieldEdit,
 } from '#rest';
-import { RequestCoordinator, RequestClient, requestMethods } from '#request';
+import { RequestCoordinator, RequestClient, methods } from '#request';
 import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -148,9 +148,9 @@ const getTransformSheets = (sheetsFromServer) => {
     };
 };
 
-const requests = {
+const requestOptions = {
     createBookRequest: {
-        method: requestMethods.POST,
+        method: methods.POST,
         url: '/tabular-books/',
         body: ({ params: { body } }) => body,
         onSuccess: ({ params, response }) => {
@@ -164,7 +164,7 @@ const requests = {
         },
     },
     deleteRequest: {
-        method: requestMethods.DELETE,
+        method: methods.DELETE,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
         onSuccess: ({ props }) => {
             props.onDelete();
@@ -190,8 +190,7 @@ const requests = {
         },
     },
     projectRegionsRequest: {
-        method: requestMethods.GET,
-        schemaName: 'projectRegionsAdminLevelResponse',
+        method: methods.GET,
         url: ({ params }) => createUrlForProjectRegions(params.project, ['admin_levels', 'title']),
         onFailure: () => {
             notify.send({
@@ -209,6 +208,9 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
+        extras: {
+            schemaName: 'projectRegionsAdminLevelResponse',
+        },
     },
 };
 
@@ -219,15 +221,14 @@ const propTypes = {
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
-    deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/forbid-prop-types
-    projectRegionsRequest: PropTypes.object.isRequired,
     viewMode: PropTypes.bool,
     isModal: PropTypes.bool,
 
     highlightList: PropTypes.arrayOf(PropTypes.object),
     selectedTab: PropTypes.string,
     setSelectedTab: PropTypes.func.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -249,7 +250,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
@@ -296,7 +297,9 @@ export default class TabularBook extends React.PureComponent {
 
     componentDidMount() {
         const {
-            createBookRequest,
+            requests: {
+                createBookRequest,
+            },
             bookId,
             fileId,
             fileType,
@@ -375,7 +378,9 @@ export default class TabularBook extends React.PureComponent {
 
     handleBookGet = (response, onComplete) => {
         const {
-            projectRegionsRequest,
+            requests: {
+                projectRegionsRequest,
+            },
             viewMode,
         } = this.props;
 
@@ -410,7 +415,12 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleBookDelete = () => {
-        this.props.deleteRequest.do();
+        const {
+            requests: {
+                deleteRequest,
+            },
+        } = this.props;
+        deleteRequest.do();
     }
 
     handleSheetOptionsChange = (sheetId, options) => {
@@ -857,8 +867,8 @@ export default class TabularBook extends React.PureComponent {
 
         const {
             viewMode,
-            projectRegionsRequest: {
-                response: projectRegions,
+            requests: {
+                projectRegionsRequest: { response: projectRegions },
             },
             highlightList,
             selectedTab: activeSheet,
@@ -959,8 +969,8 @@ export default class TabularBook extends React.PureComponent {
 
     renderTabularBook = ({ invalid, completed }) => {
         const {
-            deleteRequest: {
-                pending: deletePending,
+            requests: {
+                deleteRequest: { pending: deletePending },
             },
             onCancel,
             isModal,
@@ -1062,8 +1072,8 @@ export default class TabularBook extends React.PureComponent {
             bookId,
             className,
             onCancel,
-            deleteRequest: {
-                pending: deletePending,
+            requests: {
+                deleteRequest: { pending: deletePending },
             },
             leadTitle,
         } = this.props;

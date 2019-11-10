@@ -22,7 +22,7 @@ import _ts from '#ts';
 import _cs from '#cs';
 
 import SheetPreview from './TabularSheetPreview';
-import requests from './requests';
+import requestOptions from './requests';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -32,11 +32,11 @@ const propTypes = {
     selectedTab: PropTypes.string,
 
     onClick: PropTypes.func.isRequired,
-    setDefaultRequestParams: PropTypes.func.isRequired,
-    // extractRequest: RequestClient.propType.isRequired,
-    // bookRequest: RequestClient.propType.isRequired,
     showGraphs: PropTypes.bool.isRequired,
     setSelectedTab: PropTypes.func.isRequired,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -57,7 +57,7 @@ const mapDispatchToProps = dispatch => ({
     patchTabularFields: params => dispatch(patchTabularFieldsAction(params)),
 });
 
-@RequestClient(requests)
+@RequestClient(requestOptions)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class TabularPreview extends React.PureComponent {
     static propTypes = propTypes;
@@ -116,7 +116,12 @@ export default class TabularPreview extends React.PureComponent {
 
     pollFields = (fields) => {
         // NOTE: create a new polling request everytime
-        this.props.pollRequest.do({
+        const {
+            requests: {
+                pollRequest,
+            },
+        } = this.props;
+        pollRequest.do({
             fields,
             setInvalid: this.setInvalid,
             setFields: this.setFields,

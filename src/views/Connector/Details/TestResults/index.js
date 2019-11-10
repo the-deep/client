@@ -22,7 +22,7 @@ import {
 import { alterAndCombineResponseError } from '#rest';
 import {
     RequestClient,
-    requestMethods,
+    methods,
 } from '#request';
 import EmmTrigger from '#components/viewer/EmmTrigger';
 import EmmEntity from '#components/viewer/EmmEntity';
@@ -39,12 +39,13 @@ const TableEmptyComponent = () => _ts('connector', 'emptyTestResults');
 const propTypes = {
     className: PropTypes.string,
     title: PropTypes.string,
-    leadsGet: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     connectorSource: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     paramsForTest: PropTypes.object,
     closeModal: PropTypes.func,
+
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -60,14 +61,14 @@ const mapStateToProps = state => ({
     connectorSource: connectorSourceSelector(state),
 });
 
-const requests = {
+const requestOptions = {
     leadsGet: {
         url: ({ props: { connectorSource } }) => `/v2/connector-sources/${connectorSource.key}/leads/`,
         query: {
             limit: 10,
         },
         body: ({ props: { paramsForTest } }) => paramsForTest,
-        method: requestMethods.POST,
+        method: methods.POST,
         onMount: true,
         onFailure: ({ response }) => {
             const message = alterAndCombineResponseError(response.errors).join(' ');
@@ -86,7 +87,9 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
         },
-        schemaName: 'connectorLeads',
+        extras: {
+            schemaName: 'connectorLeads',
+        },
     },
 };
 
@@ -104,7 +107,7 @@ const emmTriggerKeySelector = t => t.emmKeyword;
 const emmEntitiesKeySelector = t => t.name;
 
 @connect(mapStateToProps)
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class ConnectorTestResults extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -245,11 +248,13 @@ export default class ConnectorTestResults extends React.PureComponent {
         const {
             className,
             title,
-            leadsGet: {
-                pending,
-                response: {
-                    results: leads = [],
-                } = {},
+            requests: {
+                leadsGet: {
+                    pending,
+                    response: {
+                        results: leads = [],
+                    } = {},
+                },
             },
             closeModal,
         } = this.props;
