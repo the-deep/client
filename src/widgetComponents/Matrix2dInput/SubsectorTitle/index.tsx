@@ -7,7 +7,7 @@ interface Props {
 interface State {
 }
 
-export default class SectorTitle extends React.PureComponent<Props, State> {
+export default class SubsectorTitle extends React.PureComponent<Props, State> {
     private getCellStyle = memoize((fontSize, orientation, width) => {
         const style = {};
         const tdStyle = {};
@@ -42,17 +42,6 @@ export default class SectorTitle extends React.PureComponent<Props, State> {
         };
     })
 
-    private handleClick = () => {
-        const {
-            sectorKey,
-            onClick,
-        } = this.props;
-
-        if (onClick) {
-            onClick(sectorKey);
-        }
-    }
-
     render() {
         const {
             fontSize,
@@ -71,7 +60,6 @@ export default class SectorTitle extends React.PureComponent<Props, State> {
             <th
                 title={tooltip}
                 style={tdStyle}
-                onClick={this.handleClick}
             >
                 <div style={style}>
                     {title}

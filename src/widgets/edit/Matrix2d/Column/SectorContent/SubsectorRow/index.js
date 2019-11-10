@@ -7,6 +7,8 @@ import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 
+import OrientationInput from '#components/general/OrientationInput';
+
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -29,12 +31,24 @@ const SubsectorRow = ({ index, className }) => (
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubsectorLabel', { index: index + 1 })}
                         persistantHintAndError={false}
                     />
+                    <OrientationInput
+                        className={styles.orientationInput}
+                        faramElementName="orientation"
+                        persistantHintAndError={false}
+                    />
                     <TextInput
                         type="number"
+                        // FIXME: string
                         label="Font size"
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
-                        persistantHintAndError={false}
+                    />
+                    <TextInput
+                        type="number"
+                        // FIXME: string
+                        label="Width"
+                        className={styles.widthInput}
+                        faramElementName="width"
                     />
                 </div>
                 <div className={styles.bottom}>

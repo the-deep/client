@@ -23,31 +23,21 @@
     overflow: auto;
 
     .header {
+        display: flex;
+        align-items: center;
         flex-shrink: 0;
         border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
         background-color: var(--color-foreground-alt);
+        padding: var(--spacing-medium) 0;
 
-        .top {
-            display: flex;
-            padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
-
-            .title-column-width-input {
-                margin: 0 var(--spacing-small);
-            }
-
-            .sub-title-column-width-input {
-                margin: 0 var(--spacing-small);
-            }
+        .label {
+            padding: 0 var(--spacing-medium);
         }
 
-        .bottom {
+        .actions {
             display: flex;
             align-items: center;
-            padding: var(--spacing-small) 0;
-
-            .label {
-                padding: 0 var(--spacing-medium);
-            }
+            padding: 0 var(--spacing-small);
         }
     }
 

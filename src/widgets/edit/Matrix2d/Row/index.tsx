@@ -67,51 +67,6 @@ export default class Row extends React.PureComponent<Props, State> {
 
         return (
             <div className={_cs(className, styles.row)}>
-                <header className={styles.header}>
-                    <FaramGroup faramElementName="meta">
-                        <TextInput
-                            className={styles.titleRowHeightInput}
-                            faramElementName="titleRowHeight"
-                            label="Title row height"
-                            type="number"
-                            persistantHintAndError={false}
-                        />
-                    </FaramGroup>
-                    <div className={styles.right}>
-                        <Label
-                            className={styles.label}
-                            text={_ts('widgets.editor.matrix2d', 'addDimensionsTitle')}
-                        />
-                        <div className={styles.actions}>
-                            <GeoLink
-                                dataModifier={dataModifier}
-                                faramElementName="dimensions"
-                                onModalVisibilityChange={onGeoLinkModalVisiblityChange}
-                                titleSelector={titleSelector}
-                            />
-                            <LinkWidgetModalButton
-                                dataModifier={dataModifier}
-                                faramElementName="dimensions"
-                                onModalVisibilityChange={onLinkWidgetModalVisiblityChange}
-                                titleSelector={titleSelector}
-                                widgetKey={widgetKey}
-                            />
-                            <FaramList
-                                faramElementName="dimensions"
-                                keySelector={keySelector}
-                            >
-                                <AccentButton
-                                    faramAction={onAddDimensionFaramAction}
-                                    faramElementName="add-dimension-btn"
-                                    iconName="add"
-                                    transparent
-                                >
-                                    {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
-                                </AccentButton>
-                            </FaramList>
-                        </div>
-                    </div>
-                </header>
                 <div className={styles.content}>
                     <FaramList
                         faramElementName="dimensions"
@@ -138,6 +93,40 @@ export default class Row extends React.PureComponent<Props, State> {
                         }
                     </FaramList>
                 </div>
+                <header className={styles.header}>
+                    <Label
+                        className={styles.label}
+                        text={_ts('widgets.editor.matrix2d', 'addDimensionsTitle')}
+                    />
+                    <div className={styles.actions}>
+                        <GeoLink
+                            dataModifier={dataModifier}
+                            faramElementName="dimensions"
+                            onModalVisibilityChange={onGeoLinkModalVisiblityChange}
+                            titleSelector={titleSelector}
+                        />
+                        <LinkWidgetModalButton
+                            dataModifier={dataModifier}
+                            faramElementName="dimensions"
+                            onModalVisibilityChange={onLinkWidgetModalVisiblityChange}
+                            titleSelector={titleSelector}
+                            widgetKey={widgetKey}
+                        />
+                        <FaramList
+                            faramElementName="dimensions"
+                            keySelector={keySelector}
+                        >
+                            <AccentButton
+                                faramAction={onAddDimensionFaramAction}
+                                faramElementName="add-dimension-btn"
+                                iconName="add"
+                                transparent
+                            >
+                                {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
+                            </AccentButton>
+                        </FaramList>
+                    </div>
+                </header>
             </div>
         );
     }

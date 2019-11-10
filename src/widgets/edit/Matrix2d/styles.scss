@@ -40,6 +40,24 @@
             margin: var(--spacing-medium);
         }
 
+        .meta-inputs {
+            display: flex;
+            flex-shrink: 0;
+            padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
+
+            .title-column-width-input {
+                margin: 0 var(--spacing-small);
+            }
+
+            .sub-title-column-width-input {
+                margin: 0 var(--spacing-small);
+            }
+
+            .title-row-height-input {
+                margin: 0 var(--spacing-small);
+            }
+        }
+
         .tabs {
             flex-shrink: 0;
         }

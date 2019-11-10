@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
+import Faram, {
+    FaramList,
+    requiredCondition,
+    FaramGroup,
+} from '@togglecorp/faram';
 import {
     getDuplicates,
     randomString,
@@ -47,7 +51,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     static schema = {
         fields: {
             title: [requiredCondition],
-            meta: [],
+            meta: {
+                fields: {
+                    titleRowHeight: [],
+                    titleColumnWidth: [],
+                    subTitleColumnWidth: [],
+                },
+            },
             dimensions: {
                 validation: (dimensions) => {
                     const errors = [];
@@ -72,6 +82,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         color: [],
                         title: [requiredCondition],
                         tooltip: [],
+                        orientation: [],
+                        fontSize: [],
+                        height: [],
                         subdimensions: {
                             validation: (subdimensions) => {
                                 const errors = [];
@@ -95,6 +108,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     id: [requiredCondition],
                                     tooltip: [],
                                     title: [requiredCondition],
+                                    orientation: [],
+                                    fontSize: [],
+                                    height: [],
                                 },
                             },
                         },
@@ -124,6 +140,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         id: [requiredCondition],
                         title: [requiredCondition],
                         tooltip: [],
+                        orientation: [],
+                        fontSize: [],
+                        width: [],
                         subsectors: {
                             validation: (subsectors) => {
                                 const errors = [];
@@ -145,6 +164,11 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     id: [requiredCondition],
                                     tooltip: [],
                                     title: [requiredCondition],
+
+                                    // TODO: implement orientation and fontSize
+                                    orientation: [],
+                                    fontSize: [],
+                                    width: [],
                                 },
                             },
                         },
@@ -458,6 +482,31 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         selectOnFocus
                         persistantHintAndError={false}
                     />
+                    <div className={styles.metaInputs}>
+                        <FaramGroup faramElementName="meta">
+                            <TextInput
+                                className={styles.titleRowHeightInput}
+                                faramElementName="titleRowHeight"
+                                label="Title row height"
+                                type="number"
+                                persistantHintAndError={false}
+                            />
+                            <TextInput
+                                type="number"
+                                label="Title column width"
+                                className={styles.titleColumnWidthInput}
+                                faramElementName="titleColumnWidth"
+                                persistantHintAndError={false}
+                            />
+                            <TextInput
+                                type="number"
+                                label="Subtitle column width"
+                                className={styles.subTitleColumnWidthInput}
+                                faramElementName="subTitleColumnWidth"
+                                persistantHintAndError={false}
+                            />
+                        </FaramGroup>
+                    </div>
                     <ScrollTabs
                         active={selectedTab}
                         className={styles.tabs}

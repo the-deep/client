@@ -38,14 +38,34 @@ export default class Cell extends React.PureComponent {
     isCellActive = () => {
         const {
             value,
-
             dimensionId,
             subdimensionId,
             sectorId,
+            subsectorId,
+            isSubsectorMode,
         } = this.props;
-        const subsectors = value && ((value[dimensionId] || {})[subdimensionId] || {})[sectorId];
 
-        return !!subsectors;
+        if (!value) {
+            return false;
+        }
+
+        const {
+            [dimensionId]: {
+                [subdimensionId]: {
+                    [sectorId]: subsectors,
+                } = {},
+            } = {},
+        } = value;
+
+        if (!isSubsectorMode) {
+            return !!subsectors;
+        }
+
+        if (!subsectors) {
+            return false;
+        }
+
+        return subsectors.findIndex(subsector => subsectorId === subsector) !== -1;
     }
 
     handleDragEnter = () => {
@@ -93,6 +113,8 @@ export default class Cell extends React.PureComponent {
             dimensionId,
             subdimensionId,
             sectorId,
+            subsectorId,
+            onDrop,
         } = this.props;
 
         const data = e.dataTransfer.getData('text');
@@ -105,18 +127,21 @@ export default class Cell extends React.PureComponent {
                 data,
             };
         }
-        this.props.onDrop(dimensionId, subdimensionId, sectorId, formattedData);
+
+        onDrop(dimensionId, subdimensionId, sectorId, subsectorId, formattedData);
         this.setState({ isBeingDraggedOver: false });
     }
 
     handleClick = () => {
         const {
             dimensionId,
+            subsectorId,
             subdimensionId,
             sectorId,
+            onClick,
         } = this.props;
         const isCellActive = this.isCellActive();
-        this.props.onClick(dimensionId, subdimensionId, sectorId, isCellActive);
+        onClick(dimensionId, subdimensionId, sectorId, subsectorId, isCellActive);
     }
 
     render() {
@@ -125,6 +150,9 @@ export default class Cell extends React.PureComponent {
             disabled,
             readOnly,
             hoverStyle,
+            activeSectorKey,
+            sectorId,
+            subsectorId,
         } = this.props;
 
         const { isBeingDraggedOver } = this.state;

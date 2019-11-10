@@ -46,13 +46,19 @@
             display: flex;
             padding: var(--spacing-small) 0;
 
-            .color-input {
+            .width-input {
                 flex-shrink: 0;
                 margin: 0 var(--spacing-small);
+                width: 42px; // TODO: use vars
             }
 
             .title-input {
                 flex-grow: 1;
+                margin: 0 var(--spacing-small);
+            }
+
+            .orientation-input {
+                flex-shrink: 0;
                 margin: 0 var(--spacing-small);
             }
 

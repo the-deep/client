@@ -39,17 +39,20 @@ export default class DimensionRow extends React.PureComponent {
     static getActiveCellStyle = (rowStyle) => {
         const outlineWidth = 2;
 
-        const stripeWidth = 4;
+        const stripeWidth = 3;
         const firstColor = rowStyle.backgroundColor;
         const secondColor = getHexFromRgbRaw(
             interpolateRgb(
                 getRgbRawFromHex(rowStyle.backgroundColor),
                 getRgbRawFromHex(rowStyle.color),
-                0.4,
+                0.3,
             ),
         );
 
+        const textBorderColor = firstColor;
         return {
+            textShadow: `-1px 0 ${textBorderColor}, 0 1px ${textBorderColor}, 1px 0 ${textBorderColor}, 0 -1px ${textBorderColor}`,
+            // textShadow: '0 0 red'
             outline: `${outlineWidth}px solid ${firstColor}`,
             outlineOffset: `-${outlineWidth + 1}px`,
             background: `repeating-linear-gradient(

@@ -6,6 +6,8 @@ import List from '#rscv/List';
 
 import Cell from './Cell';
 
+const emptyList = [];
+
 const propTypes = {
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     subdimension: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -59,17 +61,54 @@ export default class SubdimensionRow extends React.PureComponent {
         };
     })
 
+    getSubSectorsForActiveSector = memoize((sectors, activeSectorKey) => {
+        if (!activeSectorKey) {
+            return emptyList;
+        }
+
+        const activeSector = sectors
+            .find(d => SubdimensionRow.keySelector(d) === activeSectorKey);
+
+        if (!activeSector) {
+            return emptyList;
+        }
+
+        return activeSector.subsectors;
+    })
+
+    isRowActive = () => {
+        const {
+            value,
+            dimensionId,
+            subdimensionId,
+            sectorId,
+            activeSectorKey,
+        } = this.props;
+
+        if (!activeSectorKey) {
+            return false;
+        }
+
+        const subsectors = value && ((value[dimensionId] || {})[subdimensionId]);
+        return !!subsectors;
+    }
+
     rendererParams = (key) => {
         const {
             subdimension, // eslint-disable-line no-unused-vars
             sectors, // eslint-disable-line no-unused-vars
             rowStyle, // eslint-disable-line no-unused-vars
             children, // eslint-disable-line no-unused-vars
+            activeSectorKey,
             ...otherProps
         } = this.props;
 
+        const isSubsectorMode = !!activeSectorKey;
+
         return {
-            sectorId: key,
+            isSubsectorMode,
+            sectorId: isSubsectorMode ? activeSectorKey : key,
+            subsectorId: isSubsectorMode ? key : undefined,
             ...otherProps,
         };
     }
@@ -80,6 +119,7 @@ export default class SubdimensionRow extends React.PureComponent {
             sectors,
             rowStyle,
             children,
+            activeSectorKey,
         } = this.props;
 
         const {
@@ -95,19 +135,29 @@ export default class SubdimensionRow extends React.PureComponent {
             tdStyle,
         } = this.getCellStyle(fontSize, orientation, height);
 
+        const subdimensionStyle = this.isRowActive() ? ({
+            ...this.props.activeCellStyle,
+            ...tdStyle,
+        }) : ({ tdStyle });
+
         return (
             <tr style={rowStyle}>
                 { children }
                 <td
                     title={tooltip}
-                    style={tdStyle}
+                    style={subdimensionStyle}
                 >
                     <div style={style}>
                         {title}
                     </div>
                 </td>
                 <List
-                    data={sectors}
+                    data={
+                        activeSectorKey ? this.getSubSectorsForActiveSector(
+                            sectors,
+                            activeSectorKey,
+                        ) : sectors
+                    }
                     keySelector={SubdimensionRow.keySelector}
                     renderer={Cell}
                     rendererParams={this.rendererParams}

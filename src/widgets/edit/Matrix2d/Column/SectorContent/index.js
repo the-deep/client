@@ -123,7 +123,7 @@ export default class SectorContent extends React.PureComponent {
                                 type="number"
                                 // FIXME: string
                                 label="Width"
-                                className={styles.width}
+                                className={styles.widthInput}
                                 faramElementName="width"
                             />
                         </div>

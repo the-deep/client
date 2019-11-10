@@ -66,30 +66,36 @@ export default class Column extends React.PureComponent<Props, State> {
 
         return (
             <div className={_cs(styles.column, className)}>
+                <div className={styles.content}>
+                    <FaramList
+                        faramElementName="sectors"
+                        keySelector={keySelector}
+                    >
+                        { isDefined(selectedSectorKey) && selectedSectorIndex !== -1 ? (
+                            <SectorContent
+                                index={selectedSectorIndex}
+                                className={styles.sectorDetails}
+                                onBackButtonClick={onSectorContentBackButtonClick}
+                                widgetKey={widgetKey}
+                            />
+                        ) : (
+                            <SortableListView
+                                className={styles.sectorList}
+                                faramElement
+                                rendererParams={this.sectorItemRendererParams}
+                                itemClassName={styles.sectorListItem}
+                                renderer={SectorTitle}
+                                dragHandleClassName={styles.dragHandle}
+                            />
+                        )}
+                    </FaramList>
+                </div>
                 <header className={styles.header}>
-                    <div className={styles.top}>
-                        <FaramGroup faramElementName="meta">
-                            <TextInput
-                                type="number"
-                                label="Title column width"
-                                className={styles.titleColumnWidthInput}
-                                faramElementName="titleColumnWidth"
-                                persistantHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label="Subtitle column width"
-                                className={styles.subTitleColumnWidthInput}
-                                faramElementName="subTitleColumnWidth"
-                                persistantHintAndError={false}
-                            />
-                        </FaramGroup>
-                    </div>
-                    <div className={styles.bottom}>
-                        <Label
-                            className={styles.label}
-                            text={_ts('widgets.editor.matrix2d', 'addSectorsTitle')}
-                        />
+                    <Label
+                        className={styles.label}
+                        text={_ts('widgets.editor.matrix2d', 'addSectorsTitle')}
+                    />
+                    <div className={styles.actions}>
                         <GeoLink
                             faramElementName="sectors"
                             titleSelector={titleSelector}
@@ -118,30 +124,6 @@ export default class Column extends React.PureComponent<Props, State> {
                         </FaramList>
                     </div>
                 </header>
-                <div className={styles.content}>
-                    <FaramList
-                        faramElementName="sectors"
-                        keySelector={keySelector}
-                    >
-                        { isDefined(selectedSectorKey) && selectedSectorIndex !== -1 ? (
-                            <SectorContent
-                                index={selectedSectorIndex}
-                                className={styles.sectorDetails}
-                                onBackButtonClick={onSectorContentBackButtonClick}
-                                widgetKey={widgetKey}
-                            />
-                        ) : (
-                            <SortableListView
-                                className={styles.sectorList}
-                                faramElement
-                                rendererParams={this.sectorItemRendererParams}
-                                itemClassName={styles.sectorListItem}
-                                renderer={SectorTitle}
-                                dragHandleClassName={styles.dragHandle}
-                            />
-                        )}
-                    </FaramList>
-                </div>
             </div>
         );
     }
