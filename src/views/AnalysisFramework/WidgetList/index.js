@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
-import { randomString } from '@togglecorp/fujs';
 
 import { widgetGroups } from '#widgets/widgetMetadata';
 import { addAfViewWidgetAction } from '#redux';
@@ -83,13 +86,8 @@ export default class WidgetList extends React.PureComponent {
             className: classNameFromProps,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.widgetListContainer}
-        `;
-
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.widgetListContainer)}>
                 <h4 className={styles.heading}>
                     {/* FIXME: Use strings */}
                     Widgets
@@ -101,9 +99,9 @@ export default class WidgetList extends React.PureComponent {
                     keySelector={WidgetList.keySelector}
                     rendererParams={this.rendererParams}
                     groupKeySelector={WidgetList.groupKeySelector}
-                    rendererClassName={`${styles.item} widget-list-item`}
+                    rendererClassName={_cs(styles.item, 'widget-list-item')}
                     groupRendererParams={this.groupRendererParams}
-                    groupRendererClassName={`${styles.group} widget-list-group`}
+                    groupRendererClassName={_cs(styles.group, 'widget-list-group')}
                     groupComparator={this.groupComparator}
                 />
             </div>
