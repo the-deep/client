@@ -39,15 +39,13 @@ const propTypes = {
     selectedWidgets: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
     setAfViewProperties: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    editFrameworkSettingsRequest: PropTypes.object,
     // eslint-disable-next-line react/no-unused-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
     closeModal: PropTypes.func,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 const defaultProps = {
     closeModal: () => {},
-    editFrameworkSettingsRequest: {},
     selectedWidgets: [],
     className: '',
 };
@@ -55,7 +53,7 @@ const defaultProps = {
 const keySelector = d => d.id;
 const labelSelector = d => d.title;
 
-const requests = {
+const requestOptions = {
     editFrameworkSettingsRequest: {
         url: ({ props: { analysisFrameworkId } }) => `/analysis-frameworks/${analysisFrameworkId}/`,
         body: ({ params: { body } }) => body,
@@ -98,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requestOptions)
 export default class EditVizSettingsModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -144,7 +142,9 @@ export default class EditVizSettingsModal extends React.PureComponent {
     handleFaramValidationSuccess = (values) => {
         const {
             widgets = [],
-            editFrameworkSettingsRequest,
+            requests: {
+                editFrameworkSettingsRequest,
+            },
         } = this.props;
 
         const allWidgets = this.getWidgets(widgets);
@@ -201,8 +201,10 @@ export default class EditVizSettingsModal extends React.PureComponent {
             closeModal,
             className,
             widgets,
-            editFrameworkSettingsRequest: {
-                pending,
+            requests: {
+                editFrameworkSettingsRequest: {
+                    pending,
+                },
             },
         } = this.props;
 
