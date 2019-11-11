@@ -2,11 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
     _cs,
-    formatDateToString,
     isDefined,
     isFalsyString,
     isTruthy,
-    listToMap,
     unique,
 } from '@togglecorp/fujs';
 import Faram, {
@@ -18,6 +16,8 @@ import Faram, {
 import produce from 'immer';
 
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import Modalize from '#rscg/Modalize';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -34,6 +34,7 @@ import {
 } from '#request';
 
 import Cloak from '#components/general/Cloak';
+import ExtraFunctionsOnHover from '#components/general/ExtraFunctionOnHover';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
@@ -426,11 +427,6 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleExtraInfoFill = (leadOptions) => {
-        const {
-            lead,
-            activeUserId,
-        } = this.props;
-
         const { organizations } = leadOptions;
 
         if (organizations.length > 0) {
@@ -440,6 +436,11 @@ class LeadDetail extends React.PureComponent {
         }
 
         /*
+        const {
+            lead,
+            activeUserId,
+        } = this.props;
+
         const values = leadFaramValuesSelector(lead);
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
         this.handleLeadValueChange(newValues);
@@ -497,6 +498,40 @@ class LeadDetail extends React.PureComponent {
             ...values,
             author: organization.id,
         };
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleAutoFormatTitleButton = () => {
+        const { lead } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = produce(values, (safeValues) => {
+            const {
+                title,
+            } = values;
+            if (!isFalsyString(title)) {
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+            }
+        });
+
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleRemoveExtensionFromTitle = () => {
+        const { lead } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = produce(values, (safeValues) => {
+            const {
+                title,
+            } = values;
+            if (!isFalsyString(title)) {
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = title.replace(/\.[^/.]+$/, '');
+            }
+        });
+
         this.handleLeadValueChange(newValues);
     }
 
@@ -746,12 +781,35 @@ class LeadDetail extends React.PureComponent {
                             projectId={projectId}
                         />
                     ) }
-                    <TextInput
+                    <ExtraFunctionsOnHover
                         className={styles.title}
-                        faramElementName="title"
-                        label={_ts('addLeads', 'titleLabel')}
-                        placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
-                    />
+                        buttons={
+                            <React.Fragment>
+                                <AccentButton
+                                    className={styles.smallButton}
+                                    title={_ts('addLeads', 'formatButtonTitle')}
+                                    onClick={this.handleAutoFormatTitleButton}
+                                >
+                                    {_ts('addLeads', 'autoFormatTitleLabel')}
+                                </AccentButton>
+                                <DangerButton
+                                    className={styles.smallButton}
+                                    iconName="delete"
+                                    title={_ts('addLeads', 'removeExtensionTitle')}
+                                    onClick={this.handleRemoveExtensionFromTitle}
+                                >
+                                    {_ts('addLeads', 'removeExtensionLabel')}
+                                </DangerButton>
+                            </React.Fragment>
+                        }
+                    >
+                        <TextInput
+                            className={styles.title}
+                            faramElementName="title"
+                            label={_ts('addLeads', 'titleLabel')}
+                            placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
+                        />
+                    </ExtraFunctionsOnHover>
 
                     <ApplyAll
                         className={styles.source}
@@ -777,7 +835,6 @@ class LeadDetail extends React.PureComponent {
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                         />
                         <ModalButton
-                            className={styles.largeButton}
                             title={_ts('addLeads', 'addPublisherTitle')}
                             iconName="addPerson"
                             transparent
@@ -825,7 +882,6 @@ class LeadDetail extends React.PureComponent {
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                         />
                         <ModalButton
-                            className={styles.largeButton}
                             title={_ts('addLeads', 'addAuthorTitle')}
                             iconName="addPerson"
                             transparent

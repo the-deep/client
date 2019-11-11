@@ -1030,7 +1030,10 @@
         "-3697040": "Entries visualization",
         "-9524324": "Failed to load entries visualization data. ",
         "-58469334": "Select all",
-        "-578569": "Unselect all"
+        "-578569": "Unselect all",
+        "-50025578": "Format",
+        "-24896884": "Remove extension",
+        "-9263627": "Extension"
     },
     "links": {
         "browserExtension": {
@@ -1737,7 +1740,11 @@
             "addAuthorTitle": -56022972,
             "addPublisherModalTitle": -44615843,
             "addPublisherTitle": -44615843,
-            "searchInputEmptyText": -24511724
+            "searchInputEmptyText": -24511724,
+            "autoFormatTitleLabel": -50025578,
+            "formatButtonTitle": -50025578,
+            "removeExtensionLabel": -9263627,
+            "removeExtensionTitle": -24896884
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
