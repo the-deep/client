@@ -3,6 +3,7 @@ import React from 'react';
 import {
     compareString,
     compareDate,
+    _cs,
 } from '@togglecorp/fujs';
 
 import AccentButton from '#rsca/Button/AccentButton';
@@ -21,10 +22,14 @@ const defaultSort = {
 const propTypes = {
     onSelectLeadChange: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
+    pending: PropTypes.bool,
     leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: undefined,
+    pending: false,
     leads: [],
 };
 
@@ -64,6 +69,7 @@ export default class ExportLeadsTable extends React.PureComponent {
                             onClick={() => onSelectAllClick(areSomeNotSelected)}
                             smallVerticalPadding
                             transparent
+                            disabled={leads.length === 0}
                         />
                     );
                 },
@@ -120,11 +126,16 @@ export default class ExportLeadsTable extends React.PureComponent {
     }
 
     render() {
-        const { leads } = this.props;
+        const {
+            className,
+            leads,
+            pending,
+        } = this.props;
 
         return (
             <Table
-                className={styles.leadsTable}
+                pending={pending}
+                className={_cs(className, styles.leadsTable)}
                 data={leads}
                 headers={this.headers}
                 defaultSort={defaultSort}

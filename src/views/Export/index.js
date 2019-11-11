@@ -1,22 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
 import { listToMap } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
-import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';
-import { FgRestBuilder } from '#rsu/rest';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import ExportPreview from '#components/other/ExportPreview';
-import {
-    createParamsForGet,
-    createUrlForProjectFramework,
-    createUrlForGeoOptions,
-
-    transformResponseErrorToFormError,
-} from '#rest';
 import {
     entriesViewFilterSelector,
     analysisFrameworkForProjectSelector,
@@ -27,15 +16,12 @@ import {
     geoOptionsForProjectSelector,
     activeProjectRoleSelector,
 } from '#redux';
+
 import {
     RequestCoordinator,
     RequestClient,
-    methods,
 } from '#request';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
-
-import notify from '#notify';
-import schema from '#schema';
 import _ts from '#ts';
 
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
@@ -43,6 +29,7 @@ import FilterEntriesForm from '../Entries/FilterEntriesForm';
 import ExportHeader from './ExportHeader';
 import LeadsTable from './LeadsTable';
 import ExportTypePane from './ExportTypePane';
+import requestOptions from './request';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -61,11 +48,14 @@ const mapDispatchToProps = dispatch => ({
 
 const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     setAnalysisFramework: PropTypes.func.isRequired,
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     setGeoOptions: PropTypes.func.isRequired,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
@@ -75,62 +65,6 @@ const propTypes = {
 const defaultProps = {
     projectRole: {},
     geoOptions: {},
-};
-
-const requestOptions = {
-    leadsGetRequest: {
-        url: '/v2/leads/filter/',
-        method: methods.POST,
-        onMount: true,
-        query: ({
-            fields: ['id', 'title', 'created_at'],
-        }),
-        body: ({
-            props: {
-                projectId,
-                filters,
-                projectRole: {
-                    exportPermissions = {},
-                },
-            },
-        }) => {
-            const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
-            const sanitizedFilters = getFiltersForRequest(filters);
-
-            // Unprotected filter is sent to request to fetch leads
-            // if user cannot create export for confidential documents
-            if (filterOnlyUnprotected) {
-                sanitizedFilters.confidentiality = ['unprotected'];
-            }
-
-            return ({
-                project: [projectId],
-                ...sanitizedFilters,
-            });
-        },
-        onPropsChanged: [
-            'activeProject',
-            'filters',
-        ],
-        onSuccess: ({
-            response,
-            params: { setLeads: setLeadsFromParams },
-        }) => {
-            setLeadsFromParams(response);
-        },
-        onFailure: ({ error: { response } }) => {
-            const message = transformResponseErrorToFormError(response.errors)
-                .formErrors
-                .errors
-                .join(' ');
-            notify.send({
-                title: _ts('export', 'leadsLabel'),
-                type: notify.type.ERROR,
-                message,
-                duration: notify.duration.MEDIUM,
-            });
-        },
-    },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -147,9 +81,7 @@ export default class Export extends React.PureComponent {
         super(props);
 
         const {
-            requests: {
-                leadsGetRequest,
-            },
+            requests: { leadsGetRequest },
         } = this.props;
 
         leadsGetRequest.setDefaultParams({
@@ -163,34 +95,12 @@ export default class Export extends React.PureComponent {
             decoupledEntries: true,
 
             selectedLeads: {},
-            pendingAf: true,
-            pendingGeoOptions: true,
         };
     }
 
-    componentWillMount() {
-        const { projectId } = this.props;
-
-        this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-            projectId,
-        );
-        this.analysisFrameworkRequest.start();
-
-        this.geoOptionsRequest = this.createRequestForGeoOptions(
-            projectId,
-        );
-        this.geoOptionsRequest.start();
-    }
-
     componentWillReceiveProps(nextProps) {
-        const {
-            filters: newFilters,
-            projectId: newActiveProject,
-        } = nextProps;
-        const {
-            filters: oldFilters,
-            projectId: oldActiveProject,
-        } = this.props;
+        const { projectId: newActiveProject } = nextProps;
+        const { projectId: oldActiveProject } = this.props;
 
         if (oldActiveProject !== newActiveProject) {
             // Reset everything
@@ -201,132 +111,8 @@ export default class Export extends React.PureComponent {
                 decoupledEntries: true,
 
                 selectedLeads: {},
-                pendingAf: true,
-                pendingGeoOptions: true,
             });
-
-            if (this.analysisFrameworkRequest) {
-                this.analysisFrameworkRequest.stop();
-            }
-            this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-                newActiveProject,
-            );
-            this.analysisFrameworkRequest.start();
-
-            if (this.geoOptionsRequest) {
-                this.geoOptionsRequest.stop();
-            }
-            this.geoOptionsRequest = this.createRequestForGeoOptions(
-                newActiveProject,
-            );
-            this.geoOptionsRequest.start();
         }
-    }
-
-    componentWillUnmount() {
-        if (this.analysisFrameworkRequest) {
-            this.analysisFrameworkRequest.stop();
-        }
-        if (this.geoOptionsRequest) {
-            this.geoOptionsRequest.stop();
-        }
-    }
-
-    createRequestForAnalysisFramework = (projectId) => {
-        const urlForAnalysisFramework = createUrlForGeoOptions(
-            projectId,
-        );
-        const geoOptionsRequest = new FgRestBuilder()
-            .url(urlForAnalysisFramework)
-            .params(createParamsForGet)
-            .delay(0)
-            .preLoad(() => {
-                this.setState({ pendingGeoOptions: true });
-            })
-            .postLoad(() => {
-                this.setState({ pendingGeoOptions: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'geoOptions');
-                    this.props.setGeoOptions({
-                        projectId,
-                        locations: response,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.warn(response);
-                const message = transformResponseErrorToFormError(response.errors)
-                    .formErrors
-                    .errors
-                    .join(' ');
-                notify.send({
-                    title: _ts('export', 'geoLabel'),
-                    type: notify.type.ERROR,
-                    message,
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('export', 'geoLabel'),
-                    type: notify.type.ERROR,
-                    message: _ts('export', 'cantLoadGeo'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return geoOptionsRequest;
-    }
-
-    createRequestForGeoOptions = (projectId) => {
-        const urlForAnalysisFramework = createUrlForProjectFramework(
-            projectId,
-        );
-        const analysisFrameworkRequest = new FgRestBuilder()
-            .url(urlForAnalysisFramework)
-            .params(createParamsForGet)
-            .delay(0)
-            .preLoad(() => {
-                this.setState({ pendingAf: true });
-            })
-            .postLoad(() => {
-                this.setState({ pendingAf: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.setAnalysisFramework({ analysisFramework: response });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.warn(response);
-                const message = transformResponseErrorToFormError(response.errors)
-                    .formErrors
-                    .errors
-                    .join(' ');
-                notify.send({
-                    title: _ts('export', 'afLabel'),
-                    type: notify.type.ERROR,
-                    message,
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('export', 'afLabel'),
-                    type: notify.type.ERROR,
-                    message: _ts('export', 'cantLoadAf'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return analysisFrameworkRequest;
     }
 
     handleSelectedLeadsSet = (response) => {
@@ -416,9 +202,6 @@ export default class Export extends React.PureComponent {
             decoupledEntries,
             selectedLeads,
             leads = [],
-
-            pendingAf,
-            pendingGeoOptions,
         } = this.state;
 
         const {
@@ -431,6 +214,8 @@ export default class Export extends React.PureComponent {
             },
             requests: {
                 leadsGetRequest: { pending: pendingLeads },
+                analysisFrameworkRequest: { pending: pendingAf },
+                geoOptionsRequest: { pending: pendingGeoOptions },
             },
         } = this.props;
 
@@ -444,7 +229,6 @@ export default class Export extends React.PureComponent {
                     <ExportHeader
                         projectId={projectId}
                         entriesFilters={entriesFilters}
-                        className={styles.header}
                         activeExportTypeKey={activeExportTypeKey}
                         selectedLeads={selectedLeads}
                         reportStructure={reportStructure}
@@ -469,15 +253,13 @@ export default class Export extends React.PureComponent {
                                         filterOnlyUnprotected={filterOnlyUnprotected}
                                     />
                                 </div>
-                                <div className={styles.leadsTableContainer}>
-                                    { pendingLeads && <LoadingAnimation /> }
-                                    <LeadsTable
-                                        className={styles.leadsTable}
-                                        leads={leads}
-                                        onSelectLeadChange={this.handleSelectLeadChange}
-                                        onSelectAllClick={this.handleSelectAllLeads}
-                                    />
-                                </div>
+                                <LeadsTable
+                                    className={styles.leadsTable}
+                                    pending={pendingLeads}
+                                    leads={leads}
+                                    onSelectLeadChange={this.handleSelectLeadChange}
+                                    onSelectAllClick={this.handleSelectAllLeads}
+                                />
                             </div>
                             <div className={styles.entryFilters}>
                                 <h4 className={styles.heading}>
