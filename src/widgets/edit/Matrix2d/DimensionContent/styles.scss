@@ -1,64 +1,119 @@
-
-.item {
-    border-top: var(--width-separator-thin) solid var(--color-separator);
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
-    background-color: var(--color-foreground);
-    padding: 0;
+// Note: kept out because the item gets attached to the body when moving
+.subdimension-item {
+    margin: var(--spacing-small);
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground-alt);
+    width: calc(100% - calc(var(--spacing-small) * 2));
 
     .drag-handle {
         display: flex;
         align-items: center;
         align-self: stretch;
-        background-color: var(--color-foreground);
+        background-color: var(--color-foreground-alt);
         padding: var(--spacing-small);
     }
+
+    .sub-dimension-content {
+        flex-grow: 1;
+    }
 }
 
-.header {
+.dimension-content {
     display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    justify-content: space-between;
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
-    padding: 0 0 var(--spacing-small) var(--spacing-small);
+    flex-direction: column;
+    overflow: auto;
 
-    .button-container {
+    >.header {
         display: flex;
         align-items: center;
+        flex-shrink: 0;
+        background-color: var(--color-foreground-alt);
 
-        h5 {
-            padding-right: var(--spacing-small);
+        .back-button {
+            flex-shrink: 0;
+            padding: var(--spacing-small) var(--spacing-medium);
+            font-size: var(--font-size-large);
+        }
 
-            &:after {
-                content: ':';
-            }
+        .title {
+            flex-grow: 1;
+            padding: var(--spacing-medium);
         }
     }
-}
 
-.error {
-    flex-shrink: 0;
-}
-
-.edit-dimension {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    padding: 0 var(--spacing-small);
-
-    .input {
-        flex-grow: 1;
-        margin-left: var(--spacing-small);
-        padding: 0 var(--spacing-extra-small);
+    .non-field-errors {
+        flex-shrink: 0;
     }
-}
 
-.cell-list {
-    flex-grow: 1;
-    border-right: var(--width-separator-thin) solid var(--color-separator);
-    overflow-y: auto;
+    .edit-dimension {
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
 
-    .item {
-        border-top-color: transparent;
+        .top {
+            display: flex;
+            padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
+
+            .color-input {
+                flex-shrink: 0;
+                margin: 0 var(--spacing-small);
+            }
+
+            .title-input {
+                flex-grow: 1;
+                margin: 0 var(--spacing-small);
+            }
+
+            .font-size-input {
+                flex-shrink: 0;
+                margin: 0 var(--spacing-small);
+                width: 42px; // TODO: use vars
+            }
+
+            .orientation-input {
+                flex-shrink: 0;
+                margin: 0 var(--spacing-small);
+            }
+
+            .height-input {
+                flex-shrink: 0;
+                margin: 0 var(--spacing-small);
+                width: 42px; // TODO: use vars
+            }
+        }
+
+        .bottom {
+            padding: var(--spacing-medium);
+        }
+    }
+
+    .sub-dimension-list-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+
+        .header {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            padding: var(--spacing-small) 0;
+
+            >.heading {
+                flex-grow: 1;
+                padding: 0 var(--spacing-medium);
+            }
+
+            .right {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+                padding: 0 var(--spacing-medium);
+            }
+        }
+
+        .subdimension-item-list {
+            flex-grow: 1;
+            overflow: auto;
+        }
     }
 }

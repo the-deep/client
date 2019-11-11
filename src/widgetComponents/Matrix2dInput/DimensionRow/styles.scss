@@ -6,3 +6,7 @@
     width: var(--width-dimension-column);
     font-weight: var(--font-weight-bold);
 }
+
+.tiltable-text-container {
+    overflow: hidden;
+}

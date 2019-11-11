@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramErrorIndicatorElement } from '@togglecorp/faram';
 
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import _ts from '#ts';
@@ -13,9 +14,7 @@ const propTypes = {
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     isSelected: PropTypes.bool,
     index: PropTypes.number.isRequired,
-    setSelectedDimension: PropTypes.func.isRequired,
     hasError: PropTypes.bool,
-    keySelector: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: {},
@@ -28,30 +27,9 @@ export default class DimensionTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    handleClick = () => {
-        const {
-            data,
-            keySelector,
-            setSelectedDimension,
-        } = this.props;
-
-        const id = keySelector(data);
-        setSelectedDimension(id);
-    }
-
-    deleteClick = (options, index) => {
+    handleDeleteButtonClick = (options, index) => {
         const newOptions = [...options];
         newOptions.splice(index, 1);
-
-        const {
-            keySelector,
-            setSelectedDimension,
-        } = this.props;
-        const newIndex = Math.min(index, newOptions.length - 1);
-        const newKey = newIndex !== -1
-            ? keySelector(newOptions[newIndex])
-            : undefined;
-        setSelectedDimension(newKey);
 
         return newOptions;
     }
@@ -62,11 +40,13 @@ export default class DimensionTitle extends React.PureComponent {
             data: { title },
             isSelected,
             hasError,
+            onEditButtonClick,
+            className,
         } = this.props;
 
         const dimensionTitleClassName = _cs(
             styles.dimensionTitle,
-            isSelected && styles.active,
+            className,
         );
 
         const titleClassName = _cs(
@@ -76,15 +56,17 @@ export default class DimensionTitle extends React.PureComponent {
 
         return (
             <div className={dimensionTitleClassName}>
-                <button
-                    className={titleClassName}
-                    onClick={this.handleClick}
-                    type="button"
-                >
+                <div className={titleClassName}>
                     {title || _ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
-                </button>
+                </div>
+                <Button
+                    transparent
+                    className={styles.editButton}
+                    onClick={onEditButtonClick}
+                    iconName="edit"
+                />
                 <DangerButton
-                    faramAction={this.deleteClick}
+                    faramAction={this.handleDeleteButtonClick}
                     faramElementName={index}
                     className={styles.deleteButton}
                     title={_ts('widgets.editor.matrix2d', 'removeDimensionTooltip')}

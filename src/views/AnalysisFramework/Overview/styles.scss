@@ -6,9 +6,25 @@
     display: flex;
     position: relative;
     height: 100%;
+    overflow: auto;
 
     .widget-list {
         width: 30%;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .edit-widget-pane {
+        // border-right: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        width: 30%;
+        height: 100%;
+        overflow: auto;
+
+        .widget {
+            height: 100%;
+            overflow: auto;
+        }
     }
 
     .grid-layout-container {

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 import List from '#rscv/List';
 import {
@@ -21,6 +22,7 @@ const defaultProps = {
     dimension: {},
 };
 
+
 export default class DimensionRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -37,17 +39,20 @@ export default class DimensionRow extends React.PureComponent {
     static getActiveCellStyle = (rowStyle) => {
         const outlineWidth = 2;
 
-        const stripeWidth = 4;
+        const stripeWidth = 3;
         const firstColor = rowStyle.backgroundColor;
         const secondColor = getHexFromRgbRaw(
             interpolateRgb(
                 getRgbRawFromHex(rowStyle.backgroundColor),
                 getRgbRawFromHex(rowStyle.color),
-                0.4,
+                0.3,
             ),
         );
 
+        const textBorderColor = firstColor;
         return {
+            textShadow: `-1px 0 ${textBorderColor}, 0 1px ${textBorderColor}, 1px 0 ${textBorderColor}, 0 -1px ${textBorderColor}`,
+            // textShadow: '0 0 red'
             outline: `${outlineWidth}px solid ${firstColor}`,
             outlineOffset: `-${outlineWidth + 1}px`,
             background: `repeating-linear-gradient(
@@ -82,26 +87,74 @@ export default class DimensionRow extends React.PureComponent {
         }
     }
 
+    getCellStyle = memoize((fontSize, orientation, height) => {
+        const style = {};
+        const tdStyle = {};
+
+        if (fontSize) {
+            style.fontSize = `${fontSize}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            style.writingMode = 'vertical-rl';
+            tdStyle.width = 0;
+            tdStyle.height = 0;
+            style.transform = 'rotate(180deg)';
+            style.width = '100%';
+            style.height = '100%';
+            style.display = 'flex';
+            style.alignItems = 'center';
+            style.justifyContent = 'center';
+        } else {
+            style.display = 'flex';
+            style.alignItems = 'center';
+        }
+
+        if (height) {
+            style.height = `${height}px`;
+        }
+
+        return {
+            style,
+            tdStyle,
+        };
+    })
+
     rendererParams = (key, subdimension, i) => {
         const {
             dimension: {
                 subdimensions,
                 tooltip,
                 title,
+                fontSize,
+                orientation,
+                height,
             },
             ...otherProps
         } = this.props;
 
         const isFirstSubdimension = i === 0;
-        const children = isFirstSubdimension ? (
-            <td
-                rowSpan={subdimensions.length}
-                className={styles.dimensionTd}
-                title={tooltip}
-            >
-                {title}
-            </td>
-        ) : undefined;
+        let children;
+
+        if (isFirstSubdimension) {
+            const {
+                style,
+                tdStyle,
+            } = this.getCellStyle(fontSize, orientation, height);
+
+            children = (
+                <td
+                    rowSpan={subdimensions.length}
+                    className={styles.dimensionTd}
+                    style={tdStyle}
+                    title={tooltip}
+                >
+                    <div style={style}>
+                        {title}
+                    </div>
+                </td>
+            );
+        }
 
         return {
             subdimension,
