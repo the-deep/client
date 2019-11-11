@@ -2,11 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
     _cs,
-    formatDateToString,
     isDefined,
     isFalsyString,
     isTruthy,
-    listToMap,
     unique,
 } from '@togglecorp/fujs';
 import Faram, {
@@ -15,9 +13,11 @@ import Faram, {
     requiredCondition,
     urlCondition,
 } from '@togglecorp/faram';
+import titleCase from 'title';
 import produce from 'immer';
 
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 import Modalize from '#rscg/Modalize';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -34,6 +34,7 @@ import {
 } from '#request';
 
 import Cloak from '#components/general/Cloak';
+import ExtraFunctionsOnHover from '#components/general/ExtraFunctionOnHover';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
@@ -74,6 +75,10 @@ const AuthorEmptyComponent = () => (
 
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
 const ModalButton = Modalize(Button);
+
+const capitalize = string => (
+    string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+);
 
 const propTypes = {
     className: PropTypes.string,
@@ -322,6 +327,8 @@ class LeadDetail extends React.PureComponent {
 
         this.state = {
             showAddLeadGroupModal: false,
+            // NOTE: If false, it will capitalize the first letter of first word only
+            formatTitleAsTitleCase: true,
 
             searchedOrganizations: [],
             // Organizations filled by web-info-extract and lead-options
@@ -457,11 +464,6 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleExtraInfoFill = (leadOptions) => {
-        const {
-            lead,
-            activeUserId,
-        } = this.props;
-
         const { organizations } = leadOptions;
 
         if (organizations.length > 0) {
@@ -471,6 +473,11 @@ class LeadDetail extends React.PureComponent {
         }
 
         /*
+        const {
+            lead,
+            activeUserId,
+        } = this.props;
+
         const values = leadFaramValuesSelector(lead);
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
         this.handleLeadValueChange(newValues);
@@ -528,6 +535,36 @@ class LeadDetail extends React.PureComponent {
             ...values,
             author: organization.id,
         };
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleAutoFormatTitleButton = () => {
+        const { lead } = this.props;
+        const { formatTitleAsTitleCase } = this.state;
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = produce(values, (safeValues) => {
+            const { title } = values;
+
+            if (isFalsyString(title)) {
+                return;
+            }
+
+            if (formatTitleAsTitleCase) {
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = titleCase(title);
+                // Removes extension from file
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = safeValues.title.replace(/(\.\w{1,5})+$/, '');
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = safeValues.title.replace(/(\.\w{1,5})+$/, '');
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = capitalize(safeValues.title);
+            }
+        });
+
+        this.setState({ formatTitleAsTitleCase: !formatTitleAsTitleCase });
         this.handleLeadValueChange(newValues);
     }
 
@@ -709,13 +746,20 @@ class LeadDetail extends React.PureComponent {
                                     autoFocus
                                 />
                             </ExtractThis>
-                            <TextInput
-                                faramElementName="website"
-                                key="website"
-                                label={_ts('addLeads', 'websiteLabel')}
-                                placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                            <ApplyAll
                                 className={styles.website}
-                            />
+                                disabled={isApplyAllDisabled}
+                                identifierName="website"
+                                onApplyAllClick={this.handleApplyAllClick}
+                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                            >
+                                <TextInput
+                                    faramElementName="website"
+                                    key="website"
+                                    label={_ts('addLeads', 'websiteLabel')}
+                                    placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                                />
+                            </ApplyAll>
                         </React.Fragment>
                     ) }
                     { type === LEAD_TYPE.text && (
@@ -780,12 +824,25 @@ class LeadDetail extends React.PureComponent {
                             projectId={projectId}
                         />
                     ) }
-                    <TextInput
+                    <ExtraFunctionsOnHover
                         className={styles.title}
-                        faramElementName="title"
-                        label={_ts('addLeads', 'titleLabel')}
-                        placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
-                    />
+                        buttons={
+                            <AccentButton
+                                className={styles.smallButton}
+                                title={_ts('addLeads', 'formatButtonTitle')}
+                                onClick={this.handleAutoFormatTitleButton}
+                            >
+                                {_ts('addLeads', 'autoFormatTitleLabel')}
+                            </AccentButton>
+                        }
+                    >
+                        <TextInput
+                            className={styles.title}
+                            faramElementName="title"
+                            label={_ts('addLeads', 'titleLabel')}
+                            placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
+                        />
+                    </ExtraFunctionsOnHover>
 
                     <ApplyAll
                         className={styles.source}
@@ -811,7 +868,6 @@ class LeadDetail extends React.PureComponent {
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                         />
                         <ModalButton
-                            className={styles.largeButton}
                             title={_ts('addLeads', 'addPublisherTitle')}
                             iconName="addPerson"
                             transparent
@@ -860,7 +916,6 @@ class LeadDetail extends React.PureComponent {
                             placeholder={_ts('addLeads', 'authorPlaceholder')}
                         />
                         <ModalButton
-                            className={styles.largeButton}
                             title={_ts('addLeads', 'addAuthorTitle')}
                             iconName="addPerson"
                             transparent

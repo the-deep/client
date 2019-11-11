@@ -10,6 +10,13 @@
         justify-content: space-between;
         padding: 0 var(--spacing-large);
 
+        .small-button {
+            margin-right: var(--spacing-extra-small);
+            padding: var(--spacing-extra-small);
+            text-transform: capitalize;
+            font-size: var(--font-size-extra-small);
+        }
+
         .header {
             display: flex;
             align-items: center;
@@ -33,11 +40,6 @@
             .input {
                 flex-grow: 1;
             }
-        }
-
-        .small-button {
-            margin-right: var(--spacing-extra-small);
-            padding: var(--spacing-extra-small);
         }
 
         .confidentiality,

@@ -20,8 +20,6 @@ export const serverlessEndpoint = !process.env.REACT_APP_SERVERLESS_DOMAIN
     ? 'https://mlqcx46v40.execute-api.us-east-1.amazonaws.com/local'
     : process.env.REACT_APP_SERVERLESS_DOMAIN;
 
-// export const serverlessEndpoint = 'http://localhost:9999';
-
 export const adminEndpoint = !process.env.REACT_APP_ADMIN_END
     ? 'http://localhost:8000/admin/'
     : `${reactAppApiHttps}://${process.env.REACT_APP_ADMIN_END}/admin/`;

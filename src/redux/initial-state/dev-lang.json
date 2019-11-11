@@ -1116,7 +1116,10 @@
         "-32034327": "Alphabetical",
         "-48567189": "Ordered by",
         "-82896655": "Asc",
-        "-88031153": "Dsc"
+        "-88031153": "Dsc",
+        "-50025578": "Auto format",
+        "-24896884": "Remove extension",
+        "-9263627": "Extension"
     },
     "links": {
         "browserExtension": {
@@ -1844,7 +1847,11 @@
             "addPublisherModalTitle": -44615843,
             "addPublisherTitle": -44615843,
             "searchInputEmptyText": -24511724,
-            "authorPlaceholder": -4332303
+            "authorPlaceholder": -4332303,
+            "autoFormatTitleLabel": -50025578,
+            "formatButtonTitle": -50025578,
+            "removeExtensionLabel": -9263627,
+            "removeExtensionTitle": -24896884
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
