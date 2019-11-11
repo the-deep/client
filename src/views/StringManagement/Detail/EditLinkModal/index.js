@@ -133,7 +133,7 @@ export default class EditLinkModal extends React.PureComponent {
             { label: 'String ID', value: this.state.inputValue },
         ];
         if (link) {
-            properties.push({ label: 'References', value: link ? link.refs : 0 });
+            properties.push({ label: 'References', value: link.refs });
         }
 
         return (

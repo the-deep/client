@@ -651,7 +651,7 @@ export default class EditEntries extends React.PureComponent {
 
         const hasSavableEntries = this.savableEntries.length > 0;
         const isSaveDisabled = (
-            pendingEditEntryData || pendingSaveAll || projectMismatch || !hasSavableEntries
+            pendingSaveAll || projectMismatch || !hasSavableEntries
         );
 
         return (

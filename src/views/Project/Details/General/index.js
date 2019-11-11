@@ -215,7 +215,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
                     value={faramValues}
                     error={faramErrors}
                     readOnly={readOnly}
-                    disabled={loading}
                 >
                     <div className={styles.inputsContainer}>
                         <header className={styles.header}>
@@ -225,7 +224,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                             />
                             <div className={styles.actionButtons}>
                                 <DangerButton
-                                    disabled={loading || pristine || readOnly}
+                                    disabled={pristine || readOnly}
                                     onClick={this.handleFaramCancel}
                                     className={styles.button}
                                 >
@@ -233,7 +232,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                 </DangerButton>
                                 <SuccessButton
                                     className={styles.button}
-                                    disabled={loading || pristine || readOnly}
+                                    disabled={pristine || readOnly}
                                     type="submit"
                                 >
                                     {_ts('project', 'saveButtonLabel')}

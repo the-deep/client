@@ -18,11 +18,11 @@ export default class HighlightableTextOutput extends React.PureComponent {
             end: null,
         };
 
-        if (!text || text.length === 0) {
+        if (text.length === 0) {
             return defaultOutput;
         }
 
-        if (!highlightText || highlightText.length === 0) {
+        if (highlightText.length === 0) {
             return defaultOutput;
         }
 

@@ -218,7 +218,7 @@ export default class GeoJsonMap extends React.PureComponent {
                 this.layerAdded = false;
             }
             map.remove();
-            this.setState({ map: undefined });
+            // this.setState({ map: undefined });
         }
 
         this.mounted = false;

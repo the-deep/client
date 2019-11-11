@@ -137,7 +137,6 @@ export default class Usergroup extends React.PureComponent {
                     mainContentClassName={styles.mainContent}
                     mainContent={
                         <React.Fragment>
-                            { pending && <LoadingAnimation /> }
                             <div className={styles.left}>
                                 <div className={styles.info}>
                                     <div className={styles.titleContainer}>
