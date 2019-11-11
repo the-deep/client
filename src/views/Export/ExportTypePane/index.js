@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
@@ -7,7 +8,6 @@ import TreeSelection from '#rsci/TreeSelection';
 import List from '#rscv/List';
 
 import _ts from '#ts';
-import _cs from '#cs';
 
 import wordIcon from '#resources/img/word.svg';
 import excelIcon from '#resources/img/excel.svg';
@@ -112,48 +112,64 @@ export default class ExportTypePane extends React.PureComponent {
         ];
     }
 
-    componentWillMount() {
-        const newReportStructure = ExportTypePane.createReportStructure(
-            this.props.analysisFramework,
-        );
-        this.props.onReportStructureChange(newReportStructure);
+    componentDidMount() {
+        const {
+            analysisFramework,
+            onReportStructureChange,
+        } = this.props;
+
+        const newReportStructure = ExportTypePane.createReportStructure(analysisFramework);
+        onReportStructureChange(newReportStructure);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.analysisFramework !== this.props.analysisFramework) {
+        const {
+            analysisFramework: oldAnalysisFramework,
+            onReportStructureChange,
+        } = this.props;
+
+        if (nextProps.analysisFramework !== oldAnalysisFramework) {
             const newReportStructure = ExportTypePane.createReportStructure(
                 nextProps.analysisFramework,
             );
-            this.props.onReportStructureChange(newReportStructure);
+
+            onReportStructureChange(newReportStructure);
         }
     }
 
-    getExportTypeClassName(key) {
-        const { activeExportTypeKey } = this.props;
+    renderExportType = (key, data) => {
+        const {
+            onExportTypeChange,
+            activeExportTypeKey,
+        } = this.props;
 
-        return _cs(
-            styles.exportTypeSelect,
-            activeExportTypeKey === key && styles.active,
+        return (
+            <button
+                className={_cs(
+                    styles.exportTypeSelect,
+                    activeExportTypeKey === key && styles.active,
+                )}
+                key={key}
+                title={data.title}
+                onClick={() => onExportTypeChange(key)}
+                type="button"
+            >
+                <img
+                    className={styles.image}
+                    src={data.img}
+                    alt={data.title}
+                />
+            </button>
         );
     }
 
-    renderExportType = (key, data) => (
-        <button
-            className={this.getExportTypeClassName(key)}
-            key={key}
-            title={data.title}
-            onClick={() => this.props.onExportTypeChange(key)}
-        >
-            <img
-                className={styles.image}
-                src={data.img}
-                alt={data.title}
-            />
-        </button>
-    )
-
     renderWordPdfOptions = () => {
-        if (!this.props.reportStructure) {
+        const {
+            reportStructure,
+            onReportStructureChange,
+        } = this.props;
+
+        if (!reportStructure) {
             return (
                 <p>
                     { _ts('export', 'noMatrixAfText')}
@@ -161,39 +177,50 @@ export default class ExportTypePane extends React.PureComponent {
             );
         }
 
-        return [
-            <h4 key="header">
-                {_ts('export', 'reportStructureLabel')}
-            </h4>,
-            <TreeSelection
-                key="tree-selection"
-                value={this.props.reportStructure}
-                onChange={this.props.onReportStructureChange}
-            />,
-        ];
+        return (
+            <>
+                <h4 key="header">
+                    {_ts('export', 'reportStructureLabel')}
+                </h4>
+                <TreeSelection
+                    key="tree-selection"
+                    value={reportStructure}
+                    onChange={onReportStructureChange}
+                />
+            </>
+        );
     }
 
-    renderExcelOptions = () => ([
-        <Checkbox
-            key="checkbox"
-            label={_ts('export', 'decoupledEntriesLabel')}
-            value={this.props.decoupledEntries}
-            onChange={this.props.onDecoupledEntriesChange}
-        />,
-        <div
-            key="info"
-            className={styles.info}
-        >
-            <Icon
-                className={styles.icon}
-                name="info"
-            />
-            <div>
-                <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
-                <p>{_ts('export', 'decoupledEntriesTitle')}</p>
-            </div>
-        </div>,
-    ])
+    renderExcelOptions = () => {
+        const {
+            decoupledEntries,
+            onDecoupledEntriesChange,
+        } = this.props;
+
+        return (
+            <>
+                <Checkbox
+                    key="checkbox"
+                    label={_ts('export', 'decoupledEntriesLabel')}
+                    value={decoupledEntries}
+                    onChange={onDecoupledEntriesChange}
+                />
+                <div
+                    key="info"
+                    className={styles.info}
+                >
+                    <Icon
+                        className={styles.icon}
+                        name="info"
+                    />
+                    <div>
+                        <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
+                        <p>{_ts('export', 'decoupledEntriesTitle')}</p>
+                    </div>
+                </div>
+            </>
+        );
+    }
 
     renderOptions = (activeExportTypeKey) => {
         switch (activeExportTypeKey) {
@@ -213,6 +240,7 @@ export default class ExportTypePane extends React.PureComponent {
 
     render() {
         const { activeExportTypeKey } = this.props;
+
         return (
             <section className={styles.exportTypes}>
                 <div className={styles.exportTypeSelectList}>

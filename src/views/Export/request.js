@@ -86,7 +86,7 @@ const requestOptions = {
         },
     },
     geoOptionsRequest: {
-        url: '/geo-options',
+        url: '/geo-options/',
         query: ({ props: { projectId } }) => ({
             project: projectId,
         }),

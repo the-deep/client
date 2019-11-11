@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { reverseRoute } from '@togglecorp/fujs';
-import { FgRestBuilder } from '#rsu/rest';
+import {
+    _cs,
+    reverseRoute,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -15,11 +17,6 @@ import ModalFooter from '#rscv/Modal/Footer';
 
 import { processEntryFilters } from '#entities/entries';
 import Cloak from '#components/general/Cloak';
-import {
-    urlForExportTrigger,
-    createParamsForExportTrigger,
-    createUrlForExportStatus,
-} from '#rest';
 import {
     pathNames,
     viewsAcl,
@@ -56,6 +53,8 @@ const propTypes = {
     decoupledEntries: PropTypes.bool.isRequired,
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     selectedLeads: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onPreview: PropTypes.func.isRequired,
     pending: PropTypes.bool.isRequired,
@@ -67,6 +66,7 @@ const defaultProps = {
     reportStructure: undefined,
     selectedLeads: {},
     entriesFilters: {},
+    geoOptions: {},
 };
 
 const EXPORT_TYPE = {
@@ -78,7 +78,7 @@ const EXPORT_TYPE = {
 const requestOptions = {
     exportStatusGet: {
         method: methods.GET,
-        url: ({ props }) => createUrlForExportStatus(props.projectId),
+        url: ({ props: { projectId } }) => `/projects/${projectId}/export-status/`,
         onSuccess: ({ response, params: { handleExportStatus } }) => {
             const { tabularPendingFieldsCount: fieldsCount } = response;
             handleExportStatus(fieldsCount);
@@ -91,6 +91,21 @@ const requestOptions = {
         },
         extras: {
             schemaName: 'exportStatusGetResponse',
+        },
+    },
+    exportRequest: {
+        url: '/export-trigger/',
+        method: methods.POST,
+        body: ({ params: { filters } }) => ({ filters }),
+        onSuccess: ({
+            params: {
+                onSuccess,
+                setExportClass,
+            },
+            response: { exportTriggered },
+        }) => {
+            onSuccess(exportTriggered);
+            setExportClass(undefined);
         },
     },
 };
@@ -106,19 +121,25 @@ export default class ExportHeader extends React.PureComponent {
 
         this.state = {
             exportPending: false,
+            exportItem: 'entry',
+            isPreview: false,
             exportClass: undefined,
-            exportStatusPending: -1,
+            exportStatus: false,
+            exportStatusCount: 0,
         };
     }
 
-    componentWillUnmount() {
-        if (this.exportRequest) {
-            this.exportRequest.stop();
-        }
+    setExportClass = (exportClass) => {
+        this.setState({ exportClass });
     }
 
-    export = ({ onSuccess, isPreview = false, exportItem = 'entry' }) => {
+    export = () => {
         // Let's start by collecting the filters
+        const {
+            exportItem,
+            isPreview,
+        } = this.state;
+
         const {
             projectId,
             entriesFilters,
@@ -126,6 +147,11 @@ export default class ExportHeader extends React.PureComponent {
             selectedLeads,
             reportStructure,
             decoupledEntries,
+            analysisFramework,
+            geoOptions,
+            requests: {
+                exportRequest,
+            },
         } = this.props;
 
         const isWord = activeExportTypeKey === 'word';
@@ -165,8 +191,8 @@ export default class ExportHeader extends React.PureComponent {
 
         const processedFilters = processEntryFilters(
             entriesFilters,
-            this.props.analysisFramework,
-            this.props.geoOptions,
+            analysisFramework,
+            geoOptions,
         );
 
         const filters = [
@@ -174,62 +200,75 @@ export default class ExportHeader extends React.PureComponent {
             ...processedFilters,
         ];
 
-        if (this.exportRequest) {
-            this.exportRequest.stop();
-        }
-        this.exportRequest = this.createRequestForExport({
-            filters,
-            onSuccess,
-            exportClass,
-        });
-        this.exportRequest.start();
-    }
+        this.setState({ exportClass });
 
-    createRequestForExport = ({ filters, onSuccess, exportClass }) => {
-        const exportRequest = new FgRestBuilder()
-            .url(urlForExportTrigger)
-            .params(() => createParamsForExportTrigger(filters))
-            .preLoad(() => this.setState({ exportPending: true, exportClass }))
-            .postLoad(() => this.setState({ exportPending: false, exportClass: undefined }))
-            .success((response) => {
-                // FIXME: write schema
-                onSuccess(response.exportTriggered);
-            })
-            .build();
-        return exportRequest;
+        exportRequest.do({
+            filters,
+            onSuccess: this.handleSuccess,
+            setExportClass: this.setExportClass,
+        });
     }
 
     handleExport = () => {
-        const onSuccess = () => {
-            if (this.state.exportStatusPending !== 0) {
-                this.setState({ exportSuccess: true });
-            } else {
-                notify.send({
-                    title: _ts('export', 'headerExport'),
-                    type: notify.type.SUCCESS,
-                    message: _ts('export', 'exportStartedNotifyMessage'),
-                    duration: 15000,
-                });
-            }
-        };
         const {
             requests: {
                 exportStatusGet,
             },
         } = this.props;
-        exportStatusGet.do({
-            handleExportStatus: this.handleExportStatus,
-        });
-        this.export({ onSuccess });
+
+        exportStatusGet.do({ handleExportStatus: this.handleExportStatus });
+
+        this.setState({ exportItem: 'entry' }, this.export);
     }
 
-    handleExportStatus = (exportStatusPending) => {
-        this.setState({ exportStatusPending });
+    handleSuccess = (exportId) => {
+        const {
+            exportStatus,
+            exportItem,
+            isPreview,
+        } = this.state;
+
+        if (isPreview) {
+            const { onPreview } = this.props;
+
+            this.setState({ isPreview: false }, () => {
+                onPreview(exportId);
+            });
+        } else if (exportStatus) {
+            this.setState({ exportSuccess: true });
+        } else if (exportItem === 'entry') {
+            notify.send({
+                title: _ts('export', 'headerExport'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'exportStartedNotifyMessage'),
+                duration: 15000,
+            });
+        } else if (exportItem === 'assessment') {
+            notify.send({
+                title: _ts('export', 'headerExport'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'exportStartedNotifyMessage'),
+                duration: 15000,
+            });
+        }
+    }
+
+    handleExportStatus = (exportStatusCount) => {
+        this.setState({
+            exportStatusCount,
+            exportStatus: exportStatusCount.length > 0,
+        });
     }
 
     handleModalClose = () => {
-        this.setState({ exportStatusPending: 0 });
-        if (this.state.exportSuccess) {
+        const { exportSuccess } = this.state;
+
+        this.setState({
+            exportStatus: false,
+            exportStatusCount: 0,
+        });
+
+        if (exportSuccess) {
             notify.send({
                 title: _ts('export', 'headerExport'),
                 type: notify.type.SUCCESS,
@@ -240,31 +279,21 @@ export default class ExportHeader extends React.PureComponent {
     }
 
     handleAssessmentExportClick = () => {
-        const onSuccess = (exportId) => {
-            console.log('Exporting to ', exportId);
-            notify.send({
-                title: _ts('export', 'headerExport'),
-                type: notify.type.SUCCESS,
-                message: _ts('export', 'exportStartedNotifyMessage'),
-                duration: 15000,
-            });
-        };
-
-        this.export({ onSuccess, exportItem: 'assessment' });
+        this.setState({ exportItem: 'assessment' }, this.export);
     }
 
     handlePreview = () => {
         const {
-            onPreview,
             requests: {
                 exportStatusGet,
             },
         } = this.props;
 
-        exportStatusGet.do({
-            handleExportStatus: this.handleExportStatus,
-        });
-        this.export({ onSuccess: onPreview, isPreview: true });
+        exportStatusGet.do({ handleExportStatus: this.handleExportStatus });
+        this.setState({
+            isPreview: true,
+            exportItem: 'entry',
+        }, this.export);
     }
 
     render() {
@@ -275,15 +304,14 @@ export default class ExportHeader extends React.PureComponent {
         } = this.props;
 
         const {
-            exportStatusPending,
+            exportStatus,
+            exportStatusCount,
             exportPending,
             exportClass,
         } = this.state;
 
-        const classNames = `${styles.header} ${className}`;
-
         return (
-            <header className={classNames}>
+            <header className={_cs(styles.header, className)}>
                 <h2>
                     {_ts('export', 'headerExport')}
                 </h2>
@@ -325,11 +353,11 @@ export default class ExportHeader extends React.PureComponent {
                         {_ts('export', 'startExportButtonLabel')}
                     </PrimaryButton>
                 </div>
-                {exportStatusPending > 0 &&
+                {exportStatus &&
                     <Modal>
                         <ModalHeader title={_ts('export', 'exportStatusTitle')} />
                         <ModalBody>
-                            {_ts('export', 'exportImageGnerationPending', { count: exportStatusPending })}
+                            {_ts('export', 'exportImageGnerationPending', { count: exportStatusCount })}
                         </ModalBody>
                         <ModalFooter>
                             <PrimaryButton
