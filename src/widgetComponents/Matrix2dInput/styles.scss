@@ -1,4 +1,3 @@
-
 .overview {
     width: 100%;
     height: 100%;
@@ -9,6 +8,10 @@
         border-collapse: separate;
         border-spacing: 0;
         text-align: center;
+
+        .sector-title {
+            cursor: pointer;
+        }
 
         thead {
             border: 0;
@@ -27,10 +30,6 @@
                 border: var(--width-separator-thin) solid var(--color-foreground);
                 padding: var(--spacing-extra-small);
             }
-
-            // .dimension-td {
-            //     width: var(--width-dimension-column);
-            // }
         }
     }
 }

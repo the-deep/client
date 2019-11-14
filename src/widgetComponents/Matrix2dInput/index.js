@@ -18,11 +18,13 @@ const propTypes = {
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
+    meta: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     dimensions: [],
     sectors: [],
+    meta: {},
     value: undefined,
     onChange: () => {}, // FIXME: avoid use of noOp
 };
@@ -110,8 +112,6 @@ export default class Matrix2dInput extends React.PureComponent {
     handleCellDrop = (dimensionId, subdimensionId, sectorId, subsectorId, droppedData) => {
         const { type, data } = droppedData;
 
-        console.warn('Sector', sectorId, 'Subsector', subsectorId);
-
         const faramInfo = {
             action: 'newEntry',
             excerptType: type,
@@ -129,6 +129,7 @@ export default class Matrix2dInput extends React.PureComponent {
     }
 
     sectorTitleRendererParams = (key, sector) => ({
+        className: styles.sectorTitle,
         title: sector.title,
         tooltip: sector.tooltip,
         fontSize: sector.fontSize,
@@ -199,9 +200,7 @@ export default class Matrix2dInput extends React.PureComponent {
                                     onClick={this.handleActiveSectorTitleClick}
                                     style={titleColumnStyle}
                                 >
-                                    <Icon
-                                        name="back"
-                                    />
+                                    <Icon name="back" />
                                 </th>
                                 <th style={subTitleColumnStyle}>
                                     { activeSector.title }
