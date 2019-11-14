@@ -39,6 +39,8 @@ const styleProperties = {
         widthTableIcon: '56px',
 
         widthScrollbar: '6px',
+
+        heightMatrixHeader: '20px',
     },
 };
 

@@ -3,6 +3,27 @@
     height: 100%;
     overflow: auto;
 
+    .header {
+        display: flex;
+        align-items: center;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        height: var(--height-matrix-header);
+
+        &.empty-header {
+            border-bottom-color: transparent;
+        }
+
+        .button {
+            flex-shrink: 0;
+        }
+
+        .sub-title {
+            flex-grow: 1;
+            text-align: center;
+            font-weight: var(--font-weight-bold);
+        }
+    }
+
     .table {
         width: 100%;
         border-collapse: separate;
@@ -11,6 +32,10 @@
 
         .sector-title {
             cursor: pointer;
+
+            &:hover {
+                background-color: var(--color-background-accent-hint);
+            }
         }
 
         thead {

@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 import produce from 'immer';
 
-import Icon from '#rscg/Icon';
 import List from '#rscv/List';
+import Button from '#rsca/Button';
 
 import SectorTitle from './SectorTitle';
 import SubsectorTitle from './SubsectorTitle';
@@ -157,8 +158,8 @@ export default class Matrix2dInput extends React.PureComponent {
 
     dimensionRendererParams = (key, dimension) => {
         const {
-            dimensions, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
+            dimensions, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = this.props;
 
@@ -192,19 +193,31 @@ export default class Matrix2dInput extends React.PureComponent {
 
         return (
             <div className={styles.overview}>
+                {activeSectorKey ? (
+                    <div className={styles.header}>
+                        <Button
+                            className={styles.button}
+                            onClick={this.handleActiveSectorTitleClick}
+                            transparent
+                            smallVerticalPadding
+                            iconName="back"
+                        >
+                            { /* FIXME: Use strings */ }
+                            Go back
+                        </Button>
+                        <div className={styles.subTitle}>
+                            { activeSector.title }
+                        </div>
+                    </div>
+                ) : (
+                    <div className={_cs(styles.header, styles.emptyHeader)} />
+                )}
                 <table className={styles.table}>
                     { activeSectorKey ? (
                         <thead>
                             <tr style={headRowStyle}>
-                                <th
-                                    onClick={this.handleActiveSectorTitleClick}
-                                    style={titleColumnStyle}
-                                >
-                                    <Icon name="back" />
-                                </th>
-                                <th style={subTitleColumnStyle}>
-                                    { activeSector.title }
-                                </th>
+                                <th style={titleColumnStyle} />
+                                <th style={subTitleColumnStyle} />
                                 <List
                                     data={subsectors}
                                     keySelector={Matrix2dInput.sectorKeySelector}

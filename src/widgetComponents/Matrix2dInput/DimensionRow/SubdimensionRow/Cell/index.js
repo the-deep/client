@@ -7,6 +7,8 @@ const propTypes = {
     dimensionId: PropTypes.string.isRequired,
     subdimensionId: PropTypes.string.isRequired,
     sectorId: PropTypes.string.isRequired,
+    subsectorId: PropTypes.string,
+    isSubsectorMode: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired,
     onDrop: PropTypes.func.isRequired,
 
@@ -24,6 +26,7 @@ const defaultProps = {
     readOnly: false,
     activeCellStyle: undefined,
     hoverStyle: undefined,
+    subsectorId: undefined,
 };
 
 export default class Cell extends React.PureComponent {
@@ -150,9 +153,6 @@ export default class Cell extends React.PureComponent {
             disabled,
             readOnly,
             hoverStyle,
-            activeSectorKey,
-            sectorId,
-            subsectorId,
         } = this.props;
 
         const { isBeingDraggedOver } = this.state;

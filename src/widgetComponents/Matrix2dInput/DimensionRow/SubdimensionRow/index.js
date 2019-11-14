@@ -13,12 +13,21 @@ const propTypes = {
     subdimension: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node,
     rowStyle: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    dimensionId: PropTypes.string,
+    subdimensionId: PropTypes.string,
+    activeSectorKey: PropTypes.string,
+    activeCellStyle: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    activeSectorKey: undefined,
     children: undefined,
     subdimension: {},
     sectors: [],
+    dimensionId: undefined,
+    subdimensionId: undefined,
+    value: undefined,
 };
 
 export default class SubdimensionRow extends React.PureComponent {
@@ -81,7 +90,6 @@ export default class SubdimensionRow extends React.PureComponent {
             value,
             dimensionId,
             subdimensionId,
-            sectorId,
             activeSectorKey,
         } = this.props;
 
@@ -90,15 +98,15 @@ export default class SubdimensionRow extends React.PureComponent {
         }
 
         const subsectors = value && ((value[dimensionId] || {})[subdimensionId]);
-        return !!subsectors;
+        return subsectors && Object.keys(subsectors).length > 0;
     }
 
     rendererParams = (key) => {
         const {
-            subdimension, // eslint-disable-line no-unused-vars
-            sectors, // eslint-disable-line no-unused-vars
-            rowStyle, // eslint-disable-line no-unused-vars
-            children, // eslint-disable-line no-unused-vars
+            subdimension, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            sectors, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            rowStyle, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            children, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
             activeSectorKey,
             ...otherProps
         } = this.props;
@@ -120,6 +128,7 @@ export default class SubdimensionRow extends React.PureComponent {
             rowStyle,
             children,
             activeSectorKey,
+            activeCellStyle,
         } = this.props;
 
         const {
@@ -136,7 +145,7 @@ export default class SubdimensionRow extends React.PureComponent {
         } = this.getCellStyle(fontSize, orientation, height);
 
         const subdimensionStyle = this.isRowActive() ? ({
-            ...this.props.activeCellStyle,
+            ...activeCellStyle,
             ...tdStyle,
         }) : ({ tdStyle });
 
