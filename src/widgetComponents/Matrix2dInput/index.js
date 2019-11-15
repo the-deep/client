@@ -27,7 +27,7 @@ const defaultProps = {
     dimensions: [],
     sectors: [],
     meta: {},
-    value: undefined,
+    value: {},
     onChange: () => {}, // FIXME: avoid use of noOp
 };
 
