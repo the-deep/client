@@ -12,13 +12,14 @@ import styles from './styles.scss';
 
 const propTypes = {
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    isSelected: PropTypes.bool,
     index: PropTypes.number.isRequired,
     hasError: PropTypes.bool,
+    onEditButtonClick: PropTypes.func.isRequired,
+    className: PropTypes.string,
 };
 const defaultProps = {
+    className: undefined,
     data: {},
-    isSelected: false,
     hasError: false,
 };
 
@@ -38,16 +39,10 @@ export default class SectorTitle extends React.PureComponent {
         const {
             index,
             data: { title },
-            isSelected,
             hasError,
             onEditButtonClick,
             className,
         } = this.props;
-
-        const sectorTitleClassName = _cs(
-            styles.sectorTitle,
-            className,
-        );
 
         const titleClassName = _cs(
             styles.title,
@@ -55,7 +50,7 @@ export default class SectorTitle extends React.PureComponent {
         );
 
         return (
-            <div className={sectorTitleClassName}>
+            <div className={_cs(styles.sectorTitle, className)}>
                 <div className={titleClassName}>
                     {title || _ts('widgets.editor.matrix2d', 'unnamedSectorTitle', { index: index + 1 })}
                 </div>

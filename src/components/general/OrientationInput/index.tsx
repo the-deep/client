@@ -34,6 +34,10 @@ const OrientationInputItem = ({
 
 
 export default class OrientationInput extends React.PureComponent<Props, State> {
+    inputRendererParams = (key: number, data: object) => ({
+        data,
+    })
+
     render() {
         const {
             // FIXME: string
@@ -48,6 +52,7 @@ export default class OrientationInput extends React.PureComponent<Props, State> 
                 label={label}
                 options={orientationOptions}
                 renderer={OrientationInputItem}
+                rendererParams={this.inputRendererParams}
                 className={_cs(className, styles.orientationInput)}
             />
         );

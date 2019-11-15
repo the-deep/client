@@ -38,16 +38,14 @@ const SubdimensionRow = ({ className, index }) => (
                     />
                     <TextInput
                         type="number"
-                        // FIXME: string
-                        label="Font size"
+                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
                         persistantHintAndError={false}
                     />
                     <TextInput
                         type="number"
-                        // FIXME: string
-                        label="Height"
+                        label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
                         className={styles.heightInput}
                         faramElementName="height"
                         persistantHintAndError={false}
@@ -74,7 +72,12 @@ const SubdimensionRow = ({ className, index }) => (
 );
 
 SubdimensionRow.propTypes = {
+    className: PropTypes.string,
     index: PropTypes.number.isRequired,
+};
+
+SubdimensionRow.defaultProps = {
+    className: undefined,
 };
 
 export default SubdimensionRow;

@@ -7,7 +7,6 @@ import {
 
 import SortableListView from '#rscv/SortableListView';
 import AccentButton from '#rsca/Button/AccentButton';
-import Label from '#rsci/Label';
 
 import _ts from '#ts';
 
@@ -19,18 +18,36 @@ import DimensionContent from '../DimensionContent';
 
 import styles from './styles.scss';
 
+interface Dimension {
+    color?: string;
+    id?: number;
+    subdimensions?: [];
+}
+
+interface FaramValues {
+    dimensions?: [Dimension];
+}
+
 interface Props {
     className?: string;
+    faramValues?: FaramValues;
+    selectedDimensionKey?: string;
+    widgetKey?: string;
+    keySelector: (d: object) => {};
+    titleSelector: (d: object) => {};
+    dataModifier: (d: object) => {};
+    onDimensionEditButtonClick: (k: string) => {};
+    onAddDimensionFaramAction: (k: string) => {};
+    onGeoLinkModalVisiblityChange: (k: string) => {};
+    onLinkWidgetModalVisiblityChange: (k: string) => {};
+    onDimensionContentBackButtonClick: (k: string) => {};
 }
 
 interface State {
 }
 
-const emptyList: unknown[] = [];
-const emptyObject = {};
-
 export default class Row extends React.PureComponent<Props, State> {
-    private dimensionItemRendererParams = (key, elem, i) => ({
+    private dimensionItemRendererParams = (key: string, elem: object, i: number) => ({
         className: styles.dimensionContent,
         data: elem,
         faramElementName: String(i),
@@ -45,7 +62,7 @@ export default class Row extends React.PureComponent<Props, State> {
         const {
             className,
             dataModifier,
-            faramValues = emptyObject,
+            faramValues,
             keySelector,
             onAddDimensionFaramAction,
             onGeoLinkModalVisiblityChange,
@@ -56,10 +73,14 @@ export default class Row extends React.PureComponent<Props, State> {
             widgetKey,
         } = this.props;
 
-        const { dimensions = emptyList } = faramValues;
-        const selectedDimensionIndex = dimensions.findIndex(
-            dimension => (keySelector(dimension) === selectedDimensionKey),
-        );
+        let selectedDimensionIndex;
+
+        if (faramValues && faramValues.dimensions) {
+            const { dimensions } = faramValues;
+            selectedDimensionIndex = dimensions.findIndex(
+                dimension => (keySelector(dimension) === selectedDimensionKey),
+            );
+        }
 
         return (
             <div className={_cs(className, styles.row)}>
@@ -89,11 +110,10 @@ export default class Row extends React.PureComponent<Props, State> {
                         }
                     </FaramList>
                 </div>
-                <header className={styles.header}>
-                    <Label
-                        className={styles.label}
-                        text={_ts('widgets.editor.matrix2d', 'addDimensionsTitle')}
-                    />
+                <footer className={styles.footer}>
+                    <h4 className={styles.label}>
+                        {_ts('widgets.editor.matrix2d', 'addDimensionsTitle')}
+                    </h4>
                     <div className={styles.actions}>
                         <GeoLink
                             dataModifier={dataModifier}
@@ -122,7 +142,7 @@ export default class Row extends React.PureComponent<Props, State> {
                             </AccentButton>
                         </FaramList>
                     </div>
-                </header>
+                </footer>
             </div>
         );
     }

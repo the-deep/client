@@ -4,7 +4,7 @@ import memoize from 'memoize-one';
 type OrientationKey = 'leftToRight' | 'bottomToTop';
 interface Orientation {
     key: OrientationKey;
-    label: 'A';
+    label: string;
 }
 
 interface Props {

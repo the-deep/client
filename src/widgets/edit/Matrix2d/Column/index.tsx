@@ -7,7 +7,6 @@ import {
 
 import SortableListView from '#rscv/SortableListView';
 import AccentButton from '#rsca/Button/AccentButton';
-import Label from '#rsci/Label';
 
 import _ts from '#ts';
 
@@ -19,18 +18,35 @@ import SectorContent from '../SectorContent';
 
 import styles from './styles.scss';
 
+interface Sector {
+    id?: number;
+    subsectors?: [];
+}
+
+interface FaramValues {
+    sectors?: [Sector];
+}
+
 interface Props {
     className?: string;
+    faramValues?: FaramValues;
+    selectedSectorKey?: string;
+    widgetKey?: string;
+    keySelector: (d: object) => {};
+    titleSelector: (d: object) => {};
+    dataModifier: (d: object) => {};
+    onSectorEditButtonClick: (k: string) => {};
+    onAddSectorFaramAction: (k: string) => {};
+    onGeoLinkModalVisiblityChange: (k: string) => {};
+    onLinkWidgetModalVisiblityChange: (k: string) => {};
+    onSectorContentBackButtonClick: (k: string) => {};
 }
 
 interface State {
 }
 
-const emptyList: unknown[] = [];
-const emptyObject = {};
-
 export default class Column extends React.PureComponent<Props, State> {
-    private sectorItemRendererParams = (key, elem, i) => ({
+    private sectorItemRendererParams = (key: string, elem: object, i: number) => ({
         className: styles.sectorContent,
         data: elem,
         faramElementName: String(i),
@@ -45,7 +61,7 @@ export default class Column extends React.PureComponent<Props, State> {
         const {
             className,
             dataModifier,
-            faramValues = emptyObject,
+            faramValues,
             keySelector,
             onAddSectorFaramAction,
             onGeoLinkModalVisiblityChange,
@@ -56,9 +72,12 @@ export default class Column extends React.PureComponent<Props, State> {
             widgetKey,
         } = this.props;
 
-        const { sectors = emptyList } = faramValues;
-        const selectedSectorIndex = sectors
-            .findIndex(sector => (keySelector(sector) === selectedSectorKey));
+        let selectedSectorIndex;
+        if (faramValues && faramValues.sectors) {
+            const { sectors } = faramValues;
+            selectedSectorIndex = sectors
+                .findIndex(sector => (keySelector(sector) === selectedSectorKey));
+        }
 
         return (
             <div className={_cs(styles.column, className)}>
@@ -86,11 +105,10 @@ export default class Column extends React.PureComponent<Props, State> {
                         )}
                     </FaramList>
                 </div>
-                <header className={styles.header}>
-                    <Label
-                        className={styles.label}
-                        text={_ts('widgets.editor.matrix2d', 'addSectorsTitle')}
-                    />
+                <footer className={styles.footer}>
+                    <h4 className={styles.label}>
+                        {_ts('widgets.editor.matrix2d', 'addSectorsTitle')}
+                    </h4>
                     <div className={styles.actions}>
                         <GeoLink
                             faramElementName="sectors"
@@ -119,7 +137,7 @@ export default class Column extends React.PureComponent<Props, State> {
                             </AccentButton>
                         </FaramList>
                     </div>
-                </header>
+                </footer>
             </div>
         );
     }

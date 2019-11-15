@@ -38,22 +38,19 @@ const SubsectorRow = ({ index, className }) => (
                     />
                     <TextInput
                         type="number"
-                        // FIXME: string
-                        label="Font size"
+                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
                     />
                     <TextInput
                         type="number"
-                        // FIXME: string
-                        label="Width"
+                        label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
                         className={styles.widthInput}
                         faramElementName="width"
                     />
                 </div>
                 <div className={styles.bottom}>
                     <TextArea
-                        className={styles.tooltipInput}
                         faramElementName="tooltip"
                         label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         persistantHintAndError={false}
@@ -74,6 +71,11 @@ const SubsectorRow = ({ index, className }) => (
 
 SubsectorRow.propTypes = {
     index: PropTypes.number.isRequired,
+    className: PropTypes.string,
+};
+
+SubsectorRow.defaultProps = {
+    className: undefined,
 };
 
 export default SubsectorRow;

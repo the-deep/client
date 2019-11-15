@@ -22,16 +22,17 @@
     flex-direction: column;
     overflow: auto;
 
-    .header {
+    .footer {
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
+        border-top: var(--width-separator-thin) solid var(--color-separator-light);
         background-color: var(--color-foreground-alt);
         padding: var(--spacing-medium) 0;
 
         .label {
             padding: 0 var(--spacing-medium);
+            text-transform: capitalize;
         }
 
         .actions {

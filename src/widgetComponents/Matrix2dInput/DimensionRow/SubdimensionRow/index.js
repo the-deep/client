@@ -97,7 +97,15 @@ export default class SubdimensionRow extends React.PureComponent {
             return false;
         }
 
-        const subsectors = value && ((value[dimensionId] || {})[subdimensionId]);
+        if (!value) {
+            return false;
+        }
+        const {
+            [dimensionId]: {
+                [subdimensionId]: subsectors,
+            } = {},
+        } = value;
+
         return subsectors && Object.keys(subsectors).length > 0;
     }
 

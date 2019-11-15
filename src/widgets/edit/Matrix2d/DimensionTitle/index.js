@@ -11,14 +11,16 @@ import _cs from '#cs';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    isSelected: PropTypes.bool,
     index: PropTypes.number.isRequired,
     hasError: PropTypes.bool,
+    onEditButtonClick: PropTypes.func.isRequired,
 };
+
 const defaultProps = {
+    className: undefined,
     data: {},
-    isSelected: false,
     hasError: false,
 };
 
@@ -38,16 +40,10 @@ export default class DimensionTitle extends React.PureComponent {
         const {
             index,
             data: { title },
-            isSelected,
             hasError,
             onEditButtonClick,
             className,
         } = this.props;
-
-        const dimensionTitleClassName = _cs(
-            styles.dimensionTitle,
-            className,
-        );
 
         const titleClassName = _cs(
             styles.title,
@@ -55,7 +51,7 @@ export default class DimensionTitle extends React.PureComponent {
         );
 
         return (
-            <div className={dimensionTitleClassName}>
+            <div className={_cs(styles.dimensionTitle, className)}>
                 <div className={titleClassName}>
                     {title || _ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                 </div>

@@ -7,6 +7,7 @@ import produce from 'immer';
 
 import List from '#rscv/List';
 import Button from '#rsca/Button';
+import _ts from '#ts';
 
 import SectorTitle from './SectorTitle';
 import SubsectorTitle from './SubsectorTitle';
@@ -202,8 +203,7 @@ export default class Matrix2dInput extends React.PureComponent {
                             smallVerticalPadding
                             iconName="back"
                         >
-                            { /* FIXME: Use strings */ }
-                            Go back
+                            {_ts('widgets.tagging.matrix2d', 'goBackButtonLabel')}
                         </Button>
                         <div className={styles.subTitle}>
                             { activeSector.title }

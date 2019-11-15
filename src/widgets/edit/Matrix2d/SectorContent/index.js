@@ -32,6 +32,7 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
+    onBackButtonClick: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -114,22 +115,19 @@ export default class SectorContent extends React.PureComponent {
                             />
                             <TextInput
                                 type="number"
-                                // FIXME: string
-                                label="Font size"
+                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
                             />
                             <TextInput
                                 type="number"
-                                // FIXME: string
-                                label="Width"
+                                label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
                                 className={styles.widthInput}
                                 faramElementName="width"
                             />
                         </div>
                         <div className={styles.bottom}>
                             <TextArea
-                                className={styles.tooltipInput}
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                             />

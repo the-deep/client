@@ -26,6 +26,7 @@ import Column from './Column';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     title: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -35,6 +36,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     data: {},
 };
 
@@ -164,8 +166,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     id: [requiredCondition],
                                     tooltip: [],
                                     title: [requiredCondition],
-
-                                    // TODO: implement orientation and fontSize
                                     orientation: [],
                                     fontSize: [],
                                     width: [],
@@ -487,20 +487,20 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             <TextInput
                                 className={styles.titleRowHeightInput}
                                 faramElementName="titleRowHeight"
-                                label="Title row height"
+                                label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
                                 type="number"
                                 persistantHintAndError={false}
                             />
                             <TextInput
                                 type="number"
-                                label="Title column width"
+                                label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
                                 className={styles.titleColumnWidthInput}
                                 faramElementName="titleColumnWidth"
                                 persistantHintAndError={false}
                             />
                             <TextInput
                                 type="number"
-                                label="Subtitle column width"
+                                label={_ts('widgets.editor.matrix2d', 'subtitleColumnWidthLabel')}
                                 className={styles.subTitleColumnWidthInput}
                                 faramElementName="subTitleColumnWidth"
                                 persistantHintAndError={false}

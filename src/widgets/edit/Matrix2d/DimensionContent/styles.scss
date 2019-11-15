@@ -2,15 +2,15 @@
 .subdimension-item {
     margin: var(--spacing-small);
     border: var(--width-separator-thin) solid var(--color-separator);
-    background-color: var(--color-foreground-alt);
+    background-color: var(--color-foreground);
     width: calc(100% - calc(var(--spacing-small) * 2));
 
     .drag-handle {
         display: flex;
         align-items: center;
         align-self: stretch;
-        background-color: var(--color-foreground-alt);
-        padding: var(--spacing-small);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small) var(--spacing-medium);
     }
 
     .sub-dimension-content {
@@ -96,6 +96,7 @@
             display: flex;
             align-items: center;
             flex-shrink: 0;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
             padding: var(--spacing-small) 0;
 
             >.heading {
@@ -113,6 +114,7 @@
 
         .subdimension-item-list {
             flex-grow: 1;
+            background-color: var(--color-foreground-alt);
             overflow: auto;
         }
     }

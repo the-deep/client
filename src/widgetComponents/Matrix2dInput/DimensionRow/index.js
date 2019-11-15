@@ -52,7 +52,6 @@ export default class DimensionRow extends React.PureComponent {
         const textBorderColor = firstColor;
         return {
             textShadow: `-1px 0 ${textBorderColor}, 0 1px ${textBorderColor}, 1px 0 ${textBorderColor}, 0 -1px ${textBorderColor}`,
-            // textShadow: '0 0 red'
             outline: `${outlineWidth}px solid ${firstColor}`,
             outlineOffset: `-${outlineWidth + 1}px`,
             background: `repeating-linear-gradient(
