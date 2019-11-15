@@ -24,8 +24,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
@@ -33,7 +35,7 @@ const defaultProps = {
     data: {},
 };
 
-export default class NumberMatrixOverview extends React.PureComponent {
+export default class NumberMatrixEdit extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -59,7 +61,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     }
                     return errors;
                 },
-                keySelector: NumberMatrixOverview.rowKeyExtractor,
+                keySelector: NumberMatrixEdit.rowKeyExtractor,
                 member: {
                     fields: {
                         title: [requiredCondition],
@@ -84,7 +86,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     }
                     return errors;
                 },
-                keySelector: NumberMatrixOverview.rowKeyExtractor,
+                keySelector: NumberMatrixEdit.rowKeyExtractor,
                 member: {
                     fields: {
                         title: [requiredCondition],
@@ -106,6 +108,16 @@ export default class NumberMatrixOverview extends React.PureComponent {
     static rendererParams = (key, elem, i) => ({
         index: i,
     })
+
+    static getDataFromFaramValues = (data) => {
+        const {
+            title, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            ...otherValues
+        } = data;
+        return otherValues;
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -136,7 +148,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 component: () => (
                     <FaramList
                         faramElementName="rowHeaders"
-                        keySelector={NumberMatrixOverview.rowKeyExtractor}
+                        keySelector={NumberMatrixEdit.rowKeyExtractor}
                     >
                         <SortableListView
                             className={styles.editList}
@@ -144,7 +156,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                             faramElement
                             itemClassName={styles.sortableUnit}
                             renderer={InputRow}
-                            rendererParams={NumberMatrixOverview.rendererParams}
+                            rendererParams={NumberMatrixEdit.rendererParams}
                         />
                     </FaramList>
                 ),
@@ -154,7 +166,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 component: () => (
                     <FaramList
                         faramElementName="columnHeaders"
-                        keySelector={NumberMatrixOverview.rowKeyExtractor}
+                        keySelector={NumberMatrixEdit.rowKeyExtractor}
                     >
                         <SortableListView
                             className={styles.editList}
@@ -162,7 +174,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                             faramElement
                             itemClassName={styles.sortableUnit}
                             renderer={InputRow}
-                            rendererParams={NumberMatrixOverview.rendererParams}
+                            rendererParams={NumberMatrixEdit.rendererParams}
                         />
                     </FaramList>
                 ),
@@ -178,6 +190,16 @@ export default class NumberMatrixOverview extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            NumberMatrixEdit.getDataFromFaramValues(faramValues),
+            NumberMatrixEdit.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -188,8 +210,18 @@ export default class NumberMatrixOverview extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (_, faramValues) => {
-        const { title, ...otherProps } = faramValues;
-        this.props.onSave(otherProps, title);
+        const {
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            NumberMatrixEdit.getDataFromFaramValues(faramValues),
+            NumberMatrixEdit.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     };
 
     handleTabSelect = (selectedTab) => {
@@ -229,7 +261,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
                             faramElementName="add-btn"
-                            faramAction={NumberMatrixOverview.addOptionClick}
+                            faramAction={NumberMatrixEdit.addOptionClick}
                             iconName="add"
                             title={buttonLabel}
                             transparent
@@ -253,7 +285,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
 
         const {
             title,
-            onClose,
+            closeModal,
         } = this.props;
 
         const TabsWithButton = this.renderTabsWithButton;
@@ -268,7 +300,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={NumberMatrixOverview.schema}
+                    schema={NumberMatrixEdit.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
@@ -295,7 +327,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={_ts('widgets.editor.numberMatrix', 'cancelConfirmMessage')}
                             skipConfirmation={pristine}
                         >

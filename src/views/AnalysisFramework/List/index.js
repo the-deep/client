@@ -3,6 +3,7 @@ import React from 'react';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
+    fetchWidget,
     widgetListingVisibility,
     widgetList,
     VIEW,
@@ -17,25 +18,67 @@ const listWidgets = widgetList.filter(
 );
 
 const propTypes = {
-    analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    analysisFrameworkId: PropTypes.number.isRequired,
+    widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
+
+    onWidgetSave: PropTypes.func.isRequired,
+    onWidgetChange: PropTypes.func.isRequired,
+    onWidgetCancel: PropTypes.func.isRequired,
+    onWidgetEditClick: PropTypes.func.isRequired,
+    widgetsDisabled: PropTypes.bool,
+    selectedWidgetKey: PropTypes.string,
+    temporaryWidgetState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    widgets: [],
     pending: false,
+    widgetsDisabled: false,
+    selectedWidgetKey: undefined,
+    temporaryWidgetState: undefined,
 };
 
 export default class List extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    renderWidget = (key, widget) => {
+        const {
+            editComponent: Widget,
+        } = fetchWidget(VIEW.list, widget.widgetId);
+        const {
+            onWidgetSave,
+            onWidgetChange,
+            onWidgetCancel,
+        } = this.props;
+        return (
+            <div className={styles.widgetList}>
+                <Widget
+                    widgetKey={widget.key}
+                    title={widget.title}
+                    data={widget.properties.data}
+                    properties={widget.properties}
+
+                    onSave={onWidgetSave}
+                    onChange={onWidgetChange}
+                    closeModal={onWidgetCancel}
+                />
+            </div>
+        );
+    }
+
     render() {
         const {
-            analysisFramework: {
-                id: analysisFrameworkId,
-                widgets,
-            } = {},
+            analysisFrameworkId,
+            widgets,
             pending,
+
+            widgetsDisabled,
+            selectedWidgetKey,
+            temporaryWidgetState,
+
+            onWidgetEditClick,
         } = this.props;
 
         return (
@@ -46,14 +89,21 @@ export default class List extends React.PureComponent {
                         widgets={widgets}
                         widgetType={VIEW.list}
                         analysisFrameworkId={analysisFrameworkId}
+
+                        onWidgetEditClick={onWidgetEditClick}
+                        widgetsDisabled={widgetsDisabled}
                     />
                 </div>
-                <WidgetList
-                    className={styles.widgetList}
-                    widgets={listWidgets}
-                    widgetType={VIEW.list}
-                    analysisFrameworkId={analysisFrameworkId}
-                />
+                { selectedWidgetKey ? (
+                    this.renderWidget(selectedWidgetKey, temporaryWidgetState)
+                ) : (
+                    <WidgetList
+                        className={styles.widgetList}
+                        widgets={listWidgets}
+                        widgetType={VIEW.list}
+                        analysisFrameworkId={analysisFrameworkId}
+                    />
+                )}
             </div>
         );
     }

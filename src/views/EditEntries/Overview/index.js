@@ -301,7 +301,9 @@ export default class Overview extends React.PureComponent {
                         <WidgetFaram
                             className={styles.content}
                             // NOTE: dismount on key change
-                            key={key}
+                            // NOTE: removed dismount on key change behavior
+                            // to persist active UI state
+                            // key={key}
                             entry={entry}
                             pending={pending}
                             widgetType={VIEW.overview}

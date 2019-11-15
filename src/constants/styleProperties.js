@@ -37,6 +37,10 @@ const styleProperties = {
         widthTableCheckbox: '56px',
         widthTableDateTime: '120px',
         widthTableIcon: '56px',
+
+        widthScrollbar: '6px',
+
+        heightMatrixHeader: '20px',
     },
 };
 

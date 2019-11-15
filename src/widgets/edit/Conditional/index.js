@@ -27,8 +27,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     properties: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
@@ -79,6 +81,16 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         },
     }
 
+    static getDataFromFaramValues = (data) => {
+        const {
+            title, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            ...otherValues
+        } = data;
+        return otherValues;
+    };
+
+    static getTitleFromFaramValues = data => data.title;
+
     constructor(props) {
         super(props);
 
@@ -110,6 +122,16 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             pristine: false,
             hasError: faramInfo.hasError,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            ConditionalWidgetEdit.getDataFromFaramValues(faramValues),
+            ConditionalWidgetEdit.getTitleFromFaramValues(faramValues),
+        );
     }
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -119,13 +141,19 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         });
     }
 
-    handleFaramValidationSuccess = (_, values) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const {
-            title,
-            ...otherValues
-        } = values;
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
 
-        this.props.onSave(otherValues, title);
+        onSave(
+            widgetKey,
+            ConditionalWidgetEdit.getDataFromFaramValues(faramValues),
+            ConditionalWidgetEdit.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     }
 
     widgetListRendererParams = (key, widget) => {
@@ -164,7 +192,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         } = this.state;
 
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -264,7 +292,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={cancelConfirmMessage}
                             skipConfirmation={pristine}
                         >

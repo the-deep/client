@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import produce from 'immer';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
@@ -24,6 +26,7 @@ import {
     activeProjectIdFromStateSelector,
 
     setAfViewGeoOptionsAction,
+    updateAfViewWidgetAction,
 
     routeUrlSelector,
 } from '#redux';
@@ -41,9 +44,9 @@ const propTypes = {
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
+    updateWidget: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
     pristine: PropTypes.bool.isRequired,
-
     routeUrl: PropTypes.string.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
 };
@@ -63,6 +66,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setAnalysisFramework: params => dispatch(setAfViewAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setAfViewGeoOptionsAction(params)),
+    updateWidget: params => dispatch(updateAfViewWidgetAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -77,6 +81,9 @@ export default class AnalysisFramework extends React.PureComponent {
             pendingFramework: true,
             pendingGeoOptions: true,
             pendingSaveFramework: false,
+
+            selectedWidgetKey: undefined,
+            temporaryWidgetState: undefined,
         };
 
         this.frameworkGetRequest = new FrameworkGetRequest({
@@ -98,19 +105,71 @@ export default class AnalysisFramework extends React.PureComponent {
         this.views = {
             [VIEW.overview]: {
                 component: Overview,
-                rendererParams: () => ({
-                    analysisFramework: this.props.analysisFramework,
-                    pending: this.state.pendingSaveFramework,
-                }),
+                rendererParams: () => {
+                    const {
+                        analysisFramework: {
+                            id: analysisFrameworkId,
+                            widgets,
+                        } = {},
+                    } = this.props;
+                    const {
+                        pendingSaveFramework,
+                        selectedWidgetKey,
+                        temporaryWidgetState,
+                    } = this.state;
+
+                    return {
+                        analysisFrameworkId,
+                        widgets: this.getPatchedWidgets(
+                            widgets,
+                            selectedWidgetKey,
+                            temporaryWidgetState,
+                        ),
+                        pending: pendingSaveFramework,
+                        onWidgetEditClick: this.handleEditClick,
+                        onWidgetSave: this.handleItemSave,
+                        onWidgetChange: this.handleItemChange,
+                        onWidgetCancel: this.handleItemCancel,
+                        widgetsDisabled: !!selectedWidgetKey,
+                        selectedWidgetKey,
+                        temporaryWidgetState,
+                    };
+                },
                 wrapContainer: true,
                 mount: true,
             },
             [VIEW.list]: {
                 component: List,
-                rendererParams: () => ({
-                    analysisFramework: this.props.analysisFramework,
-                    pending: this.state.pendingSaveFramework,
-                }),
+                rendererParams: () => {
+                    const {
+                        analysisFramework: {
+                            id: analysisFrameworkId,
+                            widgets,
+                        } = {},
+                    } = this.props;
+                    const {
+                        pendingSaveFramework,
+                        selectedWidgetKey,
+                        temporaryWidgetState,
+                    } = this.state;
+
+                    return {
+                        analysisFrameworkId,
+                        widgets: this.getPatchedWidgets(
+                            widgets,
+                            selectedWidgetKey,
+                            temporaryWidgetState,
+                        ),
+                        pending: pendingSaveFramework,
+                        onWidgetEditClick: this.handleEditClick,
+                        onWidgetSave: this.handleItemSave,
+                        onWidgetChange: this.handleItemChange,
+                        onWidgetCancel: this.handleItemCancel,
+                        widgetsDisabled: !!selectedWidgetKey,
+                        selectedWidgetKey,
+                        temporaryWidgetState,
+                    };
+                },
                 wrapContainer: true,
                 mount: true,
             },
@@ -156,6 +215,80 @@ export default class AnalysisFramework extends React.PureComponent {
         this.geoOptionsRequest.stop();
     }
 
+    getPatchedWidgets = memoize((widgets, selectedWidgetKey, temporaryWidgetState) => {
+        if (!selectedWidgetKey || !temporaryWidgetState) {
+            return widgets;
+        }
+        const newWidgets = produce(widgets, (safeWidgets) => {
+            const selectedWidgetIndex = safeWidgets.findIndex(w => w.key === selectedWidgetKey);
+            if (selectedWidgetIndex === -1) {
+                return;
+            }
+            // eslint-disable-next-line no-param-reassign
+            safeWidgets[selectedWidgetIndex].title = temporaryWidgetState.title;
+            // eslint-disable-next-line no-param-reassign
+            safeWidgets[selectedWidgetIndex].properties.data = temporaryWidgetState.properties.data;
+        });
+        return newWidgets;
+    });
+
+    handleEditClick = (key, widget) => {
+        this.setState({
+            selectedWidgetKey: key,
+            temporaryWidgetState: widget,
+        });
+    }
+
+    handleItemChange = (key, data, title) => {
+        const {
+            temporaryWidgetState,
+        } = this.state;
+
+        if (key !== temporaryWidgetState.key) {
+            console.error('Trying to edit temporary state of another widget');
+            return;
+        }
+
+        const newTemporaryWidgetState = produce(temporaryWidgetState, (safeWidgetState) => {
+            // eslint-disable-next-line no-param-reassign
+            safeWidgetState.title = title;
+            // eslint-disable-next-line no-param-reassign
+            safeWidgetState.properties.data = data;
+        });
+
+        this.setState({
+            temporaryWidgetState: newTemporaryWidgetState,
+        });
+    }
+
+    handleItemSave = (key, data, title) => {
+        const {
+            analysisFramework: {
+                id: analysisFrameworkId,
+            } = {},
+            updateWidget,
+        } = this.props;
+
+        this.setState({
+            temporaryWidgetState: undefined,
+            selectedWidgetKey: undefined,
+        });
+
+        updateWidget({
+            analysisFrameworkId,
+            widgetKey: key,
+            widgetData: data,
+            widgetTitle: title,
+        });
+    }
+
+    handleItemCancel = () => {
+        this.setState({
+            temporaryWidgetState: undefined,
+            selectedWidgetKey: undefined,
+        });
+    }
+
     handleSave = () => {
         const {
             analysisFrameworkId,
@@ -184,6 +317,7 @@ export default class AnalysisFramework extends React.PureComponent {
             pendingFramework,
             pendingSaveFramework,
             pendingGeoOptions,
+            selectedWidgetKey,
         } = this.state;
 
         if (pendingFramework || pendingGeoOptions) {
@@ -227,12 +361,15 @@ export default class AnalysisFramework extends React.PureComponent {
                                 useHash
                                 replaceHistory
                                 defaultHash={this.defaultHash}
+                                disabled={!!selectedWidgetKey}
                             />
                             <div className={styles.actionButtons}>
                                 <DangerConfirmButton
                                     confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
                                     onClick={this.handleCancel}
-                                    disabled={pristine || pendingSaveFramework}
+                                    disabled={
+                                        pristine || pendingSaveFramework || !!selectedWidgetKey
+                                    }
                                 >
                                     { _ts('framework', 'cancelButtonTitle') }
                                 </DangerConfirmButton>
@@ -240,7 +377,9 @@ export default class AnalysisFramework extends React.PureComponent {
                                     <SuccessConfirmButton
                                         confirmationMessage={_ts('framework', 'successConfirmDetail', { count: entriesCount })}
                                         onClick={this.handleSave}
-                                        disabled={pristine || pendingSaveFramework}
+                                        disabled={
+                                            pristine || pendingSaveFramework || !!selectedWidgetKey
+                                        }
                                     >
                                         { _ts('framework', 'saveButtonTitle') }
                                     </SuccessConfirmButton>
@@ -269,9 +408,12 @@ export default class AnalysisFramework extends React.PureComponent {
                     message={
                         (location) => {
                             const { routeUrl } = this.props;
+                            const { selectedWidgetKey: widgetKey } = this.state;
                             if (location.pathname === routeUrl) {
                                 return true;
-                            } else if (pristine) {
+                            } else if (pristine && !widgetKey) {
+                                // Don't show prompt if it is pristine and
+                                // there is no selected widget key
                                 return true;
                             }
                             return _ts('common', 'youHaveUnsavedChanges');

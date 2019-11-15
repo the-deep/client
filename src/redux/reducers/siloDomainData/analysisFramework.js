@@ -52,11 +52,15 @@ export const removeAfViewWidgetAction = ({
 
 export const updateAfViewWidgetAction = ({
     analysisFrameworkId,
-    widget,
+    widgetKey,
+    widgetData,
+    widgetTitle,
 }) => ({
     type: AF__VIEW_UPDATE_WIDGET,
     analysisFrameworkId,
-    widget,
+    widgetKey,
+    widgetData,
+    widgetTitle,
 });
 
 export const updateAfViewWidgetLayoutAction = ({
@@ -192,11 +196,17 @@ const afViewRemoveWidget = (state, action) => {
 };
 
 const afViewUpdateWidget = (state, action) => {
-    const { analysisFrameworkId, widget } = action;
+    const {
+        analysisFrameworkId,
+        widgetKey,
+        widgetData,
+        widgetTitle,
+    } = action;
+
     const { analysisFrameworkView: { [analysisFrameworkId]: { data: analysisFramework } } } = state;
 
     const existingWidgets = analysisFramework.widgets;
-    const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widget.key);
+    const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widgetKey);
 
     if (widgetIndex === -1) {
         return state;
@@ -207,7 +217,19 @@ const afViewUpdateWidget = (state, action) => {
             [analysisFrameworkId]: {
                 data: {
                     widgets: {
-                        [widgetIndex]: { $merge: widget },
+                        [widgetIndex]: {
+                            title: { $set: widgetTitle },
+                            $if: [
+                                !!widgetData,
+                                {
+                                    properties: { $auto: {
+                                        data: { $auto: {
+                                            $merge: widgetData,
+                                        } },
+                                    } },
+                                },
+                            ],
+                        },
                     },
                 },
                 pristine: { $set: false },

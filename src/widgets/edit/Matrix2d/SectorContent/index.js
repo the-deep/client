@@ -1,12 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FaramList, FaramGroup } from '@togglecorp/faram';
-import { randomString } from '@togglecorp/fujs';
+import {
+    FaramList,
+    FaramGroup,
+    FaramOutputElement,
+} from '@togglecorp/faram';
+import {
+    randomString,
+    _cs,
+} from '@togglecorp/fujs';
 
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
+import TextArea from '#rsci/TextArea';
+import Button from '#rsca/Button';
+import Label from '#rsci/Label';
+
+import OrientationInput from '#components/general/OrientationInput';
 
 import _ts from '#ts';
 
@@ -20,11 +32,18 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
+    onBackButtonClick: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
 };
+
+const TextOutput = FaramOutputElement(props => (
+    <div className={props.className}>
+        { props.value }
+    </div>
+));
 
 export default class SectorContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -44,6 +63,7 @@ export default class SectorContent extends React.PureComponent {
 
     static rendererParams = (key, elem, i) => ({
         index: i,
+        className: styles.subSectorContent,
     })
 
     static rowsModifier = rows => rows.map(r => ({
@@ -58,27 +78,60 @@ export default class SectorContent extends React.PureComponent {
         const {
             index,
             className,
+            onBackButtonClick,
         } = this.props;
 
         return (
-            <div className={className}>
+            <div className={_cs(styles.sectorContent, className)}>
                 <FaramGroup faramElementName={String(index)}>
+                    <header className={styles.header}>
+                        <Button
+                            transparent
+                            onClick={onBackButtonClick}
+                            className={styles.backButton}
+                            iconName="back"
+                        />
+                        <TextOutput
+                            className={styles.title}
+                            faramElementName="title"
+                        />
+                    </header>
                     <NonFieldErrors
                         className={styles.error}
                         faramElement
                     />
                     <div className={styles.editSector}>
-                        <TextInput
-                            className={styles.input}
-                            faramElementName="title"
-                            label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
-                            autoFocus
-                        />
-                        <TextInput
-                            className={styles.input}
-                            faramElementName="tooltip"
-                            label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                        />
+                        <div className={styles.top}>
+                            <TextInput
+                                className={styles.titleInput}
+                                faramElementName="title"
+                                label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
+                                autoFocus
+                            />
+                            <OrientationInput
+                                className={styles.orientationInput}
+                                faramElementName="orientation"
+                                persistantHintAndError={false}
+                            />
+                            <TextInput
+                                type="number"
+                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
+                                className={styles.fontSizeInput}
+                                faramElementName="fontSize"
+                            />
+                            <TextInput
+                                type="number"
+                                label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
+                                className={styles.widthInput}
+                                faramElementName="width"
+                            />
+                        </div>
+                        <div className={styles.bottom}>
+                            <TextArea
+                                faramElementName="tooltip"
+                                label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
+                            />
+                        </div>
                     </div>
                     <FaramList
                         faramElementName="subsectors"
@@ -89,55 +142,55 @@ export default class SectorContent extends React.PureComponent {
                             faramElement
                         />
                     </FaramList>
-                    <header className={styles.header}>
-                        <h4>
-                            {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
-                        </h4>
-                        <div className={styles.buttonContainer} >
-                            <h5>
-                                {_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
-                            </h5>
-                            <GeoLink
-                                faramElementName="subsectors"
-                                titleSelector={SectorContent.rowTitleSelector}
-                                lastItemTitle="subcells"
-                                dataModifier={SectorContent.rowsModifier}
-                            />
-                            <LinkWidgetModalButton
-                                faramElementName="subsectors"
-                                lastItemTitle="subsectors"
-                                widgetKey={this.props.widgetKey}
-                                titleSelector={SectorContent.rowTitleSelector}
-                                dataModifier={SectorContent.rowsModifier}
-                            />
-                            <FaramList
-                                faramElementName="subsectors"
-                                keySelector={SectorContent.keySelector}
-                            >
-                                <AccentButton
-                                    faramElementName="add-btn"
-                                    faramAction={SectorContent.addSubsectorClick}
-                                    iconName="add"
-                                    transparent
+                    <div className={styles.subSectorListContainer}>
+                        <header className={styles.header}>
+                            <h4 className={styles.heading}>
+                                {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
+                            </h4>
+                            <div className={styles.right} >
+                                <Label text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')} />
+                                <GeoLink
+                                    faramElementName="subsectors"
+                                    titleSelector={SectorContent.rowTitleSelector}
+                                    lastItemTitle="subcells"
+                                    dataModifier={SectorContent.rowsModifier}
+                                />
+                                <LinkWidgetModalButton
+                                    faramElementName="subsectors"
+                                    lastItemTitle="subsectors"
+                                    widgetKey={this.props.widgetKey}
+                                    titleSelector={SectorContent.rowTitleSelector}
+                                    dataModifier={SectorContent.rowsModifier}
+                                />
+                                <FaramList
+                                    faramElementName="subsectors"
+                                    keySelector={SectorContent.keySelector}
                                 >
-                                    {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
-                                </AccentButton>
-                            </FaramList>
-                        </div>
-                    </header>
-                    <FaramList
-                        faramElementName="subsectors"
-                        keySelector={SectorContent.keySelector}
-                    >
-                        <SortableListView
-                            faramElement
-                            className={styles.cellList}
-                            dragHandleClassName={styles.dragHandle}
-                            itemClassName={styles.item}
-                            rendererParams={SectorContent.rendererParams}
-                            renderer={SubsectorRow}
-                        />
-                    </FaramList>
+                                    <AccentButton
+                                        faramElementName="add-btn"
+                                        faramAction={SectorContent.addSubsectorClick}
+                                        iconName="add"
+                                        transparent
+                                    >
+                                        {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
+                                    </AccentButton>
+                                </FaramList>
+                            </div>
+                        </header>
+                        <FaramList
+                            faramElementName="subsectors"
+                            keySelector={SectorContent.keySelector}
+                        >
+                            <SortableListView
+                                faramElement
+                                className={styles.cellList}
+                                dragHandleClassName={styles.dragHandle}
+                                itemClassName={styles.item}
+                                rendererParams={SectorContent.rendererParams}
+                                renderer={SubsectorRow}
+                            />
+                        </FaramList>
+                    </div>
                 </FaramGroup>
             </div>
         );

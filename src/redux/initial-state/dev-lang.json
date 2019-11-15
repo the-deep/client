@@ -1030,7 +1030,13 @@
         "-3697040": "Entries visualization",
         "-9524324": "Failed to load entries visualization data. ",
         "-58469334": "Select all",
-        "-578569": "Unselect all"
+        "-578569": "Unselect all",
+        "-97095875": "Font size",
+        "-8448911": "Height",
+        "-45997162": "Width",
+        "-73458468": "Subtitle column width",
+        "-92468204": "Title row height",
+        "-84669549": "Title column width"
     },
     "links": {
         "browserExtension": {
@@ -1134,7 +1140,8 @@
             "cancelConfirmMessage": -14675920
         },
         "widgets.tagging.matrix2d": {
-            "subsectorsLabel": 7039
+            "subsectorsLabel": 7039,
+            "goBackButtonLabel": -1045504
         },
         "api": {
             "loadingLabel": 7038,
@@ -2563,7 +2570,13 @@
             "addDimensionsTitle": 789,
             "addSectorsTitle": -43570294,
             "addSubDimensionsTitle": 788,
-            "addSubSectorTitle": -59828541
+            "addSubSectorTitle": -59828541,
+            "fontSizeInputLabel": -97095875,
+            "heightInputLabel": -8448911,
+            "widthInputLabel": -45997162,
+            "subtitleColumnWidthLabel": -73458468,
+            "titleColumnWidthLabel": -84669549,
+            "titleRowHeightLabel": -92468204
         },
         "editEntry.list": {
             "noEntriesText": 543

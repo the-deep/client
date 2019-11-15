@@ -18,8 +18,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
+    widgetKey: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -27,7 +29,7 @@ const defaultProps = {
     data: {},
 };
 
-export default class DateFrameworkList extends React.PureComponent {
+export default class DateWidgetEdit extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -37,6 +39,16 @@ export default class DateFrameworkList extends React.PureComponent {
             informationDateSelected: [],
         },
     };
+
+    static getDataFromFaramValues = (data) => {
+        const {
+            title, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            ...otherValues
+        } = data;
+        return otherValues;
+    };
+
+    static getTitleFromFaramValues = data => data.title;
 
     constructor(props) {
         super(props);
@@ -64,6 +76,16 @@ export default class DateFrameworkList extends React.PureComponent {
             faramErrors,
             pristine: true,
         });
+
+        const {
+            widgetKey,
+            onChange,
+        } = this.props;
+        onChange(
+            widgetKey,
+            DateWidgetEdit.getDataFromFaramValues(faramValues),
+            DateWidgetEdit.getTitleFromFaramValues(faramValues),
+        );
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -75,10 +97,17 @@ export default class DateFrameworkList extends React.PureComponent {
 
     handleFaramValidationSuccess = (_, faramValues) => {
         const {
-            title,
-            ...otherProps
-        } = faramValues;
-        this.props.onSave(otherProps, title);
+            onSave,
+            closeModal,
+            widgetKey,
+        } = this.props;
+
+        onSave(
+            widgetKey,
+            DateWidgetEdit.getDataFromFaramValues(faramValues),
+            DateWidgetEdit.getTitleFromFaramValues(faramValues),
+        );
+        closeModal();
     };
 
     render() {
@@ -88,7 +117,7 @@ export default class DateFrameworkList extends React.PureComponent {
             pristine,
         } = this.state;
         const {
-            onClose,
+            closeModal,
             title,
         } = this.props;
 
@@ -105,7 +134,7 @@ export default class DateFrameworkList extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={DateFrameworkList.schema}
+                    schema={DateWidgetEdit.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
@@ -128,7 +157,7 @@ export default class DateFrameworkList extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerConfirmButton
-                            onClick={onClose}
+                            onClick={closeModal}
                             confirmationMessage={cancelConfirmMessage}
                             skipConfirmation={pristine}
                         >

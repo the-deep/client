@@ -1,111 +1,70 @@
-:root {
-    --height-edit-modal: 70vh;
-}
-
-.item {
+.matrix-two-d-edit-widget {
     display: flex;
-    align-items: stretch;
-    border-top: var(--width-separator-thin) solid var(--color-separator);
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    flex-direction: column;
+    border-right: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
-    padding: 0;
-
-    .drag-handle {
-        flex-shrink: 0;
-        background-color: var(--color-foreground);
-        cursor: move;
-        padding: var(--spacing-small);
-
-        &.active {
-            background-color: var(--color-background-accent-hint);
-        }
-    }
-}
-
-.edit-modal {
-    width: var(--width-modal-large);
-    height: var(--height-edit-modal);
     overflow: auto;
 
-    .form {
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--spacing-small) 0;
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 var(--spacing-medium);
+        }
+
+        .actions {
+            flex-shrink: 0;
+
+            .button {
+                margin-right: var(--spacing-medium);
+            }
+        }
+    }
+
+    .content {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        flex-grow: 1;
         overflow: auto;
 
-        .body {
+        .non-field-errors {
+            flex-shrink: 0;
+        }
+
+        .title-input {
+            flex-shrink: 0;
+            margin: var(--spacing-medium);
+        }
+
+        .meta-inputs {
             display: flex;
-            flex-direction: column;
+            flex-shrink: 0;
+            padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
+
+            .title-column-width-input {
+                margin: 0 var(--spacing-small);
+            }
+
+            .sub-title-column-width-input {
+                margin: 0 var(--spacing-small);
+            }
+
+            .title-row-height-input {
+                margin: 0 var(--spacing-small);
+            }
+        }
+
+        .tabs {
+            flex-shrink: 0;
+        }
+
+        .tab-content {
             flex-grow: 1;
-            padding: 0;
             overflow: auto;
-
-            .error {
-                flex-shrink: 0;
-            }
-
-            .title-input {
-                flex-shrink: 0;
-                padding: 0 var(--spacing-small);
-            }
-
-            .tabs-container {
-                display: flex;
-                flex-direction: column;
-                flex-shrink: 0;
-                overflow: auto;
-
-                .tabs {
-                    flex-grow: 1;
-
-                    .button-container {
-                        display: flex;
-                        align-items: center;
-
-                        h5 {
-                            padding-right: var(--spacing-small);
-
-                            &:after {
-                                content: ':';
-                            }
-                        }
-                    }
-                }
-            }
-
-            .modal-unit-container {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                overflow: auto;
-
-                .error {
-                    flex-shrink: 0;
-                }
-
-                .panels {
-                    display: flex;
-                    flex-grow: 1;
-                    overflow: auto;
-
-                    .left-panel {
-                        flex-basis: 30%;
-                        border-right: var(--width-separator-thin) solid var(--color-separator);
-                        overflow: auto;
-
-                        .item {
-                            border-top: 0;
-                        }
-                    }
-
-                    .right-panel {
-                        display: flex;
-                        flex-basis: 70%;
-                        flex-direction: column;
-                        overflow: auto;
-                    }
-                }
-            }
         }
     }
 }
