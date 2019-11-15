@@ -47,14 +47,12 @@ interface State {
 
 export default class Column extends React.PureComponent<Props, State> {
     private sectorItemRendererParams = (key: string, elem: object, i: number) => ({
+        sectorKey: key,
         className: styles.sectorContent,
         data: elem,
         faramElementName: String(i),
         index: i,
-        onEditButtonClick: () => {
-            this.props.onSectorEditButtonClick(key);
-        },
-        keySelector: this.props.keySelector,
+        onEditButtonClick: this.props.onSectorEditButtonClick,
     })
 
     public render() {

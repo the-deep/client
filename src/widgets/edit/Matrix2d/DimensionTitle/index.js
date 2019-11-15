@@ -15,6 +15,7 @@ const propTypes = {
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     index: PropTypes.number.isRequired,
     hasError: PropTypes.bool,
+    dimensionKey: PropTypes.string.isRequired,
     onEditButtonClick: PropTypes.func.isRequired,
 };
 
@@ -34,6 +35,15 @@ export default class DimensionTitle extends React.PureComponent {
         newOptions.splice(index, 1);
 
         return newOptions;
+    }
+
+    handleEditButtonClick = () => {
+        const {
+            onEditButtonClick,
+            dimensionKey,
+        } = this.props;
+
+        onEditButtonClick(dimensionKey);
     }
 
     render() {

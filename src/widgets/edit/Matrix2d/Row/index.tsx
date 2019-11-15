@@ -48,14 +48,12 @@ interface State {
 
 export default class Row extends React.PureComponent<Props, State> {
     private dimensionItemRendererParams = (key: string, elem: object, i: number) => ({
+        dimensionKey: key,
         className: styles.dimensionContent,
         data: elem,
         faramElementName: String(i),
         index: i,
-        keySelector: this.props.keySelector,
-        onEditButtonClick: () => {
-            this.props.onDimensionEditButtonClick(key);
-        },
+        onEditButtonClick: this.props.onDimensionEditButtonClick,
     })
 
     public render() {

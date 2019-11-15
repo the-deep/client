@@ -16,6 +16,7 @@ const propTypes = {
     hasError: PropTypes.bool,
     onEditButtonClick: PropTypes.func.isRequired,
     className: PropTypes.string,
+    sectorKey: PropTypes.string.isRequired,
 };
 const defaultProps = {
     className: undefined,
@@ -35,12 +36,20 @@ export default class SectorTitle extends React.PureComponent {
         return newOptions;
     }
 
+    handleEditButtonClick = () => {
+        const {
+            onEditButtonClick,
+            sectorKey,
+        } = this.props;
+
+        onEditButtonClick(sectorKey);
+    }
+
     render() {
         const {
             index,
             data: { title },
             hasError,
-            onEditButtonClick,
             className,
         } = this.props;
 
@@ -57,7 +66,7 @@ export default class SectorTitle extends React.PureComponent {
                 <Button
                     transparent
                     className={styles.editButton}
-                    onClick={onEditButtonClick}
+                    onClick={this.handleEditButtonClick}
                     iconName="edit"
                 />
                 <DangerButton
