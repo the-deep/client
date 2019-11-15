@@ -228,7 +228,7 @@ export default class DataSeries extends React.PureComponent {
         series.forEach((datum) => {
             const frequency = frequencySelector(datum);
             const value = valueSelector(datum);
-            for (let i = 0; i <= frequency; i += 1) {
+            for (let i = 0; i < frequency; i += 1) {
                 newSeries.push(value);
             }
         });
@@ -328,6 +328,7 @@ export default class DataSeries extends React.PureComponent {
                         } = {},
                     } = {},
                 } = this.props;
+
                 return {
                     className: styles.horizontalBarChart,
                     margins: isExpandedView ? chartMargins : chartMarginsSmall,
