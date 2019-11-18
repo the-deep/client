@@ -19,7 +19,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
-import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
+import SelectInputWithList from '#rsci/SelectInputWithList';
 
 import {
     activeProjectIdFromStateSelector,
@@ -111,6 +111,8 @@ const requestOptions = {
         },
     },
 };
+
+const MAX_DISPLAY_OPTIONS = 50;
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
@@ -336,7 +338,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 />
                 {hasEmmLeads && (
                     <React.Fragment>
-                        <SearchMultiSelectInput
+                        <SelectInputWithList
                             faramElementName="emm_risk_factors"
                             keySelector={FilterLeadsForm.emmRiskFactorsKeySelector}
                             label={_ts('leads', 'filterEmmRiskFactors')}
@@ -344,10 +346,12 @@ export default class FilterLeadsForm extends React.PureComponent {
                             options={emmRiskFactors}
                             placeholder={_ts('leads', 'placeholderAny')}
                             showHintAndError={false}
+                            listType="inline"
                             showLabel
                             className={styles.leadsFilter}
+                            maxDisplayOptions={MAX_DISPLAY_OPTIONS}
                         />
-                        <SearchMultiSelectInput
+                        <SelectInputWithList
                             faramElementName="emm_keywords"
                             keySelector={FilterLeadsForm.emmTriggerKeySelector}
                             label={_ts('leads', 'filterEmmTriggers')}
@@ -355,10 +359,12 @@ export default class FilterLeadsForm extends React.PureComponent {
                             options={emmKeywords}
                             placeholder={_ts('leads', 'placeholderAny')}
                             showHintAndError={false}
+                            listType="inline"
                             showLabel
                             className={styles.leadsFilter}
+                            maxDisplayOptions={MAX_DISPLAY_OPTIONS}
                         />
-                        <SearchMultiSelectInput
+                        <SelectInputWithList
                             faramElementName="emm_entities"
                             keySelector={FilterLeadsForm.emmEntitiesKeySelector}
                             label={_ts('leads', 'filterEmmEntities')}
@@ -367,7 +373,9 @@ export default class FilterLeadsForm extends React.PureComponent {
                             placeholder={_ts('leads', 'placeholderAny')}
                             showHintAndError={false}
                             showLabel
+                            listType="inline"
                             className={styles.leadsFilter}
+                            maxDisplayOptions={MAX_DISPLAY_OPTIONS}
                         />
                     </React.Fragment>
                 )}
