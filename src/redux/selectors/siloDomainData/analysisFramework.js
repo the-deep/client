@@ -57,28 +57,25 @@ export const afViewWidgetsForVizSelector = createSelector(
         const allWidgets = getAllWidgets(widgets);
 
 
-        const selectedWidgets = [];
+        const selectedWidgets = {};
         Object.entries(statsConfig).forEach(([key, value]) => {
             const { pk, isConditionalWidget } = value;
 
             if (isConditionalWidget) {
-                const { selectors } = value;
-                const widgetIndex = selectors[1];
-                const newId = `${pk}-${widgetIndex}`;
-                const conditionalWidget = allWidgets.find(widget => widget.id === newId);
+                const { widgetKey } = value;
+                const conditionalWidget = allWidgets.find(widget => widget.id === widgetKey);
                 if (conditionalWidget) {
                     const { id } = conditionalWidget;
-                    selectedWidgets.push({ [key]: id });
+                    selectedWidgets[key] = id;
                 }
             } else {
                 const widget = allWidgets.find(w => w.id === pk);
                 if (widget) {
                     const { id } = widget;
-                    selectedWidgets.push({ [key]: id });
+                    selectedWidgets[key] = id;
                 }
             }
         });
-
-        return Object.assign({}, ...selectedWidgets);
+        return selectedWidgets;
     },
 );

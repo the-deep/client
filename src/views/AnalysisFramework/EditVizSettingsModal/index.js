@@ -154,7 +154,6 @@ export default class EditVizSettingsModal extends React.PureComponent {
             if (widget && widget.isConditional) {
                 const {
                     conditionalId,
-                    widgetIndex,
                     widgetId,
                     key: widgetKey,
                 } = widget;
@@ -162,11 +161,6 @@ export default class EditVizSettingsModal extends React.PureComponent {
                 return ({
                     [key]: {
                         pk: conditionalId,
-                        selectors: [
-                            'widgets',
-                            widgetIndex,
-                            'widget',
-                        ],
                         widgetKey,
                         widgetType: widgetId,
                         isConditionalWidget: true,

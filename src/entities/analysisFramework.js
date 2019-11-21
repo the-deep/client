@@ -7,14 +7,13 @@ export const getAllWidgets = (widgets = []) => {
             properties: { data: { widgets: widgetsInsideConditional = [] } = {} } = {},
         } = conditional;
 
-        const widgetsWithId = widgetsInsideConditional.map(({ widget }, index) => (
+        const widgetsWithId = widgetsInsideConditional.map(({ widget }) => (
             {
-                id: `${conditional.id}-${index}`,
+                id: widget.key,
                 ...widget,
-                title: `${conditional.title} > ${widget.title}`,
+                title: `${conditional.title} › ${widget.title}`,
                 isConditional: true,
                 conditionalId: conditional.id,
-                widgetIndex: index,
             }
         ));
 
