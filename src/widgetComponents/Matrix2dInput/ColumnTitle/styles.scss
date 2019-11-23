@@ -15,4 +15,11 @@
             overflow-wrap: anywhere;
         }
     }
+
+    &.clickable {
+        &:hover {
+            background-color: var(--color-foreground-alt);
+            cursor: pointer;
+        }
+    }
 }

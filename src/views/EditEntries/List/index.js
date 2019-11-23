@@ -59,6 +59,24 @@ export default class Listing extends React.PureComponent {
         window.addEventListener('scroll', this.handleScroll, true);
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.scrollTop && prevProps.hash !== this.props.hash && this.props.hash === '#/list') {
+            const list = document.getElementsByClassName(styles.list)[0];
+
+            if (list) {
+                const scrollContainer = list.getElementsByClassName('virtualized-list-view')[0];
+
+                if (scrollContainer) {
+                    const lastScrollTop = this.scrollTop;
+
+                    setTimeout(() => {
+                        scrollContainer.scrollTop = lastScrollTop;
+                    }, 1000);
+                }
+            }
+        }
+    }
+
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
@@ -66,6 +84,8 @@ export default class Listing extends React.PureComponent {
     keySelector = entry => entryAccessor.key(entry)
 
     handleScroll = (e) => {
+        this.scrollTop = e.target.scrollTop;
+
         const headers = e.target.getElementsByClassName('widget-container-header');
         for (let i = 0; i < headers.length; i += 1) {
             headers[i].style.transform = `translateX(${e.target.scrollLeft}px)`;
@@ -95,6 +115,7 @@ export default class Listing extends React.PureComponent {
             ...otherProps,
         };
     }
+
 
     render() {
         const { entries } = this.props;

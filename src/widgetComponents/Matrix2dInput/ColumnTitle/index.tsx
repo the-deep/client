@@ -83,6 +83,7 @@ export default class ColumnTitle extends React.PureComponent<Props, State> {
             tooltip,
             width,
             className,
+            clickable,
         } = this.props;
 
         const {
@@ -92,7 +93,12 @@ export default class ColumnTitle extends React.PureComponent<Props, State> {
 
         return (
             <th
-                className={_cs(className, styles.columnTitleTh, thClassName)}
+                className={_cs(
+                    className,
+                    styles.columnTitleTh,
+                    thClassName,
+                    clickable && styles.clickable,
+                )}
                 title={tooltip}
                 style={thStyle}
                 onClick={this.handleClick}

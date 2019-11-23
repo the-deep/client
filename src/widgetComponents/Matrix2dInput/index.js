@@ -6,8 +6,7 @@ import memoize from 'memoize-one';
 import produce from 'immer';
 
 import List from '#rscv/List';
-import Button from '#rsca/Button';
-import _ts from '#ts';
+import Icon from '#rscg/Icon';
 
 import ColumnTitle from './ColumnTitle';
 import SubcolumnTitle from './SubcolumnTitle';
@@ -133,6 +132,7 @@ export default class Matrix2dInput extends React.PureComponent {
 
     columTitleRendererParams = (key, sector) => {
         const { meta } = this.props;
+        const clickable = sector.subsectors && sector.subsectors.length;
 
         return {
             className: styles.sectorTitle,
@@ -143,7 +143,8 @@ export default class Matrix2dInput extends React.PureComponent {
             orientation: (!sector.orientation || sector.orientation === 'default') ?
                 meta.titleRowOrientation : sector.orientation,
             sectorKey: key,
-            onClick: this.handleSectorTitleClick,
+            clickable,
+            onClick: clickable ? this.handleSectorTitleClick : undefined,
         };
     }
 
@@ -205,33 +206,24 @@ export default class Matrix2dInput extends React.PureComponent {
         const activeSector = this.getActiveSector(sectors, activeSectorKey);
         const subsectors = activeSector ? activeSector.subsectors : [];
 
-        /*
-            <div className={styles.matrixTwoDInput}>
-                { activeSectorKey ? (
-                    <div className={styles.header}>
-                        <Button
-                            className={styles.button}
-                            onClick={this.handleActiveSectorTitleClick}
-                            transparent
-                            smallVerticalPadding
-                            iconName="back"
-                        >
-                            {_ts('widgets.tagging.matrix2d', 'goBackButtonLabel')}
-                        </Button>
-                        <div className={styles.subTitle}>
-                            { activeSector.title }
-                        </div>
-                    </div>
-                ) : (
-                    <div className={_cs(styles.header, styles.emptyHeader)} />
-                )}
-            </div>
-        */
         return (
             <div className={_cs(className, styles.matrixTwoDInput)}>
                 <table className={styles.table}>
                     { activeSectorKey ? (
                         <thead>
+                            <tr>
+                                <th
+                                    onClick={this.handleActiveSectorTitleClick}
+                                    colSpan={subsectors.length + 2}
+                                    className={styles.activeSectorHeader}
+                                >
+                                    <Icon
+                                        className={styles.backIcon}
+                                        name="back"
+                                    />
+                                    { activeSector.title }
+                                </th>
+                            </tr>
                             <tr style={headRowStyle}>
                                 <th style={titleColumnStyle}>
                                     <div className={styles.hidden}>
@@ -253,6 +245,16 @@ export default class Matrix2dInput extends React.PureComponent {
                         </thead>
                     ) : (
                         <thead>
+                            <tr>
+                                <th
+                                    className={styles.topTh}
+                                    colSpan={sectors.length + 2}
+                                >
+                                    <div className={styles.hidden}>
+                                        -
+                                    </div>
+                                </th>
+                            </tr>
                             <tr style={headRowStyle}>
                                 <th style={titleColumnStyle}>
                                     <div className={styles.hidden}>
