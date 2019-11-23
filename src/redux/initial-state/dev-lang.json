@@ -1036,7 +1036,10 @@
         "-45997162": "Width",
         "-73458468": "Subtitle column width",
         "-92468204": "Title row height",
-        "-84669549": "Title column width"
+        "-84669549": "Title column width",
+        "-9443338": "Horizontal",
+        "-33841680": "Vertical",
+        "-88566646": "Matrix Orientation"
     },
     "links": {
         "browserExtension": {
@@ -2538,7 +2541,10 @@
             "cancelConfirmMessage": -14675920,
             "addRowsFromTitle": -39845084,
             "addCellsFromTitle": -50010134,
-            "unnamedCellTooltip": 733
+            "unnamedCellTooltip": 733,
+            "horizontalOrientationLabel": -9443338,
+            "matrixOrientationTitle": -88566646,
+            "verticalOrientationLabel": -33841680
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 
@@ -12,6 +13,7 @@ const propTypes = {
     cells: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onCellClick: PropTypes.func,
     onCellDrop: PropTypes.func,
+    orientation: PropTypes.string,
     selectedCells: PropTypes.objectOf(PropTypes.bool),
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -20,6 +22,7 @@ const propTypes = {
 const defaultProps = {
     title: '',
     tooltip: '',
+    orientation: 'horizontal',
     onCellClick: undefined,
     onCellDrop: undefined,
     selectedCells: {},
@@ -47,11 +50,17 @@ export default class Matrix1dRow extends React.PureComponent {
         const {
             tooltip,
             title,
+            orientation,
             cells,
         } = this.props;
 
         return (
-            <div className={styles.matrixRow}>
+            <div
+                className={_cs(
+                    styles.matrixRow,
+                    orientation === 'vertical' && styles.verticalRow,
+                )}
+            >
                 <div
                     className={styles.title}
                     title={tooltip}

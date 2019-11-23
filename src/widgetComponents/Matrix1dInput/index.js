@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 import update from '#rsu/immutable-update';
@@ -12,6 +13,7 @@ const propTypes = {
     className: PropTypes.string,
     options: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    meta: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
@@ -20,6 +22,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     options: [],
+    meta: {},
     value: undefined,
     disabled: false,
     readOnly: false,
@@ -34,7 +37,10 @@ export default class Matrix1dInput extends React.PureComponent {
     static rowKeyExtractor = d => d.key;
 
     handleCellClick = (key, cellKey) => {
-        const { value } = this.props;
+        const {
+            value,
+            onChange,
+        } = this.props;
         const settings = { $auto: {
             [key]: { $auto: {
                 [cellKey]: { $apply: item => !item },
@@ -42,12 +48,17 @@ export default class Matrix1dInput extends React.PureComponent {
         } };
 
         const newValue = update(value, settings);
-        this.props.onChange(newValue);
+        onChange(newValue);
     }
 
     handleCellDrop = (key, cellKey, droppedData) => {
-        const { type, data } = droppedData;
-        this.props.onChange(
+        const { onChange } = this.props;
+        const {
+            type,
+            data,
+        } = droppedData;
+
+        onChange(
             undefined,
             {
                 action: 'newEntry',
@@ -63,27 +74,50 @@ export default class Matrix1dInput extends React.PureComponent {
     }
 
     // TODO: memoize this later
-    rendererParams = (key, row) => ({
-        title: row.title,
-        tooltip: row.tooltip,
-        cells: row.cells,
-        // FIXME: send rowKey and cellKey as props
-        onCellClick: cellKey => this.handleCellClick(key, cellKey),
-        onCellDrop: (cellKey, droppedData) => this.handleCellDrop(key, cellKey, droppedData),
-        selectedCells: this.props.value ? this.props.value[key] : undefined,
-        disabled: this.props.disabled,
-        readOnly: this.props.readOnly,
-    })
+    rendererParams = (key, row) => {
+        const {
+            value,
+            disabled,
+            meta: { orientation },
+            readOnly,
+        } = this.props;
+
+        const {
+            title,
+            tooltip,
+            cells,
+        } = row;
+
+        return ({
+            title,
+            tooltip,
+            cells,
+            orientation,
+            // FIXME: send rowKey and cellKey as props
+            onCellClick: cellKey => this.handleCellClick(key, cellKey),
+            onCellDrop: (cellKey, droppedData) => this.handleCellDrop(key, cellKey, droppedData),
+            selectedCells: value ? value[key] : undefined,
+            disabled,
+            readOnly,
+        });
+    }
 
     render() {
         const {
             options,
+            meta: {
+                orientation,
+            },
             className,
         } = this.props;
 
         return (
             <ListView
-                className={`${styles.overview} ${className}`}
+                className={_cs(
+                    styles.overview,
+                    className,
+                    orientation === 'vertical' && styles.vertical,
+                )}
                 data={options}
                 keySelector={Matrix1dInput.rowKeyExtractor}
                 renderer={Row}
