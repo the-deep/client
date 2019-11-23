@@ -64,12 +64,14 @@ const headers = [
         key: 'leads_activity',
         title: _ts('discoverProjects.table', 'leadsActivityTitle'),
         order: 11,
+        defaultSortOrder: 'dsc',
         sortable: true,
     },
     {
         key: 'entries_activity',
         title: _ts('discoverProjects.table', 'entriesActivityTitle'),
         order: 12,
+        defaultSortOrder: 'dsc',
         sortable: true,
     },
     {
