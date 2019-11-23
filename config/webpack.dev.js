@@ -26,8 +26,8 @@ module.exports = (env) => {
         output: {
             path: appDist,
             publicPath: '/',
-            chunkFilename: 'js/[name].[chunkhash].js',
-            filename: 'js/[name].[chunkhash].js',
+            chunkFilename: 'js/[name].[hash].js',
+            filename: 'js/[name].[hash].js',
             sourceMapFilename: 'sourcemaps/[file].map',
         },
 
@@ -63,6 +63,7 @@ module.exports = (env) => {
             },
             // Don't show warnings in browser console
             clientLogLevel: 'none',
+            hot: true,
         },
 
         module: {
@@ -164,6 +165,7 @@ module.exports = (env) => {
                 `,
                 messageAfter: 'Done.',
             }),
+            new webpack.HotModuleReplacementPlugin(),
         ],
     };
 };
