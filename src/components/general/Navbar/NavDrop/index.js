@@ -5,7 +5,10 @@ import {
     withRouter,
     Link,
 } from 'react-router-dom';
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    _cs,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import List from '#rscv/List';
@@ -193,7 +196,7 @@ export default class NavDrop extends React.PureComponent {
 
         return (
             <DropdownMenu
-                className={className}
+                className={_cs(styles.dropdownMenu, className)}
                 leftComponent={
                     <DisplayPicture
                         className={styles.displayPicture}

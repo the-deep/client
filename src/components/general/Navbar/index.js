@@ -299,19 +299,21 @@ export default class Navbar extends React.PureComponent {
                 <Cloak
                     {...projectSelectInputLink}
                     render={
-                        <SelectInput
-                            hideClearButton
-                            keySelector={Navbar.projectKeySelector}
-                            labelSelector={Navbar.projectLabelSelector}
-                            optionLabelSelector={this.optionLabelSelector}
-                            onChange={this.handleProjectChange}
-                            options={userProjects}
-                            placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                            showHintAndError={false}
-                            showLabel={false}
-                            className={styles.projectSelectInput}
-                            value={activeProject}
-                        />
+                        <div className={styles.projectSelectInputWrapper}>
+                            <SelectInput
+                                hideClearButton
+                                keySelector={Navbar.projectKeySelector}
+                                labelSelector={Navbar.projectLabelSelector}
+                                optionLabelSelector={this.optionLabelSelector}
+                                onChange={this.handleProjectChange}
+                                options={userProjects}
+                                placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                                showHintAndError={false}
+                                showLabel={false}
+                                className={styles.projectSelectInput}
+                                value={activeProject}
+                            />
+                        </div>
                     }
                 />
 
@@ -321,20 +323,23 @@ export default class Navbar extends React.PureComponent {
                     projectId={activeProject}
                     countryId={activeCountry}
                 />
-                <HelpLink
-                    className={styles.helpLink}
-                    currentPath={this.currentPath}
-                />
-                <Community className={styles.communityDropdown} />
-                <Notifica className={styles.notificationDropdown} />
-                <Cloak
-                    hide={Navbar.shouldHideThemeMenu}
-                    render={
-                        <ThemeMenu
-                            className={styles.themeMenu}
-                        />
-                    }
-                />
+
+                <div className={styles.actions}>
+                    <HelpLink
+                        className={styles.helpLink}
+                        currentPath={this.currentPath}
+                    />
+                    <Community className={styles.communityDropdown} />
+                    <Notifica className={styles.notificationDropdown} />
+                    <Cloak
+                        hide={Navbar.shouldHideThemeMenu}
+                        render={
+                            <ThemeMenu
+                                className={styles.themeMenu}
+                            />
+                        }
+                    />
+                </div>
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}

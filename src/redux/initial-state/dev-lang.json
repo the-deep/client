@@ -1049,7 +1049,11 @@
         "-40962553": "Matrix 1D widget",
         "-94382324": "Matrix 2D widget",
         "-71212616": "Affected groups widget",
-        "-42014525": "Edit visualization settings"
+        "-42014525": "Edit visualization settings",
+        "-70688481": "Auto",
+        "-89796679": "Title row",
+        "-15448871": "Title column",
+        "-72739389": "Subtitle column"
     },
     "links": {
         "browserExtension": {
@@ -2590,9 +2594,18 @@
             "fontSizeInputLabel": -97095875,
             "heightInputLabel": -8448911,
             "widthInputLabel": -45997162,
-            "subtitleColumnWidthLabel": -73458468,
-            "titleColumnWidthLabel": -84669549,
-            "titleRowHeightLabel": -92468204
+            "subtitleColumnWidthLabel": -45997162,
+            "titleColumnWidthLabel": -45997162,
+            "titleRowHeightLabel": -8448911,
+            "fontSizeInputPlaceholder": -70688481,
+            "widthInputPlaceholder": -70688481,
+            "heightInputPlaceholder": -70688481,
+            "subtitleColumnFontSizeLabel": -97095875,
+            "titleColumnFontSizeLabel": -97095875,
+            "titleRowFontSizeLabel": -97095875,
+            "subTitleColumnInputsHeading": -72739389,
+            "titleColumnInputsHeading": -15448871,
+            "titleRowInputsHeading": -89796679
         },
         "editEntry.list": {
             "noEntriesText": 543

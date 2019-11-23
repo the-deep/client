@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import Faram, {
     FaramList,
     requiredCondition,
     FaramGroup,
 } from '@togglecorp/faram';
+
 import {
     getDuplicates,
     randomString,
@@ -19,6 +21,8 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import TabTitle from '#components/general/TabTitle';
+import OrientationInput from '#components/general/OrientationInput';
+
 import _ts from '#ts';
 
 import Row from './Row';
@@ -56,8 +60,14 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             meta: {
                 fields: {
                     titleRowHeight: [],
+                    titleRowFontSize: [],
+                    titleRowOrientation: [],
                     titleColumnWidth: [],
+                    titleColumnFontSize: [],
+                    titleColumnOrientation: [],
                     subTitleColumnWidth: [],
+                    subTitleColumnFontSize: [],
+                    subTitleColumnOrientation: [],
                 },
             },
             dimensions: {
@@ -466,11 +476,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     <NonFieldErrors
                         className={styles.nonFieldErrors}
                         faramElement
+                        persistent={false}
                     />
                     <FaramList faramElementName={selectedTab}>
                         <NonFieldErrors
                             className={styles.nonFieldErrors}
                             faramElement
+                            persistent={false}
                         />
                     </FaramList>
                     <TextInput
@@ -484,41 +496,105 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     />
                     <div className={styles.metaInputs}>
                         <FaramGroup faramElementName="meta">
-                            <TextInput
-                                className={styles.titleRowHeightInput}
-                                faramElementName="titleRowHeight"
-                                label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
-                                type="number"
-                                persistantHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
-                                className={styles.titleColumnWidthInput}
-                                faramElementName="titleColumnWidth"
-                                persistantHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'subtitleColumnWidthLabel')}
-                                className={styles.subTitleColumnWidthInput}
-                                faramElementName="subTitleColumnWidth"
-                                persistantHintAndError={false}
-                            />
+                            <div className={styles.titleRowInputs}>
+                                <h4 className={styles.heading}>
+                                    {_ts('widgets.editor.matrix2d', 'titleRowInputsHeading')}
+                                </h4>
+                                <div className={styles.content}>
+                                    <TextInput
+                                        className={styles.heightInput}
+                                        faramElementName="titleRowHeight"
+                                        label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
+                                        type="number"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
+                                        persistantHintAndError={false}
+                                    />
+                                    <TextInput
+                                        className={styles.fontSizeInput}
+                                        faramElementName="titleRowFontSize"
+                                        label={_ts('widgets.editor.matrix2d', 'titleRowFontSizeLabel')}
+                                        type="number"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                        persistantHintAndError={false}
+                                    />
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="titleRowOrientation"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.titleColumnInputs}>
+                                <h4 className={styles.heading}>
+                                    {_ts('widgets.editor.matrix2d', 'titleColumnInputsHeading')}
+                                </h4>
+                                <div className={styles.content}>
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
+                                        className={styles.widthInput}
+                                        faramElementName="titleColumnWidth"
+                                        persistantHintAndError={false}
+                                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'titleColumnFontSizeLabel')}
+                                        className={styles.fontSizeInput}
+                                        faramElementName="titleColumnFontSize"
+                                        persistantHintAndError={false}
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                    />
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="titleColumnOrientation"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.subTitleColumnInputs}>
+                                <h4 className={styles.heading}>
+                                    {_ts('widgets.editor.matrix2d', 'subTitleColumnInputsHeading')}
+                                </h4>
+                                <div className={styles.content}>
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'subtitleColumnWidthLabel')}
+                                        className={styles.widthInput}
+                                        faramElementName="subTitleColumnWidth"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                                        persistantHintAndError={false}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'subtitleColumnFontSizeLabel')}
+                                        className={styles.fontSizeInput}
+                                        faramElementName="subTitleColumnFontSize"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                        persistantHintAndError={false}
+                                    />
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="subTitleColumnOrientation"
+                                    />
+                                </div>
+                            </div>
                         </FaramGroup>
                     </div>
-                    <ScrollTabs
-                        active={selectedTab}
-                        className={styles.tabs}
-                        onClick={this.handleTabSelect}
-                        renderer={TabTitle}
-                        rendererParams={this.tabRendererParams}
-                        tabs={this.tabs}
-                    />
-                    <MultiViewContainer
-                        views={this.views}
-                        active={selectedTab}
-                    />
+                    <div className={styles.childrenInputs}>
+                        <ScrollTabs
+                            active={selectedTab}
+                            className={styles.tabs}
+                            onClick={this.handleTabSelect}
+                            renderer={TabTitle}
+                            rendererParams={this.tabRendererParams}
+                            tabs={this.tabs}
+                        />
+                        <MultiViewContainer
+                            views={this.views}
+                            active={selectedTab}
+                        />
+                    </div>
                 </div>
             </Faram>
         );

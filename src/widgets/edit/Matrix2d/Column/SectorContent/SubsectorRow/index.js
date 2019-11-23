@@ -41,12 +41,16 @@ const SubsectorRow = ({ index, className }) => (
                         label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
+                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                        persistantHintAndError={false}
                     />
                     <TextInput
                         type="number"
                         label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
                         className={styles.widthInput}
                         faramElementName="width"
+                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                        persistantHintAndError={false}
                     />
                 </div>
                 <div className={styles.bottom}>

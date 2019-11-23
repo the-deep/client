@@ -2,14 +2,14 @@
 .item {
     margin: var(--spacing-small);
     border: var(--width-separator-thin) solid var(--color-separator);
-    background-color: var(--color-foreground-alt);
+    background-color: var(--color-foreground);
     width: calc(100% - calc(var(--spacing-small) * 2));
 
     .drag-handle {
         display: flex;
         align-items: center;
         align-self: stretch;
-        background-color: var(--color-foreground-alt);
+        background-color: var(--color-foreground);
         padding: var(--spacing-small);
     }
 

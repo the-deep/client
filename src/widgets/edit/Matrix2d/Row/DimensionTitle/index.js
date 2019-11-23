@@ -68,7 +68,7 @@ export default class DimensionTitle extends React.PureComponent {
                 <Button
                     transparent
                     className={styles.editButton}
-                    onClick={onEditButtonClick}
+                    onClick={this.handleEditButtonClick}
                     iconName="edit"
                 />
                 <DangerButton

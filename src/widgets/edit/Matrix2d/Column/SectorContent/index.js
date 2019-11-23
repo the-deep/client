@@ -13,26 +13,20 @@ import {
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';
-import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
-import ColorInput from '#rsci/ColorInput';
+import Button from '#rsca/Button';
 import Label from '#rsci/Label';
+
+import OrientationInput from '#components/general/OrientationInput';
 
 import _ts from '#ts';
 
-import OrientationInput from '#components/general/OrientationInput';
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
-import SubdimensionRow from './SubdimensionRow';
+import SubsectorRow from './SubsectorRow';
 import styles from './styles.scss';
-
-const TextOutput = FaramOutputElement(props => (
-    <div className={props.className}>
-        { props.value }
-    </div>
-));
 
 const propTypes = {
     index: PropTypes.number.isRequired,
@@ -45,15 +39,21 @@ const defaultProps = {
     className: '',
 };
 
-export default class DimensionContent extends React.PureComponent {
+const TextOutput = FaramOutputElement(props => (
+    <div className={props.className}>
+        { props.value }
+    </div>
+));
+
+export default class SectorContent extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.id;
     static rowTitleSelector = d => d.title;
 
-    static addSubdimensionClick = subdimensions => ([
-        ...subdimensions,
+    static addSubsectorClick = subsectors => ([
+        ...subsectors,
         {
             id: randomString(16),
             title: '',
@@ -63,7 +63,7 @@ export default class DimensionContent extends React.PureComponent {
 
     static rendererParams = (key, elem, i) => ({
         index: i,
-        className: styles.subDimensionContent,
+        className: styles.subSectorContent,
     })
 
     static rowsModifier = rows => rows.map(r => ({
@@ -82,7 +82,7 @@ export default class DimensionContent extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={_cs(styles.dimensionContent, className)}>
+            <div className={_cs(styles.sectorContent, className)}>
                 <FaramGroup faramElementName={String(index)}>
                     <header className={styles.header}>
                         <Button
@@ -97,21 +97,16 @@ export default class DimensionContent extends React.PureComponent {
                         />
                     </header>
                     <NonFieldErrors
-                        className={styles.nonFieldErrors}
+                        className={styles.error}
                         faramElement
+                        persistent={false}
                     />
-                    <div className={styles.editDimension}>
+                    <div className={styles.editSector}>
                         <div className={styles.top}>
-                            <ColorInput
-                                className={styles.colorInput}
-                                faramElementName="color"
-                                label={_ts('widgets.editor.matrix2d', 'colorLabel')}
-                                persistantHintAndError={false}
-                            />
                             <TextInput
                                 className={styles.titleInput}
                                 faramElementName="title"
-                                label={_ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
+                                label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
                                 autoFocus
                                 persistantHintAndError={false}
                             />
@@ -125,13 +120,15 @@ export default class DimensionContent extends React.PureComponent {
                                 label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
+                                placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                                 persistantHintAndError={false}
                             />
                             <TextInput
                                 type="number"
-                                label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
-                                className={styles.heightInput}
-                                faramElementName="height"
+                                label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
+                                className={styles.widthInput}
+                                faramElementName="width"
+                                placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
                                 persistantHintAndError={false}
                             />
                         </div>
@@ -144,62 +141,61 @@ export default class DimensionContent extends React.PureComponent {
                         </div>
                     </div>
                     <FaramList
-                        faramElementName="subdimensions"
-                        keySelector={DimensionContent.keySelector}
+                        faramElementName="subsectors"
+                        keySelector={SectorContent.keySelector}
                     >
                         <NonFieldErrors
-                            className={styles.nonFieldErrors}
+                            className={styles.error}
                             faramElement
+                            persistent={false}
                         />
                     </FaramList>
-                    <div className={styles.subDimensionListContainer}>
+                    <div className={styles.subSectorListContainer}>
                         <header className={styles.header}>
                             <h4 className={styles.heading}>
-                                {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
+                                {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
                             <div className={styles.right} >
-                                <Label
-                                    text={_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
-                                />
+                                <Label text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')} />
                                 <GeoLink
-                                    faramElementName="subdimensions"
-                                    titleSelector={DimensionContent.rowTitleSelector}
-                                    dataModifier={DimensionContent.rowsModifier}
-                                    lastItemTitle="subdimensions"
+                                    faramElementName="subsectors"
+                                    titleSelector={SectorContent.rowTitleSelector}
+                                    lastItemTitle="subcells"
+                                    dataModifier={SectorContent.rowsModifier}
                                 />
                                 <LinkWidgetModalButton
-                                    faramElementName="subdimensions"
+                                    faramElementName="subsectors"
+                                    lastItemTitle="subsectors"
                                     widgetKey={this.props.widgetKey}
-                                    titleSelector={DimensionContent.rowTitleSelector}
-                                    dataModifier={DimensionContent.rowsModifier}
-                                    lastItemTitle="subdimensions"
+                                    titleSelector={SectorContent.rowTitleSelector}
+                                    dataModifier={SectorContent.rowsModifier}
                                 />
                                 <FaramList
-                                    faramElementName="subdimensions"
-                                    keySelector={DimensionContent.keySelector}
+                                    faramElementName="subsectors"
+                                    keySelector={SectorContent.keySelector}
                                 >
                                     <AccentButton
                                         faramElementName="add-btn"
-                                        faramAction={DimensionContent.addSubdimensionClick}
+                                        faramAction={SectorContent.addSubsectorClick}
                                         iconName="add"
                                         transparent
                                     >
-                                        {_ts('widgets.editor.matrix2d', 'addSubdimensionButtonTitle')}
+                                        {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
                                     </AccentButton>
                                 </FaramList>
                             </div>
                         </header>
                         <FaramList
-                            faramElementName="subdimensions"
-                            keySelector={DimensionContent.keySelector}
+                            faramElementName="subsectors"
+                            keySelector={SectorContent.keySelector}
                         >
                             <SortableListView
                                 faramElement
-                                className={styles.subdimensionItemList}
+                                className={styles.cellList}
                                 dragHandleClassName={styles.dragHandle}
-                                itemClassName={styles.subdimensionItem}
-                                rendererParams={DimensionContent.rendererParams}
-                                renderer={SubdimensionRow}
+                                itemClassName={styles.item}
+                                rendererParams={SectorContent.rendererParams}
+                                renderer={SubsectorRow}
                             />
                         </FaramList>
                     </div>

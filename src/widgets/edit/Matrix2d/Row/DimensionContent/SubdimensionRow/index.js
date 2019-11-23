@@ -42,6 +42,7 @@ const SubdimensionRow = ({ className, index }) => (
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
                         persistantHintAndError={false}
+                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                     />
                     <TextInput
                         type="number"
@@ -49,6 +50,7 @@ const SubdimensionRow = ({ className, index }) => (
                         className={styles.heightInput}
                         faramElementName="height"
                         persistantHintAndError={false}
+                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
                     />
                 </div>
                 <div className={styles.bottom}>

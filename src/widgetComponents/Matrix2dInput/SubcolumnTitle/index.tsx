@@ -1,6 +1,8 @@
 import React from 'react';
 import memoize from 'memoize-one';
 
+import styles from './styles.scss';
+
 type OrientationKey = 'leftToRight' | 'bottomToTop';
 interface Orientation {
     key: OrientationKey;
@@ -92,7 +94,9 @@ export default class SubsectorTitle extends React.PureComponent<Props, State> {
                 style={tdStyle}
             >
                 <div style={style}>
-                    {title}
+                    <div className={styles.title}>
+                        {title}
+                    </div>
                 </div>
             </th>
         );

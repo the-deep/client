@@ -33,20 +33,12 @@ export default class Matrix2dOverviewWidget extends React.PureComponent {
         const {
             properties: {
                 data: {
-                    meta: {
-                        titleRowHeight,
-                        titleColumnWidth,
-                        subTitleColumnWidth,
-                    } = emptyObject,
+                    meta = emptyObject,
                 },
             },
         } = widget;
 
-        return {
-            titleRowHeight,
-            titleColumnWidth,
-            subTitleColumnWidth,
-        };
+        return meta;
     })
 
 

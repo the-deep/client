@@ -5,9 +5,14 @@ import {
     NavLink,
 } from 'react-router-dom';
 
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    _cs,
+} from '@togglecorp/fujs';
+
 import List from '#rscv/List';
 import DropdownMenu from '#rsca/DropdownMenu';
+import Responsive from '#rscg/Responsive';
 
 import { pathNames } from '#constants';
 import _ts from '#ts';
@@ -54,7 +59,7 @@ const defaultProps = {
 };
 
 @withRouter
-export default class NavMenu extends React.PureComponent {
+class NavMenu extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -124,15 +129,14 @@ export default class NavMenu extends React.PureComponent {
     }
 
     componentWillMount() {
-        window.addEventListener('resize', this.handleWindowResize);
-
         const overflowMenuLinks = NavMenu.computeSize(this.state.navLinks, this.menu);
         this.setState({ overflowMenuLinks });
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.links !== nextProps.links) {
+        if (this.props.boundingClientRect !== nextProps.boundingClientRect) {
             const overflowMenuLinks = NavMenu.computeSize(nextProps.links, this.menu);
+
             this.setState({
                 navLinks: nextProps.links,
                 overflowMenuLinks,
@@ -140,14 +144,12 @@ export default class NavMenu extends React.PureComponent {
         }
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleWindowResize);
-    }
-
+    /*
     handleWindowResize = () => {
         const overflowMenuLinks = NavMenu.computeSize(this.state.navLinks, this.menu);
         this.setState({ overflowMenuLinks });
     }
+    */
 
     renderNavItem = (key, item, className) => {
         const {
@@ -189,7 +191,7 @@ export default class NavMenu extends React.PureComponent {
         return (
             <div
                 ref={(el) => { this.menu = el; }}
-                className={`${styles.navMenu} ${className}`}
+                className={_cs(styles.navMenu, className)}
             >
                 <List
                     data={navLinks}
@@ -213,3 +215,5 @@ export default class NavMenu extends React.PureComponent {
         );
     }
 }
+
+export default withRouter(Responsive(NavMenu));

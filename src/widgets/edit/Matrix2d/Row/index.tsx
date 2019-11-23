@@ -13,8 +13,8 @@ import _ts from '#ts';
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
-import DimensionTitle from '../DimensionTitle';
-import DimensionContent from '../DimensionContent';
+import DimensionTitle from './DimensionTitle';
+import DimensionContent from './DimensionContent';
 
 import styles from './styles.scss';
 

@@ -48,10 +48,11 @@
     .edit-dimension {
         flex-shrink: 0;
         border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
+        padding: calc(var(--spacing-large) - var(--spacing-small)) 0;
 
         .top {
             display: flex;
-            padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
+            padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
 
             .color-input {
                 flex-shrink: 0;
@@ -82,7 +83,7 @@
         }
 
         .bottom {
-            padding: var(--spacing-medium);
+            padding: var(--spacing-small) var(--spacing-medium);
         }
     }
 

@@ -1,16 +1,52 @@
-.overview {
+.matrix-two-d-input {
     width: 100%;
     height: 100%;
     overflow: auto;
 
-    .header {
-        display: flex;
-        align-items: center;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-        height: var(--height-matrix-header);
+    .table {
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+        vertical-align: middle;
+        text-align: center;
+
+        thead {
+            border: 0;
+
+            th {
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                background-color: var(--color-foreground);
+            }
+        }
+
+        tbody {
+            td {
+                border: var(--width-separator-thin) solid var(--color-foreground);
+            }
+        }
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+}
+
+.overview {
+    // width: 100%;
+    // height: 100%;
+    // overflow: auto;
+
+    >.header {
+        // display: flex;
+        // align-items: center;
+        // border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        // height: var(--height-matrix-header);
 
         &.empty-header {
-            border-bottom-color: transparent;
+            // border-bottom-color: transparent;
         }
 
         .button {
@@ -23,38 +59,5 @@
             font-weight: var(--font-weight-bold);
         }
     }
-
-    .table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        text-align: center;
-
-        .sector-title {
-            cursor: pointer;
-
-            &:hover {
-                background-color: var(--color-background-accent-hint);
-            }
-        }
-
-        thead {
-            border: 0;
-
-            th {
-                position: sticky;
-                top: 0;
-                z-index: 1;
-                background-color: var(--color-foreground);
-                padding: var(--spacing-extra-small) var(--spacing-small);
-            }
-        }
-
-        tbody {
-            td {
-                border: var(--width-separator-thin) solid var(--color-foreground);
-                padding: var(--spacing-extra-small);
-            }
-        }
-    }
 }
+
