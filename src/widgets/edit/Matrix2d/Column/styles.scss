@@ -60,10 +60,11 @@
                 }
             }
 
-            .sector-details {
-                flex-grow: 1;
-                overflow: auto;
-            }
+        }
+
+        .sector-details {
+            flex-grow: 1;
+            overflow: auto;
         }
     }
 }

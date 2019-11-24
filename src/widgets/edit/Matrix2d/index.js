@@ -496,34 +496,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     />
                     <div className={styles.metaInputs}>
                         <FaramGroup faramElementName="meta">
-                            <div className={styles.titleRowInputs}>
-                                <h4 className={styles.heading}>
-                                    {_ts('widgets.editor.matrix2d', 'titleRowInputsHeading')}
-                                </h4>
-                                <div className={styles.content}>
-                                    <TextInput
-                                        className={styles.heightInput}
-                                        faramElementName="titleRowHeight"
-                                        label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
-                                        type="number"
-                                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
-                                        persistantHintAndError={false}
-                                    />
-                                    <TextInput
-                                        className={styles.fontSizeInput}
-                                        faramElementName="titleRowFontSize"
-                                        label={_ts('widgets.editor.matrix2d', 'titleRowFontSizeLabel')}
-                                        type="number"
-                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                        persistantHintAndError={false}
-                                    />
-                                    <OrientationInput
-                                        className={styles.orientationInput}
-                                        faramElementName="titleRowOrientation"
-                                    />
-                                </div>
-                            </div>
-
                             <div className={styles.titleColumnInputs}>
                                 <h4 className={styles.heading}>
                                     {_ts('widgets.editor.matrix2d', 'titleColumnInputsHeading')}
@@ -576,6 +548,34 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     <OrientationInput
                                         className={styles.orientationInput}
                                         faramElementName="subTitleColumnOrientation"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.titleRowInputs}>
+                                <h4 className={styles.heading}>
+                                    {_ts('widgets.editor.matrix2d', 'titleRowInputsHeading')}
+                                </h4>
+                                <div className={styles.content}>
+                                    <TextInput
+                                        className={styles.heightInput}
+                                        faramElementName="titleRowHeight"
+                                        label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
+                                        type="number"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
+                                        persistantHintAndError={false}
+                                    />
+                                    <TextInput
+                                        className={styles.fontSizeInput}
+                                        faramElementName="titleRowFontSize"
+                                        label={_ts('widgets.editor.matrix2d', 'titleRowFontSizeLabel')}
+                                        type="number"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                        persistantHintAndError={false}
+                                    />
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="titleRowOrientation"
                                     />
                                 </div>
                             </div>

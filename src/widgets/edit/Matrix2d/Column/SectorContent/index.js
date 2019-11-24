@@ -155,8 +155,25 @@ export default class SectorContent extends React.PureComponent {
                             <h4 className={styles.heading}>
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
-                            <div className={styles.right} >
-                                <Label text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')} />
+                        </header>
+                        <FaramList
+                            faramElementName="subsectors"
+                            keySelector={SectorContent.keySelector}
+                        >
+                            <SortableListView
+                                faramElement
+                                className={styles.subsectorList}
+                                dragHandleClassName={styles.dragHandle}
+                                itemClassName={styles.item}
+                                rendererParams={SectorContent.rendererParams}
+                                renderer={SubsectorRow}
+                            />
+                        </FaramList>
+                        <footer className={styles.footer} >
+                            <h4 className={styles.label}>
+                                {_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
+                            </h4>
+                            <div className={styles.actions}>
                                 <GeoLink
                                     faramElementName="subsectors"
                                     titleSelector={SectorContent.rowTitleSelector}
@@ -184,20 +201,7 @@ export default class SectorContent extends React.PureComponent {
                                     </AccentButton>
                                 </FaramList>
                             </div>
-                        </header>
-                        <FaramList
-                            faramElementName="subsectors"
-                            keySelector={SectorContent.keySelector}
-                        >
-                            <SortableListView
-                                faramElement
-                                className={styles.cellList}
-                                dragHandleClassName={styles.dragHandle}
-                                itemClassName={styles.item}
-                                rendererParams={SectorContent.rendererParams}
-                                renderer={SubsectorRow}
-                            />
-                        </FaramList>
+                        </footer>
                     </div>
                 </FaramGroup>
             </div>

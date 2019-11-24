@@ -3,6 +3,7 @@ import { FaramList } from '@togglecorp/faram';
 import {
     _cs,
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 
 import SortableListView from '#rscv/SortableListView';
@@ -103,39 +104,41 @@ export default class Column extends React.PureComponent<Props, State> {
                         )}
                     </FaramList>
                 </div>
-                <footer className={styles.footer}>
-                    <h4 className={styles.label}>
-                        {_ts('widgets.editor.matrix2d', 'addSectorsTitle')}
-                    </h4>
-                    <div className={styles.actions}>
-                        <GeoLink
-                            faramElementName="sectors"
-                            titleSelector={titleSelector}
-                            dataModifier={dataModifier}
-                            onModalVisibilityChange={onGeoLinkModalVisiblityChange}
-                        />
-                        <LinkWidgetModalButton
-                            faramElementName="sectors"
-                            widgetKey={widgetKey}
-                            titleSelector={titleSelector}
-                            dataModifier={dataModifier}
-                            onModalVisibilityChange={onLinkWidgetModalVisiblityChange}
-                        />
-                        <FaramList
-                            faramElementName="sectors"
-                            keySelector={keySelector}
-                        >
-                            <AccentButton
-                                faramElementName="add-sector-btn"
-                                faramAction={onAddSectorFaramAction}
-                                iconName="add"
-                                transparent
+                {(isNotDefined(selectedSectorIndex) || selectedSectorIndex === -1) && (
+                    <footer className={styles.footer}>
+                        <h4 className={styles.label}>
+                            {_ts('widgets.editor.matrix2d', 'addSectorsTitle')}
+                        </h4>
+                        <div className={styles.actions}>
+                            <GeoLink
+                                faramElementName="sectors"
+                                titleSelector={titleSelector}
+                                dataModifier={dataModifier}
+                                onModalVisibilityChange={onGeoLinkModalVisiblityChange}
+                            />
+                            <LinkWidgetModalButton
+                                faramElementName="sectors"
+                                widgetKey={widgetKey}
+                                titleSelector={titleSelector}
+                                dataModifier={dataModifier}
+                                onModalVisibilityChange={onLinkWidgetModalVisiblityChange}
+                            />
+                            <FaramList
+                                faramElementName="sectors"
+                                keySelector={keySelector}
                             >
-                                {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
-                            </AccentButton>
-                        </FaramList>
-                    </div>
-                </footer>
+                                <AccentButton
+                                    faramElementName="add-sector-btn"
+                                    faramAction={onAddSectorFaramAction}
+                                    iconName="add"
+                                    transparent
+                                >
+                                    {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
+                                </AccentButton>
+                            </FaramList>
+                        </div>
+                    </footer>
+                )}
             </div>
         );
     }

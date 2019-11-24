@@ -3,6 +3,7 @@ import { FaramList } from '@togglecorp/faram';
 import {
     _cs,
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 
 import SortableListView from '#rscv/SortableListView';
@@ -108,39 +109,41 @@ export default class Row extends React.PureComponent<Props, State> {
                         }
                     </FaramList>
                 </div>
-                <footer className={styles.footer}>
-                    <h4 className={styles.label}>
-                        {_ts('widgets.editor.matrix2d', 'addDimensionsTitle')}
-                    </h4>
-                    <div className={styles.actions}>
-                        <GeoLink
-                            dataModifier={dataModifier}
-                            faramElementName="dimensions"
-                            onModalVisibilityChange={onGeoLinkModalVisiblityChange}
-                            titleSelector={titleSelector}
-                        />
-                        <LinkWidgetModalButton
-                            dataModifier={dataModifier}
-                            faramElementName="dimensions"
-                            onModalVisibilityChange={onLinkWidgetModalVisiblityChange}
-                            titleSelector={titleSelector}
-                            widgetKey={widgetKey}
-                        />
-                        <FaramList
-                            faramElementName="dimensions"
-                            keySelector={keySelector}
-                        >
-                            <AccentButton
-                                faramAction={onAddDimensionFaramAction}
-                                faramElementName="add-dimension-btn"
-                                iconName="add"
-                                transparent
+                {(isNotDefined(selectedDimensionIndex) || selectedDimensionIndex === -1) && (
+                    <footer className={styles.footer}>
+                        <h4 className={styles.label}>
+                            {_ts('widgets.editor.matrix2d', 'addDimensionsTitle')}
+                        </h4>
+                        <div className={styles.actions}>
+                            <GeoLink
+                                dataModifier={dataModifier}
+                                faramElementName="dimensions"
+                                onModalVisibilityChange={onGeoLinkModalVisiblityChange}
+                                titleSelector={titleSelector}
+                            />
+                            <LinkWidgetModalButton
+                                dataModifier={dataModifier}
+                                faramElementName="dimensions"
+                                onModalVisibilityChange={onLinkWidgetModalVisiblityChange}
+                                titleSelector={titleSelector}
+                                widgetKey={widgetKey}
+                            />
+                            <FaramList
+                                faramElementName="dimensions"
+                                keySelector={keySelector}
                             >
-                                {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
-                            </AccentButton>
-                        </FaramList>
-                    </div>
-                </footer>
+                                <AccentButton
+                                    faramAction={onAddDimensionFaramAction}
+                                    faramElementName="add-dimension-btn"
+                                    iconName="add"
+                                    transparent
+                                >
+                                    {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
+                                </AccentButton>
+                            </FaramList>
+                        </div>
+                    </footer>
+                )}
             </div>
         );
     }

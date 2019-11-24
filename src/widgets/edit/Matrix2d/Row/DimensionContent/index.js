@@ -161,10 +161,25 @@ export default class DimensionContent extends React.PureComponent {
                             <h4 className={styles.heading}>
                                 {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
-                            <div className={styles.right} >
-                                <Label
-                                    text={_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
-                                />
+                        </header>
+                        <FaramList
+                            faramElementName="subdimensions"
+                            keySelector={DimensionContent.keySelector}
+                        >
+                            <SortableListView
+                                faramElement
+                                className={styles.subdimensionItemList}
+                                dragHandleClassName={styles.dragHandle}
+                                itemClassName={styles.subdimensionItem}
+                                rendererParams={DimensionContent.rendererParams}
+                                renderer={SubdimensionRow}
+                            />
+                        </FaramList>
+                        <footer className={styles.footer}>
+                            <h4 className={styles.label}>
+                                {_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
+                            </h4>
+                            <div className={styles.actions}>
                                 <GeoLink
                                     faramElementName="subdimensions"
                                     titleSelector={DimensionContent.rowTitleSelector}
@@ -192,20 +207,7 @@ export default class DimensionContent extends React.PureComponent {
                                     </AccentButton>
                                 </FaramList>
                             </div>
-                        </header>
-                        <FaramList
-                            faramElementName="subdimensions"
-                            keySelector={DimensionContent.keySelector}
-                        >
-                            <SortableListView
-                                faramElement
-                                className={styles.subdimensionItemList}
-                                dragHandleClassName={styles.dragHandle}
-                                itemClassName={styles.subdimensionItem}
-                                rendererParams={DimensionContent.rendererParams}
-                                renderer={SubdimensionRow}
-                            />
-                        </FaramList>
+                        </footer>
                     </div>
                 </FaramGroup>
             </div>

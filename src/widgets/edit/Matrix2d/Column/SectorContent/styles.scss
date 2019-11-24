@@ -19,6 +19,10 @@
 }
 
 .sector-content {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+
     >.header {
         display: flex;
         align-items: center;
@@ -98,9 +102,29 @@
             }
         }
 
-        .cell-list {
+        .subsector-list {
             flex-grow: 1;
             overflow-y: auto;
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            border-top: var(--width-separator-thin) solid var(--color-separator-light);
+            background-color: var(--color-foreground-alt);
+            padding: var(--spacing-medium) 0;
+
+            .label {
+                padding: 0 var(--spacing-medium);
+                text-transform: capitalize;
+            }
+
+            .actions {
+                display: flex;
+                align-items: center;
+                padding: 0 var(--spacing-small);
+            }
         }
     }
 }
