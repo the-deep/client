@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import Icon from '#rscg/Icon';
@@ -15,6 +14,8 @@ import wordIcon from '#resources/img/word.svg';
 import excelIcon from '#resources/img/excel.svg';
 import pdfIcon from '#resources/img/pdf.svg';
 import jsonIcon from '#resources/img/json.svg';
+
+import ExportTypePaneButton from './ExportTypeButton';
 
 import styles from './styles.scss';
 
@@ -188,7 +189,7 @@ export default class ExportTypePane extends React.PureComponent {
                 const newLevels = ExportTypePane.transformMatrix2dLevels(widget.properties.data);
                 nodes.push({
                     title: widget.title,
-                    key: `${exportable.id}`,
+                    key: String(exportable.id),
                     selected: true,
                     draggable: true,
                     nodes: ExportTypePane.mapReportLevelsToNodes(newLevels),
@@ -196,7 +197,7 @@ export default class ExportTypePane extends React.PureComponent {
             } else {
                 nodes.push({
                     title: widget.title,
-                    key: `${exportable.id}`,
+                    key: String(exportable.id),
                     selected: true,
                     draggable: true,
                     nodes: ExportTypePane.mapReportLevelsToNodes(levels),
@@ -230,31 +231,26 @@ export default class ExportTypePane extends React.PureComponent {
         });
     }
 
-    renderExportType = (key, data) => {
+    exportTypeRendererParams = (key, data) => {
         const {
             onExportTypeChange,
             activeExportTypeKey,
         } = this.props;
 
-        return (
-            <button
-                className={_cs(
-                    styles.exportTypeSelect,
-                    activeExportTypeKey === key && styles.active,
-                )}
-                key={key}
-                title={data.title}
-                onClick={() => onExportTypeChange(key)}
-                type="button"
-            >
-                <img
-                    className={styles.image}
-                    src={data.img}
-                    alt={data.title}
-                />
-            </button>
-        );
-    }
+        const {
+            title,
+            img,
+        } = data;
+
+        return ({
+            buttonKey: key,
+            className: styles.exportTypeSelect,
+            title,
+            img,
+            isActive: activeExportTypeKey === key,
+            onExportTypeChange,
+        });
+    };
 
     renderWordPdfOptions = () => {
         const {
@@ -349,7 +345,8 @@ export default class ExportTypePane extends React.PureComponent {
                     <List
                         className={styles.exportTypeSelectList}
                         data={this.exportTypes}
-                        modifier={this.renderExportType}
+                        rendererParams={this.exportTypeRendererParams}
+                        renderer={ExportTypePaneButton}
                         keySelector={ExportTypePane.exportTypeKeyExtractor}
                     />
                 </div>

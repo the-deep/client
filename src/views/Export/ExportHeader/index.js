@@ -34,33 +34,30 @@ import styles from './styles.scss';
 
 const emptyList = [];
 
-const createReportStructureForExport = nodes => nodes
-    .filter(node => node.selected)
-    .map(node => (
-        node.nodes ? {
-            id: node.key,
-            levels: createReportStructureForExport(node.nodes),
-        } : {
-            id: node.key,
-        }
-    ));
-
-const createReportStructureLevelForExport = (nodes) => {
-    const a = nodes
-        .filter(node => node.selected)
+const createReportStructureForExport = (nodes = emptyList) => (
+    nodes.filter(node => node.selected)
         .map(node => (
-            node.nodes ? {
+            {
                 id: node.key,
-                title: node.title,
-                sublevels: createReportStructureLevelForExport(node.nodes),
-            } : {
-                id: node.key,
-                title: node.title,
+                levels: node.nodes
+                    ? createReportStructureForExport(node.nodes)
+                    : undefined,
             }
-        ));
+        ))
+);
 
-    return a;
-};
+const createReportStructureLevelForExport = (nodes = emptyList) => (
+    nodes.filter(node => node.selected)
+        .map(node => (
+            {
+                id: node.key,
+                title: node.title,
+                sublevels: node.nodes
+                    ? createReportStructureLevelForExport(node.nodes)
+                    : undefined,
+            }
+        ))
+);
 
 const propTypes = {
     className: PropTypes.string,
@@ -190,7 +187,7 @@ export default class ExportHeader extends React.PureComponent {
         // levels require the sublevels to be named sublevels whereas struture requires
         // sublevels to be names levels
         // This cannot be fixed immediately in server as it requires migration
-        const report_levels = createReportStructureLevelForExport(reportStructure || emptyList)
+        const report_levels = createReportStructureLevelForExport(reportStructure)
             .map(node => ({
                 id: node.id,
                 levels: node.sublevels,
@@ -204,7 +201,7 @@ export default class ExportHeader extends React.PureComponent {
             // for excel
             decoupled: decoupledEntries,
             // for pdf or word
-            report_structure: createReportStructureForExport(reportStructure || emptyList),
+            report_structure: createReportStructureForExport(reportStructure),
             report_levels,
             // differentiate between pdf or word
             pdf: isPdf,
