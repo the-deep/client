@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
+import Faram, {
+    FaramList,
+    FaramGroup,
+    requiredCondition,
+} from '@togglecorp/faram';
 import {
     getDuplicates,
     randomString,
@@ -17,6 +21,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
+import SegmentInput from '#rsci/SegmentInput';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -42,16 +47,34 @@ const defaultProps = {
 
 const emptyArray = [];
 
+const emptyMetaObject = {
+    orientation: 'horizontal',
+};
+
+
+const orientationOptions = [
+    {
+        key: 'horizontal',
+        label: _ts('widgets.editor.matrix1d', 'horizontalOrientationLabel'),
+    },
+    {
+        key: 'vertical',
+        label: _ts('widgets.editor.matrix1d', 'verticalOrientationLabel'),
+    },
+];
+
 export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.key;
+    static labelSelector = elem => elem.label;
     static rowTitleSelector = d => d.title;
 
     static schema = {
         fields: {
             title: [requiredCondition],
+            meta: [],
             rows: {
                 validation: (rows) => {
                     const errors = [];
@@ -120,8 +143,15 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     }));
 
     static getDataFromFaramValues = (data) => {
-        const { rows } = data;
-        return { rows };
+        const {
+            rows,
+            meta,
+        } = data;
+
+        return {
+            rows,
+            meta,
+        };
     };
 
     static getTitleFromFaramValues = data => data.title;
@@ -131,12 +161,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
         const {
             title,
-            data: { rows = emptyArray },
+            data: {
+                meta = emptyMetaObject,
+                rows = emptyArray,
+            },
         } = props;
 
         this.state = {
             faramValues: {
                 title,
+                meta,
                 rows,
             },
             faramErrors: {},
@@ -243,20 +277,22 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
     render() {
         const {
-            faramValues,
+            faramValues = {},
             faramErrors,
             pristine,
             hasError,
+            selectedRowKey,
         } = this.state;
 
         const {
             closeModal,
             title,
+            widgetKey,
         } = this.props;
 
-        const { rows = [] } = faramValues || {};
+        const { rows = [] } = faramValues;
         const selectedRowIndex = rows.findIndex(
-            row => Matrix1dEditWidget.keySelector(row) === this.state.selectedRowKey,
+            row => Matrix1dEditWidget.keySelector(row) === selectedRowKey,
         );
 
         return (
@@ -276,14 +312,27 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             faramElement
                             className={styles.error}
                         />
-                        <TextInput
-                            className={styles.titleInput}
-                            faramElementName="title"
-                            autoFocus
-                            label={_ts('widgets.editor.matrix1d', 'titleLabel')}
-                            placeholder={_ts('widgets.editor.matrix1d', 'widgetTitlePlaceholder')}
-                            selectOnFocus
-                        />
+                        <div className={styles.header}>
+                            <TextInput
+                                className={styles.titleInput}
+                                faramElementName="title"
+                                autoFocus
+                                label={_ts('widgets.editor.matrix1d', 'titleLabel')}
+                                placeholder={_ts('widgets.editor.matrix1d', 'widgetTitlePlaceholder')}
+                                showHintAndError={false}
+                                selectOnFocus
+                            />
+                            <FaramGroup faramElementName="meta" >
+                                <SegmentInput
+                                    className={styles.orientationInput}
+                                    options={orientationOptions}
+                                    keySelector={Matrix1dEditWidget.keySelector}
+                                    labelSelector={Matrix1dEditWidget.labelSelector}
+                                    faramElementName="orientation"
+                                    label={_ts('widgets.editor.matrix1d', 'matrixOrientationTitle')}
+                                />
+                            </FaramGroup>
+                        </div>
                         <div className={styles.rows} >
                             <FaramList
                                 faramElementName="rows"
@@ -310,7 +359,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     />
                                     <LinkWidgetModalButton
                                         faramElementName="rows"
-                                        widgetKey={this.props.widgetKey}
+                                        widgetKey={widgetKey}
                                         titleSelector={Matrix1dEditWidget.rowTitleSelector}
                                         dataModifier={Matrix1dEditWidget.rowsModifier}
                                         onModalVisibilityChange={this.handleModalVisiblityChange}
@@ -346,7 +395,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     { rows.length > 0 && selectedRowIndex !== -1 &&
                                         <RowContent
                                             index={selectedRowIndex}
-                                            widgetKey={this.props.widgetKey}
+                                            widgetKey={widgetKey}
                                             className={styles.rightPanel}
                                             onNestedModalChange={this.handleNestedModalChange}
                                         />

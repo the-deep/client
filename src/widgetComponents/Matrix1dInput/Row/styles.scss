@@ -1,4 +1,3 @@
-
 .matrix-row {
     display: flex;
     align-items: center;
@@ -20,5 +19,16 @@
         flex-grow: 1;
         flex-wrap: wrap;
         padding: var(--spacing-extra-small) 0;
+    }
+
+    &.vertical-row {
+        align-items: stretch;
+        flex-direction: column;
+        border-bottom: none;
+        text-align: center;
+
+        .cells {
+            flex-direction: column;
+        }
     }
 }

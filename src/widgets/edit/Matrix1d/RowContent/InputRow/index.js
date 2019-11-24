@@ -19,14 +19,14 @@ const InputRow = ({ index }) => (
     <div className={styles.inputRow}>
         <FaramGroup faramElementName={String(index)}>
             <TextInput
-                className={styles.input}
+                className={styles.title}
                 faramElementName="value"
                 autoFocus
                 label={_ts('widgets.editor.matrix1d', 'unnamedCellTitle', { index: index + 1 })}
                 selectOnFocus
             />
             <TextInput
-                className={styles.input}
+                className={styles.tooltip}
                 faramElementName="tooltip"
                 label={_ts('widgets.editor.matrix1d', 'unnamedCellTooltip')}
                 selectOnFocus

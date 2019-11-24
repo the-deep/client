@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 import Matrix1dInput from '#widgetComponents/Matrix1dInput';
 
@@ -14,24 +15,41 @@ const defaultProps = {
 };
 
 const emptyArray = [];
-const getOptions = (widget) => {
-    const { properties: { data: { rows = emptyArray } = {} } = {} } = widget;
-    return rows;
-};
+const emptyObject = {};
 
 export default class Matrix1dOverviewWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    getOptions = memoize((widget) => {
+        const {
+            properties: {
+                data: {
+                    rows = emptyArray,
+                    meta = emptyObject,
+                } = {},
+            } = {},
+        } = widget;
+
+        return {
+            rows,
+            meta,
+        };
+    });
+
     render() {
         const { widget } = this.props;
-        const options = getOptions(widget);
+        const {
+            rows,
+            meta,
+        } = this.getOptions(widget);
 
         return (
             <Matrix1dInput
                 className={styles.input}
                 faramElementName="value"
-                options={options}
+                options={rows}
+                meta={meta}
             />
         );
     }

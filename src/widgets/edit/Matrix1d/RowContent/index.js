@@ -68,7 +68,6 @@ export default class RowContent extends React.PureComponent {
                     />
                     <div className={styles.editRow}>
                         <ColorInput
-                            // className={styles.input}
                             faramElementName="color"
                             label="Color"
                         />

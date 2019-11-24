@@ -45,9 +45,19 @@
                 flex-shrink: 0;
             }
 
-            .title-input {
-                flex-shrink: 0;
-                padding: 0 var(--spacing-small);
+            .header {
+                display: flex;
+                align-items: center;
+                padding: 0 var(--spacing-medium);
+
+                .title-input {
+                    flex-grow: 1;
+                    margin-right: var(--spacing-medium);
+                }
+
+                .orientation-input {
+                    flex-shrink: 0;
+                }
             }
 
             .rows {

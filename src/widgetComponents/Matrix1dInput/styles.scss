@@ -1,4 +1,7 @@
-
 .overview {
     padding: 0;
+
+    &.vertical {
+        display: flex;
+    }
 }

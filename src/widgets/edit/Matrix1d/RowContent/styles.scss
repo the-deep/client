@@ -1,7 +1,4 @@
-
 .item {
-    border-top: var(--width-separator-thin) solid var(--color-separator);
-    border-bottom: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
     padding: 0;
 
@@ -57,9 +54,13 @@
 .cell-list {
     flex-grow: 1;
     border-right: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground-alt);
     overflow-y: auto;
+}
 
-    .item {
-        border-top-color: transparent;
-    }
+.item {
+    margin: var(--spacing-small);
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+    width: calc(100% - 2 * var(--spacing-small));
 }
