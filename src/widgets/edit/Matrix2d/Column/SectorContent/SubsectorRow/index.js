@@ -29,12 +29,12 @@ const SubsectorRow = ({ index, className }) => (
                         faramElementName="title"
                         autoFocus
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubsectorLabel', { index: index + 1 })}
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                     <OrientationInput
                         className={styles.orientationInput}
                         faramElementName="orientation"
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                     <TextInput
                         type="number"
@@ -42,7 +42,7 @@ const SubsectorRow = ({ index, className }) => (
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                     <TextInput
                         type="number"
@@ -50,14 +50,14 @@ const SubsectorRow = ({ index, className }) => (
                         className={styles.widthInput}
                         faramElementName="width"
                         placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                 </div>
                 <div className={styles.bottom}>
                     <TextArea
                         faramElementName="tooltip"
                         label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                 </div>
             </div>

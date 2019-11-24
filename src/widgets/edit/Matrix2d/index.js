@@ -492,7 +492,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         label={_ts('widgets.editor.matrix2d', 'titleLabel')}
                         placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
                         selectOnFocus
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                     <div className={styles.metaInputs}>
                         <FaramGroup faramElementName="meta">
@@ -506,7 +506,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
                                         className={styles.widthInput}
                                         faramElementName="titleColumnWidth"
-                                        persistantHintAndError={false}
+                                        persistentHintAndError={false}
                                         placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
                                     />
                                     <TextInput
@@ -514,7 +514,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         label={_ts('widgets.editor.matrix2d', 'titleColumnFontSizeLabel')}
                                         className={styles.fontSizeInput}
                                         faramElementName="titleColumnFontSize"
-                                        persistantHintAndError={false}
+                                        persistentHintAndError={false}
                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                                     />
                                     <OrientationInput
@@ -535,7 +535,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         className={styles.widthInput}
                                         faramElementName="subTitleColumnWidth"
                                         placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                                        persistantHintAndError={false}
+                                        persistentHintAndError={false}
                                     />
                                     <TextInput
                                         type="number"
@@ -543,7 +543,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         className={styles.fontSizeInput}
                                         faramElementName="subTitleColumnFontSize"
                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                        persistantHintAndError={false}
+                                        persistentHintAndError={false}
                                     />
                                     <OrientationInput
                                         className={styles.orientationInput}
@@ -563,7 +563,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
                                         type="number"
                                         placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
-                                        persistantHintAndError={false}
+                                        persistentHintAndError={false}
                                     />
                                     <TextInput
                                         className={styles.fontSizeInput}
@@ -571,7 +571,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         label={_ts('widgets.editor.matrix2d', 'titleRowFontSizeLabel')}
                                         type="number"
                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                        persistantHintAndError={false}
+                                        persistentHintAndError={false}
                                     />
                                     <OrientationInput
                                         className={styles.orientationInput}

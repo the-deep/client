@@ -29,19 +29,19 @@ const SubdimensionRow = ({ className, index }) => (
                         faramElementName="title"
                         autoFocus
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubdimensionLabel', { index: index + 1 })}
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                     <OrientationInput
                         className={styles.orientationInput}
                         faramElementName="orientation"
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                     <TextInput
                         type="number"
                         label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                         className={styles.fontSizeInput}
                         faramElementName="fontSize"
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                     />
                     <TextInput
@@ -49,7 +49,7 @@ const SubdimensionRow = ({ className, index }) => (
                         label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
                         className={styles.heightInput}
                         faramElementName="height"
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                         placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
                     />
                 </div>
@@ -57,7 +57,7 @@ const SubdimensionRow = ({ className, index }) => (
                     <TextArea
                         faramElementName="tooltip"
                         label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                        persistantHintAndError={false}
+                        persistentHintAndError={false}
                     />
                 </div>
             </div>

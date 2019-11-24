@@ -108,12 +108,12 @@ export default class SectorContent extends React.PureComponent {
                                 faramElementName="title"
                                 label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
                                 autoFocus
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                             <OrientationInput
                                 className={styles.orientationInput}
                                 faramElementName="orientation"
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                             <TextInput
                                 type="number"
@@ -121,7 +121,7 @@ export default class SectorContent extends React.PureComponent {
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
                                 placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                             <TextInput
                                 type="number"
@@ -129,14 +129,14 @@ export default class SectorContent extends React.PureComponent {
                                 className={styles.widthInput}
                                 faramElementName="width"
                                 placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                         </div>
                         <div className={styles.bottom}>
                             <TextArea
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                         </div>
                     </div>

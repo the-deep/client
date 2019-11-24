@@ -107,26 +107,26 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.colorInput}
                                 faramElementName="color"
                                 label={_ts('widgets.editor.matrix2d', 'colorLabel')}
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                             <TextInput
                                 className={styles.titleInput}
                                 faramElementName="title"
                                 label={_ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                                 autoFocus
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                             <OrientationInput
                                 className={styles.orientationInput}
                                 faramElementName="orientation"
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                             <TextInput
                                 type="number"
                                 label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                                 placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                             />
                             <TextInput
@@ -134,7 +134,7 @@ export default class DimensionContent extends React.PureComponent {
                                 label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
                                 className={styles.heightInput}
                                 faramElementName="height"
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                                 placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
                             />
                         </div>
@@ -142,7 +142,7 @@ export default class DimensionContent extends React.PureComponent {
                             <TextArea
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                                persistantHintAndError={false}
+                                persistentHintAndError={false}
                             />
                         </div>
                     </div>
