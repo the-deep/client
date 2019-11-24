@@ -12,13 +12,12 @@
         .column-title {
             transform: rotate(180deg);
             writing-mode: vertical-rl;
-            overflow-wrap: anywhere;
         }
     }
 
     &.clickable {
         &:hover {
-            background-color: var(--color-foreground-alt);
+            background-color: var(--color-background-accent-hint);
             cursor: pointer;
         }
     }

@@ -155,10 +155,9 @@ export default class Matrix2dInput extends React.PureComponent {
             title: subsector.title,
             tooltip: subsector.tooltip,
 
-            fontSize: subsector.fontSize || meta.subTitleRowFontSize,
-            width: subsector.width || meta.subTitleRowWidth,
-            orientation: (subsector.orientation || meta.subTitleRowOrientation === 'default') ?
-                meta.subTitleRowOrientation : subsector.orientation,
+            fontSize: subsector.fontSize,
+            width: subsector.width,
+            orientation: subsector.orientation,
         };
     }
 
