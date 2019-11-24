@@ -55,6 +55,8 @@ export default class ExportTypePane extends React.PureComponent {
     static reportVariantKeySelector = d => d.key;
     static reportVariantLabelSelector = d => d.label;
 
+    static reportVariantLabelSelector = d => d.label;
+
     static mapReportLevelsToNodes = levels => levels.map(level => ({
         key: level.id,
         title: level.title,
@@ -63,28 +65,34 @@ export default class ExportTypePane extends React.PureComponent {
         nodes: level.sublevels && ExportTypePane.mapReportLevelsToNodes(level.sublevels),
     }));
 
-    static transformMatrix2dLevels = (levels) => {
-        const sectorsLevels = levels.map(
-            d => ({
-                id: d.id,
-                title: d.title,
-            }),
-        );
-        const dimensions = levels[0].sublevels;
+    // NOTE: This function generates dimension first level
+    static transformMatrix2dLevels = ({
+        sectors: widgetSec,
+        dimensions: widgetDim,
+    } = {}) => {
+        const dimensionFirstLevels = widgetDim.map((d) => {
+            const subDims = d.subdimensions;
 
-        const newStructure = dimensions.map((l) => {
-            const newStructureLevel = l.sublevels.map(sl => ({
-                ...sl,
-                sublevels: sectorsLevels,
-            }));
+            const sublevels = subDims.map((sd) => {
+                const sectors = widgetSec.map(s => ({
+                    id: `${s.id}-${d.id}-${sd.id}`,
+                    title: s.title,
+                }));
+                return ({
+                    id: `${d.id}-${sd.id}`,
+                    title: sd.title,
+                    sublevels: sectors,
+                });
+            });
 
             return ({
-                ...l,
-                sublevels: newStructureLevel,
+                id: d.id,
+                title: d.title,
+                sublevels,
             });
         });
 
-        return newStructure;
+        return dimensionFirstLevels;
     }
 
     constructor(props) {
@@ -174,7 +182,10 @@ export default class ExportTypePane extends React.PureComponent {
             }
 
             if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
-                const newLevels = ExportTypePane.transformMatrix2dLevels(levels);
+                if (!widget.properties) {
+                    return;
+                }
+                const newLevels = ExportTypePane.transformMatrix2dLevels(widget.properties.data);
                 nodes.push({
                     title: widget.title,
                     key: `${exportable.id}`,

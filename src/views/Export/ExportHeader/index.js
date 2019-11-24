@@ -45,6 +45,22 @@ const createReportStructureForExport = nodes => nodes
         }
     ));
 
+const createReportStructureLevelForExport = (nodes) => {
+    const a = nodes
+        .filter(node => node.selected)
+        .map(node => (
+            node.nodes ? {
+                id: node.key,
+                title: node.title,
+                sublevels: createReportStructureLevelForExport(node.nodes),
+            } : {
+                id: node.key,
+                title: node.title,
+            }
+        ));
+
+    return a;
+};
 
 const propTypes = {
     className: PropTypes.string,
@@ -170,6 +186,16 @@ export default class ExportHeader extends React.PureComponent {
             || undefined
         );
 
+        // NOTE: structure and level depict the same thing but are different in structure
+        // levels require the sublevels to be named sublevels whereas struture requires
+        // sublevels to be names levels
+        // This cannot be fixed immediately in server as it requires migration
+        const report_levels = createReportStructureLevelForExport(reportStructure || emptyList)
+            .map(node => ({
+                id: node.id,
+                levels: node.sublevels,
+            }));
+
         const otherFilters = {
             project: projectId,
             lead: Object.keys(selectedLeads).filter(l => selectedLeads[l]),
@@ -179,6 +205,7 @@ export default class ExportHeader extends React.PureComponent {
             decoupled: decoupledEntries,
             // for pdf or word
             report_structure: createReportStructureForExport(reportStructure || emptyList),
+            report_levels,
             // differentiate between pdf or word
             pdf: isPdf,
 
