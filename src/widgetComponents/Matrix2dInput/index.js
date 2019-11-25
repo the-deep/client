@@ -133,7 +133,7 @@ export default class Matrix2dInput extends React.PureComponent {
         this.props.onChange(undefined, faramInfo);
     }
 
-    columTitleRendererParams = (key, sector) => {
+    columnTitleRendererParams = (key, sector) => {
         const { meta } = this.props;
         const clickable = sector.subsectors && sector.subsectors.length;
 
@@ -203,8 +203,6 @@ export default class Matrix2dInput extends React.PureComponent {
         const activeSector = this.getActiveSector(sectors, activeSectorKey);
         const subsectors = activeSector ? activeSector.subsectors : emptyList;
 
-        console.warn(meta);
-
         return (
             <div className={_cs(className, styles.matrixTwoDInput)}>
                 <table className={styles.table}>
@@ -269,7 +267,7 @@ export default class Matrix2dInput extends React.PureComponent {
                                     data={sectors}
                                     keySelector={columnKeySelector}
                                     renderer={ColumnTitle}
-                                    rendererParams={this.columTitleRendererParams}
+                                    rendererParams={this.columnTitleRendererParams}
                                 />
                             </tr>
                         </thead>

@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import produce from 'immer';
 
 import Faram, {
     FaramList,
     requiredCondition,
     FaramGroup,
+    accumulateValues,
 } from '@togglecorp/faram';
 
 import {
@@ -53,6 +55,138 @@ const defaultProps = {
 const emptyArray = [];
 const emptyObject = {};
 
+const keySelector = elem => elem.id;
+
+const duplicateValidation = (item) => {
+    const errors = [];
+    if (!item || item.length <= 0) {
+        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
+    }
+
+    const duplicates = getDuplicates(item, o => o.title);
+    if (duplicates.length > 0) {
+        errors.push(_ts(
+            'widgets.editor.matrix2d',
+            'duplicationError',
+            { duplicates: duplicates.join(', ') },
+        ));
+    }
+    return errors;
+};
+
+const defaultSchema = {
+    title: [requiredCondition],
+    meta: {
+        fields: {
+            advanceSettings: [],
+            subsectorExpansion: [],
+        },
+    },
+    dimensions: {
+        validation: duplicateValidation,
+        keySelector,
+        member: {
+            fields: {
+                id: [requiredCondition],
+                color: [],
+                title: [requiredCondition],
+                tooltip: [],
+                subdimensions: {
+                    validation: duplicateValidation,
+                    keySelector,
+                    member: {
+                        fields: {
+                            id: [requiredCondition],
+                            tooltip: [],
+                            title: [requiredCondition],
+                        },
+                    },
+                },
+            },
+        },
+    },
+    sectors: {
+        validation: duplicateValidation,
+        keySelector,
+        member: {
+            fields: {
+                id: [requiredCondition],
+                title: [requiredCondition],
+                tooltip: [],
+                subsectors: {
+                    validation: duplicateValidation,
+                    keySelector,
+                    member: {
+                        fields: {
+                            id: [requiredCondition],
+                            tooltip: [],
+                            title: [requiredCondition],
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
+const advanceModeSchema = produce(defaultSchema, (safeSchema) => {
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleRowHeight = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleRowFontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleRowOrientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleColumnWidth = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleColumnFontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleColumnOrientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.subTitleColumnWidth = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.subTitleColumnFontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.subTitleColumnOrientation = [];
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.height = [];
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.subdimensions.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.subdimensions.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.subdimensions.member.fields.height = [];
+
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.height = [];
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.subsectors.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.subsectors.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.subsectors.member.fields.height = [];
+});
+
+const schema = {
+    identifier: value => (value.meta.advanceSettings ? 'advanceMode' : undefined),
+    fields: {
+        advanceMode: advanceModeSchema,
+        default: defaultSchema,
+    },
+};
+
 export default class Matrix2dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -60,141 +194,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     static keySelector = elem => elem.id;
     static titleSelector = elem => elem.title;
 
-    static schema = {
-        fields: {
-            title: [requiredCondition],
-            meta: {
-                fields: {
-                    titleRowHeight: [],
-                    titleRowFontSize: [],
-                    titleRowOrientation: [],
-                    titleColumnWidth: [],
-                    titleColumnFontSize: [],
-                    titleColumnOrientation: [],
-                    subTitleColumnWidth: [],
-                    subTitleColumnFontSize: [],
-                    subTitleColumnOrientation: [],
-                    advanceSettings: [],
-                    subsectorExpansion: [],
-                },
-            },
-            dimensions: {
-                validation: (dimensions) => {
-                    const errors = [];
-                    if (!dimensions || dimensions.length <= 0) {
-                        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-                    }
-
-                    const duplicates = getDuplicates(dimensions, o => o.title);
-                    if (duplicates.length > 0) {
-                        errors.push(_ts(
-                            'widgets.editor.matrix2d',
-                            'duplicationError',
-                            { duplicates: duplicates.join(', ') },
-                        ));
-                    }
-                    return errors;
-                },
-                keySelector: Matrix2dEditWidget.keySelector,
-                member: {
-                    fields: {
-                        id: [requiredCondition],
-                        color: [],
-                        title: [requiredCondition],
-                        tooltip: [],
-                        orientation: [],
-                        fontSize: [],
-                        height: [],
-                        subdimensions: {
-                            validation: (subdimensions) => {
-                                const errors = [];
-                                if (!subdimensions || subdimensions.length <= 0) {
-                                    errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-                                }
-
-                                const duplicates = getDuplicates(subdimensions, o => o.title);
-                                if (duplicates.length > 0) {
-                                    errors.push(_ts(
-                                        'widgets.editor.matrix2d',
-                                        'duplicationError',
-                                        { duplicates: duplicates.join(', ') },
-                                    ));
-                                }
-                                return errors;
-                            },
-                            keySelector: Matrix2dEditWidget.keySelector,
-                            member: {
-                                fields: {
-                                    id: [requiredCondition],
-                                    tooltip: [],
-                                    title: [requiredCondition],
-                                    orientation: [],
-                                    fontSize: [],
-                                    height: [],
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            sectors: {
-                validation: (sectors) => {
-                    const errors = [];
-                    if (!sectors || sectors.length <= 0) {
-                        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-                    }
-
-                    const duplicates = getDuplicates(sectors, o => o.title);
-                    if (duplicates.length > 0) {
-                        errors.push(_ts(
-                            'widgets.editor.matrix2d',
-                            'duplicationError',
-                            { duplicates: duplicates.join(', ') },
-                        ));
-                    }
-                    return errors;
-                },
-                keySelector: Matrix2dEditWidget.keySelector,
-                member: {
-                    fields: {
-                        id: [requiredCondition],
-                        title: [requiredCondition],
-                        tooltip: [],
-                        orientation: [],
-                        fontSize: [],
-                        width: [],
-                        subsectors: {
-                            validation: (subsectors) => {
-                                const errors = [];
-                                if (subsectors && subsectors.length > 0) {
-                                    const duplicates = getDuplicates(subsectors, o => o.title);
-                                    if (duplicates.length > 0) {
-                                        errors.push(_ts(
-                                            'widgets.editor.matrix2d',
-                                            'duplicationError',
-                                            { duplicates: duplicates.join(', ') },
-                                        ));
-                                    }
-                                }
-                                return errors;
-                            },
-                            keySelector: Matrix2dEditWidget.keySelector,
-                            member: {
-                                fields: {
-                                    id: [requiredCondition],
-                                    tooltip: [],
-                                    title: [requiredCondition],
-                                    orientation: [],
-                                    fontSize: [],
-                                    width: [],
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    };
 
     // FIXME: This should be inside Row
     static dimensionDataModifier = row => row.map(r => ({
@@ -275,7 +274,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     <Row
                         className={styles.tabContent}
                         dataModifier={Matrix2dEditWidget.dimensionDataModifier}
-                        keySelector={Matrix2dEditWidget.keySelector}
+                        keySelector={keySelector}
                         onAddDimensionFaramAction={this.handleAddDimensionFaramAction}
                         onGeoLinkModalVisiblityChange={this.handleModalVisiblityChange}
                         onLinkWidgetModalVisiblityChange={this.handleModalVisiblityChange}
@@ -292,7 +291,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     <Column
                         className={styles.tabContent}
                         dataModifier={Matrix2dEditWidget.sectorDataModifier}
-                        keySelector={Matrix2dEditWidget.keySelector}
+                        keySelector={keySelector}
                         onAddSectorFaramAction={this.handleAddSectorFaramAction}
                         onGeoLinkModalVisiblityChange={this.handleModalVisiblityChange}
                         onLinkWidgetModalVisiblityChange={this.handleModalVisiblityChange}
@@ -331,7 +330,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
         const currentSelectedRowKey = selectedTab === 'dimensions' ? selectedDimensionKey : selectedSectorKey;
         const selectedRowKey = faramInfo.lastItem ? (
-            Matrix2dEditWidget.keySelector(faramInfo.lastItem)
+            keySelector(faramInfo.lastItem)
         ) : (
             currentSelectedRowKey
         );
@@ -344,6 +343,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             hasError: faramInfo.hasError,
         });
 
+        // On temporary onChange, always pass it through schema accumulation
+        const newFaramValues = accumulateValues(faramValues, schema, { noFalsyValues: true });
+
         const {
             widgetKey,
             onChange,
@@ -351,8 +353,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
         onChange(
             widgetKey,
-            Matrix2dEditWidget.getDataFromFaramValues(faramValues),
-            Matrix2dEditWidget.getTitleFromFaramValues(faramValues),
+            Matrix2dEditWidget.getDataFromFaramValues(newFaramValues),
+            Matrix2dEditWidget.getTitleFromFaramValues(newFaramValues),
         );
     };
 
@@ -388,7 +390,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         };
 
         this.setState({
-            selectedDimensionKey: Matrix2dEditWidget.keySelector(newDimension),
+            selectedDimensionKey: keySelector(newDimension),
         });
 
         return [
@@ -406,7 +408,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         };
 
         this.setState({
-            selectedSectorKey: Matrix2dEditWidget.keySelector(newSector),
+            selectedSectorKey: keySelector(newSector),
         });
 
         return [
@@ -454,12 +456,12 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         if (selectionType === 'dimension' && faramValues && faramValues.dimensions) {
             const { dimensions } = faramValues;
             selectedIndex = dimensions.findIndex(
-                dimension => (Matrix2dEditWidget.keySelector(dimension) === selectedDimensionKey),
+                dimension => (keySelector(dimension) === selectedDimensionKey),
             );
         } else if (selectionType === 'sector' && faramValues && faramValues.sectors) {
             const { sectors } = faramValues;
             selectedIndex = sectors.findIndex(
-                sector => (Matrix2dEditWidget.keySelector(sector) === selectedSectorKey),
+                sector => (keySelector(sector) === selectedSectorKey),
             );
         }
 
@@ -471,7 +473,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             return (
                 <FaramList
                     faramElementName="dimensions"
-                    keySelector={Matrix2dEditWidget.keySelector}
+                    keySelector={keySelector}
                 >
                     <DimensionContent
                         className={styles.editContent}
@@ -486,7 +488,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             return (
                 <FaramList
                     faramElementName="sectors"
-                    keySelector={Matrix2dEditWidget.keySelector}
+                    keySelector={keySelector}
                 >
                     <SectorContent
                         className={styles.editContent}
@@ -520,6 +522,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
 
         const advanceMode = faramValues.meta.advanceSettings;
+
         return (
             <Faram
                 className={_cs(className, styles.matrixTwoDEditWidget)}
@@ -527,7 +530,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
                 onValidationSuccess={this.handleFaramValidationSuccess}
-                schema={Matrix2dEditWidget.schema}
+                schema={schema}
                 value={faramValues}
             >
                 {isNotDefined(selectionType) ? (
