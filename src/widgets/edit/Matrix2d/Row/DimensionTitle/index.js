@@ -51,7 +51,6 @@ export default class DimensionTitle extends React.PureComponent {
             index,
             data: { title },
             hasError,
-            onEditButtonClick,
             className,
         } = this.props;
 

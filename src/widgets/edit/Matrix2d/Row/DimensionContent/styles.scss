@@ -28,16 +28,17 @@
         align-items: center;
         flex-shrink: 0;
         background-color: var(--color-foreground-alt);
+        font-size: var(--font-size-large);
 
         .back-button {
             flex-shrink: 0;
             padding: var(--spacing-small) var(--spacing-medium);
-            font-size: var(--font-size-large);
         }
 
         .title {
             flex-grow: 1;
             padding: var(--spacing-medium);
+            color: var(--color-primary);
         }
     }
 

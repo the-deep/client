@@ -14,6 +14,7 @@ const emptyList = [];
 const propTypes = {
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     subdimension: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    meta: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node,
     rowStyle: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -27,6 +28,7 @@ const defaultProps = {
     activeSectorKey: undefined,
     children: undefined,
     subdimension: {},
+    meta: {},
     sectors: [],
     dimensionId: undefined,
     subdimensionId: undefined,
@@ -127,7 +129,7 @@ export default class SubdimensionRow extends React.PureComponent {
             rowStyle,
             children,
             activeSectorKey,
-            activeCellStyle,
+            // activeCellStyle,
             meta,
         } = this.props;
 
@@ -148,10 +150,12 @@ export default class SubdimensionRow extends React.PureComponent {
             height,
         );
 
+        /*
         const subdimensionStyle = this.isRowActive() ? ({
             ...activeCellStyle,
             ...tdStyle,
         }) : ({ tdStyle });
+        */
 
         return (
             <tr style={rowStyle}>

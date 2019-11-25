@@ -1053,7 +1053,9 @@
         "-70688481": "Auto",
         "-89796679": "Title row",
         "-15448871": "Title column",
-        "-72739389": "Subtitle column"
+        "-72739389": "Subtitle column",
+        "-78292946": "Advance settings",
+        "-76993519": "Sub-column expansion"
     },
     "links": {
         "browserExtension": {
@@ -2605,7 +2607,10 @@
             "titleRowFontSizeLabel": -97095875,
             "subTitleColumnInputsHeading": -72739389,
             "titleColumnInputsHeading": -15448871,
-            "titleRowInputsHeading": -89796679
+            "titleRowInputsHeading": -89796679,
+            "generalSettings": 56,
+            "subsectorExpansionLabel": -76993519,
+            "advanceSettingsLabel": -78292946
         },
         "editEntry.list": {
             "noEntriesText": 543

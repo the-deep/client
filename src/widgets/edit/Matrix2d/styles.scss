@@ -76,6 +76,10 @@
                     .orientation-input {
                         margin: var(--spacing-extra-small) var(--spacing-small);
                     }
+
+                    .checkbox-input {
+                        margin: var(--spacing-extra-small) var(--spacing-small);
+                    }
                 }
 
             }
@@ -90,6 +94,14 @@
 
             .sub-title-column-inputs {
                 @extend %input-group;
+            }
+
+            .enable-setting-inputs {
+                @extend %input-group;
+
+                .content {
+                    flex-direction: column;
+                }
             }
         }
 
@@ -110,5 +122,9 @@
                 overflow: auto;
             }
         }
+    }
+
+    .edit-content {
+        flex-grow: 1;
     }
 }

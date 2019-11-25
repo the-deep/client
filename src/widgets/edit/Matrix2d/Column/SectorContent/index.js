@@ -16,7 +16,6 @@ import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import Button from '#rsca/Button';
-import Label from '#rsci/Label';
 
 import OrientationInput from '#components/general/OrientationInput';
 

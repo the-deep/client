@@ -17,7 +17,6 @@ import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import ColorInput from '#rsci/ColorInput';
-import Label from '#rsci/Label';
 
 import _ts from '#ts';
 

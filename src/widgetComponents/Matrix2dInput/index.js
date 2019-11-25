@@ -14,6 +14,7 @@ import DimensionRow from './DimensionRow';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     dimensions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
@@ -23,6 +24,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     dimensions: [],
     sectors: [],
     meta: {},
@@ -135,7 +137,6 @@ export default class Matrix2dInput extends React.PureComponent {
         const clickable = sector.subsectors && sector.subsectors.length;
 
         return {
-            className: styles.sectorTitle,
             title: sector.title,
             tooltip: sector.tooltip,
             fontSize: sector.fontSize || meta.titleRowFontSize,
@@ -148,18 +149,14 @@ export default class Matrix2dInput extends React.PureComponent {
         };
     }
 
-    subsectorTitleRendererParams = (key, subsector) => {
-        const { meta } = this.props;
+    subsectorTitleRendererParams = (key, subsector) => ({
+        title: subsector.title,
+        tooltip: subsector.tooltip,
 
-        return {
-            title: subsector.title,
-            tooltip: subsector.tooltip,
-
-            fontSize: subsector.fontSize,
-            width: subsector.width,
-            orientation: subsector.orientation,
-        };
-    }
+        fontSize: subsector.fontSize,
+        width: subsector.width,
+        orientation: subsector.orientation,
+    });
 
     handleActiveSectorTitleClick = () => {
         this.setState({ activeSectorKey: undefined });
