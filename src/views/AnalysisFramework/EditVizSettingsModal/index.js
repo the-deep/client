@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import {
     _cs,
+    mapToMap,
     listToGroupList,
 } from '@togglecorp/fujs';
 
@@ -148,32 +149,30 @@ export default class EditVizSettingsModal extends React.PureComponent {
         } = this.props;
 
         const allWidgets = this.getWidgets(widgets);
+        const transformedValues = mapToMap(
+            values,
+            k => k,
+            (d) => {
+                const widget = allWidgets.find(w => w.id === d);
+                if (widget && widget.isConditional) {
+                    const {
+                        conditionalId,
+                        widgetId,
+                        key: widgetKey,
+                    } = widget;
 
-        const transformedValues = Object.entries(values).map(([key, value]) => {
-            const widget = allWidgets.find(w => w.id === value);
-            if (widget && widget.isConditional) {
-                const {
-                    conditionalId,
-                    widgetId,
-                    key: widgetKey,
-                } = widget;
-
-                return ({
-                    [key]: {
+                    return ({
                         pk: conditionalId,
                         widgetKey,
                         widgetType: widgetId,
                         isConditionalWidget: true,
-                    },
-                });
-            }
+                    });
+                }
+                return { pk: d };
+            },
+        );
 
-            return ({ [key]: { pk: value } });
-        }).reduce((acc, widget) => ({ ...acc, ...widget }), {});
-
-        const properties = {
-            statsConfig: transformedValues,
-        };
+        const properties = { statsConfig: transformedValues };
 
         editFrameworkSettingsRequest.do({
             body: { properties },
