@@ -14,6 +14,7 @@ import SectorTitle from './SectorTitle';
 
 import styles from './styles.scss';
 
+// FIXME: this is not used
 interface Sector {
     id?: number;
     subsectors?: [];
@@ -22,6 +23,7 @@ interface Sector {
 interface Props {
     className?: string;
     widgetKey?: string;
+    // FIXME: the typings are wrong
     keySelector: (d: object) => {};
     titleSelector: (d: object) => {};
     dataModifier: (d: object) => {};

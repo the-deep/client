@@ -19,7 +19,7 @@ const deleteClick = (options, index) => {
     return newOptions;
 };
 
-const SubdimensionRow = ({ className, index }) => (
+const SubdimensionRow = ({ className, index, advanceMode }) => (
     <div className={_cs(className, styles.subdimensionRow)}>
         <FaramGroup faramElementName={String(index)}>
             <div className={styles.inputs}>
@@ -31,27 +31,31 @@ const SubdimensionRow = ({ className, index }) => (
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubdimensionLabel', { index: index + 1 })}
                         persistentHintAndError={false}
                     />
-                    <OrientationInput
-                        className={styles.orientationInput}
-                        faramElementName="orientation"
-                        persistentHintAndError={false}
-                    />
-                    <TextInput
-                        type="number"
-                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
-                        className={styles.fontSizeInput}
-                        faramElementName="fontSize"
-                        persistentHintAndError={false}
-                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                    />
-                    <TextInput
-                        type="number"
-                        label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
-                        className={styles.heightInput}
-                        faramElementName="height"
-                        persistentHintAndError={false}
-                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
-                    />
+                    { advanceMode && (
+                        <>
+                            <OrientationInput
+                                className={styles.orientationInput}
+                                faramElementName="orientation"
+                                persistentHintAndError={false}
+                            />
+                            <TextInput
+                                type="number"
+                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
+                                className={styles.fontSizeInput}
+                                faramElementName="fontSize"
+                                persistentHintAndError={false}
+                                placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                            />
+                            <TextInput
+                                type="number"
+                                label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
+                                className={styles.heightInput}
+                                faramElementName="height"
+                                persistentHintAndError={false}
+                                placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
+                            />
+                        </>
+                    )}
                 </div>
                 <div className={styles.bottom}>
                     <TextArea
@@ -76,10 +80,12 @@ const SubdimensionRow = ({ className, index }) => (
 SubdimensionRow.propTypes = {
     className: PropTypes.string,
     index: PropTypes.number.isRequired,
+    advanceMode: PropTypes.bool,
 };
 
 SubdimensionRow.defaultProps = {
     className: undefined,
+    advanceMode: false,
 };
 
 export default SubdimensionRow;

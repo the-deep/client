@@ -35,6 +35,7 @@ const defaultProps = {
 const rowKeySelector = dimension => dimension.id;
 const columnKeySelector = sector => sector.id;
 
+const emptyList = [];
 
 @FaramInputElement
 export default class Matrix2dInput extends React.PureComponent {
@@ -200,7 +201,9 @@ export default class Matrix2dInput extends React.PureComponent {
         const subTitleColumnStyle = this.getSubTitleColumnStyle(meta.subTitleColumnWidth);
 
         const activeSector = this.getActiveSector(sectors, activeSectorKey);
-        const subsectors = activeSector ? activeSector.subsectors : [];
+        const subsectors = activeSector ? activeSector.subsectors : emptyList;
+
+        console.warn(meta);
 
         return (
             <div className={_cs(className, styles.matrixTwoDInput)}>

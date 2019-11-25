@@ -32,10 +32,12 @@ const propTypes = {
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
     onBackButtonClick: PropTypes.func.isRequired,
+    advanceMode: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    advanceMode: false,
 };
 
 const TextOutput = FaramOutputElement(props => (
@@ -60,11 +62,6 @@ export default class SectorContent extends React.PureComponent {
         },
     ])
 
-    static rendererParams = (key, elem, i) => ({
-        index: i,
-        className: styles.subSectorContent,
-    })
-
     static rowsModifier = rows => rows.map(r => ({
         id: randomString(16),
         title: r.label,
@@ -73,11 +70,18 @@ export default class SectorContent extends React.PureComponent {
         tooltip: '',
     }));
 
+    rendererParams = (key, elem, i) => ({
+        index: i,
+        className: styles.subSectorContent,
+        advanceMode: this.props.advanceMode,
+    })
+
     render() {
         const {
             index,
             className,
             onBackButtonClick,
+            advanceMode,
         } = this.props;
 
         return (
@@ -109,27 +113,31 @@ export default class SectorContent extends React.PureComponent {
                                 autoFocus
                                 persistentHintAndError={false}
                             />
-                            <OrientationInput
-                                className={styles.orientationInput}
-                                faramElementName="orientation"
-                                persistentHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
-                                className={styles.fontSizeInput}
-                                faramElementName="fontSize"
-                                placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                persistentHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
-                                className={styles.widthInput}
-                                faramElementName="width"
-                                placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                                persistentHintAndError={false}
-                            />
+                            { advanceMode && (
+                                <>
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="orientation"
+                                        persistentHintAndError={false}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
+                                        className={styles.fontSizeInput}
+                                        faramElementName="fontSize"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                        persistentHintAndError={false}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
+                                        className={styles.widthInput}
+                                        faramElementName="width"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                                        persistentHintAndError={false}
+                                    />
+                                </>
+                            )}
                         </div>
                         <div className={styles.bottom}>
                             <TextArea
@@ -164,7 +172,7 @@ export default class SectorContent extends React.PureComponent {
                                 className={styles.subsectorList}
                                 dragHandleClassName={styles.dragHandle}
                                 itemClassName={styles.item}
-                                rendererParams={SectorContent.rendererParams}
+                                rendererParams={this.rendererParams}
                                 renderer={SubsectorRow}
                             />
                         </FaramList>

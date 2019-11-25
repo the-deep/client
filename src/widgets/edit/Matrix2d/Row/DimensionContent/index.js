@@ -38,10 +38,12 @@ const propTypes = {
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
     onBackButtonClick: PropTypes.func.isRequired,
+    advanceMode: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    advanceMode: false,
 };
 
 export default class DimensionContent extends React.PureComponent {
@@ -60,11 +62,6 @@ export default class DimensionContent extends React.PureComponent {
         },
     ])
 
-    static rendererParams = (key, elem, i) => ({
-        index: i,
-        className: styles.subDimensionContent,
-    })
-
     static rowsModifier = rows => rows.map(r => ({
         id: randomString(16),
         title: r.label,
@@ -73,11 +70,18 @@ export default class DimensionContent extends React.PureComponent {
         tooltip: '',
     }));
 
+    rendererParams = (key, elem, i) => ({
+        index: i,
+        className: styles.subDimensionContent,
+        advanceMode: this.props.advanceMode,
+    })
+
     render() {
         const {
             index,
             className,
             onBackButtonClick,
+            advanceMode,
         } = this.props;
 
         return (
@@ -115,27 +119,31 @@ export default class DimensionContent extends React.PureComponent {
                                 autoFocus
                                 persistentHintAndError={false}
                             />
-                            <OrientationInput
-                                className={styles.orientationInput}
-                                faramElementName="orientation"
-                                persistentHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
-                                className={styles.fontSizeInput}
-                                faramElementName="fontSize"
-                                persistentHintAndError={false}
-                                placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
-                                className={styles.heightInput}
-                                faramElementName="height"
-                                persistentHintAndError={false}
-                                placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
-                            />
+                            { advanceMode && (
+                                <>
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="orientation"
+                                        persistentHintAndError={false}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
+                                        className={styles.fontSizeInput}
+                                        faramElementName="fontSize"
+                                        persistentHintAndError={false}
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
+                                        className={styles.heightInput}
+                                        faramElementName="height"
+                                        persistentHintAndError={false}
+                                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
+                                    />
+                                </>
+                            )}
                         </div>
                         <div className={styles.bottom}>
                             <TextArea
@@ -170,7 +178,7 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.subdimensionItemList}
                                 dragHandleClassName={styles.dragHandle}
                                 itemClassName={styles.subdimensionItem}
-                                rendererParams={DimensionContent.rendererParams}
+                                rendererParams={this.rendererParams}
                                 renderer={SubdimensionRow}
                             />
                         </FaramList>
