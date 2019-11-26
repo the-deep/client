@@ -7,6 +7,7 @@ import {
     _cs,
     mapToMap,
     listToGroupList,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import Modal from '#rscv/Modal';
@@ -19,85 +20,40 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 
 import {
-    RequestCoordinator,
-    RequestClient,
-    methods,
-} from '#request';
-
-import {
-    afViewWidgetsForVizSelector,
-    setAfViewPropertiesAction,
+    afViewAnalysisFrameworkWidgetsSelector,
+    afViewAnalysisFrameworkStatsConfigSelector,
+    setAfViewStatsConfigAction,
 } from '#redux';
-import { getAllWidgets } from '#entities/analysisFramework';
-import notify from '#notify';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
-    widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    selectedWidgets: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    // eslint-disable-next-line react/no-unused-prop-types
-    setAfViewProperties: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
+
+    className: PropTypes.string,
+
     closeModal: PropTypes.func,
-    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 const defaultProps = {
     closeModal: () => {},
-    selectedWidgets: [],
     className: '',
 };
 
 const keySelector = d => d.id;
 const labelSelector = d => d.title;
 
-const requestOptions = {
-    editFrameworkSettingsRequest: {
-        url: ({ props: { analysisFrameworkId } }) => `/analysis-frameworks/${analysisFrameworkId}/`,
-        body: ({ params: { body } }) => body,
-        method: methods.PATCH,
-        onSuccess: ({
-            props: {
-                closeModal,
-                analysisFrameworkId,
-                setAfViewProperties,
-            },
-            response: { properties },
-        }) => {
-            setAfViewProperties({ analysisFrameworkId, properties });
-            closeModal();
-        },
-        onFailure: ({
-            error: { faramErrors },
-            params: { handleFailure },
-        }) => {
-            handleFailure(faramErrors);
-        },
-        onFatal: () => {
-            notify.send({
-                title: _ts('project.framework.edit', 'afPatch'),
-                type: notify.type.ERROR,
-                message: _ts('project.framework.edit', 'afPatchFatal'),
-                duration: notify.duration.SLOW,
-            });
-        },
-    },
-};
-
 const mapStateToProps = state => ({
-    selectedWidgets: afViewWidgetsForVizSelector(state),
+    widgets: afViewAnalysisFrameworkWidgetsSelector(state),
+    statsConfig: afViewAnalysisFrameworkStatsConfigSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setAfViewProperties: params => dispatch(setAfViewPropertiesAction(params)),
+    setAfViewStatsConfig: params => dispatch(setAfViewStatsConfigAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestCoordinator
-@RequestClient(requestOptions)
 export default class EditVizSettingsModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -117,16 +73,54 @@ export default class EditVizSettingsModal extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { selectedWidgets } = this.props;
+        const { statsConfig } = this.props;
+
+        const faramValues = mapToMap(
+            statsConfig,
+            key => key,
+            v => (v.isConditionalWidget ? v.widgetKey : v.pk),
+        );
 
         this.state = {
             faramErrors: {},
-            faramValues: selectedWidgets,
+            faramValues,
             pristine: true,
         };
     }
 
-    getWidgets = memoize(getAllWidgets);
+    getWidgets = memoize((widgets = []) => {
+        // Only work for widgets with id (widgets that are saved in server)
+        const widgetsWithId = widgets.filter(widget => widget.id);
+
+        const conditionalWidgets = widgetsWithId
+            .filter(widget => widget.widgetId === 'conditionalWidget')
+            .map((conditional) => {
+                const {
+                    title,
+                    id,
+                    properties: {
+                        data: {
+                            widgets: widgetsInsideConditional = [],
+                        } = {},
+                    } = {},
+                } = conditional;
+
+                return widgetsInsideConditional.map(({ widget }) => (
+                    {
+                        ...widget,
+
+                        // doesn't matter if id is number or string (only needs to be unique)
+                        id: widget.key,
+                        title: `${title} › ${widget.title}`,
+                        conditionalId: id,
+                        isConditional: true,
+                    }
+                ));
+            })
+            .flat();
+
+        return [...widgetsWithId, ...conditionalWidgets];
+    })
 
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
@@ -141,43 +135,52 @@ export default class EditVizSettingsModal extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (values) => {
-        const {
-            widgets = [],
-            requests: {
-                editFrameworkSettingsRequest,
-            },
-        } = this.props;
+        const { widgets } = this.props;
 
         const allWidgets = this.getWidgets(widgets);
+
+        const mapping = listToMap(
+            allWidgets,
+            widget => widget.id,
+            widget => widget,
+        );
+
         const transformedValues = mapToMap(
             values,
             k => k,
             (d) => {
-                const widget = allWidgets.find(w => w.id === d);
-                if (widget && widget.isConditional) {
-                    const {
-                        conditionalId,
-                        widgetId,
-                        key: widgetKey,
-                    } = widget;
-
-                    return ({
-                        pk: conditionalId,
-                        widgetKey,
-                        widgetType: widgetId,
-                        isConditionalWidget: true,
-                    });
+                const widget = mapping[d];
+                if (!widget) {
+                    return undefined;
                 }
-                return { pk: d };
+
+                if (!widget.isConditional) {
+                    return { pk: d };
+                }
+
+                const {
+                    conditionalId,
+                    widgetId,
+                    key: widgetKey,
+                } = widget;
+
+                return ({
+                    pk: conditionalId,
+                    widgetKey,
+                    widgetType: widgetId,
+                    isConditionalWidget: true,
+                });
             },
         );
 
-        const properties = { statsConfig: transformedValues };
+        const {
+            analysisFrameworkId,
+            setAfViewStatsConfig,
+            closeModal,
+        } = this.props;
 
-        editFrameworkSettingsRequest.do({
-            body: { properties },
-            handleFailure: this.handleFaramValidationFailure,
-        });
+        setAfViewStatsConfig({ analysisFrameworkId, statsConfig: transformedValues });
+        closeModal();
     };
 
     groupWidgets = memoize((widgets = []) => {
@@ -194,11 +197,6 @@ export default class EditVizSettingsModal extends React.PureComponent {
             closeModal,
             className,
             widgets,
-            requests: {
-                editFrameworkSettingsRequest: {
-                    pending,
-                },
-            },
         } = this.props;
 
         const {
@@ -290,9 +288,8 @@ export default class EditVizSettingsModal extends React.PureComponent {
                         <PrimaryButton
                             type="submit"
                             disabled={pristine}
-                            pending={pending}
                         >
-                            {_ts('framework.editVizSettings', 'submitModalLabel')}
+                            {_ts('framework.editVizSettings', 'saveModalLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

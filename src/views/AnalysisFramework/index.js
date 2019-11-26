@@ -38,9 +38,9 @@ import _ts from '#ts';
 import FrameworkGetRequest from './requests/FrameworkGet';
 import GeoOptionsRequest from './requests/GeoOptionsRequest';
 import FrameworkSaveRequest from './requests/FrameworkSave';
+import EditVizSettingsModal from './EditVizSettingsModal';
 import Overview from './Overview';
 import List from './List';
-import EditVizSettingsModal from './EditVizSettingsModal';
 import styles from './styles.scss';
 
 const ModalButton = modalize(AccentButton);
@@ -342,10 +342,6 @@ export default class AnalysisFramework extends React.PureComponent {
             );
         }
 
-        const {
-            widgets,
-        } = analysisFramework;
-
         const exitPath = reverseRoute(pathNames.projects, { projectId });
         const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
@@ -378,7 +374,6 @@ export default class AnalysisFramework extends React.PureComponent {
                                     title={_ts('framework', 'editVizSettingsButtonTitle')}
                                     modal={(
                                         <EditVizSettingsModal
-                                            widgets={widgets}
                                             analysisFrameworkId={analysisFrameworkId}
                                         />
                                     )}
