@@ -453,12 +453,12 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const advanceMode = faramValues.meta.advanceSettings;
 
         let selectedIndex;
-        if (selectionType === 'dimension' && faramValues && faramValues.dimensions) {
+        if (selectionType === 'dimension' && faramValues.dimensions) {
             const { dimensions } = faramValues;
             selectedIndex = dimensions.findIndex(
                 dimension => (keySelector(dimension) === selectedDimensionKey),
             );
-        } else if (selectionType === 'sector' && faramValues && faramValues.sectors) {
+        } else if (selectionType === 'sector' && faramValues.sectors) {
             const { sectors } = faramValues;
             selectedIndex = sectors.findIndex(
                 sector => (keySelector(sector) === selectedSectorKey),

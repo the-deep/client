@@ -56,7 +56,6 @@
                 .input-and-actions {
                     border-radius: var(--radius-border-medium);
                     border-bottom-color: var(--color-separator-on-navbar);
-                    background-color: var(--color-foreground-alt);
                     padding: var(--spacing-small) var(--spacing-medium);
 
                     .raw-input {
@@ -80,12 +79,12 @@
         align-self: stretch;
         flex-grow: 1;
         justify-content: center;
+        padding: 0 var(--spacing-medium);
         min-width: 32px;
         overflow: auto;
 
         >div {
             display: flex;
-            justify-content: center;
         }
 
         >button {

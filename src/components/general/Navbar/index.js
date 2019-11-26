@@ -47,7 +47,6 @@ import {
     envText,
     commitHash,
 } from '#config/env';
-import logo from '#resources/img/deep-logo-simplified.svg';
 
 import Cloak from '#components/general/Cloak';
 import NavMenu from './NavMenu';

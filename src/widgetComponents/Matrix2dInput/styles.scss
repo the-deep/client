@@ -40,12 +40,23 @@
                     top: 0;
                 }
             }
+
+            &.not-subsector-expansion {
+                th {
+                    top: 0;
+                }
+            }
         }
 
         tbody {
             td {
                 border: var(--width-separator-thin) solid var(--color-foreground);
             }
+        }
+
+        &.auto-settings {
+            width: 100%;
+            height: 100%;
         }
     }
 

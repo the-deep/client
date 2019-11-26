@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isTruthy,
+    isFalsy,
+} from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 import produce from 'immer';
 
@@ -134,16 +138,25 @@ export default class Matrix2dInput extends React.PureComponent {
     }
 
     columnTitleRendererParams = (key, sector) => {
-        const { meta } = this.props;
-        const clickable = sector.subsectors && sector.subsectors.length;
+        const {
+            meta: {
+                titleRowFontSize,
+                titleRowOrientation,
+                subsectorExpansion,
+            },
+        } = this.props;
+
+        const clickable = isTruthy(subsectorExpansion)
+            && sector.subsectors
+            && sector.subsectors.length;
 
         return {
             title: sector.title,
             tooltip: sector.tooltip,
-            fontSize: sector.fontSize || meta.titleRowFontSize,
-            width: sector.width || meta.titleRowFontSize,
+            fontSize: sector.fontSize || titleRowFontSize,
+            width: sector.width || titleRowFontSize,
             orientation: (!sector.orientation || sector.orientation === 'default') ?
-                meta.titleRowOrientation : sector.orientation,
+                titleRowOrientation : sector.orientation,
             sectorKey: key,
             clickable,
             onClick: clickable ? this.handleSectorTitleClick : undefined,
@@ -190,22 +203,33 @@ export default class Matrix2dInput extends React.PureComponent {
         const {
             dimensions,
             sectors,
-            meta,
+            meta: {
+                titleRowHeight,
+                titleColumnWidth,
+                subTitleColumnWidth,
+                subsectorExpansion,
+                advanceSettings,
+            },
             className,
         } = this.props;
 
         const { activeSectorKey } = this.state;
 
-        const headRowStyle = this.getHeadRowStyle(meta.titleRowHeight);
-        const titleColumnStyle = this.getTitleColumnStyle(meta.titleColumnWidth);
-        const subTitleColumnStyle = this.getSubTitleColumnStyle(meta.subTitleColumnWidth);
+        const headRowStyle = this.getHeadRowStyle(titleRowHeight);
+        const titleColumnStyle = this.getTitleColumnStyle(titleColumnWidth);
+        const subTitleColumnStyle = this.getSubTitleColumnStyle(subTitleColumnWidth);
 
         const activeSector = this.getActiveSector(sectors, activeSectorKey);
         const subsectors = activeSector ? activeSector.subsectors : emptyList;
 
         return (
             <div className={_cs(className, styles.matrixTwoDInput)}>
-                <table className={styles.table}>
+                <table
+                    className={_cs(
+                        styles.table,
+                        isFalsy(advanceSettings) && styles.autoSettings,
+                    )}
+                >
                     { activeSectorKey ? (
                         <thead>
                             <tr>
@@ -241,17 +265,23 @@ export default class Matrix2dInput extends React.PureComponent {
                             </tr>
                         </thead>
                     ) : (
-                        <thead>
-                            <tr>
-                                <th
-                                    className={styles.topTh}
-                                    colSpan={sectors.length + 2}
-                                >
-                                    <div className={styles.hidden}>
-                                        -
-                                    </div>
-                                </th>
-                            </tr>
+                        <thead
+                            className={_cs(
+                                isFalsy(subsectorExpansion) && styles.notSubsectorExpansion,
+                            )}
+                        >
+                            {subsectorExpansion && (
+                                <tr>
+                                    <th
+                                        className={styles.topTh}
+                                        colSpan={sectors.length + 2}
+                                    >
+                                        <div className={styles.hidden}>
+                                            -
+                                        </div>
+                                    </th>
+                                </tr>
+                            )}
                             <tr style={headRowStyle}>
                                 <th style={titleColumnStyle}>
                                     <div className={styles.hidden}>

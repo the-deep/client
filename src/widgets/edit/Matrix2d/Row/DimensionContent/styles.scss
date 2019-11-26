@@ -27,12 +27,12 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        background-color: var(--color-foreground-alt);
-        font-size: var(--font-size-large);
+        font-size: var(--font-size-extra-large);
 
         .back-button {
             flex-shrink: 0;
             padding: var(--spacing-small) var(--spacing-medium);
+            font-size: var(--font-size-large);
         }
 
         .title {
@@ -48,7 +48,6 @@
 
     .edit-dimension {
         flex-shrink: 0;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
         padding: calc(var(--spacing-large) - var(--spacing-small)) 0;
 
         .top {
