@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 import { detachedFaram } from '@togglecorp/faram';
@@ -46,6 +47,7 @@ import RightPanel from './RightPanel';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     routeUrl: PropTypes.string.isRequired,
     projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
 
@@ -69,6 +71,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: undefined,
     schema: {},
     editAryVersionId: undefined,
     editAryServerId: undefined,
@@ -151,7 +154,7 @@ const requestOptions = {
         extras: {
             schemaName: 'lead',
         },
-        url: ({ props: { activeLeadId } }) => `/leads/${activeLeadId}/`,
+        url: ({ props: { activeLeadId } }) => `/v2/leads/${activeLeadId}/`,
         onMount: ({ props: { activeLeadId } }) => !!activeLeadId,
         onPropsChanged: ['activeLeadId'],
         // TODO: check mismatch between project and lead
@@ -251,6 +254,12 @@ export default class EditAry extends React.PureComponent {
             setState: params => this.setState(params),
         });
     }
+
+    getLeadTitle = memoize((activeLeadId, response = {}) => (
+        activeLeadId
+            ? response.title
+            : (response.leads || []).map(lead => lead.title).join(',')
+    ))
 
     shouldHideSaveButton = ({ assessmentPermissions }) => (
         this.props.editAryServerId
@@ -392,10 +401,7 @@ export default class EditAry extends React.PureComponent {
             projectId,
         });
 
-        const title = activeLeadId
-            ? leadRequest.response.title
-            : (leadGroupRequest.response.leads || []).map(lead => lead.title).join(',');
-
+        const title = this.getLeadTitle(activeLeadId, leadRequest.response);
         const shouldHidePrompt = editAryIsPristine;
         const uploadPending = Object.keys(pendingUploads).some(key => pendingUploads[key]);
 
