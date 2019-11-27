@@ -131,8 +131,9 @@ export default class Export extends React.PureComponent {
         this.state = {
             activeExportTypeKey: 'word',
             previewId: undefined,
-            reportStructure: undefined,
             decoupledEntries: true,
+
+            reportStructure,
             reportStructureVariant: SECTOR_FIRST,
 
             selectedLeads: {},
@@ -148,7 +149,6 @@ export default class Export extends React.PureComponent {
             projectId: oldActiveProject,
             analysisFramework: oldAnalysisFramework,
         } = this.props;
-        const { reportStructureVariant } = this.state;
 
         if (oldActiveProject !== newActiveProject) {
             // Reset everything
@@ -162,6 +162,7 @@ export default class Export extends React.PureComponent {
             });
         }
         if (newAnalysisFramework !== oldAnalysisFramework) {
+            const { reportStructureVariant } = this.state;
             this.setState({
                 reportStructure: this.createReportStructure(
                     newAnalysisFramework,
@@ -244,12 +245,11 @@ export default class Export extends React.PureComponent {
         }
 
         const { exportables, widgets } = analysisFramework;
-        const nodes = [];
-
         if (!exportables || !widgets) {
             return undefined;
         }
 
+        const nodes = [];
         exportables.forEach((exportable) => {
             const levels = exportable.data && exportable.data.report &&
                 exportable.data.report.levels;

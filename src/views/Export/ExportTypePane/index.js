@@ -132,10 +132,8 @@ export default class ExportTypePane extends React.PureComponent {
 
         return (
             <>
-                <h4 key="header">
-                    {_ts('export', 'reportStructureLabel')}
-                </h4>
                 <SegmentInput
+                    label={_ts('export', 'orderMatrix2D')}
                     keySelector={ExportTypePane.reportVariantKeySelector}
                     labelSelector={ExportTypePane.reportVariantLabelSelector}
                     value={reportStructureVariant}
@@ -144,6 +142,7 @@ export default class ExportTypePane extends React.PureComponent {
                 />
                 <TreeSelection
                     key="tree-selection"
+                    label={_ts('export', 'reportStructureLabel')}
                     value={reportStructure}
                     onChange={onReportStructureChange}
                 />

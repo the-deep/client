@@ -295,7 +295,6 @@
         "639": "Report structure",
         "640": "No export options available",
         "641": "Leads",
-        "642": "Couldn't load leads",
         "643": "Select",
         "644": "Unselect",
         "648": "Couldn't load analysis framework",
@@ -462,7 +461,6 @@
         "1122": "Set visibility to all project members",
         "1123": "You need project admin rights to change this setting.",
         "1124": "Remove project",
-        "1125": "Failed to fetch projects",
         "1126": "Failed to save project.",
         "1127": "Failed to create new category editor.",
         "1129": "Group",
@@ -927,9 +925,6 @@
         "-57281759": "Failed to upload logo",
         "-40341683": "The format is not supported",
         "-37259810": "Legend",
-        "-33031804": "Export Status",
-        "-22307298": "Continue",
-        "-46932501": "Not all graphs are done generating yet for your tabular data. The export will be generated but you can try again later to get the rest of the graphs.",
         "-5594696": "Looks like there are no data matching your criteria. Try changing what you're looking for and search again.",
         "-10096447": "Looks like this document doesn't have any tabular data",
         "-55402838": "CNA",
@@ -990,8 +985,6 @@
         "-89194894": "New thread",
         "-1874062": "Comment History",
         "-2991833": "Comments",
-        "-40879299": "Resolved Comments",
-        "-54226779": "({count} resolved)",
         "-34360343": "Active ({count})",
         "-177898": "Resolved ({count})",
         "-7178898": "You were assigned to a {comment} for an entry by {userName}.",
@@ -1027,20 +1020,15 @@
         "-24340518": "No leads can be returned with your settings. Try adding a valid URL and try again.",
         "-24511724": "No matching results were found. Add a new {title} using the add button.",
         "-91461742": "Are you sure you want to leave? You will lose your unsaved changes.",
-        "-3697040": "Entries visualization",
         "-9524324": "Failed to load entries visualization data. ",
         "-58469334": "Select all",
         "-578569": "Unselect all",
         "-97095875": "Font size",
         "-8448911": "Height",
         "-45997162": "Width",
-        "-73458468": "Subtitle column width",
-        "-92468204": "Title row height",
-        "-84669549": "Title column width",
         "-9443338": "Horizontal",
         "-33841680": "Vertical",
         "-88566646": "Matrix Orientation",
-        "-578569": "Unselect all",
         "-1354429": "Edit entries visualization settings",
         "-98565636": "Geo widget",
         "-85754874": "Reliability Widget",
@@ -1057,7 +1045,8 @@
         "-78292946": "Advance settings",
         "-76993519": "Sub-column expansion",
         "-51656640": "Row › Column",
-        "-74878255": "Column › Row"
+        "-74878255": "Column › Row",
+        "-49902146": "Ordering for Matrix 2D"
     },
     "links": {
         "browserExtension": {
@@ -1163,8 +1152,7 @@
             "cancelConfirmMessage": -14675920
         },
         "widgets.tagging.matrix2d": {
-            "subsectorsLabel": 7039,
-            "goBackButtonLabel": -1045504
+            "subsectorsLabel": 7039
         },
         "api": {
             "loadingLabel": 7038,
@@ -1531,20 +1519,16 @@
             "reportStructureLabel": 639,
             "uncategorizedTitle": 649,
             "leadsLabel": 641,
-            "cantLoadLeads": 642,
-            "selectLabel": 643,
             "titleLabel": 13,
             "afLabel": 379,
             "cantLoadAf": 648,
             "startAssessmentExportButtonLabel": -58642627,
             "geoLabel": -80682543,
             "cantLoadGeo": 534,
-            "exportStatusTitle": -33031804,
-            "continueButtonLabel": -22307298,
-            "exportImageGenerationPending": -46932501,
             "startedStatusLabel": 629,
             "dimensionFirstExportTypeLabel": -51656640,
-            "sectorFirstExportTypeLabel": -74878255
+            "sectorFirstExportTypeLabel": -74878255,
+            "orderMatrix2D": -49902146
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
@@ -1660,7 +1644,6 @@
             "markAsPendingTitle": 802,
             "markAsProcessedTitle": 804,
             "titleLabel": 13,
-            "leadsGetFailure": 513,
             "leadsPatchFailure": 8050,
             "leadsPatchSuccess": 8051,
             "leadsPendingSuccess": -74575009,
@@ -2095,10 +2078,7 @@
             "afCloneSuccess": -8045218,
             "afCloneFatal": -48269508,
             "noAfSelectedText": -86287086,
-            "entriesViz": -3697040,
-            "entriesVizErrorMessage": -9524324,
-            "entriesVizFailure": -9524324,
-            "entriesVizFatal": -9524324
+            "entriesVizErrorMessage": -9524324
         },
         "connector": {
             "noConnectorsLabel": 1115,
