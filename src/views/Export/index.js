@@ -165,7 +165,11 @@ export default class Export extends React.PureComponent {
             leads: leadsFromState = [],
         } = this.state;
 
-        const selectedLeads = listToMap(leadsFromState, d => d.id, () => selectAll);
+        const selectedLeads = listToMap(
+            leadsFromState,
+            d => d.id,
+            () => selectAll,
+        );
 
         const leads = leadsFromState.map(l => ({
             ...l,
@@ -210,7 +214,9 @@ export default class Export extends React.PureComponent {
             projectId,
             geoOptions,
             projectRole: {
-                exportPermissions = {},
+                exportPermissions: {
+                    create_only_unprotected: filterOnlyUnprotected,
+                } = {},
             },
             requests: {
                 leadsGetRequest: { pending: pendingLeads },
@@ -220,7 +226,6 @@ export default class Export extends React.PureComponent {
         } = this.props;
 
         const { filters } = analysisFramework || {};
-        const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
 
         return (
             <Page
