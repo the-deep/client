@@ -25,14 +25,35 @@ export default class FrameworkEditButton extends React.PureComponent {
     }
 
     handleEditClick = () => {
-        this.setState({ showModal: true });
+        const { value: widget } = this.props;
+        this.setState({
+            showModal: true,
+            widgetKey: widget.key,
+            widgetTitle: widget.title,
+            widgetData: widget.properties.data,
+            widgetProperties: widget.properties,
+        });
     }
 
     handleCancel = () => {
-        this.setState({ showModal: false });
+        this.setState({
+            showModal: false,
+
+            widgetKey: undefined,
+            widgetTitle: undefined,
+            widgetData: undefined,
+            widgetProperties: undefined,
+        });
     }
 
-    handleSave = (data, title) => {
+    handleChange = (key, data, title) => {
+        this.setState({
+            widgetTitle: title,
+            widgetData: data,
+        });
+    }
+
+    handleSave = (key, data, title) => {
         const { value } = this.props;
         const { title: originalTitle } = value;
 
@@ -46,22 +67,29 @@ export default class FrameworkEditButton extends React.PureComponent {
         const newValue = update(value, settings);
 
         this.setState(
-            { showModal: false },
+            {
+                showModal: false,
+
+                widgetKey: undefined,
+                widgetData: undefined,
+                widgetProperties: undefined,
+                widgetTitle: undefined,
+            },
             () => this.props.onChange(newValue),
         );
     }
 
     render() {
+        const { renderer: Widget } = this.props;
+
         const {
-            renderer: Widget,
-            value: {
-                title,
-                properties: {
-                    data,
-                } = {},
-            } = {},
-        } = this.props;
-        const { showModal } = this.state;
+            widgetKey,
+            widgetTitle,
+            widgetData,
+            widgetProperties,
+
+            showModal,
+        } = this.state;
 
         return (
             <Fragment>
@@ -76,10 +104,14 @@ export default class FrameworkEditButton extends React.PureComponent {
                 {
                     showModal &&
                     <Widget
-                        title={title}
-                        data={data}
+                        widgetKey={widgetKey}
+                        title={widgetTitle}
+                        data={widgetData}
+                        properties={widgetProperties}
+
                         onSave={this.handleSave}
-                        onClose={this.handleCancel}
+                        onChange={this.handleChange}
+                        closeModal={this.handleCancel}
                     />
                 }
             </Fragment>

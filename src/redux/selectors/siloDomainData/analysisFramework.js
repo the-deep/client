@@ -48,3 +48,15 @@ export const afViewAnalysisFrameworkWidgetsSelector = createSelector(
     afViewAnalysisFrameworkSelector,
     afView => afView.widgets || emptyArray,
 );
+
+export const afViewAnalysisFrameworkStatsConfigSelector = createSelector(
+    afViewAnalysisFrameworkSelector,
+    (afView) => {
+        const {
+            properties: {
+                statsConfig = emptyObject,
+            } = {},
+        } = afView;
+        return statsConfig;
+    },
+);
