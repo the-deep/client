@@ -29,14 +29,12 @@ const SubsectorRow = ({ index, className, advanceMode }) => (
                         faramElementName="title"
                         autoFocus
                         label={_ts('widgets.editor.matrix2d', 'unnamedSubsectorLabel', { index: index + 1 })}
-                        persistentHintAndError={false}
                     />
                     {advanceMode && (
                         <>
                             <OrientationInput
                                 className={styles.orientationInput}
                                 faramElementName="orientation"
-                                persistentHintAndError={false}
                             />
                             <TextInput
                                 type="number"
@@ -44,7 +42,6 @@ const SubsectorRow = ({ index, className, advanceMode }) => (
                                 className={styles.fontSizeInput}
                                 faramElementName="fontSize"
                                 placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                persistentHintAndError={false}
                             />
                             <TextInput
                                 type="number"
@@ -52,7 +49,6 @@ const SubsectorRow = ({ index, className, advanceMode }) => (
                                 className={styles.widthInput}
                                 faramElementName="width"
                                 placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                                persistentHintAndError={false}
                             />
                         </>
                     )}
@@ -61,7 +57,6 @@ const SubsectorRow = ({ index, className, advanceMode }) => (
                     <TextArea
                         faramElementName="tooltip"
                         label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                        persistentHintAndError={false}
                     />
                 </div>
             </div>

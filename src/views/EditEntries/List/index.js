@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isDefined } from '@togglecorp/fujs';
 
 import VirtualizedListView from '#rscv/VirtualizedListView';
 import Message from '#rscv/Message';
@@ -33,12 +34,14 @@ const propTypes = {
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    hash: PropTypes.string,
 };
 
 const defaultProps = {
     entries: [],
     statuses: {},
     widgets: [],
+    hash: undefined,
     // tabularData: {},
 };
 
@@ -60,7 +63,9 @@ export default class Listing extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.scrollTop && prevProps.hash !== this.props.hash && this.props.hash === '#/list') {
+        const { hash } = this.props;
+
+        if (isDefined(this.scrollTop) && prevProps.hash !== hash && hash === '#/list') {
             const list = document.getElementsByClassName(styles.list)[0];
 
             if (list) {
@@ -94,10 +99,9 @@ export default class Listing extends React.PureComponent {
 
     rendererParams = (key, entry) => {
         const {
-            entries, // eslint-disable-line
+            entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             statuses,
             entryStates,
-
             tabularFields,
 
             ...otherProps

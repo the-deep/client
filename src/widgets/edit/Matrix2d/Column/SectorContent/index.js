@@ -3,7 +3,6 @@ import React from 'react';
 import {
     FaramList,
     FaramGroup,
-    FaramOutputElement,
 } from '@togglecorp/faram';
 import {
     randomString,
@@ -33,18 +32,13 @@ const propTypes = {
     widgetKey: PropTypes.string.isRequired,
     onBackButtonClick: PropTypes.func.isRequired,
     advanceMode: PropTypes.bool,
+    title: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     className: '',
     advanceMode: false,
 };
-
-const TextOutput = FaramOutputElement(props => (
-    <div className={props.className}>
-        { props.value }
-    </div>
-));
 
 export default class SectorContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -82,6 +76,7 @@ export default class SectorContent extends React.PureComponent {
             className,
             onBackButtonClick,
             advanceMode,
+            title,
         } = this.props;
 
         return (
@@ -94,10 +89,9 @@ export default class SectorContent extends React.PureComponent {
                             className={styles.backButton}
                             iconName="back"
                         />
-                        <TextOutput
-                            className={styles.title}
-                            faramElementName="title"
-                        />
+                        <h2 className={styles.title}>
+                            {title}
+                        </h2>
                     </header>
                     <NonFieldErrors
                         className={styles.error}
@@ -111,14 +105,12 @@ export default class SectorContent extends React.PureComponent {
                                 faramElementName="title"
                                 label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
                                 autoFocus
-                                persistentHintAndError={false}
                             />
                             { advanceMode && (
                                 <>
                                     <OrientationInput
                                         className={styles.orientationInput}
                                         faramElementName="orientation"
-                                        persistentHintAndError={false}
                                     />
                                     <TextInput
                                         type="number"
@@ -126,7 +118,6 @@ export default class SectorContent extends React.PureComponent {
                                         className={styles.fontSizeInput}
                                         faramElementName="fontSize"
                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                        persistentHintAndError={false}
                                     />
                                     <TextInput
                                         type="number"
@@ -134,7 +125,6 @@ export default class SectorContent extends React.PureComponent {
                                         className={styles.widthInput}
                                         faramElementName="width"
                                         placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                                        persistentHintAndError={false}
                                     />
                                 </>
                             )}
@@ -143,7 +133,6 @@ export default class SectorContent extends React.PureComponent {
                             <TextArea
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                                persistentHintAndError={false}
                             />
                         </div>
                     </div>

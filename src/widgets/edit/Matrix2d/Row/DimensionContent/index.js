@@ -3,7 +3,6 @@ import React from 'react';
 import {
     FaramList,
     FaramGroup,
-    FaramOutputElement,
 } from '@togglecorp/faram';
 import {
     randomString,
@@ -27,18 +26,13 @@ import GeoLink from '#widgetComponents/GeoLink';
 import SubdimensionRow from './SubdimensionRow';
 import styles from './styles.scss';
 
-const TextOutput = FaramOutputElement(props => (
-    <div className={props.className}>
-        { props.value }
-    </div>
-));
-
 const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
     onBackButtonClick: PropTypes.func.isRequired,
     advanceMode: PropTypes.bool,
+    title: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -82,6 +76,7 @@ export default class DimensionContent extends React.PureComponent {
             className,
             onBackButtonClick,
             advanceMode,
+            title,
         } = this.props;
 
         return (
@@ -94,10 +89,9 @@ export default class DimensionContent extends React.PureComponent {
                             className={styles.backButton}
                             iconName="back"
                         />
-                        <TextOutput
-                            className={styles.title}
-                            faramElementName="title"
-                        />
+                        <h2 className={styles.title}>
+                            {title}
+                        </h2>
                     </header>
                     <NonFieldErrors
                         className={styles.nonFieldErrors}
@@ -110,28 +104,24 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.colorInput}
                                 faramElementName="color"
                                 label={_ts('widgets.editor.matrix2d', 'colorLabel')}
-                                persistentHintAndError={false}
                             />
                             <TextInput
                                 className={styles.titleInput}
                                 faramElementName="title"
                                 label={_ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                                 autoFocus
-                                persistentHintAndError={false}
                             />
                             { advanceMode && (
                                 <>
                                     <OrientationInput
                                         className={styles.orientationInput}
                                         faramElementName="orientation"
-                                        persistentHintAndError={false}
                                     />
                                     <TextInput
                                         type="number"
                                         label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
                                         className={styles.fontSizeInput}
                                         faramElementName="fontSize"
-                                        persistentHintAndError={false}
                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                                     />
                                     <TextInput
@@ -139,7 +129,6 @@ export default class DimensionContent extends React.PureComponent {
                                         label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
                                         className={styles.heightInput}
                                         faramElementName="height"
-                                        persistentHintAndError={false}
                                         placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
                                     />
                                 </>
@@ -149,7 +138,6 @@ export default class DimensionContent extends React.PureComponent {
                             <TextArea
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                                persistentHintAndError={false}
                             />
                         </div>
                     </div>

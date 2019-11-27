@@ -39,6 +39,7 @@ export default class Row extends React.PureComponent<Props, State> {
     private dimensionItemRendererParams = (key: string, elem: object, i: number) => ({
         dimensionKey: key,
         className: styles.dimensionContent,
+        // FIXME: should only inject title instead of the whole data
         data: elem,
         faramElementName: String(i),
         index: i,

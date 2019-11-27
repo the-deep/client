@@ -453,16 +453,21 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const advanceMode = faramValues.meta.advanceSettings;
 
         let selectedIndex;
-        if (selectionType === 'dimension' && faramValues.dimensions) {
+        let title;
+        if (selectionType === 'dimension' && faramValues && faramValues.dimensions) {
             const { dimensions } = faramValues;
             selectedIndex = dimensions.findIndex(
                 dimension => (keySelector(dimension) === selectedDimensionKey),
             );
-        } else if (selectionType === 'sector' && faramValues.sectors) {
+            title = dimensions[selectedIndex].title
+                || _ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: selectedIndex + 1 });
+        } else if (selectionType === 'sector' && faramValues && faramValues.sectors) {
             const { sectors } = faramValues;
             selectedIndex = sectors.findIndex(
                 sector => (keySelector(sector) === selectedSectorKey),
             );
+            title = sectors[selectedIndex].title
+                || _ts('widgets.editor.matrix2d', 'unnamedSectorTitle', { index: selectedIndex + 1 });
         }
 
         if (isNotDefined(selectedIndex) || selectedIndex === -1) {
@@ -476,6 +481,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     keySelector={keySelector}
                 >
                     <DimensionContent
+                        title={title}
                         className={styles.editContent}
                         index={selectedIndex}
                         onBackButtonClick={this.handleDimensionContentBackButtonClick}
@@ -491,6 +497,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     keySelector={keySelector}
                 >
                     <SectorContent
+                        title={title}
                         className={styles.editContent}
                         index={selectedIndex}
                         onBackButtonClick={this.handleSectorContentBackButtonClick}
@@ -577,7 +584,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                 label={_ts('widgets.editor.matrix2d', 'titleLabel')}
                                 placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
                                 selectOnFocus
-                                persistentHintAndError={false}
                             />
                             <div className={styles.metaInputs}>
                                 <FaramGroup faramElementName="meta">
@@ -590,13 +596,11 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                 className={styles.checkboxInput}
                                                 faramElementName="advanceSettings"
                                                 label={_ts('widgets.editor.matrix2d', 'advanceSettingsLabel')}
-                                                persistentHintAndError={false}
                                             />
                                             <Checkbox
                                                 className={styles.checkboxInput}
                                                 faramElementName="subsectorExpansion"
                                                 label={_ts('widgets.editor.matrix2d', 'subsectorExpansionLabel')}
-                                                persistentHintAndError={false}
                                             />
                                         </div>
                                     </div>
@@ -612,7 +616,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                         label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
                                                         className={styles.widthInput}
                                                         faramElementName="titleColumnWidth"
-                                                        persistentHintAndError={false}
                                                         placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
                                                     />
                                                     <TextInput
@@ -620,7 +623,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                         label={_ts('widgets.editor.matrix2d', 'titleColumnFontSizeLabel')}
                                                         className={styles.fontSizeInput}
                                                         faramElementName="titleColumnFontSize"
-                                                        persistentHintAndError={false}
                                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
                                                     />
                                                     <OrientationInput
@@ -640,7 +642,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                         className={styles.widthInput}
                                                         faramElementName="subTitleColumnWidth"
                                                         placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
-                                                        persistentHintAndError={false}
                                                     />
                                                     <TextInput
                                                         type="number"
@@ -648,7 +649,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                         className={styles.fontSizeInput}
                                                         faramElementName="subTitleColumnFontSize"
                                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                                        persistentHintAndError={false}
                                                     />
                                                     <OrientationInput
                                                         className={styles.orientationInput}
@@ -667,7 +667,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                         label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
                                                         type="number"
                                                         placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
-                                                        persistentHintAndError={false}
                                                     />
                                                     <TextInput
                                                         className={styles.fontSizeInput}
@@ -675,7 +674,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                                         label={_ts('widgets.editor.matrix2d', 'titleRowFontSizeLabel')}
                                                         type="number"
                                                         placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
-                                                        persistentHintAndError={false}
                                                     />
                                                     <OrientationInput
                                                         className={styles.orientationInput}
