@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isDefined } from '@togglecorp/fujs';
 
 import VirtualizedListView from '#rscv/VirtualizedListView';
 import Message from '#rscv/Message';
@@ -33,12 +34,14 @@ const propTypes = {
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    hash: PropTypes.string,
 };
 
 const defaultProps = {
     entries: [],
     statuses: {},
     widgets: [],
+    hash: undefined,
     // tabularData: {},
 };
 
@@ -59,6 +62,26 @@ export default class Listing extends React.PureComponent {
         window.addEventListener('scroll', this.handleScroll, true);
     }
 
+    componentDidUpdate(prevProps) {
+        const { hash } = this.props;
+
+        if (isDefined(this.scrollTop) && prevProps.hash !== hash && hash === '#/list') {
+            const list = document.getElementsByClassName(styles.list)[0];
+
+            if (list) {
+                const scrollContainer = list.getElementsByClassName('virtualized-list-view')[0];
+
+                if (scrollContainer) {
+                    const lastScrollTop = this.scrollTop;
+
+                    setTimeout(() => {
+                        scrollContainer.scrollTop = lastScrollTop;
+                    }, 1000);
+                }
+            }
+        }
+    }
+
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
@@ -66,6 +89,8 @@ export default class Listing extends React.PureComponent {
     keySelector = entry => entryAccessor.key(entry)
 
     handleScroll = (e) => {
+        this.scrollTop = e.target.scrollTop;
+
         const headers = e.target.getElementsByClassName('widget-container-header');
         for (let i = 0; i < headers.length; i += 1) {
             headers[i].style.transform = `translateX(${e.target.scrollLeft}px)`;
@@ -74,10 +99,9 @@ export default class Listing extends React.PureComponent {
 
     rendererParams = (key, entry) => {
         const {
-            entries, // eslint-disable-line
+            entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             statuses,
             entryStates,
-
             tabularFields,
 
             ...otherProps
@@ -95,6 +119,7 @@ export default class Listing extends React.PureComponent {
             ...otherProps,
         };
     }
+
 
     render() {
         const { entries } = this.props;

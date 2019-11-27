@@ -143,6 +143,7 @@ export default class Cell extends React.PureComponent {
             sectorId,
             onClick,
         } = this.props;
+
         const isCellActive = this.isCellActive();
         onClick(dimensionId, subdimensionId, sectorId, subsectorId, isCellActive);
     }
@@ -158,6 +159,7 @@ export default class Cell extends React.PureComponent {
         const { isBeingDraggedOver } = this.state;
 
         let style = this.isCellActive() ? activeCellStyle : undefined;
+
         if (isBeingDraggedOver) {
             style = style ? { ...style, ...hoverStyle } : hoverStyle;
         }
@@ -165,17 +167,16 @@ export default class Cell extends React.PureComponent {
         return (
             <td
                 className={styles.cell}
-                role="gridcell"
                 style={style}
             >
                 <button
-                    className={styles.cellButton}
+                    className={styles.button}
                     disabled={disabled || readOnly}
+                    onClick={this.handleClick}
                     onDragEnter={this.handleDragEnter}
                     onDragLeave={this.handleDragExit}
                     onDragOver={this.handleDragOver}
                     onDrop={this.handleDrop}
-                    onClick={this.handleClick}
                 />
             </td>
         );

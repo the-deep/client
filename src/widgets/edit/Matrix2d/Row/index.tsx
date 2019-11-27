@@ -1,9 +1,6 @@
 import React from 'react';
 import { FaramList } from '@togglecorp/faram';
-import {
-    _cs,
-    isDefined,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import SortableListView from '#rscv/SortableListView';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -13,8 +10,7 @@ import _ts from '#ts';
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
-import DimensionTitle from '../DimensionTitle';
-import DimensionContent from '../DimensionContent';
+import DimensionTitle from './DimensionTitle';
 
 import styles from './styles.scss';
 
@@ -24,14 +20,8 @@ interface Dimension {
     subdimensions?: [];
 }
 
-interface FaramValues {
-    dimensions?: [Dimension];
-}
-
 interface Props {
     className?: string;
-    faramValues?: FaramValues;
-    selectedDimensionKey?: string;
     widgetKey?: string;
     keySelector: (d: object) => {};
     titleSelector: (d: object) => {};
@@ -40,7 +30,6 @@ interface Props {
     onAddDimensionFaramAction: (k: string) => {};
     onGeoLinkModalVisiblityChange: (k: string) => {};
     onLinkWidgetModalVisiblityChange: (k: string) => {};
-    onDimensionContentBackButtonClick: (k: string) => {};
 }
 
 interface State {
@@ -50,6 +39,7 @@ export default class Row extends React.PureComponent<Props, State> {
     private dimensionItemRendererParams = (key: string, elem: object, i: number) => ({
         dimensionKey: key,
         className: styles.dimensionContent,
+        // FIXME: should only inject title instead of the whole data
         data: elem,
         faramElementName: String(i),
         index: i,
@@ -60,25 +50,13 @@ export default class Row extends React.PureComponent<Props, State> {
         const {
             className,
             dataModifier,
-            faramValues,
             keySelector,
             onAddDimensionFaramAction,
             onGeoLinkModalVisiblityChange,
             onLinkWidgetModalVisiblityChange,
-            onDimensionContentBackButtonClick,
-            selectedDimensionKey,
             titleSelector,
             widgetKey,
         } = this.props;
-
-        let selectedDimensionIndex;
-
-        if (faramValues && faramValues.dimensions) {
-            const { dimensions } = faramValues;
-            selectedDimensionIndex = dimensions.findIndex(
-                dimension => (keySelector(dimension) === selectedDimensionKey),
-            );
-        }
 
         return (
             <div className={_cs(className, styles.row)}>
@@ -87,25 +65,14 @@ export default class Row extends React.PureComponent<Props, State> {
                         faramElementName="dimensions"
                         keySelector={keySelector}
                     >
-                        { (isDefined(selectedDimensionIndex)
-                            && selectedDimensionIndex !== -1) ? (
-                                <DimensionContent
-                                    className={styles.dimensionDetails}
-                                    index={selectedDimensionIndex}
-                                    onBackButtonClick={onDimensionContentBackButtonClick}
-                                    widgetKey={widgetKey}
-                                />
-                            ) : (
-                                <SortableListView
-                                    className={styles.dimensionList}
-                                    faramElement
-                                    rendererParams={this.dimensionItemRendererParams}
-                                    itemClassName={styles.dimensionListItem}
-                                    renderer={DimensionTitle}
-                                    dragHandleClassName={styles.dragHandle}
-                                />
-                            )
-                        }
+                        <SortableListView
+                            className={styles.dimensionList}
+                            faramElement
+                            rendererParams={this.dimensionItemRendererParams}
+                            itemClassName={styles.dimensionListItem}
+                            renderer={DimensionTitle}
+                            dragHandleClassName={styles.dragHandle}
+                        />
                     </FaramList>
                 </div>
                 <footer className={styles.footer}>

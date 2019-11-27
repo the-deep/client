@@ -49,6 +49,8 @@
     }
 
     &:hover {
+        border-radius: var(--radius-border-medium);
+        background-color: var(--color-foreground-alt);
         width: var(--width-link-container-max);
 
         .help-link {

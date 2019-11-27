@@ -1,5 +1,8 @@
 import React from 'react';
 import memoize from 'memoize-one';
+import { _cs } from '@togglecorp/fujs';
+
+import styles from './styles.scss';
 
 type OrientationKey = 'leftToRight' | 'bottomToTop';
 interface Orientation {
@@ -39,36 +42,24 @@ export default class SubsectorTitle extends React.PureComponent<Props, State> {
         orientation: OrientationKey,
         width: string | undefined,
     ) => {
-        const style: StyleType = {};
-        const tdStyle: StyleType = {};
+        const thStyle: React.CSSProperties = {};
+        let thClassName;
 
         if (fontSize) {
-            style.fontSize = `${fontSize}px`;
-        }
-
-        if (orientation === 'bottomToTop') {
-            style.writingMode = 'vertical-rl';
-            tdStyle.width = 0;
-            tdStyle.height = 0;
-            style.transform = 'rotate(180deg)';
-            style.width = '100%';
-            style.height = '100%';
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
-        } else {
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
+            thStyle.fontSize = `${fontSize}px`;
         }
 
         if (width) {
-            style.width = `${width}px`;
+            thStyle.width = `${width}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            thClassName = styles.rotated;
         }
 
         return {
-            style,
-            tdStyle,
+            thClassName,
+            thStyle,
         };
     })
 
@@ -79,19 +70,25 @@ export default class SubsectorTitle extends React.PureComponent<Props, State> {
             title,
             tooltip,
             width,
+            className,
         } = this.props;
 
         const {
-            style,
-            tdStyle,
+            thClassName,
+            thStyle,
         } = this.getCellStyle(fontSize, orientation, width);
 
         return (
             <th
                 title={tooltip}
-                style={tdStyle}
+                style={thStyle}
+                className={_cs(
+                    className,
+                    styles.subcolumnTitleTh,
+                    thClassName,
+                )}
             >
-                <div style={style}>
+                <div className={styles.subcolumnTitle}>
                     {title}
                 </div>
             </th>

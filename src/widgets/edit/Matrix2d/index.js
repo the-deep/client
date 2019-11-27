@@ -1,28 +1,40 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import produce from 'immer';
+
 import Faram, {
     FaramList,
     requiredCondition,
     FaramGroup,
+    accumulateValues,
 } from '@togglecorp/faram';
+
 import {
     getDuplicates,
+    isNotDefined,
     randomString,
     _cs,
 } from '@togglecorp/fujs';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import Checkbox from '#rsci/Checkbox';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import TabTitle from '#components/general/TabTitle';
+import OrientationInput from '#components/general/OrientationInput';
+
 import _ts from '#ts';
 
 import Row from './Row';
 import Column from './Column';
+
+import DimensionContent from './Row/DimensionContent';
+import SectorContent from './Column/SectorContent';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -43,6 +55,138 @@ const defaultProps = {
 const emptyArray = [];
 const emptyObject = {};
 
+const keySelector = elem => elem.id;
+
+const duplicateValidation = (item) => {
+    const errors = [];
+    if (!item || item.length <= 0) {
+        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
+    }
+
+    const duplicates = getDuplicates(item, o => o.title);
+    if (duplicates.length > 0) {
+        errors.push(_ts(
+            'widgets.editor.matrix2d',
+            'duplicationError',
+            { duplicates: duplicates.join(', ') },
+        ));
+    }
+    return errors;
+};
+
+const defaultSchema = {
+    title: [requiredCondition],
+    meta: {
+        fields: {
+            advanceSettings: [],
+            subsectorExpansion: [],
+        },
+    },
+    dimensions: {
+        validation: duplicateValidation,
+        keySelector,
+        member: {
+            fields: {
+                id: [requiredCondition],
+                color: [],
+                title: [requiredCondition],
+                tooltip: [],
+                subdimensions: {
+                    validation: duplicateValidation,
+                    keySelector,
+                    member: {
+                        fields: {
+                            id: [requiredCondition],
+                            tooltip: [],
+                            title: [requiredCondition],
+                        },
+                    },
+                },
+            },
+        },
+    },
+    sectors: {
+        validation: duplicateValidation,
+        keySelector,
+        member: {
+            fields: {
+                id: [requiredCondition],
+                title: [requiredCondition],
+                tooltip: [],
+                subsectors: {
+                    validation: duplicateValidation,
+                    keySelector,
+                    member: {
+                        fields: {
+                            id: [requiredCondition],
+                            tooltip: [],
+                            title: [requiredCondition],
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
+const advanceModeSchema = produce(defaultSchema, (safeSchema) => {
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleRowHeight = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleRowFontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleRowOrientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleColumnWidth = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleColumnFontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.titleColumnOrientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.subTitleColumnWidth = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.subTitleColumnFontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.meta.fields.subTitleColumnOrientation = [];
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.height = [];
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.subdimensions.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.subdimensions.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.dimensions.member.fields.subdimensions.member.fields.height = [];
+
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.height = [];
+
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.subsectors.member.fields.orientation = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.subsectors.member.fields.fontSize = [];
+    // eslint-disable-next-line no-param-reassign
+    safeSchema.sectors.member.fields.subsectors.member.fields.height = [];
+});
+
+const schema = {
+    identifier: value => (value.meta.advanceSettings ? 'advanceMode' : undefined),
+    fields: {
+        advanceMode: advanceModeSchema,
+        default: defaultSchema,
+    },
+};
+
 export default class Matrix2dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -50,134 +194,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     static keySelector = elem => elem.id;
     static titleSelector = elem => elem.title;
 
-    static schema = {
-        fields: {
-            title: [requiredCondition],
-            meta: {
-                fields: {
-                    titleRowHeight: [],
-                    titleColumnWidth: [],
-                    subTitleColumnWidth: [],
-                },
-            },
-            dimensions: {
-                validation: (dimensions) => {
-                    const errors = [];
-                    if (!dimensions || dimensions.length <= 0) {
-                        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-                    }
 
-                    const duplicates = getDuplicates(dimensions, o => o.title);
-                    if (duplicates.length > 0) {
-                        errors.push(_ts(
-                            'widgets.editor.matrix2d',
-                            'duplicationError',
-                            { duplicates: duplicates.join(', ') },
-                        ));
-                    }
-                    return errors;
-                },
-                keySelector: Matrix2dEditWidget.keySelector,
-                member: {
-                    fields: {
-                        id: [requiredCondition],
-                        color: [],
-                        title: [requiredCondition],
-                        tooltip: [],
-                        orientation: [],
-                        fontSize: [],
-                        height: [],
-                        subdimensions: {
-                            validation: (subdimensions) => {
-                                const errors = [];
-                                if (!subdimensions || subdimensions.length <= 0) {
-                                    errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-                                }
-
-                                const duplicates = getDuplicates(subdimensions, o => o.title);
-                                if (duplicates.length > 0) {
-                                    errors.push(_ts(
-                                        'widgets.editor.matrix2d',
-                                        'duplicationError',
-                                        { duplicates: duplicates.join(', ') },
-                                    ));
-                                }
-                                return errors;
-                            },
-                            keySelector: Matrix2dEditWidget.keySelector,
-                            member: {
-                                fields: {
-                                    id: [requiredCondition],
-                                    tooltip: [],
-                                    title: [requiredCondition],
-                                    orientation: [],
-                                    fontSize: [],
-                                    height: [],
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            sectors: {
-                validation: (sectors) => {
-                    const errors = [];
-                    if (!sectors || sectors.length <= 0) {
-                        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-                    }
-
-                    const duplicates = getDuplicates(sectors, o => o.title);
-                    if (duplicates.length > 0) {
-                        errors.push(_ts(
-                            'widgets.editor.matrix2d',
-                            'duplicationError',
-                            { duplicates: duplicates.join(', ') },
-                        ));
-                    }
-                    return errors;
-                },
-                keySelector: Matrix2dEditWidget.keySelector,
-                member: {
-                    fields: {
-                        id: [requiredCondition],
-                        title: [requiredCondition],
-                        tooltip: [],
-                        orientation: [],
-                        fontSize: [],
-                        width: [],
-                        subsectors: {
-                            validation: (subsectors) => {
-                                const errors = [];
-                                if (subsectors && subsectors.length > 0) {
-                                    const duplicates = getDuplicates(subsectors, o => o.title);
-                                    if (duplicates.length > 0) {
-                                        errors.push(_ts(
-                                            'widgets.editor.matrix2d',
-                                            'duplicationError',
-                                            { duplicates: duplicates.join(', ') },
-                                        ));
-                                    }
-                                }
-                                return errors;
-                            },
-                            keySelector: Matrix2dEditWidget.keySelector,
-                            member: {
-                                fields: {
-                                    id: [requiredCondition],
-                                    tooltip: [],
-                                    title: [requiredCondition],
-                                    orientation: [],
-                                    fontSize: [],
-                                    width: [],
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    };
-
+    // FIXME: This should be inside Row
     static dimensionDataModifier = row => row.map(r => ({
         id: randomString(16),
         title: r.label,
@@ -188,6 +206,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         subdimensions: [],
     }));
 
+    // FIXME: this should be inside column
     static sectorDataModifier = row => row.map(r => ({
         id: randomString(16),
         title: r.label,
@@ -236,6 +255,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             pristine: true,
             hasError: false,
 
+            selectionType: undefined,
             selectedDimensionKey: undefined,
             selectedSectorKey: undefined,
 
@@ -254,17 +274,12 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     <Row
                         className={styles.tabContent}
                         dataModifier={Matrix2dEditWidget.dimensionDataModifier}
-                        faramValues={this.state.faramValues}
-                        keySelector={Matrix2dEditWidget.keySelector}
+                        keySelector={keySelector}
                         onAddDimensionFaramAction={this.handleAddDimensionFaramAction}
                         onGeoLinkModalVisiblityChange={this.handleModalVisiblityChange}
                         onLinkWidgetModalVisiblityChange={this.handleModalVisiblityChange}
-                        onDimensionContentBackButtonClick={
-                            this.handleDimensionContentBackButtonClick
-                        }
                         onDimensionEditButtonClick={this.handleDimensionEditButtonClick}
                         dimensionItemRendererParams={this.dimensionItemRendererParams}
-                        selectedDimensionKey={this.state.selectedDimensionKey}
                         titleSelector={Matrix2dEditWidget.titleSelector}
                         widgetKey={this.props.widgetKey}
                     />
@@ -276,17 +291,12 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     <Column
                         className={styles.tabContent}
                         dataModifier={Matrix2dEditWidget.sectorDataModifier}
-                        faramValues={this.state.faramValues}
-                        keySelector={Matrix2dEditWidget.keySelector}
+                        keySelector={keySelector}
                         onAddSectorFaramAction={this.handleAddSectorFaramAction}
                         onGeoLinkModalVisiblityChange={this.handleModalVisiblityChange}
                         onLinkWidgetModalVisiblityChange={this.handleModalVisiblityChange}
-                        onSectorContentBackButtonClick={
-                            this.handleSectorContentBackButtonClick
-                        }
                         onSectorEditButtonClick={this.handleSectorEditButtonClick}
                         sectorItemRendererParams={this.sectorItemRendererParams}
-                        selectedSectorKey={this.state.selectedSectorKey}
                         titleSelector={Matrix2dEditWidget.titleSelector}
                         widgetKey={this.props.widgetKey}
                     />
@@ -296,11 +306,17 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     }
 
     handleDimensionContentBackButtonClick = () => {
-        this.setState({ selectedDimensionKey: undefined });
+        this.setState({
+            selectionType: undefined,
+            selectedDimensionKey: undefined,
+        });
     }
 
     handleSectorContentBackButtonClick = () => {
-        this.setState({ selectedSectorKey: undefined });
+        this.setState({
+            selectionType: undefined,
+            selectedSectorKey: undefined,
+        });
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
@@ -314,7 +330,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
         const currentSelectedRowKey = selectedTab === 'dimensions' ? selectedDimensionKey : selectedSectorKey;
         const selectedRowKey = faramInfo.lastItem ? (
-            Matrix2dEditWidget.keySelector(faramInfo.lastItem)
+            keySelector(faramInfo.lastItem)
         ) : (
             currentSelectedRowKey
         );
@@ -327,6 +343,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             hasError: faramInfo.hasError,
         });
 
+        // On temporary onChange, always pass it through schema accumulation
+        const newFaramValues = accumulateValues(faramValues, schema, { noFalsyValues: true });
+
         const {
             widgetKey,
             onChange,
@@ -334,8 +353,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
         onChange(
             widgetKey,
-            Matrix2dEditWidget.getDataFromFaramValues(faramValues),
-            Matrix2dEditWidget.getTitleFromFaramValues(faramValues),
+            Matrix2dEditWidget.getDataFromFaramValues(newFaramValues),
+            Matrix2dEditWidget.getTitleFromFaramValues(newFaramValues),
         );
     };
 
@@ -371,7 +390,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         };
 
         this.setState({
-            selectedDimensionKey: Matrix2dEditWidget.keySelector(newDimension),
+            selectedDimensionKey: keySelector(newDimension),
         });
 
         return [
@@ -389,7 +408,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         };
 
         this.setState({
-            selectedSectorKey: Matrix2dEditWidget.keySelector(newSector),
+            selectedSectorKey: keySelector(newSector),
         });
 
         return [
@@ -408,11 +427,88 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     }
 
     handleDimensionEditButtonClick = (key) => {
-        this.setState({ selectedDimensionKey: key });
+        this.setState({
+            selectionType: 'dimension',
+            selectedDimensionKey: key,
+        });
     }
 
     handleSectorEditButtonClick = (key) => {
-        this.setState({ selectedSectorKey: key });
+        this.setState({
+            selectionType: 'sector',
+            selectedSectorKey: key,
+        });
+    }
+
+    renderEditContent() {
+        const {
+            faramValues,
+            selectionType,
+            selectedDimensionKey,
+            selectedSectorKey,
+        } = this.state;
+
+        const { widgetKey } = this.props;
+
+        const advanceMode = faramValues.meta.advanceSettings;
+
+        let selectedIndex;
+        let title;
+        if (selectionType === 'dimension' && faramValues && faramValues.dimensions) {
+            const { dimensions } = faramValues;
+            selectedIndex = dimensions.findIndex(
+                dimension => (keySelector(dimension) === selectedDimensionKey),
+            );
+            title = dimensions[selectedIndex].title
+                || _ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: selectedIndex + 1 });
+        } else if (selectionType === 'sector' && faramValues && faramValues.sectors) {
+            const { sectors } = faramValues;
+            selectedIndex = sectors.findIndex(
+                sector => (keySelector(sector) === selectedSectorKey),
+            );
+            title = sectors[selectedIndex].title
+                || _ts('widgets.editor.matrix2d', 'unnamedSectorTitle', { index: selectedIndex + 1 });
+        }
+
+        if (isNotDefined(selectedIndex) || selectedIndex === -1) {
+            return null;
+        }
+
+        if (selectionType === 'dimension') {
+            return (
+                <FaramList
+                    faramElementName="dimensions"
+                    keySelector={keySelector}
+                >
+                    <DimensionContent
+                        title={title}
+                        className={styles.editContent}
+                        index={selectedIndex}
+                        onBackButtonClick={this.handleDimensionContentBackButtonClick}
+                        widgetKey={widgetKey}
+                        advanceMode={advanceMode}
+                    />
+                </FaramList>
+            );
+        } else if (selectionType === 'sector') {
+            return (
+                <FaramList
+                    faramElementName="sectors"
+                    keySelector={keySelector}
+                >
+                    <SectorContent
+                        title={title}
+                        className={styles.editContent}
+                        index={selectedIndex}
+                        onBackButtonClick={this.handleSectorContentBackButtonClick}
+                        widgetKey={widgetKey}
+                        advanceMode={advanceMode}
+                    />
+                </FaramList>
+            );
+        }
+
+        return null;
     }
 
     render() {
@@ -422,6 +518,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             hasError,
             pristine,
             selectedTab,
+            selectionType,
         } = this.state;
 
         const {
@@ -430,6 +527,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             title,
         } = this.props;
 
+
+        const advanceMode = faramValues.meta.advanceSettings;
+
         return (
             <Faram
                 className={_cs(className, styles.matrixTwoDEditWidget)}
@@ -437,89 +537,174 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
                 onValidationSuccess={this.handleFaramValidationSuccess}
-                schema={Matrix2dEditWidget.schema}
+                schema={schema}
                 value={faramValues}
             >
-                <div className={styles.header}>
-                    <h2 className={styles.heading}>
-                        {title}
-                    </h2>
-                    <div className={styles.actions}>
-                        <DangerConfirmButton
-                            className={styles.button}
-                            confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
-                            onClick={closeModal}
-                            skipConfirmation={pristine}
-                        >
-                            {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
-                        </DangerConfirmButton>
-                        <PrimaryButton
-                            className={styles.button}
-                            disabled={pristine || hasError}
-                            type="submit"
-                        >
-                            {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
-                        </PrimaryButton>
-                    </div>
-                </div>
-                <div className={styles.content}>
-                    <NonFieldErrors
-                        className={styles.nonFieldErrors}
-                        faramElement
-                    />
-                    <FaramList faramElementName={selectedTab}>
-                        <NonFieldErrors
-                            className={styles.nonFieldErrors}
-                            faramElement
-                        />
-                    </FaramList>
-                    <TextInput
-                        autoFocus
-                        className={styles.titleInput}
-                        faramElementName="title"
-                        label={_ts('widgets.editor.matrix2d', 'titleLabel')}
-                        placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
-                        selectOnFocus
-                        persistantHintAndError={false}
-                    />
-                    <div className={styles.metaInputs}>
-                        <FaramGroup faramElementName="meta">
-                            <TextInput
-                                className={styles.titleRowHeightInput}
-                                faramElementName="titleRowHeight"
-                                label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
-                                type="number"
-                                persistantHintAndError={false}
+                {isNotDefined(selectionType) ? (
+                    <React.Fragment>
+                        <div className={styles.header}>
+                            <h2 className={styles.heading}>
+                                {title}
+                            </h2>
+                            <div className={styles.actions}>
+                                <DangerConfirmButton
+                                    className={styles.button}
+                                    confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
+                                    onClick={closeModal}
+                                    skipConfirmation={pristine}
+                                >
+                                    {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
+                                </DangerConfirmButton>
+                                <PrimaryButton
+                                    className={styles.button}
+                                    disabled={pristine || hasError}
+                                    type="submit"
+                                >
+                                    {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                        <div className={styles.content}>
+                            <NonFieldErrors
+                                className={styles.nonFieldErrors}
+                                faramElement
+                                persistent={false}
                             />
+                            <FaramList faramElementName={selectedTab}>
+                                <NonFieldErrors
+                                    className={styles.nonFieldErrors}
+                                    faramElement
+                                    persistent={false}
+                                />
+                            </FaramList>
                             <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
-                                className={styles.titleColumnWidthInput}
-                                faramElementName="titleColumnWidth"
-                                persistantHintAndError={false}
+                                autoFocus
+                                className={styles.titleInput}
+                                faramElementName="title"
+                                label={_ts('widgets.editor.matrix2d', 'titleLabel')}
+                                placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
+                                selectOnFocus
                             />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'subtitleColumnWidthLabel')}
-                                className={styles.subTitleColumnWidthInput}
-                                faramElementName="subTitleColumnWidth"
-                                persistantHintAndError={false}
-                            />
-                        </FaramGroup>
-                    </div>
-                    <ScrollTabs
-                        active={selectedTab}
-                        className={styles.tabs}
-                        onClick={this.handleTabSelect}
-                        renderer={TabTitle}
-                        rendererParams={this.tabRendererParams}
-                        tabs={this.tabs}
-                    />
-                    <MultiViewContainer
-                        views={this.views}
-                        active={selectedTab}
-                    />
-                </div>
+                            <div className={styles.metaInputs}>
+                                <FaramGroup faramElementName="meta">
+                                    <div className={styles.enableSettingInputs}>
+                                        <h4 className={styles.heading}>
+                                            {_ts('widgets.editor.matrix2d', 'generalSettings')}
+                                        </h4>
+                                        <div className={styles.content}>
+                                            <Checkbox
+                                                className={styles.checkboxInput}
+                                                faramElementName="advanceSettings"
+                                                label={_ts('widgets.editor.matrix2d', 'advanceSettingsLabel')}
+                                            />
+                                            <Checkbox
+                                                className={styles.checkboxInput}
+                                                faramElementName="subsectorExpansion"
+                                                label={_ts('widgets.editor.matrix2d', 'subsectorExpansionLabel')}
+                                            />
+                                        </div>
+                                    </div>
+                                    { advanceMode && (
+                                        <>
+                                            <div className={styles.titleColumnInputs}>
+                                                <h4 className={styles.heading}>
+                                                    {_ts('widgets.editor.matrix2d', 'titleColumnInputsHeading')}
+                                                </h4>
+                                                <div className={styles.content}>
+                                                    <TextInput
+                                                        type="number"
+                                                        label={_ts('widgets.editor.matrix2d', 'titleColumnWidthLabel')}
+                                                        className={styles.widthInput}
+                                                        faramElementName="titleColumnWidth"
+                                                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                                                    />
+                                                    <TextInput
+                                                        type="number"
+                                                        label={_ts('widgets.editor.matrix2d', 'titleColumnFontSizeLabel')}
+                                                        className={styles.fontSizeInput}
+                                                        faramElementName="titleColumnFontSize"
+                                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                                    />
+                                                    <OrientationInput
+                                                        className={styles.orientationInput}
+                                                        faramElementName="titleColumnOrientation"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className={styles.subTitleColumnInputs}>
+                                                <h4 className={styles.heading}>
+                                                    {_ts('widgets.editor.matrix2d', 'subTitleColumnInputsHeading')}
+                                                </h4>
+                                                <div className={styles.content}>
+                                                    <TextInput
+                                                        type="number"
+                                                        label={_ts('widgets.editor.matrix2d', 'subtitleColumnWidthLabel')}
+                                                        className={styles.widthInput}
+                                                        faramElementName="subTitleColumnWidth"
+                                                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                                                    />
+                                                    <TextInput
+                                                        type="number"
+                                                        label={_ts('widgets.editor.matrix2d', 'subtitleColumnFontSizeLabel')}
+                                                        className={styles.fontSizeInput}
+                                                        faramElementName="subTitleColumnFontSize"
+                                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                                    />
+                                                    <OrientationInput
+                                                        className={styles.orientationInput}
+                                                        faramElementName="subTitleColumnOrientation"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className={styles.titleRowInputs}>
+                                                <h4 className={styles.heading}>
+                                                    {_ts('widgets.editor.matrix2d', 'titleRowInputsHeading')}
+                                                </h4>
+                                                <div className={styles.content}>
+                                                    <TextInput
+                                                        className={styles.heightInput}
+                                                        faramElementName="titleRowHeight"
+                                                        label={_ts('widgets.editor.matrix2d', 'titleRowHeightLabel')}
+                                                        type="number"
+                                                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
+                                                    />
+                                                    <TextInput
+                                                        className={styles.fontSizeInput}
+                                                        faramElementName="titleRowFontSize"
+                                                        label={_ts('widgets.editor.matrix2d', 'titleRowFontSizeLabel')}
+                                                        type="number"
+                                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                                    />
+                                                    <OrientationInput
+                                                        className={styles.orientationInput}
+                                                        faramElementName="titleRowOrientation"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                        </>
+                                    )}
+                                </FaramGroup>
+                            </div>
+                            <div className={styles.childrenInputs}>
+                                <ScrollTabs
+                                    active={selectedTab}
+                                    className={styles.tabs}
+                                    onClick={this.handleTabSelect}
+                                    renderer={TabTitle}
+                                    rendererParams={this.tabRendererParams}
+                                    tabs={this.tabs}
+                                />
+                                <MultiViewContainer
+                                    views={this.views}
+                                    active={selectedTab}
+                                />
+                            </div>
+                        </div>
+                    </React.Fragment>
+                ) : (
+                    this.renderEditContent()
+                )}
             </Faram>
         );
     }

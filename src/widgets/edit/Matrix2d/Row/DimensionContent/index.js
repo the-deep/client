@@ -3,7 +3,6 @@ import React from 'react';
 import {
     FaramList,
     FaramGroup,
-    FaramOutputElement,
 } from '@togglecorp/faram';
 import {
     randomString,
@@ -17,7 +16,6 @@ import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import ColorInput from '#rsci/ColorInput';
-import Label from '#rsci/Label';
 
 import _ts from '#ts';
 
@@ -28,21 +26,18 @@ import GeoLink from '#widgetComponents/GeoLink';
 import SubdimensionRow from './SubdimensionRow';
 import styles from './styles.scss';
 
-const TextOutput = FaramOutputElement(props => (
-    <div className={props.className}>
-        { props.value }
-    </div>
-));
-
 const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
     onBackButtonClick: PropTypes.func.isRequired,
+    advanceMode: PropTypes.bool,
+    title: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     className: '',
+    advanceMode: false,
 };
 
 export default class DimensionContent extends React.PureComponent {
@@ -61,11 +56,6 @@ export default class DimensionContent extends React.PureComponent {
         },
     ])
 
-    static rendererParams = (key, elem, i) => ({
-        index: i,
-        className: styles.subDimensionContent,
-    })
-
     static rowsModifier = rows => rows.map(r => ({
         id: randomString(16),
         title: r.label,
@@ -74,11 +64,19 @@ export default class DimensionContent extends React.PureComponent {
         tooltip: '',
     }));
 
+    rendererParams = (key, elem, i) => ({
+        index: i,
+        className: styles.subDimensionContent,
+        advanceMode: this.props.advanceMode,
+    })
+
     render() {
         const {
             index,
             className,
             onBackButtonClick,
+            advanceMode,
+            title,
         } = this.props;
 
         return (
@@ -91,14 +89,14 @@ export default class DimensionContent extends React.PureComponent {
                             className={styles.backButton}
                             iconName="back"
                         />
-                        <TextOutput
-                            className={styles.title}
-                            faramElementName="title"
-                        />
+                        <h2 className={styles.title}>
+                            {title}
+                        </h2>
                     </header>
                     <NonFieldErrors
                         className={styles.nonFieldErrors}
                         faramElement
+                        persistent={false}
                     />
                     <div className={styles.editDimension}>
                         <div className={styles.top}>
@@ -106,40 +104,40 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.colorInput}
                                 faramElementName="color"
                                 label={_ts('widgets.editor.matrix2d', 'colorLabel')}
-                                persistantHintAndError={false}
                             />
                             <TextInput
                                 className={styles.titleInput}
                                 faramElementName="title"
                                 label={_ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                                 autoFocus
-                                persistantHintAndError={false}
                             />
-                            <OrientationInput
-                                className={styles.orientationInput}
-                                faramElementName="orientation"
-                                persistantHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
-                                className={styles.fontSizeInput}
-                                faramElementName="fontSize"
-                                persistantHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
-                                className={styles.heightInput}
-                                faramElementName="height"
-                                persistantHintAndError={false}
-                            />
+                            { advanceMode && (
+                                <>
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="orientation"
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
+                                        className={styles.fontSizeInput}
+                                        faramElementName="fontSize"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'heightInputLabel')}
+                                        className={styles.heightInput}
+                                        faramElementName="height"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'heightInputPlaceholder')}
+                                    />
+                                </>
+                            )}
                         </div>
                         <div className={styles.bottom}>
                             <TextArea
                                 faramElementName="tooltip"
                                 label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
-                                persistantHintAndError={false}
                             />
                         </div>
                     </div>
@@ -150,6 +148,7 @@ export default class DimensionContent extends React.PureComponent {
                         <NonFieldErrors
                             className={styles.nonFieldErrors}
                             faramElement
+                            persistent={false}
                         />
                     </FaramList>
                     <div className={styles.subDimensionListContainer}>
@@ -157,10 +156,25 @@ export default class DimensionContent extends React.PureComponent {
                             <h4 className={styles.heading}>
                                 {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
-                            <div className={styles.right} >
-                                <Label
-                                    text={_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
-                                />
+                        </header>
+                        <FaramList
+                            faramElementName="subdimensions"
+                            keySelector={DimensionContent.keySelector}
+                        >
+                            <SortableListView
+                                faramElement
+                                className={styles.subdimensionItemList}
+                                dragHandleClassName={styles.dragHandle}
+                                itemClassName={styles.subdimensionItem}
+                                rendererParams={this.rendererParams}
+                                renderer={SubdimensionRow}
+                            />
+                        </FaramList>
+                        <footer className={styles.footer}>
+                            <h4 className={styles.label}>
+                                {_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
+                            </h4>
+                            <div className={styles.actions}>
                                 <GeoLink
                                     faramElementName="subdimensions"
                                     titleSelector={DimensionContent.rowTitleSelector}
@@ -188,20 +202,7 @@ export default class DimensionContent extends React.PureComponent {
                                     </AccentButton>
                                 </FaramList>
                             </div>
-                        </header>
-                        <FaramList
-                            faramElementName="subdimensions"
-                            keySelector={DimensionContent.keySelector}
-                        >
-                            <SortableListView
-                                faramElement
-                                className={styles.subdimensionItemList}
-                                dragHandleClassName={styles.dragHandle}
-                                itemClassName={styles.subdimensionItem}
-                                rendererParams={DimensionContent.rendererParams}
-                                renderer={SubdimensionRow}
-                            />
-                        </FaramList>
+                        </footer>
                     </div>
                 </FaramGroup>
             </div>

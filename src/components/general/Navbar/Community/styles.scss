@@ -1,29 +1,39 @@
-@import '~base-scss/utils';
-
 :root {
-    --width-dropdown-min: 120px;
+    --width-dropdown-min: 128px;
 }
 
 .community-dropdown {
     min-width: var(--width-dropdown-min);
 
     .button {
-        @extend %button-base;
+        outline: none;
+        border: 0;
+        background-color: transparent;
+        cursor: pointer;
+        width: 100%;
         text-transform: uppercase;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
     }
 
     .join-link {
-        @include transition-medium();
         display: flex;
         align-items: center;
         padding: var(--spacing-small);
 
         .image {
-            margin: var(--spacing-small) var(--spacing-medium);
+            flex-shrink: 0;
+            margin: var(--spacing-small);
+            width: 16px;
+            height: auto;
         }
 
         .title {
-            padding: var(--spacing-small) var(--spacing-medium);
+            flex-grow: 1;
+            padding: var(--spacing-small);
+            text-align: left;
         }
 
         &:hover {

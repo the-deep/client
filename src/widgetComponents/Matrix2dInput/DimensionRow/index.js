@@ -2,15 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
-import List from '#rscv/List';
 import {
     getColorOnBgColor,
     getRgbRawFromHex,
     getHexFromRgbRaw,
     interpolateRgb,
+    _cs,
 } from '@togglecorp/fujs';
 
-import SubdimensionRow from './SubdimensionRow';
+import List from '#rscv/List';
+import Row from './Row';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -21,7 +22,6 @@ const propTypes = {
 const defaultProps = {
     dimension: {},
 };
-
 
 export default class DimensionRow extends React.PureComponent {
     static propTypes = propTypes;
@@ -87,40 +87,30 @@ export default class DimensionRow extends React.PureComponent {
     }
 
     getCellStyle = memoize((fontSize, orientation, height) => {
-        const style = {};
         const tdStyle = {};
+        let tdClassName;
 
         if (fontSize) {
-            style.fontSize = `${fontSize}px`;
-        }
-
-        if (orientation === 'bottomToTop') {
-            style.writingMode = 'vertical-rl';
-            tdStyle.width = 0;
-            tdStyle.height = 0;
-            style.transform = 'rotate(180deg)';
-            style.width = '100%';
-            style.height = '100%';
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
-        } else {
-            style.display = 'flex';
-            style.alignItems = 'center';
+            tdStyle.fontSize = `${fontSize}px`;
         }
 
         if (height) {
-            style.height = `${height}px`;
+            tdStyle.height = `${height}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            tdClassName = styles.rotated;
         }
 
         return {
-            style,
+            tdClassName,
             tdStyle,
         };
     })
 
     rendererParams = (key, subdimension, i) => {
         const {
+            meta,
             dimension: {
                 subdimensions,
                 tooltip,
@@ -137,18 +127,22 @@ export default class DimensionRow extends React.PureComponent {
 
         if (isFirstSubdimension) {
             const {
-                style,
                 tdStyle,
-            } = this.getCellStyle(fontSize, orientation, height);
+                tdClassName,
+            } = this.getCellStyle(
+                fontSize || meta.titleColumnFontSize,
+                (!orientation || orientation === 'default') ? meta.titleColumnOrientation : orientation,
+                height,
+            );
 
             children = (
                 <td
                     rowSpan={subdimensions.length}
-                    className={styles.dimensionTd}
+                    className={_cs(styles.dimensionTd, tdClassName)}
                     style={tdStyle}
                     title={tooltip}
                 >
-                    <div style={style}>
+                    <div className={styles.dimensionTitle}>
                         {title}
                     </div>
                 </td>
@@ -156,6 +150,7 @@ export default class DimensionRow extends React.PureComponent {
         }
 
         return {
+            meta,
             subdimension,
             subdimensionId: key,
 
@@ -174,7 +169,7 @@ export default class DimensionRow extends React.PureComponent {
             <List
                 data={subdimensions}
                 keySelector={DimensionRow.keySelector}
-                renderer={SubdimensionRow}
+                renderer={Row}
                 rendererParams={this.rendererParams}
             />
         );

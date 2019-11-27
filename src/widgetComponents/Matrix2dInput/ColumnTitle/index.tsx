@@ -1,7 +1,11 @@
 import React from 'react';
 import memoize from 'memoize-one';
+import { _cs } from '@togglecorp/fujs';
+
+import styles from './styles.scss';
 
 type OrientationKey = 'leftToRight' | 'bottomToTop';
+
 interface Orientation {
     key: OrientationKey;
     label: string;
@@ -33,42 +37,30 @@ interface StyleType {
 interface State {
 }
 
-export default class SectorTitle extends React.PureComponent<Props, State> {
+export default class ColumnTitle extends React.PureComponent<Props, State> {
     private getCellStyle = memoize((
         fontSize: string | undefined,
         orientation: OrientationKey,
         width: string | undefined,
     ) => {
-        const style: StyleType = {};
-        const tdStyle: StyleType = {};
+        const thStyle: React.CSSProperties = {};
+        let thClassName;
 
         if (fontSize) {
-            style.fontSize = `${fontSize}px`;
-        }
-
-        if (orientation === 'bottomToTop') {
-            style.writingMode = 'vertical-rl';
-            tdStyle.width = 0;
-            tdStyle.height = 0;
-            style.transform = 'rotate(180deg)';
-            style.width = '100%';
-            style.height = '100%';
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
-        } else {
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
+            thStyle.fontSize = `${fontSize}px`;
         }
 
         if (width) {
-            style.width = `${width}px`;
+            thStyle.width = `${width}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            thClassName = styles.rotated;
         }
 
         return {
-            style,
-            tdStyle,
+            thClassName,
+            thStyle,
         };
     })
 
@@ -91,21 +83,27 @@ export default class SectorTitle extends React.PureComponent<Props, State> {
             tooltip,
             width,
             className,
+            clickable,
         } = this.props;
 
         const {
-            style,
-            tdStyle,
+            thClassName,
+            thStyle,
         } = this.getCellStyle(fontSize, orientation, width);
 
         return (
             <th
-                className={className}
+                className={_cs(
+                    className,
+                    styles.columnTitleTh,
+                    thClassName,
+                    clickable && styles.clickable,
+                )}
                 title={tooltip}
-                style={tdStyle}
+                style={thStyle}
                 onClick={this.handleClick}
             >
-                <div style={style}>
+                <div className={styles.columnTitle}>
                     {title}
                 </div>
             </th>

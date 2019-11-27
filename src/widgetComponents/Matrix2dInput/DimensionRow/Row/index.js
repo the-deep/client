@@ -2,15 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
+import { _cs } from '@togglecorp/fujs';
+
 import List from '#rscv/List';
 
 import Cell from './Cell';
+import styles from './styles.scss';
 
 const emptyList = [];
 
 const propTypes = {
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     subdimension: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    meta: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     children: PropTypes.node,
     rowStyle: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -24,6 +28,7 @@ const defaultProps = {
     activeSectorKey: undefined,
     children: undefined,
     subdimension: {},
+    meta: {},
     sectors: [],
     dimensionId: undefined,
     subdimensionId: undefined,
@@ -37,35 +42,23 @@ export default class SubdimensionRow extends React.PureComponent {
     static keySelector = sector => sector.id;
 
     getCellStyle = memoize((fontSize, orientation, height) => {
-        const style = {};
         const tdStyle = {};
+        let tdClassName;
 
         if (fontSize) {
-            style.fontSize = `${fontSize}px`;
-        }
-
-        if (orientation === 'bottomToTop') {
-            style.writingMode = 'vertical-rl';
-            tdStyle.width = 0;
-            tdStyle.height = 0;
-            style.transform = 'rotate(180deg)';
-            style.width = '100%';
-            style.height = '100%';
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
-        } else {
-            style.display = 'flex';
-            style.alignItems = 'center';
-            style.justifyContent = 'center';
+            tdStyle.fontSize = `${fontSize}px`;
         }
 
         if (height) {
-            style.height = `${height}px`;
+            tdStyle.height = `${height}px`;
+        }
+
+        if (orientation === 'bottomToTop') {
+            tdClassName = styles.rotated;
         }
 
         return {
-            style,
+            tdClassName,
             tdStyle,
         };
     })
@@ -136,7 +129,8 @@ export default class SubdimensionRow extends React.PureComponent {
             rowStyle,
             children,
             activeSectorKey,
-            activeCellStyle,
+            // activeCellStyle,
+            meta,
         } = this.props;
 
         const {
@@ -148,23 +142,30 @@ export default class SubdimensionRow extends React.PureComponent {
         } = subdimension;
 
         const {
-            style,
+            tdClassName,
             tdStyle,
-        } = this.getCellStyle(fontSize, orientation, height);
+        } = this.getCellStyle(
+            fontSize || meta.subTitleColumnFontSize,
+            (!orientation || orientation === 'default') ? meta.subTitleColumnOrientation : orientation,
+            height,
+        );
 
+        /*
         const subdimensionStyle = this.isRowActive() ? ({
             ...activeCellStyle,
             ...tdStyle,
         }) : ({ tdStyle });
+        */
 
         return (
             <tr style={rowStyle}>
                 { children }
                 <td
                     title={tooltip}
-                    style={subdimensionStyle}
+                    style={tdStyle}
+                    className={_cs(styles.subdimensionTd, tdClassName)}
                 >
-                    <div style={style}>
+                    <div className={styles.subdimensionTitle}>
                         {title}
                     </div>
                 </td>

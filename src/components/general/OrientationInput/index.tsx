@@ -13,11 +13,12 @@ interface State {
 }
 
 interface Orientation {
-    key: 'leftToRight' | 'bottomToTop';
-    label: 'A';
+    key: 'leftToRight' | 'bottomToTop' | 'default';
+    label: 'A' | 'a';
 }
 
 const orientationOptions: Orientation[] = [
+    { key: 'default', label: 'a' },
     { key: 'leftToRight', label: 'A' },
     { key: 'bottomToTop', label: 'A' },
 ];

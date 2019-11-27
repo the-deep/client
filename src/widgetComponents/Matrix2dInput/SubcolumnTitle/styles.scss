@@ -1,15 +1,15 @@
-.dimension-td {
+.subcolumn-title-th {
     overflow: hidden;
     font-weight: var(--font-weight-bold);
 
-    .dimension-title {
+    .subcolumn-title {
         vertical-align: middle;
         text-align: center;
         overflow-wrap: break-word;
     }
 
     &.rotated {
-        .dimension-title {
+        .subcolumn-title {
             transform: rotate(180deg);
             writing-mode: vertical-rl;
         }

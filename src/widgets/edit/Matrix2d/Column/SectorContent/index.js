@@ -3,7 +3,6 @@ import React from 'react';
 import {
     FaramList,
     FaramGroup,
-    FaramOutputElement,
 } from '@togglecorp/faram';
 import {
     randomString,
@@ -16,7 +15,6 @@ import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import Button from '#rsca/Button';
-import Label from '#rsci/Label';
 
 import OrientationInput from '#components/general/OrientationInput';
 
@@ -33,17 +31,14 @@ const propTypes = {
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
     onBackButtonClick: PropTypes.func.isRequired,
+    advanceMode: PropTypes.bool,
+    title: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     className: '',
+    advanceMode: false,
 };
-
-const TextOutput = FaramOutputElement(props => (
-    <div className={props.className}>
-        { props.value }
-    </div>
-));
 
 export default class SectorContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -61,11 +56,6 @@ export default class SectorContent extends React.PureComponent {
         },
     ])
 
-    static rendererParams = (key, elem, i) => ({
-        index: i,
-        className: styles.subSectorContent,
-    })
-
     static rowsModifier = rows => rows.map(r => ({
         id: randomString(16),
         title: r.label,
@@ -74,11 +64,19 @@ export default class SectorContent extends React.PureComponent {
         tooltip: '',
     }));
 
+    rendererParams = (key, elem, i) => ({
+        index: i,
+        className: styles.subSectorContent,
+        advanceMode: this.props.advanceMode,
+    })
+
     render() {
         const {
             index,
             className,
             onBackButtonClick,
+            advanceMode,
+            title,
         } = this.props;
 
         return (
@@ -91,14 +89,14 @@ export default class SectorContent extends React.PureComponent {
                             className={styles.backButton}
                             iconName="back"
                         />
-                        <TextOutput
-                            className={styles.title}
-                            faramElementName="title"
-                        />
+                        <h2 className={styles.title}>
+                            {title}
+                        </h2>
                     </header>
                     <NonFieldErrors
                         className={styles.error}
                         faramElement
+                        persistent={false}
                     />
                     <div className={styles.editSector}>
                         <div className={styles.top}>
@@ -108,23 +106,28 @@ export default class SectorContent extends React.PureComponent {
                                 label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
                                 autoFocus
                             />
-                            <OrientationInput
-                                className={styles.orientationInput}
-                                faramElementName="orientation"
-                                persistantHintAndError={false}
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
-                                className={styles.fontSizeInput}
-                                faramElementName="fontSize"
-                            />
-                            <TextInput
-                                type="number"
-                                label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
-                                className={styles.widthInput}
-                                faramElementName="width"
-                            />
+                            { advanceMode && (
+                                <>
+                                    <OrientationInput
+                                        className={styles.orientationInput}
+                                        faramElementName="orientation"
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'fontSizeInputLabel')}
+                                        className={styles.fontSizeInput}
+                                        faramElementName="fontSize"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'fontSizeInputPlaceholder')}
+                                    />
+                                    <TextInput
+                                        type="number"
+                                        label={_ts('widgets.editor.matrix2d', 'widthInputLabel')}
+                                        className={styles.widthInput}
+                                        faramElementName="width"
+                                        placeholder={_ts('widgets.editor.matrix2d', 'widthInputPlaceholder')}
+                                    />
+                                </>
+                            )}
                         </div>
                         <div className={styles.bottom}>
                             <TextArea
@@ -140,6 +143,7 @@ export default class SectorContent extends React.PureComponent {
                         <NonFieldErrors
                             className={styles.error}
                             faramElement
+                            persistent={false}
                         />
                     </FaramList>
                     <div className={styles.subSectorListContainer}>
@@ -147,8 +151,25 @@ export default class SectorContent extends React.PureComponent {
                             <h4 className={styles.heading}>
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
-                            <div className={styles.right} >
-                                <Label text={_ts('widgets.editor.matrix2d', 'addSubSectorTitle')} />
+                        </header>
+                        <FaramList
+                            faramElementName="subsectors"
+                            keySelector={SectorContent.keySelector}
+                        >
+                            <SortableListView
+                                faramElement
+                                className={styles.subsectorList}
+                                dragHandleClassName={styles.dragHandle}
+                                itemClassName={styles.item}
+                                rendererParams={this.rendererParams}
+                                renderer={SubsectorRow}
+                            />
+                        </FaramList>
+                        <footer className={styles.footer} >
+                            <h4 className={styles.label}>
+                                {_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
+                            </h4>
+                            <div className={styles.actions}>
                                 <GeoLink
                                     faramElementName="subsectors"
                                     titleSelector={SectorContent.rowTitleSelector}
@@ -176,20 +197,7 @@ export default class SectorContent extends React.PureComponent {
                                     </AccentButton>
                                 </FaramList>
                             </div>
-                        </header>
-                        <FaramList
-                            faramElementName="subsectors"
-                            keySelector={SectorContent.keySelector}
-                        >
-                            <SortableListView
-                                faramElement
-                                className={styles.cellList}
-                                dragHandleClassName={styles.dragHandle}
-                                itemClassName={styles.item}
-                                rendererParams={SectorContent.rendererParams}
-                                renderer={SubsectorRow}
-                            />
-                        </FaramList>
+                        </footer>
                     </div>
                 </FaramGroup>
             </div>

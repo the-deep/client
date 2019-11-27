@@ -27,7 +27,6 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        background-color: var(--color-foreground-alt);
 
         .back-button {
             flex-shrink: 0;
@@ -38,6 +37,7 @@
         .title {
             flex-grow: 1;
             padding: var(--spacing-medium);
+            color: var(--color-primary);
         }
     }
 
@@ -47,11 +47,11 @@
 
     .edit-dimension {
         flex-shrink: 0;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
+        padding: calc(var(--spacing-large) - var(--spacing-small)) 0;
 
         .top {
             display: flex;
-            padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
+            padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
 
             .color-input {
                 flex-shrink: 0;
@@ -82,7 +82,7 @@
         }
 
         .bottom {
-            padding: var(--spacing-medium);
+            padding: var(--spacing-small) var(--spacing-medium);
         }
     }
 
@@ -116,6 +116,26 @@
             flex-grow: 1;
             background-color: var(--color-foreground-alt);
             overflow: auto;
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            border-top: var(--width-separator-thin) solid var(--color-separator-light);
+            background-color: var(--color-foreground-alt);
+            padding: var(--spacing-medium) 0;
+
+            .label {
+                padding: 0 var(--spacing-medium);
+                text-transform: capitalize;
+            }
+
+            .actions {
+                display: flex;
+                align-items: center;
+                padding: 0 var(--spacing-small);
+            }
         }
     }
 }

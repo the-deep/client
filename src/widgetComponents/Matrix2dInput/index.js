@@ -1,20 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isTruthy,
+    isFalsy,
+} from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 import produce from 'immer';
 
 import List from '#rscv/List';
-import Button from '#rsca/Button';
-import _ts from '#ts';
+import Icon from '#rscg/Icon';
 
-import SectorTitle from './SectorTitle';
-import SubsectorTitle from './SubsectorTitle';
+import ColumnTitle from './ColumnTitle';
+import SubcolumnTitle from './SubcolumnTitle';
 import DimensionRow from './DimensionRow';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     dimensions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
@@ -24,6 +28,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     dimensions: [],
     sectors: [],
     meta: {},
@@ -31,14 +36,16 @@ const defaultProps = {
     onChange: () => {}, // FIXME: avoid use of noOp
 };
 
+const rowKeySelector = dimension => dimension.id;
+const columnKeySelector = sector => sector.id;
+
+const emptyList = [];
+
 @FaramInputElement
 export default class Matrix2dInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keySelector = dimension => dimension.id;
-
-    static sectorKeySelector = sector => sector.id;
 
     constructor(props) {
         super(props);
@@ -61,7 +68,7 @@ export default class Matrix2dInput extends React.PureComponent {
     ));
 
     getActiveSector = memoize((sectors, activeSectorKey) => (
-        sectors.find(d => Matrix2dInput.sectorKeySelector(d) === activeSectorKey)
+        sectors.find(d => columnKeySelector(d) === activeSectorKey)
     ))
 
     handleCellClick = (dimensionId, subdimensionId, sectorId, subsectorId, isCellActive) => {
@@ -130,24 +137,40 @@ export default class Matrix2dInput extends React.PureComponent {
         this.props.onChange(undefined, faramInfo);
     }
 
-    sectorTitleRendererParams = (key, sector) => ({
-        className: styles.sectorTitle,
-        title: sector.title,
-        tooltip: sector.tooltip,
-        fontSize: sector.fontSize,
-        width: sector.width,
-        orientation: sector.orientation,
-        sectorKey: key,
-        onClick: this.handleSectorTitleClick,
-    })
+    columnTitleRendererParams = (key, sector) => {
+        const {
+            meta: {
+                titleRowFontSize,
+                titleRowOrientation,
+                subsectorExpansion,
+            },
+        } = this.props;
+
+        const clickable = isTruthy(subsectorExpansion)
+            && sector.subsectors
+            && sector.subsectors.length;
+
+        return {
+            title: sector.title,
+            tooltip: sector.tooltip,
+            fontSize: sector.fontSize || titleRowFontSize,
+            width: sector.width || titleRowFontSize,
+            orientation: (!sector.orientation || sector.orientation === 'default') ?
+                titleRowOrientation : sector.orientation,
+            sectorKey: key,
+            clickable,
+            onClick: clickable ? this.handleSectorTitleClick : undefined,
+        };
+    }
 
     subsectorTitleRendererParams = (key, subsector) => ({
         title: subsector.title,
         tooltip: subsector.tooltip,
+
         fontSize: subsector.fontSize,
         width: subsector.width,
         orientation: subsector.orientation,
-    })
+    });
 
     handleActiveSectorTitleClick = () => {
         this.setState({ activeSectorKey: undefined });
@@ -157,7 +180,7 @@ export default class Matrix2dInput extends React.PureComponent {
         this.setState({ activeSectorKey: sectorKey });
     }
 
-    dimensionRendererParams = (key, dimension) => {
+    dimensionRowRendererParams = (key, dimension) => {
         const {
             dimensions, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             onChange, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
@@ -180,62 +203,101 @@ export default class Matrix2dInput extends React.PureComponent {
         const {
             dimensions,
             sectors,
-            meta,
+            meta: {
+                titleRowHeight,
+                titleColumnWidth,
+                subTitleColumnWidth,
+                subsectorExpansion,
+                advanceSettings,
+            },
+            className,
         } = this.props;
 
         const { activeSectorKey } = this.state;
 
-        const headRowStyle = this.getHeadRowStyle(meta.titleRowHeight);
-        const titleColumnStyle = this.getTitleColumnStyle(meta.titleColumnWidth);
-        const subTitleColumnStyle = this.getSubTitleColumnStyle(meta.subTitleColumnWidth);
+        const headRowStyle = this.getHeadRowStyle(titleRowHeight);
+        const titleColumnStyle = this.getTitleColumnStyle(titleColumnWidth);
+        const subTitleColumnStyle = this.getSubTitleColumnStyle(subTitleColumnWidth);
 
         const activeSector = this.getActiveSector(sectors, activeSectorKey);
-        const subsectors = activeSector ? activeSector.subsectors : [];
+        const subsectors = activeSector ? activeSector.subsectors : emptyList;
 
         return (
-            <div className={styles.overview}>
-                {activeSectorKey ? (
-                    <div className={styles.header}>
-                        <Button
-                            className={styles.button}
-                            onClick={this.handleActiveSectorTitleClick}
-                            transparent
-                            smallVerticalPadding
-                            iconName="back"
-                        >
-                            {_ts('widgets.tagging.matrix2d', 'goBackButtonLabel')}
-                        </Button>
-                        <div className={styles.subTitle}>
-                            { activeSector.title }
-                        </div>
-                    </div>
-                ) : (
-                    <div className={_cs(styles.header, styles.emptyHeader)} />
-                )}
-                <table className={styles.table}>
+            <div className={_cs(className, styles.matrixTwoDInput)}>
+                <table
+                    className={_cs(
+                        styles.table,
+                        isFalsy(advanceSettings) && styles.autoSettings,
+                    )}
+                >
                     { activeSectorKey ? (
                         <thead>
+                            <tr>
+                                <th
+                                    onClick={this.handleActiveSectorTitleClick}
+                                    colSpan={subsectors.length + 2}
+                                    className={styles.activeSectorHeader}
+                                >
+                                    <Icon
+                                        className={styles.backIcon}
+                                        name="back"
+                                    />
+                                    { activeSector.title }
+                                </th>
+                            </tr>
                             <tr style={headRowStyle}>
-                                <th style={titleColumnStyle} />
-                                <th style={subTitleColumnStyle} />
+                                <th style={titleColumnStyle}>
+                                    <div className={styles.hidden}>
+                                        -
+                                    </div>
+                                </th>
+                                <th style={subTitleColumnStyle}>
+                                    <div className={styles.hidden}>
+                                        -
+                                    </div>
+                                </th>
                                 <List
                                     data={subsectors}
-                                    keySelector={Matrix2dInput.sectorKeySelector}
-                                    renderer={SubsectorTitle}
+                                    keySelector={columnKeySelector}
+                                    renderer={SubcolumnTitle}
                                     rendererParams={this.subsectorTitleRendererParams}
                                 />
                             </tr>
                         </thead>
                     ) : (
-                        <thead>
+                        <thead
+                            className={_cs(
+                                isFalsy(subsectorExpansion) && styles.notSubsectorExpansion,
+                            )}
+                        >
+                            {subsectorExpansion && (
+                                <tr>
+                                    <th
+                                        className={styles.topTh}
+                                        colSpan={sectors.length + 2}
+                                    >
+                                        <div className={styles.hidden}>
+                                            -
+                                        </div>
+                                    </th>
+                                </tr>
+                            )}
                             <tr style={headRowStyle}>
-                                <th style={titleColumnStyle} />
-                                <th style={subTitleColumnStyle} />
+                                <th style={titleColumnStyle}>
+                                    <div className={styles.hidden}>
+                                        -
+                                    </div>
+                                </th>
+                                <th style={subTitleColumnStyle}>
+                                    <div className={styles.hidden}>
+                                        -
+                                    </div>
+                                </th>
                                 <List
                                     data={sectors}
-                                    keySelector={Matrix2dInput.sectorKeySelector}
-                                    renderer={SectorTitle}
-                                    rendererParams={this.sectorTitleRendererParams}
+                                    keySelector={columnKeySelector}
+                                    renderer={ColumnTitle}
+                                    rendererParams={this.columnTitleRendererParams}
                                 />
                             </tr>
                         </thead>
@@ -243,9 +305,9 @@ export default class Matrix2dInput extends React.PureComponent {
                     <tbody>
                         <List
                             data={dimensions}
-                            keySelector={Matrix2dInput.keySelector}
+                            keySelector={rowKeySelector}
                             renderer={DimensionRow}
-                            rendererParams={this.dimensionRendererParams}
+                            rendererParams={this.dimensionRowRendererParams}
                         />
                     </tbody>
                 </table>

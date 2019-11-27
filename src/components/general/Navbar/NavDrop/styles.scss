@@ -2,6 +2,28 @@
     min-width: 196px;
 }
 
+.dropdown-menu {
+    display: flex;
+    padding: 0 calc(var(--spacing-medium) - var(--spacing-small));
+
+    .display-picture {
+        flex-shrink: 0;
+        padding: 0 var(--spacing-small);
+        width: var(--width-navbar-avatar);
+        height: var(--height-navbar-avatar);
+    }
+
+    :global {
+        .title {
+            flex-grow: 1;
+            padding: var(--spacing-small);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
 .dropdown-item {
     display: flex;
     outline: none;
@@ -16,7 +38,6 @@
     font-size: inherit;
 
     .icon {
-        display: inline-block;
         flex-basis: var(--width-icon-extra-large);
         flex-shrink: 0;
     }
@@ -35,9 +56,4 @@
     }
 }
 
-.display-picture {
-    margin: 0 var(--spacing-extra-small);
-    width: var(--width-navbar-avatar);
-    height: var(--height-navbar-avatar);
-}
 

@@ -4,19 +4,21 @@
     justify-content: space-between;
     box-shadow: 0 var(--spacing-extra-small) var(--spacing-small) var(--radius-spread-medium) var(--color-shadow-medium);
     background-color: var(--color-navbar);
-    padding: 0 var(--spacing-medium-alt);
+    padding: 0 calc(var(--spacing-large) - var(--spacing-medium));
+    overflow: auto;
     color: var(--color-text-on-navbar);
 
     .brand {
         display: flex;
         position: relative;
-        align-items: center;
         align-self: stretch;
+        padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
         color: var(--color-text-on-navbar);
-        font-size: var(--font-size-super-large);
 
         .icon-wrapper {
-            margin-right: var(--spacing-small);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--spacing-small);
 
             .icon {
                 width: var(--width-navbar-icon);
@@ -28,80 +30,95 @@
         .title {
             display: flex;
             align-items: center;
+            padding: 0 var(--spacing-small);
             text-transform: uppercase;
-            font-size: var(--font-size-extra-large);
+            font-size: var(--font-size-super-large);
         }
 
         .beta-label {
-            position: absolute;
-            top: 50%;
-            right: calc(var(--spacing-extra-small) * -1);
-            transform: translate(100%, -100%);
+            align-self: flex-start;
             opacity: .7;
-            border-radius: var(--font-size-extra-small);
             background-color: var(--color-foreground);
-            padding: 0 var(--spacing-extra-small-alt);
+            padding: var(--spacing-small);
             color: var(--color-primary);
-            font-size: var(--font-size-extra-small);
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
         }
     }
 
-    .project-select-input {
-        flex-basis: 240px;
-        flex-shrink: 0;
-        margin: 0 5%;
+    .project-select-input-wrapper {
+        flex-basis: 26%;
+        padding: 0 var(--spacing-medium);
+        min-width: 160px;
 
-        :global {
-            .input-and-actions {
-                border-bottom-color: var(--color-separator-on-navbar);
+        .project-select-input {
+            :global {
+                .input-and-actions {
+                    border-radius: var(--radius-border-medium);
+                    border-bottom-color: var(--color-separator-on-navbar);
+                    padding: var(--spacing-small) var(--spacing-medium);
 
-                .raw-input {
-                    color: var(--color-text-on-navbar);
+                    .raw-input {
+                        color: var(--color-text-on-navbar);
 
-                    &::placeholder {
+                        &::placeholder {
+                            color: var(--color-text-on-navbar);
+                        }
+                    }
+
+                    .icon {
                         color: var(--color-text-on-navbar);
                     }
-                }
-
-                .icon {
-                    color: var(--color-text-on-navbar);
                 }
             }
         }
     }
 
     .main-menu {
+        display: flex;
         align-self: stretch;
         flex-grow: 1;
+        justify-content: center;
+        padding: 0 var(--spacing-medium);
+        min-width: 32px;
+        overflow: auto;
+
+        >div {
+            display: flex;
+        }
 
         >button {
             padding: var(--spacing-small);
         }
     }
 
-    .help-link {
-        margin-right: var(--spacing-medium);
-    }
-
-    .community-dropdown {
+    .actions {
+        display: flex;
+        align-items: stretch;
         align-self: stretch;
         flex-shrink: 0;
-    }
 
-    .notification-dropdown {
-        align-self: stretch;
-        flex-shrink: 0;
-    }
+        .help-link {
+            flex-shrink: 0;
+        }
 
-    .theme-menu {
-        align-self: stretch;
-        flex-shrink: 0;
+        .community-dropdown {
+            flex-shrink: 0;
+        }
+
+        .notification-dropdown {
+            flex-shrink: 0;
+        }
+
+        .theme-menu {
+            flex-shrink: 0;
+        }
     }
 
     .user-menu {
         align-self: stretch;
         flex-shrink: 0;
-        margin-left: var(--spacing-medium);
+        max-width: 196px;
     }
 }
 
