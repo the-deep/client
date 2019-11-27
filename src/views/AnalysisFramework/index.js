@@ -372,6 +372,7 @@ export default class AnalysisFramework extends React.PureComponent {
                             <div className={styles.actionButtons}>
                                 <ModalButton
                                     title={_ts('framework', 'editVizSettingsButtonTitle')}
+                                    disabled={pendingSaveFramework || !!selectedWidgetKey}
                                     modal={(
                                         <EditVizSettingsModal
                                             analysisFrameworkId={analysisFrameworkId}
