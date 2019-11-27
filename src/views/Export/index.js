@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import { listToMap } from '@togglecorp/fujs';
 
@@ -67,6 +68,9 @@ const defaultProps = {
     geoOptions: {},
 };
 
+const SECTOR_FIRST = 'sectorFirst';
+const DIMENSION_FIRST = 'dimensionFirst';
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -77,30 +81,74 @@ export default class Export extends React.PureComponent {
     static exportButtonKeyExtractor = d => d.key;
     static leadKeyExtractor = d => d.id
 
+    // NOTE: This function generates dimension first level
+    static transformMatrix2dLevels = ({
+        sectors: widgetSec,
+        dimensions: widgetDim,
+    } = {}) => {
+        const dimensionFirstLevels = widgetDim.map((d) => {
+            const subDims = d.subdimensions;
+
+            const sublevels = subDims.map((sd) => {
+                const sectors = widgetSec.map(s => ({
+                    id: `${s.id}-${d.id}-${sd.id}`,
+                    title: s.title,
+                }));
+                return ({
+                    id: `${d.id}-${sd.id}`,
+                    title: sd.title,
+                    sublevels: sectors,
+                });
+            });
+
+            return ({
+                id: d.id,
+                title: d.title,
+                sublevels,
+            });
+        });
+
+        return dimensionFirstLevels;
+    }
+
     constructor(props) {
         super(props);
 
         const {
             requests: { leadsGetRequest },
+            analysisFramework,
         } = this.props;
 
         leadsGetRequest.setDefaultParams({
             setLeads: this.handleSelectedLeadsSet,
         });
 
+        const reportStructure = this.createReportStructure(
+            analysisFramework,
+            SECTOR_FIRST,
+        );
+
         this.state = {
             activeExportTypeKey: 'word',
             previewId: undefined,
             reportStructure: undefined,
             decoupledEntries: true,
+            reportStructureVariant: SECTOR_FIRST,
 
             selectedLeads: {},
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        const { projectId: newActiveProject } = nextProps;
-        const { projectId: oldActiveProject } = this.props;
+        const {
+            projectId: newActiveProject,
+            analysisFramework: newAnalysisFramework,
+        } = nextProps;
+        const {
+            projectId: oldActiveProject,
+            analysisFramework: oldAnalysisFramework,
+        } = this.props;
+        const { reportStructureVariant } = this.state;
 
         if (oldActiveProject !== newActiveProject) {
             // Reset everything
@@ -111,6 +159,14 @@ export default class Export extends React.PureComponent {
                 decoupledEntries: true,
 
                 selectedLeads: {},
+            });
+        }
+        if (newAnalysisFramework !== oldAnalysisFramework) {
+            this.setState({
+                reportStructure: this.createReportStructure(
+                    newAnalysisFramework,
+                    reportStructureVariant,
+                ),
             });
         }
     }
@@ -182,8 +238,74 @@ export default class Export extends React.PureComponent {
         });
     }
 
+    createReportStructure = memoize((analysisFramework, reportStructureVariant) => {
+        if (!analysisFramework) {
+            return undefined;
+        }
+
+        const { exportables, widgets } = analysisFramework;
+        const nodes = [];
+
+        if (!exportables || !widgets) {
+            return undefined;
+        }
+
+        exportables.forEach((exportable) => {
+            const levels = exportable.data && exportable.data.report &&
+                exportable.data.report.levels;
+            const widget = widgets.find(w => w.key === exportable.widgetKey);
+
+            if (!levels || !widget) {
+                return;
+            }
+
+            if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
+                if (!widget.properties) {
+                    return;
+                }
+                const newLevels = Export.transformMatrix2dLevels(widget.properties.data);
+                nodes.push({
+                    title: widget.title,
+                    key: String(exportable.id),
+                    selected: true,
+                    draggable: true,
+                    nodes: ExportTypePane.mapReportLevelsToNodes(newLevels),
+                });
+            } else {
+                nodes.push({
+                    title: widget.title,
+                    key: String(exportable.id),
+                    selected: true,
+                    draggable: true,
+                    nodes: ExportTypePane.mapReportLevelsToNodes(levels),
+                });
+            }
+        });
+
+        nodes.push({
+            title: _ts('export', 'uncategorizedTitle'),
+            key: 'uncategorized',
+            selected: true,
+            draggable: true,
+        });
+
+        return nodes;
+    })
+
     handleReportStructureChange = (value) => {
         this.setState({ reportStructure: value });
+    }
+
+    handleReportStructureVariantChange = (value) => {
+        const { analysisFramework } = this.props;
+
+        this.setState({
+            reportStructureVariant: value,
+            reportStructure: this.createReportStructure(
+                analysisFramework,
+                value,
+            ),
+        });
     }
 
     handleDecoupledEntriesChange = (value) => {
@@ -203,13 +325,14 @@ export default class Export extends React.PureComponent {
             previewId,
             activeExportTypeKey,
             reportStructure,
+            reportStructureVariant,
             decoupledEntries,
             selectedLeads,
             leads = [],
         } = this.state;
 
         const {
-            analysisFramework,
+            analysisFramework = {},
             entriesFilters,
             projectId,
             geoOptions,
@@ -225,7 +348,7 @@ export default class Export extends React.PureComponent {
             },
         } = this.props;
 
-        const { filters } = analysisFramework || {};
+        const { filters } = analysisFramework;
 
         return (
             <Page
@@ -281,9 +404,11 @@ export default class Export extends React.PureComponent {
                         <ExportTypePane
                             activeExportTypeKey={activeExportTypeKey}
                             reportStructure={reportStructure}
+                            reportStructureVariant={reportStructureVariant}
                             decoupledEntries={decoupledEntries}
                             onExportTypeChange={this.handleExportTypeSelectButtonClick}
                             onReportStructureChange={this.handleReportStructureChange}
+                            onReportStructureVariantChange={this.handleReportStructureVariantChange}
                             onDecoupledEntriesChange={this.handleDecoupledEntriesChange}
                             analysisFramework={analysisFramework}
                         />

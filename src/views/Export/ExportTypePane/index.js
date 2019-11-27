@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import memoize from 'memoize-one';
 
 import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
@@ -20,19 +19,18 @@ import ExportTypePaneButton from './ExportTypeButton';
 import styles from './styles.scss';
 
 const propTypes = {
-    analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
+    reportStructureVariant: PropTypes.string.isRequired,
     decoupledEntries: PropTypes.bool.isRequired,
     onExportTypeChange: PropTypes.func.isRequired,
     onReportStructureChange: PropTypes.func.isRequired,
+    onReportStructureVariantChange: PropTypes.func.isRequired,
     onDecoupledEntriesChange: PropTypes.func.isRequired,
 };
 
-const defaultProps = {
-    analysisFramework: undefined,
-    reportStructure: undefined,
-};
+const defaultProps = { reportStructure: undefined };
+
 
 const SECTOR_FIRST = 'sectorFirst';
 const DIMENSION_FIRST = 'dimensionFirst';
@@ -47,6 +45,7 @@ const reportStructureOptions = [
         label: _ts('export', 'dimensionFirstExportTypeLabel'),
     },
 ];
+
 
 export default class ExportTypePane extends React.PureComponent {
     static propTypes = propTypes;
@@ -66,42 +65,9 @@ export default class ExportTypePane extends React.PureComponent {
         nodes: level.sublevels && ExportTypePane.mapReportLevelsToNodes(level.sublevels),
     }));
 
-    // NOTE: This function generates dimension first level
-    static transformMatrix2dLevels = ({
-        sectors: widgetSec,
-        dimensions: widgetDim,
-    } = {}) => {
-        const dimensionFirstLevels = widgetDim.map((d) => {
-            const subDims = d.subdimensions;
-
-            const sublevels = subDims.map((sd) => {
-                const sectors = widgetSec.map(s => ({
-                    id: `${s.id}-${d.id}-${sd.id}`,
-                    title: s.title,
-                }));
-                return ({
-                    id: `${d.id}-${sd.id}`,
-                    title: sd.title,
-                    sublevels: sectors,
-                });
-            });
-
-            return ({
-                id: d.id,
-                title: d.title,
-                sublevels,
-            });
-        });
-
-        return dimensionFirstLevels;
-    }
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            reportStructureVariant: SECTOR_FIRST,
-        };
 
         this.exportTypes = [
             {
@@ -125,110 +91,6 @@ export default class ExportTypePane extends React.PureComponent {
                 title: _ts('export', 'jsonLabel'),
             },
         ];
-    }
-
-    componentDidMount() {
-        const {
-            analysisFramework,
-            onReportStructureChange,
-        } = this.props;
-
-        const { reportStructureVariant } = this.state;
-
-        const newReportStructure = this.createReportStructure(
-            analysisFramework,
-            reportStructureVariant,
-        );
-
-        onReportStructureChange(newReportStructure);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            analysisFramework,
-            onReportStructureChange,
-        } = this.props;
-
-        const { reportStructureVariant } = this.state;
-
-        if (analysisFramework !== nextProps.analysisFramework) {
-            const newReportStructure = this.createReportStructure(
-                analysisFramework,
-                reportStructureVariant,
-            );
-
-            onReportStructureChange(newReportStructure);
-        }
-    }
-
-    createReportStructure = memoize((analysisFramework, reportStructureVariant) => {
-        if (!analysisFramework) {
-            return undefined;
-        }
-
-        const { exportables, widgets } = analysisFramework;
-        const nodes = [];
-
-        if (!exportables || !widgets) {
-            return undefined;
-        }
-
-        exportables.forEach((exportable) => {
-            const levels = exportable.data && exportable.data.report &&
-                exportable.data.report.levels;
-            const widget = widgets.find(w => w.key === exportable.widgetKey);
-
-            if (!levels || !widget) {
-                return;
-            }
-
-            if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
-                if (!widget.properties) {
-                    return;
-                }
-                const newLevels = ExportTypePane.transformMatrix2dLevels(widget.properties.data);
-                nodes.push({
-                    title: widget.title,
-                    key: String(exportable.id),
-                    selected: true,
-                    draggable: true,
-                    nodes: ExportTypePane.mapReportLevelsToNodes(newLevels),
-                });
-            } else {
-                nodes.push({
-                    title: widget.title,
-                    key: String(exportable.id),
-                    selected: true,
-                    draggable: true,
-                    nodes: ExportTypePane.mapReportLevelsToNodes(levels),
-                });
-            }
-        });
-
-        nodes.push({
-            title: _ts('export', 'uncategorizedTitle'),
-            key: 'uncategorized',
-            selected: true,
-            draggable: true,
-        });
-
-        return nodes;
-    })
-
-    handleReportStructureChange = (reportStructureVariant) => {
-        const {
-            analysisFramework,
-            onReportStructureChange,
-        } = this.props;
-
-        this.setState({ reportStructureVariant }, () => {
-            const newReportStructure = this.createReportStructure(
-                analysisFramework,
-                reportStructureVariant,
-            );
-
-            onReportStructureChange(newReportStructure);
-        });
     }
 
     exportTypeRendererParams = (key, data) => {
@@ -255,10 +117,10 @@ export default class ExportTypePane extends React.PureComponent {
     renderWordPdfOptions = () => {
         const {
             reportStructure,
+            reportStructureVariant,
             onReportStructureChange,
+            onReportStructureVariantChange,
         } = this.props;
-
-        const { reportStructureVariant } = this.state;
 
         if (!reportStructure) {
             return (
@@ -277,7 +139,7 @@ export default class ExportTypePane extends React.PureComponent {
                     keySelector={ExportTypePane.reportVariantKeySelector}
                     labelSelector={ExportTypePane.reportVariantLabelSelector}
                     value={reportStructureVariant}
-                    onChange={this.handleReportStructureChange}
+                    onChange={onReportStructureVariantChange}
                     options={reportStructureOptions}
                 />
                 <TreeSelection
