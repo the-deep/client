@@ -157,7 +157,7 @@ module.exports = (env) => {
             new ShellRunPlugin({
                 messageBefore: 'Generating language map.',
                 command: `
-                    find "${appSrc}/" -name "*.js" |
+                    find "${appSrc}/" -regex ".*\\.\\(js\\|ts\\|tsx\\|jsx\\)" |
                         xargs gawk -f "${appSrc}/utils/finder.awk" > "${appSrc}/usage.tmp" &&
                         mkdir -p "${appSrc}/generated" &&
                         rsync -c "${appSrc}/usage.tmp" "${appSrc}/generated/usage.js";

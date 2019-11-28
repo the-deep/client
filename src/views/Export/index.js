@@ -1,22 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
-
 import { listToMap } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
-import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';
-import { FgRestBuilder } from '#rsu/rest';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import ExportPreview from '#components/other/ExportPreview';
-import {
-    createParamsForGet,
-    createUrlForProjectFramework,
-    createUrlForGeoOptions,
-
-    transformResponseErrorToFormError,
-} from '#rest';
 import {
     entriesViewFilterSelector,
     analysisFrameworkForProjectSelector,
@@ -27,15 +17,12 @@ import {
     geoOptionsForProjectSelector,
     activeProjectRoleSelector,
 } from '#redux';
+
 import {
     RequestCoordinator,
     RequestClient,
-    methods,
 } from '#request';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
-
-import notify from '#notify';
-import schema from '#schema';
 import _ts from '#ts';
 
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
@@ -43,6 +30,7 @@ import FilterEntriesForm from '../Entries/FilterEntriesForm';
 import ExportHeader from './ExportHeader';
 import LeadsTable from './LeadsTable';
 import ExportTypePane from './ExportTypePane';
+import requestOptions from './request';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -61,11 +49,14 @@ const mapDispatchToProps = dispatch => ({
 
 const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     setAnalysisFramework: PropTypes.func.isRequired,
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     setGeoOptions: PropTypes.func.isRequired,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
@@ -77,61 +68,8 @@ const defaultProps = {
     geoOptions: {},
 };
 
-const requestOptions = {
-    leadsGetRequest: {
-        url: '/v2/leads/filter/',
-        method: methods.POST,
-        onMount: true,
-        query: ({
-            fields: ['id', 'title', 'created_at'],
-        }),
-        body: ({
-            props: {
-                projectId,
-                filters,
-                projectRole: {
-                    exportPermissions = {},
-                },
-            },
-        }) => {
-            const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
-            const sanitizedFilters = getFiltersForRequest(filters);
-
-            // Unprotected filter is sent to request to fetch leads
-            // if user cannot create export for confidential documents
-            if (filterOnlyUnprotected) {
-                sanitizedFilters.confidentiality = ['unprotected'];
-            }
-
-            return ({
-                project: [projectId],
-                ...sanitizedFilters,
-            });
-        },
-        onPropsChanged: [
-            'activeProject',
-            'filters',
-        ],
-        onSuccess: ({
-            response,
-            params: { setLeads: setLeadsFromParams },
-        }) => {
-            setLeadsFromParams(response);
-        },
-        onFailure: ({ error: { response } }) => {
-            const message = transformResponseErrorToFormError(response.errors)
-                .formErrors
-                .errors
-                .join(' ');
-            notify.send({
-                title: _ts('export', 'leadsLabel'),
-                type: notify.type.ERROR,
-                message,
-                duration: notify.duration.MEDIUM,
-            });
-        },
-    },
-};
+const SECTOR_FIRST = 'sectorFirst';
+const DIMENSION_FIRST = 'dimensionFirst';
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
@@ -143,53 +81,73 @@ export default class Export extends React.PureComponent {
     static exportButtonKeyExtractor = d => d.key;
     static leadKeyExtractor = d => d.id
 
+    // NOTE: This function generates dimension first level
+    static transformMatrix2dLevels = ({
+        sectors: widgetSec,
+        dimensions: widgetDim,
+    } = {}) => {
+        const dimensionFirstLevels = widgetDim.map((d) => {
+            const subDims = d.subdimensions;
+
+            const sublevels = subDims.map((sd) => {
+                const sectors = widgetSec.map(s => ({
+                    id: `${s.id}-${d.id}-${sd.id}`,
+                    title: s.title,
+                }));
+                return ({
+                    id: `${d.id}-${sd.id}`,
+                    title: sd.title,
+                    sublevels: sectors,
+                });
+            });
+
+            return ({
+                id: d.id,
+                title: d.title,
+                sublevels,
+            });
+        });
+
+        return dimensionFirstLevels;
+    }
+
     constructor(props) {
         super(props);
 
         const {
-            requests: {
-                leadsGetRequest,
-            },
+            requests: { leadsGetRequest },
+            analysisFramework,
         } = this.props;
 
         leadsGetRequest.setDefaultParams({
             setLeads: this.handleSelectedLeadsSet,
         });
 
+        const reportStructure = this.createReportStructure(
+            analysisFramework,
+            SECTOR_FIRST,
+        );
+
         this.state = {
             activeExportTypeKey: 'word',
             previewId: undefined,
-            reportStructure: undefined,
             decoupledEntries: true,
 
+            reportStructure,
+            reportStructureVariant: SECTOR_FIRST,
+
             selectedLeads: {},
-            pendingAf: true,
-            pendingGeoOptions: true,
         };
-    }
-
-    componentWillMount() {
-        const { projectId } = this.props;
-
-        this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-            projectId,
-        );
-        this.analysisFrameworkRequest.start();
-
-        this.geoOptionsRequest = this.createRequestForGeoOptions(
-            projectId,
-        );
-        this.geoOptionsRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
         const {
-            filters: newFilters,
             projectId: newActiveProject,
+            analysisFramework: newAnalysisFramework,
         } = nextProps;
         const {
-            filters: oldFilters,
             projectId: oldActiveProject,
+            analysisFramework: oldAnalysisFramework,
         } = this.props;
 
         if (oldActiveProject !== newActiveProject) {
@@ -201,132 +159,17 @@ export default class Export extends React.PureComponent {
                 decoupledEntries: true,
 
                 selectedLeads: {},
-                pendingAf: true,
-                pendingGeoOptions: true,
             });
-
-            if (this.analysisFrameworkRequest) {
-                this.analysisFrameworkRequest.stop();
-            }
-            this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-                newActiveProject,
-            );
-            this.analysisFrameworkRequest.start();
-
-            if (this.geoOptionsRequest) {
-                this.geoOptionsRequest.stop();
-            }
-            this.geoOptionsRequest = this.createRequestForGeoOptions(
-                newActiveProject,
-            );
-            this.geoOptionsRequest.start();
         }
-    }
-
-    componentWillUnmount() {
-        if (this.analysisFrameworkRequest) {
-            this.analysisFrameworkRequest.stop();
+        if (newAnalysisFramework !== oldAnalysisFramework) {
+            const { reportStructureVariant } = this.state;
+            this.setState({
+                reportStructure: this.createReportStructure(
+                    newAnalysisFramework,
+                    reportStructureVariant,
+                ),
+            });
         }
-        if (this.geoOptionsRequest) {
-            this.geoOptionsRequest.stop();
-        }
-    }
-
-    createRequestForAnalysisFramework = (projectId) => {
-        const urlForAnalysisFramework = createUrlForGeoOptions(
-            projectId,
-        );
-        const geoOptionsRequest = new FgRestBuilder()
-            .url(urlForAnalysisFramework)
-            .params(createParamsForGet)
-            .delay(0)
-            .preLoad(() => {
-                this.setState({ pendingGeoOptions: true });
-            })
-            .postLoad(() => {
-                this.setState({ pendingGeoOptions: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'geoOptions');
-                    this.props.setGeoOptions({
-                        projectId,
-                        locations: response,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.warn(response);
-                const message = transformResponseErrorToFormError(response.errors)
-                    .formErrors
-                    .errors
-                    .join(' ');
-                notify.send({
-                    title: _ts('export', 'geoLabel'),
-                    type: notify.type.ERROR,
-                    message,
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('export', 'geoLabel'),
-                    type: notify.type.ERROR,
-                    message: _ts('export', 'cantLoadGeo'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return geoOptionsRequest;
-    }
-
-    createRequestForGeoOptions = (projectId) => {
-        const urlForAnalysisFramework = createUrlForProjectFramework(
-            projectId,
-        );
-        const analysisFrameworkRequest = new FgRestBuilder()
-            .url(urlForAnalysisFramework)
-            .params(createParamsForGet)
-            .delay(0)
-            .preLoad(() => {
-                this.setState({ pendingAf: true });
-            })
-            .postLoad(() => {
-                this.setState({ pendingAf: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.setAnalysisFramework({ analysisFramework: response });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.warn(response);
-                const message = transformResponseErrorToFormError(response.errors)
-                    .formErrors
-                    .errors
-                    .join(' ');
-                notify.send({
-                    title: _ts('export', 'afLabel'),
-                    type: notify.type.ERROR,
-                    message,
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('export', 'afLabel'),
-                    type: notify.type.ERROR,
-                    message: _ts('export', 'cantLoadAf'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return analysisFrameworkRequest;
     }
 
     handleSelectedLeadsSet = (response) => {
@@ -379,7 +222,11 @@ export default class Export extends React.PureComponent {
             leads: leadsFromState = [],
         } = this.state;
 
-        const selectedLeads = listToMap(leadsFromState, d => d.id, () => selectAll);
+        const selectedLeads = listToMap(
+            leadsFromState,
+            d => d.id,
+            () => selectAll,
+        );
 
         const leads = leadsFromState.map(l => ({
             ...l,
@@ -392,8 +239,73 @@ export default class Export extends React.PureComponent {
         });
     }
 
+    createReportStructure = memoize((analysisFramework, reportStructureVariant) => {
+        if (!analysisFramework) {
+            return undefined;
+        }
+
+        const { exportables, widgets } = analysisFramework;
+        if (!exportables || !widgets) {
+            return undefined;
+        }
+
+        const nodes = [];
+        exportables.forEach((exportable) => {
+            const levels = exportable.data && exportable.data.report &&
+                exportable.data.report.levels;
+            const widget = widgets.find(w => w.key === exportable.widgetKey);
+
+            if (!levels || !widget) {
+                return;
+            }
+
+            if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
+                if (!widget.properties) {
+                    return;
+                }
+                const newLevels = Export.transformMatrix2dLevels(widget.properties.data);
+                nodes.push({
+                    title: widget.title,
+                    key: String(exportable.id),
+                    selected: true,
+                    draggable: true,
+                    nodes: ExportTypePane.mapReportLevelsToNodes(newLevels),
+                });
+            } else {
+                nodes.push({
+                    title: widget.title,
+                    key: String(exportable.id),
+                    selected: true,
+                    draggable: true,
+                    nodes: ExportTypePane.mapReportLevelsToNodes(levels),
+                });
+            }
+        });
+
+        nodes.push({
+            title: _ts('export', 'uncategorizedTitle'),
+            key: 'uncategorized',
+            selected: true,
+            draggable: true,
+        });
+
+        return nodes;
+    })
+
     handleReportStructureChange = (value) => {
         this.setState({ reportStructure: value });
+    }
+
+    handleReportStructureVariantChange = (value) => {
+        const { analysisFramework } = this.props;
+
+        this.setState({
+            reportStructureVariant: value,
+            reportStructure: this.createReportStructure(
+                analysisFramework,
+                value,
+            ),
+        });
     }
 
     handleDecoupledEntriesChange = (value) => {
@@ -413,29 +325,30 @@ export default class Export extends React.PureComponent {
             previewId,
             activeExportTypeKey,
             reportStructure,
+            reportStructureVariant,
             decoupledEntries,
             selectedLeads,
             leads = [],
-
-            pendingAf,
-            pendingGeoOptions,
         } = this.state;
 
         const {
-            analysisFramework,
+            analysisFramework = {},
             entriesFilters,
             projectId,
             geoOptions,
             projectRole: {
-                exportPermissions = {},
+                exportPermissions: {
+                    create_only_unprotected: filterOnlyUnprotected,
+                } = {},
             },
             requests: {
                 leadsGetRequest: { pending: pendingLeads },
+                analysisFrameworkRequest: { pending: pendingAf },
+                geoOptionsRequest: { pending: pendingGeoOptions },
             },
         } = this.props;
 
-        const { filters } = analysisFramework || {};
-        const filterOnlyUnprotected = exportPermissions.create_only_unprotected;
+        const { filters } = analysisFramework;
 
         return (
             <Page
@@ -444,7 +357,6 @@ export default class Export extends React.PureComponent {
                     <ExportHeader
                         projectId={projectId}
                         entriesFilters={entriesFilters}
-                        className={styles.header}
                         activeExportTypeKey={activeExportTypeKey}
                         selectedLeads={selectedLeads}
                         reportStructure={reportStructure}
@@ -469,15 +381,13 @@ export default class Export extends React.PureComponent {
                                         filterOnlyUnprotected={filterOnlyUnprotected}
                                     />
                                 </div>
-                                <div className={styles.leadsTableContainer}>
-                                    { pendingLeads && <LoadingAnimation /> }
-                                    <LeadsTable
-                                        className={styles.leadsTable}
-                                        leads={leads}
-                                        onSelectLeadChange={this.handleSelectLeadChange}
-                                        onSelectAllClick={this.handleSelectAllLeads}
-                                    />
-                                </div>
+                                <LeadsTable
+                                    className={styles.leadsTable}
+                                    pending={pendingLeads}
+                                    leads={leads}
+                                    onSelectLeadChange={this.handleSelectLeadChange}
+                                    onSelectAllClick={this.handleSelectAllLeads}
+                                />
                             </div>
                             <div className={styles.entryFilters}>
                                 <h4 className={styles.heading}>
@@ -494,9 +404,11 @@ export default class Export extends React.PureComponent {
                         <ExportTypePane
                             activeExportTypeKey={activeExportTypeKey}
                             reportStructure={reportStructure}
+                            reportStructureVariant={reportStructureVariant}
                             decoupledEntries={decoupledEntries}
                             onExportTypeChange={this.handleExportTypeSelectButtonClick}
                             onReportStructureChange={this.handleReportStructureChange}
+                            onReportStructureVariantChange={this.handleReportStructureVariantChange}
                             onDecoupledEntriesChange={this.handleDecoupledEntriesChange}
                             analysisFramework={analysisFramework}
                         />

@@ -2,30 +2,21 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { reverseRoute } from '@togglecorp/fujs';
-import { FgRestBuilder } from '#rsu/rest';
+import {
+    _cs,
+    reverseRoute,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import AccentButton from '#rsca/Button/AccentButton';
-import Modal from '#rscv/Modal';
-import ModalHeader from '#rscv/Modal/Header';
-import ModalBody from '#rscv/Modal/Body';
-import ModalFooter from '#rscv/Modal/Footer';
 
 import { processEntryFilters } from '#entities/entries';
 import Cloak from '#components/general/Cloak';
-import {
-    urlForExportTrigger,
-    createParamsForExportTrigger,
-    createUrlForExportStatus,
-} from '#rest';
 import {
     pathNames,
     viewsAcl,
 } from '#constants';
 import {
-    RequestCoordinator,
     RequestClient,
     methods,
 } from '#request';
@@ -37,17 +28,39 @@ import styles from './styles.scss';
 
 const emptyList = [];
 
-const createReportStructureForExport = nodes => nodes
-    .filter(node => node.selected)
-    .map(node => (
-        node.nodes ? {
+const createReportStructureForExport = (nodes = emptyList) => (
+    nodes
+        .filter(node => node.selected)
+        .map(node => ({
             id: node.key,
-            levels: createReportStructureForExport(node.nodes),
-        } : {
-            id: node.key,
-        }
-    ));
+            levels: node.nodes
+                ? createReportStructureForExport(node.nodes)
+                : undefined,
+        }))
+);
 
+const createReportStructureLevelForExport = (nodes = emptyList) => (
+    nodes
+        .filter(node => node.selected)
+        .map(node => ({
+            id: node.key,
+            title: node.title,
+            sublevels: node.nodes
+                ? createReportStructureLevelForExport(node.nodes)
+                : undefined,
+        }))
+);
+
+const EXPORT_CLASS = {
+    assessmentExport: 'assessment-export',
+    entriesExport: 'entries-export',
+    entriesPreview: 'entries-preview',
+};
+
+const EXPORT_ITEM = {
+    assessment: 'assessment',
+    entry: 'entry',
+};
 
 const propTypes = {
     className: PropTypes.string,
@@ -56,6 +69,8 @@ const propTypes = {
     decoupledEntries: PropTypes.bool.isRequired,
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     selectedLeads: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onPreview: PropTypes.func.isRequired,
     pending: PropTypes.bool.isRequired,
@@ -67,35 +82,52 @@ const defaultProps = {
     reportStructure: undefined,
     selectedLeads: {},
     entriesFilters: {},
-};
-
-const EXPORT_TYPE = {
-    assessmentExport: 'assessment-export',
-    entriesExport: 'entries-export',
-    entriesPreview: 'entries-preview',
+    geoOptions: {},
 };
 
 const requestOptions = {
-    exportStatusGet: {
-        method: methods.GET,
-        url: ({ props }) => createUrlForExportStatus(props.projectId),
-        onSuccess: ({ response, params: { handleExportStatus } }) => {
-            const { tabularPendingFieldsCount: fieldsCount } = response;
-            handleExportStatus(fieldsCount);
+    exportRequest: {
+        url: '/export-trigger/',
+        method: methods.POST,
+        body: ({ params: { filters } }) => ({ filters }),
+        onSuccess: ({
+            props: { onPreview },
+            params: {
+                setExportClass,
+                isPreview,
+                exportItem,
+            },
+            response: { exportTriggered },
+        }) => {
+            if (isPreview) {
+                onPreview(exportTriggered);
+            } else if (exportItem === EXPORT_ITEM.entry) {
+                notify.send({
+                    title: _ts('export', 'headerExport'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('export', 'exportStartedNotifyMessage'),
+                    duration: 15000,
+                });
+            } else if (exportItem === EXPORT_ITEM.assessment) {
+                notify.send({
+                    title: _ts('export', 'headerExport'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('export', 'exportStartedNotifyMessage'),
+                    duration: 15000,
+                });
+            }
+
+            setExportClass(undefined);
         },
-        onFailure: () => {
-            // No action needed on failure
+        onFailure: ({ params }) => {
+            params.setExportClass(undefined);
         },
-        onFatal: () => {
-            // No action needed on fatal
-        },
-        extras: {
-            schemaName: 'exportStatusGetResponse',
+        onFatal: ({ params }) => {
+            params.setExportClass(undefined);
         },
     },
 };
 
-@RequestCoordinator
 @RequestClient(requestOptions)
 export default class ExportHeader extends React.PureComponent {
     static propTypes = propTypes;
@@ -105,56 +137,66 @@ export default class ExportHeader extends React.PureComponent {
         super(props);
 
         this.state = {
-            exportPending: false,
+            // NOTE: just saving this to identify which button is pressed:
+            // - entry export
+            // - entry preview
+            // - assessment export
             exportClass: undefined,
-            exportStatusPending: -1,
         };
     }
 
-    componentWillUnmount() {
-        if (this.exportRequest) {
-            this.exportRequest.stop();
-        }
+    setExportClass = (exportClass) => {
+        this.setState({ exportClass });
     }
 
-    export = ({ onSuccess, isPreview = false, exportItem = 'entry' }) => {
-        // Let's start by collecting the filters
+    export = (isPreview, exportItem) => {
         const {
             projectId,
             entriesFilters,
             activeExportTypeKey,
             selectedLeads,
-            reportStructure,
+            reportStructure: struct,
             decoupledEntries,
+            analysisFramework,
+            geoOptions,
+            requests: {
+                exportRequest,
+            },
         } = this.props;
 
         const isWord = activeExportTypeKey === 'word';
         const isPdf = activeExportTypeKey === 'pdf';
 
         const exportType = (
-            (exportItem === 'assessment' && 'excel')
+            (exportItem === EXPORT_ITEM.assessment && 'excel')
             || ((isWord || isPdf) && 'report')
             || activeExportTypeKey
         );
-
-        const exportClass = (
-            (isPreview && EXPORT_TYPE.entriesPreview)
-            || (exportItem === 'entry' && EXPORT_TYPE.entriesExport)
-            || (exportItem === 'assessement' && EXPORT_TYPE.assessmentExport)
-            || undefined
-        );
+        // NOTE: structure and level depict the same thing but are different in structure
+        // levels require the sublevels to be named sublevels whereas structure requires
+        // sublevels to be names levels
+        // This cannot be fixed immediately in server as it requires migration
+        const reportLevels = createReportStructureLevelForExport(struct)
+            .map(node => ({
+                id: node.id,
+                levels: node.sublevels,
+            }));
+        const reportStructure = createReportStructureForExport(struct);
 
         const otherFilters = {
             project: projectId,
             lead: Object.keys(selectedLeads).filter(l => selectedLeads[l]),
 
             export_type: exportType,
+            // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
+            pdf: isPdf,
+
             // for excel
             decoupled: decoupledEntries,
+
             // for pdf or word
-            report_structure: createReportStructureForExport(reportStructure || emptyList),
-            // differentiate between pdf or word
-            pdf: isPdf,
+            report_levels: reportLevels,
+            report_structure: reportStructure,
 
             // entry or assessment
             export_item: exportItem,
@@ -165,8 +207,8 @@ export default class ExportHeader extends React.PureComponent {
 
         const processedFilters = processEntryFilters(
             entriesFilters,
-            this.props.analysisFramework,
-            this.props.geoOptions,
+            analysisFramework,
+            geoOptions,
         );
 
         const filters = [
@@ -174,97 +216,36 @@ export default class ExportHeader extends React.PureComponent {
             ...processedFilters,
         ];
 
-        if (this.exportRequest) {
-            this.exportRequest.stop();
-        }
-        this.exportRequest = this.createRequestForExport({
+        exportRequest.do({
+            setExportClass: this.setExportClass,
             filters,
-            onSuccess,
-            exportClass,
+            isPreview,
+            exportItem,
         });
-        this.exportRequest.start();
-    }
 
-    createRequestForExport = ({ filters, onSuccess, exportClass }) => {
-        const exportRequest = new FgRestBuilder()
-            .url(urlForExportTrigger)
-            .params(() => createParamsForExportTrigger(filters))
-            .preLoad(() => this.setState({ exportPending: true, exportClass }))
-            .postLoad(() => this.setState({ exportPending: false, exportClass: undefined }))
-            .success((response) => {
-                // FIXME: write schema
-                onSuccess(response.exportTriggered);
-            })
-            .build();
-        return exportRequest;
-    }
-
-    handleExport = () => {
-        const onSuccess = () => {
-            if (this.state.exportStatusPending !== 0) {
-                this.setState({ exportSuccess: true });
-            } else {
-                notify.send({
-                    title: _ts('export', 'headerExport'),
-                    type: notify.type.SUCCESS,
-                    message: _ts('export', 'exportStartedNotifyMessage'),
-                    duration: 15000,
-                });
-            }
-        };
-        const {
-            requests: {
-                exportStatusGet,
-            },
-        } = this.props;
-        exportStatusGet.do({
-            handleExportStatus: this.handleExportStatus,
-        });
-        this.export({ onSuccess });
-    }
-
-    handleExportStatus = (exportStatusPending) => {
-        this.setState({ exportStatusPending });
-    }
-
-    handleModalClose = () => {
-        this.setState({ exportStatusPending: 0 });
-        if (this.state.exportSuccess) {
-            notify.send({
-                title: _ts('export', 'headerExport'),
-                type: notify.type.SUCCESS,
-                message: _ts('export', 'exportStartedNotifyMessage'),
-                duration: 15000,
-            });
-        }
+        const exportClass = (
+            (isPreview && EXPORT_CLASS.entriesPreview)
+            || (exportItem === EXPORT_ITEM.entry && EXPORT_CLASS.entriesExport)
+            || (exportItem === EXPORT_ITEM.assessment && EXPORT_CLASS.assessmentExport)
+            || undefined
+        );
+        this.setState({ exportClass });
     }
 
     handleAssessmentExportClick = () => {
-        const onSuccess = (exportId) => {
-            console.log('Exporting to ', exportId);
-            notify.send({
-                title: _ts('export', 'headerExport'),
-                type: notify.type.SUCCESS,
-                message: _ts('export', 'exportStartedNotifyMessage'),
-                duration: 15000,
-            });
-        };
-
-        this.export({ onSuccess, exportItem: 'assessment' });
+        this.export(false, EXPORT_ITEM.assessment);
     }
 
-    handlePreview = () => {
-        const {
-            onPreview,
-            requests: {
-                exportStatusGet,
-            },
-        } = this.props;
+    handleEntryExport = () => {
+        this.export(false, EXPORT_ITEM.entry);
+    }
 
-        exportStatusGet.do({
-            handleExportStatus: this.handleExportStatus,
-        });
-        this.export({ onSuccess: onPreview, isPreview: true });
+    handleEntryPreview = () => {
+        // NOTE: resetting preview
+        const { onPreview } = this.props;
+        onPreview(undefined);
+
+        this.export(true, EXPORT_ITEM.entry);
     }
 
     render() {
@@ -272,18 +253,17 @@ export default class ExportHeader extends React.PureComponent {
             projectId,
             className,
             pending,
+            requests: {
+                exportRequest: {
+                    pending: exportPending,
+                },
+            },
         } = this.props;
 
-        const {
-            exportStatusPending,
-            exportPending,
-            exportClass,
-        } = this.state;
-
-        const classNames = `${styles.header} ${className}`;
+        const { exportClass } = this.state;
 
         return (
-            <header className={classNames}>
+            <header className={_cs(styles.header, className)}>
                 <h2>
                     {_ts('export', 'headerExport')}
                 </h2>
@@ -296,50 +276,37 @@ export default class ExportHeader extends React.PureComponent {
                     </Link>
                     <Button
                         className={styles.button}
-                        onClick={this.handlePreview}
-                        disabled={pending || exportPending}
-                        pending={exportClass === EXPORT_TYPE.entriesPreview}
+                        onClick={this.handleEntryPreview}
+                        disabled={pending}
+                        pending={exportPending && exportClass === EXPORT_CLASS.entriesPreview}
                     >
                         {_ts('export', 'showPreviewButtonLabel')}
                     </Button>
+                    <PrimaryButton
+                        className={styles.button}
+                        onClick={this.handleEntryExport}
+                        disabled={pending}
+                        pending={exportPending && exportClass === EXPORT_CLASS.entriesExport}
+                    >
+                        {_ts('export', 'startExportButtonLabel')}
+                    </PrimaryButton>
                     <Cloak
                         // NOTE: this is temporary, will be moved to new page
                         {...viewsAcl.arys}
                         render={
-                            <AccentButton
+                            <PrimaryButton
                                 className={styles.button}
                                 onClick={this.handleAssessmentExportClick}
-                                disabled={pending || exportPending}
-                                pending={exportClass === EXPORT_TYPE.assessmentExport}
+                                disabled={pending}
+                                pending={
+                                    exportPending && exportClass === EXPORT_CLASS.assessmentExport
+                                }
                             >
                                 {_ts('export', 'startAssessmentExportButtonLabel')}
-                            </AccentButton>
+                            </PrimaryButton>
                         }
                     />
-                    <PrimaryButton
-                        className={styles.button}
-                        onClick={this.handleExport}
-                        disabled={pending || exportPending}
-                        pending={exportClass === EXPORT_TYPE.entriesExport}
-                    >
-                        {_ts('export', 'startExportButtonLabel')}
-                    </PrimaryButton>
                 </div>
-                {exportStatusPending > 0 &&
-                    <Modal>
-                        <ModalHeader title={_ts('export', 'exportStatusTitle')} />
-                        <ModalBody>
-                            {_ts('export', 'exportImageGnerationPending', { count: exportStatusPending })}
-                        </ModalBody>
-                        <ModalFooter>
-                            <PrimaryButton
-                                onClick={this.handleModalClose}
-                            >
-                                {_ts('export', 'continueButtonLabel')}
-                            </PrimaryButton>
-                        </ModalFooter>
-                    </Modal>
-                }
             </header>
         );
     }

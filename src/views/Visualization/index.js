@@ -230,13 +230,13 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'organigram')}
                         data={hierarchicalData}
                         idSelector={nameSelector}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
             googleOrgChart: {
                 component: () => (
                     <GoogleOrgChartView
-                        className={styles.googleOrgChart}
                         headerText={_ts('visualization', 'googleOrgChart')}
                         options={orgChartData}
                         value={this.state.value}
@@ -327,7 +327,6 @@ export default class Visualization extends React.PureComponent {
             groupedBarChart: {
                 component: () => (
                     <GroupedBarChartView
-                        className={styles.groupedBarChart}
                         headerText={_ts('visualization', 'groupedBarChart')}
                         data={groupedData}
                         groupSelector={monthSelector}

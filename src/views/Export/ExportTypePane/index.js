@@ -4,38 +4,58 @@ import React from 'react';
 import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
 import TreeSelection from '#rsci/TreeSelection';
+import SegmentInput from '#rsci/SegmentInput';
 import List from '#rscv/List';
 
 import _ts from '#ts';
-import _cs from '#cs';
 
 import wordIcon from '#resources/img/word.svg';
 import excelIcon from '#resources/img/excel.svg';
 import pdfIcon from '#resources/img/pdf.svg';
 import jsonIcon from '#resources/img/json.svg';
 
+import ExportTypePaneButton from './ExportTypeButton';
+
 import styles from './styles.scss';
 
 const propTypes = {
-    analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
+    reportStructureVariant: PropTypes.string.isRequired,
     decoupledEntries: PropTypes.bool.isRequired,
     onExportTypeChange: PropTypes.func.isRequired,
     onReportStructureChange: PropTypes.func.isRequired,
+    onReportStructureVariantChange: PropTypes.func.isRequired,
     onDecoupledEntriesChange: PropTypes.func.isRequired,
 };
 
-const defaultProps = {
-    analysisFramework: undefined,
-    reportStructure: undefined,
-};
+const defaultProps = { reportStructure: undefined };
+
+
+const SECTOR_FIRST = 'sectorFirst';
+const DIMENSION_FIRST = 'dimensionFirst';
+
+const reportStructureOptions = [
+    {
+        key: SECTOR_FIRST,
+        label: _ts('export', 'sectorFirstExportTypeLabel'),
+    },
+    {
+        key: DIMENSION_FIRST,
+        label: _ts('export', 'dimensionFirstExportTypeLabel'),
+    },
+];
+
 
 export default class ExportTypePane extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static exportTypeKeyExtractor = d => d.key
+    static exportTypeKeyExtractor = d => d.key;
+    static reportVariantKeySelector = d => d.key;
+    static reportVariantLabelSelector = d => d.label;
+
+    static reportVariantLabelSelector = d => d.label;
 
     static mapReportLevelsToNodes = levels => levels.map(level => ({
         key: level.id,
@@ -45,45 +65,6 @@ export default class ExportTypePane extends React.PureComponent {
         nodes: level.sublevels && ExportTypePane.mapReportLevelsToNodes(level.sublevels),
     }));
 
-    static createReportStructure = (analysisFramework) => {
-        if (!analysisFramework) {
-            return undefined;
-        }
-
-        const { exportables, widgets } = analysisFramework;
-        const nodes = [];
-
-        if (!exportables || !widgets) {
-            return undefined;
-        }
-
-        exportables.forEach((exportable) => {
-            const levels = exportable.data && exportable.data.report &&
-                exportable.data.report.levels;
-            const widget = widgets.find(w => w.key === exportable.widgetKey);
-
-            if (!levels || !widget) {
-                return;
-            }
-
-            nodes.push({
-                title: widget.title,
-                key: `${exportable.id}`,
-                selected: true,
-                draggable: true,
-                nodes: ExportTypePane.mapReportLevelsToNodes(levels),
-            });
-        });
-
-        nodes.push({
-            title: _ts('export', 'uncategorizedTitle'),
-            key: 'uncategorized',
-            selected: true,
-            draggable: true,
-        });
-
-        return nodes;
-    }
 
     constructor(props) {
         super(props);
@@ -112,48 +93,36 @@ export default class ExportTypePane extends React.PureComponent {
         ];
     }
 
-    componentWillMount() {
-        const newReportStructure = ExportTypePane.createReportStructure(
-            this.props.analysisFramework,
-        );
-        this.props.onReportStructureChange(newReportStructure);
-    }
+    exportTypeRendererParams = (key, data) => {
+        const {
+            onExportTypeChange,
+            activeExportTypeKey,
+        } = this.props;
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.analysisFramework !== this.props.analysisFramework) {
-            const newReportStructure = ExportTypePane.createReportStructure(
-                nextProps.analysisFramework,
-            );
-            this.props.onReportStructureChange(newReportStructure);
-        }
-    }
+        const {
+            title,
+            img,
+        } = data;
 
-    getExportTypeClassName(key) {
-        const { activeExportTypeKey } = this.props;
-
-        return _cs(
-            styles.exportTypeSelect,
-            activeExportTypeKey === key && styles.active,
-        );
-    }
-
-    renderExportType = (key, data) => (
-        <button
-            className={this.getExportTypeClassName(key)}
-            key={key}
-            title={data.title}
-            onClick={() => this.props.onExportTypeChange(key)}
-        >
-            <img
-                className={styles.image}
-                src={data.img}
-                alt={data.title}
-            />
-        </button>
-    )
+        return ({
+            buttonKey: key,
+            className: styles.exportTypeSelect,
+            title,
+            img,
+            isActive: activeExportTypeKey === key,
+            onExportTypeChange,
+        });
+    };
 
     renderWordPdfOptions = () => {
-        if (!this.props.reportStructure) {
+        const {
+            reportStructure,
+            reportStructureVariant,
+            onReportStructureChange,
+            onReportStructureVariantChange,
+        } = this.props;
+
+        if (!reportStructure) {
             return (
                 <p>
                     { _ts('export', 'noMatrixAfText')}
@@ -161,39 +130,56 @@ export default class ExportTypePane extends React.PureComponent {
             );
         }
 
-        return [
-            <h4 key="header">
-                {_ts('export', 'reportStructureLabel')}
-            </h4>,
-            <TreeSelection
-                key="tree-selection"
-                value={this.props.reportStructure}
-                onChange={this.props.onReportStructureChange}
-            />,
-        ];
+        return (
+            <>
+                <SegmentInput
+                    label={_ts('export', 'orderMatrix2D')}
+                    keySelector={ExportTypePane.reportVariantKeySelector}
+                    labelSelector={ExportTypePane.reportVariantLabelSelector}
+                    value={reportStructureVariant}
+                    onChange={onReportStructureVariantChange}
+                    options={reportStructureOptions}
+                />
+                <TreeSelection
+                    key="tree-selection"
+                    label={_ts('export', 'reportStructureLabel')}
+                    value={reportStructure}
+                    onChange={onReportStructureChange}
+                />
+            </>
+        );
     }
 
-    renderExcelOptions = () => ([
-        <Checkbox
-            key="checkbox"
-            label={_ts('export', 'decoupledEntriesLabel')}
-            value={this.props.decoupledEntries}
-            onChange={this.props.onDecoupledEntriesChange}
-        />,
-        <div
-            key="info"
-            className={styles.info}
-        >
-            <Icon
-                className={styles.icon}
-                name="info"
-            />
-            <div>
-                <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
-                <p>{_ts('export', 'decoupledEntriesTitle')}</p>
-            </div>
-        </div>,
-    ])
+    renderExcelOptions = () => {
+        const {
+            decoupledEntries,
+            onDecoupledEntriesChange,
+        } = this.props;
+
+        return (
+            <>
+                <Checkbox
+                    key="checkbox"
+                    label={_ts('export', 'decoupledEntriesLabel')}
+                    value={decoupledEntries}
+                    onChange={onDecoupledEntriesChange}
+                />
+                <div
+                    key="info"
+                    className={styles.info}
+                >
+                    <Icon
+                        className={styles.icon}
+                        name="info"
+                    />
+                    <div>
+                        <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
+                        <p>{_ts('export', 'decoupledEntriesTitle')}</p>
+                    </div>
+                </div>
+            </>
+        );
+    }
 
     renderOptions = (activeExportTypeKey) => {
         switch (activeExportTypeKey) {
@@ -213,13 +199,15 @@ export default class ExportTypePane extends React.PureComponent {
 
     render() {
         const { activeExportTypeKey } = this.props;
+
         return (
             <section className={styles.exportTypes}>
                 <div className={styles.exportTypeSelectList}>
                     <List
                         className={styles.exportTypeSelectList}
                         data={this.exportTypes}
-                        modifier={this.renderExportType}
+                        rendererParams={this.exportTypeRendererParams}
+                        renderer={ExportTypePaneButton}
                         keySelector={ExportTypePane.exportTypeKeyExtractor}
                     />
                 </div>
