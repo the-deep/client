@@ -13,6 +13,7 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 import {
+    _cs,
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
@@ -316,7 +317,7 @@ export default class Arys extends React.PureComponent {
 
         return (
             <Page
-                className={`${className} ${styles.arys}`}
+                className={_cs(className, styles.arys)}
                 headerClassName={styles.header}
                 header={<FilterArysForm className={styles.filters} />}
                 mainContentClassName={styles.mainContent}
