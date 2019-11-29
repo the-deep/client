@@ -14,6 +14,7 @@ import {
     isNotDefined,
     randomString,
     _cs,
+    isTruthyString,
 } from '@togglecorp/fujs';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -57,19 +58,25 @@ const emptyObject = {};
 
 const keySelector = elem => elem.id;
 
-const duplicateValidation = (item) => {
+const listValidation = (atLeastOne = true) => (item) => {
     const errors = [];
     if (!item || item.length <= 0) {
-        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
-    }
-
-    const duplicates = getDuplicates(item, o => o.title);
-    if (duplicates.length > 0) {
-        errors.push(_ts(
-            'widgets.editor.matrix2d',
-            'duplicationError',
-            { duplicates: duplicates.join(', ') },
-        ));
+        if (atLeastOne) {
+            errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
+        }
+    } else {
+        const duplicates = getDuplicates(
+            // NOTE: remove undefined an empty string content
+            item.filter(o => isTruthyString(o.title)),
+            o => o.title,
+        );
+        if (duplicates.length > 0) {
+            errors.push(_ts(
+                'widgets.editor.matrix2d',
+                'duplicationError',
+                { duplicates: duplicates.join(', ') },
+            ));
+        }
     }
     return errors;
 };
@@ -83,7 +90,7 @@ const defaultSchema = {
         },
     },
     dimensions: {
-        validation: duplicateValidation,
+        validation: listValidation(true),
         keySelector,
         member: {
             fields: {
@@ -92,7 +99,7 @@ const defaultSchema = {
                 title: [requiredCondition],
                 tooltip: [],
                 subdimensions: {
-                    validation: duplicateValidation,
+                    validation: listValidation(true),
                     keySelector,
                     member: {
                         fields: {
@@ -106,7 +113,7 @@ const defaultSchema = {
         },
     },
     sectors: {
-        validation: duplicateValidation,
+        validation: listValidation(true),
         keySelector,
         member: {
             fields: {
@@ -114,7 +121,7 @@ const defaultSchema = {
                 title: [requiredCondition],
                 tooltip: [],
                 subsectors: {
-                    validation: duplicateValidation,
+                    validation: listValidation(false),
                     keySelector,
                     member: {
                         fields: {
