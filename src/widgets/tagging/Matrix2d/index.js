@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import memoize from 'memoize-one';
 
 import Matrix2dInput from '#widgetComponents/Matrix2dInput';
 
@@ -25,28 +24,28 @@ const getSectors = (widget) => {
     return sectors;
 };
 
+const getMeta = (widget) => {
+    const {
+        properties: {
+            data: {
+                meta = emptyObject,
+            } = {},
+        } = {},
+    } = widget;
+
+    return meta;
+};
+
+
 export default class Matrix2dOverviewWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    getMeta = memoize((widget) => {
-        const {
-            properties: {
-                data: {
-                    meta = emptyObject,
-                },
-            },
-        } = widget;
-
-        return meta;
-    })
-
 
     render() {
         const { widget } = this.props;
         const dimensions = getDimensions(widget);
         const sectors = getSectors(widget);
-        const meta = this.getMeta(widget);
+        const meta = getMeta(widget);
 
         return (
             <Matrix2dInput
