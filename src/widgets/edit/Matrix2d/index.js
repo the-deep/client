@@ -176,14 +176,14 @@ const advanceModeSchema = produce(defaultSchema, (safeSchema) => {
     // eslint-disable-next-line no-param-reassign
     safeSchema.sectors.member.fields.fontSize = [];
     // eslint-disable-next-line no-param-reassign
-    safeSchema.sectors.member.fields.height = [];
+    safeSchema.sectors.member.fields.width = [];
 
     // eslint-disable-next-line no-param-reassign
     safeSchema.sectors.member.fields.subsectors.member.fields.orientation = [];
     // eslint-disable-next-line no-param-reassign
     safeSchema.sectors.member.fields.subsectors.member.fields.fontSize = [];
     // eslint-disable-next-line no-param-reassign
-    safeSchema.sectors.member.fields.subsectors.member.fields.height = [];
+    safeSchema.sectors.member.fields.subsectors.member.fields.width = [];
 });
 
 const schema = {
