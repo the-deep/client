@@ -1050,7 +1050,10 @@
         "-41526057": "Planned Assessments",
         "-85659768": "Assessment Registry",
         "-56332411": "Looks like your project doesn't have any planned assessments.",
-        "-45288888": "Looks like there are no planned assessments that match your filtering criteria. Try changing what you're looking for and search again."
+        "-45288888": "Looks like there are no planned assessments that match your filtering criteria. Try changing what you're looking for and search again.",
+        "-51724423": "Are you sure you want to delete this planned assessment?",
+        "-65870254": "Add planned assessment",
+        "-60481348": "Edit planned assessment"
     },
     "links": {
         "browserExtension": {
@@ -3005,7 +3008,18 @@
             "emptyWithFilterMessage": -45288888,
             "plannedAssessmentsNotifyTitle": -41526057,
             "tableHeaderActions": 16,
-            "titleLabel": 13
+            "titleLabel": 13,
+            "plannedAryDeleteConfirmText": -51724423,
+            "removeAryButtonTitle": -94736495,
+            "addPlannedAryButtonLabel": -65870254
+        },
+        "assessments.planned.editForm": {
+            "addPlannedAryModalTitle": -65870254,
+            "cancelButtonTitle": 61,
+            "editPlannedAryModalTitle": -60481348,
+            "plannedAryTitleInputLabel": 13,
+            "plannedAryTitleInputPlacehoder": 13,
+            "saveButtonTitle": 25
         }
     }
 }
