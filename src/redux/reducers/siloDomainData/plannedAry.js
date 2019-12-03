@@ -9,21 +9,21 @@ export const PLANNED_ARY__SET_ACTIVE_SORT = 'siloDomainData/PLANNED_ARY__SET_ACT
 
 // ACTION-CREATOR
 
-export const setAryPageFilterAction = ({ filters }) => ({
+export const setPlannedAryPageFilterAction = ({ filters }) => ({
     type: PLANNED_ARY__SET_FILTER,
     filters,
 });
 
-export const unsetAryPageFilterAction = () => ({
+export const unsetPlannedAryPageFilterAction = () => ({
     type: PLANNED_ARY__UNSET_FILTER,
 });
 
-export const setAryPageActivePageAction = ({ activePage }) => ({
+export const setPlannedAryPageActivePageAction = ({ activePage }) => ({
     type: PLANNED_ARY__SET_ACTIVE_PAGE,
     activePage,
 });
 
-export const setAryPageActiveSortAction = ({ activeSort }) => ({
+export const setPlannedAryPageActiveSortAction = ({ activeSort }) => ({
     type: PLANNED_ARY__SET_ACTIVE_SORT,
     activeSort,
 });
@@ -33,6 +33,7 @@ export const setAryPageActiveSortAction = ({ activeSort }) => ({
 const plannedAryViewSetFilter = (state, action) => {
     const { filters } = action;
     const { activeProject } = state;
+
     const settings = {
         plannedAryPage: { $auto: {
             [activeProject]: { $auto: {

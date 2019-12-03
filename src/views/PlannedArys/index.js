@@ -17,6 +17,9 @@ import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
+import modalize from '#rscg/Modalize';
+import AccentButton from '#rsca/Button/AccentButton';
+
 import BackLink from '#components/general/BackLink';
 import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 import {
@@ -40,9 +43,12 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import ActionButtons from './ActionButtons';
+import PlannedAryForm from './PlannedAryForm';
 import PlannedAryFilterForm from './PlannedAryFilterForm';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(AccentButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -224,6 +230,23 @@ export default class PlannedArys extends React.PureComponent {
         });
     }
 
+    handlePlannedAryAdd = (ary) => {
+        const {
+            arys,
+            arysCount,
+        } = this.state;
+
+        const newArys = [
+            ...arys,
+            ary,
+        ];
+
+        this.setState({
+            arys: newArys,
+            arysCount: arysCount + 1,
+        });
+    }
+
     handlePageClick = (page) => {
         this.props.setPlannedAryPageActivePage({ activePage: page });
     }
@@ -328,6 +351,17 @@ export default class PlannedArys extends React.PureComponent {
                             className={styles.backLink}
                         />
                         <PlannedAryFilterForm className={styles.filters} />
+                        <ModalButton
+                            className={styles.modalButton}
+                            modal={
+                                <PlannedAryForm
+                                    projectId={activeProject}
+                                    onActionSuccess={this.handlePlannedAryAdd}
+                                />
+                            }
+                        >
+                            {_ts('assessments.planned', 'addPlannedAryButtonLabel')}
+                        </ModalButton>
                     </React.Fragment>
                 }
                 mainContentClassName={styles.mainContent}

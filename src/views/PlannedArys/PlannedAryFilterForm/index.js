@@ -55,8 +55,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setAryPageFilter: params => dispatch(setPlannedAryPageFilterAction(params)),
-    unsetAryPageFilter: params => dispatch(unsetPlannedAryPageFilterAction(params)),
+    setPlannedAryPageFilter: params => dispatch(setPlannedAryPageFilterAction(params)),
+    unsetPlannedAryPageFilter: params => dispatch(unsetPlannedAryPageFilterAction(params)),
 });
 
 const requestOptions = {
@@ -81,7 +81,6 @@ const requestOptions = {
         },
     },
 };
-
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class FilterPlannedArysForm extends React.PureComponent {
