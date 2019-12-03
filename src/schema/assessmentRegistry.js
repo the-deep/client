@@ -89,6 +89,7 @@ const assessmentRegistrySchema = [];
             summary: { type: 'object' },
             score: { type: 'object' },
             lead: { type: 'uint' }, // either lead or leadGroup is required
+            project: { type: 'uint' },
             leadTitle: { type: 'string' },
             leadGroup: { type: 'uint' }, // either lead or leadGroup is required
             leadGroupTitle: { type: 'string' },

@@ -1,11 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { getFiltersForRequest } from '#entities/lead';
 import {
     Redirect,
     Link,
 } from 'react-router-dom';
 
+import {
+    RequestCoordinator,
+    RequestClient,
+    methods,
+} from '#request';
 import Page from '#rscv/Page';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
@@ -22,52 +28,44 @@ import {
     activeProjectIdFromStateSelector,
     projectIdFromRouteSelector,
 
-    arysForProjectSelector,
     totalArysCountForProjectSelector,
     aryPageActivePageSelector,
     aryPageActiveSortSelector,
     aryPageFilterSelector,
 
-    setArysAction,
     setAryPageActivePageAction,
     setAryPageActiveSortAction,
 } from '#redux';
 import { pathNames } from '#constants/';
+import notify from '#notify';
 import _ts from '#ts';
 
 import ActionButtons from './ActionButtons';
 import FilterArysForm from './FilterArysForm';
-import ArysGetRequest from './requests/ArysGetRequest';
-import AryDeleteRequest from './requests/AryDeleteRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    arys: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     projectId: PropTypes.number.isRequired,
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
-    setArys: PropTypes.func.isRequired,
-    totalArysCount: PropTypes.number,
     setAryPageActiveSort: PropTypes.func.isRequired,
     setAryPageActivePage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    arys: [],
-    totalArysCount: 0,
 };
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
     projectId: projectIdFromRouteSelector(state),
-    arys: arysForProjectSelector(state),
     totalArysCount: totalArysCountForProjectSelector(state),
     activePage: aryPageActivePageSelector(state),
     activeSort: aryPageActiveSortSelector(state),
@@ -75,21 +73,84 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setArys: params => dispatch(setArysAction(params)),
-
     setAryPageActivePage: params => dispatch(setAryPageActivePageAction(params)),
     setAryPageActiveSort: params => dispatch(setAryPageActiveSortAction(params)),
 });
 
 const MAX_ARYS_PER_REQUEST = 24;
 
+const requestOptions = {
+    arysGetRequest: {
+        url: '/assessments/',
+        method: methods.GET,
+        query: ({
+            props: {
+                activeProject,
+                activeSort,
+                filters,
+                activePage,
+            },
+        }) => ({
+            project: activeProject,
+            ordering: activeSort,
+            ...getFiltersForRequest(filters),
+            offset: (activePage - 1) * MAX_ARYS_PER_REQUEST,
+            limit: MAX_ARYS_PER_REQUEST,
+        }),
+        onPropsChanged: [
+            'activeProject',
+            'activeSort',
+            'filters',
+            'activePage',
+        ],
+        onMount: true,
+        onSuccess: ({
+            response: {
+                results,
+                count,
+            },
+            params: {
+                onArysListGet,
+            },
+        }) => {
+            onArysListGet({
+                arys: results,
+                arysCount: count,
+            });
+        },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: 'Assessment Registry', // FIXME: strings
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'arysGetResponse',
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requestOptions)
 export default class Arys extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
+
+        const {
+            requests: {
+                arysGetRequest,
+            },
+        } = this.props;
+
+        arysGetRequest.setDefaultParams({
+            onArysListGet: this.handleArysGet,
+        });
 
         this.headers = [
             {
@@ -141,81 +202,36 @@ export default class Arys extends React.PureComponent {
         ];
 
         this.state = {
-            loadingArys: false,
+            arys: [],
             redirectTo: undefined,
         };
     }
 
-    componentWillMount() {
-        this.pullArys();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            activeProject,
-            activeSort,
-            filters,
-            activePage,
-        } = nextProps;
-
-        if (
-            this.props.activeProject !== activeProject ||
-            this.props.activeSort !== activeSort ||
-            this.props.filters !== filters ||
-            this.props.activePage !== activePage
-        ) {
-            this.pullArys(nextProps);
-        }
-    }
-
-    componentWillUnmount() {
-        this.arysRequest.stop();
-
-        if (this.aryDeleteRequest) {
-            this.aryDeleteRequest.stop();
-        }
-    }
-
-    pullArys = (props = this.props) => {
-        const {
-            activePage,
-            activeProject,
-            activeSort,
-            filters,
-        } = props;
-
-        if (this.arysRequest) {
-            this.arysRequest.stop();
-        }
-
-        const arysRequest = new ArysGetRequest({
-            setState: params => this.setState(params),
-            setArys: this.props.setArys,
-        });
-
-        this.arysRequest = arysRequest.create({
-            activeProject,
-            activePage,
-            activeSort,
-            filters,
-            MAX_ARYS_PER_REQUEST,
-        });
-
-        this.arysRequest.start();
-    }
-
     // UI
-
-    handleRemoveAry = (aryToDelete) => {
-        if (this.aryDeleteRequest) {
-            this.aryDeleteRequest.stop();
-        }
-        const aryDeleteRequest = new AryDeleteRequest({
-            setState: params => this.setState(params),
-            pullArys: this.pullArys,
+    handleArysGet = ({ arys, arysCount }) => {
+        this.setState({
+            arys,
+            arysCount,
         });
-        this.aryDeleteRequest = aryDeleteRequest.create(aryToDelete);
-        this.aryDeleteRequest.start();
+    };
+
+    handleRemoveAry = (aryId) => {
+        const {
+            arys,
+            arysCount,
+        } = this.state;
+
+        const aryIndex = arys.findIndex(ary => ary.id === aryId);
+        if (aryIndex === -1) {
+            return;
+        }
+        const newArys = [...arys];
+        newArys.splice(aryIndex, 1);
+
+        this.setState({
+            arys: newArys,
+            arysCount: arysCount - 1,
+        });
     }
 
     handlePageClick = (page) => {
@@ -275,17 +291,21 @@ export default class Arys extends React.PureComponent {
 
     render() {
         const {
-            loadingArys,
             redirectTo,
+            arys,
+            arysCount,
         } = this.state;
 
         const {
             className,
-            arys,
-            totalArysCount,
             filters,
             activePage,
             projectId,
+            requests: {
+                arysGetRequest: {
+                    pending: loadingArys,
+                },
+            },
         } = this.props;
 
         if (redirectTo) {
@@ -344,7 +364,7 @@ export default class Arys extends React.PureComponent {
                         <Pager
                             activePage={activePage}
                             className={styles.pager}
-                            itemsCount={totalArysCount}
+                            itemsCount={arysCount}
                             maxItemsPerPage={MAX_ARYS_PER_REQUEST}
                             onPageClick={this.handlePageClick}
                             showItemsPerPageChange={false}
