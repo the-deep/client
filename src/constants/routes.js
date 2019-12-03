@@ -167,6 +167,15 @@ export const routes = {
         loader: () => import('../views/Arys/'),
         links: allLinks,
     }, // _ts('pageTitle', 'arys');
+
+    plannedArys: {
+        order: 51,
+        type: ROUTE.private,
+        path: '/projects/:projectId/planned-arys/',
+        loader: () => import('../views/PlannedArys/'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'plannedArys');
+
     editAry: {
         order: 51,
         type: ROUTE.private,

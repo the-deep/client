@@ -1,7 +1,14 @@
 @import '~base-scss/utils';
 
-.arys {
+.planned-arys {
     .header {
+        display: flex;
+        align-items: center;
+
+        .back-link {
+            flex-shrink: 0;
+        }
+
         .filters {
             display: flex;
             flex-grow: 1;
@@ -30,7 +37,6 @@
                     @extend %accent-color-link;
                     margin-right: var(--spacing-small);
                 }
-
 
                 :global {
                     .header {
@@ -62,13 +68,6 @@
                     }
                 }
             }
-
-            .empty-link-message {
-                display: block;
-                margin: var(--spacing-medium) 0;
-                text-transform: none;
-                color: var(--color-accent);
-            }
         }
     }
 
@@ -76,15 +75,6 @@
         display: flex;
         flex-shrink: 0;
         justify-content: space-between;
-
-        .button-container {
-            display: flex;
-            align-items: center;
-
-            .link {
-                @include button-like-link(var(--color-accent));
-            }
-        }
 
         .pager {
             display: flex;

@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { projectIdFromRoute } from '../domainData';
 
 const emptyObject = {};
-const emptyList = [];
 
 // ARYS SELECTORS
 const aryPageSelector = ({ siloDomainData }) => siloDomainData.aryPage;
@@ -13,16 +12,6 @@ const aryPageForProjectSelector = createSelector(
     (aryPage, activeProject) => (
         aryPage[activeProject] || emptyObject
     ),
-);
-
-export const arysForProjectSelector = createSelector(
-    aryPageForProjectSelector,
-    aryPage => aryPage.arys || emptyList,
-);
-
-export const totalArysCountForProjectSelector = createSelector(
-    aryPageForProjectSelector,
-    aryPage => aryPage.totalArysCount || 0,
 );
 
 export const aryPageActivePageSelector = createSelector(

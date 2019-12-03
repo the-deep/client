@@ -70,6 +70,7 @@ const acl = {
     editEntries: { hide: notEntriesEditable },
 
     arys: { hide: notAssessmentViewable },
+    plannedArys: { hide: notAssessmentViewable },
     editAry: { hide: notAssessmentViewable },
     editLeadGroupAssessment: { hide: notAssessmentViewable },
 

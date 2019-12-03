@@ -35,10 +35,6 @@ export const projectRolesSelector = ({ domainData }) => (
     domainData.projectRoles || emptyObject
 );
 
-export const aryFilterOptionsSelector = ({ domainData }) => (
-    domainData.aryFilterOptions || emptyObject
-);
-
 export const regionsSelector = ({ domainData }) => (
     domainData.regions || emptyObject
 );
