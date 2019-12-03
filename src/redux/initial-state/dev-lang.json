@@ -1046,7 +1046,11 @@
         "-76993519": "Sub-column expansion",
         "-51656640": "Row › Column",
         "-74878255": "Column › Row",
-        "-49902146": "Ordering for Matrix 2D"
+        "-49902146": "Ordering for Matrix 2D",
+        "-41526057": "Planned Assessments",
+        "-85659768": "Assessment Registry",
+        "-56332411": "Looks like your project doesn't have any planned assessments.",
+        "-45288888": "Looks like there are no planned assessments that match your filtering criteria. Try changing what you're looking for and search again."
     },
     "links": {
         "browserExtension": {
@@ -1560,7 +1564,9 @@
             "editAryButtonTitle": 8102,
             "emptyWithFilterMessage": -94305439,
             "emptyMessage": -97447888,
-            "emptyLinkMessage": -52524002
+            "emptyLinkMessage": -52524002,
+            "plannedAssessmentsButtonLabel": -41526057,
+            "assessmentsNotifyTitle": -85659768
         },
         "editAssessment.metadata": {
             "executiveSummaryTitle": 9022,
@@ -1925,7 +1931,8 @@
             "visualization": 3999,
             "workshop": -72172702,
             "fourHundredThree": -44264923,
-            "projectDenied": -44264923
+            "projectDenied": -44264923,
+            "plannedArys": -41526057
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2990,6 +2997,15 @@
             "widget1dLabel": -40962553,
             "widget2dLabel": -94382324,
             "affectedGroupsWidgetLabel": -71212616
+        },
+        "assessments.planned": {
+            "createdAt": 163,
+            "createdByFilterLabel": 538,
+            "emptyMessage": -56332411,
+            "emptyWithFilterMessage": -45288888,
+            "plannedAssessmentsNotifyTitle": -41526057,
+            "tableHeaderActions": 16,
+            "titleLabel": 13
         }
     }
 }

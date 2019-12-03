@@ -125,6 +125,17 @@ const initialSiloDomainData = {
         */
     },
 
+    // i specifies project
+    plannedAryPage: {
+        /*
+        1: {
+            activeSort: '-created_at',
+            activePage: 1,
+            filters: {},
+        },
+        */
+    },
+
     entriesView: {
         /*
         1: {

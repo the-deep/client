@@ -17,6 +17,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
+import BackLink from '#components/general/BackLink';
 import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 import {
     _cs,
@@ -26,21 +27,20 @@ import {
 
 import {
     activeProjectIdFromStateSelector,
-    projectIdFromRouteSelector,
 
-    aryPageActivePageSelector,
-    aryPageActiveSortSelector,
-    aryPageFilterSelector,
+    plannedAryPageActivePageSelector,
+    plannedAryPageActiveSortSelector,
+    plannedAryPageFilterSelector,
 
-    setAryPageActivePageAction,
-    setAryPageActiveSortAction,
+    setPlannedAryPageActivePageAction,
+    setPlannedAryPageActiveSortAction,
 } from '#redux';
 import { pathNames } from '#constants/';
 import notify from '#notify';
 import _ts from '#ts';
 
 import ActionButtons from './ActionButtons';
-import FilterArysForm from './FilterArysForm';
+import PlannedAryFilterForm from './PlannedAryFilterForm';
 
 import styles from './styles.scss';
 
@@ -49,12 +49,11 @@ const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-    projectId: PropTypes.number.isRequired,
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
-    setAryPageActiveSort: PropTypes.func.isRequired,
-    setAryPageActivePage: PropTypes.func.isRequired,
+    setPlannedAryPageActiveSort: PropTypes.func.isRequired,
+    setPlannedAryPageActivePage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -64,22 +63,21 @@ const defaultProps = {
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
-    projectId: projectIdFromRouteSelector(state),
-    activePage: aryPageActivePageSelector(state),
-    activeSort: aryPageActiveSortSelector(state),
-    filters: aryPageFilterSelector(state),
+    activePage: plannedAryPageActivePageSelector(state),
+    activeSort: plannedAryPageActiveSortSelector(state),
+    filters: plannedAryPageFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setAryPageActivePage: params => dispatch(setAryPageActivePageAction(params)),
-    setAryPageActiveSort: params => dispatch(setAryPageActiveSortAction(params)),
+    setPlannedAryPageActivePage: params => dispatch(setPlannedAryPageActivePageAction(params)),
+    setPlannedAryPageActiveSort: params => dispatch(setPlannedAryPageActiveSortAction(params)),
 });
 
 const MAX_ARYS_PER_REQUEST = 24;
 
 const requestOptions = {
-    arysGetRequest: {
-        url: '/assessments/',
+    plannedArysGetRequest: {
+        url: '/planned-assessments/',
         method: methods.GET,
         query: ({
             props: {
@@ -113,14 +111,14 @@ const requestOptions = {
         },
         onFailure: ({ error: { messageForNotification } }) => {
             notify.send({
-                title: _ts('assessments', 'assessmentsNotifyTitle'),
+                title: _ts('assessments.planned', 'plannedAssessmentsNotifyTitle'),
                 type: notify.type.ERROR,
                 message: messageForNotification,
                 duration: notify.duration.MEDIUM,
             });
         },
         extras: {
-            schemaName: 'arysGetResponse',
+            schemaName: 'plannedArysGetResponse',
         },
     },
 };
@@ -128,7 +126,7 @@ const requestOptions = {
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requestOptions)
-export default class Arys extends React.PureComponent {
+export default class PlannedArys extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -137,25 +135,24 @@ export default class Arys extends React.PureComponent {
 
         const {
             requests: {
-                arysGetRequest,
+                plannedArysGetRequest,
             },
         } = this.props;
 
-        arysGetRequest.setDefaultParams({
+        plannedArysGetRequest.setDefaultParams({
             onArysListGet: this.handleArysGet,
         });
 
         this.headers = [
             {
-                key: 'lead__title',
-                label: _ts('assessments', 'titleLabel'),
+                key: 'title',
+                label: _ts('assessments.planned', 'titleLabel'),
                 order: 1,
                 sortable: true,
-                modifier: row => row.leadTitle,
             },
             {
                 key: 'created_at',
-                label: _ts('assessments', 'createdAt'),
+                label: _ts('assessments.planned', 'createdAt'),
                 order: 2,
                 sortable: true,
                 modifier: row => (
@@ -167,7 +164,7 @@ export default class Arys extends React.PureComponent {
             },
             {
                 key: 'created_by',
-                label: _ts('assessments', 'createdByFilterLabel'),
+                label: _ts('assessments.planned', 'createdByFilterLabel'),
                 order: 3,
                 sortable: true,
                 modifier: row => (
@@ -182,13 +179,12 @@ export default class Arys extends React.PureComponent {
             },
             {
                 key: 'actions',
-                label: _ts('assessments', 'tableHeaderActions'),
+                label: _ts('assessments.planned', 'tableHeaderActions'),
                 order: 4,
                 sortable: false,
                 modifier: row => (
                     <ActionButtons
                         row={row}
-                        activeProject={this.props.activeProject}
                         onRemoveAry={this.handleRemoveAry}
                     />
                 ),
@@ -229,14 +225,14 @@ export default class Arys extends React.PureComponent {
     }
 
     handlePageClick = (page) => {
-        this.props.setAryPageActivePage({ activePage: page });
+        this.props.setPlannedAryPageActivePage({ activePage: page });
     }
 
     // TABLE
 
-    aryKeyExtractor = ary => (ary.id.toString())
+    plannedAryKeyExtractor = ary => (ary.id.toString())
 
-    aryModifier = (ary, columnKey) => {
+    plannedAryModifier = (ary, columnKey) => {
         const header = this.headers.find(d => d.key === columnKey);
         if (header.modifier) {
             return header.modifier(ary);
@@ -280,7 +276,7 @@ export default class Arys extends React.PureComponent {
         } else {
             activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
         }
-        this.props.setAryPageActiveSort({ activeSort });
+        this.props.setPlannedAryPageActiveSort({ activeSort });
     }
 
     render() {
@@ -292,12 +288,11 @@ export default class Arys extends React.PureComponent {
 
         const {
             className,
-            activeProject,
             filters,
             activePage,
-            projectId,
+            activeProject,
             requests: {
-                arysGetRequest: {
+                plannedArysGetRequest: {
                     pending: loadingArys,
                 },
             },
@@ -312,39 +307,39 @@ export default class Arys extends React.PureComponent {
             );
         }
 
+        const backLink = reverseRoute(pathNames.arys, { projectId: activeProject });
+
         // FIXME: Fix re-rendering
         const EmptyComponent = TableEmptyComponent({
-            emptyText: (
-                <React.Fragment>
-                    <span>{ _ts('assessments', 'emptyMessage') }</span>
-                    <Link
-                        className={styles.emptyLinkMessage}
-                        to={reverseRoute(pathNames.leads, { projectId })}
-                    >
-                        { _ts('assessments', 'emptyLinkMessage') }
-                    </Link>
-                </React.Fragment>
-            ),
-            filteredEmptyText: _ts('assessments', 'emptyWithFilterMessage'),
+            emptyText: _ts('assessments.planned', 'emptyMessage'),
+            filteredEmptyText: _ts('assessments.planned', 'emptyWithFilterMessage'),
         });
 
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (
             <Page
-                className={_cs(className, styles.arys)}
+                className={_cs(className, styles.plannedArys)}
                 headerClassName={styles.header}
-                header={<FilterArysForm className={styles.filters} />}
+                header={
+                    <React.Fragment>
+                        <BackLink
+                            defaultLink={backLink}
+                            className={styles.backLink}
+                        />
+                        <PlannedAryFilterForm className={styles.filters} />
+                    </React.Fragment>
+                }
                 mainContentClassName={styles.mainContent}
                 mainContent={
                     <div className={styles.tableContainer}>
                         <RawTable
                             data={arys}
-                            dataModifier={this.aryModifier}
+                            dataModifier={this.plannedAryModifier}
                             headerModifier={this.headerModifier}
                             headers={this.headers}
                             onHeaderClick={this.handleTableHeaderClick}
-                            keySelector={this.aryKeyExtractor}
+                            keySelector={this.plannedAryKeyExtractor}
                             className={styles.arysTable}
                             emptyComponent={EmptyComponent}
                             isFiltered={!isFilterEmpty}
@@ -355,19 +350,7 @@ export default class Arys extends React.PureComponent {
                 footerClassName={styles.footer}
                 footer={
                     <React.Fragment>
-                        <div className={styles.buttonContainer}>
-                            <Link
-                                className={styles.link}
-                                to={
-                                    reverseRoute(
-                                        pathNames.plannedArys,
-                                        { projectId: activeProject },
-                                    )
-                                }
-                            >
-                                {_ts('assessments', 'plannedAssessmentsButtonLabel')}
-                            </Link>
-                        </div>
+                        <div />
                         <Pager
                             activePage={activePage}
                             className={styles.pager}

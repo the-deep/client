@@ -19,10 +19,10 @@ import MultiSelectInput from '#rsci/MultiSelectInput';
 
 import {
     activeProjectIdFromStateSelector,
-    aryPageFilterSelector,
+    plannedAryPageFilterSelector,
 
-    setAryPageFilterAction,
-    unsetAryPageFilterAction,
+    setPlannedAryPageFilterAction,
+    unsetPlannedAryPageFilterAction,
 } from '#redux';
 import _ts from '#ts';
 import notify from '#notify';
@@ -38,8 +38,8 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     filters: PropTypes.object.isRequired,
 
-    setAryPageFilter: PropTypes.func.isRequired,
-    unsetAryPageFilter: PropTypes.func.isRequired,
+    setPlannedAryPageFilter: PropTypes.func.isRequired,
+    unsetPlannedAryPageFilter: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
@@ -51,12 +51,12 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
-    filters: aryPageFilterSelector(state),
+    filters: plannedAryPageFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setAryPageFilter: params => dispatch(setAryPageFilterAction(params)),
-    unsetAryPageFilter: params => dispatch(unsetAryPageFilterAction(params)),
+    setAryPageFilter: params => dispatch(setPlannedAryPageFilterAction(params)),
+    unsetAryPageFilter: params => dispatch(unsetPlannedAryPageFilterAction(params)),
 });
 
 const requestOptions = {
@@ -84,7 +84,7 @@ const requestOptions = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
-export default class FilterArysForm extends React.PureComponent {
+export default class FilterPlannedArysForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -130,7 +130,7 @@ export default class FilterArysForm extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (_, values) => {
-        this.props.setAryPageFilter({
+        this.props.setPlannedAryPageFilter({
             filters: values,
         });
     }
@@ -138,7 +138,7 @@ export default class FilterArysForm extends React.PureComponent {
     handleClearFilters = () => {
         const {
             filters,
-            unsetAryPageFilter,
+            unsetPlannedAryPageFilter,
         } = this.props;
 
         if (doesObjectHaveNoData(filters, [''])) {
@@ -149,7 +149,7 @@ export default class FilterArysForm extends React.PureComponent {
                 pristine: true,
             });
         } else {
-            unsetAryPageFilter();
+            unsetPlannedAryPageFilter();
         }
     }
 
@@ -179,7 +179,7 @@ export default class FilterArysForm extends React.PureComponent {
 
         return (
             <Faram
-                className={_cs(styles.arysFilters, className)}
+                className={_cs(styles.arysFilter, className)}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
                 schema={this.schema}
@@ -205,9 +205,9 @@ export default class FilterArysForm extends React.PureComponent {
                 <MultiSelectInput
                     className={styles.input}
                     faramElementName="created_by"
-                    keySelector={FilterArysForm.optionKeySelector}
+                    keySelector={FilterPlannedArysForm.optionKeySelector}
                     label={_ts('assessments', 'createdByFilterLabel')}
-                    labelSelector={FilterArysForm.optionLabelSelector}
+                    labelSelector={FilterPlannedArysForm.optionLabelSelector}
                     options={createdBy}
                     placeholder={_ts('assessments', 'placeholderAnybody')}
                     showHintAndError={false}
