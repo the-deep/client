@@ -74,8 +74,13 @@
 
     .footer {
         display: flex;
+        align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground-alt);
+        padding: var(--spacing-medium);
+        color: var(--color-text-on-background-alt);
 
         .button-container {
             display: flex;

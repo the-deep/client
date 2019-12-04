@@ -5,21 +5,30 @@ import {
     RequestClient,
     methods,
 } from '#request';
+
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import modalize from '#rscg/Modalize';
+import Button from '#rsca/Button';
 
 import notify from '#notify';
 import _ts from '#ts';
 
+import PlannedAryForm from '../PlannedAryForm';
+
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types, react/forbid-prop-types
     row: PropTypes.object.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onRemoveAry: PropTypes.func.isRequired,
+    onPlannedAryEdit: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {};
@@ -64,11 +73,14 @@ export default class ActionButtons extends React.PureComponent {
 
     render() {
         const {
+            row,
+            projectId,
             requests: {
                 plannedAryDeleteRequest: {
                     pending,
                 },
             },
+            onPlannedAryEdit,
         } = this.props;
 
         return (
@@ -81,6 +93,19 @@ export default class ActionButtons extends React.PureComponent {
                     transparent
                     iconName="delete"
                     confirmationMessage={_ts('assessments.planned', 'plannedAryDeleteConfirmText')}
+                />
+                <ModalButton
+                    className={styles.modalButton}
+                    transparent
+                    modal={
+                        <PlannedAryForm
+                            projectId={projectId}
+                            plannedAryData={row}
+                            onActionSuccess={onPlannedAryEdit}
+                            editMode
+                        />
+                    }
+                    iconName="edit"
                 />
             </div>
         );

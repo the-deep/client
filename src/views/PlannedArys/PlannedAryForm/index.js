@@ -177,6 +177,13 @@ export default class PlannedAryForm extends React.PureComponent {
                         />
                     </ModalBody>
                     <ModalFooter className={styles.footer} >
+                        <DangerButton
+                            className={styles.button}
+                            disabled={pending}
+                            onClick={closeModal}
+                        >
+                            {_ts('assessments.planned.editForm', 'cancelButtonTitle')}
+                        </DangerButton>
                         <PrimaryButton
                             className={styles.button}
                             disabled={pristine}
@@ -185,13 +192,6 @@ export default class PlannedAryForm extends React.PureComponent {
                         >
                             {_ts('assessments.planned.editForm', 'saveButtonTitle')}
                         </PrimaryButton>
-                        <DangerButton
-                            className={styles.button}
-                            disabled={pending}
-                            onClick={closeModal}
-                        >
-                            {_ts('assessments.planned.editForm', 'cancelButtonTitle')}
-                        </DangerButton>
                     </ModalFooter>
                 </Faram>
             </Modal>

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { getFiltersForRequest } from '#entities/lead';
+import produce from 'immer';
 import {
     Redirect,
     Link,
@@ -190,6 +191,8 @@ export default class PlannedArys extends React.PureComponent {
                 sortable: false,
                 modifier: row => (
                     <ActionButtons
+                        projectId={this.props.activeProject}
+                        onPlannedAryEdit={this.handlePlannedAryEdit}
                         row={row}
                         onRemoveAry={this.handleRemoveAry}
                     />
@@ -228,6 +231,23 @@ export default class PlannedArys extends React.PureComponent {
             arys: newArys,
             arysCount: arysCount - 1,
         });
+    }
+
+    handlePlannedAryEdit = (ary) => {
+        const { arys } = this.state;
+        const newArys = produce(arys, (safeArys) => {
+            const aryIndex = arys.findIndex(a => a.id === ary.id);
+            if (aryIndex === -1) {
+                return;
+            }
+            // eslint-disable-next-line no-param-reassign
+            safeArys[aryIndex] = {
+                ...safeArys[aryIndex],
+                ...ary,
+            };
+        });
+
+        this.setState({ arys: newArys });
     }
 
     handlePlannedAryAdd = (ary) => {
