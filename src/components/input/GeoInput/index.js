@@ -1,18 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-
-import AccentButton from '#rsca/Button/AccentButton';
-import SelectInputWithList from '#rsci/SelectInputWithList';
-import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
-import Label from '#rsci/Label';
-import { FaramInputElement } from '@togglecorp/faram';
 import {
+    _cs,
     listToMap,
     mapToList,
     isDefined,
 } from '@togglecorp/fujs';
-import _cs from '#cs';
+import { FaramInputElement } from '@togglecorp/faram';
+
+import AccentButton from '#rsca/Button/AccentButton';
+import SelectInputWithList from '#rsci/SelectInputWithList';
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
+import HintAndError from '#rsci/HintAndError';
+import Label from '#rsci/Label';
 
 import GeoModal from './GeoModal';
 import styles from './styles.scss';
@@ -34,6 +35,10 @@ const propTypes = {
     modalLeftComponent: PropTypes.node,
     emptyComponent: PropTypes.func,
     placeholder: PropTypes.string,
+    error: PropTypes.string,
+    hint: PropTypes.string,
+    showHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -51,6 +56,10 @@ const defaultProps = {
     modalLeftComponent: undefined,
     emptyComponent: undefined,
     placeholder: undefined,
+    hint: '',
+    error: '',
+    showHintAndError: true,
+    persistentHintAndError: true,
 };
 
 @FaramInputElement
@@ -270,6 +279,10 @@ export default class GeoInput extends React.PureComponent {
         const {
             label,
             showLabel,
+            hint,
+            error,
+            showHintAndError,
+            persistentHintAndError,
             className: classNameFromProps,
         } = this.props;
 
@@ -292,6 +305,12 @@ export default class GeoInput extends React.PureComponent {
                 }
                 <Selection />
                 <GeoModalRender />
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                    persistent={persistentHintAndError}
+                />
             </div>
         );
     }

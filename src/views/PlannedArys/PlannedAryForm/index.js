@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram, { requiredCondition } from '@togglecorp/faram';
+import { connect } from 'react-redux';
+import Faram, {
+    FaramGroup,
+    requiredCondition,
+} from '@togglecorp/faram';
 
 import {
     RequestClient,
@@ -8,13 +12,22 @@ import {
 } from '#request';
 import TextInput from '#rsci/TextInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import Modal from '#rscv/Modal';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 
+import OrganigramInput from '#components/input/OrganigramInput/';
+import GeoInput from '#components/input/GeoInput/';
+
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+
+import {
+    projectDetailsSelector,
+} from '#redux';
 
 import _ts from '#ts';
 import notify from '#notify';
@@ -32,6 +45,8 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
     projectId: PropTypes.number,
+    // eslint-disable-next-line react/forbid-prop-types
+    projectDetails: PropTypes.object,
 };
 
 const defaultProps = {
@@ -39,7 +54,12 @@ const defaultProps = {
     className: undefined,
     plannedAryData: undefined,
     projectId: undefined,
+    projectDetails: {},
 };
+
+const mapStateToProps = state => ({
+    projectDetails: projectDetailsSelector(state),
+});
 
 const requestOptions = {
     plannedAryRequest: {
@@ -77,9 +97,37 @@ const requestOptions = {
             schemaName: 'plannedAry',
         },
     },
+    assessmentTemplateRequest: {
+        url: ({ props: { projectId } }) => `/projects/${projectId}/assessment-template/`,
+        extras: {
+            schemaName: 'aryTemplateGetResponse',
+        },
+        onMount: ({ props: { projectId } }) => !!projectId,
+        onPropsChanged: ['projectId'],
+        onSuccess: ({ response, params: { getPlannedAryFields } }) => {
+            getPlannedAryFields(response);
+        },
+    },
+    geoOptionsRequest: {
+        extras: {
+            schemaName: 'geoOptions',
+        },
+        url: '/geo-options/',
+        query: ({ props: { projectId } }) => ({ project: projectId }),
+        onMount: ({ props: { projectId } }) => !!projectId,
+        onPropsChanged: ['projectId'],
+    },
 };
 
+const idSelector = d => String(d.id);
+const titleSelector = d => d.title;
+
+const orgIdSelector = organ => organ.id;
+const orgLabelSelector = organ => organ.title;
+const orgChildSelector = organ => organ.children;
+
 @RequestClient(requestOptions)
+@connect(mapStateToProps)
 export default class PlannedAryForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -89,7 +137,14 @@ export default class PlannedAryForm extends React.PureComponent {
         const {
             plannedAryData,
             editMode,
+            requests: {
+                assessmentTemplateRequest,
+            },
         } = this.props;
+
+        assessmentTemplateRequest.setDefaultParams({
+            getPlannedAryFields: this.getPlannedAryFields,
+        });
 
         this.state = {
             faramValues: editMode ? plannedAryData : {},
@@ -103,6 +158,10 @@ export default class PlannedAryForm extends React.PureComponent {
             },
         };
     }
+
+    getPlannedAryFields = (aryTemplate) => {
+        console.warn('here', aryTemplate);
+    };
 
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
@@ -139,8 +198,22 @@ export default class PlannedAryForm extends React.PureComponent {
             closeModal,
             requests: {
                 plannedAryRequest: {
-                    pending,
+                    pending: plannedAryPending,
                 },
+                assessmentTemplateRequest: {
+                    response: {
+                        affectedGroups,
+                        sectors,
+                    } = {},
+                    pending: assessmentTemplatePending,
+                },
+                geoOptionsRequest: {
+                    response: geoOptions = {},
+                    pending: pendingGeoOptions,
+                },
+            },
+            projectDetails: {
+                regions,
             },
         } = this.props;
 
@@ -154,6 +227,10 @@ export default class PlannedAryForm extends React.PureComponent {
             ? _ts('assessments.planned.editForm', 'editPlannedAryModalTitle')
             : _ts('assessments.planned.editForm', 'addPlannedAryModalTitle');
 
+        const showLoading = plannedAryPending
+            || assessmentTemplatePending
+            || pendingGeoOptions;
+
         return (
             <Modal className={className}>
                 <ModalHeader
@@ -166,28 +243,54 @@ export default class PlannedAryForm extends React.PureComponent {
                     onValidationSuccess={this.handleFaramValidationSuccess}
                     onValidationFailure={this.handleFaramValidationFailure}
                     schema={this.schema}
-                    disabled={pending}
+                    disabled={showLoading}
                 >
-                    <ModalBody>
-                        <NonFieldErrors faramElement />
-                        <TextInput
-                            faramElementName="title"
-                            label={_ts('assessments.planned.editForm', 'plannedAryTitleInputLabel')}
-                            placeholder={_ts('assessments.planned.editForm', 'plannedAryTitleInputPlacehoder')}
-                        />
+                    <ModalBody className={styles.modalBody}>
+                        {showLoading && <LoadingAnimation />}
+                        <div className={styles.content}>
+                            <NonFieldErrors faramElement />
+                            <TextInput
+                                faramElementName="title"
+                                label={_ts('assessments.planned.editForm', 'plannedAryTitleInputLabel')}
+                                placeholder={_ts('assessments.planned.editForm', 'plannedAryTitleInputPlacehoder')}
+                            />
+                            <FaramGroup faramElementName="methodology">
+                                <MultiSelectInput
+                                    faramElementName="sectors"
+                                    options={sectors}
+                                    keySelector={idSelector}
+                                    labelSelector={titleSelector}
+                                    label={_ts('assessments.planned.editForm', 'plannedArySectorsLabel')}
+                                    placeholder={_ts('assessments.planned.editForm', 'plannedArySectorsPlaceholder')}
+                                />
+                                <OrganigramInput
+                                    faramElementName="affectedGroups"
+                                    data={affectedGroups}
+                                    label={_ts('assessments.planned.editForm', 'plannedAryAffectedGroupsLabel')}
+                                    childSelector={orgChildSelector}
+                                    labelSelector={orgLabelSelector}
+                                    idSelector={orgIdSelector}
+                                    hideList
+                                />
+                                <GeoInput
+                                    faramElementName="locations"
+                                    label={_ts('assessments.planned.editForm', 'plannedAryLocationsLabel')}
+                                    geoOptionsByRegion={geoOptions}
+                                    regions={regions}
+                                    hideList
+                                />
+                            </FaramGroup>
+                        </div>
                     </ModalBody>
-                    <ModalFooter className={styles.footer} >
+                    <ModalFooter>
                         <DangerButton
-                            className={styles.button}
-                            disabled={pending}
                             onClick={closeModal}
                         >
                             {_ts('assessments.planned.editForm', 'cancelButtonTitle')}
                         </DangerButton>
                         <PrimaryButton
-                            className={styles.button}
                             disabled={pristine}
-                            pending={pending}
+                            pending={plannedAryPending}
                             type="submit"
                         >
                             {_ts('assessments.planned.editForm', 'saveButtonTitle')}

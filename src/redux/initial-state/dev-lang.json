@@ -3019,7 +3019,11 @@
             "editPlannedAryModalTitle": -60481348,
             "plannedAryTitleInputLabel": 13,
             "plannedAryTitleInputPlacehoder": 13,
-            "saveButtonTitle": 25
+            "saveButtonTitle": 25,
+            "plannedAryAffectedGroupsLabel": 9027,
+            "plannedAryLocationsLabel": 9028,
+            "plannedArySectorsLabel": -24457818,
+            "plannedArySectorsPlaceholder": -24457818
         }
     }
 }

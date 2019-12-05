@@ -27,6 +27,9 @@ const assessmentRegistrySchema = [];
             fieldType: { type: 'string' },
             options: { type: 'array.aryTemplateFieldOption', required: true },
             title: { type: 'string' },
+            isRequired: { type: 'boolean' },
+            sourceType: { type: 'string' },
+            showInPlannedAssessment: { type: 'boolean' },
         },
     };
     assessmentRegistrySchema.push({ name, schema });
