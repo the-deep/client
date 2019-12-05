@@ -380,9 +380,11 @@ export default class EditAry extends React.PureComponent {
             projectId,
             activeLeadId,
             editAryIsPristine,
+            editAryFaramValues,
             editAryHasErrors,
             className: classNameFromProps,
         } = this.props;
+        console.warn('values are here', editAryFaramValues);
 
         const {
             noTemplate,

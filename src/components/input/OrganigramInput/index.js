@@ -13,6 +13,7 @@ import ModalBody from '#rscv/Modal/Body';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import ModalFooter from '#rscv/Modal/Footer';
 import Label from '#rsci/Label';
+import HintAndError from '#rsci/HintAndError';
 
 import _ts from '#ts';
 import _cs from '#cs';
@@ -36,6 +37,10 @@ const propTypes = {
     hideList: PropTypes.bool,
     modalLeftComponent: PropTypes.node,
     emptyComponent: PropTypes.func,
+    error: PropTypes.string,
+    hint: PropTypes.string,
+    showHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -54,6 +59,10 @@ const defaultProps = {
     data: [],
     modalLeftComponent: undefined,
     emptyComponent: undefined,
+    hint: '',
+    error: '',
+    showHintAndError: true,
+    persistentHintAndError: true,
 };
 
 const emptyObject = {};
@@ -257,6 +266,7 @@ export default class OrganigramInput extends React.PureComponent {
             hideList,
             disabled,
             readOnly,
+            emptyComponent,
         } = this.props;
 
         if (!this.mountSelectInput) {
@@ -277,6 +287,7 @@ export default class OrganigramInput extends React.PureComponent {
                         hideSelectAllButton
                         disabled={disabled}
                         readOnly={readOnly}
+                        showLabel={false}
                     />
                     <AccentButton
                         className={styles.action}
@@ -302,7 +313,7 @@ export default class OrganigramInput extends React.PureComponent {
                 hideSelectAllButton
                 disabled={disabled}
                 readOnly={readOnly}
-                emptyComponent={this.props.emptyComponent}
+                emptyComponent={emptyComponent}
             />
         );
     }
@@ -311,6 +322,10 @@ export default class OrganigramInput extends React.PureComponent {
         const {
             label,
             showLabel,
+            hint,
+            error,
+            showHintAndError,
+            persistentHintAndError,
             className: classNameFromProps,
         } = this.props;
 
@@ -333,6 +348,12 @@ export default class OrganigramInput extends React.PureComponent {
                 }
                 <Selection />
                 <OrgChartModal />
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                    persistent={persistentHintAndError}
+                />
             </div>
         );
     }
