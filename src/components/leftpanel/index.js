@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import {
+    _cs,
     isFalsy,
     isTruthy,
 } from '@togglecorp/fujs';
@@ -85,9 +86,11 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func,
     viewsModifier: PropTypes.func,
     tabsModifier: PropTypes.func,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: undefined,
     projectRole: {},
     projectDetails: {},
     filteredEntries: [],
@@ -424,6 +427,7 @@ export default class LeftPane extends React.PureComponent {
                 isPrivate,
                 categoryEditor,
             },
+            className,
         } = this.props;
         const {
             images,
@@ -441,7 +445,7 @@ export default class LeftPane extends React.PureComponent {
         const TabularModal = this.renderTabularModal;
 
         return (
-            <Fragment>
+            <div className={_cs(styles.leftPanel, className)}>
                 <ScrollTabs
                     className={styles.tabs}
                     active={tabKey}
@@ -478,10 +482,12 @@ export default class LeftPane extends React.PureComponent {
                     }
                 </ScrollTabs>
                 <MultiViewContainer
+                    containerClassName={styles.multiviewContainer}
+                    activeClassName={styles.active}
                     active={tabKey}
                     views={this.views}
                 />
-            </Fragment>
+            </div>
         );
     }
 }
