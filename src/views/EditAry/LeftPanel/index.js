@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
@@ -18,9 +18,11 @@ const propTypes = {
     lead: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     leadGroup: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeSector: PropTypes.string,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: undefined,
     projectRole: {},
     activeSector: undefined,
     lead: undefined,

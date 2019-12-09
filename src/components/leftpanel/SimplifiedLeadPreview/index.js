@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import {
+    isFalsy,
+    _cs,
+} from '@togglecorp/fujs';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { isFalsy } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 
@@ -231,7 +234,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
         const Content = this.renderContent;
 
         return (
-            <div className={`${className} ${styles.leadPreview}`}>
+            <div className={_cs(className, styles.leadPreview)}>
                 { pending ? (
                     <LoadingAnimation
                         className={styles.loadingAnimation}

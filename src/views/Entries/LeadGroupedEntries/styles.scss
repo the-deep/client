@@ -25,6 +25,15 @@
                 white-space: nowrap;
                 font-size: var(--font-size-large);
                 font-weight: var(--font-weight-normal);
+
+                .lead-title-button {
+                    padding: 0;
+                    text-transform: none;
+                    text-decoration: underline;
+                    color: inherit;
+                    font-size: inherit;
+                    font-weight: inherit;
+                }
             }
 
             .date {

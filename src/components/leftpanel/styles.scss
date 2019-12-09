@@ -1,26 +1,45 @@
-
 :root {
     --height-leftpanel-tabs: 48px;
 }
 
-.tabs {
-    height: var(--height-leftpanel-tabs);
-}
-
-.tabular-modal {
-    width: auto;
-    overflow: auto;
-
-    .tabular-book {
-        width: 96vw;
-        height: 92vh;
-    }
-}
-
-.container {
-    background-color: var(--color-foreground-alt);
-    height: calc(100% - var(--height-leftpanel-tabs));
+.left-panel {
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
+
+    .tabs {
+        flex-shrink: 0;
+        height: var(--height-leftpanel-tabs);
+    }
+
+    .tabular-modal {
+        width: auto;
+        overflow: auto;
+
+        .tabular-book {
+            width: 96vw;
+            height: 92vh;
+        }
+    }
+
+    .multiview-container {
+        display: none;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: var(--color-foreground-alt);
+            overflow-y: auto;
+        }
+
+        &.active {
+            display: flex;
+        }
+    }
 }
 
 .brain-icon {
