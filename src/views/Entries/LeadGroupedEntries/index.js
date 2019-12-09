@@ -9,8 +9,11 @@ import {
 import Icon from '#rscg/Icon';
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';
+import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';
+import LeadPreview from '#views/Leads/LeadPreview';
 import {
     pathNames,
     viewsAcl,
@@ -19,6 +22,8 @@ import _ts from '#ts';
 
 import Entry from './Entry';
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -69,18 +74,23 @@ export default class LeadGroupedEntries extends React.PureComponent {
         const {
             projectId,
             headerClassName: headerClassNameFromProps,
-            lead: {
-                title: leadTitle,
-                id: leadId,
-                createdAt: leadCreatedAt,
-                entries,
-            },
+            lead,
         } = this.props;
+        const {
+            title: leadTitle,
+            id: leadId,
+            createdAt: leadCreatedAt,
+            entries,
+            url: leadUrlFromProps,
+            attachment,
+        } = lead;
 
         const route = reverseRoute(pathNames.editEntries, {
             projectId,
             leadId,
         });
+
+        const leadUrl = (attachment && attachment.file) || leadUrlFromProps;
 
         // {_ts('entries', 'editEntryButtonLabel')}
         return (
@@ -91,7 +101,19 @@ export default class LeadGroupedEntries extends React.PureComponent {
                         className={styles.heading}
                     >
                         <div className={styles.title}>
-                            { leadTitle }
+                            {leadUrl ? (
+                                <ModalButton
+                                    className={styles.leadTitleButton}
+                                    transparent
+                                    modal={
+                                        <LeadPreview value={lead} />
+                                    }
+                                >
+                                    {leadTitle}
+                                </ModalButton>
+                            ) : (
+                                leadTitle
+                            )}
                         </div>
                         <FormattedDate
                             className={styles.date}
