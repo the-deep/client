@@ -21,6 +21,7 @@ import LeftPanel from '#components/leftpanel';
 import EntriesList from './EntriesList';
 
 const propTypes = {
+    className: PropTypes.string,
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
@@ -34,6 +35,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     projectRole: {},
     entries: [],
     filteredEntries: [],
@@ -101,6 +103,7 @@ export default class LeftPane extends React.PureComponent {
 
     render() {
         const {
+            className,
             projectRole,
             lead,
             onExcerptCreate,
@@ -110,6 +113,7 @@ export default class LeftPane extends React.PureComponent {
 
         return (
             <LeftPanel
+                className={className}
                 projectRole={projectRole}
                 lead={lead}
                 filteredEntries={filteredEntries}

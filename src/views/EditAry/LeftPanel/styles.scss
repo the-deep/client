@@ -15,6 +15,10 @@
         flex-grow: 1;
         overflow: auto;
 
+        .left-panel {
+            flex-grow: 1;
+        }
+
         .entries {
             // TODO: allocate height dynamically
             height: calc(100% - 48px);
