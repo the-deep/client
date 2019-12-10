@@ -17,6 +17,10 @@
         min-width: var(--width-left-min);
         height: 100%;
         overflow-y: auto;
+
+        .left-panel {
+            flex-grow: 1;
+        }
     }
 
     .right {

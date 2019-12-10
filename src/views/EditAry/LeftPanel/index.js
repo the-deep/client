@@ -115,6 +115,7 @@ export default class LeftPanel extends React.PureComponent {
                 />
                 <div className={styles.container}>
                     <LeftPanelOriginal
+                        className={styles.leftPanel}
                         projectRole={projectRole}
                         lead={lead}
                         viewsModifier={this.getViews}

@@ -198,16 +198,19 @@ export default class EntriesListing extends React.PureComponent {
                 leadId: this.props.leadId,
             },
         );
-        const { entries = [] } = this.state;
+        const {
+            entries = [],
+            pendingEntries,
+        } = this.state;
         const noOfEntries = entries.length;
 
         return (
             <div className={_cs(className, styles.entriesListing)}>
-                { this.state.pendingEntries && <LoadingAnimation />}
+                { pendingEntries && <LoadingAnimation />}
                 <ListView
                     className={styles.entriesList}
                     modifier={this.renderEntryItem}
-                    data={this.state.entries}
+                    data={entries}
                     keySelector={EntriesListing.calcEntryKey}
                 />
                 <div className={styles.leadDetail}>

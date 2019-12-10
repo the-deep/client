@@ -226,6 +226,7 @@ export default class Overview extends React.PureComponent {
                 className={styles.overview}
                 leftChild={
                     <LeadPane
+                        className={styles.leftPanel}
                         onExcerptCreate={this.props.onExcerptCreate}
                         tabularFields={tabularFields}
                     />
