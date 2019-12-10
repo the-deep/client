@@ -29,7 +29,7 @@ export default class EntriesRequest {
                     this.setEntries({
                         entries: response.results,
                         leadId,
-                        lead: response.results[0].lead,
+                        lead: (response.results[0] || {}).lead,
                     });
                     this.setState({ pendingEntries: false });
                 } catch (er) {
