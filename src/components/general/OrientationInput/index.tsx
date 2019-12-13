@@ -18,7 +18,7 @@ interface Orientation {
 }
 
 const orientationOptions: Orientation[] = [
-    { key: 'default', label: 'a' },
+    { key: 'default', label: 'auto' },
     { key: 'leftToRight', label: 'A' },
     { key: 'bottomToTop', label: 'A' },
 ];

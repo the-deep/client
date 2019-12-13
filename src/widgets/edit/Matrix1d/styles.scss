@@ -57,6 +57,15 @@
 
                 .orientation-input {
                     flex-shrink: 0;
+
+                    .orientation-option {
+                        display: flex;
+                        align-items: center;
+
+                        .option-image {
+                            width: 128px;
+                        }
+                    }
                 }
             }
 

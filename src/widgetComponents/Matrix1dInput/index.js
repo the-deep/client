@@ -29,6 +29,12 @@ const defaultProps = {
     onChange: () => {},
 };
 
+const orientationStyleMaps = {
+    horizontal: styles.horizontal,
+    vertical: styles.vertical,
+    pivoted: styles.pivoted,
+};
+
 @FaramInputElement
 export default class Matrix1dInput extends React.PureComponent {
     static propTypes = propTypes;
@@ -99,6 +105,7 @@ export default class Matrix1dInput extends React.PureComponent {
             selectedCells: value ? value[key] : undefined,
             disabled,
             readOnly,
+            className: styles.row,
         });
     }
 
@@ -116,7 +123,7 @@ export default class Matrix1dInput extends React.PureComponent {
                 className={_cs(
                     styles.overview,
                     className,
-                    orientation === 'vertical' && styles.vertical,
+                    orientationStyleMaps[orientation],
                 )}
                 data={options}
                 keySelector={Matrix1dInput.rowKeyExtractor}

@@ -30,6 +30,12 @@ const defaultProps = {
     readOnly: false,
 };
 
+const orientationStyleMaps = {
+    horizontal: styles.horizontalRow,
+    vertical: styles.verticalRow,
+    pivoted: styles.pivotedRow,
+};
+
 export default class Matrix1dRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -37,13 +43,15 @@ export default class Matrix1dRow extends React.PureComponent {
     static cellKeyExtractor = d => d.key;
 
     rendererParams = (key, data) => ({
-        children: data.value,
+        content: data.value,
+        contentClassName: styles.cellValue,
         tooltip: data.tooltip,
         onClick: () => this.props.onCellClick(key),
         onDrop: droppedData => this.props.onCellDrop(key, droppedData),
         active: this.props.selectedCells[key],
         disabled: this.props.disabled,
         readOnly: this.props.readOnly,
+        className: styles.cell,
     })
 
     render() {
@@ -52,13 +60,15 @@ export default class Matrix1dRow extends React.PureComponent {
             title,
             orientation,
             cells,
+            className,
         } = this.props;
 
         return (
             <div
                 className={_cs(
+                    className,
                     styles.matrixRow,
-                    orientation === 'vertical' && styles.verticalRow,
+                    orientationStyleMaps[orientation],
                 )}
             >
                 <div
