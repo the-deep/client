@@ -29,6 +29,8 @@ import notify from '#notify';
 
 import styles from './styles.scss';
 
+const emptyArray = [];
+
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     activeProject: PropTypes.number.isRequired,
@@ -159,7 +161,8 @@ export default class FilterArysForm extends React.PureComponent {
             requests: {
                 filterOptionsRequest: {
                     response: {
-                        createdBy = [],
+                        // created by is options
+                        createdBy = emptyArray,
                     } = {},
                     pending,
                 },

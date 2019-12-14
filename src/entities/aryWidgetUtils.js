@@ -144,8 +144,9 @@ BaseWidget.defaultProps = {
 };
 
 export const isDroppableWidget = (sourceType, fieldType) => (
-    (sourceType === 'organizations' && fieldType === 'multiselect')
+    sourceType === 'organizations' && fieldType === 'multiselect'
 );
+
 
 // NOTE: this should be use new widget api
 export const renderDroppableWidget = (key, data, sources, otherProps = {}) => {

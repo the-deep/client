@@ -1054,7 +1054,14 @@
         "-45288888": "Looks like there are no planned assessments that match your filtering criteria. Try changing what you're looking for and search again.",
         "-51724423": "Are you sure you want to delete this planned assessment?",
         "-65870254": "Add planned assessment",
-        "-60481348": "Edit planned assessment"
+        "-60481348": "Edit planned assessment",
+        "-7326554": "Do you want to continue?",
+        "-13164537": "Drop here",
+        "-35334807": "Stakeholders",
+        "-41987822": "Start typing above to search for organizations",
+        "-95930063": "No results found, try different search text",
+        "-74378035": "Organizations",
+        "-43663158": "Showing only top {max} results"
     },
     "links": {
         "browserExtension": {
@@ -1570,7 +1577,8 @@
             "emptyMessage": -97447888,
             "emptyLinkMessage": -52524002,
             "plannedAssessmentsButtonLabel": -41526057,
-            "assessmentsNotifyTitle": -85659768
+            "assessmentsNotifyTitle": -85659768,
+            "aryTitle": -85659768
         },
         "editAssessment.metadata": {
             "executiveSummaryTitle": 9022,
@@ -2871,7 +2879,18 @@
         },
         "assessment.metadata.stakeholder": {
             "logoUploadTitle": -44804579,
-            "invalidFileSelection": -44817445
+            "invalidFileSelection": -44817445,
+            "closeModalButtonLabel": -39430073,
+            "dropConfirmation": -7326554,
+            "dropHereMessage": -13164537,
+            "stakeholdersModalTitle": -35334807,
+            "typeToSearchOrganizationMessage": -41987822,
+            "noResultsFoundMessage": -95930063,
+            "organizationsTitle": -74378035,
+            "addNewOrganizationTitle": 301,
+            "maxDisplayWarning": -43663158,
+            "searchInputLabel": 9,
+            "searchInputPlaceholder": 154
         },
         "components.viewer.fileImagePreview": {
             "notFoundTitle": 1301,
@@ -3013,7 +3032,8 @@
             "titleLabel": 13,
             "plannedAryDeleteConfirmText": -51724423,
             "removeAryButtonTitle": -94736495,
-            "addPlannedAryButtonLabel": -65870254
+            "addPlannedAryButtonLabel": -65870254,
+            "plannedAryTitle": -41526057
         },
         "assessments.planned.editForm": {
             "addPlannedAryModalTitle": -65870254,
