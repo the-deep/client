@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
@@ -7,11 +8,21 @@ import Confirm from '#rscv/Modal/Confirm';
 
 import styles from './styles.scss';
 
-const propTypes = {};
-const defaultProps = {};
+const propTypes = {
+    containerClassName: PropTypes.string,
+    onChange: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    value: PropTypes.array,
+    renderer: PropTypes.func,
+};
 
-// FIXME: Use strings everywhere, define all the props
-// FIXME: No inline functions
+const defaultProps = {
+    renderer: undefined,
+    containerClassName: undefined,
+    value: undefined,
+};
+
+// FIXME: Use strings everywhere
 
 class Widget extends React.PureComponent {
     static propTypes = propTypes;
@@ -24,22 +35,27 @@ class Widget extends React.PureComponent {
             isBeingDraggedOver: false,
             showConfirmation: false,
             droppedOrganizationId: undefined,
-            droppedOrganizationName: undefined,
         };
 
         this.dragEnterCount = 0;
     }
 
     handleConfirmation = (confirm) => {
+        const {
+            onChange,
+            value,
+        } = this.props;
+
+        const { droppedOrganizationId } = this.state;
+
         if (confirm) {
-            this.props.onChange([
-                ...this.props.value,
-                this.state.droppedOrganizationId,
+            onChange([
+                ...value,
+                droppedOrganizationId,
             ]);
         }
         this.setState({
             droppedOrganizationId: undefined,
-            droppedOrganizationName: undefined,
             showConfirmation: false,
         });
     }
@@ -77,19 +93,17 @@ class Widget extends React.PureComponent {
         try {
             const parsedData = JSON.parse(data);
             if (parsedData && parsedData.organizationId) {
-                const {
-                    organizationId,
-                    organizationName,
-                } = parsedData;
+                const { organizationId } = parsedData;
+
                 if (!value) {
                     onChange([organizationId]);
                 } else if (value.findIndex(v => v === organizationId) === -1) {
                     const intercept = false;
+
                     if (intercept) {
                         this.setState({
                             showConfirmation: true,
                             droppedOrganizationId: organizationId,
-                            droppedOrganizationName: organizationName,
                         });
                     } else {
                         onChange([...value, organizationId]);
@@ -111,10 +125,7 @@ class Widget extends React.PureComponent {
             renderer: Renderer,
             ...otherProps
         } = this.props;
-        const {
-            showConfirmation,
-            droppedOrganizationName,
-        } = this.state;
+        const { showConfirmation } = this.state;
 
         const { isBeingDraggedOver } = this.state;
 

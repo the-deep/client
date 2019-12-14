@@ -83,16 +83,23 @@ export default class OrganizationList extends React.PureComponent {
         return organizationTypesMap;
     })
 
-    getOrganizationItemRendererParams = (key, d) => ({
-        itemKey: key,
-        logo: d.logo,
-        longName: d.longName,
-        name: d.label,
-        searchValue: this.state.searchValue,
-        shortName: d.shortName,
-        type: d.organizationType,
-        organizationTypes: this.getOrganizationTypesMap(this.props.sources),
-    })
+    getOrganizationItemRendererParams = (key, d) => {
+        const { searchValue } = this.state;
+        const { sources } = this.props;
+
+        const organizationTypes = this.getOrganizationTypesMap(sources);
+
+        return ({
+            itemKey: key,
+            logo: d.logo,
+            longName: d.longName,
+            name: d.label,
+            searchValue,
+            shortName: d.shortName,
+            type: d.organizationType,
+            organizationType: organizationTypes[d.organizationType],
+        });
+    }
 
     filterOrganization = memoize((options, value) => {
         if (value === '') {

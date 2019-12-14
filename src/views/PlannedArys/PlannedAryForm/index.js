@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
+import {
+    isDefined,
+} from '@togglecorp/fujs';
 import Faram, {
     FaramGroup,
     requiredCondition,
@@ -104,9 +108,6 @@ const requestOptions = {
         },
         onMount: ({ props: { projectId } }) => !!projectId,
         onPropsChanged: ['projectId'],
-        onSuccess: ({ response, params: { getPlannedAryFields } }) => {
-            getPlannedAryFields(response);
-        },
     },
     geoOptionsRequest: {
         extras: {
@@ -126,6 +127,26 @@ const orgIdSelector = organ => organ.id;
 const orgLabelSelector = organ => organ.title;
 const orgChildSelector = organ => organ.children;
 
+const getPlannedAryGroupFields = (groups) => {
+    if (!groups) {
+        return [];
+    }
+    const plannedGroups = groups.map((group) => {
+        const newFields = group.fields.filter(
+            groupFields => groupFields.showInPlannedAssessment,
+        );
+        if (newFields.length === 0) {
+            return undefined;
+        }
+        return {
+            ...group,
+            fields: newFields,
+        };
+    }).filter(mg => isDefined(mg));
+    return plannedGroups;
+};
+
+
 @RequestClient(requestOptions)
 @connect(mapStateToProps)
 export default class PlannedAryForm extends React.PureComponent {
@@ -137,14 +158,7 @@ export default class PlannedAryForm extends React.PureComponent {
         const {
             plannedAryData,
             editMode,
-            requests: {
-                assessmentTemplateRequest,
-            },
         } = this.props;
-
-        assessmentTemplateRequest.setDefaultParams({
-            getPlannedAryFields: this.getPlannedAryFields,
-        });
 
         this.state = {
             faramValues: editMode ? plannedAryData : {},
@@ -159,9 +173,7 @@ export default class PlannedAryForm extends React.PureComponent {
         };
     }
 
-    getPlannedAryFields = (aryTemplate) => {
-        console.warn('here', aryTemplate);
-    };
+    getPlannedAryMetadataGroups = memoize(getPlannedAryGroupFields);
 
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
@@ -204,6 +216,7 @@ export default class PlannedAryForm extends React.PureComponent {
                     response: {
                         affectedGroups,
                         sectors,
+                        metadataGroups,
                     } = {},
                     pending: assessmentTemplatePending,
                 },
@@ -230,6 +243,8 @@ export default class PlannedAryForm extends React.PureComponent {
         const showLoading = plannedAryPending
             || assessmentTemplatePending
             || pendingGeoOptions;
+
+        const plannedMetadataGroups = this.getPlannedAryMetadataGroups(metadataGroups);
 
         return (
             <Modal className={className}>

@@ -12,18 +12,24 @@ const propTypes = {
     itemKey: PropTypes.number.isRequired,
     logo: PropTypes.string,
     name: PropTypes.string,
+    longName: PropTypes.string,
+    shortName: PropTypes.string,
     searchValue: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    organizationType: PropTypes.object,
 };
 
 const defaultProps = {
     className: undefined,
     logo: undefined,
+    longName: undefined,
     name: undefined,
+    shortName: undefined,
     searchValue: undefined,
+    organizationType: undefined,
 };
 
-// FIXME: Use strings everywhere, define all the props
-// FIXME: No inline functions
+const emptyObject = {};
 
 export default class OrganizationItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -52,11 +58,13 @@ export default class OrganizationItem extends React.PureComponent {
             longName,
             shortName,
             searchValue,
-            type,
-            organizationTypes,
+            organizationType,
         } = this.props;
 
-        const organizationType = organizationTypes[type];
+        const {
+            title,
+            description,
+        } = organizationType || emptyObject;
 
         return (
             <div
@@ -92,10 +100,10 @@ export default class OrganizationItem extends React.PureComponent {
                     />
                     { organizationType && (
                         <div
-                            title={`${organizationType.title}\r\n\r\n${organizationType.description}`}
+                            title={`${title}\r\n\r\n${description}`}
                             className={styles.type}
                         >
-                            { organizationType.title }
+                            { title }
                         </div>
                     ) }
                 </div>
