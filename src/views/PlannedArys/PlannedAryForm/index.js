@@ -18,6 +18,7 @@ import TextInput from '#rsci/TextInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Modal from '#rscv/Modal';
+import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
@@ -36,6 +37,7 @@ import {
 import _ts from '#ts';
 import notify from '#notify';
 
+import Group from './Group';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -127,6 +129,8 @@ const orgIdSelector = organ => organ.id;
 const orgLabelSelector = organ => organ.title;
 const orgChildSelector = organ => organ.children;
 
+const groupKeySelector = data => data.id;
+
 const getPlannedAryGroupFields = (groups) => {
     if (!groups) {
         return [];
@@ -145,7 +149,6 @@ const getPlannedAryGroupFields = (groups) => {
     }).filter(mg => isDefined(mg));
     return plannedGroups;
 };
-
 
 @RequestClient(requestOptions)
 @connect(mapStateToProps)
@@ -203,15 +206,36 @@ export default class PlannedAryForm extends React.PureComponent {
         this.setState({ faramErrors });
     }
 
+    groupRendererParams = (key, data) => {
+        const {
+            requests: {
+                assessmentTemplateRequest: {
+                    response: {
+                        sources,
+                    } = {},
+                },
+            },
+        } = this.props;
+
+        const {
+            title,
+            fields,
+        } = data;
+
+        return {
+            title,
+            fields,
+            sources,
+        };
+    }
+
     render() {
         const {
             className,
             editMode,
             closeModal,
             requests: {
-                plannedAryRequest: {
-                    pending: plannedAryPending,
-                },
+                plannedAryRequest: { pending: plannedAryPending },
                 assessmentTemplateRequest: {
                     response: {
                         affectedGroups,
@@ -225,9 +249,7 @@ export default class PlannedAryForm extends React.PureComponent {
                     pending: pendingGeoOptions,
                 },
             },
-            projectDetails: {
-                regions,
-            },
+            projectDetails: { regions },
         } = this.props;
 
         const {
@@ -248,9 +270,7 @@ export default class PlannedAryForm extends React.PureComponent {
 
         return (
             <Modal className={className}>
-                <ModalHeader
-                    title={modalTitle}
-                />
+                <ModalHeader title={modalTitle} />
                 <Faram
                     value={faramValues}
                     error={faramErrors}
@@ -269,6 +289,16 @@ export default class PlannedAryForm extends React.PureComponent {
                                 label={_ts('assessments.planned.editForm', 'plannedAryTitleInputLabel')}
                                 placeholder={_ts('assessments.planned.editForm', 'plannedAryTitleInputPlacehoder')}
                             />
+                            <FaramGroup faramElementName="metadata">
+                                <FaramGroup faramElementName="basicInformation">
+                                    <List
+                                        data={plannedMetadataGroups}
+                                        keySelector={groupKeySelector}
+                                        renderer={Group}
+                                        rendererParams={this.groupRendererParams}
+                                    />
+                                </FaramGroup>
+                            </FaramGroup>
                             <FaramGroup faramElementName="methodology">
                                 <MultiSelectInput
                                     faramElementName="sectors"
@@ -298,9 +328,7 @@ export default class PlannedAryForm extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton
-                            onClick={closeModal}
-                        >
+                        <DangerButton onClick={closeModal} >
                             {_ts('assessments.planned.editForm', 'cancelButtonTitle')}
                         </DangerButton>
                         <PrimaryButton

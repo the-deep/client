@@ -48,7 +48,7 @@ const requestOptions = {
         },
         onFailure: ({ error: { messageForNotification } }) => {
             notify.send({
-                title: 'Assessment Registry', // FIXME: strings
+                title: _ts('assessments.planned', 'plannedAryTitle'),
                 type: notify.type.ERROR,
                 message: messageForNotification,
                 duration: notify.duration.MEDIUM,

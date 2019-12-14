@@ -5,6 +5,7 @@ import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import Confirm from '#rscv/Modal/Confirm';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -21,8 +22,6 @@ const defaultProps = {
     containerClassName: undefined,
     value: undefined,
 };
-
-// FIXME: Use strings everywhere
 
 class Widget extends React.PureComponent {
     static propTypes = propTypes;
@@ -125,9 +124,11 @@ class Widget extends React.PureComponent {
             renderer: Renderer,
             ...otherProps
         } = this.props;
-        const { showConfirmation } = this.state;
 
-        const { isBeingDraggedOver } = this.state;
+        const {
+            isBeingDraggedOver,
+            showConfirmation,
+        } = this.state;
 
         return (
             <div
@@ -142,8 +143,7 @@ class Widget extends React.PureComponent {
                 onDrop={this.handleDrop}
             >
                 <div className={styles.dropMessage}>
-                    {/* FIXME: use strings */}
-                    Drop here
+                    {_ts('assessment.metadata.stakeholder', 'dropHereMessage')}
                 </div>
                 <Renderer
                     {...otherProps}
@@ -153,7 +153,7 @@ class Widget extends React.PureComponent {
                     onClose={this.handleConfirmation}
                 >
                     <p>
-                        Do you want to continue?
+                        {_ts('assessment.metadata.stakeholder', 'dropConfirmation')}
                     </p>
                 </Confirm>
             </div>

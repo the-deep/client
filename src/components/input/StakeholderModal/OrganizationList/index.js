@@ -22,6 +22,7 @@ import {
 } from '#redux';
 
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
+import _ts from '#ts';
 
 import OrganizationItem from './OrganizationItem';
 import styles from './styles.scss';
@@ -158,12 +159,11 @@ export default class OrganizationList extends React.PureComponent {
     }
 
     renderEmpty = () => (
-        // FIXME: use strings
         <div className={styles.emptyComponent}>
             { this.state.searchValue.length === 0 ? (
-                'Start typing above to search for organizations'
+                _ts('assessment.metadata.stakeholder', 'typeToSearchOrganizationMessage')
             ) : (
-                'No results found, try different search text'
+                _ts('assessment.metadata.stakeholder', 'noResultsFoundMessage')
             )}
         </div>
     )
@@ -186,7 +186,7 @@ export default class OrganizationList extends React.PureComponent {
                 <div className={styles.top}>
                     <header className={styles.header}>
                         <h3 className={styles.heading}>
-                            Organizations
+                            {_ts('assessment.metadata.stakeholder', 'organizationsTitle')}
                         </h3>
                         <PrimaryModalButton
                             className={styles.addOrganizationButton}
@@ -196,16 +196,15 @@ export default class OrganizationList extends React.PureComponent {
                                     onOrganizationAdd={this.handleOrganizationAdd}
                                 />
                             }
+                            iconName="add"
                         >
-                            {/* FIXME: Use strings */}
-                            Add new
+                            {_ts('assessment.metadata.stakeholder', 'addNewOrganizationTitle')}
                         </PrimaryModalButton>
                     </header>
                     <SearchInput
                         className={styles.searchInput}
-                        label="Search"
-                        // FIXME: Use strings
-                        placeholder="Any organization"
+                        label={_ts('assessment.metadata.stakeholder', 'searchInputLabel')}
+                        placeholder={_ts('assessment.metadata.stakeholder', 'searchInputPlaceholder')}
                         value={searchValue}
                         onChange={this.handleSearch}
                         showHintAndError={false}
@@ -218,8 +217,7 @@ export default class OrganizationList extends React.PureComponent {
                             className={styles.icon}
                         />
                         <div className={styles.text}>
-                            {/* FIXME: Use strings */}
-                            Showing only top {MAX_DISPLAY_ORGANIZATIONS} results
+                            {_ts('assessment.metadata.stakeholder', 'maxDisplayWarning', { max: MAX_DISPLAY_ORGANIZATIONS })}
                         </div>
                     </div>
                 )}

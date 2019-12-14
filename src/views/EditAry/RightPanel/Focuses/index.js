@@ -75,8 +75,6 @@ export default class Focuses extends React.PureComponent {
         const affectedGroupsTitle = _ts('editAssessment.methodology', 'affectedGroupsTitle');
         const locationsTitle = _ts('editAssessment.methodology', 'locationsTitle');
 
-        console.warn('here', geoOptions, projectDetails.regions);
-
         return (
             <div className={styles.focuses}>
                 {pending && <LoadingAnimation />}

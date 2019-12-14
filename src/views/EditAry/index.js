@@ -165,6 +165,8 @@ const requestOptions = {
                 removeAry,
             },
         }) => {
+            // If error code is 404, and server id is present, it means that the
+            // assesment is deleted in server, so we need to remove local data from redux
             if (error.response.errorCode === 404 && isDefined(editAryServerId)) {
                 removeAry({
                     leadId: activeLeadId,
@@ -380,11 +382,9 @@ export default class EditAry extends React.PureComponent {
             projectId,
             activeLeadId,
             editAryIsPristine,
-            editAryFaramValues,
             editAryHasErrors,
             className: classNameFromProps,
         } = this.props;
-        console.warn('values are here', editAryFaramValues);
 
         const {
             noTemplate,
@@ -422,10 +422,7 @@ export default class EditAry extends React.PureComponent {
             );
         }
 
-        const exitPath = reverseRoute(pathNames.leads, {
-            projectId,
-        });
-
+        const exitPath = reverseRoute(pathNames.leads, { projectId });
         const title = this.getLeadTitle(activeLeadId, leadRequest.response);
         const shouldHidePrompt = editAryIsPristine;
         const uploadPending = Object.keys(pendingUploads).some(key => pendingUploads[key]);

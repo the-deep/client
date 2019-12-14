@@ -3,10 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getFiltersForRequest } from '#entities/lead';
 import produce from 'immer';
-import {
-    Redirect,
-    Link,
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import {
     RequestCoordinator,
@@ -200,10 +197,7 @@ export default class PlannedArys extends React.PureComponent {
             },
         ];
 
-        this.state = {
-            arys: [],
-            redirectTo: undefined,
-        };
+        this.state = { arys: [] };
     }
 
     // UI
@@ -324,7 +318,6 @@ export default class PlannedArys extends React.PureComponent {
 
     render() {
         const {
-            redirectTo,
             arys,
             arysCount,
         } = this.state;
@@ -340,15 +333,6 @@ export default class PlannedArys extends React.PureComponent {
                 },
             },
         } = this.props;
-
-        if (redirectTo) {
-            return (
-                <Redirect
-                    to={redirectTo}
-                    push
-                />
-            );
-        }
 
         const backLink = reverseRoute(pathNames.arys, { projectId: activeProject });
 
