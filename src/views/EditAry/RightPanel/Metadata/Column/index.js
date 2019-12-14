@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import ListView from '#rscv/List/ListView';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
+import StakeholderModal from '#components/input/StakeholderModal';
 
-import { getProps, BaseWidget } from '../../widgetUtils';
-import StakeholderModal from '../StakeholderModal';
+import { getProps, BaseWidget } from '#entities/aryWidgetUtils';
 import styles from './styles.scss';
 
 const StakeholderButton = props => (

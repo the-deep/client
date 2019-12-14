@@ -8,14 +8,12 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 
-// import Widget from './Widget';
-
-import OrganizationList from './OrganizationList';
-
 import {
     renderDroppableWidget,
     isDroppableWidget,
-} from '../../widgetUtils';
+} from '#entities/aryWidgetUtils';
+
+import OrganizationList from './OrganizationList';
 
 import styles from './styles.scss';
 
