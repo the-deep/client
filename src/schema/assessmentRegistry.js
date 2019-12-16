@@ -166,8 +166,8 @@ const assessmentRegistrySchema = [];
     const name = 'aryPostResponse';
     const schema = {
         doc: {
-            name: 'Analysis Registry POST Reponse',
-            description: 'Analysis Registry POST Reponse',
+            name: 'Analysis Registry POST Response',
+            description: 'Analysis Registry POST Response',
         },
         extends: 'ary',
     };
@@ -177,8 +177,8 @@ const assessmentRegistrySchema = [];
     const name = 'aryEntryFilterOptionsResponse';
     const schema = {
         doc: {
-            name: 'Ary Entry Filter Option GET Reponse',
-            description: 'Ary Entry Filter Option GET Reponse',
+            name: 'Ary Entry Filter Option GET Response',
+            description: 'Ary Entry Filter Option GET Response',
         },
         fields: {
             createdBy: { type: 'array.keyValuePair' },

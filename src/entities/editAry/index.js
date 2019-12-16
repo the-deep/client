@@ -185,87 +185,137 @@ const createFieldSchema = (field) => {
     }
 };
 
-const createMetadataSchema = (aryTemplateMetadata = []) => ({
-    fields: {
-        basicInformation: {
-            fields: listToMap(
-                aryTemplateMetadata
-                    .map(group => group.fields)
-                    .flat(),
-                field => field.id,
-                field => createFieldSchema(field),
-            ),
-        },
-        additionalDocuments: {
+export const filterPlannedAssessmentMetadataGroups = (groups = []) => {
+    const plannedGroups = groups.map((group) => {
+        const { fields } = group;
+        const newFields = fields.filter(
+            f => f.showInPlannedAssessment,
+        );
+        return {
+            ...group,
+            fields: newFields,
+        };
+    })
+        .filter(group => group.fields.length > 0);
+
+    return plannedGroups;
+};
+
+export const createMetadataSchema = (aryTemplateMetadata = [], plannedAssessment = false) => {
+    if (plannedAssessment) {
+        const aryTemplateFilteredMetadata = filterPlannedAssessmentMetadataGroups(
+            aryTemplateMetadata,
+        );
+        return {
             fields: {
-                executiveSummary: [],
-                assessmentData: [],
-                questionnaire: [],
-                misc: [],
-            },
-        },
-    },
-});
-
-const createMethodologySchema = (aryTemplateMethodology = []) => ({
-    fields: {
-        attributes: {
-            keySelector: d => d.key,
-            identifier: (value) => {
-                if (isSecondaryDataReviewSelected(value)) {
-                    return 'secondaryDataReview';
-                }
-                return 'default';
-            },
-            member: {
-                secondaryDataReview: {
-                    fields: {
-                        key: [],
-                        ...listToMap(
-                            aryTemplateMethodology
-                                .map(group => group.fields)
-                                .flat()
-                                // Only show data collection technique
-                                .filter(isDataCollectionTechniqueColumn),
-                            field => field.id,
-                            field => createFieldSchema(field),
-                        ),
-                    },
-                },
-                default: {
-                    fields: {
-                        key: [],
-                        ...listToMap(
-                            aryTemplateMethodology
-                                .map(group => group.fields)
-                                .flat(),
-                            field => field.id,
-                            field => createFieldSchema(field),
-                        ),
-                    },
+                basicInformation: {
+                    fields: listToMap(
+                        aryTemplateFilteredMetadata
+                            .map(group => group.fields)
+                            .flat(),
+                        field => field.id,
+                        field => createFieldSchema(field),
+                    ),
                 },
             },
-            validation: (value) => {
-                const errors = [];
-                if (!value || value.length < 1) {
-                    // FIXME: Use strings
-                    errors.push('There should be at least one item.');
-                }
-                return errors;
+        };
+    }
+
+    return {
+        fields: {
+            basicInformation: {
+                fields: listToMap(
+                    aryTemplateMetadata
+                        .map(group => group.fields)
+                        .flat(),
+                    field => field.id,
+                    field => createFieldSchema(field),
+                ),
+            },
+            additionalDocuments: {
+                fields: {
+                    executiveSummary: [],
+                    assessmentData: [],
+                    questionnaire: [],
+                    misc: [],
+                },
             },
         },
+    };
+};
 
-        sectors: [],
-        focuses: [],
-        locations: [],
-        affectedGroups: [],
+export const createMethodologySchema = (aryTemplateMethodology = [], plannedAssessment = false) => {
+    if (plannedAssessment) {
+        return {
+            fields: {
+                // focuses: [],
+                sectors: [],
+                locations: [],
+                affectedGroups: [],
+            },
+        };
+    }
 
-        objectives: [],
-        dataCollectionTechniques: [],
-        sampling: [],
-        limitations: [],
-    },
-});
+    return {
+        fields: {
+            attributes: {
+                keySelector: d => d.key,
+                identifier: (value) => {
+                    if (isSecondaryDataReviewSelected(value)) {
+                        return 'secondaryDataReview';
+                    }
+                    return 'default';
+                },
+                member: {
+                    secondaryDataReview: {
+                        fields: {
+                            key: [],
+                            ...listToMap(
+                                aryTemplateMethodology
+                                    .map(group => group.fields)
+                                    .flat()
+                                    // Only show data collection technique
+                                    .filter(isDataCollectionTechniqueColumn),
+                                field => field.id,
+                                field => createFieldSchema(field),
+                            ),
+                        },
+                    },
+                    default: {
+                        fields: {
+                            key: [],
+                            ...listToMap(
+                                aryTemplateMethodology
+                                    .map(group => group.fields)
+                                    .flat(),
+                                field => field.id,
+                                field => createFieldSchema(field),
+                            ),
+                        },
+                    },
+                },
+                validation: (value) => {
+                    const errors = [];
+                    if (!value || value.length < 1) {
+                        // FIXME: Use strings
+                        errors.push('There should be at least one item.');
+                    }
+                    return errors;
+                },
+            },
+
+            focuses: [],
+            sectors: [],
+            locations: [],
+            affectedGroups: [],
+
+            objectives: [],
+            dataCollectionTechniques: [],
+            sampling: [],
+            limitations: [],
+        },
+    };
+};
 
 const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []) => {
     const schemaForSubRow = {
@@ -459,17 +509,18 @@ export const createSchema = (
         methodology: createMethodologySchema(aryTemplateMethodology),
         summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
         score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
-        questionnaire: {
-            fields: {},
-        },
     } };
 
-    if (showHNO) {
-        schema.fields.questionnaire.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
+    if (showHNO || showCNA) {
+        schema.fields.questionnaire = { fields: {} };
+        if (showHNO) {
+            schema.fields.questionnaire.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
+        }
+        if (showCNA) {
+            schema.fields.questionnaire.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
+        }
     }
-    if (showCNA) {
-        schema.fields.questionnaire.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
-    }
+
     return schema;
 };
 
@@ -594,22 +645,24 @@ export const createComputeSchema = (
                 scoreScales,
                 scoreBuckets,
             ),
-            questionnaire: {
-                fields: {},
-            },
         },
     };
-    if (showHNO) {
-        schema.fields.questionnaire.fields.hno = createQuestionnaireComputeSchema(
-            aryTemplateQuestionnaire,
-            'hno',
-        );
+
+    if (showHNO || showCNA) {
+        schema.fields.questionnaire = { fields: {} };
+        if (showHNO) {
+            schema.fields.questionnaire.fields.hno = createQuestionnaireComputeSchema(
+                aryTemplateQuestionnaire,
+                'hno',
+            );
+        }
+        if (showCNA) {
+            schema.fields.questionnaire.fields.cna = createQuestionnaireComputeSchema(
+                aryTemplateQuestionnaire,
+                'cna',
+            );
+        }
     }
-    if (showCNA) {
-        schema.fields.questionnaire.fields.cna = createQuestionnaireComputeSchema(
-            aryTemplateQuestionnaire,
-            'cna',
-        );
-    }
+
     return schema;
 };
