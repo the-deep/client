@@ -15,5 +15,9 @@
 
     .no-list-selection {
         display: flex;
+
+        .select-input {
+            flex-grow: 1;
+        }
     }
 }

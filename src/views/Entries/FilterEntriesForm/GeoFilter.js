@@ -99,6 +99,7 @@ export default class GeoFilter extends React.PureComponent {
                     label={label}
                     disabled={disabled}
                     hideList
+                    showHintAndError={false}
                 />
                 <RotatingInput
                     value={includeSubRegions}
