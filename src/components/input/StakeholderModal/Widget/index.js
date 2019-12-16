@@ -5,6 +5,9 @@ import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import Confirm from '#rscv/Modal/Confirm';
+
+import BaseWidget from '#entities/editAry/BaseWidget';
+
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -14,11 +17,9 @@ const propTypes = {
     onChange: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     value: PropTypes.array,
-    renderer: PropTypes.func,
 };
 
 const defaultProps = {
-    renderer: undefined,
     containerClassName: undefined,
     value: undefined,
 };
@@ -121,7 +122,7 @@ class Widget extends React.PureComponent {
     render() {
         const {
             containerClassName,
-            renderer: Renderer,
+            isDroppable,
             ...otherProps
         } = this.props;
 
@@ -130,24 +131,38 @@ class Widget extends React.PureComponent {
             showConfirmation,
         } = this.state;
 
+        const widget = (
+            <BaseWidget
+                {...otherProps}
+            />
+        );
+
+        const mainClassName = _cs(
+            styles.widget,
+            containerClassName,
+            isBeingDraggedOver && styles.draggedOver,
+        );
+
+        if (!isDroppable) {
+            return (
+                <div className={mainClassName}>
+                    {widget}
+                </div>
+            );
+        }
+
         return (
             <div
-                className={_cs(
-                    styles.widget,
-                    containerClassName,
-                    isBeingDraggedOver && styles.draggedOver,
-                )}
+                className={mainClassName}
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragLeave}
                 onDragOver={this.handleDragOver}
                 onDrop={this.handleDrop}
             >
+                {widget}
                 <div className={styles.dropMessage}>
                     {_ts('assessment.metadata.stakeholder', 'dropHereMessage')}
                 </div>
-                <Renderer
-                    {...otherProps}
-                />
                 <Confirm
                     show={showConfirmation}
                     onClose={this.handleConfirmation}
