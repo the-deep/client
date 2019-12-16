@@ -10,6 +10,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     aryTemplateMetadataSelector,
     assessmentSourcesSelector,
+    isStakeholderColumn,
 } from '#redux';
 
 import Column from './Column';
@@ -54,6 +55,7 @@ export default class Metadata extends React.PureComponent {
             title,
             fields,
             sources,
+            isStakeholder: isStakeholderColumn(data),
         };
     }
 
