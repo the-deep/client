@@ -6,9 +6,9 @@ import ListView from '#rscv/List/ListView';
 
 import {
     isDataCollectionTechniqueColumn,
-} from '#redux';
+    getProps,
+} from '#entities/editAry';
 
-import { getProps } from '#entities/editAry';
 import BaseWidget from '#entities/editAry/BaseWidget';
 
 import styles from './styles.scss';

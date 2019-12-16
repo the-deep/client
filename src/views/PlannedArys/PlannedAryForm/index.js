@@ -32,8 +32,11 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     projectDetailsSelector,
-    isStakeholderColumn,
 } from '#redux';
+
+import {
+    isStakeholderColumn,
+} from '#entities/editAry';
 
 import _ts from '#ts';
 import notify from '#notify';

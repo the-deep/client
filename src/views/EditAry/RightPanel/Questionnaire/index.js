@@ -12,9 +12,11 @@ import {
     aryTemplateQuestionnaireListSelector,
     assessmentMinScaleColorSelector,
     assessmentMaxScaleColorSelector,
-
-    isUseCriteria,
 } from '#redux';
+
+import {
+    isUseCriteria,
+} from '#entities/editAry';
 
 import styles from './styles.scss';
 import ScoreItem from '../Score/ScoreItem';

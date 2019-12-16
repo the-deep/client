@@ -14,9 +14,11 @@ import _ts from '#ts';
 import {
     aryTemplateMethodologySelector,
     assessmentSourcesSelector,
-
-    isSecondaryDataReviewSelected,
 } from '#redux';
+
+import {
+    isSecondaryDataReviewSelected,
+} from '#entities/editAry';
 
 import Row from './Row';
 import Header from '../Header';
