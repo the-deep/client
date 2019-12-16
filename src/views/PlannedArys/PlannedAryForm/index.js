@@ -32,6 +32,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     projectDetailsSelector,
+    isStakeholderColumn,
 } from '#redux';
 
 import _ts from '#ts';
@@ -226,6 +227,7 @@ export default class PlannedAryForm extends React.PureComponent {
             title,
             fields,
             sources,
+            isStakeholder: isStakeholderColumn(data),
         };
     }
 

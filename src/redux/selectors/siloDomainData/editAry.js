@@ -54,6 +54,8 @@ export const MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR = 3;
 const FOCUSES__CROSS_SECTOR = '12';
 const FOCUSES__HUMANITARIAN_ACCESS = '8';
 
+const METADATA_GROUPS__STAKEHOLDER = 2;
+
 const METADATA_FIELDS__FAMILY = 21;
 const FAMILY__HNO = '7';
 
@@ -71,6 +73,10 @@ const HNO__USE_CRITERIA = 6;
 export const isUseCriteria = (method, sectorId) => (
     (method === 'cna' && sectorId === CNA__USE_CRITERIA)
     || (method === 'hno' && sectorId === HNO__USE_CRITERIA)
+);
+
+export const isStakeholderColumn = field => (
+    field && field.id === METADATA_GROUPS__STAKEHOLDER
 );
 
 export const isDataCollectionTechniqueColumn = field => (

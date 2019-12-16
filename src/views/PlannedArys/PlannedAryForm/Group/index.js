@@ -27,11 +27,13 @@ const propTypes = {
     sources: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types
     fields: PropTypes.array,
+    isStakeholder: PropTypes.bool,
 };
 
 const defaultProps = {
     sources: undefined,
     fields: [],
+    isStakeholder: false,
 };
 
 const fieldKeySelector = data => data.id;
@@ -40,17 +42,13 @@ export default class PlannedMetadataGroups extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    // FIXME: should identify using identifier
-    isStakeholderColumn = () => {
-        const { title } = this.props;
-        return title.toLowerCase() === 'stakeholders';
-    }
-
     fieldRendererParams = (key, data) => {
-        const { sources } = this.props;
+        const {
+            sources,
+            isStakeholder,
+        } = this.props;
         const { fieldType } = data;
 
-        const isStakeholder = this.isStakeholderColumn();
         const widgetProps = getProps(data, sources);
 
         const newFieldType = isStakeholder && fieldType === 'multiselect'
@@ -69,9 +67,8 @@ export default class PlannedMetadataGroups extends React.PureComponent {
             title,
             fields,
             sources,
+            isStakeholder,
         } = this.props;
-
-        const isStakeholder = this.isStakeholderColumn();
 
         return (
             <div className={styles.widgetGroup}>
