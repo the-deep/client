@@ -7,7 +7,9 @@ import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
 import StakeholderModal from '#components/input/StakeholderModal';
 
-import { getProps, BaseWidget } from '#entities/aryWidgetUtils';
+import { getProps } from '#entities/editAry';
+import BaseWidget from '#entities/editAry/BaseWidget';
+
 import styles from './styles.scss';
 
 const StakeholderButton = props => (
