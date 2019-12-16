@@ -10,8 +10,11 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     aryTemplateMetadataSelector,
     assessmentSourcesSelector,
-    isStakeholderColumn,
 } from '#redux';
+
+import {
+    isStakeholderColumn,
+} from '#entities/editAry';
 
 import Column from './Column';
 import Header from '../Header';
