@@ -62,6 +62,7 @@ const defaultProps = {
 const allAccessibleFeatures = {
     accessZoomableImage: featureList => featureList.includes('zoomable_image'),
     accessPrivateProject: featureList => featureList.includes('private_project'),
+    accessEntryVisualizationConfiguration: featureList => featureList.includes('entry_visualization_configuration'),
 };
 
 @connect(mapStateToProps, undefined)
@@ -72,11 +73,12 @@ export default class Cloak extends React.Component {
     getAccessibleFeatures = memoize((accessibleFeatures = []) => {
         const featureList = accessibleFeatures.map(f => f.key);
 
-        return mapToMap(
+        const features = mapToMap(
             allAccessibleFeatures,
             k => k,
             v => v(featureList),
         );
+        return features;
     });
 
     render() {
@@ -118,6 +120,7 @@ export default class Cloak extends React.Component {
         const {
             accessZoomableImage,
             accessPrivateProject,
+            accessEntryVisualizationConfiguration,
         } = this.getAccessibleFeatures(accessibleFeatures);
 
         const params = {
@@ -140,6 +143,7 @@ export default class Cloak extends React.Component {
 
             accessZoomableImage,
             accessPrivateProject,
+            accessEntryVisualizationConfiguration,
         };
 
         const hidden = hide && hide(params);
