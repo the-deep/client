@@ -430,6 +430,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     labelSelector={ProjectDashboard.regionLabelSelector}
                     value={selectedRegion}
                     onChange={this.handleRegionChange}
+                    showLabel={false}
                     showHintAndError={false}
                     hideClearButton
                 />
