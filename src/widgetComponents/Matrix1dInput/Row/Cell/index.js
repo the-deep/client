@@ -8,6 +8,7 @@ import styles from './styles.scss';
 const propTypes = {
     content: PropTypes.node,
     active: PropTypes.bool,
+    itemKey: PropTypes.string.isRequired,
     onClick: PropTypes.func,
     onDrop: PropTypes.func,
     disabled: PropTypes.bool,
@@ -52,27 +53,40 @@ export default class Matrix1dCell extends React.PureComponent {
 
     handleDrop = (e) => {
         e.preventDefault();
-        const { onDrop } = this.props;
+        const {
+            onDrop,
+            itemKey,
+        } = this.props;
 
         const data = e.dataTransfer.getData('text');
         try {
             const parsedData = JSON.parse(data);
-            onDrop(parsedData);
+            onDrop(itemKey, parsedData);
         } catch (ex) {
             const formattedData = {
                 type: 'excerpt',
                 data,
             };
-            onDrop(formattedData);
+            onDrop(itemKey, formattedData);
         }
 
         this.setState({ isBeingDraggedOver: false });
     }
 
+    handleButtonClick = () => {
+        const {
+            itemKey,
+            onClick,
+        } = this.props;
+
+        if (onClick) {
+            onClick(itemKey);
+        }
+    }
+
     render() {
         const {
             content,
-            onClick,
             disabled,
             readOnly,
             active,
@@ -97,7 +111,7 @@ export default class Matrix1dCell extends React.PureComponent {
                 onDragLeave={this.handleDragExit}
                 onDragOver={this.handleDragOver}
                 onDrop={this.handleDrop}
-                onClick={onClick}
+                onClick={this.handleButtonClick}
                 type="button"
                 tabIndex="-1"
                 title={tooltip}
