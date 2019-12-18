@@ -15,7 +15,6 @@
 
     .cells {
         display: flex;
-        flex-basis: 100%;
         flex-grow: 1;
         flex-wrap: wrap;
         padding: var(--spacing-extra-small) 0;
@@ -29,6 +28,41 @@
 
         .cells {
             flex-direction: column;
+        }
+    }
+
+
+    &.pivoted-row {
+        display: flex;
+        align-items: stretch;
+
+        .title {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            justify-content: center;
+            transform: rotate(180deg);
+            writing-mode: vertical-rl;
+        }
+
+        .cells {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            flex-wrap: unset;
+
+            .cell {
+                display: flex;
+                align-items: stretch;
+                flex-basis: 0;
+                flex-grow: 1;
+                justify-content: center;
+
+                .cell-value {
+                    transform: rotate(180deg);
+                    writing-mode: vertical-rl;
+                }
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string,
+    className: PropTypes.string,
     tooltip: PropTypes.string,
     cells: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onCellClick: PropTypes.func,
@@ -22,6 +23,7 @@ const propTypes = {
 const defaultProps = {
     title: '',
     tooltip: '',
+    className: undefined,
     orientation: 'horizontal',
     onCellClick: undefined,
     onCellDrop: undefined,
@@ -30,21 +32,40 @@ const defaultProps = {
     readOnly: false,
 };
 
+const orientationStyleMaps = {
+    horizontal: styles.horizontalRow,
+    vertical: styles.verticalRow,
+    pivoted: styles.pivotedRow,
+};
+
 export default class Matrix1dRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     static cellKeyExtractor = d => d.key;
 
-    rendererParams = (key, data) => ({
-        children: data.value,
-        tooltip: data.tooltip,
-        onClick: () => this.props.onCellClick(key),
-        onDrop: droppedData => this.props.onCellDrop(key, droppedData),
-        active: this.props.selectedCells[key],
-        disabled: this.props.disabled,
-        readOnly: this.props.readOnly,
-    })
+    rendererParams = (key, data) => {
+        const {
+            onCellClick,
+            onCellDrop,
+            selectedCells,
+            disabled,
+            readOnly,
+        } = this.props;
+
+        return ({
+            content: data.value,
+            contentClassName: styles.cellValue,
+            tooltip: data.tooltip,
+            itemKey: key,
+            onClick: onCellClick,
+            onDrop: onCellDrop,
+            active: selectedCells[key],
+            disabled,
+            readOnly,
+            className: styles.cell,
+        });
+    }
 
     render() {
         const {
@@ -52,13 +73,15 @@ export default class Matrix1dRow extends React.PureComponent {
             title,
             orientation,
             cells,
+            className,
         } = this.props;
 
         return (
             <div
                 className={_cs(
+                    className,
                     styles.matrixRow,
-                    orientation === 'vertical' && styles.verticalRow,
+                    orientationStyleMaps[orientation],
                 )}
             >
                 <div

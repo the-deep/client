@@ -8,6 +8,7 @@ import Faram, {
 import {
     getDuplicates,
     randomString,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -22,6 +23,10 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import SegmentInput from '#rsci/SegmentInput';
+
+import matrix1dHorizontalIcon from '#resources/img/matrix-1d-horizontal.jpg';
+import matrix1dVerticalIcon from '#resources/img/matrix-1d-vertical.jpg';
+import matrix1dRotatedIcon from '#resources/img/matrix-1d-rotated.jpg';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -51,17 +56,36 @@ const emptyMetaObject = {
     orientation: 'horizontal',
 };
 
-
-const orientationOptions = [
+const orientationOptionList = [
     {
         key: 'horizontal',
         label: _ts('widgets.editor.matrix1d', 'horizontalOrientationLabel'),
+        image: matrix1dHorizontalIcon,
     },
     {
         key: 'vertical',
         label: _ts('widgets.editor.matrix1d', 'verticalOrientationLabel'),
+        image: matrix1dVerticalIcon,
+    },
+    {
+        key: 'pivoted',
+        label: _ts('widgets.editor.matrix1d', 'pivotedOrientationLabel'),
+        image: matrix1dRotatedIcon,
     },
 ];
+
+const orientationOptionRendererParams = (_, d) => ({
+    image: d.image,
+    containerClassName: styles.orientationOption,
+});
+
+const OrientationOption = p => (
+    <img
+        className={styles.optionImage}
+        src={p.image}
+        alt={p.label}
+    />
+);
 
 export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
@@ -325,10 +349,13 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             <FaramGroup faramElementName="meta" >
                                 <SegmentInput
                                     className={styles.orientationInput}
-                                    options={orientationOptions}
+                                    options={orientationOptionList}
                                     keySelector={Matrix1dEditWidget.keySelector}
                                     labelSelector={Matrix1dEditWidget.labelSelector}
                                     faramElementName="orientation"
+                                    renderer={OrientationOption}
+                                    rendererParams={orientationOptionRendererParams}
+                                    activeClassName={styles.active}
                                     label={_ts('widgets.editor.matrix1d', 'matrixOrientationTitle')}
                                 />
                             </FaramGroup>

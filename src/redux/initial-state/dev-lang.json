@@ -1046,7 +1046,8 @@
         "-76993519": "Sub-column expansion",
         "-51656640": "Row › Column",
         "-74878255": "Column › Row",
-        "-49902146": "Ordering for Matrix 2D"
+        "-49902146": "Ordering for Matrix 2D",
+        "-64110623": "Pivoted"
     },
     "links": {
         "browserExtension": {
@@ -2544,7 +2545,8 @@
             "unnamedCellTooltip": 733,
             "horizontalOrientationLabel": -9443338,
             "matrixOrientationTitle": -88566646,
-            "verticalOrientationLabel": -33841680
+            "verticalOrientationLabel": -33841680,
+            "pivotedOrientationLabel": -64110623
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,

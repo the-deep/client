@@ -1,11 +1,15 @@
-@import '~base-scss/utils';
-
 .matrix-cell {
-    @extend %button-base;
     position: relative;
     margin: var(--spacing-extra-small);
+    outline: 0;
+    border: 0;
+    background-color: transparent;
     background-color: var(--color-background-alt);
+    cursor: pointer;
+    padding: var(--spacing-extra-small) var(--spacing-small);
     color: var(--color-text-on-background-alt);
+    font-family: inherit;
+    font-size: inherit;
 
     &.active {
         background-color: var(--color-accent);
