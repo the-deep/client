@@ -12,11 +12,9 @@ import Faram, {
     emailCondition,
     lengthGreaterThanCondition,
 } from '@togglecorp/faram';
+import { parseUrlParams } from '@togglecorp/react-rest-request';
 
-import {
-    FgRestBuilder,
-    RestRequest,
-} from '#rsu/rest';
+import { FgRestBuilder } from '#rsu/rest';
 
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -131,7 +129,7 @@ export default class Login extends React.PureComponent {
         const { location } = this.props;
         // Get params from the current url
         // NOTE: hid provides query as hash
-        const query = RestRequest.parseUrlParams(location.hash.replace('#', ''));
+        const query = parseUrlParams(location.hash.replace('#', ''));
         // Login User with HID access_token
         if (query.access_token) {
             const params = createParamsForTokenCreateHid({

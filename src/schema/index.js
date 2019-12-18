@@ -27,7 +27,7 @@ const basicTypeSchemas = basicTypes.map(entry => ({ name: entry.doc.name, schema
 
 const userDefinedSchemas = [];
 
-// TODO: add errorResponse and successResponse in RestRequest
+// TODO: add errorResponse and successResponse in Rest Request
 
 {
     const name = 'dbentity';
