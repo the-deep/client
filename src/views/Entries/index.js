@@ -31,6 +31,7 @@ import {
     setAnalysisFrameworkAction,
     analysisFrameworkForProjectSelector,
     unsetEntriesViewFilterAction,
+    activeProjectFromStateSelector,
 
     setGeoOptionsAction,
 
@@ -91,6 +92,7 @@ const mapStateToProps = state => ({
     entriesFilter: entriesViewFilterSelector(state),
     framework: analysisFrameworkForProjectSelector(state),
     leadGroupedEntriesList: entriesForProjectSelector(state),
+    currentUserActiveProject: activeProjectFromStateSelector(state),
     projectId: projectIdFromRouteSelector(state),
     totalEntriesCount: totalEntriesCountForProjectSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
@@ -114,6 +116,8 @@ const propTypes = {
     framework: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types
     leadGroupedEntriesList: PropTypes.array.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    currentUserActiveProject: PropTypes.object.isRequired,
     projectId: PropTypes.number.isRequired,
     totalEntriesCount: PropTypes.number,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -263,8 +267,8 @@ export default class Entries extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    getTabs = memoize((framework) => {
-        if (framework.properties && framework.properties.statsConfig) {
+    getTabs = memoize((framework, isVisualizationEnabled) => {
+        if (isVisualizationEnabled && framework.properties && framework.properties.statsConfig) {
             return {
                 tabs: {
                     [LIST_VIEW]: LIST_VIEW,
@@ -407,6 +411,7 @@ export default class Entries extends React.PureComponent {
             activePage,
             totalEntriesCount,
             geoOptions,
+            currentUserActiveProject: { isVisualizationEnabled },
         } = this.props;
 
         const {
@@ -417,7 +422,7 @@ export default class Entries extends React.PureComponent {
         const {
             tabs,
             showTabs,
-        } = this.getTabs(framework);
+        } = this.getTabs(framework, isVisualizationEnabled);
 
         return (
             <Page
