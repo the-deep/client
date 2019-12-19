@@ -8,7 +8,11 @@ import { detachedFaram } from '@togglecorp/faram';
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
-import { reverseRoute, checkVersion } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    checkVersion,
+    isDefined,
+} from '@togglecorp/fujs';
 import Message from '#rscv/Message';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -25,6 +29,7 @@ import {
     setAryForEditAryAction,
     setGeoOptionsAction,
     setErrorAryForEditAryAction,
+    removeAryForEditAryAction,
     editAryHasErrorsSelector,
     editAryIsPristineSelector,
     assessmentSchemaSelector,
@@ -63,6 +68,7 @@ const propTypes = {
     editAryServerId: PropTypes.number,
     setAry: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setAryTemplate: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    removeAry: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     // FIXME: inject for individual request
@@ -96,6 +102,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setErrorAry: params => dispatch(setErrorAryForEditAryAction(params)),
+    removeAry: params => dispatch(removeAryForEditAryAction(params)),
     setAryTemplate: params => dispatch(setAryTemplateAction(params)),
     setAry: params => dispatch(setAryForEditAryAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
@@ -146,6 +153,24 @@ const requestOptions = {
                     title: 'Assessment',
                     message: 'Your copy was overridden by server\'s copy.',
                     duration: notify.duration.SLOW,
+                });
+            }
+        },
+        onFailure: ({
+            error,
+            props: {
+                activeLeadId,
+                activeLeadGroupId,
+                editAryServerId,
+                removeAry,
+            },
+        }) => {
+            // If error code is 404, and server id is present, it means that the
+            // assesment is deleted in server, so we need to remove local data from redux
+            if (error.response.errorCode === 404 && isDefined(editAryServerId)) {
+                removeAry({
+                    leadId: activeLeadId,
+                    leadGroupId: activeLeadGroupId,
                 });
             }
         },
@@ -397,10 +422,7 @@ export default class EditAry extends React.PureComponent {
             );
         }
 
-        const exitPath = reverseRoute(pathNames.leads, {
-            projectId,
-        });
-
+        const exitPath = reverseRoute(pathNames.leads, { projectId });
         const title = this.getLeadTitle(activeLeadId, leadRequest.response);
         const shouldHidePrompt = editAryIsPristine;
         const uploadPending = Object.keys(pendingUploads).some(key => pendingUploads[key]);

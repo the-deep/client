@@ -8,20 +8,16 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 
-// import Widget from './Widget';
-
-import OrganizationList from './OrganizationList';
-
 import {
     renderDroppableWidget,
     isDroppableWidget,
-} from '../../widgetUtils';
+} from '#entities/aryWidgetUtils';
+
+import _ts from '#ts';
+
+import OrganizationList from './OrganizationList';
 
 import styles from './styles.scss';
-
-// FIXME: Use strings everywhere, define all the props
-// FIXME: No inline functions
-
 
 const propTypes = {
     closeModal: PropTypes.func.isRequired,
@@ -69,7 +65,7 @@ export default class StakeholderModal extends React.PureComponent {
                 closeOnEscape
                 className={styles.modal}
             >
-                <ModalHeader title="Stakeholders" />
+                <ModalHeader title={_ts('assessment.metadata.stakeholder', 'stakeholdersModalTitle')} />
                 <ModalBody className={styles.modalBody}>
                     <OrganizationList
                         sources={sources}
@@ -86,7 +82,7 @@ export default class StakeholderModal extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <DangerButton onClick={closeModal}>
-                        Close
+                        {_ts('assessment.metadata.stakeholder', 'closeModalButtonLabel')}
                     </DangerButton>
                 </ModalFooter>
             </Modal>

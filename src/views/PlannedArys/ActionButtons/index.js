@@ -1,35 +1,41 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import {
     RequestClient,
     methods,
 } from '#request';
-import { reverseRoute } from '@togglecorp/fujs';
-import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import Icon from '#rscg/Icon';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import { pathNames } from '#constants/';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import modalize from '#rscg/Modalize';
+import Button from '#rsca/Button';
+
 import notify from '#notify';
 import _ts from '#ts';
 
+import PlannedAryForm from '../PlannedAryForm';
+
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
+
 const propTypes = {
-    row: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    activeProject: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types, react/forbid-prop-types
+    row: PropTypes.object.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onRemoveAry: PropTypes.func.isRequired,
+    onPlannedAryEdit: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {};
 
 const requestOptions = {
-    aryDeleteRequest: {
-        url: ({ props: { row } }) => `/assessments/${row.id}/`,
+    plannedAryDeleteRequest: {
+        url: ({ props: { row } }) => `/planned-assessments/${row.id}/`,
         method: methods.DELETE,
         onMount: false,
         onSuccess: ({
@@ -42,7 +48,7 @@ const requestOptions = {
         },
         onFailure: ({ error: { messageForNotification } }) => {
             notify.send({
-                title: _ts('assessments', 'aryTitle'),
+                title: _ts('assessments.planned', 'plannedAryTitle'),
                 type: notify.type.ERROR,
                 message: messageForNotification,
                 duration: notify.duration.MEDIUM,
@@ -56,62 +62,51 @@ export default class ActionButtons extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getLinks = () => {
-        const {
-            activeProject,
-            row,
-        } = this.props;
-
-        const editAry = {
-            pathname: reverseRoute(
-                pathNames.editAry,
-                {
-                    projectId: activeProject,
-                    leadId: row.lead,
-                },
-            ),
-        };
-
-        return { editAry };
-    }
-
     handleAryRemoveClick = () => {
         const {
             requests: {
-                aryDeleteRequest,
+                plannedAryDeleteRequest,
             },
         } = this.props;
-        aryDeleteRequest.do();
+        plannedAryDeleteRequest.do();
     }
 
     render() {
         const {
+            row,
+            projectId,
             requests: {
-                aryDeleteRequest: {
+                plannedAryDeleteRequest: {
                     pending,
                 },
             },
+            onPlannedAryEdit,
         } = this.props;
-        const links = this.getLinks();
 
         return (
             <div className={styles.actionButtons}>
                 {pending && <LoadingAnimation />}
                 <DangerConfirmButton
-                    title={_ts('assessments', 'removeAryButtonTitle')}
+                    title={_ts('assessments.planned', 'removeAryButtonTitle')}
                     onClick={this.handleAryRemoveClick}
                     smallVerticalPadding
                     transparent
                     iconName="delete"
-                    confirmationMessage={_ts('assessments', 'aryDeleteConfirmText')}
+                    confirmationMessage={_ts('assessments.planned', 'plannedAryDeleteConfirmText')}
                 />
-                <Link
-                    className={styles.editLink}
-                    title={_ts('assessments', 'editAryButtonTitle')}
-                    to={links.editAry}
-                >
-                    <Icon name="edit" />
-                </Link>
+                <ModalButton
+                    className={styles.modalButton}
+                    transparent
+                    modal={
+                        <PlannedAryForm
+                            projectId={projectId}
+                            plannedAryData={row}
+                            onActionSuccess={onPlannedAryEdit}
+                            editMode
+                        />
+                    }
+                    iconName="edit"
+                />
             </div>
         );
     }

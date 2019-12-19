@@ -27,6 +27,9 @@ const assessmentRegistrySchema = [];
             fieldType: { type: 'string' },
             options: { type: 'array.aryTemplateFieldOption', required: true },
             title: { type: 'string' },
+            isRequired: { type: 'boolean' },
+            sourceType: { type: 'string' },
+            showInPlannedAssessment: { type: 'boolean' },
         },
     };
     assessmentRegistrySchema.push({ name, schema });
@@ -89,6 +92,7 @@ const assessmentRegistrySchema = [];
             summary: { type: 'object' },
             score: { type: 'object' },
             lead: { type: 'uint' }, // either lead or leadGroup is required
+            project: { type: 'uint' },
             leadTitle: { type: 'string' },
             leadGroup: { type: 'uint' }, // either lead or leadGroup is required
             leadGroupTitle: { type: 'string' },

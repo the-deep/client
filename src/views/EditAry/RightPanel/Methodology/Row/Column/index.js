@@ -8,7 +8,7 @@ import {
     isDataCollectionTechniqueColumn,
 } from '#redux';
 
-import { getProps, BaseWidget } from '../../../widgetUtils';
+import { getProps, BaseWidget } from '#entities/aryWidgetUtils';
 import styles from './styles.scss';
 
 const propTypes = {

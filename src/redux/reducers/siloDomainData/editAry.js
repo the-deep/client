@@ -1,5 +1,6 @@
 import { analyzeErrors } from '@togglecorp/faram';
 import { isTruthy } from '@togglecorp/fujs';
+import produce from 'immer';
 
 import update from '#rsu/immutable-update';
 
@@ -18,6 +19,7 @@ const getNamespacedId = (leadId, leadGroupId) => {
 export const EDIT_ARY__SET_ARY = 'siloDomainData/EDIT_ARY__SET_ARY';
 export const EDIT_ARY__SAVE_ARY = 'siloDomainData/EDIT_ARY__SAVE_ARY';
 export const EDIT_ARY__CHANGE_ARY = 'siloDomainData/EDIT_ARY__CHANGE_ARY';
+export const EDIT_ARY__REMOVE_ARY = 'siloDomainData/EDIT_ARY__REMOVE_ARY';
 export const EDIT_ARY__SET_ERROR_ARY = 'siloDomainData/EDIT_ARY__SET_ERROR_ARY';
 export const EDIT_ARY__SET_ENTRIES = 'siloDomainData/EDIT_ARY__SET_ENTRIES';
 
@@ -64,6 +66,14 @@ export const changeAryForEditAryAction = ({
     faramValues,
     faramErrors,
     isPristine,
+});
+
+export const removeAryForEditAryAction = ({
+    leadId,
+    leadGroupId,
+}) => ({
+    type: EDIT_ARY__REMOVE_ARY,
+    id: getNamespacedId(leadId, leadGroupId),
 });
 
 export const setErrorAryForEditAryAction = ({
@@ -150,6 +160,17 @@ const changeAry = (state, action) => {
     return update(state, settings);
 };
 
+const removeAry = (state, action) => {
+    const {
+        id,
+    } = action;
+
+    return produce(state, (safeState) => {
+        const { editAry } = safeState;
+        delete editAry[id];
+    });
+};
+
 const setErrorAry = (state, action) => {
     const {
         id,
@@ -205,6 +226,7 @@ const reducers = {
     [EDIT_ARY__SET_ENTRIES]: setEntries,
 
     [EDIT_ARY__CHANGE_ARY]: changeAry,
+    [EDIT_ARY__REMOVE_ARY]: removeAry,
     [EDIT_ARY__SET_ERROR_ARY]: setErrorAry,
     [EDIT_ARY__SAVE_ARY]: saveAry,
 };

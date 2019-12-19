@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import { FaramGroup } from '@togglecorp/faram';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -9,7 +10,7 @@ import SimpleListInput from '#rsci/SimpleListInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
 
-import Widget from './Metadata/StakeholderModal/Widget';
+import Widget from '#components/input/StakeholderModal/Widget';
 
 const DateRangeInput = ({ label, faramElementName, ...props }) => (
     <FaramGroup faramElementName={faramElementName}>
@@ -26,6 +27,16 @@ const DateRangeInput = ({ label, faramElementName, ...props }) => (
         <NonFieldErrors faramElement />
     </FaramGroup>
 );
+
+DateRangeInput.propTypes = {
+    label: PropTypes.string,
+    faramElementName: PropTypes.string,
+};
+
+DateRangeInput.defaultProps = {
+    label: '',
+    faramElementName: undefined,
+};
 
 const widgets = {
     string: TextInput,
@@ -123,9 +134,19 @@ export const BaseWidget = memo(({ fieldType, hidden, ...otherProps }) => {
     );
 });
 
+BaseWidget.propTypes = {
+    fieldType: PropTypes.string.isRequired,
+    hidden: PropTypes.bool,
+};
+
+BaseWidget.defaultProps = {
+    hidden: false,
+};
+
 export const isDroppableWidget = (sourceType, fieldType) => (
-    (sourceType === 'organizations' && fieldType === 'multiselect')
+    sourceType === 'organizations' && fieldType === 'multiselect'
 );
+
 
 // NOTE: this should be use new widget api
 export const renderDroppableWidget = (key, data, sources, otherProps = {}) => {

@@ -1,5 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -20,14 +21,20 @@ const ModalButton = modalize(StakeholderButton);
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    fields: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    sources: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types
+    fields: PropTypes.array,
 };
+
 const defaultProps = {
+    sources: undefined,
     fields: [],
 };
 
-export default class Column extends React.PureComponent {
+const fieldKeySelector = data => data.id;
+
+export default class PlannedMetadataGroups extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -37,12 +44,8 @@ export default class Column extends React.PureComponent {
         return title.toLowerCase() === 'stakeholders';
     }
 
-    fieldKeySelector = data => data.id;
-
     fieldRendererParams = (key, data) => {
-        const {
-            sources,
-        } = this.props;
+        const { sources } = this.props;
         const { fieldType } = data;
 
         const isStakeholder = this.isStakeholderColumn();
@@ -71,25 +74,29 @@ export default class Column extends React.PureComponent {
         return (
             <div className={styles.widgetGroup}>
                 <h3 className={styles.heading}>
-                    {title}
                     {isStakeholder &&
-                        <ModalButton
-                            className={styles.showMoreButton}
-                            modal={
-                                <StakeholderModal
-                                    fields={fields}
-                                    sources={sources}
-                                />
-                            }
-                        />
+                        <React.Fragment>
+                            {title}
+                            <ModalButton
+                                modal={
+                                    <StakeholderModal
+                                        fields={fields}
+                                        sources={sources}
+                                    />
+                                }
+                            />
+                        </React.Fragment>
                     }
                 </h3>
                 <ListView
-                    className={styles.content}
+                    className={_cs(
+                        styles.content,
+                        isStakeholder && styles.stakeholder,
+                    )}
                     data={fields}
                     rendererParams={this.fieldRendererParams}
                     renderer={BaseWidget}
-                    keySelector={Column.fieldKeySelector}
+                    keySelector={fieldKeySelector}
                 />
             </div>
         );

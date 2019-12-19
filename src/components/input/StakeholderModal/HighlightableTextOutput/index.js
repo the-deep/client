@@ -5,9 +5,22 @@ import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
-// FIXME: Declare proptypes
+const propTypes = {
+    className: PropTypes.string,
+    highlightText: PropTypes.string,
+    text: PropTypes.string,
+};
+
+const defaultProps = {
+    className: undefined,
+    highlightText: undefined,
+    text: undefined,
+};
 
 export default class HighlightableTextOutput extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     splitHighlightText = memoize((text = '', highlightText = '') => {
         const testText = text.toLowerCase();
         const testHighlightText = highlightText.toLowerCase();

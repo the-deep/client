@@ -4,6 +4,7 @@ import commonReducers from './common';
 import discoverProjectsReducers from './discoverProjects';
 import analysisFrameworkReducers from './analysisFramework';
 import assessmentRegistryReducers from './assessmentRegistry';
+import plannedAryReducers from './plannedAry';
 import categoryEditorReducers from './categoryEditor';
 import editEntriesReducers from './editEntries';
 import entriesReducers from './entries';
@@ -27,6 +28,7 @@ import initialSiloDomainData from '../../initial-state/siloDomainData';
 const reducers = {
     ...analysisFrameworkReducers,
     ...assessmentRegistryReducers,
+    ...plannedAryReducers,
     ...categoryEditorReducers,
     ...commonReducers,
     ...editEntriesReducers,
