@@ -217,18 +217,6 @@ export default class FilterEntriesForm extends React.PureComponent {
                     projectDetails,
                 } = this.props;
 
-                /*
-                    <GeoInput
-                        {...props}
-                        value={props.value || emptyList}
-                        disabled={props.disabled}
-                        geoOptionsByRegion={geoOptions}
-                        regions={projectDetails.regions}
-                        placeholder={_ts('entries', 'geoPlaceholder')}
-                        showHeader={false}
-                        hideList
-                    />
-                */
                 return (
                     <GeoFilter
                         {...props}

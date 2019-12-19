@@ -228,6 +228,7 @@ export default class GeoInput extends React.PureComponent {
                 <div className={styles.noListSelection} >
                     {!hideInput &&
                         <SearchMultiSelectInput
+                            className={styles.selectInput}
                             showLabel={false}
                             value={value}
                             onChange={this.handleSelectChange}

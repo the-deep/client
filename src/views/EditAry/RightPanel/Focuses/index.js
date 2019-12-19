@@ -138,6 +138,7 @@ export default class Focuses extends React.PureComponent {
                             title={locationsTitle}
                             geoOptionsByRegion={geoOptions}
                             regions={projectDetails.regions}
+                            showHintAndError={false}
                         />
                     </div>
                 </FaramGroup>

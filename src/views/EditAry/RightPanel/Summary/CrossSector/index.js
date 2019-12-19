@@ -11,8 +11,12 @@ import {
     affectedGroupsSelector,
     prioritySectorsSelector,
     specificNeedGroupsSelector,
-    MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR,
 } from '#redux';
+
+import {
+    MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR,
+} from '#entities/editAry';
+
 import _ts from '#ts';
 import _cs from '#cs';
 

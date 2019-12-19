@@ -2,9 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
-import {
-    isDefined,
-} from '@togglecorp/fujs';
 import Faram, {
     FaramGroup,
     requiredCondition,
@@ -33,6 +30,13 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import {
     projectDetailsSelector,
 } from '#redux';
+
+import {
+    filterPlannedAssessmentMetadataGroups,
+    isStakeholderColumn,
+    createMetadataSchema,
+    createMethodologySchema,
+} from '#entities/editAry';
 
 import _ts from '#ts';
 import notify from '#notify';
@@ -131,25 +135,6 @@ const orgChildSelector = organ => organ.children;
 
 const groupKeySelector = data => data.id;
 
-const getPlannedAryGroupFields = (groups) => {
-    if (!groups) {
-        return [];
-    }
-    const plannedGroups = groups.map((group) => {
-        const newFields = group.fields.filter(
-            groupFields => groupFields.showInPlannedAssessment,
-        );
-        if (newFields.length === 0) {
-            return undefined;
-        }
-        return {
-            ...group,
-            fields: newFields,
-        };
-    }).filter(mg => isDefined(mg));
-    return plannedGroups;
-};
-
 @RequestClient(requestOptions)
 @connect(mapStateToProps)
 export default class PlannedAryForm extends React.PureComponent {
@@ -168,15 +153,17 @@ export default class PlannedAryForm extends React.PureComponent {
             faramErrors: {},
             pristine: true,
         };
-
-        this.schema = {
-            fields: {
-                title: [requiredCondition],
-            },
-        };
     }
 
-    getPlannedAryMetadataGroups = memoize(getPlannedAryGroupFields);
+    getSchema = memoize((aryTemplateMetadata, aryTemplateMethodology) => ({
+        fields: {
+            title: [requiredCondition],
+            metadata: createMetadataSchema(aryTemplateMetadata, true),
+            methodology: createMethodologySchema(aryTemplateMethodology, true),
+        },
+    }));
+
+    getPlannedAryMetadataGroups = memoize(filterPlannedAssessmentMetadataGroups);
 
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
@@ -226,6 +213,7 @@ export default class PlannedAryForm extends React.PureComponent {
             title,
             fields,
             sources,
+            isStakeholder: isStakeholderColumn(data),
         };
     }
 
@@ -241,6 +229,7 @@ export default class PlannedAryForm extends React.PureComponent {
                         affectedGroups,
                         sectors,
                         metadataGroups,
+                        methodologyGroups,
                     } = {},
                     pending: assessmentTemplatePending,
                 },
@@ -268,6 +257,8 @@ export default class PlannedAryForm extends React.PureComponent {
 
         const plannedMetadataGroups = this.getPlannedAryMetadataGroups(metadataGroups);
 
+        const schema = this.getSchema(metadataGroups, methodologyGroups);
+
         return (
             <Modal className={className}>
                 <ModalHeader title={modalTitle} />
@@ -277,7 +268,7 @@ export default class PlannedAryForm extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationSuccess={this.handleFaramValidationSuccess}
                     onValidationFailure={this.handleFaramValidationFailure}
-                    schema={this.schema}
+                    schema={schema}
                     disabled={showLoading}
                 >
                     <ModalBody className={styles.modalBody}>
@@ -318,6 +309,7 @@ export default class PlannedAryForm extends React.PureComponent {
                                     hideList
                                 />
                                 <GeoInput
+                                    className={styles.geoInput}
                                     faramElementName="locations"
                                     label={_ts('assessments.planned.editForm', 'plannedAryLocationsLabel')}
                                     geoOptionsByRegion={geoOptions}

@@ -9,13 +9,14 @@ import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 
 import {
-    renderDroppableWidget,
     isDroppableWidget,
-} from '#entities/aryWidgetUtils';
+    getProps,
+} from '#entities/editAry';
 
 import _ts from '#ts';
 
 import OrganizationList from './OrganizationList';
+import Widget from './Widget';
 
 import styles from './styles.scss';
 
@@ -40,17 +41,36 @@ export default class StakeholderModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    renderWidget = (k, data) => renderDroppableWidget(
-        k,
-        data,
-        this.props.sources,
-        {
+    fieldRendererParams = (key, data) => {
+        const {
+            sources,
+        } = this.props;
+
+        const {
+            fieldType,
+            sourceType,
+        } = data;
+
+        const newFieldType = fieldType === 'multiselect'
+            ? 'listInput'
+            : fieldType;
+
+        const widgetProps = getProps(data, sources);
+
+        const isDroppable = isDroppableWidget(data.sourceType, data.fieldType);
+
+        return {
+            ...widgetProps,
+            fieldType: newFieldType,
+            sourceType,
+            hidden: false,
+
+            isDroppable,
             containerClassName: styles.widgetContainer,
-            className: isDroppableWidget(data.sourceType, data.fieldType)
-                ? styles.droppableWidget : styles.widget,
+            className: isDroppable ? styles.droppableWidget : styles.widget,
             itemClassName: styles.widgetItem,
-        },
-    );
+        };
+    }
 
     render() {
         const {
@@ -75,8 +95,10 @@ export default class StakeholderModal extends React.PureComponent {
                         <ListView
                             className={styles.widgetList}
                             data={fields}
-                            modifier={this.renderWidget}
                             keySelector={fieldKeySelector}
+
+                            renderer={Widget}
+                            rendererParams={this.fieldRendererParams}
                         />
                     </div>
                 </ModalBody>

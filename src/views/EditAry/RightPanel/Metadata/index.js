@@ -12,6 +12,10 @@ import {
     assessmentSourcesSelector,
 } from '#redux';
 
+import {
+    isStakeholderColumn,
+} from '#entities/editAry';
+
 import Column from './Column';
 import Header from '../Header';
 import styles from './styles.scss';
@@ -54,6 +58,7 @@ export default class Metadata extends React.PureComponent {
             title,
             fields,
             sources,
+            isStakeholder: isStakeholderColumn(data),
         };
     }
 

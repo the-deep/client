@@ -162,6 +162,7 @@ export default class GeoLink extends React.PureComponent {
                     onChange={this.handleGeoChange}
                     regions={regions}
                     showLabel={false}
+                    showHintAndError={false}
                     hideList
                     hideInput
                 />

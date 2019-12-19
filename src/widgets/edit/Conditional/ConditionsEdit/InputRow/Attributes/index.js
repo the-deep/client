@@ -148,6 +148,7 @@ export default class ConditionAttribute extends React.PureComponent {
                     faramElementName={attribute.key}
                     label={attribute.title}
                     geoOptionsByRegion={geoOptions}
+                    showHintAndError={false}
                     regions={regions}
                     hideList
                 />

@@ -14,9 +14,14 @@ import {
     focusesSelector,
     editArySelectedSectorsSelector,
     editArySelectedFocusesSelector,
+} from '#redux';
+
+import {
     shouldShowHumanitarianAccess,
     shouldShowCrossSector,
-} from '#redux';
+} from '#entities/editAry';
+
+
 import _ts from '#ts';
 import _cs from '#cs';
 

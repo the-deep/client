@@ -4,5 +4,9 @@
 
     .content {
         padding: var(--spacing-large);
+
+        .geo-input {
+            width: 100%;
+        }
     }
 }
