@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
@@ -17,7 +18,7 @@ const PreviewNothing = ({
 }) => {
     if (pending) {
         return (
-            <div className={`${styles.previewNothing} ${className}`}>
+            <div className={_cs(styles.previewNothing, className)}>
                 <span className={styles.label} >
                     { pendingLabel || _ts('components.internalGallery', 'loadingFileLabel') }
                 </span>
@@ -30,7 +31,7 @@ const PreviewNothing = ({
     }
     if (notFound) {
         return (
-            <div className={`${styles.previewNothing} ${className}`}>
+            <div className={_cs(styles.previewNothing, className)}>
                 {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
             </div>
         );
@@ -38,7 +39,7 @@ const PreviewNothing = ({
     // show file name only
     return (
         <a
-            className={`${styles.galleryFileName} ${className}`}
+            className={_cs(styles.galleryFileName, className)}
             href={fileUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -71,7 +72,7 @@ const PreviewGallery = ({
 }) => {
     if (pending) {
         return (
-            <div className={`${className} ${styles.previewGallery}`}>
+            <div className={_cs(className, styles.previewGallery)}>
                 <LoadingAnimation
                     minPaddingSize={0}
                     minFontSize={14}
@@ -81,7 +82,7 @@ const PreviewGallery = ({
     }
     if (notFound) {
         return (
-            <div className={`${className} ${styles.previewGallery}`}>
+            <div className={_cs(className, styles.previewGallery)}>
                 <Message>
                     {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
                 </Message>

@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import NumberInput from '#rsci/NumberInput';
-import _cs from '#cs';
+import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 import _ts from '#ts';
 
+import InternalGalleryModal from '#components/viewer/InternalGalleryModal';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -13,10 +16,10 @@ const propTypes = {
     selectionKey: PropTypes.string.isRequired,
     onRemoveClick: PropTypes.func.isRequired,
     onStartPageChange: PropTypes.func.isRequired,
+    galleryId: PropTypes.number.isRequired,
     onEndPageChange: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
-    url: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     showPageRange: PropTypes.bool.isRequired,
     startPage: PropTypes.number.isRequired,
@@ -29,6 +32,8 @@ const defaultProps = {
     readOnly: false,
     endPage: undefined,
 };
+
+const ModalButton = modalize(Button);
 
 export default class Selection extends React.PureComponent {
     static propTypes = propTypes;
@@ -63,11 +68,11 @@ export default class Selection extends React.PureComponent {
             className: classNameFromProps,
             disabled,
             readOnly,
-            url,
             name,
             showPageRange,
             startPage,
             endPage,
+            galleryId,
         } = this.props;
 
         const className = _cs(
@@ -79,15 +84,20 @@ export default class Selection extends React.PureComponent {
         return (
             <div className={className}>
                 <div className={styles.top}>
-                    <a
+                    <ModalButton
                         className={styles.documentLink}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        transparent
                         title={name}
+                        modal={
+                            <InternalGalleryModal
+                                galleryId={galleryId}
+                                showUrl
+                                name={name}
+                            />
+                        }
                     >
                         { name }
-                    </a>
+                    </ModalButton>
                     <DangerButton
                         className={styles.removeButton}
                         iconName="close"
