@@ -18,6 +18,8 @@ import Message from '#rscv/Message';
 import BackLink from '#components/general/BackLink';
 import modalize from '#rscg/Modalize';
 
+import Cloak from '#components/general/Cloak';
+
 import { VIEW } from '#widgets';
 import {
     afIdFromRoute,
@@ -73,6 +75,10 @@ const mapDispatchToProps = dispatch => ({
     setGeoOptions: params => dispatch(setAfViewGeoOptionsAction(params)),
     updateWidget: params => dispatch(updateAfViewWidgetAction(params)),
 });
+
+const shouldHideVisualizationSettings = ({
+    accessEntryVisualizationConfiguration,
+}) => !accessEntryVisualizationConfiguration;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AnalysisFramework extends React.PureComponent {
@@ -370,17 +376,22 @@ export default class AnalysisFramework extends React.PureComponent {
                                 disabled={!!selectedWidgetKey}
                             />
                             <div className={styles.actionButtons}>
-                                <ModalButton
-                                    title={_ts('framework', 'editVizSettingsButtonTitle')}
-                                    disabled={pendingSaveFramework || !!selectedWidgetKey}
-                                    modal={(
-                                        <EditVizSettingsModal
-                                            analysisFrameworkId={analysisFrameworkId}
-                                        />
-                                    )}
-                                >
-                                    {_ts('framework', 'editVizSettingsButtonLabel')}
-                                </ModalButton>
+                                <Cloak
+                                    hide={shouldHideVisualizationSettings}
+                                    render={
+                                        <ModalButton
+                                            title={_ts('framework', 'editVizSettingsButtonTitle')}
+                                            disabled={pendingSaveFramework || !!selectedWidgetKey}
+                                            modal={(
+                                                <EditVizSettingsModal
+                                                    analysisFrameworkId={analysisFrameworkId}
+                                                />
+                                            )}
+                                        >
+                                            {_ts('framework', 'editVizSettingsButtonLabel')}
+                                        </ModalButton>
+                                    }
+                                />
                                 <DangerConfirmButton
                                     confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
                                     onClick={this.handleCancel}

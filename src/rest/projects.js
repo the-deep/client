@@ -41,6 +41,7 @@ const projectMiniUrlFields = [
     'category_editor',
     'regions',
     'member_status',
+    'is_visualization_enabled',
     'is_private',
 ];
 export const urlForProjects = `${wsEndpoint}/projects/member-of/?${p({ fields: projectMiniUrlFields })}`;
