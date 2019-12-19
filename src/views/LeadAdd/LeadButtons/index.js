@@ -88,7 +88,6 @@ export default class LeadButtons extends React.PureComponent {
 
         const lead = {
             faramValues: {
-                title: `Lead ${(new Date()).toLocaleTimeString()}`,
                 sourceType: LEAD_TYPE.text,
             },
         };
@@ -103,7 +102,6 @@ export default class LeadButtons extends React.PureComponent {
 
         const lead = {
             faramValues: {
-                title: `Lead ${(new Date()).toLocaleTimeString()}`,
                 sourceType: LEAD_TYPE.website,
                 emmTriggers: [],
                 emmEntities: [],

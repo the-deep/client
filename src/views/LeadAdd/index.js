@@ -384,6 +384,7 @@ class LeadAdd extends React.PureComponent {
                 id: key,
                 serverId,
                 faramValues: {
+                    title: `Lead ${(new Date()).toLocaleTimeString()}`,
                     // NOTE: setting current project as project for lead
                     project: defaultProjectId,
                     // NOTE: only projects where user can create lead should be listed
