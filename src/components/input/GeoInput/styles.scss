@@ -12,12 +12,4 @@
         flex-grow: 1;
         overflow-y: auto;
     }
-
-    .no-list-selection {
-        display: flex;
-
-        .select-input {
-            flex-grow: 1;
-        }
-    }
 }

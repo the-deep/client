@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SelectInputWithList from '#rsci/SelectInputWithList';
+import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import styles from './styles.scss';
 // import _ts from '#ts';
 
@@ -33,7 +33,7 @@ export default class MultiSelectWidget extends React.PureComponent {
         const options = getOptions(widget);
 
         return (
-            <SelectInputWithList
+            <MultiSelectInputWithList
                 className={styles.multiSelectWidget}
                 faramElementName="value"
                 options={options}

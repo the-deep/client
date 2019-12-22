@@ -23,7 +23,7 @@ import ListInput from '#rsci/ListInput';
 import ListSelection from '#rsci/ListSelection';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SelectInput from '#rsci/SelectInput';
-import SelectInputWithList from '#rsci/SelectInputWithList';
+import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import RadioInput from '#rsci/RadioInput';
 import ScaleInput from '#rsci/ScaleInput';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
@@ -308,7 +308,7 @@ export default class Workshop extends React.PureComponent {
                                     { key: 'illam', label: 'Illam' },
                                 ]}
                             />
-                            <SelectInputWithList
+                            <MultiSelectInputWithList
                                 label="Worse place"
                                 labelSelector={Workshop.labelSelector}
                                 keySelector={Workshop.keySelector}
