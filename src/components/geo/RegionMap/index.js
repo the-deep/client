@@ -1,11 +1,21 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import produce from 'immer';
+import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { FgRestBuilder } from '#rsu/rest';
 import Message from '#rscv/Message';
+import { FgRestBuilder } from '#rsu/rest';
+
+import Map from '#re-map';
+import MapBounds from '#re-map/MapBounds';
+import MapContainer from '#re-map/MapContainer';
+import MapSource from '#re-map/MapSource';
+import MapLayer from '#re-map/MapSource/MapLayer';
+import MapState from '#re-map/MapSource/MapState';
+import MapTooltip from '#re-map/MapTooltip';
 
 import {
     createParamsForGet,
@@ -16,7 +26,6 @@ import {
 } from '#rest';
 import _ts from '#ts';
 
-import GeoJsonMap from './GeoJsonMap';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -24,87 +33,137 @@ const propTypes = {
     regionId: PropTypes.number,
     selections: PropTypes.arrayOf(PropTypes.string),
     onChange: PropTypes.func,
-    onLocationsChange: PropTypes.func,
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     regionId: undefined,
     selections: [],
     onChange: undefined,
-    onLocationsChange: undefined,
 };
-
-const emptyObject = {};
 
 export default class RegionMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     static adminLevelKeySelector = d => d.value;
+
     static adminLevelLabelSelector = d => d.label;
+
+    static isStale = adminLevels => (
+        adminLevels.reduce(
+            (acc, adminLevel) => (
+                adminLevel.staleGeoAreas || acc
+            ),
+            false,
+        )
+    )
 
     constructor(props) {
         super(props);
 
         this.state = {
-            pending: true,
+            // for adminLevels
+            error: undefined,
+            pending: undefined,
+            adminLevels: undefined,
+            selectedAdminLevelId: undefined,
+
+            // for each admin level
             adminLevelPending: {},
-            error: false,
-            adminLevels: [],
             geoJsons: {},
-            geoJsonBounds: {},
+            geoJsonBounds: {}, // TODO: can be calculated using turf
+
+            hoverTitle: undefined,
+            hoverLngLat: undefined,
         };
-        this.geoJsonRequests = [];
+
+        this.geoJsonRequests = undefined; // TODO: use coordinator
+        this.hasTriggeredOnce = undefined; // TODO: can be replaced
+
+        // TODO: support points
+        // TODO: support element id from server
+        // TODO: look at problem with cloned geo-json
+        // TODO: clone re-map
     }
 
     componentDidMount() {
-        this.create(this.props.regionId);
+        const { regionId } = this.props;
+        this.create(regionId);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.regionId !== nextProps.regionId) {
-            this.create(nextProps.regionId);
+        const { regionId: oldRegionId } = this.props;
+        const { regionId: newRegionId } = nextProps;
+        if (oldRegionId !== newRegionId) {
+            this.create(newRegionId);
         }
     }
 
     componentWillUnmount() {
-        this.geoJsonRequests.forEach(request => request.stop());
-        if (this.triggerRequest) {
-            this.triggerRequest.stop();
-        }
-        if (this.adminLevelsRequest) {
-            this.adminLevelsRequest.stop();
-        }
+        this.destroy();
     }
 
+    // NOTE: initialize state for a region
+    init = (initialPending = true) => {
+        this.setState({
+            error: false,
+            pending: initialPending,
+
+            adminLevels: [],
+            selectedAdminLevelId: '',
+
+            adminLevelPending: {},
+            geoJsons: {},
+            geoJsonBounds: {},
+
+            hoverTitle: undefined,
+            hoverLngLat: undefined,
+            // NOTE: let's not clear geoJson and geoJson bounds
+        });
+
+        this.geoJsonRequests = [];
+        this.hasTriggeredOnce = false;
+    }
+
+    // NOTE: call appropriate request
     create = (regionId) => {
-        this.geoJsonRequests.forEach(request => request.stop());
+        this.destroy();
 
         if (!regionId) {
-            this.setState({ pending: false, adminLevelPending: {} });
+            this.init(false);
             return;
         }
 
-        this.hasTriggeredOnce = false;
-        this.setState({ pending: true, adminLevelPending: {} });
-
-        if (this.adminLevelsRequest) {
-            this.adminLevelsRequest.stop();
-        }
+        this.init();
         this.adminLevelsRequest = this.createAdminLevelsRequest(regionId);
         this.adminLevelsRequest.start();
     }
 
+    // NOTE: stop all requests
+    destroy = () => {
+        if (this.geoJsonRequests) {
+            this.geoJsonRequests.forEach(
+                request => request.stop(),
+            );
+        }
+
+        if (this.triggerRequest) {
+            this.triggerRequest.stop();
+        }
+
+        if (this.adminLevelsRequest) {
+            this.adminLevelsRequest.stop();
+        }
+    }
+
+    // NOTE: triggered by admin level request
     createTriggerRequest = regionId => (
         new FgRestBuilder()
             .url(createUrlForGeoAreasLoadTrigger(regionId))
             .params(createParamsForGet)
             .success(() => {
                 console.log(`Triggered geo areas loading task for ${regionId}`);
-                if (this.adminLevelsRequest) {
-                    this.adminLevelsRequest.stop();
-                }
                 this.adminLevelsRequest = this.createAdminLevelsRequest(regionId);
                 this.adminLevelsRequest.start();
             })
@@ -123,6 +182,7 @@ export default class RegionMap extends React.PureComponent {
             .build()
     )
 
+    // NOTE: re-triggered by trigger request
     createAdminLevelsRequest = regionId => (
         new FgRestBuilder()
             .url(createUrlForAdminLevelsForRegion(regionId))
@@ -130,31 +190,29 @@ export default class RegionMap extends React.PureComponent {
             .maxPollAttempts(200)
             .pollTime(2000)
             .shouldPoll(response => (
-                this.hasTriggeredOnce &&
-                response.results.reduce((acc, adminLevel) => (
-                    adminLevel.staleGeoAreas || acc
-                ), false)
+                this.hasTriggeredOnce && RegionMap.isStale(response.results)
             ))
             .success((response) => {
-                const stale = response.results.reduce((acc, adminLevel) => (
-                    adminLevel.staleGeoAreas || acc
-                ), false);
+                const { results } = response;
+                const stale = RegionMap.isStale(results);
 
                 if (stale) {
                     this.hasTriggeredOnce = true;
-                    if (this.triggerRequest) {
-                        this.triggerRequest.stop();
-                    }
                     this.triggerRequest = this.createTriggerRequest(regionId);
                     this.triggerRequest.start();
                 } else {
-                    this.setState({
-                        pending: false,
-                        adminLevelPending: {},
-                        error: undefined,
-                        selectedAdminLevelId: response.results.length > 0 ? `${response.results[0].id}` : '',
-                        adminLevels: response.results,
-                    }, this.loadGeoJsons);
+                    const selectedAdminLevelId = results.length > 0
+                        ? `${results[0].id}`
+                        : '';
+
+                    this.setState(
+                        {
+                            pending: false,
+                            adminLevels: results,
+                            selectedAdminLevelId,
+                        },
+                        this.loadSelectedAdminGeoJson,
+                    );
                 }
             })
             .failure(() => {
@@ -172,200 +230,321 @@ export default class RegionMap extends React.PureComponent {
             .build()
     )
 
-    handleAreaClick = (selection) => {
-        if (!this.props.onChange) {
-            return;
-        }
+    createGeoJsonRequest = (selectedAdminLevelId, adminLevels) => {
+        const selectedAdminLevel = adminLevels.find(
+            l => String(l.id) === selectedAdminLevelId,
+        );
 
-        const selections = [...this.props.selections];
-        const index = selections.indexOf(selection);
+        const url = (selectedAdminLevel && selectedAdminLevel.geojsonFile)
+            || createUrlForGeoJsonMap(selectedAdminLevelId);
 
-        if (index === -1) {
-            selections.push(selection);
-        } else {
-            selections.splice(index, 1);
-        }
+        const params = selectedAdminLevel && selectedAdminLevel.geojsonFile
+            ? undefined
+            : createParamsForGet;
 
-        this.props.onChange(selections);
+        return new FgRestBuilder()
+            .url(url)
+            .params(params)
+            .preLoad(() => {
+                this.setState(state => ({
+                    ...state,
+                    adminLevelPending: {
+                        ...state.adminLevelPending,
+                        [selectedAdminLevelId]: true,
+                    },
+                }));
+            })
+            .postLoad(() => {
+                this.setState(state => ({
+                    ...state,
+                    adminLevelPending: {
+                        ...state.adminLevelPending,
+                        [selectedAdminLevelId]: false,
+                    },
+                }));
+            })
+            .success((response) => {
+                const newGeoJson = produce(response, (safeResponse) => {
+                    safeResponse.features.forEach((feature) => {
+                        if (!feature.properties) {
+                            return;
+                        }
+                        // eslint-disable-next-line no-param-reassign
+                        feature.id = feature.properties.pk;
+                    });
+                });
+                this.setState(
+                    state => ({
+                        ...state,
+                        geoJsons: {
+                            ...state.geoJsons,
+                            [selectedAdminLevelId]: newGeoJson,
+                        },
+                    }),
+                );
+            })
+            .failure((response) => {
+                console.log(response);
+            })
+            .fatal((response) => {
+                console.log(response);
+            })
+            .build();
     }
 
-    handleAdminLevelSelection = (id) => {
-        this.setState({
-            selectedAdminLevelId: id,
-        }, this.loadGeoJsons);
-    }
+    createGeoJsonBoundsRequest = (selectedAdminLevelId, adminLevels) => {
+        const selectedAdminLevel = adminLevels.find(
+            l => String(l.id) === selectedAdminLevelId,
+        );
 
-    // NOTE: Is onLocationsChange really necessary?
-    // Assess in detail
-    loadLocations = () => {
-        const { adminLevels, geoJsons } = this.state;
+        const url = (selectedAdminLevel && selectedAdminLevel.boundsFile)
+            || createUrlForGeoJsonBounds(selectedAdminLevelId);
 
-        let locations = [];
-        adminLevels.forEach((adminLevel) => {
-            const geoJson = geoJsons[adminLevel.id];
-            if (geoJson) {
-                locations = [
-                    ...locations,
-                    ...geoJson.features.map(feature => ({
-                        key: feature.properties.pk,
-                        label: feature.properties.title,
-                    })),
+        const params = selectedAdminLevel && selectedAdminLevel.boundsFile
+            ? undefined
+            : createParamsForGet;
+
+        return new FgRestBuilder()
+            .url(url)
+            .params(params)
+            .success((response) => {
+                const { bounds } = response;
+
+                const myBounds = bounds && [
+                    [bounds.minX, bounds.minY],
+                    [bounds.maxX, bounds.maxY],
                 ];
-            }
-        });
 
-        if (this.props.onLocationsChange) {
-            this.props.onLocationsChange(locations);
-        }
+                this.setState(
+                    state => ({
+                        ...state,
+                        geoJsonBounds: {
+                            ...state.geoJsonBounds,
+                            [selectedAdminLevelId]: myBounds,
+                        },
+                    }),
+                );
+            })
+            .failure((response) => {
+                console.log(response);
+            })
+            .fatal((response) => {
+                console.log(response);
+            })
+            .build();
     }
 
-    loadGeoJsons = () => {
-        // FIXME: use coordinator
+    loadSelectedAdminGeoJson = () => {
         const {
             geoJsons: geoJsonsFromState,
             geoJsonBounds: geoJsonBoundsFromState,
+
             selectedAdminLevelId,
-            adminLevelPending,
             adminLevels,
         } = this.state;
 
-        const selectedAdminLevel = adminLevels.find(l => String(l.id) === selectedAdminLevelId)
-            || emptyObject;
-
         if (!geoJsonsFromState[selectedAdminLevelId]) {
-            const url = selectedAdminLevel.geojsonFile
-                || createUrlForGeoJsonMap(selectedAdminLevelId);
-            const params = selectedAdminLevel.geojsonFile ? undefined : createParamsForGet;
-            const request = new FgRestBuilder()
-                .url(url)
-                .params(params)
-                .preLoad(() => {
-                    this.setState({
-                        adminLevelPending: {
-                            ...adminLevelPending,
-                            [selectedAdminLevelId]: true,
-                        },
-                    });
-                })
-                .postLoad(() => {
-                    this.setState({
-                        adminLevelPending: {
-                            ...adminLevelPending,
-                            [selectedAdminLevelId]: false,
-                        },
-                    });
-                })
-                .success((response) => {
-                    // FIXME: write schema
-                    const geoJsons = {
-                        [selectedAdminLevelId]: response,
-                        ...geoJsonsFromState,
-                    };
-                    this.setState({ geoJsons }, this.loadLocations);
-                })
-                .failure((response) => {
-                    console.log(response);
-                })
-                .fatal((response) => {
-                    console.log(response);
-                })
-                .build();
+            const request = this.createGeoJsonRequest(selectedAdminLevelId, adminLevels);
             request.start();
 
             this.geoJsonRequests.push(request);
         }
 
         if (!geoJsonBoundsFromState[selectedAdminLevelId]) {
-            const url = selectedAdminLevel.boundsFile
-                || createUrlForGeoJsonBounds(selectedAdminLevelId);
-            const params = selectedAdminLevel.boundsFile ? undefined : createParamsForGet;
-            const request = new FgRestBuilder()
-                .url(url)
-                .params(params)
-                .success((response) => {
-                    // FIXME: write schema
-                    const { bounds } = response;
-                    const geoJsonBounds = {
-                        [selectedAdminLevelId]: bounds && [[
-                            bounds.minX,
-                            bounds.minY,
-                        ], [
-                            bounds.maxX,
-                            bounds.maxY,
-                        ]],
-                        ...geoJsonBoundsFromState,
-                    };
-                    this.setState({ geoJsonBounds });
-                })
-                .failure((response) => {
-                    console.log(response);
-                })
-                .fatal((response) => {
-                    console.log(response);
-                })
-                .build();
+            const request = this.createGeoJsonBoundsRequest(selectedAdminLevelId, adminLevels);
             request.start();
-
             this.geoJsonRequests.push(request);
         }
     }
 
-    handleRefresh = () => {
-        this.create(this.props.regionId);
+    handleAreaClick = (feature) => {
+        const {
+            onChange,
+            selections: selectionsFromProps,
+        } = this.props;
+
+        if (!onChange) {
+            return;
+        }
+
+        const { id } = feature;
+        const selection = String(id);
+
+        const selections = [...selectionsFromProps];
+
+        const index = selections.indexOf(selection);
+        if (index === -1) {
+            selections.push(selection);
+        } else {
+            selections.splice(index, 1);
+        }
+
+        onChange(selections);
     }
 
-    renderContent = () => {
+    handleMouseEnter = (feature, lngLat) => {
+        this.setState({
+            hoverTitle: feature.properties.title,
+            hoverLngLat: lngLat,
+        });
+    }
+
+    handleMouseLeave = () => {
+        this.setState({
+            hoverTitle: undefined,
+            hoverLngLat: undefined,
+        });
+    }
+
+    handleAdminLevelSelection = (id) => {
+        this.setState(
+            {
+                selectedAdminLevelId: id,
+            },
+            this.loadSelectedAdminGeoJson,
+        );
+    }
+
+    handleRefresh = () => {
+        const { regionId } = this.props;
+        this.create(regionId);
+    }
+
+    render() {
         const {
+            className: classNameFromProps,
+            selections,
+        } = this.props;
+
+        const {
+            pending,
             error,
             adminLevels = [],
             selectedAdminLevelId,
-            geoJsons,
-            geoJsonBounds,
-            adminLevelPending,
         } = this.state;
+
+        const className = _cs(
+            classNameFromProps,
+            styles.regionMap,
+        );
+
+        if (pending) {
+            return (
+                <div className={className}>
+                    <LoadingAnimation />
+                </div>
+            );
+        }
 
         if (error) {
             return (
-                <Message>
-                    { error }
-                </Message>
+                <div className={className}>
+                    <Message>
+                        { error }
+                    </Message>
+                </div>
             );
         }
 
         if (adminLevels.length === 0 || !selectedAdminLevelId) {
             return (
-                <Message>
-                    {_ts('components.regionMap', 'mapNotAvailable')}
-                </Message>
+                <div className={className}>
+                    <Message>
+                        {_ts('components.regionMap', 'mapNotAvailable')}
+                    </Message>
+                </div>
             );
         }
 
-        const adminLevel = adminLevels.find(al => al.id === +selectedAdminLevelId);
-        const segmentButtonData = adminLevels.map(al => ({
+        // FIXME: memoize this
+        const segmentButtonOptions = adminLevels.map(al => ({
             label: al.title,
             value: `${al.id}`,
         }));
 
+        // FIXME: memoize this
+        const adminLevel = adminLevels.find(
+            l => String(l.id) === selectedAdminLevelId,
+        );
+
+        const thickness = 1 + (3 * ((adminLevels.length - adminLevel.level) / adminLevels.length));
+
+        const {
+            geoJsons: {
+                [selectedAdminLevelId]: myGeoJson,
+            },
+            geoJsonBounds: {
+                [selectedAdminLevelId]: myGeoJsonBounds,
+            },
+            adminLevelPending: {
+                [selectedAdminLevelId]: myAdminLevelPending,
+            },
+            hoverLngLat,
+            hoverTitle,
+        } = this.state;
+
+        // FIXME: memoize this
+        const attributes = selections.map(id => ({
+            id: +id,
+            value: true,
+        }));
+
+        const bounds = myGeoJsonBounds
+            ? [...myGeoJsonBounds[0], ...myGeoJsonBounds[1]]
+            : undefined;
+
+        const mapOptions = {
+            zoom: 2,
+            center: [50, 10],
+        };
+
+        const sourceOptions = {
+            type: 'geojson',
+        };
+
+        const fillLayerOptions = {
+            type: 'fill',
+            paint: {
+                'fill-opacity': ['case',
+                    ['boolean', ['feature-state', 'hovered'], false],
+                    0.7,
+                    0.5,
+                ],
+                'fill-color': ['case',
+                    ['boolean', ['feature-state', 'selected'], false],
+                    '#6e599f',
+                    '#088',
+                ],
+            },
+        };
+
+        const lineLayerOptions = {
+            type: 'line',
+            paint: {
+                'line-color': '#fff',
+                'line-width': thickness,
+            },
+        };
+
+        const tooltipOptions = {
+            closeOnClick: false,
+            closeButton: false,
+            offset: 8,
+        };
+
         return (
-            <div className={styles.mapContainer}>
-                <Button
-                    className={styles.refreshButton}
-                    onClick={this.handleRefresh}
-                    iconName="refresh"
-                />
-                <GeoJsonMap
-                    selections={this.props.selections}
-                    className={styles.geoJsonMap}
-                    geoJson={geoJsons[selectedAdminLevelId]}
-                    geoJsonBounds={geoJsonBounds[selectedAdminLevelId]}
-                    onAreaClick={this.handleAreaClick}
-                    thickness={adminLevels.length - adminLevel.level}
-                    pending={adminLevelPending[selectedAdminLevelId]}
-                />
-                <div className={styles.bottomBar}>
+            <div className={className}>
+                <div className={styles.mapContainer}>
+                    <Button
+                        className={styles.refreshButton}
+                        onClick={this.handleRefresh}
+                        iconName="refresh"
+                        pending={myAdminLevelPending}
+                    />
                     <SegmentInput
+                        className={styles.bottomContainer}
                         name="admin-levels"
-                        options={segmentButtonData}
+                        options={segmentButtonOptions}
                         value={selectedAdminLevelId}
                         onChange={this.handleAdminLevelSelection}
                         keySelector={RegionMap.adminLevelKeySelector}
@@ -373,25 +552,58 @@ export default class RegionMap extends React.PureComponent {
                         showLabel={false}
                         showHintAndError={false}
                     />
+                    <Map
+                        mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
+                        mapOptions={mapOptions}
+                        scaleControlShown={false}
+                        navControlShown={false}
+                    >
+                        { bounds && (
+                            <MapBounds
+                                bounds={bounds}
+                                padding={10}
+                            />
+                        )}
+
+                        { myGeoJson && (
+                            <MapSource
+                                sourceKey="region"
+                                sourceOptions={sourceOptions}
+                                geoJson={myGeoJson}
+                            >
+                                <MapLayer
+                                    layerKey="fill"
+                                    onClick={this.handleAreaClick}
+                                    onMouseEnter={this.handleMouseEnter}
+                                    onMouseLeave={this.handleMouseLeave}
+                                    layerOptions={fillLayerOptions}
+                                />
+                                <MapLayer
+                                    layerKey="line"
+                                    layerOptions={lineLayerOptions}
+                                />
+                                {hoverLngLat && (
+                                    <MapTooltip
+                                        coordinates={hoverLngLat}
+                                        tooltipOptions={tooltipOptions}
+                                        trackPointer
+                                    >
+                                        <div>
+                                            {hoverTitle}
+                                        </div>
+                                    </MapTooltip>
+                                )}
+                                <MapState
+                                    attributes={attributes}
+                                    attributeKey="selected"
+                                />
+                            </MapSource>
+                        )}
+                        <MapContainer
+                            className={styles.geoJsonMap}
+                        />
+                    </Map>
                 </div>
-            </div>
-        );
-    }
-
-    render() {
-        const { className: classNameFromProps } = this.props;
-        const { pending } = this.state;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.regionMap}
-        `;
-
-        const Content = this.renderContent;
-
-        return (
-            <div className={className}>
-                { pending ? <LoadingAnimation /> : <Content /> }
             </div>
         );
     }

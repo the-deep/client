@@ -14,18 +14,21 @@
             flex-grow: 1;
         }
 
-        .bottom-bar {
-            display: flex;
-            flex-shrink: 0;
-            justify-content: center;
-            border-top: var(--width-separator-thin) solid var(--color-separator);
-        }
-
         .refresh-button {
             position: absolute;
             top: 8px;
             right: 8px;
             z-index: 1;
+        }
+
+        .bottom-container {
+            position: absolute;
+            bottom: var(--spacing-small);
+            left: 50%;
+            flex-direction: row;
+            transform: translateX(-50%);
+            z-index: 11;
+            max-width: 100%;
         }
     }
 }
