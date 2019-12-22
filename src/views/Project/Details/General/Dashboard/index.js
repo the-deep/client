@@ -432,7 +432,6 @@ export default class ProjectDashboard extends React.PureComponent {
                     onChange={this.handleRegionChange}
                     showLabel={false}
                     showHintAndError={false}
-                    showLabel={false}
                     hideClearButton
                 />
             </div>

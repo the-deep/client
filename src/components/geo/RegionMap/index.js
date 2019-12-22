@@ -569,7 +569,7 @@ export default class RegionMap extends React.PureComponent {
                             <MapSource
                                 sourceKey="region"
                                 sourceOptions={sourceOptions}
-                                geoJSON={myGeoJson}
+                                geoJson={myGeoJson}
                             >
                                 <MapLayer
                                     layerKey="fill"
