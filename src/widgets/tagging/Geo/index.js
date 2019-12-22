@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import GeoInput from '#components/input/GeoInput/';
+import GeoInput from '#components/input/GeoInput';
 import ExcerptOutput from '#widgetComponents/ExcerptOutput';
 import _ts from '#ts';
 

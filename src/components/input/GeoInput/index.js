@@ -10,8 +10,7 @@ import {
 import { FaramInputElement } from '@togglecorp/faram';
 
 import AccentButton from '#rsca/Button/AccentButton';
-import SelectInputWithList from '#rsci/SelectInputWithList';
-import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
+import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import HintAndError from '#rsci/HintAndError';
 import Label from '#rsci/Label';
 
@@ -22,27 +21,31 @@ const MAX_DISPLAY_OPTIONS = 100;
 
 const propTypes = {
     className: PropTypes.string,
+
     onChange: PropTypes.func,
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    label: PropTypes.string,
-    showLabel: PropTypes.bool,
+
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+
+    placeholder: PropTypes.string,
+    label: PropTypes.string,
+    showLabel: PropTypes.bool,
+    error: PropTypes.string,
+    showHintAndError: PropTypes.bool,
+    hint: PropTypes.string,
+    persistentHintAndError: PropTypes.bool,
     hideList: PropTypes.bool,
     hideInput: PropTypes.bool,
+
     modalLeftComponent: PropTypes.node,
     emptyComponent: PropTypes.func,
-    placeholder: PropTypes.string,
-    error: PropTypes.string,
-    hint: PropTypes.string,
-    showHintAndError: PropTypes.bool,
-    persistentHintAndError: PropTypes.bool,
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     label: '',
     showLabel: true,
     onChange: undefined,
@@ -77,8 +80,14 @@ export default class GeoInput extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
-            this.setState({ modalValue: nextProps.value });
+        const { value: oldValue } = this.props;
+        const { value: newValue } = nextProps;
+
+        // Override value of modal if value changed externally
+        if (oldValue !== newValue) {
+            this.setState({
+                modalValue: newValue,
+            });
         }
     }
 
@@ -92,7 +101,8 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsList;
     })
 
-    getAllGeoOptionsMap = memoize((geoOptionsList) => {
+    getAllGeoOptionsMap = memoize((geoOptionsByRegion) => {
+        const geoOptionsList = this.getAllGeoOptions(geoOptionsByRegion);
         const geoOptionsMapping = listToMap(
             geoOptionsList,
             geoOption => geoOption.key,
@@ -101,8 +111,11 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsMapping;
     })
 
+    // MODAL
+
     handleModalCancel = () => {
         const { value: modalValue } = this.props;
+
         this.setState({
             showModal: false,
             modalValue,
@@ -122,13 +135,6 @@ export default class GeoInput extends React.PureComponent {
         );
     }
 
-    handleSelectChange = (newValues) => {
-        const { onChange } = this.props;
-        if (onChange) {
-            onChange(newValues);
-        }
-    }
-
     handleModalValueChange = (modalValue) => {
         this.setState({ modalValue });
     }
@@ -137,143 +143,32 @@ export default class GeoInput extends React.PureComponent {
         this.setState({ showModal: true });
     }
 
-    valueLabelSelector = (v) => {
+    // SELECTOR
+
+    handleSelectChange = (newValues) => {
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(newValues);
+        }
+    }
+
+    keySelector = v => v.key;
+
+    labelSelector = (v) => {
         const {
             geoOptionsByRegion,
             regions,
         } = this.props;
 
-        const allGeoOptionsMap = this.getAllGeoOptionsMap(
-            this.getAllGeoOptions(geoOptionsByRegion),
-        );
-        const option = allGeoOptionsMap[this.valueKeySelector(v)];
+        const allGeoOptionsMap = this.getAllGeoOptionsMap(geoOptionsByRegion);
 
-        if (regions.length > 0) {
-            return `${option.regionTitle} / ${option.label}`;
-        }
-        return option.label;
-    }
+        const key = this.keySelector(v);
 
-    valueKeySelector = v => v.key;
+        const option = allGeoOptionsMap[key];
 
-    renderGeoModal = () => {
-        const {
-            label,
-            regions,
-            geoOptionsByRegion,
-            modalLeftComponent,
-        } = this.props;
-        const {
-            showModal,
-            modalValue,
-        } = this.state;
-
-        if (!showModal) {
-            return null;
-        }
-
-        return (
-            <GeoModal
-                title={label}
-                regions={regions}
-                geoOptionsByRegion={geoOptionsByRegion}
-                geoOptionsById={this.getAllGeoOptionsMap(
-                    this.getAllGeoOptions(geoOptionsByRegion),
-                )}
-                value={modalValue}
-                onChange={this.handleModalValueChange}
-                onApply={this.handleModalApply}
-                onCancel={this.handleModalCancel}
-                modalLeftComponent={modalLeftComponent}
-            />
-        );
-    }
-
-    renderShowModalButton = () => {
-        const { disabled, readOnly } = this.props;
-
-        return (
-            <AccentButton
-                className={styles.action}
-                iconName="globe"
-                // FIXME: use strings
-                title="Open geo modal"
-                onClick={this.handleShowModal}
-                disabled={disabled || readOnly}
-                transparent
-            />
-        );
-    }
-
-    renderSelection = () => {
-        /* TODO: Don't toggle between MultiSelect & SelectInputWithList
-            Make a separate ListComponent and use that in SelectInputWithList
-            Use that component to build custom SelectInputWithList to use in GeoInput
-            and organigram input
-        */
-        const {
-            value,
-            disabled,
-            readOnly,
-            hideList,
-            label,
-            hideInput,
-            placeholder,
-            emptyComponent,
-            geoOptionsByRegion,
-        } = this.props;
-
-        if (hideList || hideInput) {
-            return (
-                <div className={styles.noListSelection} >
-                    {!hideInput &&
-                        <SearchMultiSelectInput
-                            className={styles.selectInput}
-                            showLabel={false}
-                            value={value}
-                            onChange={this.handleSelectChange}
-                            options={this.getAllGeoOptions(geoOptionsByRegion)}
-                            labelSelector={this.valueLabelSelector}
-                            keySelector={this.valueKeySelector}
-                            showHintAndError={false}
-                            hideSelectAllButton
-                            disabled={disabled}
-                            readOnly={readOnly}
-                            placeholder={placeholder}
-                            maxDisplayOptions={MAX_DISPLAY_OPTIONS}
-                        />
-                    }
-                    <AccentButton
-                        className={styles.action}
-                        iconName="globe"
-                        onClick={this.handleShowModal}
-                        disabled={disabled || readOnly}
-                        transparent
-                    >
-                        {hideInput && label}
-                    </AccentButton>
-                </div>
-            );
-        }
-
-        return (
-            <SelectInputWithList
-                value={value}
-                showLabel={false}
-                onChange={this.handleSelectChange}
-                className={styles.selectInput}
-                options={this.getAllGeoOptions(geoOptionsByRegion)}
-                labelSelector={this.valueLabelSelector}
-                keySelector={this.valueKeySelector}
-                showHintAndError={false}
-                topRightChild={this.renderShowModalButton}
-                hideSelectAllButton
-                disabled={disabled}
-                readOnly={readOnly}
-                emptyComponent={emptyComponent}
-                maxDisplayOptions={MAX_DISPLAY_OPTIONS}
-            />
-        );
+        return regions.length > 0
+            ? `${option.regionTitle} / ${option.label}`
+            : option.label;
     }
 
     render() {
@@ -285,16 +180,29 @@ export default class GeoInput extends React.PureComponent {
             showHintAndError,
             persistentHintAndError,
             className: classNameFromProps,
+            regions,
+            geoOptionsByRegion,
+            modalLeftComponent,
+            value,
+            disabled,
+            readOnly,
+            hideList,
+            hideInput,
+            placeholder,
+            emptyComponent,
         } = this.props;
-
-        const GeoModalRender = this.renderGeoModal;
-        const Selection = this.renderSelection;
+        const {
+            showModal,
+            modalValue,
+        } = this.state;
 
         const className = _cs(
             classNameFromProps,
             styles.geoListInput,
             'geoListInput',
         );
+
+        const options = this.getAllGeoOptions(geoOptionsByRegion);
 
         return (
             <div className={className}>
@@ -304,8 +212,52 @@ export default class GeoInput extends React.PureComponent {
                         text={label}
                     />
                 }
-                <Selection />
-                <GeoModalRender />
+                <MultiSelectInputWithList
+                    value={value}
+                    showLabel={false}
+                    onChange={this.handleSelectChange}
+                    className={styles.selectInput}
+                    options={options}
+                    labelSelector={this.labelSelector}
+                    keySelector={this.keySelector}
+                    showHintAndError={false}
+                    hideSelectAllButton
+                    disabled={disabled}
+                    readOnly={readOnly}
+
+                    hideList={hideList}
+                    hideInput={hideInput}
+                    maxDisplayOptions={MAX_DISPLAY_OPTIONS}
+                    placeholder={placeholder}
+
+                    emptyComponent={emptyComponent}
+                    topRightChild={(
+                        <AccentButton
+                            className={styles.action}
+                            iconName="globe"
+                            onClick={this.handleShowModal}
+                            disabled={disabled || readOnly}
+                            transparent
+                            // FIXME: use strings
+                            title="Open geo modal"
+                        >
+                            {hideInput && label}
+                        </AccentButton>
+                    )}
+                />
+                {showModal && (
+                    <GeoModal
+                        title={label}
+                        regions={regions}
+                        geoOptionsByRegion={geoOptionsByRegion}
+                        geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+                        value={modalValue}
+                        onChange={this.handleModalValueChange}
+                        onApply={this.handleModalApply}
+                        onCancel={this.handleModalCancel}
+                        modalLeftComponent={modalLeftComponent}
+                    />
+                )}
                 <HintAndError
                     show={showHintAndError}
                     hint={hint}

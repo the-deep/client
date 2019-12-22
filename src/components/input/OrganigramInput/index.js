@@ -7,10 +7,9 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import Modal from '#rscv/Modal';
-import SelectInputWithList from '#rsci/SelectInputWithList';
+import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
-import MultiSelectInput from '#rsci/MultiSelectInput';
 import ModalFooter from '#rscv/Modal/Footer';
 import Label from '#rsci/Label';
 import HintAndError from '#rsci/HintAndError';
@@ -19,7 +18,6 @@ import _ts from '#ts';
 import _cs from '#cs';
 
 import styles from './styles.scss';
-
 
 const propTypes = {
     className: PropTypes.string,
@@ -241,26 +239,7 @@ export default class OrganigramInput extends React.PureComponent {
         );
     }
 
-    renderShowModalButton = () => {
-        const { disabled, readOnly } = this.props;
-
-        return (
-            <AccentButton
-                className={styles.action}
-                iconName="chart"
-                onClick={this.handleShowModal}
-                transparent
-                disabled={disabled || readOnly}
-            />
-        );
-    }
-
     renderSelection = () => {
-        /* TODO: Don't toggle between MultiSelectInput & SelectInputWithList
-            Make a separate ListComponent and use that in SelectInputWithList
-            Use that component to build custom SelectInputWithList to use in GeoInput
-            and organigram input
-        */
         const {
             value,
             hideList,
@@ -273,47 +252,37 @@ export default class OrganigramInput extends React.PureComponent {
             return null;
         }
 
-        if (hideList) {
-            return (
-                <div className={styles.noListSelection} >
-                    <MultiSelectInput
-                        value={value}
-                        onChange={this.handleSelectChange}
-                        className={styles.selectInput}
-                        options={this.options}
-                        labelSelector={OrganigramInput.selectLabelSelector}
-                        keySelector={OrganigramInput.selectIdSelector}
-                        showHintAndError={false}
-                        hideSelectAllButton
-                        disabled={disabled}
-                        readOnly={readOnly}
-                        showLabel={false}
-                    />
-                    <AccentButton
-                        className={styles.action}
-                        iconName="chart"
-                        onClick={this.handleShowModal}
-                        disabled={disabled || readOnly}
-                        transparent
-                    />
-                </div>
-            );
-        }
         return (
-            <SelectInputWithList
+            <MultiSelectInputWithList
                 value={value}
+                showLabel={false}
                 onChange={this.handleSelectChange}
                 className={styles.selectInput}
                 options={this.options}
                 labelSelector={OrganigramInput.selectLabelSelector}
                 keySelector={OrganigramInput.selectIdSelector}
                 showHintAndError={false}
-                topRightChild={this.renderShowModalButton}
-                showLabel={false}
                 hideSelectAllButton
                 disabled={disabled}
                 readOnly={readOnly}
+
+                hideList={hideList}
+                hideInput={false}
+                maxDisplayOptions={undefined}
+                // placeholder={placeholder}
+
                 emptyComponent={emptyComponent}
+                topRightChild={(
+                    <AccentButton
+                        className={styles.action}
+                        iconName="chart"
+                        onClick={this.handleShowModal}
+                        transparent
+                        disabled={disabled || readOnly}
+                        // FIXME: use strings
+                        title="Open organigram"
+                    />
+                )}
             />
         );
     }
