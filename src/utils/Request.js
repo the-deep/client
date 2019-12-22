@@ -1,4 +1,5 @@
-import { RestRequest } from '#rsu/rest';
+import { RestRequest } from '@togglecorp/react-rest-request';
+
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 
@@ -6,7 +7,7 @@ const requestNotCreatedForStartMessage = 'REQUEST: start() called before init()'
 const validationNotDefinedMessage = 'REQUEST: Validation is not defined';
 
 export default class Request {
-    constructor(parent, { delay = 50, retryTime = 1000, maxRetryAttempts = 5 } = {}) {
+    constructor(parent, { delay, retryTime, maxRetryAttempts } = {}) {
         this.parent = parent;
 
         this.delay = delay;
@@ -40,7 +41,7 @@ export default class Request {
         */
     }
 
-    successInterceptor = (response) => {
+    successInterceptor = (key, response) => {
         if (this.schemaName !== undefined) {
             try {
                 schema.validate(response, this.schemaName);
@@ -56,9 +57,13 @@ export default class Request {
         this.handleSuccess(response);
     }
 
-    failureInterceptor = (response) => {
+    failureInterceptor = (key, response) => {
         const newResponse = alterResponseErrorToFaramError(response.errors);
         this.handleFailure(newResponse, response);
+    }
+
+    fatalInterceptor = (key, response) => {
+        this.handleFatal(response);
     }
 
     createDefault = (createOptions) => {
@@ -71,25 +76,32 @@ export default class Request {
             params,
         } = createOptions;
 
-        const request = new RestRequest(
+        const request = new RestRequest({
+            key: 'unknown',
             url,
             params,
-            this.handleSuccess ? this.successInterceptor : undefined,
-            this.handleFailure ? this.failureInterceptor : undefined,
-            this.handleFatal,
-            this.handleAbort,
-            this.handlePreLoad,
-            this.handlePostLoad,
-            this.handleAfterLoad,
-            this.retryTime,
-            this.maxRetryTime,
-            this.decayVal,
-            this.maxRetryAttempts,
-            this.pollTime,
-            this.maxPollAttempts,
-            this.shouldPoll,
-            this.delay,
-        );
+
+            delay: this.delay,
+
+            shouldPoll: this.shouldPoll,
+            pollTime: this.pollTime,
+            maxPollAttempts: this.maxPollAttempts,
+
+            onAbort: this.handleAbort,
+            onPreLoad: this.handlePreLoad,
+            onSuccess: this.handleSuccess ? this.successInterceptor : undefined,
+            onFailure: this.handleFailure ? this.failureInterceptor : undefined,
+            onFatal: this.handleFatal ? this.fatalInterceptor : undefined,
+            onPostLoad: this.handlePostLoad,
+            onAfterLoad: this.handleAfterLoad,
+
+            // shouldRetry, (new)
+            retryTime: this.retryTime,
+            maxRetryAttempts: this.maxRetryAttempts,
+
+            // this.maxRetryTime, (obsolete)
+            // this.decayVal, (obsolete)
+        });
 
         this.request = request;
     }

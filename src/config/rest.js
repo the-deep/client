@@ -1,4 +1,4 @@
-import { RestRequest } from '#rsu/rest';
+import { prepareUrlParams } from '@togglecorp/react-rest-request';
 
 export const POST = 'POST';
 export const GET = 'GET';
@@ -62,4 +62,4 @@ export const commonHeaderForGetExternal = {
 
 // ALIAS
 
-export const p = RestRequest.prepareUrlParams;
+export const p = prepareUrlParams;
