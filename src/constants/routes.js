@@ -3,7 +3,10 @@ import {
     mapObjectToArray,
 } from '#utils/common';
 
-import { allLinks, noLinks } from './linksAcl';
+import {
+    allLinks,
+    noLinks,
+} from './linksAcl';
 
 export const ROUTE = {
     exclusivelyPublic: 'exclusively-public',
@@ -73,6 +76,14 @@ export const routes = {
     }, //  _ts('pageTitle', 'discoverUserGroups');
     */
 
+    projectQuestionnaires: {
+        order: 18,
+        type: ROUTE.private,
+        path: '/projects/:projectId/questionnaires/',
+        loader: () => import('../views/ProjectQuestionnaires'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'projectQuestionnare');
+
     projects: {
         order: 20,
         type: ROUTE.private,
@@ -112,6 +123,7 @@ export const routes = {
         loader: () => import('../views/LeadsViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'leadsViz');
+
     clusterViz: {
         order: 34,
         type: ROUTE.private,
@@ -183,6 +195,7 @@ export const routes = {
         loader: () => import('../views/EditAry'),
         links: allLinks,
     }, // _ts('pageTitle', 'editAry');
+
     editLeadGroupAssessment: {
         order: 51,
         type: ROUTE.private,
@@ -286,6 +299,15 @@ export const routes = {
         loader: () => import('../views/Visualization'),
         links: allLinks,
     }, // _ts('pageTitle', 'visualization');
+
+    questionnaireBuilder: {
+        order: 180,
+        type: ROUTE.private,
+        path: '/questionnaire-builder/:questionnaireId?/',
+        loader: () => import('../views/QuestionnaireBuilder'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'questionnaireBuilder');
+
 
     projectDenied: {
         order: 970,

@@ -100,7 +100,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         const activeFrameworkId = activeFrameworkIdFromState || usedFrameworkId;
 
         return (
-            <div className={_cs(className, styles.projectAnalysisFramework)}>
+            <div className={_cs(className, styles.projectFramework)}>
                 <FrameworkList
                     className={styles.frameworkList}
 

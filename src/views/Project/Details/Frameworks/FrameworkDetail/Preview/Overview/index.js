@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FaramGroup } from '@togglecorp/faram';
+import Faram, { FaramGroup } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import GridViewLayout from '#rscv/GridViewLayout';
 import {
@@ -26,6 +27,7 @@ const widgetLayoutSelector = (widget) => {
 };
 
 const widgetKeySelector = widget => widget.key;
+const emptyObject = {};
 
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
@@ -92,6 +94,7 @@ export default class Overview extends React.PureComponent {
     render() {
         const {
             framework: { widgets },
+            className,
         } = this.props;
 
         const filteredWidgets = widgets.filter(
@@ -103,7 +106,13 @@ export default class Overview extends React.PureComponent {
         );
 
         return (
-            <div className={styles.overview}>
+            <Faram
+                className={_cs(className, styles.faram)}
+                readOnly
+                schema={emptyObject}
+                value={emptyObject}
+                error={emptyObject}
+            >
                 <GridViewLayout
                     data={filteredWidgets}
                     itemClassName={styles.widget}
@@ -112,7 +121,7 @@ export default class Overview extends React.PureComponent {
                     keySelector={widgetKeySelector}
                     layoutSelector={widgetLayoutSelector}
                 />
-            </div>
+            </Faram>
         );
     }
 }

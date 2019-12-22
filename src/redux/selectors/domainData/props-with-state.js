@@ -7,6 +7,7 @@ import {
     countryIdFromRoute,
     projectIdFromRoute,
 
+    questionnaireIdFromRoute,
     afIdFromRoute,
     ceIdFromRoute,
     wordCategoryIdFromRoute,
@@ -20,6 +21,7 @@ import {
     regionsForAllProjectsSelector,
     projectsOptionsSelector,
     analysisFrameworksSelector,
+    questionnairesSelector,
     adminLevelsSelector,
     groupsSelector,
     usersSelector,
@@ -360,6 +362,15 @@ export const assessmentMaxFinalScoreSelector = createSelector(
     buckets => Math.max(...buckets.map(s => s[2])),
 );
 
+// NOTE: this should be the naming convention
+export const questionnaireSelector = createSelector(
+    questionnairesSelector,
+    questionnaireIdFromRoute,
+    (questionnaires, questionnaireId) => (
+        questionnaires[questionnaireId] || emptyObject
+    ),
+);
+
 // afIdFromRoute
 export const analysisFrameworkDetailSelector = createSelector(
     analysisFrameworksSelector,
@@ -368,6 +379,7 @@ export const analysisFrameworkDetailSelector = createSelector(
         analysisFrameworks[afId] || emptyObject
     ),
 );
+
 
 // ceIdFromRoute
 export const categoryEditorDetailSelector = createSelector(

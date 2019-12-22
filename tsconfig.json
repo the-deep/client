@@ -46,7 +46,9 @@
         "#views/*": ["./src/views/*"],
         "#widgetComponents/*": ["./src/widgetComponents/*"],
         "#widgets": ["./src/widgets"],
-        "#widgets/*": ["./src/widgets/*"]
+        "#widgets/*": ["./src/widgets/*"],
+        "#typings": ["./src/typings"],
+        "#typings/*": ["./src/typings/*"]
     }
   },
   "include": [

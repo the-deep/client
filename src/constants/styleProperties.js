@@ -50,6 +50,8 @@ const styleProperties = {
         widthScrollbar: '6px',
 
         heightMatrixHeader: '20px',
+
+        widthProjectDetailLeftPane: '280px',
     },
 };
 

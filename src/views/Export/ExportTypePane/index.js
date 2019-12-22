@@ -8,6 +8,10 @@ import SegmentInput from '#rsci/SegmentInput';
 import List from '#rscv/List';
 
 import _ts from '#ts';
+import {
+    SECTOR_FIRST,
+    DIMENSION_FIRST,
+} from '#utils/framework';
 
 import wordIcon from '#resources/img/word.svg';
 import excelIcon from '#resources/img/excel.svg';
@@ -41,9 +45,6 @@ const defaultProps = {
 };
 
 
-const SECTOR_FIRST = 'sectorFirst';
-const DIMENSION_FIRST = 'dimensionFirst';
-
 const reportStructureOptions = [
     {
         key: SECTOR_FIRST,
@@ -65,15 +66,6 @@ export default class ExportTypePane extends React.PureComponent {
     static reportVariantLabelSelector = d => d.label;
 
     static reportVariantLabelSelector = d => d.label;
-
-    static mapReportLevelsToNodes = levels => levels.map(level => ({
-        key: level.id,
-        title: level.title,
-        selected: true,
-        draggable: true,
-        nodes: level.sublevels && ExportTypePane.mapReportLevelsToNodes(level.sublevels),
-    }));
-
 
     constructor(props) {
         super(props);

@@ -1,0 +1,18 @@
+.questionnaire-list {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        flex-shrink: 0;
+        background-color: var(--color-foreground);
+
+        .heading {
+            padding: var(--spacing-medium);
+        }
+    }
+
+    .content {
+        flex-grow: 1;
+        overflow: auto;
+    }
+}

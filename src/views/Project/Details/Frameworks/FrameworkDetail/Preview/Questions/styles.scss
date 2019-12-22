@@ -1,0 +1,40 @@
+.questions {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        .heading {
+            flex-grow: 1;
+            padding: var(--spacing-medium);
+        }
+
+        .actions {
+            flex-shrink: 0;
+            padding: 0 var(--spacing-medium);
+        }
+    }
+
+
+    .content {
+        flex-grow: 1;
+    }
+}
+
+.question {
+    display: flex;
+    margin: var(--spacing-small) var(--spacing-medium);
+    background-color: var(--color-foreground);
+    padding: var(--spacing-medium);
+
+    .title {
+        flex-grow: 1;
+    }
+
+    .actions {
+        flex-shrink: 0;
+    }
+}

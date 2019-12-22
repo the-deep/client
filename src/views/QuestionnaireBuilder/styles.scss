@@ -1,0 +1,15 @@
+.questionnaire-builder {
+    >.header {
+        display: flex;
+        align-items: center;
+
+        .back-link {
+            flex-shrink: 0;
+        }
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 var(--spacing-medium);
+        }
+    }
+}

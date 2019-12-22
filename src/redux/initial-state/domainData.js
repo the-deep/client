@@ -36,6 +36,32 @@ const initialDomainDataState = {
         */
     },
 
+    // index is questionnaire id
+    questionnaires: {
+        1: {
+            id: 1,
+            title: 'Venezuela HH Survey 2019 #1',
+            numberOfQuestions: 32,
+            dateCreated: '2019-02-22',
+            crisisType: 'conflict',
+            dataCollectionTechnique: 'direct',
+            requiredDuration: 35,
+            enumeratorSkill: 'basic',
+            frameworkId: 495,
+        },
+        2: {
+            id: 2,
+            title: 'Venezuela HH Survey 2019 #2',
+            numberOfQuestions: 24,
+            dateCreated: '2019-01-12',
+            crisisType: 'flood',
+            dataCollectionTechnique: 'direct',
+            requiredDuration: 42,
+            enumeratorSkill: 'medium',
+            frameworkId: 495,
+        },
+    },
+
     analysisFrameworks: {
         /*
         1: {

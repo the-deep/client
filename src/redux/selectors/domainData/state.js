@@ -59,6 +59,10 @@ export const analysisFrameworksSelector = ({ domainData }) => (
     domainData.analysisFrameworks || emptyObject
 );
 
+export const questionnairesSelector = ({ domainData }) => (
+    domainData.questionnaires || emptyObject
+);
+
 export const adminLevelsSelector = ({ domainData }) => (
     domainData.adminLevels || emptyObject
 );
@@ -99,6 +103,15 @@ export const regionsListSelector = createSelector(
     regions => (
         (regions && Object.values(regions).filter(
             region => region && region.public,
+        )) || emptyList
+    ),
+);
+
+export const questionnaireListSelector = createSelector(
+    questionnairesSelector,
+    questionnaires => (
+        (questionnaires && Object.values(questionnaires).filter(
+            questionnaire => questionnaire,
         )) || emptyList
     ),
 );

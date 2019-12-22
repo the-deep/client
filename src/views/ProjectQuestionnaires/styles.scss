@@ -1,0 +1,76 @@
+.project-questionnaires {
+    >.header {
+        display: flex;
+        align-items: center;
+
+        .back-link {
+            flex-shrink: 0;
+        }
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 var(--spacing-medium);
+        }
+    }
+
+    .sidebar {
+        .project-details {
+            padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+
+            .heading {
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+
+            .content {
+                .project-name {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                    font-weight: var(--font-weight-bold);
+                }
+
+                .framework-name {
+                    padding: var(--spacing-small) 0;
+
+                    .label {
+                        padding: 0 var(--spacing-medium);
+                        text-transform: uppercase;
+                        color: var(--color-text-label);
+                        font-size: var(--font-size-small);
+                    }
+
+                    .value {
+                        padding: 0 var(--spacing-medium);
+                    }
+                }
+            }
+        }
+
+
+        .questionnaires {
+            padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+
+            .heading {
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+
+            .content {
+                .tab {
+                    display: flex;
+                    text-transform: none;
+
+                    .label {
+                        flex-grow: 1;
+                    }
+
+                    .count {
+                        flex-shrink: 0;
+                    }
+                }
+            }
+        }
+
+
+        .actions {
+            padding: var(--spacing-medium);
+        }
+    }
+}

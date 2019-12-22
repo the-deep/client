@@ -481,7 +481,7 @@
         "1211": "Open google chooser",
         "1214": "Map not available",
         "1217": "Anon",
-        "1219": "Select event",
+        "1219": "Select a project",
         "1220": "Admin panel",
         "1221": "Logout",
         "1222": "Locating the required gigapixels to render ...",
@@ -1101,7 +1101,9 @@
         "-4332303": "Select an option (optional)",
         "-66927638": "Entry metadata",
         "-99420745": "Show entry groups",
-        "-96285781": "Structure"
+        "-96285781": "Structure",
+        "-5446515": "Search text widget",
+        "-39116082": "Questions"
     },
     "links": {
         "browserExtension": {
@@ -2046,7 +2048,8 @@
             "frameworkVisibilityInputLabel": 1120,
             "editFrameworkModalTitle": -59086768,
             "editWidgetsButtonTitle": -49370702,
-            "frameworkUseNotifyTitle": -17456167
+            "frameworkUseNotifyTitle": -17456167,
+            "entryQuestionTitle": -39116082
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,

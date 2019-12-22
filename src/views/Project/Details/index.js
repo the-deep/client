@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+import {
+    _cs,
+    reverseRoute,
+} from '@togglecorp/fujs';
 
 import notify from '#notify';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -17,6 +22,8 @@ import {
     unsetProjectDetailsAction,
     currentUserProjectsSelector,
 } from '#redux';
+import { pathNames } from '#constants';
+import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
 import _ts from '#ts';
 
@@ -218,6 +225,10 @@ export default class ProjectDetails extends React.PureComponent {
         };
     }
 
+    getProjectQuestionnaireLink = memoize(projectId => (
+        reverseRoute(pathNames.projectQuestionnaires, { projectId })
+    ))
+
     handleProjectDelete = () => {
         const {
             requests: {
@@ -231,36 +242,38 @@ export default class ProjectDetails extends React.PureComponent {
 
     render() {
         const {
-            className: classNameFromProps,
+            projectId,
+            className,
             requests: {
                 projectDeleteRequest,
             },
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.projectDetails}
-        `;
-
-        if (projectDeleteRequest.pending) {
-            return <LoadingAnimation className={className} />;
-        }
-
         return (
-            <div className={className}>
-                <ScrollTabs
-                    className={styles.tabs}
-                    defaultHash={this.defaultHash}
-                    replaceHistory
-                    useHash
-                    tabs={this.routes}
-                />
-                <MultiViewContainer
-                    useHash
-                    activeClassName={styles.active}
-                    containerClassName={styles.content}
-                    views={this.views}
-                />
+            <div className={_cs(className, styles.projectDetails)}>
+                {projectDeleteRequest.pending ? (
+                    <LoadingAnimation />
+                ) : (
+                    <>
+                        <ScrollTabs
+                            className={styles.tabs}
+                            defaultHash={this.defaultHash}
+                            replaceHistory
+                            useHash
+                            tabs={this.routes}
+                        >
+                            <ButtonLikeLink to={this.getProjectQuestionnaireLink(projectId)}>
+                                Manage questionares
+                            </ButtonLikeLink>
+                        </ScrollTabs>
+                        <MultiViewContainer
+                            useHash
+                            activeClassName={styles.active}
+                            containerClassName={styles.content}
+                            views={this.views}
+                        />
+                    </>
+                )}
             </div>
         );
     }
