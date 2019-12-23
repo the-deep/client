@@ -6,6 +6,7 @@ import {
     listToMap,
     mapToList,
     isDefined,
+    isObject,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -74,7 +75,6 @@ export default class GeoInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            modalValue: undefined,
             showModal: false,
         };
     }
@@ -98,6 +98,14 @@ export default class GeoInput extends React.PureComponent {
         );
         return geoOptionsMapping;
     })
+
+    getSelections = memoize(value => (
+        value.filter(v => !isObject(v))
+    ))
+
+    getPolygons = memoize(value => (
+        value.filter(isObject)
+    ))
 
     // SELECTOR
 
@@ -130,33 +138,24 @@ export default class GeoInput extends React.PureComponent {
     // MODAL
 
     handleModalShow = () => {
-        const { value } = this.props;
-        this.setState({
-            modalValue: value,
-            showModal: true,
-        });
+        this.setState({ showModal: true });
     }
 
-    handleModalApply = (newValue) => {
+    handleModalCancel = () => {
+        this.setState({ showModal: false });
+    }
+
+    handleModalApply = (selections, polygons) => {
         this.setState(
-            {
-                modalValue: undefined,
-                showModal: false,
-            },
+            { showModal: false },
             () => {
                 const { onChange } = this.props;
+                const newValue = [...selections, ...polygons];
                 if (onChange) {
                     onChange(newValue);
                 }
             },
         );
-    }
-
-    handleModalCancel = () => {
-        this.setState({
-            modalValue: undefined,
-            showModal: false,
-        });
     }
 
     render() {
@@ -181,7 +180,6 @@ export default class GeoInput extends React.PureComponent {
         } = this.props;
         const {
             showModal,
-            modalValue,
         } = this.state;
 
         const className = _cs(
@@ -190,6 +188,8 @@ export default class GeoInput extends React.PureComponent {
             'geoListInput',
         );
 
+        const selections = this.getSelections(value);
+        const polygons = this.getPolygons(value);
         const options = this.getAllGeoOptions(geoOptionsByRegion);
 
         return (
@@ -201,7 +201,7 @@ export default class GeoInput extends React.PureComponent {
                     />
                 }
                 <MultiSelectInputWithList
-                    value={value}
+                    value={selections}
                     showLabel={false}
                     onChange={this.handleSelectChange}
                     className={styles.selectInput}
@@ -245,8 +245,9 @@ export default class GeoInput extends React.PureComponent {
                         regions={regions}
                         geoOptionsByRegion={geoOptionsByRegion}
                         geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
-                        value={modalValue}
-                        // onChange={this.handleModalValueChange}
+                        // NOTE: this value is only set on mount
+                        selections={selections}
+                        polygons={polygons}
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
                         modalLeftComponent={modalLeftComponent}
