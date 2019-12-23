@@ -74,21 +74,9 @@ export default class GeoInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            modalValue: props.value,
+            modalValue: undefined,
             showModal: false,
         };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { value: oldValue } = this.props;
-        const { value: newValue } = nextProps;
-
-        // Override value of modal if value changed externally
-        if (oldValue !== newValue) {
-            this.setState({
-                modalValue: newValue,
-            });
-        }
     }
 
     getAllGeoOptions = memoize((geoOptionsByRegion) => {
@@ -111,46 +99,7 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsMapping;
     })
 
-    // MODAL
-
-    handleModalCancel = () => {
-        const { value: modalValue } = this.props;
-
-        this.setState({
-            showModal: false,
-            modalValue,
-        });
-    }
-
-    handleModalApply = () => {
-        const { onChange } = this.props;
-        const { modalValue } = this.state;
-        this.setState(
-            { showModal: false },
-            () => {
-                if (onChange) {
-                    onChange(modalValue);
-                }
-            },
-        );
-    }
-
-    handleModalValueChange = (modalValue) => {
-        this.setState({ modalValue });
-    }
-
-    handleShowModal = () => {
-        this.setState({ showModal: true });
-    }
-
     // SELECTOR
-
-    handleSelectChange = (newValues) => {
-        const { onChange } = this.props;
-        if (onChange) {
-            onChange(newValues);
-        }
-    }
 
     keySelector = v => v.key;
 
@@ -169,6 +118,45 @@ export default class GeoInput extends React.PureComponent {
         return regions.length > 0
             ? `${option.regionTitle} / ${option.label}`
             : option.label;
+    }
+
+    handleSelectChange = (newValues) => {
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(newValues);
+        }
+    }
+
+    // MODAL
+
+    handleModalShow = () => {
+        const { value } = this.props;
+        this.setState({
+            modalValue: value,
+            showModal: true,
+        });
+    }
+
+    handleModalApply = (newValue) => {
+        this.setState(
+            {
+                modalValue: undefined,
+                showModal: false,
+            },
+            () => {
+                const { onChange } = this.props;
+                if (onChange) {
+                    onChange(newValue);
+                }
+            },
+        );
+    }
+
+    handleModalCancel = () => {
+        this.setState({
+            modalValue: undefined,
+            showModal: false,
+        });
     }
 
     render() {
@@ -235,7 +223,7 @@ export default class GeoInput extends React.PureComponent {
                         <AccentButton
                             className={styles.action}
                             iconName="globe"
-                            onClick={this.handleShowModal}
+                            onClick={this.handleModalShow}
                             disabled={disabled || readOnly}
                             transparent
                             // FIXME: use strings
@@ -245,6 +233,12 @@ export default class GeoInput extends React.PureComponent {
                         </AccentButton>
                     )}
                 />
+                <HintAndError
+                    show={showHintAndError}
+                    hint={hint}
+                    error={error}
+                    persistent={persistentHintAndError}
+                />
                 {showModal && (
                     <GeoModal
                         title={label}
@@ -252,18 +246,12 @@ export default class GeoInput extends React.PureComponent {
                         geoOptionsByRegion={geoOptionsByRegion}
                         geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
                         value={modalValue}
-                        onChange={this.handleModalValueChange}
+                        // onChange={this.handleModalValueChange}
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
                         modalLeftComponent={modalLeftComponent}
                     />
                 )}
-                <HintAndError
-                    show={showHintAndError}
-                    hint={hint}
-                    error={error}
-                    persistent={persistentHintAndError}
-                />
             </div>
         );
     }
