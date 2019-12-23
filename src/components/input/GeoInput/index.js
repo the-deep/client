@@ -6,6 +6,7 @@ import {
     listToMap,
     mapToList,
     isDefined,
+    isObject,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -74,21 +75,8 @@ export default class GeoInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            modalValue: props.value,
             showModal: false,
         };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { value: oldValue } = this.props;
-        const { value: newValue } = nextProps;
-
-        // Override value of modal if value changed externally
-        if (oldValue !== newValue) {
-            this.setState({
-                modalValue: newValue,
-            });
-        }
     }
 
     getAllGeoOptions = memoize((geoOptionsByRegion) => {
@@ -111,46 +99,15 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsMapping;
     })
 
-    // MODAL
+    getSelections = memoize(value => (
+        value.filter(v => !isObject(v))
+    ))
 
-    handleModalCancel = () => {
-        const { value: modalValue } = this.props;
-
-        this.setState({
-            showModal: false,
-            modalValue,
-        });
-    }
-
-    handleModalApply = () => {
-        const { onChange } = this.props;
-        const { modalValue } = this.state;
-        this.setState(
-            { showModal: false },
-            () => {
-                if (onChange) {
-                    onChange(modalValue);
-                }
-            },
-        );
-    }
-
-    handleModalValueChange = (modalValue) => {
-        this.setState({ modalValue });
-    }
-
-    handleShowModal = () => {
-        this.setState({ showModal: true });
-    }
+    getPolygons = memoize(value => (
+        value.filter(isObject)
+    ))
 
     // SELECTOR
-
-    handleSelectChange = (newValues) => {
-        const { onChange } = this.props;
-        if (onChange) {
-            onChange(newValues);
-        }
-    }
 
     keySelector = v => v.key;
 
@@ -169,6 +126,36 @@ export default class GeoInput extends React.PureComponent {
         return regions.length > 0
             ? `${option.regionTitle} / ${option.label}`
             : option.label;
+    }
+
+    handleSelectChange = (newValues) => {
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(newValues);
+        }
+    }
+
+    // MODAL
+
+    handleModalShow = () => {
+        this.setState({ showModal: true });
+    }
+
+    handleModalCancel = () => {
+        this.setState({ showModal: false });
+    }
+
+    handleModalApply = (selections, polygons) => {
+        this.setState(
+            { showModal: false },
+            () => {
+                const { onChange } = this.props;
+                const newValue = [...selections, ...polygons];
+                if (onChange) {
+                    onChange(newValue);
+                }
+            },
+        );
     }
 
     render() {
@@ -193,7 +180,6 @@ export default class GeoInput extends React.PureComponent {
         } = this.props;
         const {
             showModal,
-            modalValue,
         } = this.state;
 
         const className = _cs(
@@ -202,6 +188,8 @@ export default class GeoInput extends React.PureComponent {
             'geoListInput',
         );
 
+        const selections = this.getSelections(value);
+        const polygons = this.getPolygons(value);
         const options = this.getAllGeoOptions(geoOptionsByRegion);
 
         return (
@@ -213,7 +201,7 @@ export default class GeoInput extends React.PureComponent {
                     />
                 }
                 <MultiSelectInputWithList
-                    value={value}
+                    value={selections}
                     showLabel={false}
                     onChange={this.handleSelectChange}
                     className={styles.selectInput}
@@ -235,7 +223,7 @@ export default class GeoInput extends React.PureComponent {
                         <AccentButton
                             className={styles.action}
                             iconName="globe"
-                            onClick={this.handleShowModal}
+                            onClick={this.handleModalShow}
                             disabled={disabled || readOnly}
                             transparent
                             // FIXME: use strings
@@ -245,25 +233,26 @@ export default class GeoInput extends React.PureComponent {
                         </AccentButton>
                     )}
                 />
-                {showModal && (
-                    <GeoModal
-                        title={label}
-                        regions={regions}
-                        geoOptionsByRegion={geoOptionsByRegion}
-                        geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
-                        value={modalValue}
-                        onChange={this.handleModalValueChange}
-                        onApply={this.handleModalApply}
-                        onCancel={this.handleModalCancel}
-                        modalLeftComponent={modalLeftComponent}
-                    />
-                )}
                 <HintAndError
                     show={showHintAndError}
                     hint={hint}
                     error={error}
                     persistent={persistentHintAndError}
                 />
+                {showModal && (
+                    <GeoModal
+                        title={label}
+                        regions={regions}
+                        geoOptionsByRegion={geoOptionsByRegion}
+                        geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+                        // NOTE: this value is only set on mount
+                        selections={selections}
+                        polygons={polygons}
+                        onApply={this.handleModalApply}
+                        onCancel={this.handleModalCancel}
+                        modalLeftComponent={modalLeftComponent}
+                    />
+                )}
             </div>
         );
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
+import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -28,6 +29,38 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const mapOptions = {
+    zoom: 2,
+    center: [50, 10],
+};
+
+const sourceOptions = {
+    type: 'geojson',
+};
+
+const fillLayerOptions = {
+    type: 'fill',
+    paint: {
+        'fill-opacity': ['case',
+            ['boolean', ['feature-state', 'hovered'], false],
+            0.7,
+            0.5,
+        ],
+        'fill-color': ['case',
+            ['boolean', ['feature-state', 'selected'], false],
+            '#6e599f',
+            '#088',
+        ],
+    },
+};
+
+const tooltipOptions = {
+    closeOnClick: false,
+    closeButton: false,
+    offset: 8,
+};
+
+
 const propTypes = {
     className: PropTypes.string,
     regionId: PropTypes.number,
@@ -46,9 +79,9 @@ export default class RegionMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static adminLevelKeySelector = d => d.value;
+    static adminLevelKeySelector = d => String(d.id);
 
-    static adminLevelLabelSelector = d => d.label;
+    static adminLevelLabelSelector = d => d.title;
 
     static isStale = adminLevels => (
         adminLevels.reduce(
@@ -83,8 +116,6 @@ export default class RegionMap extends React.PureComponent {
 
         // TODO: support points
         // TODO: support element id from server
-        // TODO: look at problem with cloned geo-json
-        // TODO: clone re-map
     }
 
     componentDidMount() {
@@ -103,6 +134,31 @@ export default class RegionMap extends React.PureComponent {
     componentWillUnmount() {
         this.destroy();
     }
+
+    getSelectedAdminLevel = memoize((adminLevels, selectedAdminLevelId) => (
+        adminLevels.find(l => String(l.id) === selectedAdminLevelId)
+    ))
+
+    getLineLayerOptions = memoize(thickness => ({
+        type: 'line',
+        paint: {
+            'line-color': '#fff',
+            'line-width': thickness,
+        },
+    }))
+
+    getValidBounds = memoize(geoJsonBounds => (
+        geoJsonBounds
+            ? [...geoJsonBounds[0], ...geoJsonBounds[1]]
+            : undefined
+    ))
+
+    getSelectedState = memoize(selections => (
+        selections.map(id => ({
+            id: +id,
+            value: true,
+        }))
+    ))
 
     // NOTE: initialize state for a region
     init = (initialPending = true) => {
@@ -456,19 +512,6 @@ export default class RegionMap extends React.PureComponent {
             );
         }
 
-        // FIXME: memoize this
-        const segmentButtonOptions = adminLevels.map(al => ({
-            label: al.title,
-            value: `${al.id}`,
-        }));
-
-        // FIXME: memoize this
-        const adminLevel = adminLevels.find(
-            l => String(l.id) === selectedAdminLevelId,
-        );
-
-        const thickness = 1 + (3 * ((adminLevels.length - adminLevel.level) / adminLevels.length));
-
         const {
             geoJsons: {
                 [selectedAdminLevelId]: myGeoJson,
@@ -483,54 +526,13 @@ export default class RegionMap extends React.PureComponent {
             hoverTitle,
         } = this.state;
 
-        // FIXME: memoize this
-        const attributes = selections.map(id => ({
-            id: +id,
-            value: true,
-        }));
+        const adminLevel = this.getSelectedAdminLevel(adminLevels, selectedAdminLevelId);
+        const thickness = 1 + (3 * ((adminLevels.length - adminLevel.level) / adminLevels.length));
+        const lineLayerOptions = this.getLineLayerOptions(thickness);
 
-        const bounds = myGeoJsonBounds
-            ? [...myGeoJsonBounds[0], ...myGeoJsonBounds[1]]
-            : undefined;
+        const attributes = this.getSelectedState(selections);
 
-        const mapOptions = {
-            zoom: 2,
-            center: [50, 10],
-        };
-
-        const sourceOptions = {
-            type: 'geojson',
-        };
-
-        const fillLayerOptions = {
-            type: 'fill',
-            paint: {
-                'fill-opacity': ['case',
-                    ['boolean', ['feature-state', 'hovered'], false],
-                    0.7,
-                    0.5,
-                ],
-                'fill-color': ['case',
-                    ['boolean', ['feature-state', 'selected'], false],
-                    '#6e599f',
-                    '#088',
-                ],
-            },
-        };
-
-        const lineLayerOptions = {
-            type: 'line',
-            paint: {
-                'line-color': '#fff',
-                'line-width': thickness,
-            },
-        };
-
-        const tooltipOptions = {
-            closeOnClick: false,
-            closeButton: false,
-            offset: 8,
-        };
+        const bounds = this.getValidBounds(myGeoJsonBounds);
 
         return (
             <div className={className}>
@@ -544,7 +546,7 @@ export default class RegionMap extends React.PureComponent {
                     <SegmentInput
                         className={styles.bottomContainer}
                         name="admin-levels"
-                        options={segmentButtonOptions}
+                        options={adminLevels}
                         value={selectedAdminLevelId}
                         onChange={this.handleAdminLevelSelection}
                         keySelector={RegionMap.adminLevelKeySelector}

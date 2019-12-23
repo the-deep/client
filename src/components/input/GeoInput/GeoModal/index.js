@@ -3,7 +3,6 @@ import React from 'react';
 import memoize from 'memoize-one';
 import {
     listToMap,
-    listToGroupList,
     unique,
 } from '@togglecorp/fujs';
 
@@ -25,17 +24,15 @@ import _cs from '#cs';
 import RegionMap from '#components/geo/RegionMap';
 import styles from './styles.scss';
 
-const EmptyComponent = () => '';
-
 const MAX_DISPLAY_OPTIONS = 100;
 
 const propTypes = {
     title: PropTypes.string,
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     geoOptionsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    selections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    onChange: PropTypes.func,
     onApply: PropTypes.func,
     onCancel: PropTypes.func,
     modalLeftComponent: PropTypes.node,
@@ -45,14 +42,12 @@ const defaultProps = {
     title: '',
     geoOptionsByRegion: {},
     geoOptionsById: {},
-    value: [],
-    onChange: undefined,
+    selections: [],
+    polygons: [],
     onApply: undefined,
     onCancel: undefined,
     modalLeftComponent: undefined,
 };
-
-const emptyObject = {};
 
 @FaramInputElement
 export default class GeoModal extends React.PureComponent {
@@ -73,44 +68,34 @@ export default class GeoModal extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        // Set default selectedRegion to the first region
-        const { regions } = props;
-        const selectedRegion = regions.length > 0 ? regions[0].id : undefined;
+        const {
+            regions,
+            selections,
+            polygons,
+        } = props;
 
-        // Calculate state from initial value
+        // NOTE: Set default selectedRegion to the first region
+        const selectedRegion = regions.length > 0
+            ? regions[0].id
+            : undefined;
+
         this.state = {
-            ...this.calcValueState(props, selectedRegion),
+            selections,
+            polygons,
             selectedRegion,
             selectedAdminLevel: [],
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (
-            this.props.value !== nextProps.value ||
-            this.props.geoOptionsByRegion !== nextProps.geoOptionsByRegion
-        ) {
-            this.setState(this.calcValueState(nextProps, this.state.selectedRegion));
-        }
-    }
-
-    getAdminLevels = memoize((geoOptionsByRegion, selectedRegion) => {
-        if (!geoOptionsByRegion[selectedRegion]) {
-            return {};
-        }
-        const adminLevelsById = listToGroupList(
-            geoOptionsByRegion[selectedRegion],
-            geoOption => geoOption.adminLevel,
-        );
-        return adminLevelsById;
-    })
-
+    // NOTE: Iterate over geoOptions for selectedRegion and get unique admin levels
     getAdminLevelTitles = memoize((geoOptionsByRegion, selectedRegion) => {
-        if (!geoOptionsByRegion[selectedRegion]) {
+        const geoOptions = geoOptionsByRegion[selectedRegion];
+        if (!geoOptions) {
             return [];
         }
+
         const adminLevelTitles = unique(
-            geoOptionsByRegion[selectedRegion],
+            geoOptions,
             geoOption => geoOption.adminLevel,
         ).map(geoOption => ({
             key: geoOption.adminLevel,
@@ -119,49 +104,127 @@ export default class GeoModal extends React.PureComponent {
         return adminLevelTitles;
     })
 
+    // NOTE: get geoOptions for current region and currently selected admin levels
     getOptionsForSelectedAdminLevels = memoize((
         geoOptionsByRegion,
         selectedRegion,
         selectedAdminLevel,
     ) => {
-        const selectedRegionAdminLevels = this.getAdminLevels(geoOptionsByRegion, selectedRegion);
-        let optionsForSelectedAdminLevels = [];
-        if (selectedAdminLevel.length > 0) {
-            selectedAdminLevel.forEach((adminLevel) => {
-                optionsForSelectedAdminLevels = optionsForSelectedAdminLevels
-                    .concat(...selectedRegionAdminLevels[adminLevel]);
-            });
-        } else {
-            optionsForSelectedAdminLevels = geoOptionsByRegion[selectedRegion];
+        const geoOptions = geoOptionsByRegion[selectedRegion];
+        if (!geoOptions) {
+            return [];
         }
-        const optionMap = listToMap(optionsForSelectedAdminLevels, d => d.key);
-        return {
-            optionsForSelectedAdminLevels,
-            optionsForSelectedAdminLevelsMap: optionMap,
-        };
-    });
+        if (selectedAdminLevel.length <= 0) {
+            return geoOptions;
+        }
 
-    getFilteredOutValues = (value, options) => (
-        value.filter(o => !options[o])
-    )
+        const adminLevelMapping = listToMap(
+            selectedAdminLevel,
+            al => al,
+            () => true,
+        );
 
-    getFilteredValues = (value, options) => (
-        value.filter(o => !!options[o])
-    )
+        return geoOptions.filter(
+            geoOption => adminLevelMapping[geoOption.adminLevel],
+        );
+    })
 
-    calcValueState = ({ value: originalValue, geoOptionsById }, selectedRegion) => {
-        const value = originalValue.filter(v => (
-            geoOptionsById[v] &&
-            geoOptionsById[v].region === selectedRegion
-        ));
+    getSelectionsForSelectedRegion = memoize((
+        geoOptionsById,
+        selectedRegion,
+        selections,
+    ) => (
+        selections.filter(v => (geoOptionsById[v] && geoOptionsById[v].region === selectedRegion))
+    ))
 
-        const valueMap = value.map(v => geoOptionsById[v]);
+    getSelectionsForSelectedAdminLevels = memoize((
+        optionsForSelectedAdminLevelsMap,
+        selectionsForSelectedRegion,
+    ) => (
+        selectionsForSelectedRegion.filter(v => !!optionsForSelectedAdminLevelsMap[v])
+    ))
 
-        return {
-            value,
+    // NOTE: get list of options that are selected
+    getMappedSelectionsForSelectedRegion = memoize((
+        geoOptionsById,
+        selectionsForSelectedRegion,
+    ) => (
+        selectionsForSelectedRegion.map(v => geoOptionsById[v])
+    ))
+
+    // State
+
+    handleRegionChange = (selectedRegion) => {
+        this.setState({
             selectedRegion,
-            valueMap,
-        };
+            selectedAdminLevel: [],
+        });
+    }
+
+    handleAdminLevelChange = (selectedAdminLevel) => {
+        this.setState({ selectedAdminLevel });
+    }
+
+    handleSelectionsChangeForAdminLevels = (selectionsForSelectedAdminLevels) => {
+        const {
+            geoOptionsById,
+            geoOptionsByRegion,
+        } = this.props;
+
+        const {
+            selections,
+            selectedRegion,
+            selectedAdminLevel,
+        } = this.state;
+
+        const selectionsForSelectedRegion = this.getSelectionsForSelectedRegion(
+            geoOptionsById,
+            selectedRegion,
+            selections,
+        );
+
+        const optionsForSelectedAdminLevels = this.getOptionsForSelectedAdminLevels(
+            geoOptionsByRegion,
+            selectedRegion,
+            selectedAdminLevel,
+        );
+
+        const optionsForSelectedAdminLevelsMap = listToMap(
+            optionsForSelectedAdminLevels,
+            item => item.key,
+            item => item,
+        );
+
+        const selectionsExceptForSelectedAdminLevels = selectionsForSelectedRegion.filter(
+            v => !optionsForSelectedAdminLevelsMap[v],
+        );
+
+        this.handleSelectionsChangeForRegion([
+            ...selectionsForSelectedAdminLevels,
+            ...selectionsExceptForSelectedAdminLevels,
+        ]);
+    }
+
+    handleSelectionsChangeForRegion = (selectionsForSelectedRegion) => {
+        const { selections, selectedRegion } = this.state;
+        const { geoOptionsById } = this.props;
+
+        const selectionsExceptForSelectedRegion = selections
+            .filter(v => (!geoOptionsById[v] || geoOptionsById[v].region !== selectedRegion));
+
+        this.setState({
+            selections: [
+                ...selectionsExceptForSelectedRegion,
+                ...selectionsForSelectedRegion,
+            ],
+        });
+    }
+
+    handleItemDismiss = (itemKey) => {
+        this.setState(state => ({
+            ...state,
+            selections: state.selections.filter(v => v !== itemKey),
+        }));
     }
 
     handleCancelClick = () => {
@@ -173,84 +236,24 @@ export default class GeoModal extends React.PureComponent {
 
     handleApplyClick = () => {
         const { onApply } = this.props;
+        const { selections, polygons } = this.state;
         if (onApply) {
-            onApply();
+            onApply(selections, polygons);
         }
     }
-
-    handleRegionChange = (selectedRegion) => {
-        this.setState({
-            ...this.calcValueState(this.props, selectedRegion),
-            selectedAdminLevel: [],
-        });
-    }
-
-    handleFilteredRegionValueChange = (regionValue) => {
-        const { geoOptionsByRegion } = this.props;
-
-        const {
-            value,
-            selectedRegion,
-            selectedAdminLevel,
-        } = this.state;
-
-        const { optionsForSelectedAdminLevelsMap } = this.getOptionsForSelectedAdminLevels(
-            geoOptionsByRegion,
-            selectedRegion,
-            selectedAdminLevel,
-        );
-
-        const filteredValues = this.getFilteredOutValues(
-            value,
-            optionsForSelectedAdminLevelsMap,
-        );
-
-        this.handleRegionValueChange([
-            ...regionValue,
-            ...filteredValues,
-        ]);
-    }
-
-    handleRegionValueChange = (regionValue) => {
-        const { onChange, value, geoOptionsById } = this.props;
-        if (!onChange) {
-            return;
-        }
-        const { selectedRegion } = this.state;
-        const newValue = [
-            ...value.filter(v => (
-                (geoOptionsById[v] || emptyObject).region !== selectedRegion
-            )),
-            ...regionValue,
-        ];
-        onChange(newValue);
-    }
-
-    handleAdminLevelChange = (selectedAdminLevel) => {
-        this.setState({ selectedAdminLevel });
-    }
-
-    handleGroupValueChange = (itemKey) => {
-        const { value } = this.state;
-        const { onChange } = this.props;
-
-        const newValue = value.filter(v => v !== itemKey);
-        onChange(newValue);
-    }
-
-    geoValueLabelSelector = v => GeoModal.geoOptionLabelSelector(this.props.geoOptionsById[v]);
-    geoValueKeySelector = v => v;
 
     groupRendererParams = (groupKey) => {
         const { geoOptionsByRegion } = this.props;
-
         const { selectedRegion } = this.state;
+
         const adminLevelTitles = this.getAdminLevelTitles(
             geoOptionsByRegion,
             selectedRegion,
         );
 
-        const adminLevel = adminLevelTitles.find(a => String(a.key) === String(groupKey));
+        const adminLevel = adminLevelTitles.find(
+            a => String(a.key) === String(groupKey),
+        );
 
         return {
             children: adminLevel ? adminLevel.title : '',
@@ -260,7 +263,7 @@ export default class GeoModal extends React.PureComponent {
     listRendererParams = (key, geoOption) => ({
         className: styles.item,
         itemKey: key,
-        onDismiss: this.handleGroupValueChange,
+        onDismiss: this.handleItemDismiss,
         value: geoOption.title,
     })
 
@@ -270,13 +273,13 @@ export default class GeoModal extends React.PureComponent {
             title,
             modalLeftComponent,
             geoOptionsByRegion,
+            geoOptionsById,
         } = this.props;
 
         const {
-            value,
-            valueMap,
             selectedRegion,
             selectedAdminLevel,
+            selections,
         } = this.state;
 
         const adminLevelTitles = this.getAdminLevelTitles(
@@ -284,39 +287,48 @@ export default class GeoModal extends React.PureComponent {
             selectedRegion,
         );
 
-        const {
-            optionsForSelectedAdminLevels,
-            optionsForSelectedAdminLevelsMap,
-        } = this.getOptionsForSelectedAdminLevels(
+        const optionsForSelectedAdminLevels = this.getOptionsForSelectedAdminLevels(
             geoOptionsByRegion,
             selectedRegion,
             selectedAdminLevel,
         );
 
-        const filteredValues = this.getFilteredValues(
-            value,
+        const optionsForSelectedAdminLevelsMap = listToMap(
+            optionsForSelectedAdminLevels,
+            item => item.key,
+            item => item,
+        );
+
+        const selectionsForSelectedRegion = this.getSelectionsForSelectedRegion(
+            geoOptionsById,
+            selectedRegion,
+            selections,
+        );
+
+        const selectionsForSelectedAdminLevels = this.getSelectionsForSelectedAdminLevels(
             optionsForSelectedAdminLevelsMap,
+            selectionsForSelectedRegion,
         );
 
-        const geoModalClassName = _cs(
-            styles.geoModal,
-            modalLeftComponent && styles.hasLeft,
-        );
-
-        const mapClassName = _cs(
-            styles.map,
-            modalLeftComponent && styles.hasLeft,
+        const mappedSelectionsForSelectedRegion = this.getMappedSelectionsForSelectedRegion(
+            geoOptionsById,
+            selectionsForSelectedRegion,
         );
 
         return (
-            <Modal className={geoModalClassName}>
+            <Modal
+                className={_cs(
+                    styles.geoModal,
+                    modalLeftComponent && styles.hasLeft,
+                )}
+            >
                 <ModalHeader title={title} />
                 <ModalBody className={styles.body}>
-                    {modalLeftComponent &&
+                    {modalLeftComponent && (
                         <div className={styles.left}>
                             {modalLeftComponent}
                         </div>
-                    }
+                    )}
                     <div className={styles.mapWrapper}>
                         <div className={styles.selectInputs}>
                             <SelectInput
@@ -341,14 +353,15 @@ export default class GeoModal extends React.PureComponent {
                                     value={selectedAdminLevel}
                                     showHintAndError={false}
                                 />
+
                                 <SearchMultiSelectInput
                                     label={_ts('components.geo.geoModal', 'geoAreasLabel')}
                                     className={styles.selectInput}
                                     options={optionsForSelectedAdminLevels}
                                     labelSelector={GeoModal.geoOptionLongLabelSelector}
                                     keySelector={GeoModal.geoOptionKeySelector}
-                                    onChange={this.handleFilteredRegionValueChange}
-                                    value={filteredValues}
+                                    onChange={this.handleSelectionsChangeForAdminLevels}
+                                    value={selectionsForSelectedAdminLevels}
                                     showHintAndError={false}
                                     placeholder={_ts('components.geo.geoModal', 'geoAreasPlaceholder')}
                                     maxDisplayOptions={MAX_DISPLAY_OPTIONS}
@@ -357,10 +370,13 @@ export default class GeoModal extends React.PureComponent {
                             </div>
                         </div>
                         <RegionMap
-                            className={mapClassName}
+                            className={_cs(
+                                styles.map,
+                                modalLeftComponent && styles.hasLeft,
+                            )}
                             regionId={selectedRegion}
-                            onChange={this.handleRegionValueChange}
-                            selections={value}
+                            onChange={this.handleSelectionsChangeForRegion}
+                            selections={selectionsForSelectedRegion}
                         />
                     </div>
                     <div className={styles.right}>
@@ -368,11 +384,11 @@ export default class GeoModal extends React.PureComponent {
                             {_ts('components.geo.geoModal', 'listHeading')}
                         </h3>
                         <ListView
-                            data={valueMap}
-                            emptyComponent={EmptyComponent}
+                            data={mappedSelectionsForSelectedRegion}
+                            emptyComponent={null}
+                            keySelector={GeoModal.geoOptionKeySelector}
                             renderer={DismissableListItem}
                             rendererParams={this.listRendererParams}
-                            keySelector={GeoModal.geoOptionKeySelector}
                             groupKeySelector={GeoModal.groupKeySelector}
                             groupRendererParams={this.groupRendererParams}
                         />
