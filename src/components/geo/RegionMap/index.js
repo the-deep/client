@@ -41,7 +41,7 @@ const getIdFromPolygon = polygon => (
     getIdFromFeature(polygon.geoJson)
 );
 
-// FIXME: disable shape edit
+// TODO: disable shape edit
 
 const mapOptions = {
     zoom: 2,
@@ -169,7 +169,7 @@ export default class RegionMap extends React.PureComponent {
 
             hoverInfo: undefined,
 
-            // FIXME: Editing polygons
+            // FIXME: Editing polygons move this
             editMode: false,
             polygons: props.polygons,
         };
@@ -177,7 +177,7 @@ export default class RegionMap extends React.PureComponent {
         this.geoJsonRequests = undefined; // TODO: use coordinator
         this.hasTriggeredOnce = undefined; // TODO: can be replaced
 
-        // TODO: support point for selections
+        // TODO: support circle along with fill  for selections
         // TODO: support element id from server
     }
 

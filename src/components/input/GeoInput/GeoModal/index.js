@@ -42,6 +42,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    // FIXME: use strings
     title: 'Select geo areas',
     geoOptionsByRegion: {},
     geoOptionsById: {},
@@ -293,6 +294,19 @@ export default class GeoModal extends React.PureComponent {
         }));
     }
 
+    handlePolygonEdit = (localId) => {
+        const { polygons } = this.state;
+        const polygon = polygons.find(p => p.localId === localId);
+        if (!polygon) {
+            console.error('Could not find index for polygon localId', localId);
+            return;
+        }
+        this.setState({
+            selectedPolygonInfo: polygon,
+            showPolygonEditModal: true,
+        });
+    }
+
     handleItemDismiss = (itemKey) => {
         this.setState(state => ({
             ...state,
@@ -327,8 +341,7 @@ export default class GeoModal extends React.PureComponent {
         className: styles.item,
         itemKey: key,
         onDismiss: this.handlePolygonRemove,
-        // FIXME: open modal
-        // onEdit: () => {},
+        onEdit: this.handlePolygonEdit,
         value: polygon.geoJson.properties.title,
         marker: null,
     })
