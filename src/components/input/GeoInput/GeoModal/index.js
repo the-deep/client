@@ -95,6 +95,8 @@ export default class GeoModal extends React.PureComponent {
 
             selectedPolygonInfo: undefined,
             showPolygonEditModal: false,
+
+            editMode: false,
         };
     }
 
@@ -173,6 +175,7 @@ export default class GeoModal extends React.PureComponent {
         this.setState({
             selectedRegion,
             selectedAdminLevel: [],
+            editMode: false,
         });
     }
 
@@ -258,6 +261,19 @@ export default class GeoModal extends React.PureComponent {
         });
     }
 
+    handleEditStart = () => {
+        this.setState({ editMode: true });
+    }
+
+    handleEditCancel = () => {
+        this.setState({ editMode: false });
+    }
+
+    handleEditComplete = (newPolygons) => {
+        this.handlePolygonsChangeForRegion(newPolygons);
+        this.setState({ editMode: false });
+    }
+
     // MODAL
 
     handleModalCancel = () => {
@@ -341,6 +357,7 @@ export default class GeoModal extends React.PureComponent {
         className: styles.item,
         itemKey: key,
         onDismiss: this.handlePolygonRemove,
+        disabled: this.state.editMode,
         onEdit: this.handlePolygonEdit,
         value: polygon.geoJson.properties.title,
         marker: null,
@@ -388,6 +405,8 @@ export default class GeoModal extends React.PureComponent {
 
             selectedPolygonInfo,
             showPolygonEditModal,
+
+            editMode,
         } = this.state;
 
         const adminLevelTitles = this.getAdminLevelTitles(
@@ -496,6 +515,11 @@ export default class GeoModal extends React.PureComponent {
                             onPolygonsChange={this.handlePolygonsChangeForRegion}
 
                             onPolygonClick={this.handlePolygonClick}
+                            onEditStart={this.handleEditStart}
+                            onEditCancel={this.handleEditCancel}
+                            onEditComplete={this.handleEditComplete}
+
+                            editMode={editMode}
                         />
                         {showPolygonEditModal && selectedPolygonInfo && (
                             <PolygonPropertiesModal
