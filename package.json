@@ -112,6 +112,7 @@
         "webpack-pwa-manifest": "^3.8.0"
     },
     "dependencies": {
+        "@mapbox/mapbox-gl-draw": "^1.1.2",
         "@timilsinabishal/react-components": "https://github.com/the-deep/react-components",
         "@togglecorp/faram": "^1.2.1",
         "@togglecorp/fujs": "^1.8.0",

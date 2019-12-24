@@ -39,7 +39,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    title: '',
+    title: 'Select geo areas',
     geoOptionsByRegion: {},
     geoOptionsById: {},
     selections: [],
@@ -57,6 +57,10 @@ export default class GeoModal extends React.PureComponent {
     // Selector for regions
     static regionKeySelector = d => d.id;
     static regionLabelSelector = d => d.title;
+
+    // Selector for polygon
+    static polygonKeySelector = p => p.localId;
+    static polygonGroupKeySelector = p => p.type;
 
     // Selector for geo options
     static geoOptionKeySelector = option => option.key;
@@ -137,6 +141,10 @@ export default class GeoModal extends React.PureComponent {
         selections.filter(v => (geoOptionsById[v] && geoOptionsById[v].region === selectedRegion))
     ))
 
+    getPolygonsForSelectedRegion = memoize((selectedRegion, polygons) => (
+        polygons.filter(polygon => polygon.region === selectedRegion)
+    ))
+
     getSelectionsForSelectedAdminLevels = memoize((
         optionsForSelectedAdminLevelsMap,
         selectionsForSelectedRegion,
@@ -151,8 +159,6 @@ export default class GeoModal extends React.PureComponent {
     ) => (
         selectionsForSelectedRegion.map(v => geoOptionsById[v])
     ))
-
-    // State
 
     handleRegionChange = (selectedRegion) => {
         this.setState({
@@ -220,6 +226,27 @@ export default class GeoModal extends React.PureComponent {
         });
     }
 
+    handlePolygonsChangeForRegion = (polygonsForSelectedRegion) => {
+        const { polygons, selectedRegion } = this.state;
+
+        const polygonsExceptForSelectedRegion = polygons
+            .filter(polygon => polygon.region !== selectedRegion);
+
+        this.setState({
+            polygons: [
+                ...polygonsExceptForSelectedRegion,
+                ...polygonsForSelectedRegion,
+            ],
+        });
+    }
+
+    handlePolygonRemove = (localId) => {
+        this.setState(state => ({
+            ...state,
+            polygons: state.polygons.filter(p => p.localId !== localId),
+        }));
+    }
+
     handleItemDismiss = (itemKey) => {
         this.setState(state => ({
             ...state,
@@ -241,6 +268,20 @@ export default class GeoModal extends React.PureComponent {
             onApply(selections, polygons);
         }
     }
+
+    polygonGroupRendererParams = groupKey => ({
+        children: groupKey,
+    })
+
+    polygonListRendererParams = (key, polygon) => ({
+        className: styles.item,
+        itemKey: key,
+        onDismiss: this.handlePolygonRemove,
+        // FIXME: open modal
+        // onEdit: () => {},
+        value: polygon.geoJson.properties.title,
+        marker: null,
+    })
 
     groupRendererParams = (groupKey) => {
         const { geoOptionsByRegion } = this.props;
@@ -280,6 +321,7 @@ export default class GeoModal extends React.PureComponent {
             selectedRegion,
             selectedAdminLevel,
             selections,
+            polygons,
         } = this.state;
 
         const adminLevelTitles = this.getAdminLevelTitles(
@@ -313,6 +355,11 @@ export default class GeoModal extends React.PureComponent {
         const mappedSelectionsForSelectedRegion = this.getMappedSelectionsForSelectedRegion(
             geoOptionsById,
             selectionsForSelectedRegion,
+        );
+
+        const polygonsForSelectedRegion = this.getPolygonsForSelectedRegion(
+            selectedRegion,
+            polygons,
         );
 
         return (
@@ -375,8 +422,11 @@ export default class GeoModal extends React.PureComponent {
                                 modalLeftComponent && styles.hasLeft,
                             )}
                             regionId={selectedRegion}
-                            onChange={this.handleSelectionsChangeForRegion}
+                            onSelectionsChange={this.handleSelectionsChangeForRegion}
                             selections={selectionsForSelectedRegion}
+
+                            onPolygonsChange={this.handlePolygonsChangeForRegion}
+                            polygons={polygonsForSelectedRegion}
                         />
                     </div>
                     <div className={styles.right}>
@@ -391,6 +441,15 @@ export default class GeoModal extends React.PureComponent {
                             rendererParams={this.listRendererParams}
                             groupKeySelector={GeoModal.groupKeySelector}
                             groupRendererParams={this.groupRendererParams}
+                        />
+                        <ListView
+                            data={polygonsForSelectedRegion}
+                            emptyComponent={null}
+                            keySelector={GeoModal.polygonKeySelector}
+                            renderer={DismissableListItem}
+                            rendererParams={this.polygonListRendererParams}
+                            groupKeySelector={GeoModal.polygonGroupKeySelector}
+                            groupRendererParams={this.polygonGroupRendererParams}
                         />
                     </div>
                 </ModalBody>

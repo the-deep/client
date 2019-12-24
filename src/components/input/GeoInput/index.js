@@ -47,7 +47,7 @@ const propTypes = {
 
 const defaultProps = {
     className: undefined,
-    label: '',
+    label: undefined,
     showLabel: true,
     onChange: undefined,
     geoOptionsByRegion: {},
@@ -128,10 +128,14 @@ export default class GeoInput extends React.PureComponent {
             : option.label;
     }
 
-    handleSelectChange = (newValues) => {
-        const { onChange } = this.props;
+    handleSelectionsChange = (newSelections) => {
+        const { onChange, value } = this.props;
+        const polygons = this.getPolygons(value);
         if (onChange) {
-            onChange(newValues);
+            onChange([
+                ...newSelections,
+                ...polygons,
+            ]);
         }
     }
 
@@ -203,7 +207,7 @@ export default class GeoInput extends React.PureComponent {
                 <MultiSelectInputWithList
                     value={selections}
                     showLabel={false}
-                    onChange={this.handleSelectChange}
+                    onChange={this.handleSelectionsChange}
                     className={styles.selectInput}
                     options={options}
                     labelSelector={this.labelSelector}

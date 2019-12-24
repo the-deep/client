@@ -15,10 +15,15 @@
         }
 
         .refresh-button {
+            display: block;
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: var(--spacing-small);
+            left: var(--spacing-small);
             z-index: 1;
+
+            .button {
+                margin: var(--spacing-small);
+            }
         }
 
         .bottom-container {

@@ -2,13 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
 
+import Faram, { requiredCondition } from '@togglecorp/faram';
+
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import { FgRestBuilder } from '#rsu/rest';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import Button from '#rsca/Button';
 import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import { FgRestBuilder } from '#rsu/rest';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
+import TextInput from '#rsci/TextInput';
+import ColorInput from '#rsci/ColorInput';
 
 import Map from '#re-map';
 import MapBounds from '#re-map/MapBounds';
@@ -17,6 +28,7 @@ import MapSource from '#re-map/MapSource';
 import MapLayer from '#re-map/MapSource/MapLayer';
 import MapState from '#re-map/MapSource/MapState';
 import MapTooltip from '#re-map/MapTooltip';
+import MapShapeEditor from '#re-map/MapShapeEditor';
 
 import {
     createParamsForGet,
@@ -28,6 +40,131 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const getIdFromFeature = feature => (
+    feature.id
+);
+
+const getIdFromPolygon = polygon => (
+    getIdFromFeature(polygon.geoJson)
+);
+
+// FIXME: disable shape edit
+
+// FIXME: move this outside
+class PolygonEditModal extends React.PureComponent {
+    constructor(props) {
+        super(props);
+
+        const { value } = props;
+
+        const {
+            geoJson: {
+                properties: {
+                    title,
+                    color,
+                },
+            },
+        } = value;
+
+        this.state = {
+            faramValues: {
+                title,
+                color,
+            },
+            faramErrors: {},
+            pristine: true,
+        };
+
+        this.schema = {
+            fields: {
+                title: [requiredCondition],
+                color: [],
+            },
+        };
+    }
+
+    handleFaramChange = (faramValues, faramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+            pristine: false,
+        });
+    };
+
+    handleFaramValidationFailure = (faramErrors) => {
+        this.setState({ faramErrors });
+    };
+
+    handleFaramValidationSuccess = (_, faramValues) => {
+        const { onUpdate, onClose, value } = this.props;
+        const { geoJson } = value;
+
+        const newFeature = produce(geoJson, (safeGeoJson) => {
+            // eslint-disable-next-line no-param-reassign
+            safeGeoJson.properties.title = faramValues.title;
+            // eslint-disable-next-line no-param-reassign
+            safeGeoJson.properties.color = faramValues.color;
+        });
+
+        onUpdate(newFeature);
+    };
+
+    render() {
+        const {
+            faramValues,
+            faramErrors,
+            pristine,
+        } = this.state;
+        const {
+            value,
+            onClose,
+        } = this.props;
+
+        return (
+            <Modal>
+                <ModalHeader
+                    // FIXME: use strings
+                    title={`Edit ${value.type}`}
+                />
+                <Faram
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={this.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <NonFieldErrors faramElement />
+                    <ModalBody>
+                        <TextInput
+                            faramElementName="title"
+                            label="Title"
+                            autoFocus
+                        />
+                        <ColorInput
+                            faramElementName="color"
+                            label="Color"
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            onClick={onClose}
+                        >
+                            Cancel
+                        </Button>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={pristine}
+                        >
+                            Save
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
+            </Modal>
+        );
+    }
+}
 
 const mapOptions = {
     zoom: 2,
@@ -57,24 +194,71 @@ const fillLayerOptions = {
 const tooltipOptions = {
     closeOnClick: false,
     closeButton: false,
-    offset: 8,
+    offset: 12,
 };
 
+const geoJsonFillOptions = {
+    id: 'not-required',
+    type: 'fill',
+    paint: {
+        'fill-color': ['get', 'color'],
+        'fill-opacity': ['case',
+            ['boolean', ['feature-state', 'hovered'], false],
+            0.7,
+            0.3,
+        ],
+    },
+    filter: ['==', '$type', 'Polygon'],
+};
+
+const geoJsonLineOptions = {
+    id: 'not-required-okay',
+    type: 'line',
+    paint: {
+        'line-width': 1,
+        'line-color': ['get', 'color'],
+        'line-opacity': 0.8,
+    },
+    filter: ['==', '$type', 'Polygon'],
+};
+
+const geoJsonCircleOptions = {
+    id: 'not-required-much',
+    type: 'circle',
+    paint: {
+        'circle-color': ['get', 'color'],
+        'circle-opacity': ['case',
+            ['boolean', ['feature-state', 'hovered'], false],
+            0.7,
+            0.3,
+        ],
+        'circle-radius': 5,
+        'circle-stroke-width': 1,
+        'circle-stroke-color': ['get', 'color'],
+        'circle-stroke-opacity': 0.8,
+    },
+    filter: ['==', '$type', 'Point'],
+};
 
 const propTypes = {
     className: PropTypes.string,
     regionId: PropTypes.number,
     selections: PropTypes.arrayOf(PropTypes.string),
-    onChange: PropTypes.func,
+    onSelectionsChange: PropTypes.func,
+    polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    onPolygonsChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: undefined,
     regionId: undefined,
     selections: [],
-    onChange: undefined,
+    onSelectionsChange: undefined,
+    polygons: [],
+    onPolygonsChange: undefined,
 };
 
+// eslint-disable-next-line
 export default class RegionMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -107,14 +291,21 @@ export default class RegionMap extends React.PureComponent {
             geoJsons: {},
             geoJsonBounds: {}, // TODO: can be calculated using turf
 
-            hoverTitle: undefined,
-            hoverLngLat: undefined,
+            hoverInfo: undefined,
+
+            // FIXME: Move this outside
+            selectedPolygonInfo: undefined,
+            showPolygonEditModal: false,
+
+            // FIXME: Editing polygons
+            editMode: false,
+            polygons: props.polygons,
         };
 
         this.geoJsonRequests = undefined; // TODO: use coordinator
         this.hasTriggeredOnce = undefined; // TODO: can be replaced
 
-        // TODO: support points
+        // TODO: support point for selections
         // TODO: support element id from server
     }
 
@@ -124,10 +315,13 @@ export default class RegionMap extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { regionId: oldRegionId } = this.props;
-        const { regionId: newRegionId } = nextProps;
+        const { regionId: oldRegionId, polygons: oldPolygons } = this.props;
+        const { regionId: newRegionId, polygons: newPolygons } = nextProps;
         if (oldRegionId !== newRegionId) {
             this.create(newRegionId);
+        }
+        if (oldPolygons !== newPolygons) {
+            this.setState({ polygons: newPolygons, editMode: false });
         }
     }
 
@@ -160,6 +354,25 @@ export default class RegionMap extends React.PureComponent {
         }))
     ))
 
+    getGeoJsonsFromPolygons = memoize(polygons => (
+        polygons ? polygons.map(p => p.geoJson) : undefined
+    ))
+
+    getPolygonCollectionFromPolygons = memoize(polygons => (
+        polygons
+            ? ({
+                type: 'FeatureCollection',
+                features: polygons.map(p => ({
+                    ...p.geoJson,
+                    // NOTE: id used by mapboxgl draw is not a number
+                    // NOTE: Also, there was a problem with numeric
+                    // id with polygon on update and delete
+                    id: p.localId,
+                })),
+            })
+            : undefined
+    ))
+
     // NOTE: initialize state for a region
     init = (initialPending = true) => {
         this.setState({
@@ -173,9 +386,9 @@ export default class RegionMap extends React.PureComponent {
             geoJsons: {},
             geoJsonBounds: {},
 
-            hoverTitle: undefined,
-            hoverLngLat: undefined,
-            // NOTE: let's not clear geoJson and geoJson bounds
+            hoverInfo: undefined,
+            selectedPolygonInfo: undefined,
+            showPolygonEditModal: false,
         });
 
         this.geoJsonRequests = [];
@@ -415,11 +628,11 @@ export default class RegionMap extends React.PureComponent {
 
     handleAreaClick = (feature) => {
         const {
-            onChange,
+            onSelectionsChange,
             selections: selectionsFromProps,
         } = this.props;
 
-        if (!onChange) {
+        if (!onSelectionsChange) {
             return;
         }
 
@@ -435,20 +648,22 @@ export default class RegionMap extends React.PureComponent {
             selections.splice(index, 1);
         }
 
-        onChange(selections);
+        onSelectionsChange(selections);
     }
 
+    // NOTE: used for both geo-areas and polygons
     handleMouseEnter = (feature, lngLat) => {
         this.setState({
-            hoverTitle: feature.properties.title,
-            hoverLngLat: lngLat,
+            hoverInfo: {
+                title: feature.properties.title || feature.id,
+                lngLat,
+            },
         });
     }
 
     handleMouseLeave = () => {
         this.setState({
-            hoverTitle: undefined,
-            hoverLngLat: undefined,
+            hoverInfo: undefined,
         });
     }
 
@@ -466,11 +681,172 @@ export default class RegionMap extends React.PureComponent {
         this.create(regionId);
     }
 
+    handleModeChange = (editMode) => {
+        this.setState({ editMode });
+    }
+
+    handlePolygonCreate = (features) => {
+        const { regionId } = this.props;
+        const { polygons } = this.state;
+
+        const createdPolygons = features.map((feature) => {
+            const newFeature = feature;
+            return {
+                region: regionId,
+                geoJson: newFeature,
+                type: newFeature.geometry.type,
+            };
+        });
+        const newPolygons = [
+            ...polygons,
+            ...createdPolygons,
+        ];
+
+        this.setState({ polygons: newPolygons });
+    }
+
+    handlePolygonDelete = (features) => {
+        const { polygons } = this.state;
+
+        const newPolygons = [...polygons];
+        features.forEach((feature) => {
+            const idFromFeature = getIdFromFeature(feature);
+            const index = polygons.findIndex(
+                polygon => getIdFromPolygon(polygon) === idFromFeature,
+            );
+            if (index === -1) {
+                console.error(`Couldn't find polygon with id ${idFromFeature}`, feature);
+                return;
+            }
+
+            newPolygons.splice(index, 1);
+        });
+
+        this.setState({ polygons: newPolygons });
+    }
+
+    handlePolygonUpdate = (features) => {
+        const { polygons } = this.state;
+
+        const newPolygons = [...polygons];
+        features.forEach((feature) => {
+            const idFromFeature = getIdFromFeature(feature);
+            const index = polygons.findIndex(
+                polygon => getIdFromPolygon(polygon) === idFromFeature,
+            );
+            if (index === -1) {
+                console.error(`Couldn't find polygon with id ${idFromFeature}`, feature);
+                return;
+            }
+
+            newPolygons[index] = {
+                ...newPolygons[index],
+                geoJson: feature,
+            };
+        });
+        this.setState({ polygons: newPolygons });
+    }
+
+    handleEnableEditMode = () => {
+        this.setState({ editMode: true });
+    }
+
+    handleCompleteEditMode = () => {
+        const { onPolygonsChange, polygons: polygonsFromProps } = this.props;
+
+        const { polygons } = this.state;
+        const polygonsWithLocalId = polygons.filter(
+            polygon => isDefined(polygon.localId),
+        );
+        const polygonsWithoutLocalId = polygons.filter(
+            polygon => isNotDefined(polygon.localId),
+        );
+        const maxId = Math.max(-1, ...polygonsWithLocalId.map(polygon => polygon.localId));
+        const mappedPolygons = polygonsWithoutLocalId.map((polygon, i) => {
+            const newPolygon = produce(polygon, (safePolygon) => {
+                const localId = maxId + i + 1;
+                // eslint-disable-next-line
+                safePolygon.localId = localId;
+                // eslint-disable-next-line
+                safePolygon.geoJson.properties.title = `${safePolygon.type} ${localId}`;
+            });
+            return newPolygon;
+        });
+
+        this.setState(
+            {
+                editMode: false,
+                polygons: polygonsFromProps,
+            },
+            () => {
+                onPolygonsChange([
+                    ...polygonsWithLocalId,
+                    ...mappedPolygons,
+                ]);
+            },
+        );
+    }
+
+    handleCancelEditMode = () => {
+        const { polygons } = this.props;
+        this.setState({ editMode: false, polygons });
+    }
+
+    handleModalOpen = (feature) => {
+        const { polygons } = this.state;
+        const polygon = polygons.find(
+            p => p.localId === feature.id,
+        );
+        if (polygon) {
+            this.setState({
+                hoverInfo: undefined,
+                selectedPolygonInfo: polygon,
+                showPolygonEditModal: true,
+            });
+        }
+        return true;
+    }
+
+    handleModalClose = () => {
+        this.setState({
+            selectedPolygonInfo: undefined,
+            showPolygonEditModal: false,
+        });
+    }
+
+    handleModalEdit = (feature) => {
+        const { onPolygonsChange } = this.props;
+        const { polygons } = this.state;
+
+        const idFromFeature = getIdFromFeature(feature);
+        const index = polygons.findIndex(
+            polygon => getIdFromPolygon(polygon) === idFromFeature,
+        );
+        if (index === -1) {
+            console.error(`Couldn't find polygon with id ${idFromFeature}`, feature);
+            return;
+        }
+
+        const newPolygon = {
+            ...polygons[index],
+            geoJson: feature,
+        };
+
+        const newPolygons = [...polygons];
+        newPolygons[index] = newPolygon;
+
+        onPolygonsChange(newPolygons);
+        this.handleModalClose();
+    }
+
     render() {
         const {
             className: classNameFromProps,
             selections,
         } = this.props;
+        const {
+            polygons,
+        } = this.state;
 
         const {
             pending,
@@ -522,8 +898,10 @@ export default class RegionMap extends React.PureComponent {
             adminLevelPending: {
                 [selectedAdminLevelId]: myAdminLevelPending,
             },
-            hoverLngLat,
-            hoverTitle,
+            hoverInfo,
+            editMode,
+            showPolygonEditModal,
+            selectedPolygonInfo,
         } = this.state;
 
         const adminLevel = this.getSelectedAdminLevel(adminLevels, selectedAdminLevelId);
@@ -534,15 +912,46 @@ export default class RegionMap extends React.PureComponent {
 
         const bounds = this.getValidBounds(myGeoJsonBounds);
 
+        const polygonCollection = this.getPolygonCollectionFromPolygons(polygons);
+
         return (
             <div className={className}>
                 <div className={styles.mapContainer}>
-                    <Button
-                        className={styles.refreshButton}
-                        onClick={this.handleRefresh}
-                        iconName="refresh"
-                        pending={myAdminLevelPending}
-                    />
+                    <div className={styles.refreshButton}>
+                        <Button
+                            className={styles.button}
+                            onClick={this.handleRefresh}
+                            iconName="refresh"
+                            pending={myAdminLevelPending}
+                        />
+                        {editMode ? (
+                            <>
+                                <PrimaryButton
+                                    className={styles.button}
+                                    onClick={this.handleCompleteEditMode}
+                                    disabled={myAdminLevelPending}
+                                >
+                                    Save
+                                </PrimaryButton>
+                                <DangerButton
+                                    className={styles.button}
+                                    onClick={this.handleCancelEditMode}
+                                    disabled={myAdminLevelPending}
+                                >
+                                    Cancel
+                                </DangerButton>
+                            </>
+                        ) : (
+                            <Button
+                                className={styles.button}
+                                onClick={this.handleEnableEditMode}
+                                disabled={myAdminLevelPending}
+                            >
+                                {/* FIXME: use strings */}
+                                Edit shapes
+                            </Button>
+                        )}
+                    </div>
                     <SegmentInput
                         className={styles.bottomContainer}
                         name="admin-levels"
@@ -560,14 +969,26 @@ export default class RegionMap extends React.PureComponent {
                         scaleControlShown={false}
                         navControlShown={false}
                     >
-                        { bounds && (
+                        <MapContainer
+                            className={styles.geoJsonMap}
+                        />
+                        {bounds && (
                             <MapBounds
                                 bounds={bounds}
                                 padding={10}
                             />
                         )}
+                        {editMode && (
+                            <MapShapeEditor
+                                onCreate={this.handlePolygonCreate}
+                                onDelete={this.handlePolygonDelete}
+                                onUpdate={this.handlePolygonUpdate}
+                                onModeChange={this.handleModeChange}
 
-                        { myGeoJson && (
+                                geoJsons={this.getGeoJsonsFromPolygons(polygons)}
+                            />
+                        )}
+                        {myGeoJson && (
                             <MapSource
                                 sourceKey="region"
                                 sourceOptions={sourceOptions}
@@ -575,36 +996,66 @@ export default class RegionMap extends React.PureComponent {
                             >
                                 <MapLayer
                                     layerKey="fill"
-                                    onClick={this.handleAreaClick}
-                                    onMouseEnter={this.handleMouseEnter}
-                                    onMouseLeave={this.handleMouseLeave}
+                                    onClick={editMode ? undefined : this.handleAreaClick}
+                                    onMouseEnter={editMode ? undefined : this.handleMouseEnter}
+                                    onMouseLeave={editMode ? undefined : this.handleMouseLeave}
                                     layerOptions={fillLayerOptions}
                                 />
                                 <MapLayer
                                     layerKey="line"
                                     layerOptions={lineLayerOptions}
                                 />
-                                {hoverLngLat && (
-                                    <MapTooltip
-                                        coordinates={hoverLngLat}
-                                        tooltipOptions={tooltipOptions}
-                                        trackPointer
-                                    >
-                                        <div>
-                                            {hoverTitle}
-                                        </div>
-                                    </MapTooltip>
-                                )}
                                 <MapState
                                     attributes={attributes}
                                     attributeKey="selected"
                                 />
                             </MapSource>
                         )}
-                        <MapContainer
-                            className={styles.geoJsonMap}
-                        />
+                        {!editMode && hoverInfo && (
+                            <MapTooltip
+                                coordinates={hoverInfo.lngLat}
+                                tooltipOptions={tooltipOptions}
+                                trackPointer
+                            >
+                                <div>
+                                    {hoverInfo.title}
+                                </div>
+                            </MapTooltip>
+                        )}
+                        {!editMode && polygonCollection && /* FIXME: myGeoJson && */ (
+                            <MapSource
+                                sourceKey="polygons"
+                                sourceOptions={sourceOptions}
+                                geoJson={polygonCollection}
+                            >
+                                <MapLayer
+                                    layerKey="fill"
+                                    layerOptions={geoJsonFillOptions}
+                                    onClick={editMode ? undefined : this.handleModalOpen}
+                                    onMouseEnter={editMode ? undefined : this.handleMouseEnter}
+                                    onMouseLeave={editMode ? undefined : this.handleMouseLeave}
+                                />
+                                <MapLayer
+                                    layerKey="line"
+                                    layerOptions={geoJsonLineOptions}
+                                />
+                                <MapLayer
+                                    layerKey="circle"
+                                    layerOptions={geoJsonCircleOptions}
+                                    onClick={editMode ? undefined : this.handleModalOpen}
+                                    onMouseEnter={editMode ? undefined : this.handleMouseEnter}
+                                    onMouseLeave={editMode ? undefined : this.handleMouseLeave}
+                                />
+                            </MapSource>
+                        )}
                     </Map>
+                    {showPolygonEditModal && selectedPolygonInfo && (
+                        <PolygonEditModal
+                            onUpdate={this.handleModalEdit}
+                            onClose={this.handleModalClose}
+                            value={selectedPolygonInfo}
+                        />
+                    )}
                 </div>
             </div>
         );

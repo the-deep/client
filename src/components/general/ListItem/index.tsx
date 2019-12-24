@@ -20,9 +20,11 @@ export default class ListItem extends React.PureComponent<Props> {
 
         return (
             <div className={styles.listItem}>
-                <div className={styles.marker}>
-                    { marker }
-                </div>
+                {marker && (
+                    <div className={styles.marker}>
+                        { marker }
+                    </div>
+                )}
                 <div className={styles.label}>
                     { value }
                 </div>
