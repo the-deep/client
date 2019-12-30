@@ -93,10 +93,11 @@ export const editEntriesFormatAllEntriesAction = ({ leadId, modifiable }) => ({
     modifiable,
 });
 
-export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
+export const editEntriesAddEntryAction = ({ leadId, entry, dropped }) => ({
     type: EEB__ADD_ENTRY,
     leadId,
     entry,
+    dropped,
 });
 
 export const editEntriesRemoveEntryAction = ({ leadId, key }) => ({
@@ -410,7 +411,7 @@ const setEntryExcerpt = (state, action) => {
 };
 
 const addEntry = (state, action) => {
-    const { entry, leadId } = action;
+    const { entry, leadId, dropped } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -421,6 +422,8 @@ const addEntry = (state, action) => {
         color,
         ...otherEntry
     } = entry;
+
+    console.warn(action);
 
     // Add order to entries during creation
     const maxEntryOrder = entries.reduce(
@@ -440,6 +443,7 @@ const addEntry = (state, action) => {
         ...otherEntry,
         entryType: excerptType,
         excerpt: excerptType === 'excerpt' ? excerptValue : undefined,
+        droppedExcerpt: excerptType === 'excerpt' && dropped ? excerptValue : undefined,
         image: excerptType === 'image' ? excerptValue : undefined,
         tabularField: excerptType === 'dataSeries' ? excerptValue : undefined,
         lead: leadId,

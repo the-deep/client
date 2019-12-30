@@ -123,6 +123,8 @@ const getPaneType = (lead) => {
     return fileTypeToLeadPaneTypeMap[fileType];
 };
 
+const defaultSelectionColor = '#c0c0c0';
+
 const mapStateToProps = state => ({
     projectDetails: currentUserActiveProjectSelector(state),
 });
@@ -331,9 +333,10 @@ export default class LeftPane extends React.PureComponent {
             .filter(e => entryAccessor.entryType(e) === 'excerpt')
             .map(entry => ({
                 key: entryAccessor.key(entry),
-                // text is used by simplified lead preview
-                text: entryAccessor.excerpt(entry),
-                color: entryAccessor.color(entry) || '#c0c0c0',
+                // TODO:
+                // change condition to see if highlight cleared
+                text: entryAccessor.droppedExcerpt(entry),
+                color: entryAccessor.color(entry) || defaultSelectionColor,
             }))
     ))
 
@@ -343,7 +346,7 @@ export default class LeftPane extends React.PureComponent {
             .map(entry => ({
                 key: entryAccessor.key(entry),
                 tabularFieldId: entryAccessor.tabularField(entry),
-                color: entryAccessor.color(entry) || '#c0c0c0',
+                color: entryAccessor.color(entry) || defaultSelectionColor,
             }))
     ))
 

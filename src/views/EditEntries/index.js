@@ -389,7 +389,7 @@ export default class EditEntries extends React.PureComponent {
     }
 
     // can only create entry
-    handleExcerptCreate = ({ type, value }) => {
+    handleExcerptCreate = ({ type, value, dropped }) => {
         this.addEntry({
             leadId: this.props.leadId,
             entry: {
@@ -398,6 +398,7 @@ export default class EditEntries extends React.PureComponent {
                 excerptValue: value,
                 attributes: this.calculateFirstTimeAttributes({}),
             },
+            dropped,
         });
     }
 
