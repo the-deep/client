@@ -879,9 +879,9 @@ export default class RegionMap extends React.PureComponent {
                                 <MapLayer
                                     layerKey="fill"
                                     layerOptions={geoJsonFillOptions}
-                                    onClick={editMode ? undefined : this.handlePolygonClick}
-                                    onMouseEnter={editMode ? undefined : this.handleMouseEnter}
-                                    onMouseLeave={editMode ? undefined : this.handleMouseLeave}
+                                    onClick={this.handlePolygonClick}
+                                    onMouseEnter={this.handleMouseEnter}
+                                    onMouseLeave={this.handleMouseLeave}
                                 />
                                 <MapLayer
                                     layerKey="line"
@@ -890,9 +890,9 @@ export default class RegionMap extends React.PureComponent {
                                 <MapLayer
                                     layerKey="circle"
                                     layerOptions={geoJsonCircleOptions}
-                                    onClick={editMode ? undefined : this.handlePolygonClick}
-                                    onMouseEnter={editMode ? undefined : this.handleMouseEnter}
-                                    onMouseLeave={editMode ? undefined : this.handleMouseLeave}
+                                    onClick={this.handlePolygonClick}
+                                    onMouseEnter={this.handleMouseEnter}
+                                    onMouseLeave={this.handleMouseLeave}
                                 />
                             </MapSource>
                         )}
