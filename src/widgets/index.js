@@ -389,6 +389,10 @@ export const fetchWidgetViewComponent = (widgetId, addedFrom) => {
         return undefined;
     }
 
+    if (!widget) {
+        return undefined;
+    }
+
     return widget.viewComponent;
 };
 
@@ -398,6 +402,10 @@ export const fetchWidgetTagComponent = (widgetId, view, addedFrom) => {
 
     if (!addedFrom) {
         console.warn(`ERROR: addedFrom is not defined for ${widgetId}`);
+        return undefined;
+    }
+
+    if (!widget) {
         return undefined;
     }
 

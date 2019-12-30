@@ -38,6 +38,7 @@ import {
     editEntriesStatusesSelector,
 
     editEntriesAddEntryAction,
+    editEntriesSetEntryHighlightHidden,
     editEntriesClearEntriesAction,
     editEntriesRemoveEntryAction,
     editEntriesSaveEntryAction,
@@ -136,6 +137,7 @@ const mapDispatchToProps = dispatch => ({
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
+    setEntryHighlightHidden: params => dispatch(editEntriesSetEntryHighlightHidden(params)),
     setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
@@ -174,10 +176,12 @@ export default class EditEntries extends React.PureComponent {
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
+                        onHighlightHiddenChange={this.handleHighlightHiddenChange}
+                        onEntryStateChange={this.handleEntryStateChange}
+
                         schema={this.props.schema}
                         computeSchema={this.props.computeSchema}
                         entryStates={this.state.entryStates}
-                        onEntryStateChange={this.handleEntryStateChange}
                         bookId={this.props.lead && this.props.lead.tabularBook}
                     />
                 ),
@@ -195,11 +199,10 @@ export default class EditEntries extends React.PureComponent {
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
+                        onEntryStateChange={this.handleEntryStateChange}
+
                         schema={this.props.schema}
                         computeSchema={this.props.computeSchema}
-                        entryStates={this.state.entryStates}
-                        onEntryStateChange={this.handleEntryStateChange}
-                        bookId={this.props.lead && this.props.lead.tabularBook}
                     />
                 ),
                 wrapContainer: true,
@@ -312,6 +315,14 @@ export default class EditEntries extends React.PureComponent {
 
     // PERMISSION
 
+    setEntryHighlightHidden = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to change highlight visibility');
+            return;
+        }
+        this.props.setEntryHighlightHidden(val);
+    }
+
     setExcerpt = (val) => {
         if (this.shouldDisableEntryChange(val.id)) {
             console.warn('No permission to edit entry excerpt');
@@ -381,11 +392,21 @@ export default class EditEntries extends React.PureComponent {
             this.setExcerpt({
                 leadId: this.props.leadId,
                 key: entryKey,
+                // FIXME: looks like id is not used
                 id: entryId,
                 excerptType: type,
                 excerptValue: value,
             });
         }
+    }
+
+    handleHighlightHiddenChange = (value, entryKey, entryId) => {
+        this.setEntryHighlightHidden({
+            leadId: this.props.leadId,
+            key: entryKey,
+            id: entryId,
+            value,
+        });
     }
 
     // can only create entry
@@ -465,6 +486,7 @@ export default class EditEntries extends React.PureComponent {
             this.setEntryData({
                 leadId: this.props.leadId,
                 key: entryKey,
+                // FIXME: looks like id is not used
                 id: entryId,
                 values: faramValues,
                 errors: faramErrors,

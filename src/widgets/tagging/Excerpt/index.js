@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import FormattedTextArea from '#rsci/FormattedTextArea';
+import Button from '#rsca/Button';
 
 import DataSeries from '#components/viz/DataSeries';
 import Cloak from '#components/general/Cloak';
@@ -19,9 +20,11 @@ const propTypes = {
     tabularField: PropTypes.number,
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onExcerptChange: PropTypes.func,
+    onHighlightHiddenChange: PropTypes.func,
     onExcerptCreate: PropTypes.func,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    highlightHidden: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -35,6 +38,8 @@ const defaultProps = {
     readOnly: false,
     onExcerptChange: () => {},
     onExcerptCreate: () => {},
+    onHighlightHiddenChange: () => {},
+    highlightHidden: false,
 };
 
 // FIXME: reuse this from entities.editEntries
@@ -157,6 +162,15 @@ export default class Excerpt extends React.PureComponent {
         onEntryStateChange(entryKey, value);
     }
 
+    handleHighlightHiddenChange = () => {
+        const {
+            onHighlightHiddenChange,
+            highlightHidden,
+        } = this.props;
+
+        onHighlightHiddenChange(!highlightHidden);
+    }
+
     renderExcerptImage = () => {
         const { image } = this.props;
 
@@ -213,6 +227,7 @@ export default class Excerpt extends React.PureComponent {
             excerpt,
             disabled,
             readOnly,
+            highlightHidden,
         } = this.props;
 
         const className = `
@@ -221,15 +236,24 @@ export default class Excerpt extends React.PureComponent {
         `;
 
         return (
-            <FormattedTextArea
-                className={className}
-                showLabel={false}
-                value={excerpt}
-                onChange={this.handleTextChange}
-                disabled={disabled}
-                readOnly={readOnly}
-                showFormatButton={!!entryType}
-            />
+            <>
+                <Button
+                    transparent
+                    onClick={this.handleHighlightHiddenChange}
+                >
+                    {/* FIXME: use strings */}
+                    { highlightHidden ? 'Show highlight' : 'Hide highlight' }
+                </Button>
+                <FormattedTextArea
+                    className={className}
+                    showLabel={false}
+                    value={excerpt}
+                    onChange={this.handleTextChange}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    showFormatButton={!!entryType}
+                />
+            </>
         );
     }
 

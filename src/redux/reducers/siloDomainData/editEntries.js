@@ -49,6 +49,14 @@ export const EEB__FORMAT_ALL_ENTRIES = 'siloDomainData/EEB__FORMAT_ALL_ENTRIES';
 export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
+export const EEB__SET_ENTRY_HIGHLIGHT_HIDDEN = 'siloDomainData/EEB__SET_ENTRY_HIGHLIGHT_HIDDEN';
+
+export const editEntriesSetEntryHighlightHidden = ({ leadId, key, value }) => ({
+    type: EEB__SET_ENTRY_HIGHLIGHT_HIDDEN,
+    leadId,
+    key,
+    value,
+});
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -387,6 +395,7 @@ const setEntryExcerpt = (state, action) => {
     const tabularField = excerptType === 'dataSeries' ? excerptValue : undefined;
 
     const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
+
     const settings = {
         editEntries: {
             [leadId]: {
@@ -472,6 +481,41 @@ const addEntry = (state, action) => {
     return update(state, settings);
 };
 
+const setEntryHighlightHidden = (state, action) => {
+    const { leadId, key, value } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    const entryIndex = entries.findIndex(
+        entry => entryAccessor.key(entry) === key,
+    );
+
+    let newState = state;
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    [entryIndex]: {
+                        data: {
+                            highlightHidden: {
+                                $set: value,
+                            },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    newState = update(newState, settings);
+
+    return newState;
+};
+
 const setEntryData = (state, action) => {
     const { leadId, key, values, errors, info, color } = action;
     const {
@@ -484,6 +528,8 @@ const setEntryData = (state, action) => {
 
     let newState = state;
 
+    /*
+    // NOTE: I don't think this has been used anywhere
     if (info.action === 'changeExcerpt') {
         const excerpt = info.type === 'excerpt' ? info.value : undefined;
         const image = info.type === 'image' ? info.value : undefined;
@@ -512,6 +558,7 @@ const setEntryData = (state, action) => {
 
         newState = update(newState, settings);
     }
+    */
 
     const settings = {
         editEntries: {
@@ -845,6 +892,7 @@ const reducers = {
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,
     [EEB__SET_ENTRY_EXCERPT]: setEntryExcerpt,
+    [EEB__SET_ENTRY_HIGHLIGHT_HIDDEN]: setEntryHighlightHidden,
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,

@@ -31,6 +31,7 @@ export const entryAccessor = {
     entryType: (entry = {}) => (entry.data || {}).entryType,
     excerpt: (entry = {}) => (entry.data || {}).excerpt,
     droppedExcerpt: (entry = {}) => (entry.data || {}).droppedExcerpt,
+    isHighlightHidden: (entry = {}) => !!(entry.data || {}).highlightHidden,
     tabularField: (entry = {}) => (entry.data || {}).tabularField,
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,

@@ -330,6 +330,7 @@ export default class LeftPane extends React.PureComponent {
 
     getHighlightsForText = memoize(entries => (
         entries
+            .filter(e => !entryAccessor.isHighlightHidden(e))
             .filter(e => entryAccessor.entryType(e) === 'excerpt')
             .map(entry => ({
                 key: entryAccessor.key(entry),

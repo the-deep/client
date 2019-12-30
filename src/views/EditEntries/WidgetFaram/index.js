@@ -33,6 +33,7 @@ const propTypes = {
     onExcerptChange: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
+    onHighlightHiddenChange: PropTypes.func.isRequired,
     actionComponent: PropTypes.func,
 };
 
@@ -68,6 +69,13 @@ export default class WidgetFaram extends React.PureComponent {
         const entryId = entryAccessor.serverId(this.props.entry);
         this.props.onChange(faramValues, faramErrors, faramInfo, entryKey, entryId);
     }
+
+    handleHighlightHiddenChange = (value) => {
+        const entryKey = entryAccessor.key(this.props.entry);
+        const entryId = entryAccessor.serverId(this.props.entry);
+        this.props.onHighlightHiddenChange(value, entryKey, entryId);
+    }
+
 
     handleExcerptChange = (excerptData) => {
         const entryKey = entryAccessor.key(this.props.entry);
@@ -164,9 +172,12 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             entryType,
             excerpt,
+            droppedExcerpt,
             image,
             tabularField,
         } = entryAccessor.data(entry) || {};
+
+        const highlightHidden = entryAccessor.isHighlightHidden(entry);
 
         let widgetProps = {
             widgetName: widgetId,
@@ -188,6 +199,7 @@ export default class WidgetFaram extends React.PureComponent {
                 ...widgetProps,
                 entryType,
                 excerpt,
+                droppedExcerpt,
                 image,
                 tabularField,
                 tabularFieldData: tabularData,
@@ -202,6 +214,8 @@ export default class WidgetFaram extends React.PureComponent {
         if (levelTwoWidgets.includes(widgetId)) {
             widgetProps = {
                 ...widgetProps,
+                highlightHidden,
+                onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 onExcerptChange: this.handleExcerptChange,
                 onExcerptCreate: this.handleExcerptCreate,
             };
@@ -212,6 +226,8 @@ export default class WidgetFaram extends React.PureComponent {
             widgetType,
             addedFrom,
         );
+
+        console.warn(widgetProps);
 
         // Widgets to allow drag and drop
         const dropableWidgets = widgetType === VIEW.overview ? [
