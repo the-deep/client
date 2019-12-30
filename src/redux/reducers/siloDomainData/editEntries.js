@@ -556,7 +556,7 @@ const setEntryHighlightHidden = (state, action) => {
 };
 
 const setEntryData = (state, action) => {
-    const { leadId, key, values, errors, info, color } = action;
+    const { leadId, key, values, errors, color /* , info */ } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;

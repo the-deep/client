@@ -99,6 +99,7 @@ export const createEntry = ({
         'lead',
         'order',
 
+        'highlightHidden',
         'droppedExcerpt',
 
         'analysisFramework',

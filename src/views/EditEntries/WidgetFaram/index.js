@@ -234,8 +234,6 @@ export default class WidgetFaram extends React.PureComponent {
             addedFrom,
         );
 
-        console.warn(widgetProps);
-
         // Widgets to allow drag and drop
         const dropableWidgets = widgetType === VIEW.overview ? [
             'excerptWidget',
