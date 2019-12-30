@@ -44,6 +44,9 @@ const propTypes = {
     pending: PropTypes.bool,
     disabled: PropTypes.bool,
 
+    onExcerptReset: PropTypes.func.isRequired,
+    onHighlightHiddenChange: PropTypes.func.isRequired,
+
     actionComponent: PropTypes.func,
 
     addEntry: PropTypes.func.isRequired,
@@ -225,6 +228,18 @@ export default class WidgetFaram extends React.PureComponent {
     }
 
     // can only edit entry
+    handleHighlightHiddenChange = (value) => {
+        const entryKey = entryAccessor.key(this.props.entry);
+        const entryId = entryAccessor.serverId(this.props.entry);
+        this.props.onHighlightHiddenChange(value, entryKey, entryId);
+    }
+
+    handleExcerptReset = () => {
+        const entryKey = entryAccessor.key(this.props.entry);
+        const entryId = entryAccessor.serverId(this.props.entry);
+        this.props.onExcerptReset(entryKey, entryId);
+    }
+
     handleExcerptChange = (excerptData) => {
         const {
             leadId,
@@ -368,9 +383,12 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             entryType,
             excerpt,
+            droppedExcerpt,
             image,
             tabularField,
         } = entryAccessor.data(entry) || {};
+
+        const highlightHidden = entryAccessor.isHighlightHidden(entry);
 
         let widgetProps = {
             widgetName: widgetId,
@@ -392,6 +410,7 @@ export default class WidgetFaram extends React.PureComponent {
                 ...widgetProps,
                 entryType,
                 excerpt,
+                droppedExcerpt,
                 image,
                 tabularField,
                 tabularFieldData: tabularData,
@@ -406,8 +425,11 @@ export default class WidgetFaram extends React.PureComponent {
         if (levelTwoWidgets.includes(widgetId)) {
             widgetProps = {
                 ...widgetProps,
+                highlightHidden,
+                onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 onExcerptChange: this.handleExcerptChange,
                 onExcerptCreate: this.handleExcerptCreate,
+                onExcerptReset: this.handleExcerptReset,
             };
         }
 

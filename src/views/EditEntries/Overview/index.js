@@ -58,6 +58,9 @@ const propTypes = {
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
+
+    onExcerptReset: PropTypes.func.isRequired,
+    onHighlightHiddenChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -235,6 +238,9 @@ export default class Overview extends React.PureComponent {
             widgets,
 
             tabularFields,
+
+            onExcerptReset,
+            onHighlightHiddenChange,
         } = this.props;
 
         const { mountModalButton } = this.state;
@@ -346,6 +352,8 @@ export default class Overview extends React.PureComponent {
                             analysisFramework={analysisFramework}
                             lead={lead}
                             leadId={leadId}
+                            onExcerptReset={onExcerptReset}
+                            onHighlightHiddenChange={onHighlightHiddenChange}
                         />
                     </React.Fragment>
                 }

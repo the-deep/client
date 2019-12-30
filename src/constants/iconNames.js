@@ -41,6 +41,8 @@ const iconNames = {
     expand: 'ion-arrow-expand',
     eye: 'ion-eye',
     eyeDisabled: 'ion-eye-disabled',
+    faEye: 'fa fa-eye',
+    faEyeDisabled: 'fa fa-eye-slash',
     fig: 'fa fa-file-image-o',
     fork: 'ion-fork-repo',
     format: 'ion-android-list',

@@ -38,6 +38,8 @@ export const entryAccessor = {
     ),
     entryType: entry => getDataSafe(entry).entryType,
     excerpt: entry => getDataSafe(entry).excerpt,
+    droppedExcerpt: entry => getDataSafe(entry).droppedExcerpt,
+    isHighlightHidden: entry => getDataSafe(entry).highlightHidden,
     tabularField: entry => getDataSafe(entry).tabularField,
     order: entry => getDataSafe(entry).order,
     serverId: entry => getDataSafe(entry).id,
@@ -123,6 +125,9 @@ export const createEntry = ({
         'entryType',
         'lead',
         'order',
+
+        'highlightHidden',
+        'droppedExcerpt',
 
         'analysisFramework',
         'attributes',

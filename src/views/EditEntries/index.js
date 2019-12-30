@@ -64,17 +64,16 @@ import {
     editEntriesStatusesSelector,
     editEntriesEntryGroupStatusesSelector,
 
-    editEntriesAddEntryAction,
+    editEntriesSetEntryHighlightHidden,
     editEntriesClearEntriesAction,
     editEntriesRemoveEntryAction,
     editEntriesSaveEntryAction,
     editEntriesSetEntriesAction,
     editEntriesSetEntriesCommentsCountAction,
     editEntriesUpdateEntriesBulkAction,
-    editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
     editEntriesSetEntryGroupErrorsAction,
-    editEntriesSetExcerptAction,
+    editEntriesResetExcerptAction,
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
@@ -137,8 +136,12 @@ const propTypes = {
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     setEntryGroupError: PropTypes.func.isRequired,
+
+    resetExcerpt: PropTypes.func.isRequired,
+
     setPending: PropTypes.func.isRequired,
     setEntryGroupPending: PropTypes.func.isRequired,
+    setEntryHighlightHidden: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -166,7 +169,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
     clearEntryGroups: params => dispatch(editEntriesEntryGroupsClearEntriesAction(params)),
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
@@ -178,10 +180,10 @@ const mapDispatchToProps = dispatch => ({
     setEntryGroups: params => dispatch(editEntriesSetEntryGroupsAction(params)),
     setEntriesCommentsCount: params => dispatch(editEntriesSetEntriesCommentsCountAction(params)),
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
-    setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     setEntryGroupError: params => dispatch(editEntriesSetEntryGroupErrorsAction(params)),
-    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+    setEntryHighlightHidden: params => dispatch(editEntriesSetEntryHighlightHidden(params)),
+    resetExcerpt: params => dispatch(editEntriesResetExcerptAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
@@ -226,40 +228,6 @@ const requestOptions = {
                 clearEntries({ leadId });
                 clearEntryGroups({ leadId });
             }
-
-            /*
-            const newResponse = {
-                ...response,
-                labels: [
-                    { id: 1, order: 1, title: 'Problem', color: 'red' },
-                    { id: 2, order: 2, title: 'Solution', color: 'orange' },
-                    { id: 3, order: 3, title: 'Remarks', color: 'blue' },
-                ],
-                entryGroups: [
-                    {
-                        id: 1,
-                        clientId: 'pipkbabx',
-                        versionId: 3,
-                        order: 1,
-                        title: 'Group first',
-                        selections: [
-                            {
-                                id: 1,
-                                entryId: 52,
-                                entryClientId: 'xv9sn3a6',
-                                labelId: 1,
-                            },
-                            {
-                                id: 2,
-                                entryId: 53,
-                                entryClientId: 'xlpebkgu',
-                                labelId: 2,
-                            },
-                        ],
-                    },
-                ],
-            };
-            */
 
             const {
                 lead,
@@ -399,6 +367,9 @@ export default class EditEntries extends React.PureComponent {
                     entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
                     statuses: this.props.statuses,
+
+                    onExcerptReset: this.handleExcerptReset,
+                    onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 }),
                 wrapContainer: true,
                 lazyMount: false,
@@ -421,6 +392,9 @@ export default class EditEntries extends React.PureComponent {
                     entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
                     statuses: this.props.statuses,
+
+                    onExcerptReset: this.handleExcerptReset,
+                    onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 }),
                 wrapContainer: true,
                 lazyMount: true,
@@ -550,6 +524,33 @@ export default class EditEntries extends React.PureComponent {
         return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
     }))
 
+    // PERMISSION
+
+    // FIXME: move this inside WidgetFaram
+    setEntryHighlightHidden = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to change highlight visibility');
+            return;
+        }
+        this.props.setEntryHighlightHidden(val);
+    }
+
+    // FIXME: move this inside WidgetFaram
+    resetExcerpt = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry excerpt');
+            return;
+        }
+        this.props.resetExcerpt(val);
+    }
+
+    // PERMISSIONS
+
+    shouldDisableEntryChange = (entryId) => {
+        const { projectRole: { entryPermissions = {} } } = this.props;
+        return !entryPermissions.modify && !!entryId;
+    }
+
     shouldHideEditLink = () => {
         const {
             analysisFramework: {
@@ -560,6 +561,26 @@ export default class EditEntries extends React.PureComponent {
     }
 
     // APIS
+
+    // FIXME: move this inside FaramWidget
+    handleExcerptReset = (entryKey, entryId) => {
+        this.resetExcerpt({
+            leadId: this.props.leadId,
+            key: entryKey,
+            id: entryId,
+        });
+    }
+
+    // FIXME: move this inside FaramWidget
+    handleHighlightHiddenChange = (value, entryKey, entryId) => {
+        this.setEntryHighlightHidden({
+            leadId: this.props.leadId,
+            key: entryKey,
+            id: entryId,
+            value,
+        });
+    }
+
 
     handleValidationFailure = (faramErrors, entryKey) => {
         const proxyRequest = {
@@ -953,12 +974,7 @@ export default class EditEntries extends React.PureComponent {
             } else {
                 detachedFaram({
                     value: entryAccessor.dataAttributes(entry),
-                    error: entryAccessor.error(entry),
-
                     schema,
-                    computeSchema,
-                    onChange: this.handleChange,
-
                     onValidationFailure: (errors) => {
                         this.handleValidationFailure(errors, entryKey, entry);
                     },

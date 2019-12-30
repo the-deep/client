@@ -33,6 +33,9 @@ const propTypes = {
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     hash: PropTypes.string,
     leadId: PropTypes.number.isRequired,
+
+    onExcerptReset: PropTypes.func.isRequired,
+    onHighlightHiddenChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -103,6 +106,8 @@ export default class Listing extends React.PureComponent {
             leadId,
             bookId,
             widgets,
+            onExcerptReset,
+            onHighlightHiddenChange,
         } = this.props;
 
         const fieldId = entryAccessor.tabularField(entry);
@@ -122,6 +127,8 @@ export default class Listing extends React.PureComponent {
             lead,
             leadId,
             widgets,
+            onExcerptReset,
+            onHighlightHiddenChange,
 
             index,
         };

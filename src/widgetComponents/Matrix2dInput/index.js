@@ -123,6 +123,7 @@ export default class Matrix2dInput extends React.PureComponent {
 
         const faramInfo = {
             action: 'newEntry',
+            dropped: true,
             excerptType: type,
             excerptValue: data,
             value: {
