@@ -22,6 +22,7 @@ const propTypes = {
     onExcerptChange: PropTypes.func,
     onHighlightHiddenChange: PropTypes.func,
     onExcerptCreate: PropTypes.func,
+    onExcerptReset: PropTypes.func,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     highlightHidden: PropTypes.bool,
@@ -38,6 +39,7 @@ const defaultProps = {
     readOnly: false,
     onExcerptChange: () => {},
     onExcerptCreate: () => {},
+    onExcerptReset: () => {},
     onHighlightHiddenChange: () => {},
     highlightHidden: false,
 };
@@ -153,6 +155,13 @@ export default class Excerpt extends React.PureComponent {
         this.setState({ isBeingDraggedOver: false });
     }
 
+    handleReset = () => {
+        const {
+            onExcerptReset,
+        } = this.props;
+        onExcerptReset({ type: TEXT });
+    }
+
     handleEntryStateChange = (value) => {
         const {
             onEntryStateChange,
@@ -225,6 +234,7 @@ export default class Excerpt extends React.PureComponent {
         const {
             entryType,
             excerpt,
+            droppedExcerpt,
             disabled,
             readOnly,
             highlightHidden,
@@ -237,13 +247,24 @@ export default class Excerpt extends React.PureComponent {
 
         return (
             <>
-                <Button
-                    transparent
-                    onClick={this.handleHighlightHiddenChange}
-                >
-                    {/* FIXME: use strings */}
-                    { highlightHidden ? 'Show highlight' : 'Hide highlight' }
-                </Button>
+                { droppedExcerpt && (
+                    <Button
+                        transparent
+                        onClick={this.handleHighlightHiddenChange}
+                    >
+                        {/* FIXME: use strings */}
+                        { highlightHidden ? 'Show highlight' : 'Hide highlight' }
+                    </Button>
+                )}
+                { droppedExcerpt && droppedExcerpt !== excerpt && (
+                    <Button
+                        transparent
+                        onClick={this.handleReset}
+                    >
+                        {/* FIXME: use strings */}
+                        Reset Excerpt
+                    </Button>
+                )}
                 <FormattedTextArea
                     className={className}
                     showLabel={false}

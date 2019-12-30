@@ -48,6 +48,7 @@ import {
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
     editEntriesSetExcerptAction,
+    editEntriesResetExcerptAction,
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
@@ -94,6 +95,7 @@ const propTypes = {
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
+    resetExcerpt: PropTypes.func.isRequired,
     setExcerpt: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
     setLead: PropTypes.func.isRequired,
@@ -139,6 +141,7 @@ const mapDispatchToProps = dispatch => ({
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     setEntryHighlightHidden: params => dispatch(editEntriesSetEntryHighlightHidden(params)),
     setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+    resetExcerpt: params => dispatch(editEntriesResetExcerptAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
@@ -176,6 +179,7 @@ export default class EditEntries extends React.PureComponent {
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
+                        onExcerptReset={this.handleExcerptReset}
                         onHighlightHiddenChange={this.handleHighlightHiddenChange}
                         onEntryStateChange={this.handleEntryStateChange}
 
@@ -199,6 +203,8 @@ export default class EditEntries extends React.PureComponent {
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
+                        onExcerptReset={this.handleExcerptReset}
+                        onHighlightHiddenChange={this.handleHighlightHiddenChange}
                         onEntryStateChange={this.handleEntryStateChange}
 
                         schema={this.props.schema}
@@ -339,6 +345,14 @@ export default class EditEntries extends React.PureComponent {
         this.props.setEntryData(val);
     }
 
+    resetExcerpt = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry excerpt');
+            return;
+        }
+        this.props.resetExcerpt(val);
+    }
+
     addEntry = (val) => {
         if (this.shouldDisableEntryCreate()) {
             console.warn('No permission to create entry');
@@ -383,6 +397,14 @@ export default class EditEntries extends React.PureComponent {
 
     // APIS
 
+    handleExcerptReset = (entryKey, entryId) => {
+        this.resetExcerpt({
+            leadId: this.props.leadId,
+            key: entryKey,
+            id: entryId,
+        });
+    }
+
     // can only edit entry
     handleExcerptChange = ({ type, value }, entryKey, entryId) => {
         if (!entryKey) {
@@ -392,7 +414,6 @@ export default class EditEntries extends React.PureComponent {
             this.setExcerpt({
                 leadId: this.props.leadId,
                 key: entryKey,
-                // FIXME: looks like id is not used
                 id: entryId,
                 excerptType: type,
                 excerptValue: value,

@@ -37,6 +37,7 @@ export const EEB__UPDATE_ENTRIES_BULK = 'siloDomainData/EEB__UPDATE_ENTRIES_BULK
 export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
 export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
+export const EEB__RESET_ENTRY_EXCERPT = 'siloDomainData/EEB__RESET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
@@ -150,6 +151,12 @@ export const editEntriesClearEntriesAction = ({ leadId }) => ({
 
 export const editEntriesSetSelectedEntryKeyAction = ({ leadId, key }) => ({
     type: EEB__SET_SELECTED_ENTRY_KEY,
+    leadId,
+    key,
+});
+
+export const editEntriesResetExcerptAction = ({ leadId, key }) => ({
+    type: EEB__RESET_ENTRY_EXCERPT,
     leadId,
     key,
 });
@@ -406,6 +413,38 @@ const setEntryExcerpt = (state, action) => {
                             excerpt: { $set: excerpt },
                             image: { $set: image },
                             tabularField: { $set: tabularField },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
+                            hasServerError: { $set: false },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
+const resetEntryExcerpt = (state, action) => {
+    const { leadId, key } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
+    const entry = entries[entryIndex];
+    const { droppedExcerpt } = entryAccessor.data(entry);
+
+    // NOTE: currently this only works for text type excerpt
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    [entryIndex]: {
+                        data: {
+                            excerpt: { $set: droppedExcerpt },
                         },
                         localData: {
                             isPristine: { $set: false },
@@ -892,6 +931,7 @@ const reducers = {
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,
     [EEB__SET_ENTRY_EXCERPT]: setEntryExcerpt,
+    [EEB__RESET_ENTRY_EXCERPT]: resetEntryExcerpt,
     [EEB__SET_ENTRY_HIGHLIGHT_HIDDEN]: setEntryHighlightHidden,
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,

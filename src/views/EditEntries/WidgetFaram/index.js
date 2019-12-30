@@ -32,6 +32,7 @@ const propTypes = {
 
     onExcerptChange: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
+    onExcerptReset: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onHighlightHiddenChange: PropTypes.func.isRequired,
     actionComponent: PropTypes.func,
@@ -76,6 +77,11 @@ export default class WidgetFaram extends React.PureComponent {
         this.props.onHighlightHiddenChange(value, entryKey, entryId);
     }
 
+    handleExcerptReset = () => {
+        const entryKey = entryAccessor.key(this.props.entry);
+        const entryId = entryAccessor.serverId(this.props.entry);
+        this.props.onExcerptReset(entryKey, entryId);
+    }
 
     handleExcerptChange = (excerptData) => {
         const entryKey = entryAccessor.key(this.props.entry);
@@ -218,6 +224,7 @@ export default class WidgetFaram extends React.PureComponent {
                 onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 onExcerptChange: this.handleExcerptChange,
                 onExcerptCreate: this.handleExcerptCreate,
+                onExcerptReset: this.handleExcerptReset,
             };
         }
 
