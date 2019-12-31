@@ -35,7 +35,6 @@ const GeoInputList = (props) => {
                 console.error('Could not find index for polygon localId', localId);
                 return;
             }
-            console.warn('Do something for', polygon);
             onPolygonEditClick(polygon);
         },
         [polygons, onPolygonEditClick],
@@ -115,7 +114,7 @@ const GeoInputList = (props) => {
             disabled: polygonDisabled,
             onEdit: handlePolygonEdit,
             value: polygon.geoJson.properties.title,
-            marker: null,
+            color: polygon.geoJson.properties.color,
         }),
         [handlePolygonEdit, handlePolygonRemove, polygonDisabled],
     );
