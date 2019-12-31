@@ -237,8 +237,6 @@ export default class GeoInput extends React.PureComponent {
                             onClick={this.handleModalShow}
                             disabled={disabled || readOnly}
                             transparent
-                            // FIXME: use strings
-                            title="Open geo modal"
                         >
                             {hideInput && label}
                         </AccentButton>

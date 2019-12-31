@@ -777,8 +777,8 @@ export default class RegionMap extends React.PureComponent {
                             iconName="refresh"
                             pending={myAdminLevelPending}
                         >
-                            {/* FIXME: use strings */}
-                            Reload
+
+                            {_ts('components.regionMap', 'reloadButtonLabel')}
                         </Button>
                         { polygonsEnabled && (
                             <>
@@ -789,16 +789,14 @@ export default class RegionMap extends React.PureComponent {
                                             onClick={this.handleCompleteEditMode}
                                             disabled={myAdminLevelPending}
                                         >
-                                            {/* FIXME: use strings */}
-                                            Save
+                                            {_ts('components.regionMap', 'polygonSaveButtonLabel')}
                                         </PrimaryButton>
                                         <DangerButton
                                             className={styles.button}
                                             onClick={onEditCancel}
                                             disabled={myAdminLevelPending}
                                         >
-                                            {/* FIXME: use strings */}
-                                            Cancel
+                                            {_ts('components.regionMap', 'polygonCancelButtonLabel')}
                                         </DangerButton>
                                     </>
                                 ) : (
@@ -807,8 +805,7 @@ export default class RegionMap extends React.PureComponent {
                                         onClick={onEditStart}
                                         disabled={myAdminLevelPending}
                                     >
-                                        {/* FIXME: use strings */}
-                                        Edit points/polygons
+                                        {_ts('components.regionMap', 'polygonEditButtonLabel')}
                                     </Button>
                                 )}
                             </>

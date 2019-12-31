@@ -175,6 +175,7 @@ export default class EditLinkModal extends React.PureComponent {
                         options={allStrings}
                         keySelector={d => d.id}
                         labelSelector={d => d.string}
+                        autoFocus
                     />
                 </ModalBody>
                 <ModalFooter>

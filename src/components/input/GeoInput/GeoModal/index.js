@@ -42,8 +42,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    // FIXME: use strings
-    title: 'Select geo areas',
+    title: undefined,
     geoOptionsByRegion: {},
     geoOptionsById: {},
     selections: [],
@@ -323,7 +322,7 @@ export default class GeoModal extends React.PureComponent {
     render() {
         const {
             regions,
-            title,
+            title = _ts('components.geo.geoModal', 'title'),
             modalLeftComponent,
             geoOptionsByRegion,
             geoOptionsById,

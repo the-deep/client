@@ -1061,7 +1061,11 @@
         "-41987822": "Start typing above to search for organizations",
         "-95930063": "No results found, try different search text",
         "-74378035": "Organizations",
-        "-43663158": "Showing only top {max} results"
+        "-43663158": "Showing only top {max} results",
+        "-95724442": "Select Geo Areas",
+        "-47942303": "Edit {type}",
+        "-50180114": "Reload",
+        "-97219656": "Edit points/polygons"
     },
     "links": {
         "browserExtension": {
@@ -2371,7 +2375,11 @@
         "components.regionMap": {
             "serverErrorText": 500,
             "connectionFailureText": 501,
-            "mapNotAvailable": 1214
+            "mapNotAvailable": 1214,
+            "polygonCancelButtonLabel": 61,
+            "polygonSaveButtonLabel": 25,
+            "reloadButtonLabel": -50180114,
+            "polygonEditButtonLabel": -97219656
         },
         "components.simplifiedFilePreview": {
             "serverErrorText": 500,
@@ -2776,7 +2784,8 @@
             "geoAreasLabel": -10995037,
             "regionLabel": -67487923,
             "geoAreasPlaceholder": -65943043,
-            "listHeading": -63009300
+            "listHeading": -63009300,
+            "title": -95724442
         },
         "project.regions": {
             "saveButtonLabel": 25,
@@ -3046,6 +3055,13 @@
             "plannedAryLocationsLabel": 9028,
             "plannedArySectorsLabel": -24457818,
             "plannedArySectorsPlaceholder": -24457818
+        },
+        "components.geo.geoModal.polygonModal": {
+            "cancelButtonLabel": 61,
+            "colorInputLabel": 764,
+            "saveButtonLabel": 25,
+            "titleInputLabel": 13,
+            "title": -47942303
         }
     }
 }

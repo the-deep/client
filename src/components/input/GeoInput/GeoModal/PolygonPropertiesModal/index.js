@@ -13,6 +13,8 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 
+import _ts from '#ts';
+
 const schema = {
     fields: {
         title: [requiredCondition],
@@ -96,8 +98,7 @@ export default class PolygonEditModal extends React.PureComponent {
         return (
             <Modal>
                 <ModalHeader
-                    // FIXME: use strings
-                    title={`Edit ${value.type}`}
+                    title={_ts('components.geo.geoModal.polygonModal', 'title', { type: value.type })}
                 />
                 <Faram
                     onChange={this.handleFaramChange}
@@ -111,29 +112,25 @@ export default class PolygonEditModal extends React.PureComponent {
                     <ModalBody>
                         <TextInput
                             faramElementName="title"
-                            // FIXME: use strings
-                            label="Title"
+                            label={_ts('components.geo.geoModal.polygonModal', 'titleInputLabel')}
                             autoFocus
                         />
                         <ColorInput
                             faramElementName="color"
-                            // FIXME: use strings
-                            label="Color"
+                            label={_ts('components.geo.geoModal.polygonModal', 'colorInputLabel')}
                         />
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton
                             onClick={onClose}
                         >
-                            {/* FIXME: use strings */}
-                            Cancel
+                            {_ts('components.geo.geoModal.polygonModal', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={pristine}
                         >
-                            {/* FIXME: use strings */}
-                            Save
+                            {_ts('components.geo.geoModal.polygonModal', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>
