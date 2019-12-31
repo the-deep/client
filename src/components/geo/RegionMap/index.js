@@ -124,6 +124,7 @@ const propTypes = {
     onSelectionsChange: PropTypes.func,
     polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     editMode: PropTypes.boolean,
+    polygonsEnabled: PropTypes.bool,
 
     onEditStart: PropTypes.func,
     onEditCancel: PropTypes.func,
@@ -138,6 +139,7 @@ const defaultProps = {
     onSelectionsChange: undefined,
     polygons: [],
     editMode: false,
+    polygonsEnabled: false,
 
     onEditStart: undefined,
     onEditCancel: undefined,
@@ -694,16 +696,15 @@ export default class RegionMap extends React.PureComponent {
             onEditStart,
             onEditCancel,
             polygons,
+            polygonsEnabled,
         } = this.props;
-        const {
-            polygons: polygonsFromState,
-        } = this.state;
 
         const {
             pending,
             error,
             adminLevels = [],
             selectedAdminLevelId,
+            polygons: polygonsFromState,
         } = this.state;
 
         const className = _cs(
@@ -765,39 +766,48 @@ export default class RegionMap extends React.PureComponent {
         return (
             <div className={className}>
                 <div className={styles.mapContainer}>
-                    <div className={styles.refreshButton}>
+                    <div className={styles.topContainer}>
                         <Button
                             className={styles.button}
                             onClick={this.handleRefresh}
                             iconName="refresh"
                             pending={myAdminLevelPending}
-                        />
-                        {editMode ? (
+                        >
+                            {/* FIXME: use strings */}
+                            Reload
+                        </Button>
+                        { polygonsEnabled && (
                             <>
-                                <PrimaryButton
-                                    className={styles.button}
-                                    onClick={this.handleCompleteEditMode}
-                                    disabled={myAdminLevelPending}
-                                >
-                                    Save
-                                </PrimaryButton>
-                                <DangerButton
-                                    className={styles.button}
-                                    onClick={onEditCancel}
-                                    disabled={myAdminLevelPending}
-                                >
-                                    Cancel
-                                </DangerButton>
+                                {editMode ? (
+                                    <>
+                                        <PrimaryButton
+                                            className={styles.button}
+                                            onClick={this.handleCompleteEditMode}
+                                            disabled={myAdminLevelPending}
+                                        >
+                                            {/* FIXME: use strings */}
+                                            Save
+                                        </PrimaryButton>
+                                        <DangerButton
+                                            className={styles.button}
+                                            onClick={onEditCancel}
+                                            disabled={myAdminLevelPending}
+                                        >
+                                            {/* FIXME: use strings */}
+                                            Cancel
+                                        </DangerButton>
+                                    </>
+                                ) : (
+                                    <Button
+                                        className={styles.button}
+                                        onClick={onEditStart}
+                                        disabled={myAdminLevelPending}
+                                    >
+                                        {/* FIXME: use strings */}
+                                        Edit points/polygons
+                                    </Button>
+                                )}
                             </>
-                        ) : (
-                            <Button
-                                className={styles.button}
-                                onClick={onEditStart}
-                                disabled={myAdminLevelPending}
-                            >
-                                {/* FIXME: use strings */}
-                                Edit points/polygons
-                            </Button>
                         )}
                     </div>
                     <SegmentInput
@@ -826,7 +836,7 @@ export default class RegionMap extends React.PureComponent {
                                 padding={10}
                             />
                         )}
-                        {editMode && (
+                        {polygonsEnabled && editMode && (
                             <MapShapeEditor
                                 onCreate={this.handlePolygonCreate}
                                 onDelete={this.handlePolygonDelete}

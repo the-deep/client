@@ -86,6 +86,7 @@ export default class GeoWidget extends React.PureComponent {
                 showLabel={false}
                 emptyComponent={null}
                 showHintAndError={false}
+                polygonsEnabled
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>
                         <h3 className={styles.title} >

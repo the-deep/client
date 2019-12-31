@@ -56,23 +56,11 @@
         }
 
         .right {
-            display: flex;
             flex-basis: 20%;
-            flex-direction: column;
             flex-grow: 1;
             min-width: var(--width-right-container-min);
             max-width: var(--width-right-container-max);
             overflow-y: auto;
-
-            .heading {
-                flex-shrink: 0;
-                padding: var(--spacing-small);
-                text-transform: initial;
-            }
-
-            .item {
-                padding: var(--spacing-extra-small) var(--spacing-small);
-            }
         }
     }
 }

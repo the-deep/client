@@ -12,8 +12,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import Button from '#rsca/Button';
-import DismissableListItem from '#rsca/DismissableListItem';
-import ListView from '#rscv/List/ListView';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
@@ -24,6 +22,7 @@ import _cs from '#cs';
 import RegionMap from '#components/geo/RegionMap';
 
 import PolygonPropertiesModal from './PolygonPropertiesModal';
+import GeoInputList from './GeoInputList';
 
 import styles from './styles.scss';
 
@@ -39,6 +38,7 @@ const propTypes = {
     onApply: PropTypes.func,
     onCancel: PropTypes.func,
     modalLeftComponent: PropTypes.node,
+    polygonsEnabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -51,7 +51,9 @@ const defaultProps = {
     onApply: undefined,
     onCancel: undefined,
     modalLeftComponent: undefined,
+    polygonsEnabled: false,
 };
+
 
 @FaramInputElement
 export default class GeoModal extends React.PureComponent {
@@ -301,35 +303,6 @@ export default class GeoModal extends React.PureComponent {
         });
     }
 
-    // SIDEBAR LIST
-
-    handlePolygonRemove = (localId) => {
-        this.setState(state => ({
-            ...state,
-            polygons: state.polygons.filter(p => p.localId !== localId),
-        }));
-    }
-
-    handlePolygonEdit = (localId) => {
-        const { polygons } = this.state;
-        const polygon = polygons.find(p => p.localId === localId);
-        if (!polygon) {
-            console.error('Could not find index for polygon localId', localId);
-            return;
-        }
-        this.setState({
-            selectedPolygonInfo: polygon,
-            showPolygonEditModal: true,
-        });
-    }
-
-    handleItemDismiss = (itemKey) => {
-        this.setState(state => ({
-            ...state,
-            selections: state.selections.filter(v => v !== itemKey),
-        }));
-    }
-
     // FOOTER
 
     handleCancelClick = () => {
@@ -347,47 +320,6 @@ export default class GeoModal extends React.PureComponent {
         }
     }
 
-    // RENDERERS
-
-    polygonGroupRendererParams = groupKey => ({
-        children: groupKey,
-    })
-
-    polygonListRendererParams = (key, polygon) => ({
-        className: styles.item,
-        itemKey: key,
-        onDismiss: this.handlePolygonRemove,
-        disabled: this.state.editMode,
-        onEdit: this.handlePolygonEdit,
-        value: polygon.geoJson.properties.title,
-        marker: null,
-    })
-
-    groupRendererParams = (groupKey) => {
-        const { geoOptionsByRegion } = this.props;
-        const { selectedRegion } = this.state;
-
-        const adminLevelTitles = this.getAdminLevelTitles(
-            geoOptionsByRegion,
-            selectedRegion,
-        );
-
-        const adminLevel = adminLevelTitles.find(
-            a => String(a.key) === String(groupKey),
-        );
-
-        return {
-            children: adminLevel ? adminLevel.title : '',
-        };
-    }
-
-    listRendererParams = (key, geoOption) => ({
-        className: styles.item,
-        itemKey: key,
-        onDismiss: this.handleItemDismiss,
-        value: geoOption.title,
-    })
-
     render() {
         const {
             regions,
@@ -395,6 +327,7 @@ export default class GeoModal extends React.PureComponent {
             modalLeftComponent,
             geoOptionsByRegion,
             geoOptionsById,
+            polygonsEnabled,
         } = this.props;
 
         const {
@@ -520,6 +453,7 @@ export default class GeoModal extends React.PureComponent {
                             onEditComplete={this.handleEditComplete}
 
                             editMode={editMode}
+                            polygonsEnabled={polygonsEnabled}
                         />
                         {showPolygonEditModal && selectedPolygonInfo && (
                             <PolygonPropertiesModal
@@ -529,29 +463,22 @@ export default class GeoModal extends React.PureComponent {
                             />
                         )}
                     </div>
-                    <div className={styles.right}>
-                        <h3 className={styles.heading}>
-                            {_ts('components.geo.geoModal', 'listHeading')}
-                        </h3>
-                        <ListView
-                            data={mappedSelectionsForSelectedRegion}
-                            emptyComponent={null}
-                            keySelector={GeoModal.geoOptionKeySelector}
-                            renderer={DismissableListItem}
-                            rendererParams={this.listRendererParams}
-                            groupKeySelector={GeoModal.groupKeySelector}
-                            groupRendererParams={this.groupRendererParams}
-                        />
-                        <ListView
-                            data={polygonsForSelectedRegion}
-                            emptyComponent={null}
-                            keySelector={GeoModal.polygonKeySelector}
-                            renderer={DismissableListItem}
-                            rendererParams={this.polygonListRendererParams}
-                            groupKeySelector={GeoModal.polygonGroupKeySelector}
-                            groupRendererParams={this.polygonGroupRendererParams}
-                        />
-                    </div>
+                    <GeoInputList
+                        className={styles.right}
+                        header={_ts('components.geo.geoModal', 'listHeading')}
+
+                        selections={selectionsForSelectedRegion}
+                        mappedSelections={mappedSelectionsForSelectedRegion}
+                        polygons={polygonsForSelectedRegion}
+                        adminLevelTitles={adminLevelTitles}
+
+                        polygonDisabled={editMode}
+
+                        onSelectionsChange={this.handleSelectionsChangeForRegion}
+                        onPolygonsChange={this.handlePolygonsChangeForRegion}
+
+                        onPolygonEditClick={this.handlePolygonClick}
+                    />
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelClick} >

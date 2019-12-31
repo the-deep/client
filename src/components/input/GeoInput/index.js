@@ -33,13 +33,17 @@ const propTypes = {
 
     placeholder: PropTypes.string,
     label: PropTypes.string,
-    showLabel: PropTypes.bool,
     error: PropTypes.string,
-    showHintAndError: PropTypes.bool,
     hint: PropTypes.string,
     persistentHintAndError: PropTypes.bool,
+    showLabel: PropTypes.bool,
+    showHintAndError: PropTypes.bool,
+
+    // hideButton: PropTypes.bool,
     hideList: PropTypes.bool,
     hideInput: PropTypes.bool,
+
+    polygonsEnabled: PropTypes.bool,
 
     modalLeftComponent: PropTypes.node,
     emptyComponent: PropTypes.func,
@@ -64,6 +68,7 @@ const defaultProps = {
     error: '',
     showHintAndError: true,
     persistentHintAndError: true,
+    polygonsEnabled: false,
 };
 
 @FaramInputElement
@@ -181,6 +186,7 @@ export default class GeoInput extends React.PureComponent {
             hideInput,
             placeholder,
             emptyComponent,
+            polygonsEnabled,
         } = this.props;
         const {
             showModal,
@@ -224,6 +230,7 @@ export default class GeoInput extends React.PureComponent {
 
                     emptyComponent={emptyComponent}
                     topRightChild={(
+                        // FIXME: use modal button
                         <AccentButton
                             className={styles.action}
                             iconName="globe"
@@ -255,6 +262,7 @@ export default class GeoInput extends React.PureComponent {
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
                         modalLeftComponent={modalLeftComponent}
+                        polygonsEnabled={polygonsEnabled}
                     />
                 )}
             </div>

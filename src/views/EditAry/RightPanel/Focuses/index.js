@@ -139,6 +139,7 @@ export default class Focuses extends React.PureComponent {
                             geoOptionsByRegion={geoOptions}
                             regions={projectDetails.regions}
                             showHintAndError={false}
+                            polygonsEnabled
                         />
                     </div>
                 </FaramGroup>
