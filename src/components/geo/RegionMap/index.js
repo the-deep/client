@@ -234,7 +234,11 @@ export default class RegionMap extends React.PureComponent {
         type: 'line',
         paint: {
             'line-color': '#fff',
-            'line-width': thickness,
+            'line-width': ['case',
+                ['boolean', ['feature-state', 'hovered'], false],
+                thickness + 2,
+                thickness,
+            ],
         },
     }))
 
