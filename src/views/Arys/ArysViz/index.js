@@ -16,7 +16,7 @@ import requestOptions from './requests';
 import styles from './styles.scss';
 
 
-const vizRendererUrl = process.env.REACT_APP_ENTRY_VIZ_URL || 'https://the-deep.github.io/deepviz/';
+const vizRendererUrl = process.env.REACT_APP_ARY_VIZ_URL || 'https://matthewsmawfield.github.io/deepviz-assessments/';
 
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
@@ -28,7 +28,7 @@ const propTypes = {
 
 @RequestCoordinator
 @RequestClient(requestOptions)
-export default class EntriesViz extends React.PureComponent {
+export default class ArysViz extends React.PureComponent {
     static propTypes = propTypes;
 
     constructor(props) {
@@ -36,39 +36,54 @@ export default class EntriesViz extends React.PureComponent {
 
         this.state = {
             entriesDataUrl: undefined,
+            assessmentsDataUrl: undefined,
         };
         this.props.setDefaultRequestParams({
-            setState: params => this.setState(params),
+            setEntriesDataUrl: this.setEntriesDataUrl,
+            setAryDataUrl: this.setAryDataUrl,
         });
     }
 
-    getVizRendererUrl = memoize(entriesDataUrl => (
-        `${vizRendererUrl}?${p({ dataUrl: entriesDataUrl })}`
+    getVizRendererUrl = memoize(urls => (
+        `${vizRendererUrl}?${p(urls)}`
     ))
+
+    setEntriesDataUrl = (entriesDataUrl) => {
+        this.setState({ entriesDataUrl });
+    }
+
+    setAryDataUrl = (assessmentsDataUrl) => {
+        this.setState({ assessmentsDataUrl });
+    }
 
     render() {
         const {
             requests: {
-                entriesVizGetRequest: {
-                    pending,
-                    responseError,
-                },
+                arysVizGetRequest,
+                entriesVizGetRequest,
             },
         } = this.props;
-        const { entriesDataUrl } = this.state;
+        const pending = arysVizGetRequest.pending || entriesVizGetRequest.pending;
+        const responseError = arysVizGetRequest.responseError || entriesVizGetRequest.responseError;
+        const {
+            entriesDataUrl,
+            assessmentsDataUrl,
+        } = this.state;
+        const urls = { entriesDataUrl, assessmentsDataUrl };
+        const invalidDataUrl = (!entriesDataUrl || !assessmentsDataUrl);
 
         // NOTE: Show old data even if pending
-        if (pending && !entriesDataUrl) {
+        if (pending && invalidDataUrl) {
             return (
                 <div className={styles.content}>
                     <LoadingAnimation />
                 </div>
             );
-        // NOTE: Show error if responseError or entriesDataUrl is not defined
-        } else if (responseError || !entriesDataUrl) {
+        // NOTE: Show error if responseError or dataUrl is not defined
+        } else if (responseError || invalidDataUrl) {
             return (
                 <Message>
-                    {_ts('project', 'entriesVizErrorMessage')}
+                    {_ts('project', 'arysVizErrorMessage')}
                 </Message>
             );
         }
@@ -79,7 +94,7 @@ export default class EntriesViz extends React.PureComponent {
                 <iframe
                     className={styles.iframe}
                     title="Visualization"
-                    src={this.getVizRendererUrl(entriesDataUrl)}
+                    src={this.getVizRendererUrl(urls)}
                     sandbox="allow-scripts allow-same-origin"
                 />
             </div>

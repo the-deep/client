@@ -1,0 +1,11 @@
+.content {
+    display: flex;
+    flex-grow: 1;
+
+    .iframe {
+        flex-grow: 1;
+        border: 0;
+        object-fit: contain;
+        object-position: center center;
+    }
+}

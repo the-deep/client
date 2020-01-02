@@ -4,6 +4,7 @@ import _ts from '#ts';
 const ENTRIES_VIZ_POLL_TIME = 3000;
 
 const requestOptions = {
+    // NOTE: This is also used by ArysViz component. (Look for entriesDataUrl)
     entriesVizGetRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
@@ -11,10 +12,10 @@ const requestOptions = {
         url: ({ props: { projectId } }) => `/projects/${projectId}/entries-viz/`,
         options: ({ params: { setState } }) => ({
             pollTime: ENTRIES_VIZ_POLL_TIME,
-            maxPollAttempts: 10,
+            maxPollAttempts: 20,
             shouldPoll: (r) => {
                 if (r.data) {
-                    setState({ dataUrl: r.data });
+                    setState({ entriesDataUrl: r.data });
                 }
                 return r.status === 'pending' || r.status === 'started';
             },
