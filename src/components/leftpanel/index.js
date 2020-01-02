@@ -220,7 +220,7 @@ export default class LeftPane extends React.PureComponent {
         return tabs;
     })
 
-    getViews = () => ({
+    getViews = containerClassName => ({
         'simplified-preview': {
             component: SimplifiedLeadPreview,
             rendererParams: () => {
@@ -229,7 +229,7 @@ export default class LeftPane extends React.PureComponent {
                     filteredEntries,
                 } = this.props;
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     leadId,
                     highlights: this.getHighlightsForText(filteredEntries),
                     onLoad: this.handleLoad,
@@ -249,7 +249,7 @@ export default class LeftPane extends React.PureComponent {
                 } = this.props;
                 const { showGraphs } = this.state;
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     bookId: tabularBook,
                     highlights: this.getHighlightsForTabular(filteredEntries),
                     onClick: this.handleHighlightClick,
@@ -275,7 +275,7 @@ export default class LeftPane extends React.PureComponent {
                 } = this.props;
 
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     leadId,
                     projectId,
                     showNlp: !isPrivate,
@@ -299,7 +299,7 @@ export default class LeftPane extends React.PureComponent {
                 } = this.props;
 
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     lead,
                     handleScreenshot: this.handleScreenshot,
                     showScreenshot: entryPermissions.create,
@@ -314,7 +314,7 @@ export default class LeftPane extends React.PureComponent {
             rendererParams: () => {
                 const { images } = this.state;
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     images,
                 };
             },

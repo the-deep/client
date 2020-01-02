@@ -16,7 +16,7 @@ import {
 } from '#widgets';
 
 import WidgetContentWrapper from './WidgetContentWrapper';
-import ErrorWrapper from '../ErrorWrapper';
+import ErrorWrapper from './ErrorWrapper';
 import styles from './styles.scss';
 
 const propTypes = {

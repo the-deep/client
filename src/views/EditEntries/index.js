@@ -98,6 +98,7 @@ const propTypes = {
     setLead: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
+    setEntriesCommentsCount: PropTypes.func.isRequired,
 
     resetUiState: PropTypes.func.isRequired,
     routeUrl: PropTypes.string.isRequired,
@@ -168,39 +169,46 @@ export default class EditEntries extends React.PureComponent {
 
         this.views = {
             [VIEW.overview]: {
-                component: () => (
-                    <Overview
-                        // injected inside WidgetFaram
-                        onChange={this.handleChange}
-                        onExcerptChange={this.handleExcerptChange}
-                        onExcerptCreate={this.handleExcerptCreate}
-                        schema={this.props.schema}
-                        computeSchema={this.props.computeSchema}
-                        entryStates={this.state.entryStates}
-                        onEntryStateChange={this.handleEntryStateChange}
-                        bookId={this.props.lead && this.props.lead.tabularBook}
-                    />
-                ),
+                component: Overview,
+                rendererParams: () => ({
+                    // injected inside WidgetFaram
+                    onChange: this.handleChange,
+                    onExcerptChange: this.handleExcerptChange,
+                    onExcerptCreate: this.handleExcerptCreate,
+                    schema: this.props.schema,
+                    computeSchema: this.props.computeSchema,
+                    entryStates: this.state.entryStates,
+                    onEntryStateChange: this.handleEntryStateChange,
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+                }),
                 wrapContainer: true,
                 lazyMount: false,
                 mount: true,
             },
-
             [VIEW.list]: {
+                component: Listing,
+                rendererParams: () => ({
+                    // NOTE: to re-render Listing when has changes
+                    hash: window.location.hash,
+                    // injected inside WidgetFaram
+                    onChange: this.handleChange,
+                    onExcerptChange: this.handleExcerptChange,
+                    onExcerptCreate: this.handleExcerptCreate,
+                    schema: this.props.schema,
+                    computeSchema: this.props.computeSchema,
+                    entryStates: this.state.entryStates,
+                    onEntryStateChange: this.handleEntryStateChange,
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+                }),
+                wrapContainer: true,
+                lazyMount: true,
+                mount: true,
+            },
+            [VIEW.group]: {
                 component: () => (
-                    <Listing
-                        // NOTE: to re-render Listing when has changes
-                        hash={window.location.hash}
-                        // injected inside WidgetFaram
-                        onChange={this.handleChange}
-                        onExcerptChange={this.handleExcerptChange}
-                        onExcerptCreate={this.handleExcerptCreate}
-                        schema={this.props.schema}
-                        computeSchema={this.props.computeSchema}
-                        entryStates={this.state.entryStates}
-                        onEntryStateChange={this.handleEntryStateChange}
-                        bookId={this.props.lead && this.props.lead.tabularBook}
-                    />
+                    <div>
+                        Placeholder
+                    </div>
                 ),
                 wrapContainer: true,
                 lazyMount: true,
@@ -211,6 +219,7 @@ export default class EditEntries extends React.PureComponent {
         this.tabs = {
             [VIEW.overview]: _ts('editEntry', 'overviewTabTitle'),
             [VIEW.list]: _ts('editEntry', 'listTabTitle'),
+            [VIEW.group]: _ts('editEntry', 'groupTabTitle'),
         };
 
         this.defaultHash = VIEW.overview;
@@ -690,8 +699,8 @@ export default class EditEntries extends React.PureComponent {
                                 <Cloak
                                     hide={this.shouldHideEditLink}
                                     render={
-                                        /* viewsAcl not used because it
-                                            doesn't consider admin of af */
+                                        // viewsAcl not used because it doesn't
+                                        // consider admin of af
                                         <Link
                                             className={styles.editFrameworkLink}
                                             to={frameworkPath}

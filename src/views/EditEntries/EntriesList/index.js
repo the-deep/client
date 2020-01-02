@@ -83,7 +83,7 @@ export default class EntriesList extends React.PureComponent {
             const { tabularFields } = this.props;
             const fieldId = entryAccessor.tabularField(entry);
 
-            const field = this.props.tabularFields[fieldId];
+            const field = tabularFields[fieldId];
             // FIXME: use strings
             const tabularTitle = (field && field.title) || `Column ${fieldId}`;
 

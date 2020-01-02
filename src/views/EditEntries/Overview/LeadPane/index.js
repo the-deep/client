@@ -18,7 +18,7 @@ import _ts from '#ts';
 
 import LeftPanel from '#components/leftpanel';
 
-import EntriesList from './EntriesList';
+import EntriesList from '../../EntriesList';
 
 const propTypes = {
     className: PropTypes.string,
