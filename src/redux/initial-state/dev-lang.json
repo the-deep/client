@@ -1066,7 +1066,8 @@
         "-47942303": "Edit {type}",
         "-50180114": "Reload",
         "-97219656": "Edit points/polygons",
-        "-8007367": "Start Planned Assessment Export"
+        "-8007367": "Start Planned Assessment Export",
+        "-76059043": "Failed to load assessments visualization data. "
     },
     "links": {
         "browserExtension": {
@@ -2103,7 +2104,8 @@
             "afCloneSuccess": -8045218,
             "afCloneFatal": -48269508,
             "noAfSelectedText": -86287086,
-            "entriesVizErrorMessage": -9524324
+            "entriesVizErrorMessage": -9524324,
+            "arysVizErrorMessage": -76059043
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -3064,6 +3066,11 @@
             "saveButtonLabel": 25,
             "titleInputLabel": 13,
             "title": -47942303
+        },
+        "assessments.visualization": {
+            "assessmentsViz": -76059043,
+            "assessmentsVizFailure": -76059043,
+            "assessmentsVizFatal": -76059043
         }
     }
 }

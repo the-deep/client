@@ -2,9 +2,41 @@
 
 .arys {
     .header {
+        display: flex;
+        justify-content: flex-end;
+
         .filters {
             display: flex;
             flex-grow: 1;
+        }
+
+        .tabs {
+            align-self: flex-end;
+            flex-shrink: 0;
+            margin-right: var(--spacing-extra-large);
+            background-color: transparent;
+
+            .tab {
+                outline: 0;
+                border: none;
+                background-color: transparent;
+                padding: var(--spacing-small);
+                font-size: var(--font-size-extra-large);
+
+                &:hover,
+                &.active-tab {
+                    background-color: var(--color-background-hover);
+                    color: var(--color-accent);
+                }
+            }
+
+            .blank {
+                border: 0;
+            }
+
+            &.hide-tabs {
+                display: none;
+            }
         }
     }
 
@@ -69,6 +101,13 @@
                 text-transform: none;
                 color: var(--color-accent);
             }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
         }
     }
 
