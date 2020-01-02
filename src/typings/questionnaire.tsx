@@ -10,15 +10,25 @@ export interface Meta {
     requiredDuration?: number;
 }
 
-export interface QuestionnaireMeta extends Meta {
+export interface QuestionnaireMeta extends Meta {}
+
+export interface QuestionnaireFormElement extends QuestionnaireMeta {}
+
+export interface QuestionnaireElement extends QuestionnaireMeta {
+    id?: number;
     title?: string;
+    isArchived?: boolean;
+    createdAt?: string;
+    questions: QuestionElement[];
 }
 
 export interface QuestionnaireItem extends QuestionnaireMeta {
     id: number;
+    title?: string;
     numberOfQuestions: number;
     dateCreated: string;
     frameworkId: number;
+    questions: QuestionElement[];
 }
 
 export interface ResponseOptionElement {
@@ -31,6 +41,32 @@ export interface QuestionMeta extends Meta {
     importance?: number;
 }
 
+export interface QuestionFormElementFrameworkAttriute {
+    matrix2dId?: WidgetElement['id'];
+    type: 'sector' | 'dimension' | 'subsector' | 'subdimension';
+    value?: Matrix2dFlatCellElement['id'];
+    parentValue?: Matrix2dFlatCellElement['id']; // sector or dimension id
+}
+
+export interface QuestionFormElement extends QuestionMeta {
+    enumeratorInstruction?: string;
+    frameworkAttribute: QuestionFormElementFrameworkAttriute;
+    frameworkId?: number;
+    importance?: number;
+    label?: string;
+    respondentInstruction?: string;
+    responseOptionList: ResponseOptionElement[];
+    title?: string;
+    type?: QuestionType;
+}
+
+export interface QuestionElementFrameworkAttribute {
+    matrix2dId?: WidgetElement['id'];
+    type: 'sector' | 'dimension' | 'subsector' | 'subdimension';
+    value?: Matrix2dFlatCellElement['id'];
+    parentValue?: Matrix2dFlatCellElement['id']; // sector or dimension id
+}
+
 export interface QuestionElement extends QuestionMeta {
     id: number | undefined;
     title?: string;
@@ -39,11 +75,6 @@ export interface QuestionElement extends QuestionMeta {
     enumeratorInstruction?: string;
     respondentInstruction?: string;
     frameworkId: number | undefined;
-    frameworkAttribute: {
-        matrix2dId?: WidgetElement['id'];
-        type: 'sector' | 'dimension' | 'subsector' | 'subdimension';
-        value?: Matrix2dFlatCellElement['id'];
-        parentValue?: Matrix2dFlatCellElement['id']; // sector or dimension id
-    };
+    frameworkAttribute: QuestionElementFrameworkAttribute;
 }
 

@@ -48,7 +48,8 @@
         "#widgets": ["./src/widgets"],
         "#widgets/*": ["./src/widgets/*"],
         "#typings": ["./src/typings"],
-        "#typings/*": ["./src/typings/*"]
+        "#typings/*": ["./src/typings/*"],
+        "#qbc/*": ["./src/components/questionnaire-builder/*"]
     }
   },
   "include": [

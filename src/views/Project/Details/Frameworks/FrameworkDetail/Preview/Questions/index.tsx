@@ -1,8 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import modalize from '#rscg/Modalize';
-import AccentButton from '#rsca/Button/AccentButton';
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -16,8 +14,6 @@ import {
 
 import QuestionForm from './QuestionForm';
 import styles from './styles.scss';
-
-const ModalButton = modalize(AccentButton);
 
 const AddQuestionModal = ({
     onCloseButtonClick,
@@ -111,6 +107,13 @@ class Questions extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleAddQuestionButtonClick = () => {
+        this.setState({
+            showQuestionModal: true,
+            questionToEdit: undefined,
+        });
+    }
+
     private handleAddQuestionModalCloseButtonClick = () => {
         this.setState({
             showQuestionModal: false,
@@ -136,16 +139,12 @@ class Questions extends React.PureComponent<Props, State> {
                         Questions
                     </h3>
                     <div className={styles.actions}>
-                        <ModalButton
+                        <Button
                             className={styles.addQuestionButton}
-                            modal={(
-                                <AddQuestionModal
-                                    framework={framework}
-                                />
-                            )}
+                            onClick={this.handleAddQuestionButtonClick}
                         >
                             Add question
-                        </ModalButton>
+                        </Button>
                     </div>
                 </header>
                 <ListView

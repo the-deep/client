@@ -63,6 +63,8 @@ class Questionnaire extends React.PureComponent<Props> {
             data,
         } = this.props;
 
+        console.warn(data);
+
         return (
             <div className={_cs(styles.questionnaire, className)}>
                 <header className={styles.header}>
@@ -73,7 +75,7 @@ class Questionnaire extends React.PureComponent<Props> {
                         <div className={styles.info}>
                             <div className={styles.questions}>
                                 <div className={styles.value}>
-                                    { data.numberOfQuestions }
+                                    { data.questions.length }
                                 </div>
                                 <div className={styles.label}>
                                     questions
@@ -84,7 +86,7 @@ class Questionnaire extends React.PureComponent<Props> {
                                     Created on
                                 </div>
                                 <div className={styles.value}>
-                                    { data.dateCreated }
+                                    { data.createdAt }
                                 </div>
                             </div>
                         </div>

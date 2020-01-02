@@ -161,7 +161,7 @@
         "localforage": "^1.7.3",
         "localforage-observable": "^1.4.0",
         "mapbox-gl": "^1.6.0",
-        "memoize-one": "^5.0.5",
+        "memoize-one": "^5.1.1",
         "prop-types": "^15.7.2",
         "raven-js": "^3.27.2",
         "react": "^16.8.6",

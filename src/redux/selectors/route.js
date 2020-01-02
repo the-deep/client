@@ -55,3 +55,4 @@ export const leadIdFromRouteSelector = createRouteSelector('leadId');
 export const leadGroupIdFromRouteSelector = createRouteSelector('leadGroupId');
 export const projectIdFromRouteSelector = createRouteSelector('projectId');
 export const userIdFromRouteSelector = createRouteSelector('userId');
+export const questionnaireIdFromRouteSelector = createRouteSelector('questionnaireId');

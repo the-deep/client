@@ -1,42 +1,30 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 
 import {
-    AppState,
-    QuestionnaireItem,
+    QuestionnaireElement,
 } from '#typings';
-import {
-    questionnaireListSelector,
-} from '#redux';
-
 
 import Questionnaire from './Questionnaire';
 import styles from './styles.scss';
 
-interface PropsFromAppState {
-    questionnaireList: QuestionnaireItem[];
-}
+type ViewMode = 'active' | 'archived';
 
-interface OwnProps {
+interface Props {
     className?: string;
     title: string;
+    questionnaireList: QuestionnaireElement[];
 }
 
-type Props = PropsFromAppState & OwnProps;
 
-const mapStateToProps = (state: AppState) => ({
-    questionnaireList: questionnaireListSelector(state),
-});
-
-const questionnaireKeySelector = (q: QuestionnaireItem) => q.id;
+const questionnaireKeySelector = (q: QuestionnaireElement) => q.id;
 
 class QuestionnaireList extends React.PureComponent<Props> {
-    getQuestionnaireRendererParams = (
-        key: QuestionnaireItem['id'],
-        questionnaire: QuestionnaireItem,
+    private getQuestionnaireRendererParams = (
+        key: QuestionnaireElement['id'],
+        questionnaire: QuestionnaireElement,
     ) => ({
         questionnaireKey: key,
         data: questionnaire,
@@ -68,6 +56,4 @@ class QuestionnaireList extends React.PureComponent<Props> {
     }
 }
 
-export default connect(mapStateToProps)(
-    QuestionnaireList,
-);
+export default QuestionnaireList;
