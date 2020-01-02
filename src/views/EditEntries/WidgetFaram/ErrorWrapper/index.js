@@ -1,7 +1,3 @@
-/**
-* @author frozenhelium <fren.ankit@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 

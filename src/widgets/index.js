@@ -70,6 +70,7 @@ export const gridSize = {
 export const VIEW = {
     overview: 'overview',
     list: 'list',
+    group: 'group',
 };
 
 // Decorator for each widgets

@@ -31,8 +31,7 @@ export default class WidgetContentWrapper extends React.PureComponent {
         super(props);
 
         this.containerRef = React.createRef();
-        // NOTE: the explaination by frozenhelium
-        // is that this is required
+        // NOTE: the explanation by frozenhelium is that this is required
         this.dragEnterCount = 0;
     }
 
