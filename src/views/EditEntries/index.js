@@ -70,6 +70,7 @@ import {
 } from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
+import Group from './Group';
 
 import styles from './styles.scss';
 
@@ -205,11 +206,7 @@ export default class EditEntries extends React.PureComponent {
                 mount: true,
             },
             [VIEW.group]: {
-                component: () => (
-                    <div>
-                        Placeholder
-                    </div>
-                ),
+                component: Group,
                 wrapContainer: true,
                 lazyMount: true,
                 mount: true,

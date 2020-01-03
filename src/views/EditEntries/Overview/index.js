@@ -101,26 +101,27 @@ export default class Overview extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const entryIdFromRoute = urlParams.get('entry_id');
         const {
             setSelectedEntryKey,
             leadId,
             entries,
         } = this.props;
-        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
-        const entryLocalId = entryAccessor.key(entry);
 
         this.state = {
             mountModalButton: false,
         };
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryIdFromRoute = urlParams.get('entry_id');
+        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
+        const entryLocalId = entryAccessor.key(entry);
         if (entryLocalId) {
             setSelectedEntryKey({
                 leadId,
                 key: entryLocalId,
             });
         }
+
         this.showInitial = !!entryLocalId;
     }
 
