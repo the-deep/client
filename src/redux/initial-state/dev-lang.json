@@ -1451,7 +1451,8 @@
             "editFrameworkTitle": -59086768,
             "cancelConfirmDetail": -58972891,
             "noLeadMessage": -3048933,
-            "noDropMessage": -47892955
+            "noDropMessage": -47892955,
+            "groupTabTitle": 1129
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
