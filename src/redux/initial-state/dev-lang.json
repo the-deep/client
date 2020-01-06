@@ -2482,7 +2482,8 @@
             "altLabel": 512,
             "removeEntryButtonTitle": 523,
             "undoRemoveEntryButtonTitle": 525,
-            "unnamedExcerptTitle": -39451070
+            "unnamedExcerptTitle": -39451070,
+            "unnamedColumnTitle": -8790199
         },
         "framework.widgetList": {
             "addWidgetButtonLabel": -91895140
@@ -3072,6 +3073,10 @@
             "assessmentsViz": -76059043,
             "assessmentsVizFailure": -76059043,
             "assessmentsVizFatal": -76059043
+        },
+        "editEntry.group.leftpane": {
+            "entriesListingTabLabel": 15,
+            "entryGroupsListingTabLabel": 175
         }
     }
 }

@@ -1,8 +1,9 @@
 // import PropTypes from 'prop-types';
 import React from 'react';
 
-import modalize from '#rscg/Modalize';
 import ResizableH from '#rscv/Resizable/ResizableH';
+
+import LeftPanel from './LeftPane';
 
 import styles from './styles.scss';
 
@@ -22,7 +23,9 @@ export default class Group extends React.PureComponent {
             <ResizableH
                 className={styles.group}
                 leftChild={
-                    <div className={styles.leftPanel} />
+                    <LeftPanel
+                        className={styles.leftPanel}
+                    />
                 }
                 rightChild={
                     <React.Fragment>

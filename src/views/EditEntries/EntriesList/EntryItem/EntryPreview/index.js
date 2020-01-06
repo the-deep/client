@@ -30,7 +30,7 @@ const EntryPreview = (props) => {
         }
         case 'dataSeries': {
             const tabularTitle = (tabularField && tabularField.title)
-                || _ts('editEntry.overview.leftpane.entryList', 'unnamedColumnTitle', { id: tabularFieldId });
+                || _ts('editEntry.overview.leftpane.entryList', 'unnamedColumnTitle', { index: tabularFieldId });
             return (
                 <div className={styles.entryExcerpt}>
                     {tabularTitle}
