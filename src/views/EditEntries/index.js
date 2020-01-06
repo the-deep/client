@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 import produce from 'immer';
+import memoize from 'memoize-one';
 
 import { reverseRoute } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
@@ -20,9 +21,17 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 
 import BackLink from '#components/general/BackLink';
 import Cloak from '#components/general/Cloak';
-import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
+import {
+    createDiff,
+    createEntryGroup,
+    getApplicableDiffCount,
+    getApplicableAndModifyingDiffCount,
+    entryAccessor,
+    entryGroupAccessor,
+    ENTRY_STATUS,
+} from '#entities/editEntries';
 
-import { RequestCoordinator } from '#request';
+import { RequestCoordinator, RequestClient } from '#request';
 import { pathNames } from '#constants';
 import {
     leadIdFromRoute,
@@ -50,6 +59,9 @@ import {
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
+    editEntriesSetLabelsAction,
+    editEntriesEntryGroupsSelector,
+    editEntriesSetEntryGroupsAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -60,7 +72,6 @@ import notify from '#notify';
 import _ts from '#ts';
 import { VIEW } from '#widgets';
 
-import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
@@ -80,35 +91,41 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     leadId: PropTypes.number.isRequired,
-    projectId: PropTypes.number.isRequired,
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    resetUiState: PropTypes.func.isRequired,
+    routeUrl: PropTypes.string.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+
+    entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
+    setAnalysisFramework: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    setEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setLead: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setRegions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setEntriesCommentsCount: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
 
     addEntry: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired,
     removeEntry: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
-    setAnalysisFramework: PropTypes.func.isRequired,
-    setEntries: PropTypes.func.isRequired,
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     setExcerpt: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
-    setLead: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
-    setRegions: PropTypes.func.isRequired,
-    setEntriesCommentsCount: PropTypes.func.isRequired,
-
-    resetUiState: PropTypes.func.isRequired,
-    routeUrl: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
     projectRole: {},
     analysisFramework: undefined,
     entries: [],
+    entryGroups: [],
     statuses: {},
     schema: {},
     computeSchema: {},
@@ -118,6 +135,7 @@ const mapStateToProps = state => ({
     projectRole: activeProjectRoleSelector(state),
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
     entries: editEntriesEntriesSelector(state),
+    entryGroups: editEntriesEntryGroupsSelector(state),
     lead: editEntriesLeadSelector(state),
     leadId: leadIdFromRoute(state),
     projectId: projectIdFromRoute(state),
@@ -134,6 +152,7 @@ const mapDispatchToProps = dispatch => ({
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    setEntryGroups: params => dispatch(editEntriesSetEntryGroupsAction(params)),
     setEntriesCommentsCount: params => dispatch(editEntriesSetEntriesCommentsCountAction(params)),
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
@@ -144,25 +163,184 @@ const mapDispatchToProps = dispatch => ({
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
+    setLabels: params => dispatch(editEntriesSetLabelsAction(params)),
 });
 
-@RequestCoordinator
+const requestOptions = {
+    editEntryDataRequest: {
+        extras: {
+            schemaName: 'entriesForEditEntriesGetResponse',
+        },
+        url: ({ props }) => `/v2/edit-entries-data/${props.leadId}/`,
+        onPropsChanged: ['leadId', 'projectId'],
+        onMount: true,
+        onSuccess: ({ response, props, params }) => {
+            const {
+                leadId,
+                projectId: projectIdFromUrl,
+                entries: entriesFromProps,
+                entryGroups: entryGroupsFromProps,
+                setEntriesCommentsCount,
+                setAnalysisFramework,
+                setEntries,
+                setEntryGroups,
+                setGeoOptions,
+                setLead,
+                setRegions,
+                setLabels,
+            } = props;
+            const {
+                setProjectMismatch,
+            } = params;
+
+            const newResponse = {
+                ...response,
+                labels: [
+                    { id: 1, order: 1, title: 'Problem', color: 'red' },
+                    { id: 2, order: 2, title: 'Solution', color: 'orange' },
+                    { id: 3, order: 3, title: 'Remarks', color: 'blue' },
+                ],
+                entryGroups: [
+                    {
+                        id: 1,
+                        clientId: 'pipkbabx',
+                        versionId: 1,
+                        order: 1,
+                        title: '',
+                        entries: [
+                            {
+                                id: 1,
+                                entryId: 52,
+                                entryClientId: 'xv9sn3a6',
+                                labelId: 1,
+                            },
+                            {
+                                id: 2,
+                                entryId: 53,
+                                entryClientId: 'xlpebkgu',
+                                labelId: 2,
+                            },
+                        ],
+                    },
+                ],
+            };
+            const {
+                lead,
+                geoOptions,
+                analysisFramework,
+                entries,
+                entryGroups,
+                regions,
+                labels,
+            } = newResponse;
+
+            const projectMismatch = projectIdFromUrl !== lead.project;
+            setProjectMismatch(projectMismatch);
+
+            if (projectMismatch) {
+                console.error(`Expected project id to be ${projectIdFromUrl}, but got ${lead.project}`);
+                return;
+            }
+
+            setLead({ lead });
+
+            setAnalysisFramework({ analysisFramework });
+
+            setGeoOptions({
+                projectId: lead.project,
+                locations: geoOptions,
+            });
+
+            setRegions({
+                projectId: lead.project,
+                regions,
+            });
+
+            setEntriesCommentsCount({ leadId, entries });
+
+            setLabels({ leadId, labels });
+
+            // Calculate color for each entry in the diff
+            const diffs = createDiff(entriesFromProps, entries)
+                .map((diff) => {
+                    if (!diff.item) {
+                        return diff;
+                    }
+
+                    const {
+                        item: { data: { attributes = {} } = {} },
+                    } = diff;
+                    const color = calculateEntryColor(
+                        attributes,
+                        analysisFramework,
+                    );
+                    return {
+                        ...diff,
+                        item: {
+                            ...diff.item,
+                            localData: {
+                                ...diff.item.localData,
+                                color,
+                            },
+                        },
+                    };
+                });
+
+            if (getApplicableDiffCount(diffs) > 0) {
+                setEntries({ leadId, entryActions: diffs });
+
+                if (getApplicableAndModifyingDiffCount(diffs) > 0) {
+                    notify.send({
+                        type: notify.type.WARNING,
+                        title: _ts('editEntry', 'entryUpdate'),
+                        message: _ts('editEntry', 'entryUpdateOverridden'),
+                        duration: notify.duration.SLOW,
+                    });
+                }
+            }
+
+            const entryGroupDiffs = createDiff(
+                entryGroupsFromProps,
+                entryGroups,
+                entryGroupAccessor,
+                createEntryGroup,
+            );
+            if (getApplicableDiffCount(entryGroupDiffs) > 0) {
+                setEntryGroups({ leadId, entryGroupActions: entryGroupDiffs });
+
+                if (getApplicableAndModifyingDiffCount(entryGroupDiffs) > 0) {
+                    notify.send({
+                        type: notify.type.WARNING,
+                        title: _ts('editEntry', 'entryGroupUpdate'),
+                        message: _ts('editEntry', 'entryGroupUpdateOverridden'),
+                        duration: notify.duration.SLOW,
+                    });
+                }
+            }
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requestOptions)
 export default class EditEntries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static calculateSavableEntries = (entries, statuses) => entries.filter((entry) => {
-        const entryKey = entryAccessor.key(entry);
-        const status = statuses[entryKey];
-        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
-    })
-
     constructor(props) {
         super(props);
 
+        const {
+            requests,
+        } = this.props;
+        requests.editEntryDataRequest.setDefaultParams({
+            setProjectMismatch: (value) => {
+                this.setState({ projectMismatch: value });
+            },
+        });
+
         this.state = {
-            pendingEditEntryData: true,
             pendingSaveAll: false,
             projectMismatch: false,
             entryStates: {},
@@ -245,76 +423,44 @@ export default class EditEntries extends React.PureComponent {
                 this.setState({ pendingSaveAll: false });
             })
             .build();
-
-        this.editEntryDataRequest = new EditEntryDataRequest({
-            getProjectId: () => this.props.projectId,
-            getEntries: () => this.props.entries,
-            setEntriesCommentsCount: this.props.setEntriesCommentsCount,
-            setAnalysisFramework: this.props.setAnalysisFramework,
-            setEntries: this.props.setEntries,
-            setGeoOptions: this.props.setGeoOptions,
-            setLead: this.props.setLead,
-            setRegions: this.props.setRegions,
-            setState: params => this.setState(params),
-            calculateEntryColor,
-        });
-
-        this.savableEntries = EditEntries.calculateSavableEntries(
-            this.props.entries,
-            this.props.statuses,
-        );
-    }
-
-    componentWillMount() {
-        const { leadId, resetUiState } = this.props;
-        resetUiState(leadId);
     }
 
     componentDidMount() {
-        const { leadId, entries, analysisFramework } = this.props;
+        const {
+            leadId,
+            entries,
+            analysisFramework,
+            resetUiState,
+            updateEntriesBulk,
+        } = this.props;
+
+        resetUiState(leadId);
 
         // Update all entries with new color
         if (entries && analysisFramework && entries.length > 0) {
             const bulkData = entries.reduce((acc, entry) => {
                 const entryKey = entryAccessor.key(entry);
                 acc[entryKey] = { localData: {} };
-                acc[entryKey].localData.color = this.calculateEntryColor(
+                acc[entryKey].localData.color = calculateEntryColor(
                     entryAccessor.dataAttributes(entry),
+                    analysisFramework,
                 );
                 return acc;
             }, {});
 
-            this.props.updateEntriesBulk({ leadId, bulkData });
-        }
-
-        this.editEntryDataRequest.init({ leadId });
-        this.editEntryDataRequest.start();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { leadId } = nextProps;
-        if (this.props.leadId !== leadId && leadId) {
-            this.saveRequestCoordinator.stop();
-
-            this.editEntryDataRequest.init({ leadId });
-            this.editEntryDataRequest.start();
-        }
-
-        if (
-            this.props.entries !== nextProps.entries ||
-            this.props.statuses !== nextProps.statuses
-        ) {
-            this.savableEntries = EditEntries.calculateSavableEntries(
-                nextProps.entries,
-                nextProps.statuses,
-            );
+            updateEntriesBulk({ leadId, bulkData });
         }
     }
 
     componentWillUnmount() {
-        this.editEntryDataRequest.stop();
         this.saveRequestCoordinator.stop();
     }
+
+    getSavebleEntries = memoize((entries, statuses) => entries.filter((entry) => {
+        const entryKey = entryAccessor.key(entry);
+        const status = statuses[entryKey];
+        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
+    }))
 
     // PERMISSION
 
@@ -323,7 +469,8 @@ export default class EditEntries extends React.PureComponent {
             console.warn('No permission to edit entry excerpt');
             return;
         }
-        this.props.setExcerpt(val);
+        const { setExcerpt } = this.props;
+        setExcerpt(val);
     }
 
     setEntryData = (val) => {
@@ -331,7 +478,8 @@ export default class EditEntries extends React.PureComponent {
             console.warn('No permission to edit entry');
             return;
         }
-        this.props.setEntryData(val);
+        const { setEntryData } = this.props;
+        setEntryData(val);
     }
 
     addEntry = (val) => {
@@ -339,7 +487,8 @@ export default class EditEntries extends React.PureComponent {
             console.warn('No permission to create entry');
             return;
         }
-        this.props.addEntry(val);
+        const { addEntry } = this.props;
+        addEntry(val);
     }
 
     // PERMISSIONS
@@ -363,29 +512,17 @@ export default class EditEntries extends React.PureComponent {
         return !isAdmin;
     }
 
-    // CALCULATIONS
-
-    calculateFirstTimeAttributes = attributes => calculateFirstTimeAttributes(
-        attributes,
-        this.props.analysisFramework,
-        this.props.lead,
-    )
-
-    calculateEntryColor = attributes => calculateEntryColor(
-        attributes,
-        this.props.analysisFramework,
-    )
-
     // APIS
 
     // can only edit entry
     handleExcerptChange = ({ type, value }, entryKey, entryId) => {
+        const { leadId } = this.props;
         if (!entryKey) {
             console.warn('There is no entry key while changing excerpt.');
             // this.handleExcerptCreate({ type, value });
         } else {
             this.setExcerpt({
-                leadId: this.props.leadId,
+                leadId,
                 key: entryKey,
                 id: entryId,
                 excerptType: type,
@@ -396,13 +533,22 @@ export default class EditEntries extends React.PureComponent {
 
     // can only create entry
     handleExcerptCreate = ({ type, value }) => {
+        const {
+            leadId,
+            analysisFramework,
+            lead,
+        } = this.props;
         this.addEntry({
-            leadId: this.props.leadId,
+            leadId,
             entry: {
-                analysisFramework: this.props.analysisFramework.id,
+                analysisFramework: analysisFramework.id,
                 excerptType: type,
                 excerptValue: value,
-                attributes: this.calculateFirstTimeAttributes({}),
+                attributes: calculateFirstTimeAttributes(
+                    {},
+                    analysisFramework,
+                    lead,
+                ),
             },
         });
     }
@@ -412,7 +558,11 @@ export default class EditEntries extends React.PureComponent {
     // can edit/create entry
     // create when 'newEntry' is on info or entryKey is undefined
     handleChange = (faramValues, faramErrors, faramInfo, entryKey, entryId) => {
-        const { analysisFramework } = this.props;
+        const {
+            analysisFramework,
+            lead,
+            leadId,
+        } = this.props;
         if (faramInfo.action === 'newEntry') {
             // TODO: if excerpt already exists modify existing entry
             // instead of creating a new one
@@ -430,15 +580,19 @@ export default class EditEntries extends React.PureComponent {
                 attributes = { [key]: attributes };
             });
 
-            attributes = this.calculateFirstTimeAttributes(attributes);
-            const color = this.calculateEntryColor(attributes);
+            attributes = calculateFirstTimeAttributes(
+                attributes,
+                analysisFramework,
+                lead,
+            );
+            const color = calculateEntryColor(attributes, analysisFramework);
 
             this.addEntry({
-                leadId: this.props.leadId,
+                leadId,
                 entry: {
                     excerptType,
                     excerptValue,
-                    lead: this.props.leadId,
+                    lead: leadId,
                     attributes,
                     color,
                     analysisFramework: analysisFramework.id,
@@ -451,24 +605,28 @@ export default class EditEntries extends React.PureComponent {
             const excerptValue = '';
             const excerptType = 'excerpt';
 
-            const attributes = this.calculateFirstTimeAttributes(faramValues);
-            const color = this.calculateEntryColor(attributes);
+            const attributes = this.calculateFirstTimeAttributes(
+                faramValues,
+                analysisFramework,
+                lead,
+            );
+            const color = calculateEntryColor(attributes, analysisFramework);
 
             this.addEntry({
-                leadId: this.props.leadId,
+                leadId,
                 entry: {
                     excerptType,
                     excerptValue,
-                    lead: this.props.leadId,
+                    lead: leadId,
                     attributes,
                     color,
                     analysisFramework: analysisFramework.id,
                 },
             });
         } else {
-            const color = this.calculateEntryColor(faramValues);
+            const color = calculateEntryColor(faramValues, analysisFramework);
             this.setEntryData({
-                leadId: this.props.leadId,
+                leadId,
                 key: entryKey,
                 id: entryId,
                 values: faramValues,
@@ -482,8 +640,13 @@ export default class EditEntries extends React.PureComponent {
     handleValidationFailure = (faramErrors, entryKey) => {
         const proxyRequest = {
             start: () => {
-                this.props.setEntryError({
-                    leadId: this.props.leadId,
+                const {
+                    setEntryError,
+                    leadId,
+                } = this.props;
+
+                setEntryError({
+                    leadId,
                     key: entryKey,
                     errors: faramErrors,
                 });
@@ -508,8 +671,13 @@ export default class EditEntries extends React.PureComponent {
             saveEntry: this.props.saveEntry,
             setEntryServerError: (data) => {
                 console.warn('Entry save error', data);
-                this.props.setEntryError({
-                    leadId: this.props.leadId,
+                const {
+                    leadId,
+                    setEntryError,
+                } = this.props;
+
+                setEntryError({
+                    leadId,
                     key: entryKey,
                     // TODO: handle error messages later
                     errors: undefined,
@@ -517,7 +685,10 @@ export default class EditEntries extends React.PureComponent {
                 });
             },
             getCoordinator: () => this.saveRequestCoordinator,
-            calculateEntryColor: this.calculateEntryColor,
+            calculateEntryColor: (value) => {
+                const { analysisFramework } = this.props;
+                this.calculateEntryColor(value, analysisFramework);
+            },
         });
         request.init({
             leadId: this.props.leadId,
@@ -536,8 +707,12 @@ export default class EditEntries extends React.PureComponent {
     handleDeleteLocalEntry = (entryKey) => {
         const pseudoRequest = {
             start: () => {
-                this.props.removeEntry({
-                    leadId: this.props.leadId,
+                const {
+                    removeEntry,
+                    leadId,
+                } = this.props;
+                removeEntry({
+                    leadId,
                     key: entryKey,
                 });
                 this.saveRequestCoordinator.notifyComplete(entryKey);
@@ -553,8 +728,13 @@ export default class EditEntries extends React.PureComponent {
             removeEntry: this.props.removeEntry,
             setEntryServerError: (data) => {
                 console.warn('Entry delete error', data);
-                this.props.setEntryError({
-                    leadId: this.props.leadId,
+                const {
+                    leadId,
+                    setEntryError,
+                } = this.props;
+
+                setEntryError({
+                    leadId,
                     key: entryKey,
                     // TODO: handle error messages later
                     errors: undefined,
@@ -572,7 +752,18 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleSave = () => {
-        this.savableEntries.forEach((entry) => {
+        const {
+            entries,
+            statuses,
+            schema,
+            computeSchema,
+        } = this.props;
+        const savableEntries = this.getSavebleEntries(
+            entries,
+            statuses,
+        );
+
+        savableEntries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
             const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
@@ -587,8 +778,8 @@ export default class EditEntries extends React.PureComponent {
                     value: entryAccessor.dataAttributes(entry),
                     error: entryAccessor.error(entry),
 
-                    schema: this.props.schema,
-                    computeSchema: this.props.computeSchema,
+                    schema,
+                    computeSchema,
                     onChange: this.handleChange,
 
                     onValidationFailure: (errors) => {
@@ -605,10 +796,13 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleCancel = () => {
-        const { leadId } = this.props;
-        this.props.clearEntries({ leadId });
-        this.editEntryDataRequest.init({ leadId });
-        this.editEntryDataRequest.start();
+        const {
+            leadId,
+            clearEntries,
+            requests,
+        } = this.props;
+        clearEntries({ leadId });
+        requests.editEntryDataRequest.start();
     }
 
     handleEntryStateChange = (entryKey, value) => {
@@ -631,10 +825,16 @@ export default class EditEntries extends React.PureComponent {
             analysisFramework: {
                 id: analysisFrameworkId,
             } = {},
+            requests: {
+                editEntryDataRequest: {
+                    pending: pendingEditEntryData,
+                },
+            },
+            entries,
+            statuses,
         } = this.props;
 
         const {
-            pendingEditEntryData,
             pendingSaveAll,
             projectMismatch,
         } = this.state;
@@ -655,7 +855,11 @@ export default class EditEntries extends React.PureComponent {
             analysisFrameworkId,
         });
 
-        const hasSavableEntries = this.savableEntries.length > 0;
+        const savableEntries = this.getSavebleEntries(
+            entries,
+            statuses,
+        );
+        const hasSavableEntries = savableEntries.length > 0;
         const isSaveDisabled = (
             pendingSaveAll || projectMismatch || !hasSavableEntries
         );
