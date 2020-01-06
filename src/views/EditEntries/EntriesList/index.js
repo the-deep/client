@@ -1,14 +1,9 @@
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import React from 'react';
 
-import Icon from '#rscg/Icon';
-import Button from '#rsca/Button';
-import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
-import Cloak from '#components/general/Cloak';
-import _ts from '#ts';
 import _cs from '#cs';
 
 import EntryItem from './EntryItem';

@@ -77,12 +77,15 @@ export const editEntriesEntryGroupRestsSelector = createSelector(
 );
 
 export const editEntriesEntryGroupStatusesSelector = createSelector(
-    editEntriesEntriesSelector,
+    editEntriesEntryGroupsSelector,
     editEntriesEntryGroupRestsSelector,
     (entryGroups, rests) => listToMap(
         entryGroups,
         entryGroup => entryGroupAccessor.key(entryGroup),
-        (entryGroup, key) => calculateEntryGroupState({ entryGroup, restPending: !!rests[key] }),
+        (entryGroup, key) => calculateEntryGroupState({
+            entryGroup,
+            restPending: !!rests[key],
+        }),
     ),
 );
 
