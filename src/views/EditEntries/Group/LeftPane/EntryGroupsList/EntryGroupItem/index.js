@@ -9,108 +9,84 @@ import Cloak from '#components/general/Cloak';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import EntryPreview from './EntryPreview';
-import EntryStatusIcon from '../../StatusIcon';
+// TODO: this status icon can be reused
+import EntryGroupStatusIcon from '../../../../StatusIcon';
+
 import styles from './styles.scss';
 
-const EntryItem = (props) => {
+
+const EntryGroupItem = (props) => {
     const {
         className: classNameFromProps,
 
-        isActive,
         status,
         pending,
         isMarkedAsDeleted,
 
-        entryServerId,
-        entryKey,
-        entryType,
-        image,
-        excerpt,
+        entryGroupServerId,
+        entryGroupKey,
+        title,
         order,
-        tabularField,
-        tabularFieldId,
 
         leadId,
-        onSelect,
         onMarkAsDelete,
     } = props;
 
     const className = _cs(
         classNameFromProps,
-        styles.entriesListItem,
-        isActive && styles.active,
-    );
-
-    const handleClick = useCallback(
-        () => {
-            onSelect({
-                leadId,
-                key: entryKey,
-            });
-        },
-        [onSelect, leadId, entryKey],
+        styles.entryGroupsListItem,
     );
 
     const handleDelete = useCallback(
         () => {
             onMarkAsDelete({
                 leadId,
-                key: entryKey,
+                key: entryGroupKey,
                 value: true,
             });
         },
-        [onMarkAsDelete, entryKey, leadId],
+        [onMarkAsDelete, entryGroupKey, leadId],
     );
 
     const handleUndoDelete = useCallback(
         () => {
             onMarkAsDelete({
                 leadId,
-                key: entryKey,
+                key: entryGroupKey,
                 value: false,
             });
         },
-        [onMarkAsDelete, entryKey, leadId],
+        [onMarkAsDelete, entryGroupKey, leadId],
     );
 
     const shouldHideEntryDelete = useCallback(
         ({ entryPermissions }) => (
-            !entryPermissions.delete && entryServerId
+            !entryPermissions.delete && entryGroupServerId
         ),
-        [entryServerId],
+        [entryGroupServerId],
     );
 
     return (
         <div className={className}>
-            <button
-                className={styles.addEntryListItem}
-                onClick={handleClick}
-                disabled={isMarkedAsDeleted}
+            <div
+                className={styles.addEntryGroupListItem}
                 type="button"
             >
-                <EntryPreview
-                    entryType={entryType}
-                    image={image}
-                    excerpt={excerpt}
-                    order={order}
-                    tabularFieldId={tabularFieldId}
-                    tabularField={tabularField}
-                />
+                {title || `Group ${order}`}
                 <div className={styles.statusIcons}>
-                    <EntryStatusIcon
+                    <EntryGroupStatusIcon
                         status={status}
                         isMarkedAsDeleted={isMarkedAsDeleted}
                     />
                 </div>
-            </button>
+            </div>
             {
                 isMarkedAsDeleted ? (
                     <Button
                         className={styles.removeButton}
                         onClick={handleUndoDelete}
                         iconName="undo"
-                        title={_ts('editEntry.overview.leftpane.entryList', 'removeEntryButtonTitle')}
+                        title={_ts('editEntry.group.leftpane.entryGroupList', 'removeEntryGroupButtonTitle')}
                         disabled={pending}
                     />
                 ) : (
@@ -121,7 +97,7 @@ const EntryItem = (props) => {
                                 className={styles.removeButton}
                                 onClick={handleDelete}
                                 iconName="delete"
-                                title={_ts('editEntry.overview.leftpane.entryList', 'undoRemoveEntryButtonTitle')}
+                                title={_ts('editEntry.group.leftpane.entryGroupList', 'undoRemoveEntryGroupButtonTitle')}
                                 disabled={pending}
                             />
                         }
@@ -131,36 +107,26 @@ const EntryItem = (props) => {
         </div>
     );
 };
-EntryItem.propTypes = {
+EntryGroupItem.propTypes = {
     className: PropTypes.string,
-    isActive: PropTypes.bool,
     status: PropTypes.string.isRequired,
     pending: PropTypes.bool,
     isMarkedAsDeleted: PropTypes.bool,
 
-    entryServerId: PropTypes.number,
-    entryKey: PropTypes.string.isRequired,
-    entryType: PropTypes.string.isRequired,
-    image: PropTypes.string,
-    excerpt: PropTypes.string,
+    entryGroupServerId: PropTypes.number,
+    entryGroupKey: PropTypes.string.isRequired,
     order: PropTypes.number.isRequired,
-    tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    tabularFieldId: PropTypes.number,
 
     leadId: PropTypes.number.isRequired,
-    onSelect: PropTypes.func.isRequired,
     onMarkAsDelete: PropTypes.func.isRequired,
+    title: PropTypes.string,
 };
-EntryItem.defaultProps = {
+EntryGroupItem.defaultProps = {
     className: undefined,
-    isActive: false,
     pending: false,
     isMarkedAsDeleted: false,
-    entryServerId: undefined,
-    image: undefined,
-    excerpt: undefined,
-    tabularFieldId: undefined,
-    tabularField: undefined,
+    entryGroupServerId: undefined,
+    title: undefined,
 };
 
-export default EntryItem;
+export default EntryGroupItem;

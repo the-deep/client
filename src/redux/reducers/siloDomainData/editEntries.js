@@ -203,6 +203,14 @@ export const editEntriesMarkAsDeletedEntryAction = ({ leadId, key, value }) => (
     value,
 });
 
+export const editEntriesMarkAsDeletedEntryGroupAction = ({ leadId, key, value }) => ({
+    type: EEB__MARK_AS_DELETED_ENTRY_GROUP,
+    leadId,
+    key,
+    value,
+});
+
+
 export const editEntriesResetUiStateAction = leadId => ({
     type: EEB__RESET_UI_STATE,
     leadId,
@@ -699,6 +707,33 @@ const markAsDeletedEntry = (state, action) => {
     return update(state, settings);
 };
 
+const markAsDeletedEntryGroup = (state, action) => {
+    const { leadId, key, value } = action;
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        entryGroup => entryGroupAccessor.key(entryGroup) === key,
+    );
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    [entryGroupIndex]: {
+                        localData: {
+                            isPristine: { $set: false },
+                            isMarkedAsDeleted: { $set: value },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const applyToAllEntries = mode => (state, action) => {
     // attribute key and value
     const { leadId, key, value, entryKey, modifiable } = action;
@@ -928,7 +963,7 @@ const reducers = {
     [EEB__ADD_ENTRY_GROUP]: noop,
     [EEB__REMOVE_ENTRY_GROUP]: noop,
     [EEB__REMOVE_LOCAL_ENTRY_GROUPS]: noop,
-    [EEB__MARK_AS_DELETED_ENTRY_GROUP]: noop,
+    [EEB__MARK_AS_DELETED_ENTRY_GROUP]: markAsDeletedEntryGroup,
     [EEB__SAVE_ENTRY_GROUP]: noop,
     [EEB__SET_ENTRY_GROUP_PENDING]: noop,
     [EEB__RESET_ENTRY_GROUP_UI_STATE]: noop,

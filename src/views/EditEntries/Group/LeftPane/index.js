@@ -8,6 +8,8 @@ import ScrollTabs from '#rscv/ScrollTabs';
 
 import _ts from '#ts';
 
+import EntryGroupsList from './EntryGroupsList';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -44,11 +46,7 @@ export default class LeftPane extends React.PureComponent {
                 wrapContainer: true,
             },
             'entry-groups-listing': {
-                component: ({ className }) => (
-                    <div className={className}>
-                        Entry Groups Listing
-                    </div>
-                ),
+                component: EntryGroupsList,
                 rendererParams: () => ({
                     className: styles.container,
                 }),
