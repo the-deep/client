@@ -1065,7 +1065,8 @@
         "-95724442": "Select Geo Areas",
         "-47942303": "Edit {type}",
         "-50180114": "Reload",
-        "-97219656": "Edit points/polygons"
+        "-97219656": "Edit points/polygons",
+        "-8007367": "Start Planned Assessment Export"
     },
     "links": {
         "browserExtension": {
@@ -1542,6 +1543,7 @@
             "afLabel": 379,
             "cantLoadAf": 648,
             "startAssessmentExportButtonLabel": -58642627,
+            "startPlannedAssessmentExportButtonLabel": -8007367,
             "geoLabel": -80682543,
             "cantLoadGeo": 534,
             "startedStatusLabel": 629,

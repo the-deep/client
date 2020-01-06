@@ -15,6 +15,8 @@ import ModalHeader from '#rscv/Modal/Header';
 
 import _ts from '#ts';
 
+import styles from './styles.scss';
+
 const schema = {
     fields: {
         title: [requiredCondition],
@@ -109,13 +111,14 @@ export default class PolygonEditModal extends React.PureComponent {
                     error={faramErrors}
                 >
                     <NonFieldErrors faramElement />
-                    <ModalBody>
+                    <ModalBody className={styles.modalBody}>
                         <TextInput
                             faramElementName="title"
                             label={_ts('components.geo.geoModal.polygonModal', 'titleInputLabel')}
                             autoFocus
                         />
                         <ColorInput
+                            className={styles.colorInput}
                             faramElementName="color"
                             label={_ts('components.geo.geoModal.polygonModal', 'colorInputLabel')}
                         />
