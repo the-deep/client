@@ -7,7 +7,7 @@ import {
 } from '@togglecorp/fujs';
 import produce from 'immer';
 
-import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
+import { applyDiff, entryAccessor, createEntry, entryGroupAccessor } from '#entities/editEntries';
 import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
@@ -30,12 +30,16 @@ const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
 // REDUX
 
 export const EEB__SET_LEAD = 'siloDomainData/EEB__SET_LEAD';
+
 export const EEB__SET_ENTRIES = 'siloDomainData/EEB__SET_ENTRIES';
-export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
-export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
 export const EEB__UPDATE_ENTRIES_BULK = 'siloDomainData/EEB__UPDATE_ENTRIES_BULK';
 export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
+
+export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
+export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
+
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
+
 export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
@@ -46,9 +50,24 @@ export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_E
 export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES';
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
 export const EEB__FORMAT_ALL_ENTRIES = 'siloDomainData/EEB__FORMAT_ALL_ENTRIES';
-export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
+
+export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
+
+
+// NOTE: these are added newly
+const EEB__SET_ENTRY_GROUPS = 'siloDomainData/EEB__SET_ENTRY_GROUPS';
+const EEB__UPDATE_ENTRY_GROUPS_BULK = 'siloDomainData/EEB__UPDATE_ENTRY_GROUPS_BULK';
+const EEB__CLEAR_ENTRY_GROUPS = 'siloDomainData/EEB__CLEAR_ENTRY_GROUPS';
+const EEB__ADD_ENTRY_GROUP = 'siloDomainData/EEB__ADD_ENTRY_GROUP';
+const EEB__REMOVE_ENTRY_GROUP = 'siloDomainData/EEB__REMOVE_ENTRY_GROUP';
+const EEB__REMOVE_LOCAL_ENTRY_GROUPS = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRY_GROUPS';
+const EEB__MARK_AS_DELETED_ENTRY_GROUP = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY_GROUP';
+const EEB__SAVE_ENTRY_GROUP = 'siloDomainData/EEB__SAVE_ENTRY_GROUP';
+const EEB__SET_ENTRY_GROUP_PENDING = 'siloDomainData/EEB__SET_ENTRY_GROUP_PENDING';
+const EEB__RESET_ENTRY_GROUP_UI_STATE = 'siloDomainData/EEB__RESET_ENTRY_GROUP_UI_STATE';
+const EEB__SET_LABELS = 'siloDomainData/EEB__SET_LABELS';
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -113,6 +132,12 @@ export const editEntriesSetLeadAction = ({ lead }) => ({
 export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
     type: EEB__SET_ENTRIES,
     entryActions,
+    leadId,
+});
+
+export const editEntriesSetEntryGroupsAction = ({ leadId, entryGroupActions }) => ({
+    type: EEB__SET_ENTRY_GROUPS,
+    entryGroupActions,
     leadId,
 });
 
@@ -183,6 +208,12 @@ export const editEntriesResetUiStateAction = leadId => ({
     leadId,
 });
 
+export const editEntriesSetLabelsAction = ({ leadId, labels }) => ({
+    type: EEB__SET_LABELS,
+    leadId,
+    labels,
+});
+
 // ACTION-CREATOR
 const setLead = (state, action) => {
     const { lead } = action;
@@ -191,6 +222,19 @@ const setLead = (state, action) => {
         editEntries: { $auto: {
             [leadId]: { $auto: {
                 lead: { $set: lead },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+
+const setLabels = (state, action) => {
+    const { labels, leadId } = action;
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                labels: { $set: labels },
             } },
         } },
     };
@@ -302,6 +346,26 @@ const setEntries = (state, action) => {
             [leadId]: { $auto: {
                 entries: { $set: newEntries },
                 selectedEntryKey: { $set: newSelectedEntryKey },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+const setEntryGroups = (state, action) => {
+    const { leadId, entryGroupActions } = action;
+    const {
+        editEntries: {
+            [leadId]: {
+                entryGroups = [],
+            },
+        },
+    } = state;
+    const newEntryGroups = applyDiff(entryGroups, entryGroupActions, entryGroupAccessor);
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryGroups: { $set: newEntryGroups },
             } },
         } },
     };
@@ -832,6 +896,11 @@ const formatAllEntries = (state, { leadId, modifiable }) => {
     return update(state, settings);
 };
 
+const noop = (state, action) => {
+    console.warn(action);
+    return state;
+};
+
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
@@ -852,6 +921,18 @@ const reducers = {
     [EEB__SAVE_ENTRY]: saveEntry,
     [EEB__RESET_UI_STATE]: editEntriesResetUiState,
     [EEB__FORMAT_ALL_ENTRIES]: formatAllEntries,
+
+    [EEB__SET_ENTRY_GROUPS]: setEntryGroups,
+    [EEB__UPDATE_ENTRY_GROUPS_BULK]: noop,
+    [EEB__CLEAR_ENTRY_GROUPS]: noop,
+    [EEB__ADD_ENTRY_GROUP]: noop,
+    [EEB__REMOVE_ENTRY_GROUP]: noop,
+    [EEB__REMOVE_LOCAL_ENTRY_GROUPS]: noop,
+    [EEB__MARK_AS_DELETED_ENTRY_GROUP]: noop,
+    [EEB__SAVE_ENTRY_GROUP]: noop,
+    [EEB__SET_ENTRY_GROUP_PENDING]: noop,
+    [EEB__RESET_ENTRY_GROUP_UI_STATE]: noop,
+    [EEB__SET_LABELS]: setLabels,
 };
 
 export default reducers;

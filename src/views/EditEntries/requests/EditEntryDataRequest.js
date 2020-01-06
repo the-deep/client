@@ -23,13 +23,43 @@ export default class EditEntryDataRequest extends Request {
     }
 
     handleSuccess = (response) => {
+        const newResponse = {
+            ...response,
+            labels: [
+                { id: 1, order: 1, title: 'Problem', color: 'red' },
+                { id: 2, order: 2, title: 'Solution', color: 'orange' },
+                { id: 3, order: 3, title: 'Remarks', color: 'blue' },
+            ],
+            entryGroups: [
+                {
+                    id: 1,
+                    clientId: 'pipkbabx',
+                    order: 1,
+                    title: '',
+                    entries: [
+                        {
+                            id: 1,
+                            entryId: 52,
+                            entryClientId: 'xv9sn3a6',
+                            labelId: 1,
+                        },
+                        {
+                            id: 2,
+                            entryId: 53,
+                            entryClientId: 'xlpebkgu',
+                            labelId: 2,
+                        },
+                    ],
+                },
+            ],
+        };
         const {
             lead,
             geoOptions,
             analysisFramework,
             entries,
             regions,
-        } = response;
+        } = newResponse;
         const { leadId } = this;
 
         const projectIdFromUrl = this.parent.getProjectId();
