@@ -7,7 +7,7 @@ import {
 } from '@togglecorp/fujs';
 import produce from 'immer';
 
-import { applyDiff, entryAccessor, createEntry, entryGroupAccessor } from '#entities/editEntries';
+import { applyDiff, entryAccessor, createEntry, createEntryGroup, entryGroupAccessor } from '#entities/editEntries';
 import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
@@ -45,7 +45,6 @@ export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
 export const EEB__REMOVE_ENTRY = 'siloDomainData/EEB__REMOVE_ENTRY';
-export const EEB__REMOVE_LOCAL_ENTRIES = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRIES';
 export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
 export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES';
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
@@ -58,16 +57,15 @@ export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
 
 // NOTE: these are added newly
 const EEB__SET_ENTRY_GROUPS = 'siloDomainData/EEB__SET_ENTRY_GROUPS';
-const EEB__UPDATE_ENTRY_GROUPS_BULK = 'siloDomainData/EEB__UPDATE_ENTRY_GROUPS_BULK';
 const EEB__CLEAR_ENTRY_GROUPS = 'siloDomainData/EEB__CLEAR_ENTRY_GROUPS';
 const EEB__ADD_ENTRY_GROUP = 'siloDomainData/EEB__ADD_ENTRY_GROUP';
 const EEB__REMOVE_ENTRY_GROUP = 'siloDomainData/EEB__REMOVE_ENTRY_GROUP';
-const EEB__REMOVE_LOCAL_ENTRY_GROUPS = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRY_GROUPS';
 const EEB__MARK_AS_DELETED_ENTRY_GROUP = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY_GROUP';
 const EEB__SAVE_ENTRY_GROUP = 'siloDomainData/EEB__SAVE_ENTRY_GROUP';
 const EEB__SET_ENTRY_GROUP_PENDING = 'siloDomainData/EEB__SET_ENTRY_GROUP_PENDING';
 const EEB__RESET_ENTRY_GROUP_UI_STATE = 'siloDomainData/EEB__RESET_ENTRY_GROUP_UI_STATE';
 const EEB__SET_LABELS = 'siloDomainData/EEB__SET_LABELS';
+const EEB__SET_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__SET_ENTRY_GROUP_SELECTION';
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -135,12 +133,6 @@ export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
     leadId,
 });
 
-export const editEntriesSetEntryGroupsAction = ({ leadId, entryGroupActions }) => ({
-    type: EEB__SET_ENTRY_GROUPS,
-    entryGroupActions,
-    leadId,
-});
-
 export const editEntriesSetEntriesCommentsCountAction = ({ entries, leadId }) => ({
     type: EEB__SET_ENTRIES_COMMENTS_COUNT,
     entries,
@@ -203,13 +195,6 @@ export const editEntriesMarkAsDeletedEntryAction = ({ leadId, key, value }) => (
     value,
 });
 
-export const editEntriesMarkAsDeletedEntryGroupAction = ({ leadId, key, value }) => ({
-    type: EEB__MARK_AS_DELETED_ENTRY_GROUP,
-    leadId,
-    key,
-    value,
-});
-
 
 export const editEntriesResetUiStateAction = leadId => ({
     type: EEB__RESET_UI_STATE,
@@ -220,6 +205,48 @@ export const editEntriesSetLabelsAction = ({ leadId, labels }) => ({
     type: EEB__SET_LABELS,
     leadId,
     labels,
+});
+
+export const editEntriesSetEntryGroupsAction = ({ leadId, entryGroupActions }) => ({
+    type: EEB__SET_ENTRY_GROUPS,
+    entryGroupActions,
+    leadId,
+});
+
+export const editEntriesMarkAsDeletedEntryGroupAction = ({ leadId, key, value }) => ({
+    type: EEB__MARK_AS_DELETED_ENTRY_GROUP,
+    leadId,
+    key,
+    value,
+});
+
+export const editEntriesResetEntryGroupUiStateAction = leadId => ({
+    type: EEB__RESET_ENTRY_GROUP_UI_STATE,
+    leadId,
+});
+
+export const editEntriesEntryGroupsClearEntriesAction = ({ leadId }) => ({
+    type: EEB__CLEAR_ENTRY_GROUPS,
+    leadId,
+});
+
+export const editEntriesRemoveEntryGroupAction = ({ leadId, key }) => ({
+    type: EEB__REMOVE_ENTRY_GROUP,
+    leadId,
+    key,
+});
+
+export const editEntriesAddEntryGroupAction = ({ entryGroup, leadId }) => ({
+    type: EEB__ADD_ENTRY_GROUP,
+    leadId,
+    entryGroup,
+});
+
+export const editEntriesSetEntryGroupSelectionAction = ({ leadId, entryGroupKey, selection }) => ({
+    type: EEB__SET_ENTRY_GROUP_SELECTION,
+    leadId,
+    entryGroupKey,
+    selection,
 });
 
 // ACTION-CREATOR
@@ -354,26 +381,6 @@ const setEntries = (state, action) => {
             [leadId]: { $auto: {
                 entries: { $set: newEntries },
                 selectedEntryKey: { $set: newSelectedEntryKey },
-            } },
-        } },
-    };
-    return update(state, settings);
-};
-
-const setEntryGroups = (state, action) => {
-    const { leadId, entryGroupActions } = action;
-    const {
-        editEntries: {
-            [leadId]: {
-                entryGroups = [],
-            },
-        },
-    } = state;
-    const newEntryGroups = applyDiff(entryGroups, entryGroupActions, entryGroupAccessor);
-    const settings = {
-        editEntries: { $auto: {
-            [leadId]: { $auto: {
-                entryGroups: { $set: newEntryGroups },
             } },
         } },
     };
@@ -660,6 +667,20 @@ const removeEntry = (state, action) => {
     return update(state, settings);
 };
 
+const removeEntryGroup = (state, action) => {
+    const { leadId, key } = action;
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    $filter: entryGroup => entryGroupAccessor.key(entryGroup) !== key,
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const markAsDeletedEntry = (state, action) => {
     const { leadId, key, value } = action;
     const {
@@ -695,33 +716,6 @@ const markAsDeletedEntry = (state, action) => {
                 selectedEntryKey: { $set: newSelectedEntryKey },
                 entries: {
                     [entryIndex]: {
-                        localData: {
-                            isPristine: { $set: false },
-                            isMarkedAsDeleted: { $set: value },
-                        },
-                    },
-                },
-            },
-        },
-    };
-    return update(state, settings);
-};
-
-const markAsDeletedEntryGroup = (state, action) => {
-    const { leadId, key, value } = action;
-    const {
-        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
-    } = state;
-
-    const entryGroupIndex = entryGroups.findIndex(
-        entryGroup => entryGroupAccessor.key(entryGroup) === key,
-    );
-
-    const settings = {
-        editEntries: {
-            [leadId]: {
-                entryGroups: {
-                    [entryGroupIndex]: {
                         localData: {
                             isPristine: { $set: false },
                             isMarkedAsDeleted: { $set: value },
@@ -931,6 +925,159 @@ const formatAllEntries = (state, { leadId, modifiable }) => {
     return update(state, settings);
 };
 
+const setEntryGroups = (state, action) => {
+    const { leadId, entryGroupActions } = action;
+    const {
+        editEntries: {
+            [leadId]: {
+                entryGroups = [],
+            },
+        },
+    } = state;
+    const newEntryGroups = applyDiff(entryGroups, entryGroupActions, entryGroupAccessor);
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryGroups: { $set: newEntryGroups },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+const markAsDeletedEntryGroup = (state, action) => {
+    const { leadId, key, value } = action;
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        entryGroup => entryGroupAccessor.key(entryGroup) === key,
+    );
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    [entryGroupIndex]: {
+                        localData: {
+                            isPristine: { $set: false },
+                            isMarkedAsDeleted: { $set: value },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
+const resetEntryGroupUiState = (state, { leadId }) => {
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                $unset: ['entryGroupRests'],
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+const clearEntryGroups = (state, action) => {
+    const { leadId } = action;
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryGroups: { $set: [] },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+const addEntryGroup = (state, action) => {
+    const { entryGroup, leadId } = action;
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    // Add order to entries during creation
+    const maxEntryOrder = entryGroups.reduce(
+        (acc, e) => {
+            const val = entryGroupAccessor.data(e) || {};
+            const entryOrder = val.order;
+            if (isFalsy(entryOrder)) {
+                return acc;
+            }
+            return Math.max(acc, entryOrder);
+        },
+        0,
+    );
+
+    // Create data for new entry
+    const newData = {
+        ...entryGroup,
+        order: maxEntryOrder + 1,
+    };
+
+    // Get random key for new entry
+    const localId = randomString();
+
+    const newEntryGroup = createEntryGroup({
+        key: localId,
+        data: newData,
+    });
+
+    const settings = {
+        editEntries: {
+            [leadId]: { $auto: {
+                entryGroups: { $autoArray: {
+                    $push: [newEntryGroup],
+                } },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
+const setEntryGroupSelection = (state, action) => {
+    const { leadId, entryGroupKey, selection } = action;
+
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        g => entryGroupAccessor.key(g) === entryGroupKey,
+    );
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    [entryGroupIndex]: {
+                        localData: {
+                            isPristine: { $set: false },
+                            error: { $set: undefined },
+                            hasError: { $set: false },
+                            hasServerError: { $set: false },
+                        },
+                        data: {
+                            selections: {
+                                $replaceOrPush: [
+                                    s => s.labelId === selection.labelId,
+                                    () => selection,
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const noop = (state, action) => {
     console.warn(action);
     return state;
@@ -958,16 +1105,15 @@ const reducers = {
     [EEB__FORMAT_ALL_ENTRIES]: formatAllEntries,
 
     [EEB__SET_ENTRY_GROUPS]: setEntryGroups,
-    [EEB__UPDATE_ENTRY_GROUPS_BULK]: noop,
-    [EEB__CLEAR_ENTRY_GROUPS]: noop,
-    [EEB__ADD_ENTRY_GROUP]: noop,
-    [EEB__REMOVE_ENTRY_GROUP]: noop,
-    [EEB__REMOVE_LOCAL_ENTRY_GROUPS]: noop,
+    [EEB__CLEAR_ENTRY_GROUPS]: clearEntryGroups,
+    [EEB__ADD_ENTRY_GROUP]: addEntryGroup, // NOTE: not used yet
+    [EEB__REMOVE_ENTRY_GROUP]: removeEntryGroup, // NOTE: not used yet
     [EEB__MARK_AS_DELETED_ENTRY_GROUP]: markAsDeletedEntryGroup,
     [EEB__SAVE_ENTRY_GROUP]: noop,
     [EEB__SET_ENTRY_GROUP_PENDING]: noop,
-    [EEB__RESET_ENTRY_GROUP_UI_STATE]: noop,
+    [EEB__RESET_ENTRY_GROUP_UI_STATE]: resetEntryGroupUiState,
     [EEB__SET_LABELS]: setLabels,
+    [EEB__SET_ENTRY_GROUP_SELECTION]: setEntryGroupSelection,
 };
 
 export default reducers;

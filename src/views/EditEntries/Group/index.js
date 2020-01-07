@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rscv/List/ListView';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
+import DropZoneTwo from '#rsci/DropZoneTwo';
 import Cloak from '#components/general/Cloak';
 
 import {
@@ -13,6 +15,8 @@ import {
     editEntriesFilteredEntryGroupsSelector,
     editEntriesLabelsSelector,
     fieldsMapForTabularBookSelector,
+    editEntriesMarkAsDeletedEntryGroupAction,
+    editEntriesSetEntryGroupSelectionAction,
 } from '#redux';
 
 import { entryGroupAccessor, entryAccessor } from '#entities/editEntries';
@@ -24,6 +28,57 @@ import EntryPreview from '../EntryPreview';
 
 import styles from './styles.scss';
 
+const LabelItem = ({
+    labelId,
+    title: labelTitle,
+    color: labelColor,
+
+    selected,
+
+    entryType,
+    image,
+    excerpt,
+    order: entryOrder,
+    tabularFieldId,
+    tabularField,
+
+    disabled,
+    entryGroupKey,
+    onSelectionSet,
+}) => (
+    <div className={styles.labelItem}>
+        <h5 className={styles.heading}>
+            {labelTitle}
+        </h5>
+        <DropZoneTwo
+            className={styles.entryPreview}
+            disabled={disabled}
+            onDrop={(data) => {
+                onSelectionSet({
+                    entryGroupKey,
+                    selection: {
+                        entryId: data.entryId,
+                        entryClientId: data.entryKey,
+                        labelId,
+                    },
+                });
+            }}
+        >
+            {selected && (
+                <EntryPreview
+                    entryType={entryType}
+                    image={image}
+                    excerpt={excerpt}
+                    order={entryOrder}
+                    tabularFieldId={tabularFieldId}
+                    tabularField={tabularField}
+                />
+            )}
+        </DropZoneTwo>
+    </div>
+);
+
+
 const EntryGroupItem = (props) => {
     const {
         title,
@@ -31,10 +86,14 @@ const EntryGroupItem = (props) => {
         className: classNameFromProps,
         disabled,
         entryGroupServerId,
+        entryGroupKey,
         labels,
         entries,
         tabularFields,
         selections,
+        onMarkAsDelete,
+        onSelectionSet,
+        leadId,
     } = props;
 
     const className = _cs(
@@ -60,20 +119,28 @@ const EntryGroupItem = (props) => {
     const rendererParams = (key, item) => {
         const selection = selections.find(e => e.labelId === key);
 
+        const params = {
+            title: item.title,
+            color: item.coor,
+            labelId: key,
+            selected: false,
+
+            disabled,
+            onSelectionSet,
+
+            entryGroupKey,
+        };
+
         if (!selection) {
-            return {
-                title: item.title,
-                color: item.coor,
-            };
+            return params;
         }
 
-        const entry = entries.find(e => entryAccessor.key(e) === selection.entryClientId);
+        const entry = entries.find(
+            e => entryAccessor.key(e) === selection.entryClientId,
+        );
 
         if (!entry) {
-            return {
-                title: item.title,
-                color: item.coor,
-            };
+            return params;
         }
 
         const entryData = entryAccessor.data(entry);
@@ -87,10 +154,9 @@ const EntryGroupItem = (props) => {
         const tabularField = tabularFields[tabularFieldId];
 
         return {
-            title: item.title,
-            color: item.color,
-
+            ...params,
             selected: true,
+
             entryType,
             image,
             excerpt,
@@ -100,37 +166,19 @@ const EntryGroupItem = (props) => {
         };
     };
 
-    const renderer = ({
-        title: labelTitle,
-        selected,
-        entryType,
-        image,
-        excerpt,
-        order: entryOrder,
-        tabularFieldId,
-        tabularField,
-    }) => (
-        <div className={styles.labelItem}>
-            <h5>
-                {labelTitle}
-            </h5>
-            {selected && (
-                <EntryPreview
-                    className={styles.entryPreview}
-                    entryType={entryType}
-                    image={image}
-                    excerpt={excerpt}
-                    order={entryOrder}
-                    tabularFieldId={tabularFieldId}
-                    tabularField={tabularField}
-                />
-            )}
-        </div>
+    const handleDelete = useCallback(
+        () => {
+            onMarkAsDelete({
+                key: entryGroupKey,
+                value: true,
+            });
+        },
+        [onMarkAsDelete, entryGroupKey],
     );
 
     return (
         <div className={className}>
-            <div className={styles.header}>
+            <div className={styles.labelHeader}>
                 <h3 className={styles.heading}>
                     {/* FIXME: use strings */}
                     {title || `Group ${order}`}
@@ -143,7 +191,7 @@ const EntryGroupItem = (props) => {
                             // FIXME: uses strings
                             title="Edit group"
                             iconName="edit"
-                            disabled={disabled}
+                            disabled
                         />
                     }
                 />
@@ -156,6 +204,7 @@ const EntryGroupItem = (props) => {
                             title="Delete group"
                             iconName="delete"
                             disabled={disabled}
+                            onClick={handleDelete}
                         />
                     }
                 />
@@ -165,10 +214,13 @@ const EntryGroupItem = (props) => {
                 data={labels}
                 keySelector={item => item.id}
                 rendererParams={rendererParams}
-                renderer={renderer}
+                renderer={LabelItem}
             />
         </div>
     );
+};
+EntryGroupItem.defaultProps = {
+    selections: [],
 };
 
 const propTypes = {
@@ -188,16 +240,40 @@ const mapStateToProps = (state, props) => ({
     tabularFields: fieldsMapForTabularBookSelector(state, props),
 });
 
-@connect(mapStateToProps)
+
+// FIXME: permissions
+const mapDispatchToProps = dispatch => ({
+    markAsDeletedEntryGroup: params => dispatch(editEntriesMarkAsDeletedEntryGroupAction(params)),
+    setEntryGroupSelection: params => dispatch(editEntriesSetEntryGroupSelectionAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Group extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    setEntryGroupSelection = (value) => {
+        const { setEntryGroupSelection, leadId } = this.props;
+        setEntryGroupSelection({
+            ...value,
+            leadId,
+        });
+    }
+
+    markAsDeletedEntryGroup = (value) => {
+        const { markAsDeletedEntryGroup, leadId } = this.props;
+        markAsDeletedEntryGroup({
+            ...value,
+            leadId,
+        });
+    }
 
     rendererParams = (key, entryGroup) => {
         const {
             labels,
             entries,
             tabularFields,
+            disabled,
         } = this.props;
         const {
             title,
@@ -207,16 +283,23 @@ export default class Group extends React.PureComponent {
         const {
             selections,
         } = entryGroupAccessor.data(entryGroup);
+
         const serverId = entryGroupAccessor.serverId(entryGroup);
+        const entryGroupKey = entryGroupAccessor.key(entryGroup);
 
         return {
             title,
             order,
             entryGroupServerId: serverId,
+            entryGroupKey,
             selections,
             labels,
             entries,
             tabularFields,
+
+            onMarkAsDelete: this.markAsDeletedEntryGroup,
+            onSelectionSet: this.setEntryGroupSelection,
+            disabled,
         };
     }
 
@@ -224,6 +307,7 @@ export default class Group extends React.PureComponent {
         const {
             bookId,
             entryGroups,
+            onEntryGroupCreate,
         } = this.props;
         return (
             <ResizableH
@@ -236,11 +320,15 @@ export default class Group extends React.PureComponent {
                 }
                 rightChild={
                     <React.Fragment>
-                        {/*
                         <header className={styles.header}>
-                            3 labels, 5 groups
+                            <PrimaryButton
+                                onClick={onEntryGroupCreate}
+                                iconName="add"
+                            >
+                                {/* FIXME: use strings */}
+                                Add Entry Group
+                            </PrimaryButton>
                         </header>
-                        */}
                         <ListView
                             className={styles.content}
                             data={entryGroups}
