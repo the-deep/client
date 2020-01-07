@@ -45,6 +45,7 @@ import {
     editEntriesSchemaSelector,
     editEntriesComputeSchemaSelector,
     editEntriesStatusesSelector,
+    editEntriesEntryGroupStatusesSelector,
 
     editEntriesAddEntryAction,
     editEntriesClearEntriesAction,
@@ -97,6 +98,7 @@ const propTypes = {
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    entryGroupStatuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     resetUiState: PropTypes.func.isRequired,
     routeUrl: PropTypes.string.isRequired,
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -133,6 +135,7 @@ const defaultProps = {
     entries: [],
     entryGroups: [],
     statuses: {},
+    entryGroupStatuses: {},
     schema: {},
     computeSchema: {},
 };
@@ -148,6 +151,7 @@ const mapStateToProps = state => ({
     schema: editEntriesSchemaSelector(state),
     computeSchema: editEntriesComputeSchemaSelector(state),
     statuses: editEntriesStatusesSelector(state),
+    entryGroupStatuses: editEntriesEntryGroupStatusesSelector(state),
     routeUrl: routeUrlSelector(state),
 });
 
@@ -474,9 +478,15 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.stop();
     }
 
-    getSavebleEntries = memoize((entries, statuses) => entries.filter((entry) => {
+    getSavableEntries = memoize((entries, statuses) => entries.filter((entry) => {
         const entryKey = entryAccessor.key(entry);
         const status = statuses[entryKey];
+        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
+    }))
+
+    getSavableEntryGroups = memoize((entryGroups, statuses) => entryGroups.filter((entryGroup) => {
+        const entryGroupKey = entryAccessor.key(entryGroup);
+        const status = statuses[entryGroupKey];
         return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
     }))
 
@@ -804,7 +814,7 @@ export default class EditEntries extends React.PureComponent {
             schema,
             computeSchema,
         } = this.props;
-        const savableEntries = this.getSavebleEntries(
+        const savableEntries = this.getSavableEntries(
             entries,
             statuses,
         );
@@ -850,7 +860,7 @@ export default class EditEntries extends React.PureComponent {
         } = this.props;
         clearEntries({ leadId });
         clearEntryGroups({ leadId });
-        requests.editEntryDataRequest.start();
+        requests.editEntryDataRequest.do();
     }
 
     handleEntryStateChange = (entryKey, value) => {
@@ -880,6 +890,8 @@ export default class EditEntries extends React.PureComponent {
             },
             entries,
             statuses,
+            entryGroups,
+            entryGroupStatuses,
         } = this.props;
 
         const {
@@ -903,13 +915,24 @@ export default class EditEntries extends React.PureComponent {
             analysisFrameworkId,
         });
 
-        const savableEntries = this.getSavebleEntries(
+        const savableEntries = this.getSavableEntries(
             entries,
             statuses,
         );
+
+        const savableEntryGroups = this.getSavableEntryGroups(
+            entryGroups,
+            entryGroupStatuses,
+        );
+
         const hasSavableEntries = savableEntries.length > 0;
+
+        const hasSavableEntryGroups = savableEntryGroups.length > 0;
+
+        const hasSavableItems = hasSavableEntries || hasSavableEntryGroups;
+
         const isSaveDisabled = (
-            pendingSaveAll || projectMismatch || !hasSavableEntries
+            pendingSaveAll || projectMismatch || !hasSavableItems
         );
 
         return (
@@ -920,7 +943,7 @@ export default class EditEntries extends React.PureComponent {
                             const { routeUrl } = this.props;
                             if (location.pathname === routeUrl) {
                                 return true;
-                            } else if (!hasSavableEntries) {
+                            } else if (!hasSavableItems) {
                                 return true;
                             }
                             return _ts('common', 'youHaveUnsavedChanges');
