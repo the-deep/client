@@ -59,9 +59,12 @@ import {
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
+    editEntriesResetEntryGroupUiStateAction,
     editEntriesSetLabelsAction,
     editEntriesEntryGroupsSelector,
     editEntriesSetEntryGroupsAction,
+    editEntriesEntryGroupsClearEntriesAction,
+    editEntriesAddEntryGroupAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -109,9 +112,12 @@ const propTypes = {
     setRegions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setEntriesCommentsCount: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    resetEntryGroupUiState: PropTypes.func.isRequired,
 
     addEntry: PropTypes.func.isRequired,
+    addEntryGroup: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired,
+    clearEntryGroups: PropTypes.func.isRequired,
     removeEntry: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
     updateEntriesBulk: PropTypes.func.isRequired,
@@ -147,7 +153,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
+    addEntryGroup: params => dispatch(editEntriesAddEntryGroupAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
+    clearEntryGroups: params => dispatch(editEntriesEntryGroupsClearEntriesAction(params)),
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
@@ -163,6 +171,7 @@ const mapDispatchToProps = dispatch => ({
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
+    resetEntryGroupUiState: params => dispatch(editEntriesResetEntryGroupUiStateAction(params)),
     setLabels: params => dispatch(editEntriesSetLabelsAction(params)),
 });
 
@@ -389,6 +398,8 @@ export default class EditEntries extends React.PureComponent {
                 component: Group,
                 rendererParams: () => ({
                     bookId: this.props.lead && this.props.lead.tabularBook,
+                    leadId: this.props.leadId,
+                    onEntryGroupCreate: this.handleEntryGroupCreate,
                 }),
                 wrapContainer: true,
                 lazyMount: true,
@@ -436,10 +447,12 @@ export default class EditEntries extends React.PureComponent {
             entries,
             analysisFramework,
             resetUiState,
+            resetEntryGroupUiState,
             updateEntriesBulk,
         } = this.props;
 
         resetUiState(leadId);
+        resetEntryGroupUiState(leadId);
 
         // Update all entries with new color
         if (entries && analysisFramework && entries.length > 0) {
@@ -496,6 +509,15 @@ export default class EditEntries extends React.PureComponent {
         addEntry(val);
     }
 
+    addEntryGroup = (val) => {
+        if (this.shouldDisableEntryGroupCreate()) {
+            console.warn('No permission to create entry group');
+            return;
+        }
+        const { addEntryGroup } = this.props;
+        addEntryGroup(val);
+    }
+
     // PERMISSIONS
 
     shouldDisableEntryChange = (entryId) => {
@@ -504,6 +526,12 @@ export default class EditEntries extends React.PureComponent {
     }
 
     shouldDisableEntryCreate = () => {
+        const { projectRole: { entryPermissions = {} } } = this.props;
+        return !entryPermissions.create;
+    }
+
+    shouldDisableEntryGroupCreate = () => {
+        // FIXME: currently using entryPermission for entry group as well
         const { projectRole: { entryPermissions = {} } } = this.props;
         return !entryPermissions.create;
     }
@@ -534,6 +562,19 @@ export default class EditEntries extends React.PureComponent {
                 excerptValue: value,
             });
         }
+    }
+
+
+    handleEntryGroupCreate = () => {
+        const {
+            leadId,
+        } = this.props;
+        this.addEntryGroup({
+            leadId,
+            entryGroup: {
+                selections: [],
+            },
+        });
     }
 
     // can only create entry
@@ -804,9 +845,11 @@ export default class EditEntries extends React.PureComponent {
         const {
             leadId,
             clearEntries,
+            clearEntryGroups,
             requests,
         } = this.props;
         clearEntries({ leadId });
+        clearEntryGroups({ leadId });
         requests.editEntryDataRequest.start();
     }
 
