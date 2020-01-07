@@ -358,6 +358,7 @@ export default class EditEntries extends React.PureComponent {
                     computeSchema: this.props.computeSchema,
                     entryStates: this.state.entryStates,
                     onEntryStateChange: this.handleEntryStateChange,
+
                     bookId: this.props.lead && this.props.lead.tabularBook,
                 }),
                 wrapContainer: true,
@@ -377,6 +378,7 @@ export default class EditEntries extends React.PureComponent {
                     computeSchema: this.props.computeSchema,
                     entryStates: this.state.entryStates,
                     onEntryStateChange: this.handleEntryStateChange,
+
                     bookId: this.props.lead && this.props.lead.tabularBook,
                 }),
                 wrapContainer: true,
@@ -385,6 +387,9 @@ export default class EditEntries extends React.PureComponent {
             },
             [VIEW.group]: {
                 component: Group,
+                rendererParams: () => ({
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+                }),
                 wrapContainer: true,
                 lazyMount: true,
                 mount: true,

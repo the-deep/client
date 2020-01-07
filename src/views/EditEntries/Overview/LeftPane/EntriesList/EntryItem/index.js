@@ -9,8 +9,8 @@ import Cloak from '#components/general/Cloak';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import EntryPreview from './EntryPreview';
-import EntryStatusIcon from '../../StatusIcon';
+import EntryPreview from '../../../../EntryPreview';
+import EntryStatusIcon from '../../../../StatusIcon';
 import styles from './styles.scss';
 
 const EntryItem = (props) => {
@@ -96,6 +96,7 @@ const EntryItem = (props) => {
                     order={order}
                     tabularFieldId={tabularFieldId}
                     tabularField={tabularField}
+                    disabled={isMarkedAsDeleted}
                 />
                 <div className={styles.statusIcons}>
                     <EntryStatusIcon

@@ -39,7 +39,7 @@ import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
 
 import WidgetFaram from '../WidgetFaram';
-import LeadPane from './LeadPane';
+import LeftPane from './LeftPane';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -226,7 +226,7 @@ export default class Overview extends React.PureComponent {
             <ResizableH
                 className={styles.overview}
                 leftChild={
-                    <LeadPane
+                    <LeftPane
                         className={styles.leftPanel}
                         onExcerptCreate={this.props.onExcerptCreate}
                         tabularFields={tabularFields}
