@@ -2,11 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
 const EntryPreview = (props) => {
     const {
+        className,
+
         entryType,
 
         image,
@@ -22,7 +25,7 @@ const EntryPreview = (props) => {
         case 'image': {
             return (
                 <img
-                    className={styles.image}
+                    className={_cs(className, styles.image)}
                     src={image}
                     alt={_ts('editEntry.overview.leftpane.entryList', 'altLabel')}
                 />
@@ -32,7 +35,7 @@ const EntryPreview = (props) => {
             const tabularTitle = (tabularField && tabularField.title)
                 || _ts('editEntry.overview.leftpane.entryList', 'unnamedColumnTitle', { index: tabularFieldId });
             return (
-                <div className={styles.entryExcerpt}>
+                <div className={_cs(styles.entryExcerpt, className)}>
                     {tabularTitle}
                 </div>
             );
@@ -41,7 +44,7 @@ const EntryPreview = (props) => {
             const excerptTitle = excerpt
                 || _ts('editEntry.overview.leftpane.entryList', 'unnamedExcerptTitle', { index: order });
             return (
-                <div className={styles.entryExcerpt}>
+                <div className={_cs(styles.entryExcerpt, className)}>
                     {excerptTitle}
                 </div>
             );
@@ -55,12 +58,14 @@ EntryPreview.propTypes = {
     order: PropTypes.number.isRequired,
     tabularFieldId: PropTypes.number,
     tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 EntryPreview.defaultProps = {
     image: undefined,
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,
+    className: undefined,
 };
 
 export default EntryPreview;

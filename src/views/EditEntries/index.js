@@ -204,10 +204,10 @@ const requestOptions = {
                     {
                         id: 1,
                         clientId: 'pipkbabx',
-                        versionId: 1,
+                        versionId: 3,
                         order: 1,
-                        title: '',
-                        entries: [
+                        title: 'Group first',
+                        selections: [
                             {
                                 id: 1,
                                 entryId: 52,

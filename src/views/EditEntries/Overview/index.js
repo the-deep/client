@@ -247,13 +247,43 @@ export default class Overview extends React.PureComponent {
                                         />
                                     }
                                 />
+                                {mountModalButton && (
+                                    <ModalButton
+                                        className={
+                                            _cs(
+                                                styles.entryCommentButton,
+                                                unresolvedCommentCount > 0 && styles.accented,
+                                            )
+                                        }
+                                        disabled={isFalsy(entryAccessor.serverId(entry))}
+                                        initialShowModal={this.showInitial}
+                                        modal={
+                                            <EntryCommentModal
+                                                entryServerId={entryAccessor.serverId(entry)}
+                                                onCommentsCountChange={
+                                                    this.handleCommentsCountChange
+                                                }
+                                            />
+                                        }
+                                    >
+                                        <Icon
+                                            name="chat"
+                                            className={styles.commentIcon}
+                                        />
+                                        {unresolvedCommentCount > 0 &&
+                                            <div className={styles.commentCount}>
+                                                {unresolvedCommentCount}
+                                            </div>
+                                        }
+                                    </ModalButton>
+                                )}
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
                                     render={
                                         <DangerButton
                                             onClick={this.handleEntryDelete}
                                             disabled={pending}
-                                            iconName="remove"
+                                            iconName="delete"
                                             title={_ts('editEntry.overview', 'deleteExcerptTooltip')}
                                         />
                                     }
@@ -271,34 +301,6 @@ export default class Overview extends React.PureComponent {
                                 showLabel={false}
                                 hideClearButton
                             />
-                            {mountModalButton && (
-                                <ModalButton
-                                    className={
-                                        _cs(
-                                            styles.entryCommentButton,
-                                            unresolvedCommentCount > 0 && styles.accented,
-                                        )
-                                    }
-                                    disabled={isFalsy(entryAccessor.serverId(entry))}
-                                    initialShowModal={this.showInitial}
-                                    modal={
-                                        <EntryCommentModal
-                                            entryServerId={entryAccessor.serverId(entry)}
-                                            onCommentsCountChange={this.handleCommentsCountChange}
-                                        />
-                                    }
-                                >
-                                    <Icon
-                                        name="chat"
-                                        className={styles.commentIcon}
-                                    />
-                                    {unresolvedCommentCount > 0 &&
-                                        <div className={styles.commentCount}>
-                                            {unresolvedCommentCount}
-                                        </div>
-                                    }
-                                </ModalButton>
-                            )}
                         </header>
                         <WidgetFaram
                             className={styles.content}

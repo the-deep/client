@@ -7,12 +7,21 @@
 
     .header {
         display: flex;
+        position: sticky;
+        top: 0;
         flex-shrink: 0;
-        justify-content: flex-end;
+        z-index: 1;
+        background-color: var(--color-background-header);
         padding: var(--spacing-small);
         width: 100%;
 
-        >* {
+        .heading {
+            align-self: center;
+            flex-grow: 1;
+        }
+
+        .button {
+            flex-shrink: 0;
             margin-left: var(--spacing-small);
             border-radius: 0;
             box-shadow: none;
@@ -22,7 +31,11 @@
         .entry-comment-button {
             display: flex;
             align-items: center;
-            padding: var(--spacing-extra-small) var(--spacing-small);
+            flex-shrink: 0;
+            margin-left: var(--spacing-small);
+            border-radius: 0;
+            box-shadow: none;
+            padding: var(--spacing-extra-small-alt) var(--spacing-small-alt);
 
             .comment-count {
                 padding-left: var(--spacing-small);

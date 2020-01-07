@@ -180,7 +180,7 @@ export const createEntryGroup = ({
     const keysToPick = [
         'order',
         'title',
-        'entries',
+        'selections',
         'createdAt',
     ];
     const pickedData = pick(data, keysToPick);
