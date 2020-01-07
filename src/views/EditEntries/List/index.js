@@ -12,7 +12,6 @@ import {
     editEntriesWidgetsSelector,
     editEntriesStatusesSelector,
     fieldsMapForTabularBookSelector,
-    // editEntriesTabularDataSelector,
 } from '#redux';
 import {
     entryAccessor,
@@ -33,7 +32,6 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     hash: PropTypes.string,
 };
 
@@ -42,7 +40,6 @@ const defaultProps = {
     statuses: {},
     widgets: [],
     hash: undefined,
-    // tabularData: {},
 };
 
 const mapStateToProps = (state, props) => ({
@@ -50,7 +47,6 @@ const mapStateToProps = (state, props) => ({
     statuses: editEntriesStatusesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
-    // tabularData: editEntriesTabularDataSelector(state),
 });
 
 @connect(mapStateToProps)
@@ -86,8 +82,6 @@ export default class Listing extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    keySelector = entry => entryAccessor.key(entry)
-
     handleScroll = (e) => {
         this.scrollTop = e.target.scrollTop;
 
@@ -97,12 +91,12 @@ export default class Listing extends React.PureComponent {
         }
     }
 
-    rendererParams = (key, entry) => {
+    rendererParams = (key, entry, index) => {
         const {
-            entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             statuses,
-            entryStates,
-            tabularFields,
+            entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            entryStates, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            tabularFields, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
 
             ...otherProps
         } = this.props;
@@ -116,6 +110,7 @@ export default class Listing extends React.PureComponent {
             tabularData: field,
             widgetType: VIEW.list,
             entryState: entryStates[key],
+            index,
             ...otherProps,
         };
     }
@@ -130,7 +125,7 @@ export default class Listing extends React.PureComponent {
                 data={entries}
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
-                keySelector={this.keySelector}
+                keySelector={entryAccessor.key}
                 emptyComponent={EmptyComponent}
             />
         );

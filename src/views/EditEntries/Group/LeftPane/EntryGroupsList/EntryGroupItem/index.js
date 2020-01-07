@@ -72,6 +72,7 @@ const EntryGroupItem = (props) => {
                 className={styles.addEntryGroupListItem}
                 type="button"
             >
+                {/* FIXME: use strings */}
                 {title || `Group ${order}`}
                 <div className={styles.statusIcons}>
                     <EntryGroupStatusIcon
