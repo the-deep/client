@@ -24,12 +24,6 @@
         .status-icons {
             display: flex;
         }
-
-        &:disabled {
-            .image {
-                opacity: .5;
-            }
-        }
     }
 
     .remove-button {

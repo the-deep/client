@@ -8,16 +8,19 @@ import ScrollTabs from '#rscv/ScrollTabs';
 
 import _ts from '#ts';
 
+import EntriesList from './EntriesList';
 import EntryGroupsList from './EntryGroupsList';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    bookId: PropTypes.number,
 };
 
 const defaultProps = {
     className: undefined,
+    bookId: undefined,
 };
 
 export default class LeftPane extends React.PureComponent {
@@ -33,13 +36,10 @@ export default class LeftPane extends React.PureComponent {
 
         this.views = {
             'entries-listing': {
-                component: ({ className }) => (
-                    <div className={className}>
-                        Entries Listing
-                    </div>
-                ),
+                component: EntriesList,
                 rendererParams: () => ({
                     className: styles.container,
+                    bookId: this.props.bookId,
                 }),
                 mount: true,
                 lazyMount: true,
