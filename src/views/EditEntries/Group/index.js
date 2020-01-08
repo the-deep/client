@@ -17,6 +17,7 @@ import {
     fieldsMapForTabularBookSelector,
     editEntriesMarkAsDeletedEntryGroupAction,
     editEntriesSetEntryGroupSelectionAction,
+    editEntriesClearEntryGroupSelectionAction,
 } from '#redux';
 
 import { entryGroupAccessor, entryAccessor } from '#entities/editEntries';
@@ -45,37 +46,68 @@ const LabelItem = ({
     disabled,
     entryGroupKey,
     onSelectionSet,
+    onSelectionClear,
+    shouldHideEntryGroupEdit,
 }) => (
     <div className={styles.labelItem}>
-        <h5 className={styles.heading}>
-            {labelTitle}
-        </h5>
-        <DropZoneTwo
-            className={styles.entryPreview}
-            disabled={disabled}
-            onDrop={(data) => {
-                onSelectionSet({
-                    entryGroupKey,
-                    selection: {
-                        entryId: data.entryId,
-                        entryClientId: data.entryKey,
-                        labelId,
-                    },
-                });
-            }}
-        >
-            {selected && (
-                <EntryPreview
-                    entryType={entryType}
-                    image={image}
-                    excerpt={excerpt}
-                    order={entryOrder}
-                    tabularFieldId={tabularFieldId}
-                    tabularField={tabularField}
+        <div className={styles.previewTitle}>
+            <h5 className={styles.heading}>
+                {labelTitle}
+            </h5>
+            { selected && (
+                <Cloak
+                    hide={shouldHideEntryGroupEdit}
+                    render={(
+                        <DangerButton
+                            className={styles.button}
+                            transparent
+                            // FIXME: uses strings
+                            title="Clear entry"
+                            iconName="close"
+                            disabled={disabled}
+                            onClick={() => {
+                                onSelectionClear({
+                                    entryGroupKey,
+                                    labelId,
+                                });
+                            }}
+                        />
+                    )}
                 />
             )}
-        </DropZoneTwo>
+        </div>
+        <Cloak
+            disable={shouldHideEntryGroupEdit}
+            render={(
+                <DropZoneTwo
+                    className={styles.entryPreview}
+                    disabled={disabled}
+                    onDrop={(data) => {
+                        onSelectionSet({
+                            entryGroupKey,
+                            selection: {
+                                entryId: data.entryId,
+                                entryClientId: data.entryKey,
+                                labelId,
+                            },
+                        });
+                    }}
+                >
+                    {selected && (
+                        <EntryPreview
+                            entryType={entryType}
+                            image={image}
+                            excerpt={excerpt}
+                            order={entryOrder}
+                            tabularFieldId={tabularFieldId}
+                            tabularField={tabularField}
+                        />
+                    )}
+                </DropZoneTwo>
+            )}
+        />
     </div>
+
 );
 
 
@@ -93,6 +125,7 @@ const EntryGroupItem = (props) => {
         selections,
         onMarkAsDelete,
         onSelectionSet,
+        onSelectionClear,
         leadId,
     } = props;
 
@@ -127,6 +160,7 @@ const EntryGroupItem = (props) => {
 
             disabled,
             onSelectionSet,
+            onSelectionClear,
 
             entryGroupKey,
         };
@@ -163,6 +197,8 @@ const EntryGroupItem = (props) => {
             order: entryOrder,
             tabularFieldId,
             tabularField,
+
+            shouldHideEntryGroupEdit,
         };
     };
 
@@ -245,6 +281,7 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     markAsDeletedEntryGroup: params => dispatch(editEntriesMarkAsDeletedEntryGroupAction(params)),
     setEntryGroupSelection: params => dispatch(editEntriesSetEntryGroupSelectionAction(params)),
+    clearEntryGroupSelection: params => dispatch(editEntriesClearEntryGroupSelectionAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -255,6 +292,14 @@ export default class Group extends React.PureComponent {
     setEntryGroupSelection = (value) => {
         const { setEntryGroupSelection, leadId } = this.props;
         setEntryGroupSelection({
+            ...value,
+            leadId,
+        });
+    }
+
+    clearEntryGroupSelection = (value) => {
+        const { clearEntryGroupSelection, leadId } = this.props;
+        clearEntryGroupSelection({
             ...value,
             leadId,
         });
@@ -299,6 +344,7 @@ export default class Group extends React.PureComponent {
 
             onMarkAsDelete: this.markAsDeletedEntryGroup,
             onSelectionSet: this.setEntryGroupSelection,
+            onSelectionClear: this.clearEntryGroupSelection,
             disabled,
         };
     }

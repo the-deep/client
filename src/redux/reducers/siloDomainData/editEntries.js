@@ -66,6 +66,7 @@ const EEB__SET_ENTRY_GROUP_PENDING = 'siloDomainData/EEB__SET_ENTRY_GROUP_PENDIN
 const EEB__RESET_ENTRY_GROUP_UI_STATE = 'siloDomainData/EEB__RESET_ENTRY_GROUP_UI_STATE';
 const EEB__SET_LABELS = 'siloDomainData/EEB__SET_LABELS';
 const EEB__SET_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__SET_ENTRY_GROUP_SELECTION';
+const EEB__CLEAR_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__CLEAR_ENTRY_GROUP_SELECTION';
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -248,6 +249,14 @@ export const editEntriesSetEntryGroupSelectionAction = ({ leadId, entryGroupKey,
     entryGroupKey,
     selection,
 });
+
+export const editEntriesClearEntryGroupSelectionAction = ({ leadId, entryGroupKey, labelId }) => ({
+    type: EEB__CLEAR_ENTRY_GROUP_SELECTION,
+    leadId,
+    entryGroupKey,
+    labelId,
+});
+
 
 // ACTION-CREATOR
 const setLead = (state, action) => {
@@ -1078,6 +1087,41 @@ const setEntryGroupSelection = (state, action) => {
     return update(state, settings);
 };
 
+const clearEntryGroupSelection = (state, action) => {
+    const { leadId, entryGroupKey, labelId } = action;
+
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        g => entryGroupAccessor.key(g) === entryGroupKey,
+    );
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    [entryGroupIndex]: {
+                        localData: {
+                            isPristine: { $set: false },
+                            error: { $set: undefined },
+                            hasError: { $set: false },
+                            hasServerError: { $set: false },
+                        },
+                        data: {
+                            selections: {
+                                $filter: s => s.labelId !== labelId,
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const noop = (state, action) => {
     console.warn(action);
     return state;
@@ -1114,6 +1158,7 @@ const reducers = {
     [EEB__RESET_ENTRY_GROUP_UI_STATE]: resetEntryGroupUiState,
     [EEB__SET_LABELS]: setLabels,
     [EEB__SET_ENTRY_GROUP_SELECTION]: setEntryGroupSelection,
+    [EEB__CLEAR_ENTRY_GROUP_SELECTION]: clearEntryGroupSelection,
 };
 
 export default reducers;

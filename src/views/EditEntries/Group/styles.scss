@@ -79,14 +79,32 @@
                         padding: var(--spacing-small);
                         min-height: 120px;
 
-                        .heading {
+                        .preview-title {
+                            display: flex;
+                            flex-direction: row;
                             flex-shrink: 0;
                             padding: var(--spacing-small);
+
+                            .heading {
+                                flex-grow: 1;
+                            }
+
+                            .button {
+                                opacity: 0;
+                            }
                         }
 
                         .entry-preview {
                             flex-grow: 1;
                             padding: var(--spacing-small);
+                        }
+
+                        &:hover {
+                            .preview-title {
+                                .button {
+                                    opacity: 1;
+                                }
+                            }
                         }
                     }
                 }
