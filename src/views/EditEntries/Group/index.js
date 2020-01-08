@@ -52,7 +52,12 @@ const LabelItem = ({
 }) => (
     <div className={styles.labelItem}>
         <div className={styles.previewTitle}>
-            <h5 className={styles.heading}>
+            <h5
+                className={styles.heading}
+                style={{
+                    color: labelColor || 'var(--color-text)',
+                }}
+            >
                 {labelTitle}
             </h5>
             { selected && (
@@ -155,7 +160,7 @@ const EntryGroupItem = (props) => {
 
         const params = {
             title: item.title,
-            color: item.coor,
+            color: item.color,
             labelId: key,
             selected: false,
 
