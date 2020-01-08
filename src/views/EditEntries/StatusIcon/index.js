@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Icon from '#rscg/Icon';
+import Spinner from '#rsu/../v2/View/Spinner';
 
 import { ENTRY_STATUS } from '#entities/editEntries';
 import _cs from '#cs';
@@ -9,7 +10,7 @@ import _cs from '#cs';
 import styles from './styles.scss';
 
 const iconMap = {
-    [ENTRY_STATUS.requesting]: 'loading',
+    // [ENTRY_STATUS.requesting]: 'loading',
     [ENTRY_STATUS.localError]: 'error',
     [ENTRY_STATUS.serverError]: 'error',
     [ENTRY_STATUS.nonPristine]: 'codeWorking',
@@ -30,6 +31,15 @@ const EntryStatusIcon = (props) => {
         isMarkedAsDeleted,
         className,
     } = props;
+
+    if (status === ENTRY_STATUS.requesting) {
+        return (
+            <Spinner
+                className={_cs(styleMap[status], className)}
+                small
+            />
+        );
+    }
 
     const realStatus = isMarkedAsDeleted
         ? 'markedAsDeleted'
