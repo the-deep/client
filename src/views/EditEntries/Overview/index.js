@@ -20,10 +20,8 @@ import {
     ENTRY_STATUS,
 } from '#entities/editEntries';
 import {
-    leadIdFromRoute,
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
-    editEntriesStatusesSelector,
 
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
@@ -31,7 +29,6 @@ import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
-    routeSelector,
 } from '#redux';
 import { VIEW } from '#widgets';
 
@@ -49,7 +46,6 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
-    routeUrl: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -72,14 +68,10 @@ const defaultProps = {
 
 
 const mapStateToProps = (state, props) => ({
-    leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
-    routeUrl: routeSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
-    statuses: editEntriesStatusesSelector(state),
-
     tabularFields: fieldsMapForTabularBookSelector(state, props),
 });
 
@@ -206,7 +198,6 @@ export default class Overview extends React.PureComponent {
             statuses,
             selectedEntryKey,
             entryStates,
-            routeUrl, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
             tabularFields,
 
@@ -230,6 +221,9 @@ export default class Overview extends React.PureComponent {
                         className={styles.leftPanel}
                         onExcerptCreate={this.props.onExcerptCreate}
                         tabularFields={tabularFields}
+                        selectedEntryKey={this.props.selectedEntryKey}
+                        filteredEntries={this.props.entries}
+                        statuses={this.props.statuses}
                     />
                 }
                 rightChild={

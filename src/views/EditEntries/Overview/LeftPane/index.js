@@ -7,12 +7,8 @@ import {
     activeProjectRoleSelector,
     editEntriesLeadSelector,
     editEntriesEntriesSelector,
-    editEntriesFilteredEntriesSelector,
-    editEntriesStatusesSelector,
-    editEntriesSelectedEntryKeySelector,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
-    // editEntriesTabularDataSelector,
 } from '#redux';
 import _ts from '#ts';
 
@@ -22,7 +18,6 @@ import EntriesList from './EntriesList';
 
 const propTypes = {
     className: PropTypes.string,
-    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -36,7 +31,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    projectRole: {},
     entries: [],
     filteredEntries: [],
     statuses: {},
@@ -44,13 +38,8 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    projectRole: activeProjectRoleSelector(state),
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
-    filteredEntries: editEntriesFilteredEntriesSelector(state),
-    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
-    statuses: editEntriesStatusesSelector(state),
-    // tabularData: editEntriesTabularDataSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -104,7 +93,6 @@ export default class LeftPane extends React.PureComponent {
     render() {
         const {
             className,
-            projectRole,
             lead,
             onExcerptCreate,
             filteredEntries,
@@ -114,7 +102,6 @@ export default class LeftPane extends React.PureComponent {
         return (
             <LeftPanel
                 className={className}
-                projectRole={projectRole}
                 lead={lead}
                 filteredEntries={filteredEntries}
                 setSelectedEntryKey={setSelectedEntryKey}

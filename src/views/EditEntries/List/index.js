@@ -10,7 +10,6 @@ import _ts from '#ts';
 import {
     editEntriesFilteredEntriesSelector,
     editEntriesWidgetsSelector,
-    editEntriesStatusesSelector,
     fieldsMapForTabularBookSelector,
 } from '#redux';
 import {
@@ -33,6 +32,7 @@ const propTypes = {
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     hash: PropTypes.string,
+    leadId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -44,7 +44,6 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     entries: editEntriesFilteredEntriesSelector(state),
-    statuses: editEntriesStatusesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
 });
@@ -97,6 +96,7 @@ export default class Listing extends React.PureComponent {
             entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             entryStates, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             tabularFields, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            leadId,
 
             ...otherProps
         } = this.props;
@@ -105,6 +105,7 @@ export default class Listing extends React.PureComponent {
         const field = tabularFields[fieldId];
 
         return {
+            leadId,
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
             tabularData: field,
