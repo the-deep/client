@@ -116,12 +116,12 @@ const EntryGroupItem = (props) => {
                 tabularFieldId,
                 tabularField,
 
-                shouldHideEntryGroupEdit,
+                entryGroupServerId,
             };
         },
         [
-            disabled, entries, entryGroupKey, tabularFields,
-            selections, shouldHideEntryGroupEdit,
+            disabled, entries, tabularFields,
+            entryGroupKey, entryGroupServerId, selections,
             onSelectionClear, onSelectionSet,
         ],
     );

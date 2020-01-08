@@ -29,13 +29,21 @@ const LabelItem = (props) => {
         entryGroupKey,
         onSelectionSet,
         onSelectionClear,
-        shouldHideEntryGroupEdit,
         className: classNameFromProps,
+
+        entryGroupServerId,
     } = props;
 
     const style = {
         color: labelColor || 'var(--color-text)',
     };
+
+    const shouldHideEntryGroupEdit = useCallback(
+        ({ entryPermissions }) => (
+            !entryPermissions.modify && !!entryGroupServerId
+        ),
+        [entryGroupServerId],
+    );
 
     const handleSelectionClear = useCallback(
         () => {
@@ -123,10 +131,10 @@ LabelItem.propTypes = {
 
     selected: PropTypes.bool,
 
-    entryType: PropTypes.string.isRequired,
+    entryType: PropTypes.string,
     image: PropTypes.string,
     excerpt: PropTypes.string,
-    order: PropTypes.number.isRequired,
+    order: PropTypes.number,
     tabularFieldId: PropTypes.number,
     tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
@@ -134,8 +142,9 @@ LabelItem.propTypes = {
     entryGroupKey: PropTypes.string.isRequired,
     onSelectionSet: PropTypes.func.isRequired,
     onSelectionClear: PropTypes.func.isRequired,
-    shouldHideEntryGroupEdit: PropTypes.func.isRequired,
     className: PropTypes.string,
+
+    entryGroupServerId: PropTypes.number,
 };
 LabelItem.defaultProps = {
     className: undefined,
@@ -147,6 +156,9 @@ LabelItem.defaultProps = {
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,
+    entryType: undefined,
+    order: undefined,
+    entryGroupServerId: undefined,
 };
 
 export default LabelItem;

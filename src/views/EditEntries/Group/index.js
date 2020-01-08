@@ -20,8 +20,6 @@ import {
 
 import { entryGroupAccessor } from '#entities/editEntries';
 
-import _cs from '#cs';
-
 import EntryGroupItem from './EntryGroupItem';
 import LeftPanel from './LeftPane';
 
