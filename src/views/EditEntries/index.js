@@ -8,6 +8,7 @@ import memoize from 'memoize-one';
 import { reverseRoute } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
+import { FgRestBuilder } from '#rsu/rest';
 import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import update from '#rsu/immutable-update';
@@ -30,6 +31,17 @@ import {
     entryGroupAccessor,
     ENTRY_STATUS,
 } from '#entities/editEntries';
+
+import {
+    createUrlForDeleteEntry,
+    createParamsForDeleteEntry,
+    createParamsForEntryCreate,
+    createParamsForEntryEdit,
+    createUrlForEntryEdit,
+    urlForEntryCreate,
+} from '#rest';
+
+import schemaValidator from '#schema';
 
 import { RequestCoordinator, RequestClient } from '#request';
 import { pathNames } from '#constants';
@@ -73,9 +85,6 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 import { VIEW } from '#widgets';
-
-import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
-import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
 import { calculateEntryColor } from './entryDataCalculator';
 import Overview from './Overview';
@@ -529,16 +538,57 @@ export default class EditEntries extends React.PureComponent {
         };
         const newEntry = update(entry, settings);
 
-        const request = new EditEntrySaveRequest({
-            setPending: this.props.setPending,
-            saveEntry: this.props.saveEntry,
-            setEntryServerError: (data) => {
-                console.warn('Entry save error', data);
-                const {
-                    leadId,
-                    setEntryError,
-                } = this.props;
+        const {
+            leadId,
+            setPending,
+            setEntryError,
+            analysisFramework,
+            saveEntry,
+        } = this.props;
 
+        const entryData = {
+            ...entryAccessor.data(newEntry),
+            clientId: entryKey,
+        };
+
+        let urlForEntry;
+        let paramsForEntry;
+        const serverId = entryAccessor.serverId(entry);
+        if (serverId) {
+            urlForEntry = createUrlForEntryEdit(serverId);
+            paramsForEntry = () => createParamsForEntryEdit(entryData);
+        } else {
+            urlForEntry = urlForEntryCreate;
+            paramsForEntry = () => createParamsForEntryCreate(entryData);
+        }
+
+        const request = new FgRestBuilder()
+            .url(urlForEntry)
+            .params(paramsForEntry)
+            .preLoad(() => {
+                setPending({ leadId, entryKey, pending: true });
+            })
+            .afterLoad(() => {
+                setPending({ leadId, entryKey, pending: false });
+            })
+            .success((response) => {
+                try {
+                    schemaValidator.validate(response, 'entry');
+                    const color = calculateEntryColor(response.attributes, analysisFramework);
+                    saveEntry({
+                        leadId,
+                        entryKey,
+                        response,
+                        color,
+                    });
+                    this.saveRequestCoordinator.notifyComplete(entryKey);
+                } catch (err) {
+                    console.error(err);
+                    this.saveRequestCoordinator.notifyComplete(entryKey, false);
+                }
+            })
+            .failure(() => {
+                console.warn('Entry save error', ({ leadId, entryKey }));
                 setEntryError({
                     leadId,
                     key: entryKey,
@@ -546,22 +596,20 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-            },
-            getCoordinator: () => this.saveRequestCoordinator,
-            calculateEntryColor: (value) => {
-                const { analysisFramework } = this.props;
-                return calculateEntryColor(value, analysisFramework);
-            },
-        });
-        request.init({
-            leadId: this.props.leadId,
-            entryKey: entryAccessor.key(newEntry),
-            entryData: {
-                ...entryAccessor.data(newEntry),
-                clientId: entryKey,
-            },
-            serverId: entryAccessor.serverId(newEntry),
-        });
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            })
+            .fatal(() => {
+                console.warn('Entry save error', ({ leadId, entryKey }));
+                setEntryError({
+                    leadId,
+                    key: entryKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            })
+            .build();
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
@@ -586,16 +634,33 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleDeleteEntry = (entryKey, entry) => {
-        const request = new EditEntryDeleteRequest({
-            setPending: this.props.setPending,
-            removeEntry: this.props.removeEntry,
-            setEntryServerError: (data) => {
-                console.warn('Entry delete error', data);
-                const {
-                    leadId,
-                    setEntryError,
-                } = this.props;
+        const {
+            leadId,
+            setPending,
+            removeEntry,
+            setEntryError,
+        } = this.props;
 
+        const serverId = entryAccessor.serverId(entry);
+
+        const request = new FgRestBuilder()
+            .url(createUrlForDeleteEntry(serverId))
+            .params(createParamsForDeleteEntry)
+            .preLoad(() => {
+                setPending({ leadId, entryKey, pending: true });
+            })
+            .afterLoad(() => {
+                setPending({ leadId, entryKey, pending: false });
+            })
+            .success(() => {
+                removeEntry({
+                    leadId,
+                    key: entryKey,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey);
+            })
+            .failure(() => {
+                console.warn('Entry delete error', ({ leadId, entryKey }));
                 setEntryError({
                     leadId,
                     key: entryKey,
@@ -603,14 +668,21 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-            },
-            getCoordinator: () => this.saveRequestCoordinator,
-        });
-        request.init({
-            leadId: this.props.leadId,
-            entryKey: entryAccessor.key(entry),
-            serverId: entryAccessor.serverId(entry),
-        });
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            })
+            .fatal(() => {
+                console.warn('Entry delete error', ({ leadId, entryKey }));
+                setEntryError({
+                    leadId,
+                    key: entryKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            })
+            .build();
+
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
@@ -621,6 +693,7 @@ export default class EditEntries extends React.PureComponent {
             schema,
             computeSchema,
         } = this.props;
+
         const savableEntries = this.getSavableEntries(
             entries,
             statuses,
@@ -654,6 +727,8 @@ export default class EditEntries extends React.PureComponent {
                 });
             }
         });
+
+        // add savableEntryGroups here
 
         this.saveRequestCoordinator.start();
     }
