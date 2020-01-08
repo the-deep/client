@@ -77,6 +77,7 @@ import {
     editEntriesEntryGroupsSelector,
     editEntriesSetEntryGroupsAction,
     editEntriesEntryGroupsClearEntriesAction,
+    editEntriesRemoveEntryGroupAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -122,6 +123,7 @@ const propTypes = {
     clearEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     clearEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     removeEntry: PropTypes.func.isRequired,
+    removeEntryGroup: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
@@ -157,6 +159,7 @@ const mapDispatchToProps = dispatch => ({
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
     clearEntryGroups: params => dispatch(editEntriesEntryGroupsClearEntriesAction(params)),
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
+    removeEntryGroup: params => dispatch(editEntriesRemoveEntryGroupAction(params)),
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
@@ -686,12 +689,47 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
+    handleDeleteLocalEntryGroup = (entryGroupKey) => {
+        const pseudoRequest = {
+            start: () => {
+                const {
+                    removeEntryGroup,
+                    leadId,
+                } = this.props;
+                removeEntryGroup({
+                    leadId,
+                    key: entryGroupKey,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryGroupKey);
+            },
+            stop: () => {}, // no-op
+        };
+        this.saveRequestCoordinator.add(entryGroupKey, pseudoRequest);
+    }
+
+    handleDeleteEntryGroup = (entryGroupKey, entry) => {
+        console.warn('Delete entry group', entryGroupKey, entry);
+    }
+
+    handleSaveEntryGroup = (entryGroupKey, entry) => {
+        console.warn('Save entry group', entryGroupKey, entry);
+    }
+
+    handleCancel = () => {
+        const { requests } = this.props;
+        requests.editEntryDataRequest.do({
+            cancelMode: true,
+        });
+    }
+
     handleSave = () => {
         const {
             entries,
             statuses,
             schema,
             computeSchema,
+            entryGroups,
+            entryGroupStatuses,
         } = this.props;
 
         const savableEntries = this.getSavableEntries(
@@ -728,16 +766,27 @@ export default class EditEntries extends React.PureComponent {
             }
         });
 
-        // add savableEntryGroups here
+        const savableEntryGroups = this.getSavableEntryGroups(
+            entryGroups,
+            entryGroupStatuses,
+        );
+
+        savableEntryGroups.forEach((entryGroup) => {
+            const entryGroupKey = entryGroupAccessor.key(entryGroup);
+            const isMarkedAsDeleted = entryGroupAccessor.isMarkedAsDeleted(entryGroup);
+
+            if (isMarkedAsDeleted) {
+                if (entryAccessor.serverId(entryGroup)) {
+                    this.handleDeleteEntryGroup(entryGroupKey, entryGroup);
+                } else {
+                    this.handleDeleteLocalEntryGroup(entryGroupKey);
+                }
+            } else {
+                this.handleSaveEntryGroup(entryGroupKey, entryGroup);
+            }
+        });
 
         this.saveRequestCoordinator.start();
-    }
-
-    handleCancel = () => {
-        const { requests } = this.props;
-        requests.editEntryDataRequest.do({
-            cancelMode: true,
-        });
     }
 
     handleEntryStateChange = (entryKey, value) => {

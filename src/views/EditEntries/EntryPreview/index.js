@@ -52,10 +52,10 @@ const EntryPreview = (props) => {
     }
 };
 EntryPreview.propTypes = {
-    entryType: PropTypes.string.isRequired,
+    entryType: PropTypes.string,
     image: PropTypes.string,
     excerpt: PropTypes.string,
-    order: PropTypes.number.isRequired,
+    order: PropTypes.number,
     tabularFieldId: PropTypes.number,
     tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
@@ -66,6 +66,8 @@ EntryPreview.defaultProps = {
     tabularFieldId: undefined,
     tabularField: undefined,
     className: undefined,
+    entryType: undefined,
+    order: undefined,
 };
 
 export default EntryPreview;
