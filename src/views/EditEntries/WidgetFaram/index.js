@@ -9,10 +9,7 @@ import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
-    leadIdFromRoute,
     activeProjectRoleSelector,
-    editEntriesAnalysisFrameworkSelector,
-    editEntriesLeadSelector,
     editEntriesAddEntryAction,
     editEntriesSetEntryDataAction,
     editEntriesSetExcerptAction,
@@ -52,9 +49,13 @@ const propTypes = {
     setEntryData: PropTypes.func.isRequired,
     setExcerpt: PropTypes.func.isRequired,
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     leadId: PropTypes.number.isRequired,
+
+    onEntryStateChange: PropTypes.func.isRequired,
+    entryState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -70,13 +71,11 @@ const defaultProps = {
 
     projectRole: {},
     analysisFramework: undefined,
+    entryState: undefined,
 };
 
 const mapStateToProps = state => ({
     projectRole: activeProjectRoleSelector(state),
-    analysisFramework: editEntriesAnalysisFrameworkSelector(state),
-    lead: editEntriesLeadSelector(state),
-    leadId: leadIdFromRoute(state),
 });
 
 const mapDispatchToProps = dispatch => ({

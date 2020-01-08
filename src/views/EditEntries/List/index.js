@@ -93,26 +93,37 @@ export default class Listing extends React.PureComponent {
     rendererParams = (key, entry, index) => {
         const {
             statuses,
-            entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-            entryStates, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-            tabularFields, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+            tabularFields,
+            entryStates,
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            analysisFramework,
+            lead,
             leadId,
-
-            ...otherProps
+            bookId,
+            widgets,
         } = this.props;
 
         const fieldId = entryAccessor.tabularField(entry);
         const field = tabularFields[fieldId];
 
         return {
-            leadId,
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
+            entryState: entryStates[key],
             tabularData: field,
             widgetType: VIEW.list,
-            entryState: entryStates[key],
+
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            analysisFramework,
+            lead,
+            leadId,
+            widgets,
+
             index,
-            ...otherProps,
         };
     }
 

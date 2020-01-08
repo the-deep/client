@@ -18,6 +18,7 @@ import {
     editEntriesMarkAsDeletedEntryGroupAction,
     editEntriesSetEntryGroupSelectionAction,
     editEntriesClearEntryGroupSelectionAction,
+    editEntriesAddEntryGroupAction,
 } from '#redux';
 
 import { entryGroupAccessor, entryAccessor } from '#entities/editEntries';
@@ -262,6 +263,7 @@ EntryGroupItem.defaultProps = {
 const propTypes = {
     bookId: PropTypes.number,
     tabularFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    addEntryGroup: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -282,6 +284,7 @@ const mapDispatchToProps = dispatch => ({
     markAsDeletedEntryGroup: params => dispatch(editEntriesMarkAsDeletedEntryGroupAction(params)),
     setEntryGroupSelection: params => dispatch(editEntriesSetEntryGroupSelectionAction(params)),
     clearEntryGroupSelection: params => dispatch(editEntriesClearEntryGroupSelectionAction(params)),
+    addEntryGroup: params => dispatch(editEntriesAddEntryGroupAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -289,8 +292,16 @@ export default class Group extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+
+    static shouldHideEntryGroupCreate = ({ entryPermissions }) => (
+        !entryPermissions.create
+    )
+
     setEntryGroupSelection = (value) => {
-        const { setEntryGroupSelection, leadId } = this.props;
+        const {
+            setEntryGroupSelection,
+            leadId,
+        } = this.props;
         setEntryGroupSelection({
             ...value,
             leadId,
@@ -298,7 +309,10 @@ export default class Group extends React.PureComponent {
     }
 
     clearEntryGroupSelection = (value) => {
-        const { clearEntryGroupSelection, leadId } = this.props;
+        const {
+            clearEntryGroupSelection,
+            leadId,
+        } = this.props;
         clearEntryGroupSelection({
             ...value,
             leadId,
@@ -306,10 +320,27 @@ export default class Group extends React.PureComponent {
     }
 
     markAsDeletedEntryGroup = (value) => {
-        const { markAsDeletedEntryGroup, leadId } = this.props;
+        const {
+            markAsDeletedEntryGroup,
+            leadId,
+        } = this.props;
         markAsDeletedEntryGroup({
             ...value,
             leadId,
+        });
+    }
+
+    handleEntryGroupCreate = () => {
+        const {
+            leadId,
+            addEntryGroup,
+        } = this.props;
+
+        addEntryGroup({
+            leadId,
+            entryGroup: {
+                selections: [],
+            },
         });
     }
 
@@ -353,7 +384,6 @@ export default class Group extends React.PureComponent {
         const {
             bookId,
             entryGroups,
-            onEntryGroupCreate,
         } = this.props;
         return (
             <ResizableH
@@ -367,13 +397,18 @@ export default class Group extends React.PureComponent {
                 rightChild={
                     <React.Fragment>
                         <header className={styles.header}>
-                            <PrimaryButton
-                                onClick={onEntryGroupCreate}
-                                iconName="add"
-                            >
-                                {/* FIXME: use strings */}
-                                Add Entry Group
-                            </PrimaryButton>
+                            <Cloak
+                                hide={this.shouldHideEntryGroupCreate}
+                                render={(
+                                    <PrimaryButton
+                                        onClick={this.handleEntryGroupCreate}
+                                        iconName="add"
+                                    >
+                                        {/* FIXME: use strings */}
+                                        Add Entry Group
+                                    </PrimaryButton>
+                                )}
+                            />
                         </header>
                         <ListView
                             className={styles.content}

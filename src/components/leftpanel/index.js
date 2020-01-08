@@ -274,6 +274,9 @@ export default class LeftPane extends React.PureComponent {
                         isPrivate,
                         categoryEditor,
                     },
+                    projectRole: {
+                        entryPermissions = {},
+                    },
                 } = this.props;
 
                 return {
@@ -284,6 +287,7 @@ export default class LeftPane extends React.PureComponent {
                     showNer: !isPrivate,
                     showCategoryEditor: isTruthy(categoryEditor),
                     onEntryAdd: this.handleEntryAdd,
+                    disableEntryAdd: !entryPermissions.create,
                 };
             },
             mount: true,
