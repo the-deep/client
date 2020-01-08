@@ -21,6 +21,7 @@ import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
 import {
     currentUserActiveProjectSelector,
+    activeProjectRoleSelector,
 } from '#redux';
 import _ts from '#ts';
 
@@ -124,6 +125,7 @@ const getPaneType = (lead) => {
 };
 
 const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     projectDetails: currentUserActiveProjectSelector(state),
 });
 

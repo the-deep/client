@@ -1,11 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 import memoize from 'memoize-one';
 
 import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+
+import {
+    leadIdFromRoute,
+    activeProjectRoleSelector,
+    editEntriesAnalysisFrameworkSelector,
+    editEntriesLeadSelector,
+    editEntriesAddEntryAction,
+    editEntriesSetEntryDataAction,
+    editEntriesSetExcerptAction,
+} from '#redux';
 
 import { entryAccessor } from '#entities/editEntries';
 
@@ -14,6 +25,11 @@ import {
     hasWidgetTagComponent,
     fetchWidgetTagComponent,
 } from '#widgets';
+
+import {
+    calculateEntryColor,
+    calculateFirstTimeAttributes,
+} from '../entryDataCalculator';
 
 import WidgetContentWrapper from './WidgetContentWrapper';
 import ErrorWrapper from './ErrorWrapper';
@@ -30,10 +46,15 @@ const propTypes = {
     pending: PropTypes.bool,
     disabled: PropTypes.bool,
 
-    onExcerptChange: PropTypes.func.isRequired,
-    onExcerptCreate: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
     actionComponent: PropTypes.func,
+
+    addEntry: PropTypes.func.isRequired,
+    setEntryData: PropTypes.func.isRequired,
+    setExcerpt: PropTypes.func.isRequired,
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    leadId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -43,12 +64,28 @@ const defaultProps = {
     entry: undefined,
     tabularData: undefined,
     widgets: [],
-    onChange: () => {},
     schema: {},
     computeSchema: {},
     actionComponent: undefined,
+
+    projectRole: {},
+    analysisFramework: undefined,
 };
 
+const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
+    analysisFramework: editEntriesAnalysisFrameworkSelector(state),
+    lead: editEntriesLeadSelector(state),
+    leadId: leadIdFromRoute(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
+    setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
+    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class WidgetFaram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -61,22 +98,181 @@ export default class WidgetFaram extends React.PureComponent {
         )
     ))
 
-    // Faram
+    // Permission
 
+    setExcerpt = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry excerpt');
+            return;
+        }
+        const { setExcerpt } = this.props;
+        setExcerpt(val);
+    }
+
+    setEntryData = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry');
+            return;
+        }
+        const { setEntryData } = this.props;
+        setEntryData(val);
+    }
+
+    addEntry = (val) => {
+        if (this.shouldDisableEntryCreate()) {
+            console.warn('No permission to create entry');
+            return;
+        }
+        const { addEntry } = this.props;
+        addEntry(val);
+    }
+
+    shouldDisableEntryChange = (entryId) => {
+        const { projectRole: { entryPermissions = {} } } = this.props;
+        return !entryPermissions.modify && !!entryId;
+    }
+
+    shouldDisableEntryCreate = () => {
+        const { projectRole: { entryPermissions = {} } } = this.props;
+        return !entryPermissions.create;
+    }
+
+    // can edit/create entry
+    // create when 'newEntry' is on info or entryKey is undefined
     handleChange = (faramValues, faramErrors, faramInfo) => {
-        const entryKey = entryAccessor.key(this.props.entry);
-        const entryId = entryAccessor.serverId(this.props.entry);
-        this.props.onChange(faramValues, faramErrors, faramInfo, entryKey, entryId);
+        const {
+            analysisFramework,
+            lead,
+            leadId,
+            entry,
+        } = this.props;
+
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
+
+        if (faramInfo.action === 'newEntry') {
+            // TODO: if excerpt already exists modify existing entry
+            // instead of creating a new one
+
+            const {
+                excerptType,
+                excerptValue,
+                value,
+                faramElementName,
+            } = faramInfo;
+
+            // Create attribute using faramElementName and value
+            let attributes = value;
+            [...faramElementName].reverse().forEach((key) => {
+                attributes = { [key]: attributes };
+            });
+
+            attributes = calculateFirstTimeAttributes(
+                attributes,
+                analysisFramework,
+                lead,
+            );
+            const color = calculateEntryColor(attributes, analysisFramework);
+
+            this.addEntry({
+                leadId,
+                entry: {
+                    excerptType,
+                    excerptValue,
+                    lead: leadId,
+                    attributes,
+                    color,
+                    analysisFramework: analysisFramework.id,
+                },
+            });
+        } else if (entryKey === undefined && faramInfo.isComputed) {
+            console.warn('Ignoring entry change if there is no entry key and the change is from entry creation.');
+            // pass
+        } else if (entryKey === undefined) {
+            const excerptValue = '';
+            const excerptType = 'excerpt';
+
+            const attributes = calculateFirstTimeAttributes(
+                faramValues,
+                analysisFramework,
+                lead,
+            );
+            const color = calculateEntryColor(attributes, analysisFramework);
+
+            this.addEntry({
+                leadId,
+                entry: {
+                    excerptType,
+                    excerptValue,
+                    lead: leadId,
+                    attributes,
+                    color,
+                    analysisFramework: analysisFramework.id,
+                },
+            });
+        } else {
+            const color = calculateEntryColor(faramValues, analysisFramework);
+            this.setEntryData({
+                leadId,
+                key: entryKey,
+                id: entryId,
+                values: faramValues,
+                errors: faramErrors,
+                info: faramInfo,
+                color,
+            });
+        }
     }
 
+    // can only edit entry
     handleExcerptChange = (excerptData) => {
-        const entryKey = entryAccessor.key(this.props.entry);
-        const entryId = entryAccessor.serverId(this.props.entry);
-        this.props.onExcerptChange(excerptData, entryKey, entryId);
+        const {
+            leadId,
+            entry,
+        } = this.props;
+
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
+
+        const { type, value } = excerptData;
+
+        if (!entryKey) {
+            console.warn('There is no entry key while changing excerpt.');
+            // this.handleExcerptCreate({ type, value });
+        } else {
+            this.setExcerpt({
+                leadId,
+                key: entryKey,
+                id: entryId,
+                excerptType: type,
+                excerptValue: value,
+            });
+        }
     }
 
+    // can only create entry
     handleExcerptCreate = (excerptData) => {
-        this.props.onExcerptCreate(excerptData);
+        const {
+            leadId,
+            analysisFramework,
+            lead,
+        } = this.props;
+
+        const { type, value } = excerptData;
+
+        this.addEntry({
+            leadId,
+            entry: {
+                analysisFramework: analysisFramework.id,
+                excerptType: type,
+                excerptValue: value,
+                attributes: calculateFirstTimeAttributes(
+                    {},
+                    analysisFramework,
+                    lead,
+                ),
+            },
+        });
     }
 
     // Grid View Layout
@@ -214,14 +410,14 @@ export default class WidgetFaram extends React.PureComponent {
         );
 
         // Widgets to allow drag and drop
-        const dropableWidgets = widgetType === VIEW.overview ? [
+        const droppableWidgets = widgetType === VIEW.overview ? [
             'excerptWidget',
             'matrix1dWidget',
             'matrix2dWidget',
         ] : [
             'excerptWidget',
         ];
-        const isDroppable = dropableWidgets.includes(widgetId);
+        const isDroppable = droppableWidgets.includes(widgetId);
 
         return (
             <WidgetContentWrapper
@@ -249,8 +445,6 @@ export default class WidgetFaram extends React.PureComponent {
             pending,
             disabled,
             widgetType,
-            fieldId,
-            bookId,
         } = this.props;
 
         const error = entryAccessor.error(entry);

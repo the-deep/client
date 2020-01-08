@@ -18,7 +18,6 @@ import { entryAccessor } from '#entities/editEntries';
 import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesSetEntryCommentsCountAction,
-    leadIdFromRoute,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
@@ -49,17 +48,13 @@ const defaultProps = {
     entry: undefined,
 };
 
-const mapStateToProps = state => ({
-    leadId: leadIdFromRoute(state),
-});
-
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(undefined, mapDispatchToProps)
 export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

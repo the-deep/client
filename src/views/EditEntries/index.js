@@ -79,10 +79,7 @@ import { VIEW } from '#widgets';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
-import {
-    calculateEntryColor,
-    calculateFirstTimeAttributes,
-} from './entryDataCalculator';
+import { calculateEntryColor } from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
 import Group from './Group';
@@ -116,16 +113,13 @@ const propTypes = {
     setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     resetEntryGroupUiState: PropTypes.func.isRequired,
 
-    addEntry: PropTypes.func.isRequired,
     addEntryGroup: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     clearEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     removeEntry: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
     updateEntriesBulk: PropTypes.func.isRequired,
-    setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
-    setExcerpt: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
 };
 
@@ -372,15 +366,18 @@ export default class EditEntries extends React.PureComponent {
                 component: Overview,
                 rendererParams: () => ({
                     // injected inside WidgetFaram
-                    onChange: this.handleChange,
-                    onExcerptChange: this.handleExcerptChange,
-                    onExcerptCreate: this.handleExcerptCreate,
+                    // onChange: this.handleChange,
+                    // onExcerptChange: this.handleExcerptChange,
+                    // onExcerptCreate: this.handleExcerptCreate,
+
                     schema: this.props.schema,
                     computeSchema: this.props.computeSchema,
                     entryStates: this.state.entryStates,
                     onEntryStateChange: this.handleEntryStateChange,
 
+                    leadId: this.props.leadId,
                     bookId: this.props.lead && this.props.lead.tabularBook,
+                    statuses: this.props.statuses,
                 }),
                 wrapContainer: true,
                 lazyMount: false,
@@ -391,16 +388,19 @@ export default class EditEntries extends React.PureComponent {
                 rendererParams: () => ({
                     // NOTE: to re-render Listing when has changes
                     hash: window.location.hash,
+
                     // injected inside WidgetFaram
-                    onChange: this.handleChange,
-                    onExcerptChange: this.handleExcerptChange,
-                    onExcerptCreate: this.handleExcerptCreate,
+                    // onChange: this.handleChange,
+                    // onExcerptChange: this.handleExcerptChange,
+                    // onExcerptCreate: this.handleExcerptCreate,
                     schema: this.props.schema,
                     computeSchema: this.props.computeSchema,
                     entryStates: this.state.entryStates,
                     onEntryStateChange: this.handleEntryStateChange,
 
+                    leadId: this.props.leadId,
                     bookId: this.props.lead && this.props.lead.tabularBook,
+                    statuses: this.props.statuses,
                 }),
                 wrapContainer: true,
                 lazyMount: true,
@@ -409,8 +409,10 @@ export default class EditEntries extends React.PureComponent {
             [VIEW.group]: {
                 component: Group,
                 rendererParams: () => ({
-                    bookId: this.props.lead && this.props.lead.tabularBook,
                     leadId: this.props.leadId,
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+
+                    // FIXME: this can be handled inside
                     onEntryGroupCreate: this.handleEntryGroupCreate,
                 }),
                 wrapContainer: true,
@@ -458,6 +460,7 @@ export default class EditEntries extends React.PureComponent {
             leadId,
             entries,
             analysisFramework,
+
             resetUiState,
             resetEntryGroupUiState,
             updateEntriesBulk,
@@ -500,33 +503,6 @@ export default class EditEntries extends React.PureComponent {
 
     // PERMISSION
 
-    setExcerpt = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
-            console.warn('No permission to edit entry excerpt');
-            return;
-        }
-        const { setExcerpt } = this.props;
-        setExcerpt(val);
-    }
-
-    setEntryData = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
-            console.warn('No permission to edit entry');
-            return;
-        }
-        const { setEntryData } = this.props;
-        setEntryData(val);
-    }
-
-    addEntry = (val) => {
-        if (this.shouldDisableEntryCreate()) {
-            console.warn('No permission to create entry');
-            return;
-        }
-        const { addEntry } = this.props;
-        addEntry(val);
-    }
-
     addEntryGroup = (val) => {
         if (this.shouldDisableEntryGroupCreate()) {
             console.warn('No permission to create entry group');
@@ -534,18 +510,6 @@ export default class EditEntries extends React.PureComponent {
         }
         const { addEntryGroup } = this.props;
         addEntryGroup(val);
-    }
-
-    // PERMISSIONS
-
-    shouldDisableEntryChange = (entryId) => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.modify && !!entryId;
-    }
-
-    shouldDisableEntryCreate = () => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.create;
     }
 
     shouldDisableEntryGroupCreate = () => {
@@ -565,24 +529,7 @@ export default class EditEntries extends React.PureComponent {
 
     // APIS
 
-    // can only edit entry
-    handleExcerptChange = ({ type, value }, entryKey, entryId) => {
-        const { leadId } = this.props;
-        if (!entryKey) {
-            console.warn('There is no entry key while changing excerpt.');
-            // this.handleExcerptCreate({ type, value });
-        } else {
-            this.setExcerpt({
-                leadId,
-                key: entryKey,
-                id: entryId,
-                excerptType: type,
-                excerptValue: value,
-            });
-        }
-    }
-
-
+    // TODO: move these
     handleEntryGroupCreate = () => {
         const {
             leadId,
@@ -593,112 +540,6 @@ export default class EditEntries extends React.PureComponent {
                 selections: [],
             },
         });
-    }
-
-    // can only create entry
-    handleExcerptCreate = ({ type, value }) => {
-        const {
-            leadId,
-            analysisFramework,
-            lead,
-        } = this.props;
-        this.addEntry({
-            leadId,
-            entry: {
-                analysisFramework: analysisFramework.id,
-                excerptType: type,
-                excerptValue: value,
-                attributes: calculateFirstTimeAttributes(
-                    {},
-                    analysisFramework,
-                    lead,
-                ),
-            },
-        });
-    }
-
-    // FARAM
-
-    // can edit/create entry
-    // create when 'newEntry' is on info or entryKey is undefined
-    handleChange = (faramValues, faramErrors, faramInfo, entryKey, entryId) => {
-        const {
-            analysisFramework,
-            lead,
-            leadId,
-        } = this.props;
-        if (faramInfo.action === 'newEntry') {
-            // TODO: if excerpt already exists modify existing entry
-            // instead of creating a new one
-
-            const {
-                excerptType,
-                excerptValue,
-                value,
-                faramElementName,
-            } = faramInfo;
-
-            // Create attribute using faramElementName and value
-            let attributes = value;
-            [...faramElementName].reverse().forEach((key) => {
-                attributes = { [key]: attributes };
-            });
-
-            attributes = calculateFirstTimeAttributes(
-                attributes,
-                analysisFramework,
-                lead,
-            );
-            const color = calculateEntryColor(attributes, analysisFramework);
-
-            this.addEntry({
-                leadId,
-                entry: {
-                    excerptType,
-                    excerptValue,
-                    lead: leadId,
-                    attributes,
-                    color,
-                    analysisFramework: analysisFramework.id,
-                },
-            });
-        } else if (entryKey === undefined && faramInfo.isComputed) {
-            console.warn('Ignoring entry change if there is no entry key and the change is from entry creation.');
-            // pass
-        } else if (entryKey === undefined) {
-            const excerptValue = '';
-            const excerptType = 'excerpt';
-
-            const attributes = this.calculateFirstTimeAttributes(
-                faramValues,
-                analysisFramework,
-                lead,
-            );
-            const color = calculateEntryColor(attributes, analysisFramework);
-
-            this.addEntry({
-                leadId,
-                entry: {
-                    excerptType,
-                    excerptValue,
-                    lead: leadId,
-                    attributes,
-                    color,
-                    analysisFramework: analysisFramework.id,
-                },
-            });
-        } else {
-            const color = calculateEntryColor(faramValues, analysisFramework);
-            this.setEntryData({
-                leadId,
-                key: entryKey,
-                id: entryId,
-                values: faramValues,
-                errors: faramErrors,
-                info: faramInfo,
-                color,
-            });
-        }
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
@@ -751,7 +592,7 @@ export default class EditEntries extends React.PureComponent {
             getCoordinator: () => this.saveRequestCoordinator,
             calculateEntryColor: (value) => {
                 const { analysisFramework } = this.props;
-                this.calculateEntryColor(value, analysisFramework);
+                return calculateEntryColor(value, analysisFramework);
             },
         });
         request.init({
@@ -860,15 +701,7 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleCancel = () => {
-        const {
-            // leadId,
-            // clearEntries,
-            // clearEntryGroups,
-            requests,
-        } = this.props;
-        // clearEntries({ leadId });
-        // clearEntryGroups({ leadId });
-
+        const { requests } = this.props;
         requests.editEntryDataRequest.do({
             cancelMode: true,
         });
