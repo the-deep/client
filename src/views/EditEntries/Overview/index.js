@@ -23,6 +23,7 @@ import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
 
+    editEntriesAddEntryAction,
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetEntryCommentsCountAction,
@@ -35,6 +36,9 @@ import { VIEW } from '#widgets';
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
 
+import {
+    calculateFirstTimeAttributes,
+} from '../entryDataCalculator';
 import WidgetFaram from '../WidgetFaram';
 import LeftPane from './LeftPane';
 import styles from './styles.scss';
@@ -51,9 +55,9 @@ const propTypes = {
     entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
-    onExcerptCreate: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    addEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -76,6 +80,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
@@ -158,9 +163,33 @@ export default class Overview extends React.PureComponent {
         });
     }
 
+    // can only create entry
+    handleExcerptCreate = (excerptData) => {
+        const {
+            leadId,
+            analysisFramework,
+            lead,
+        } = this.props;
+
+        const { type, value } = excerptData;
+
+        this.props.addEntry({
+            leadId,
+            entry: {
+                analysisFramework: analysisFramework.id,
+                excerptType: type,
+                excerptValue: value,
+                attributes: calculateFirstTimeAttributes(
+                    {},
+                    analysisFramework,
+                    lead,
+                ),
+            },
+        });
+    }
+
     handleEmptyExcerptCreate = () => {
-        // NOTE: onExcerptCreate should be passed to widgetfaram as well
-        this.props.onExcerptCreate({ type: 'excerpt', value: '' });
+        this.handleExcerptCreate({ type: 'excerpt', value: '' });
     }
 
     handleEntryDelete = () => {
@@ -193,15 +222,19 @@ export default class Overview extends React.PureComponent {
     render() {
         const {
             entry,
-            leadId, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
-            entries, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            leadId,
+            entries,
+            lead,
+            analysisFramework,
             statuses,
             selectedEntryKey,
             entryStates,
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            widgets,
 
             tabularFields,
-
-            ...otherProps
         } = this.props;
 
         const { mountModalButton } = this.state;
@@ -211,7 +244,6 @@ export default class Overview extends React.PureComponent {
 
         const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
-        const field = tabularFields[fieldId];
 
         return (
             <ResizableH
@@ -219,7 +251,7 @@ export default class Overview extends React.PureComponent {
                 leftChild={
                     <LeftPane
                         className={styles.leftPanel}
-                        onExcerptCreate={this.props.onExcerptCreate}
+                        onExcerptCreate={this.handleExcerptCreate}
                         tabularFields={tabularFields}
                         selectedEntryKey={this.props.selectedEntryKey}
                         filteredEntries={this.props.entries}
@@ -302,12 +334,18 @@ export default class Overview extends React.PureComponent {
                             // NOTE: removed dismount on key change behavior
                             // to persist active UI state
                             // key={key}
+                            widgetType={VIEW.overview}
                             entry={entry}
                             pending={pending}
-                            widgetType={VIEW.overview}
+                            widgets={widgets}
                             entryState={entryStates[key]}
-                            tabularData={field}
-                            {...otherProps}
+                            tabularData={tabularFields[fieldId]}
+                            schema={schema}
+                            computeSchema={computeSchema}
+                            onEntryStateChange={onEntryStateChange}
+                            analysisFramework={analysisFramework}
+                            lead={lead}
+                            leadId={leadId}
                         />
                     </React.Fragment>
                 }

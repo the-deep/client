@@ -65,12 +65,10 @@ import {
     editEntriesEntryGroupsSelector,
     editEntriesSetEntryGroupsAction,
     editEntriesEntryGroupsClearEntriesAction,
-    editEntriesAddEntryGroupAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
-    activeProjectRoleSelector,
 } from '#redux';
 import notify from '#notify';
 import _ts from '#ts';
@@ -87,7 +85,6 @@ import Group from './Group';
 import styles from './styles.scss';
 
 const propTypes = {
-    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -113,7 +110,6 @@ const propTypes = {
     setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     resetEntryGroupUiState: PropTypes.func.isRequired,
 
-    addEntryGroup: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     clearEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     removeEntry: PropTypes.func.isRequired,
@@ -124,7 +120,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    projectRole: {},
     analysisFramework: undefined,
     entries: [],
     entryGroups: [],
@@ -135,7 +130,6 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    projectRole: activeProjectRoleSelector(state),
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
     entries: editEntriesEntriesSelector(state),
     entryGroups: editEntriesEntryGroupsSelector(state),
@@ -151,7 +145,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
-    addEntryGroup: params => dispatch(editEntriesAddEntryGroupAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
     clearEntryGroups: params => dispatch(editEntriesEntryGroupsClearEntriesAction(params)),
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
@@ -239,6 +232,7 @@ const requestOptions = {
                     },
                 ],
             };
+
             const {
                 lead,
                 geoOptions,
@@ -366,16 +360,14 @@ export default class EditEntries extends React.PureComponent {
                 component: Overview,
                 rendererParams: () => ({
                     // injected inside WidgetFaram
-                    // onChange: this.handleChange,
-                    // onExcerptChange: this.handleExcerptChange,
-                    // onExcerptCreate: this.handleExcerptCreate,
-
                     schema: this.props.schema,
                     computeSchema: this.props.computeSchema,
-                    entryStates: this.state.entryStates,
                     onEntryStateChange: this.handleEntryStateChange,
-
+                    analysisFramework: this.props.analysisFramework,
+                    lead: this.props.lead,
                     leadId: this.props.leadId,
+
+                    entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
                     statuses: this.props.statuses,
                 }),
@@ -390,15 +382,14 @@ export default class EditEntries extends React.PureComponent {
                     hash: window.location.hash,
 
                     // injected inside WidgetFaram
-                    // onChange: this.handleChange,
-                    // onExcerptChange: this.handleExcerptChange,
-                    // onExcerptCreate: this.handleExcerptCreate,
                     schema: this.props.schema,
                     computeSchema: this.props.computeSchema,
-                    entryStates: this.state.entryStates,
                     onEntryStateChange: this.handleEntryStateChange,
-
+                    analysisFramework: this.props.analysisFramework,
+                    lead: this.props.lead,
                     leadId: this.props.leadId,
+
+                    entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
                     statuses: this.props.statuses,
                 }),
@@ -411,9 +402,6 @@ export default class EditEntries extends React.PureComponent {
                 rendererParams: () => ({
                     leadId: this.props.leadId,
                     bookId: this.props.lead && this.props.lead.tabularBook,
-
-                    // FIXME: this can be handled inside
-                    onEntryGroupCreate: this.handleEntryGroupCreate,
                 }),
                 wrapContainer: true,
                 lazyMount: true,
@@ -501,23 +489,6 @@ export default class EditEntries extends React.PureComponent {
         return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
     }))
 
-    // PERMISSION
-
-    addEntryGroup = (val) => {
-        if (this.shouldDisableEntryGroupCreate()) {
-            console.warn('No permission to create entry group');
-            return;
-        }
-        const { addEntryGroup } = this.props;
-        addEntryGroup(val);
-    }
-
-    shouldDisableEntryGroupCreate = () => {
-        // FIXME: currently using entryPermission for entry group as well
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.create;
-    }
-
     shouldHideEditLink = () => {
         const {
             analysisFramework: {
@@ -528,19 +499,6 @@ export default class EditEntries extends React.PureComponent {
     }
 
     // APIS
-
-    // TODO: move these
-    handleEntryGroupCreate = () => {
-        const {
-            leadId,
-        } = this.props;
-        this.addEntryGroup({
-            leadId,
-            entryGroup: {
-                selections: [],
-            },
-        });
-    }
 
     handleValidationFailure = (faramErrors, entryKey) => {
         const proxyRequest = {

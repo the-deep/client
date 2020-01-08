@@ -39,6 +39,8 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+
+    index: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -115,8 +117,14 @@ export default class WidgetFaramContainer extends React.PureComponent {
             widgetType,
             entry,
             index,
-
-            ...otherProps
+            entryState,
+            tabularData,
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            analysisFramework,
+            lead,
+            leadId,
         } = this.props;
 
         const {
@@ -189,12 +197,20 @@ export default class WidgetFaramContainer extends React.PureComponent {
                 </header>
                 <WidgetFaram
                     className={_cs('widget', styles.widget)}
-                    entry={entry}
-                    widgets={widgets}
-                    pending={pending}
                     widgetType={widgetType}
+                    entry={entry}
+                    pending={pending}
+                    widgets={widgets}
                     actionComponent={HeaderComponent}
-                    {...otherProps}
+
+                    entryState={entryState}
+                    tabularData={tabularData}
+                    schema={schema}
+                    computeSchema={computeSchema}
+                    onEntryStateChange={onEntryStateChange}
+                    analysisFramework={analysisFramework}
+                    lead={lead}
+                    leadId={leadId}
                 />
             </div>
         );

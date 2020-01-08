@@ -41,6 +41,7 @@ const propTypes = {
     showNlp: PropTypes.bool,
     showNer: PropTypes.bool,
     showCategoryEditor: PropTypes.bool,
+    disableEntryAdd: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -48,6 +49,7 @@ const defaultProps = {
     showNlp: true,
     showNer: true,
     showCategoryEditor: true,
+    disableEntryAdd: false,
 };
 
 const emptyList = [];
@@ -528,7 +530,10 @@ export default class AssistedTagging extends React.PureComponent {
     );
 
     renderAssistant = () => {
-        const { onEntryAdd } = this.props;
+        const {
+            onEntryAdd,
+            disableEntryAdd,
+        } = this.props;
 
         const {
             activeHighlightDetails,
@@ -589,6 +594,7 @@ export default class AssistedTagging extends React.PureComponent {
                             onClick={() => this.handleEntryAdd(
                                 activeHighlightDetails.text,
                             )}
+                            disabled={disableEntryAdd}
                         >
                             {_ts('components.assistedTagging', 'addEntryButtonLabel')}
                         </PrimaryButton>
