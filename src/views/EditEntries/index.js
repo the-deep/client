@@ -118,8 +118,8 @@ const propTypes = {
 
     addEntry: PropTypes.func.isRequired,
     addEntryGroup: PropTypes.func.isRequired,
-    clearEntries: PropTypes.func.isRequired,
-    clearEntryGroups: PropTypes.func.isRequired,
+    clearEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    clearEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     removeEntry: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
     updateEntriesBulk: PropTypes.func.isRequired,
@@ -201,10 +201,18 @@ const requestOptions = {
                 setLead,
                 setRegions,
                 setLabels,
+                clearEntries,
+                clearEntryGroups,
             } = props;
             const {
                 setProjectMismatch,
+                cancelMode,
             } = params;
+
+            if (cancelMode) {
+                clearEntries({ leadId });
+                clearEntryGroups({ leadId });
+            }
 
             const newResponse = {
                 ...response,
@@ -274,7 +282,7 @@ const requestOptions = {
             setLabels({ leadId, labels });
 
             // Calculate color for each entry in the diff
-            const diffs = createDiff(entriesFromProps, entries)
+            const diffs = createDiff(cancelMode ? [] : entriesFromProps, entries)
                 .map((diff) => {
                     if (!diff.item) {
                         return diff;
@@ -313,7 +321,7 @@ const requestOptions = {
             }
 
             const entryGroupDiffs = createDiff(
-                entryGroupsFromProps,
+                cancelMode ? [] : entryGroupsFromProps,
                 entryGroups,
                 entryGroupAccessor,
                 createEntryGroup,
@@ -853,14 +861,17 @@ export default class EditEntries extends React.PureComponent {
 
     handleCancel = () => {
         const {
-            leadId,
-            clearEntries,
-            clearEntryGroups,
+            // leadId,
+            // clearEntries,
+            // clearEntryGroups,
             requests,
         } = this.props;
-        clearEntries({ leadId });
-        clearEntryGroups({ leadId });
-        requests.editEntryDataRequest.do();
+        // clearEntries({ leadId });
+        // clearEntryGroups({ leadId });
+
+        requests.editEntryDataRequest.do({
+            cancelMode: true,
+        });
     }
 
     handleEntryStateChange = (entryKey, value) => {
