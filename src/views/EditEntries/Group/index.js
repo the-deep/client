@@ -16,6 +16,7 @@ import {
     editEntriesSetEntryGroupSelectionAction,
     editEntriesClearEntryGroupSelectionAction,
     editEntriesAddEntryGroupAction,
+    editEntriesSetEntryGroupDataAction,
 } from '#redux';
 
 import { entryGroupAccessor } from '#entities/editEntries';
@@ -37,6 +38,7 @@ const propTypes = {
     setEntryGroupSelection: PropTypes.func.isRequired,
     clearEntryGroupSelection: PropTypes.func.isRequired,
     markAsDeletedEntryGroup: PropTypes.func.isRequired,
+    setEntryGroupData: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -61,6 +63,7 @@ const mapDispatchToProps = dispatch => ({
     setEntryGroupSelection: params => dispatch(editEntriesSetEntryGroupSelectionAction(params)),
     clearEntryGroupSelection: params => dispatch(editEntriesClearEntryGroupSelectionAction(params)),
     addEntryGroup: params => dispatch(editEntriesAddEntryGroupAction(params)),
+    setEntryGroupData: params => dispatch(editEntriesSetEntryGroupDataAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -79,6 +82,17 @@ export default class Group extends React.PureComponent {
             leadId,
         } = this.props;
         setEntryGroupSelection({
+            ...value,
+            leadId,
+        });
+    }
+
+    setEntryGroupData = (value) => {
+        const {
+            setEntryGroupData,
+            leadId,
+        } = this.props;
+        setEntryGroupData({
             ...value,
             leadId,
         });
@@ -150,6 +164,7 @@ export default class Group extends React.PureComponent {
 
             onMarkAsDelete: this.markAsDeletedEntryGroup,
             onSelectionSet: this.setEntryGroupSelection,
+            onEntryGroupDataSet: this.setEntryGroupData,
             onSelectionClear: this.clearEntryGroupSelection,
         };
     }

@@ -67,6 +67,7 @@ const EEB__RESET_ENTRY_GROUP_UI_STATE = 'siloDomainData/EEB__RESET_ENTRY_GROUP_U
 const EEB__SET_LABELS = 'siloDomainData/EEB__SET_LABELS';
 const EEB__SET_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__SET_ENTRY_GROUP_SELECTION';
 const EEB__CLEAR_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__CLEAR_ENTRY_GROUP_SELECTION';
+const EEB__SET_ENTRY_GROUP_DATA = 'siloDomainData/EEB__SET_ENTRY_GROUP_DATA';
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -257,6 +258,19 @@ export const editEntriesClearEntryGroupSelectionAction = ({ leadId, entryGroupKe
     labelId,
 });
 
+export const editEntriesSetEntryGroupPendingAction = ({ leadId, entryGroupKey, pending }) => ({
+    type: EEB__SET_ENTRY_GROUP_PENDING,
+    leadId,
+    entryGroupKey,
+    pending,
+});
+
+export const editEntriesSetEntryGroupDataAction = ({ leadId, entryGroupKey, data }) => ({
+    type: EEB__SET_ENTRY_GROUP_DATA,
+    leadId,
+    entryGroupKey,
+    data,
+});
 
 // ACTION-CREATOR
 const setLead = (state, action) => {
@@ -1087,6 +1101,39 @@ const setEntryGroupSelection = (state, action) => {
     return update(state, settings);
 };
 
+const setEntryGroupData = (state, action) => {
+    const { leadId, entryGroupKey, data } = action;
+
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        g => entryGroupAccessor.key(g) === entryGroupKey,
+    );
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    [entryGroupIndex]: {
+                        localData: {
+                            isPristine: { $set: false },
+                            error: { $set: undefined },
+                            hasError: { $set: false },
+                            hasServerError: { $set: false },
+                        },
+                        data: {
+                            title: { $set: data.title },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const clearEntryGroupSelection = (state, action) => {
     const { leadId, entryGroupKey, labelId } = action;
 
@@ -1122,7 +1169,23 @@ const clearEntryGroupSelection = (state, action) => {
     return update(state, settings);
 };
 
-const noop = (state, action) => {
+const setEntryGroupPending = (state, action) => {
+    const { leadId, entryGroupKey, pending } = action;
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryGroupRests: { $auto: {
+                    [entryGroupKey]: { $set: pending },
+                } },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+
+const saveEntryGroup = (state, action) => {
+    // TODO: do this
     console.warn(action);
     return state;
 };
@@ -1150,15 +1213,16 @@ const reducers = {
 
     [EEB__SET_ENTRY_GROUPS]: setEntryGroups,
     [EEB__CLEAR_ENTRY_GROUPS]: clearEntryGroups,
-    [EEB__ADD_ENTRY_GROUP]: addEntryGroup, // NOTE: not used yet
-    [EEB__REMOVE_ENTRY_GROUP]: removeEntryGroup, // NOTE: not used yet
+    [EEB__ADD_ENTRY_GROUP]: addEntryGroup,
+    [EEB__REMOVE_ENTRY_GROUP]: removeEntryGroup,
     [EEB__MARK_AS_DELETED_ENTRY_GROUP]: markAsDeletedEntryGroup,
-    [EEB__SAVE_ENTRY_GROUP]: noop,
-    [EEB__SET_ENTRY_GROUP_PENDING]: noop,
+    [EEB__SAVE_ENTRY_GROUP]: saveEntryGroup,
+    [EEB__SET_ENTRY_GROUP_PENDING]: setEntryGroupPending,
     [EEB__RESET_ENTRY_GROUP_UI_STATE]: resetEntryGroupUiState,
     [EEB__SET_LABELS]: setLabels,
     [EEB__SET_ENTRY_GROUP_SELECTION]: setEntryGroupSelection,
     [EEB__CLEAR_ENTRY_GROUP_SELECTION]: clearEntryGroupSelection,
+    [EEB__SET_ENTRY_GROUP_DATA]: setEntryGroupData,
 };
 
 export default reducers;

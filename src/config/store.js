@@ -38,6 +38,8 @@ const myTransform = createTransform(
                     // eslint-disable-next-line no-param-reassign
                     delete state.editEntries[key].entryRests;
                     // eslint-disable-next-line no-param-reassign
+                    delete state.editEntries[key].entryGroupRests;
+                    // eslint-disable-next-line no-param-reassign
                     delete state.editEntries[key].tabularData;
                 }
             });

@@ -52,6 +52,10 @@ export const createParamsForDeleteEntry = () => ({
     headers: commonHeaderForPost,
 });
 
+export const createUrlForDeleteEntryGroup = entryGroupId => (
+    `${wsEndpoint}/entry-groups/${entryGroupId}/`
+);
+
 export const createUrlEditEntryGet = leadId => (
     getVersionedUrl(wsEndpoint, `/v2/edit-entries-data/${leadId}/`)
 );
