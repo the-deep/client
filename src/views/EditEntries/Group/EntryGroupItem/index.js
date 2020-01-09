@@ -1,17 +1,24 @@
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
+
+import { listToMap } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
+import modalize from '#rscg/Modalize';
+
 import Cloak from '#components/general/Cloak';
 
 import { entryAccessor } from '#entities/editEntries';
 
 import _cs from '#cs';
 
+import EntryGroupEditModal from './EntryGroupEditModal';
 import LabelItem from './LabelItem';
 import styles from './styles.scss';
+
+const WarningModalButton = modalize(WarningButton);
 
 const EntryGroupItem = (props) => {
     const {
@@ -28,6 +35,7 @@ const EntryGroupItem = (props) => {
         onMarkAsDelete,
         onSelectionSet,
         onSelectionClear,
+        onEntryGroupDataSet,
     } = props;
 
     const className = _cs(
@@ -59,16 +67,41 @@ const EntryGroupItem = (props) => {
         [onMarkAsDelete, entryGroupKey],
     );
 
+    const handleEntryGroupDataSet = useCallback(
+        (data) => {
+            onEntryGroupDataSet({
+                entryGroupKey,
+                data,
+            });
+        },
+        [onEntryGroupDataSet, entryGroupKey],
+    );
+
     const labelKeySelector = useCallback(
         item => item.id,
         [],
     );
 
+    const selectionMap = useMemo(
+        () => listToMap(
+            selections,
+            selection => selection.labelId,
+            selection => selection,
+        ),
+        [selections],
+    );
+    // NOTE: entryMap can be moved outside
+    const entryMap = useMemo(
+        () => listToMap(
+            entries,
+            entryAccessor.key,
+            entry => entry,
+        ),
+        [entries],
+    );
+
     const rendererParams = useCallback(
         (key, item) => {
-            // TODO: change this to a mapping
-            const selection = selections.find(e => e.labelId === key);
-
             const params = {
                 title: item.title,
                 color: item.color,
@@ -82,15 +115,12 @@ const EntryGroupItem = (props) => {
                 entryGroupKey,
             };
 
+            const selection = selectionMap[key];
             if (!selection) {
                 return params;
             }
 
-            // TODO: change this to a mapping
-            const entry = entries.find(
-                e => entryAccessor.key(e) === selection.entryClientId,
-            );
-
+            const entry = entryMap[selection.entryClientId];
             if (!entry) {
                 return params;
             }
@@ -120,8 +150,8 @@ const EntryGroupItem = (props) => {
             };
         },
         [
-            disabled, entries, tabularFields,
-            entryGroupKey, entryGroupServerId, selections,
+            disabled, entryMap, tabularFields,
+            entryGroupKey, entryGroupServerId, selectionMap,
             onSelectionClear, onSelectionSet,
         ],
     );
@@ -136,12 +166,18 @@ const EntryGroupItem = (props) => {
                 <Cloak
                     hide={shouldHideEntryGroupEdit}
                     render={
-                        <WarningButton
+                        <WarningModalButton
                             className={styles.button}
                             // FIXME: uses strings
                             title="Edit group"
                             iconName="edit"
-                            disabled
+                            disabled={disabled}
+                            modal={
+                                <EntryGroupEditModal
+                                    title={title}
+                                    onSave={handleEntryGroupDataSet}
+                                />
+                            }
                         />
                     }
                 />
@@ -183,6 +219,7 @@ EntryGroupItem.propTypes = {
     onMarkAsDelete: PropTypes.func.isRequired,
     onSelectionSet: PropTypes.func.isRequired,
     onSelectionClear: PropTypes.func.isRequired,
+    onEntryGroupDataSet: PropTypes.func.isRequired,
 };
 EntryGroupItem.defaultProps = {
     selections: [],

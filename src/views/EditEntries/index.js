@@ -34,6 +34,7 @@ import {
 
 import {
     createUrlForDeleteEntry,
+    createUrlForDeleteEntryGroup,
     createParamsForDeleteEntry,
     createParamsForEntryCreate,
     createParamsForEntryEdit,
@@ -78,6 +79,7 @@ import {
     editEntriesSetEntryGroupsAction,
     editEntriesEntryGroupsClearEntriesAction,
     editEntriesRemoveEntryGroupAction,
+    editEntriesSetEntryGroupPendingAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -128,6 +130,7 @@ const propTypes = {
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
+    setEntryGroupPending: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -172,6 +175,7 @@ const mapDispatchToProps = dispatch => ({
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
+    setEntryGroupPending: params => dispatch(editEntriesSetEntryGroupPendingAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
     resetEntryGroupUiState: params => dispatch(editEntriesResetEntryGroupUiStateAction(params)),
@@ -707,12 +711,61 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryGroupKey, pseudoRequest);
     }
 
-    handleDeleteEntryGroup = (entryGroupKey, entry) => {
-        console.warn('Delete entry group', entryGroupKey, entry);
+    handleDeleteEntryGroup = (entryGroupKey, entryGroup) => {
+        const {
+            leadId,
+            setEntryGroupPending,
+            removeEntryGroup,
+            setEntryError,
+        } = this.props;
+
+        const serverId = entryGroupAccessor.serverId(entryGroup);
+
+        const request = new FgRestBuilder()
+            .url(createUrlForDeleteEntryGroup(serverId))
+            .params(createParamsForDeleteEntry)
+            .preLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: true });
+            })
+            .afterLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: false });
+            })
+            .success(() => {
+                removeEntryGroup({
+                    leadId,
+                    key: entryGroupKey,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryGroupKey);
+            })
+            .failure(() => {
+                console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
+                setEntryError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryGroupKey, false);
+            })
+            .fatal(() => {
+                console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
+                setEntryError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryGroupKey, false);
+            })
+            .build();
+
+        this.saveRequestCoordinator.add(entryGroupKey, request);
     }
 
-    handleSaveEntryGroup = (entryGroupKey, entry) => {
-        console.warn('Save entry group', entryGroupKey, entry);
+    handleSaveEntryGroup = (entryGroupKey, entryGroup) => {
+        console.warn('Save entry group', entryGroupKey, entryGroup);
     }
 
     handleCancel = () => {
