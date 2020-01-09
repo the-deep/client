@@ -5,7 +5,7 @@ import { Link, Prompt } from 'react-router-dom';
 import produce from 'immer';
 import memoize from 'memoize-one';
 
-import { reverseRoute } from '@togglecorp/fujs';
+import { reverseRoute, listToMap, isDefined } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
 import { FgRestBuilder } from '#rsu/rest';
@@ -33,8 +33,12 @@ import {
 } from '#entities/editEntries';
 
 import {
-    createUrlForDeleteEntry,
     createUrlForDeleteEntryGroup,
+    createParamsForEntryGroupCreate,
+    createParamsForEntryGroupEdit,
+    createUrlForEntryGroupEdit,
+    createUrlForEntryGroupCreate,
+    createUrlForDeleteEntry,
     createParamsForDeleteEntry,
     createParamsForEntryCreate,
     createParamsForEntryEdit,
@@ -69,6 +73,7 @@ import {
     editEntriesUpdateEntriesBulkAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
+    editEntriesSetEntryGroupErrorsAction,
     editEntriesSetExcerptAction,
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
@@ -80,6 +85,7 @@ import {
     editEntriesEntryGroupsClearEntriesAction,
     editEntriesRemoveEntryGroupAction,
     editEntriesSetEntryGroupPendingAction,
+    editEntriesSaveEntryGroupAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -127,8 +133,10 @@ const propTypes = {
     removeEntry: PropTypes.func.isRequired,
     removeEntryGroup: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
+    saveEntryGroup: PropTypes.func.isRequired,
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
+    setEntryGroupError: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
     setEntryGroupPending: PropTypes.func.isRequired,
 };
@@ -164,6 +172,7 @@ const mapDispatchToProps = dispatch => ({
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
     removeEntryGroup: params => dispatch(editEntriesRemoveEntryGroupAction(params)),
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
+    saveEntryGroup: params => dispatch(editEntriesSaveEntryGroupAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     setEntryGroups: params => dispatch(editEntriesSetEntryGroupsAction(params)),
@@ -171,6 +180,7 @@ const mapDispatchToProps = dispatch => ({
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
+    setEntryGroupError: params => dispatch(editEntriesSetEntryGroupErrorsAction(params)),
     setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
@@ -217,6 +227,7 @@ const requestOptions = {
                 clearEntryGroups({ leadId });
             }
 
+            /*
             const newResponse = {
                 ...response,
                 labels: [
@@ -248,6 +259,7 @@ const requestOptions = {
                     },
                 ],
             };
+            */
 
             const {
                 lead,
@@ -256,8 +268,8 @@ const requestOptions = {
                 entries,
                 entryGroups,
                 regions,
-                labels,
-            } = newResponse;
+                entryLabels,
+            } = response;
 
             const projectMismatch = projectIdFromUrl !== lead.project;
             setProjectMismatch(projectMismatch);
@@ -283,7 +295,7 @@ const requestOptions = {
 
             setEntriesCommentsCount({ leadId, entries });
 
-            setLabels({ leadId, labels });
+            setLabels({ leadId, labels: entryLabels });
 
             // Calculate color for each entry in the diff
             const diffs = createDiff(cancelMode ? [] : entriesFromProps, entries)
@@ -367,6 +379,7 @@ export default class EditEntries extends React.PureComponent {
 
         this.state = {
             pendingSaveAll: false,
+            pendingSaveAllEntryGroup: false,
             projectMismatch: false,
             entryStates: {},
         };
@@ -454,7 +467,38 @@ export default class EditEntries extends React.PureComponent {
                         duration: notify.duration.MEDIUM,
                     });
                 }
-                this.setState({ pendingSaveAll: false });
+
+                this.setState({
+                    pendingSaveAll: false,
+                    pendingSaveAllEntryGroup: true,
+                }, () => {
+                    this.handleEntryGroupSave();
+                });
+            })
+            .build();
+
+        this.saveEntryGroupRequestCoordinator = new CoordinatorBuilder()
+            .maxActiveActors(4)
+            .preSession(() => {
+                this.setState({ pendingSaveAllEntryGroup: true });
+            })
+            .postSession((totalErrors) => {
+                if (totalErrors > 0) {
+                    notify.send({
+                        type: notify.type.ERROR,
+                        title: _ts('editEntry', 'entryGroupSave'),
+                        message: _ts('editEntry', 'entryGroupSaveFailure', { errorCount: totalErrors }),
+                        duration: notify.duration.SLOW,
+                    });
+                } else {
+                    notify.send({
+                        type: notify.type.SUCCESS,
+                        title: _ts('editEntry', 'entryGroupSave'),
+                        message: _ts('editEntry', 'entryGroupSaveSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                }
+                this.setState({ pendingSaveAllEntryGroup: false });
             })
             .build();
     }
@@ -491,6 +535,7 @@ export default class EditEntries extends React.PureComponent {
 
     componentWillUnmount() {
         this.saveRequestCoordinator.stop();
+        this.saveEntryGroupRequestCoordinator.stop();
     }
 
     getSavableEntries = memoize((entries, statuses) => entries.filter((entry) => {
@@ -704,11 +749,11 @@ export default class EditEntries extends React.PureComponent {
                     leadId,
                     key: entryGroupKey,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryGroupKey);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
             },
             stop: () => {}, // no-op
         };
-        this.saveRequestCoordinator.add(entryGroupKey, pseudoRequest);
+        this.saveEntryGroupRequestCoordinator.add(entryGroupKey, pseudoRequest);
     }
 
     handleDeleteEntryGroup = (entryGroupKey, entryGroup) => {
@@ -716,7 +761,7 @@ export default class EditEntries extends React.PureComponent {
             leadId,
             setEntryGroupPending,
             removeEntryGroup,
-            setEntryError,
+            setEntryGroupError,
         } = this.props;
 
         const serverId = entryGroupAccessor.serverId(entryGroup);
@@ -735,37 +780,138 @@ export default class EditEntries extends React.PureComponent {
                     leadId,
                     key: entryGroupKey,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryGroupKey);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
             })
             .failure(() => {
                 console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
-                setEntryError({
+                setEntryGroupError({
                     leadId,
                     key: entryGroupKey,
                     // TODO: handle error messages later
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryGroupKey, false);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
             })
             .fatal(() => {
                 console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
-                setEntryError({
+                setEntryGroupError({
                     leadId,
                     key: entryGroupKey,
                     // TODO: handle error messages later
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryGroupKey, false);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
             })
             .build();
 
-        this.saveRequestCoordinator.add(entryGroupKey, request);
+        this.saveRequestEntryGroupCoordinator.add(entryGroupKey, request);
     }
 
     handleSaveEntryGroup = (entryGroupKey, entryGroup) => {
-        console.warn('Save entry group', entryGroupKey, entryGroup);
+        const {
+            entries,
+            setEntryGroupPending,
+            leadId,
+            setEntryGroupError,
+            saveEntryGroup,
+        } = this.props;
+        // NOTE: no need to use filteredEntries,
+        // at this point there should only be saved entries
+        const entryMap = listToMap(
+            entries,
+            entryAccessor.key,
+            entry => entry,
+        );
+
+        const entryGroupData = {
+            ...entryGroupAccessor.data(entryGroup),
+            clientId: entryGroupAccessor.key(entryGroup),
+        };
+
+        const newEntryGroupData = {
+            ...entryGroupData,
+            selections: entryGroupData.selections
+                .map((selection) => {
+                    const entry = entryMap[selection.entryClientId];
+                    if (!entry || entryAccessor.isMarkedAsDeleted(entry)) {
+                        // NOTE: entry was deleted
+                        return undefined;
+                    }
+                    const entryServerId = entryAccessor.serverId(entry);
+                    if (!entryServerId) {
+                        // NOTE: entry has not been saved
+                        return selection;
+                    }
+                    return {
+                        ...selection,
+                        entryId: entryServerId,
+                    };
+                })
+                .filter(isDefined),
+        };
+
+        let urlForEntryGroup;
+        let paramsForEntryGroup;
+        const serverId = entryGroupAccessor.serverId(entryGroup);
+        if (serverId) {
+            urlForEntryGroup = createUrlForEntryGroupEdit(leadId, serverId);
+            paramsForEntryGroup = () => createParamsForEntryGroupEdit(newEntryGroupData);
+        } else {
+            urlForEntryGroup = createUrlForEntryGroupCreate(leadId);
+            paramsForEntryGroup = () => createParamsForEntryGroupCreate(newEntryGroupData);
+        }
+
+        const request = new FgRestBuilder()
+            .url(urlForEntryGroup)
+            .params(paramsForEntryGroup)
+            .preLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: true });
+            })
+            .afterLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: false });
+            })
+            .success((response) => {
+                try {
+                    // TODO: write schema
+                    // schemaValidator.validate(response, 'entry');
+                    saveEntryGroup({
+                        leadId,
+                        entryGroupKey,
+                        response,
+                    });
+                    this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
+                } catch (err) {
+                    console.error(err);
+                    this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+                }
+            })
+            .failure(() => {
+                console.warn('Entry Group save error', ({ leadId, entryGroupKey }));
+                setEntryGroupError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+            })
+            .fatal(() => {
+                console.warn('Entry Group save error', ({ leadId, entryGroupKey }));
+                setEntryGroupError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+            })
+            .build();
+
+        this.saveEntryGroupRequestCoordinator.add(entryGroupKey, request);
     }
 
     handleCancel = () => {
@@ -781,8 +927,6 @@ export default class EditEntries extends React.PureComponent {
             statuses,
             schema,
             computeSchema,
-            entryGroups,
-            entryGroupStatuses,
         } = this.props;
 
         const savableEntries = this.getSavableEntries(
@@ -819,6 +963,18 @@ export default class EditEntries extends React.PureComponent {
             }
         });
 
+        this.saveRequestCoordinator.start();
+    }
+
+    handleEntryGroupSave = () => {
+        const {
+            entryGroups,
+            entryGroupStatuses,
+        } = this.props;
+
+        // 1. Remove if there is no entry with that entryGroup
+        // 2. Error if there is no entry with that id
+
         const savableEntryGroups = this.getSavableEntryGroups(
             entryGroups,
             entryGroupStatuses,
@@ -829,7 +985,7 @@ export default class EditEntries extends React.PureComponent {
             const isMarkedAsDeleted = entryGroupAccessor.isMarkedAsDeleted(entryGroup);
 
             if (isMarkedAsDeleted) {
-                if (entryAccessor.serverId(entryGroup)) {
+                if (entryGroupAccessor.serverId(entryGroup)) {
                     this.handleDeleteEntryGroup(entryGroupKey, entryGroup);
                 } else {
                     this.handleDeleteLocalEntryGroup(entryGroupKey);
@@ -839,7 +995,8 @@ export default class EditEntries extends React.PureComponent {
             }
         });
 
-        this.saveRequestCoordinator.start();
+        // TODO:
+        this.saveEntryGroupRequestCoordinator.start();
     }
 
     handleEntryStateChange = (entryKey, value) => {
@@ -875,6 +1032,7 @@ export default class EditEntries extends React.PureComponent {
 
         const {
             pendingSaveAll,
+            pendingSaveAllEntryGroup,
             projectMismatch,
         } = this.state;
 
@@ -911,7 +1069,7 @@ export default class EditEntries extends React.PureComponent {
         const hasSavableItems = hasSavableEntries || hasSavableEntryGroups;
 
         const isSaveDisabled = (
-            pendingSaveAll || projectMismatch || !hasSavableItems
+            pendingSaveAllEntryGroup || pendingSaveAll || projectMismatch || !hasSavableItems
         );
 
         return (
@@ -974,7 +1132,7 @@ export default class EditEntries extends React.PureComponent {
                                 <SuccessButton
                                     disabled={isSaveDisabled}
                                     onClick={this.handleSave}
-                                    pending={pendingSaveAll}
+                                    pending={pendingSaveAll || pendingSaveAllEntryGroup}
                                 >
                                     { _ts('editEntry', 'saveButtonTitle') }
                                 </SuccessButton>
