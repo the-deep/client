@@ -42,6 +42,14 @@ export const editEntriesLeadSelector = createSelector(
 export const editEntriesLabelsSelector = createSelector(
     editEntriesForLeadSelector,
     editEntry => editEntry.labels || emptyArray,
+
+    editEntry => [...(editEntry.labels || emptyArray)].sort(
+        (a, b) => (
+            compareNumber(a.order, b.order)
+            || compareNumber(a.id, b.id)
+        ),
+    ),
+
 );
 
 export const editEntriesEntriesSelector = createSelector(

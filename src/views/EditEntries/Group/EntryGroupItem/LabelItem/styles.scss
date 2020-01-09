@@ -6,7 +6,7 @@
     margin: var(--spacing-small);
     background-color: var(--color-foreground);
     padding: var(--spacing-small);
-    min-height: 120px;
+    height: 120px;
 
     .preview-title {
         display: flex;
@@ -26,6 +26,7 @@
     .entry-preview {
         flex-grow: 1;
         padding: var(--spacing-small);
+        overflow: auto;
     }
 
     &:hover {

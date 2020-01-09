@@ -68,6 +68,7 @@ const EEB__SET_LABELS = 'siloDomainData/EEB__SET_LABELS';
 const EEB__SET_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__SET_ENTRY_GROUP_SELECTION';
 const EEB__CLEAR_ENTRY_GROUP_SELECTION = 'siloDomainData/EEB__CLEAR_ENTRY_GROUP_SELECTION';
 const EEB__SET_ENTRY_GROUP_DATA = 'siloDomainData/EEB__SET_ENTRY_GROUP_DATA';
+export const EEB__SET_ENTRY_GROUP_ERROR = 'siloDomainData/EEB__SET_ENTRY_GROUP_ERROR';
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -270,6 +271,21 @@ export const editEntriesSetEntryGroupDataAction = ({ leadId, entryGroupKey, data
     leadId,
     entryGroupKey,
     data,
+});
+
+export const editEntriesSetEntryGroupErrorsAction = ({ leadId, key, errors, isServerError }) => ({
+    type: EEB__SET_ENTRY_GROUP_ERROR,
+    leadId,
+    key,
+    errors,
+    isServerError,
+});
+
+export const editEntriesSaveEntryGroupAction = ({ leadId, entryGroupKey, response }) => ({
+    type: EEB__SAVE_ENTRY_GROUP,
+    leadId,
+    entryGroupKey,
+    response,
 });
 
 // ACTION-CREATOR
@@ -1183,11 +1199,82 @@ const setEntryGroupPending = (state, action) => {
     return update(state, settings);
 };
 
+const setEntryGroupError = (state, action) => {
+    const { leadId, key, errors, isServerError } = action;
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        entryGroup => entryGroupAccessor.key(entryGroup) === key,
+    );
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entryGroups: {
+                    [entryGroupIndex]: {
+                        localData: {
+                            $if: [
+                                isServerError,
+                                {
+                                    hasServerError: { $set: true },
+                                },
+                                {
+                                    error: { $set: errors },
+                                    hasError: { $set: analyzeErrors(errors) },
+                                    hasServerError: { $set: false },
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 
 const saveEntryGroup = (state, action) => {
-    // TODO: do this
-    console.warn(action);
-    return state;
+    const { leadId, entryGroupKey, response, color } = action;
+
+    // NOTE: create new entryGroup from remote entryGroup
+    const remoteEntryGroup = response;
+    const {
+        id: remoteServerId,
+        versionId: remoteVersionId,
+    } = remoteEntryGroup;
+
+    const newEntryGroup = createEntryGroup({
+        key: entryGroupKey,
+        serverId: remoteServerId,
+        versionId: remoteVersionId,
+        data: remoteEntryGroup,
+        isPristine: true,
+        hasError: false,
+        color,
+    });
+
+    const {
+        editEntries: { [leadId]: { entryGroups = [] } = {} } = {},
+    } = state;
+
+    const entryGroupIndex = entryGroups.findIndex(
+        entryGroup => entryGroupAccessor.key(entryGroup) === entryGroupKey,
+    );
+
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryGroups: { $auto: {
+                    [entryGroupIndex]: { $set: newEntryGroup },
+                } },
+            } },
+        } },
+    };
+
+    return update(state, settings);
 };
 
 const reducers = {
@@ -1223,6 +1310,7 @@ const reducers = {
     [EEB__SET_ENTRY_GROUP_SELECTION]: setEntryGroupSelection,
     [EEB__CLEAR_ENTRY_GROUP_SELECTION]: clearEntryGroupSelection,
     [EEB__SET_ENTRY_GROUP_DATA]: setEntryGroupData,
+    [EEB__SET_ENTRY_GROUP_ERROR]: setEntryGroupError,
 };
 
 export default reducers;

@@ -59,3 +59,23 @@ export const createUrlForDeleteEntryGroup = entryGroupId => (
 export const createUrlEditEntryGet = leadId => (
     getVersionedUrl(wsEndpoint, `/v2/edit-entries-data/${leadId}/`)
 );
+
+export const createUrlForEntryGroupEdit = (leadId, entryGroupId) => (
+    `${wsEndpoint}/leads/${leadId}entry-groups/${entryGroupId}/`
+);
+
+export const createUrlForEntryGroupCreate = leadId => (
+    `${wsEndpoint}/leads/${leadId}/entry-groups/`
+);
+
+export const createParamsForEntryGroupEdit = data => ({
+    method: PUT,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(data),
+});
+
+export const createParamsForEntryGroupCreate = data => ({
+    method: POST,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(data),
+});

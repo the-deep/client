@@ -8,6 +8,7 @@ import TextInput from '#rsci/TextInput';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
+import ModalFooter from '#rscv/Modal/Footer';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
@@ -67,15 +68,15 @@ const EntryGroupEditModal = (props) => {
                     />
                 }
             />
-            <ModalBody>
-                <Faram
-                    onChange={handleFaramChange}
-                    onValidationFailure={handleFaramValidationFailure}
-                    onValidationSuccess={handleFaramValidationSuccess}
-                    schema={schema}
-                    value={faramValues}
-                    error={faramErrors}
-                >
+            <Faram
+                onChange={handleFaramChange}
+                onValidationFailure={handleFaramValidationFailure}
+                onValidationSuccess={handleFaramValidationSuccess}
+                schema={schema}
+                value={faramValues}
+                error={faramErrors}
+            >
+                <ModalBody>
                     <NonFieldErrors faramElement />
                     <TextInput
                         faramElementName="title"
@@ -83,6 +84,8 @@ const EntryGroupEditModal = (props) => {
                         label="Title"
                         autoFocus
                     />
+                </ModalBody>
+                <ModalFooter>
                     <PrimaryButton
                         type="submit"
                         disabled={pristine}
@@ -90,8 +93,8 @@ const EntryGroupEditModal = (props) => {
                         {/* FIXME: use strings */}
                         Save
                     </PrimaryButton>
-                </Faram>
-            </ModalBody>
+                </ModalFooter>
+            </Faram>
         </Modal>
     );
 };
