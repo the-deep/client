@@ -51,7 +51,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
 
     handleOrganAdd = () => {
         const newOrgan = {
-            key: `organ-${randomString()}`,
+            key: `organ-${randomString(16)}`,
             title: '',
             organs: [],
         };

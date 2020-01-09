@@ -263,7 +263,7 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
 
             if (!localItem) {
                 // NOTE: New remote item has been added
-                const localId = remoteKey || randomString();
+                const localId = remoteKey || randomString(16);
                 const newItem = create({
                     key: localId,
                     serverId: remoteServerId,
