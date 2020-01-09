@@ -549,7 +549,7 @@ const addEntry = (state, action) => {
     };
 
     // Get random key for new entry
-    const localId = randomString();
+    const localId = randomString(16);
 
     const newEntry = createEntry({
         key: localId,
@@ -1044,7 +1044,7 @@ const addEntryGroup = (state, action) => {
     };
 
     // Get random key for new entry
-    const localId = randomString();
+    const localId = randomString(16);
 
     const newEntryGroup = createEntryGroup({
         key: localId,
