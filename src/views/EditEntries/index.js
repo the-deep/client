@@ -934,6 +934,11 @@ export default class EditEntries extends React.PureComponent {
             statuses,
         );
 
+        if (savableEntries.length <= 0) {
+            this.handleEntryGroupSave();
+            return;
+        }
+
         savableEntries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
             const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
@@ -972,13 +977,16 @@ export default class EditEntries extends React.PureComponent {
             entryGroupStatuses,
         } = this.props;
 
-        // 1. Remove if there is no entry with that entryGroup
-        // 2. Error if there is no entry with that id
-
         const savableEntryGroups = this.getSavableEntryGroups(
             entryGroups,
             entryGroupStatuses,
         );
+
+        if (savableEntryGroups.length <= 0) {
+            // NOTE: pendingSaveAllEntryGroup is set to true by entry save coordinator
+            this.setState({ pendingSaveAllEntryGroup: false });
+            return;
+        }
 
         savableEntryGroups.forEach((entryGroup) => {
             const entryGroupKey = entryGroupAccessor.key(entryGroup);
