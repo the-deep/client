@@ -52,8 +52,8 @@ export const createParamsForDeleteEntry = () => ({
     headers: commonHeaderForPost,
 });
 
-export const createUrlForDeleteEntryGroup = entryGroupId => (
-    `${wsEndpoint}/entry-groups/${entryGroupId}/`
+export const createUrlForDeleteEntryGroup = (leadId, entryGroupId) => (
+    `${wsEndpoint}/leads/${leadId}/entry-groups/${entryGroupId}/`
 );
 
 export const createUrlEditEntryGet = leadId => (
@@ -61,7 +61,7 @@ export const createUrlEditEntryGet = leadId => (
 );
 
 export const createUrlForEntryGroupEdit = (leadId, entryGroupId) => (
-    `${wsEndpoint}/leads/${leadId}entry-groups/${entryGroupId}/`
+    `${wsEndpoint}/leads/${leadId}/entry-groups/${entryGroupId}/`
 );
 
 export const createUrlForEntryGroupCreate = leadId => (

@@ -767,7 +767,7 @@ export default class EditEntries extends React.PureComponent {
         const serverId = entryGroupAccessor.serverId(entryGroup);
 
         const request = new FgRestBuilder()
-            .url(createUrlForDeleteEntryGroup(serverId))
+            .url(createUrlForDeleteEntryGroup(leadId, serverId))
             .params(createParamsForDeleteEntry)
             .preLoad(() => {
                 setEntryGroupPending({ leadId, entryGroupKey, pending: true });
@@ -806,7 +806,7 @@ export default class EditEntries extends React.PureComponent {
             })
             .build();
 
-        this.saveRequestEntryGroupCoordinator.add(entryGroupKey, request);
+        this.saveEntryGroupRequestCoordinator.add(entryGroupKey, request);
     }
 
     handleSaveEntryGroup = (entryGroupKey, entryGroup) => {
