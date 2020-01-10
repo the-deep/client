@@ -18,6 +18,7 @@ const LabelItem = (props) => {
 
         selected,
 
+        entryKey,
         entryType,
         image,
         excerpt,
@@ -27,11 +28,10 @@ const LabelItem = (props) => {
 
         disabled,
         entryGroupKey,
+        entryGroupServerId,
         onSelectionSet,
         onSelectionClear,
         className: classNameFromProps,
-
-        entryGroupServerId,
     } = props;
 
     const style = {
@@ -57,6 +57,9 @@ const LabelItem = (props) => {
 
     const handleSelectionSet = useCallback(
         (data) => {
+            if (entryKey === data.entryKey) {
+                return;
+            }
             onSelectionSet({
                 entryGroupKey,
                 selection: {
@@ -66,7 +69,7 @@ const LabelItem = (props) => {
                 },
             });
         },
-        [entryGroupKey, labelId, onSelectionSet],
+        [entryKey, entryGroupKey, labelId, onSelectionSet],
     );
 
     const className = _cs(
