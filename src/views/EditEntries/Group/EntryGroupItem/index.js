@@ -113,6 +113,7 @@ const EntryGroupItem = (props) => {
                 onSelectionClear,
 
                 entryGroupKey,
+                entryGroupServerId,
             };
 
             const selection = selectionMap[key];
@@ -125,6 +126,7 @@ const EntryGroupItem = (props) => {
                 return params;
             }
 
+            const entryKey = entryAccessor.key(entry);
             const entryData = entryAccessor.data(entry);
             const {
                 entryType,
@@ -139,14 +141,13 @@ const EntryGroupItem = (props) => {
                 ...params,
                 selected: true,
 
+                entryKey,
                 entryType,
                 image,
                 excerpt,
                 order: entryOrder,
                 tabularFieldId,
                 tabularField,
-
-                entryGroupServerId,
             };
         },
         [
