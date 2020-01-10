@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { FaramOutputElement } from '@togglecorp/faram';
 
 import ListView from '#rscv/List/ListView';
-
-import ListItem from '#components/general/ListItem';
+import ListItem from '#rscv/ListItem';
 
 import styles from './styles.scss';
 

@@ -166,6 +166,7 @@ export default class EditStringModal extends React.PureComponent {
                         label={inputTitle}
                         value={inputValue}
                         onChange={this.handleInputValueChange}
+                        autoFocus
                     />
                 </ModalBody>
                 <ModalFooter>

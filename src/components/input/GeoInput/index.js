@@ -33,13 +33,17 @@ const propTypes = {
 
     placeholder: PropTypes.string,
     label: PropTypes.string,
-    showLabel: PropTypes.bool,
     error: PropTypes.string,
-    showHintAndError: PropTypes.bool,
     hint: PropTypes.string,
     persistentHintAndError: PropTypes.bool,
+    showLabel: PropTypes.bool,
+    showHintAndError: PropTypes.bool,
+
+    // hideButton: PropTypes.bool,
     hideList: PropTypes.bool,
     hideInput: PropTypes.bool,
+
+    polygonsEnabled: PropTypes.bool,
 
     modalLeftComponent: PropTypes.node,
     emptyComponent: PropTypes.func,
@@ -47,7 +51,7 @@ const propTypes = {
 
 const defaultProps = {
     className: undefined,
-    label: '',
+    label: undefined,
     showLabel: true,
     onChange: undefined,
     geoOptionsByRegion: {},
@@ -64,6 +68,7 @@ const defaultProps = {
     error: '',
     showHintAndError: true,
     persistentHintAndError: true,
+    polygonsEnabled: false,
 };
 
 @FaramInputElement
@@ -128,10 +133,14 @@ export default class GeoInput extends React.PureComponent {
             : option.label;
     }
 
-    handleSelectChange = (newValues) => {
-        const { onChange } = this.props;
+    handleSelectionsChange = (newSelections) => {
+        const { onChange, value } = this.props;
+        const polygons = this.getPolygons(value);
         if (onChange) {
-            onChange(newValues);
+            onChange([
+                ...newSelections,
+                ...polygons,
+            ]);
         }
     }
 
@@ -177,6 +186,7 @@ export default class GeoInput extends React.PureComponent {
             hideInput,
             placeholder,
             emptyComponent,
+            polygonsEnabled,
         } = this.props;
         const {
             showModal,
@@ -203,7 +213,7 @@ export default class GeoInput extends React.PureComponent {
                 <MultiSelectInputWithList
                     value={selections}
                     showLabel={false}
-                    onChange={this.handleSelectChange}
+                    onChange={this.handleSelectionsChange}
                     className={styles.selectInput}
                     options={options}
                     labelSelector={this.labelSelector}
@@ -220,14 +230,13 @@ export default class GeoInput extends React.PureComponent {
 
                     emptyComponent={emptyComponent}
                     topRightChild={(
+                        // FIXME: use modal button
                         <AccentButton
                             className={styles.action}
                             iconName="globe"
                             onClick={this.handleModalShow}
                             disabled={disabled || readOnly}
                             transparent
-                            // FIXME: use strings
-                            title="Open geo modal"
                         >
                             {hideInput && label}
                         </AccentButton>
@@ -251,6 +260,7 @@ export default class GeoInput extends React.PureComponent {
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
                         modalLeftComponent={modalLeftComponent}
+                        polygonsEnabled={polygonsEnabled}
                     />
                 )}
             </div>

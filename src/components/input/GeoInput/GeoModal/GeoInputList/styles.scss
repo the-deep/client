@@ -1,0 +1,15 @@
+.geo-input-list {
+    display: flex;
+    flex-direction: column;
+
+    .heading {
+        flex-shrink: 0;
+        padding: var(--spacing-small);
+        text-transform: initial;
+    }
+
+    .item {
+        padding: var(--spacing-extra-small) var(--spacing-small);
+    }
+}
+

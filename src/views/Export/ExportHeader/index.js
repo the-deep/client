@@ -59,6 +59,7 @@ const EXPORT_CLASS = {
 
 const EXPORT_ITEM = {
     assessment: 'assessment',
+    plannedAssessment: 'planned_assessment',
     entry: 'entry',
 };
 
@@ -169,6 +170,7 @@ export default class ExportHeader extends React.PureComponent {
 
         const exportType = (
             (exportItem === EXPORT_ITEM.assessment && 'excel')
+            || (exportItem === EXPORT_ITEM.plannedAssessment && 'excel')
             || ((isWord || isPdf) && 'report')
             || activeExportTypeKey
         );
@@ -234,6 +236,10 @@ export default class ExportHeader extends React.PureComponent {
 
     handleAssessmentExportClick = () => {
         this.export(false, EXPORT_ITEM.assessment);
+    }
+
+    handlePlannedAssessmentExportClick = () => {
+        this.export(false, EXPORT_ITEM.plannedAssessment);
     }
 
     handleEntryExport = () => {
@@ -303,6 +309,22 @@ export default class ExportHeader extends React.PureComponent {
                                 }
                             >
                                 {_ts('export', 'startAssessmentExportButtonLabel')}
+                            </PrimaryButton>
+                        }
+                    />
+                    <Cloak
+                        // NOTE: this is temporary, will be moved to new page
+                        {...viewsAcl.arys}
+                        render={
+                            <PrimaryButton
+                                className={styles.button}
+                                onClick={this.handlePlannedAssessmentExportClick}
+                                disabled={pending}
+                                pending={
+                                    exportPending && exportClass === EXPORT_CLASS.assessmentExport
+                                }
+                            >
+                                {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
                             </PrimaryButton>
                         }
                     />

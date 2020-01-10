@@ -315,6 +315,7 @@ export default class PlannedAryForm extends React.PureComponent {
                                     geoOptionsByRegion={geoOptions}
                                     regions={regions}
                                     hideList
+                                    polygonsEnabled
                                 />
                             </FaramGroup>
                         </div>

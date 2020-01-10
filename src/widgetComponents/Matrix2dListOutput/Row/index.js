@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import List from '#rscv/List';
-import ListItem from '#components/general/ListItem';
+import ListItem from '#rscv/ListItem';
 
 import styles from './styles.scss';
 
