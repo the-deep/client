@@ -1105,7 +1105,15 @@ const setEntryGroupSelection = (state, action) => {
                             selections: {
                                 $replaceOrPush: [
                                     s => s.labelId === selection.labelId,
-                                    () => selection,
+                                    (oldSelection) => {
+                                        if (!oldSelection) {
+                                            return selection;
+                                        }
+                                        return {
+                                            ...oldSelection,
+                                            ...selection,
+                                        };
+                                    },
                                 ],
                             },
                         },

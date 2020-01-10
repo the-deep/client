@@ -636,7 +636,7 @@ export default class EditEntries extends React.PureComponent {
                     this.saveRequestCoordinator.notifyComplete(entryKey);
                 } catch (err) {
                     console.error(err);
-                    this.saveRequestCoordinator.notifyComplete(entryKey, false);
+                    this.saveRequestCoordinator.notifyComplete(entryKey, true);
                 }
             })
             .failure(() => {
@@ -648,7 +648,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
             })
             .fatal(() => {
                 console.warn('Entry save error', ({ leadId, entryKey }));
@@ -659,7 +659,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
             })
             .build();
         this.saveRequestCoordinator.add(entryKey, request);
@@ -720,7 +720,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
             })
             .fatal(() => {
                 console.warn('Entry delete error', ({ leadId, entryKey }));
@@ -731,7 +731,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
             })
             .build();
 
@@ -791,7 +791,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
             })
             .fatal(() => {
                 console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
@@ -802,7 +802,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
             })
             .build();
 
@@ -825,13 +825,14 @@ export default class EditEntries extends React.PureComponent {
             entry => entry,
         );
 
-        const entryGroupData = {
-            ...entryGroupAccessor.data(entryGroup),
-            clientId: entryGroupAccessor.key(entryGroup),
-        };
+        const entryGroupData = entryGroupAccessor.data(entryGroup);
 
         const newEntryGroupData = {
             ...entryGroupData,
+            clientId: entryGroupKey,
+            title: entryGroupData.title
+                ? entryGroupData.title
+                : `Group ${entryGroupData.order}`,
             selections: entryGroupData.selections
                 .map((selection) => {
                     const entry = entryMap[selection.entryClientId];
@@ -884,7 +885,7 @@ export default class EditEntries extends React.PureComponent {
                     this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
                 } catch (err) {
                     console.error(err);
-                    this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+                    this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
                 }
             })
             .failure(() => {
@@ -896,7 +897,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
             })
             .fatal(() => {
                 console.warn('Entry Group save error', ({ leadId, entryGroupKey }));
@@ -907,7 +908,7 @@ export default class EditEntries extends React.PureComponent {
                     errors: undefined,
                     isServerError: true,
                 });
-                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, false);
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
             })
             .build();
 
