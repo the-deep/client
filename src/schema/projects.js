@@ -19,7 +19,7 @@ const projectSchema = [];
             assessmentTemplate: { type: 'uint', required: false },
             assessmentTemplateTitle: { type: 'string' },
             categoryEditor: { type: 'uint', required: false },
-            isVisualizationEnabled: { type: 'boolean' },
+            isVisualizationEnabled: { type: 'object' },
             categoryEditorTitle: { type: 'string' },
             userGroups: { type: 'array.userGroupBase' },
             startDate: { type: 'string' }, // date
@@ -114,7 +114,7 @@ const projectSchema = [];
             role: { type: 'uint' },
             analysisFramework: { type: 'uint', required: false },
             assessmentTemplate: { type: 'uint', required: false },
-            isVisualizationEnabled: { type: 'boolean' },
+            isVisualizationEnabled: { type: 'object' },
             categoryEditor: { type: 'uint', required: false },
             versionId: { type: 'uint', required: true },
             regions: { type: 'array' },

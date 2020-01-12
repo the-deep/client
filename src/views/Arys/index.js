@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import { getFiltersForRequest } from '#entities/lead';
 import { Link } from 'react-router-dom';
@@ -9,12 +10,15 @@ import {
     RequestClient,
     methods,
 } from '#request';
+import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import ScrollTabs from '#rscv/ScrollTabs';
 import {
     _cs,
     reverseRoute,
@@ -23,8 +27,9 @@ import {
 
 import {
     activeProjectIdFromStateSelector,
-    projectIdFromRouteSelector,
+    activeProjectFromStateSelector,
 
+    analysisFrameworkForProjectSelector,
     aryPageActivePageSelector,
     aryPageActiveSortSelector,
     aryPageFilterSelector,
@@ -38,30 +43,69 @@ import _ts from '#ts';
 
 import ActionButtons from './ActionButtons';
 import FilterArysForm from './FilterArysForm';
+import ArysViz from './ArysViz';
 
 import styles from './styles.scss';
+
+const LIST_VIEW = 'list';
+const VIZ_VIEW = 'viz';
+
+const tabsIcons = {
+    [LIST_VIEW]: 'list',
+    [VIZ_VIEW]: 'visualization',
+};
+
+
+const Tab = ({
+    className,
+    view,
+    onClick,
+}) => (
+    <button
+        type="button"
+        className={_cs(styles.tab, className)}
+        onClick={onClick}
+    >
+        <Icon name={tabsIcons[view]} />
+    </button>
+);
+
+Tab.propTypes = {
+    className: PropTypes.string,
+    view: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
+};
+
+Tab.defaultProps = {
+    className: '',
+    onClick: undefined,
+};
+
 
 const propTypes = {
     className: PropTypes.string,
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-    projectId: PropTypes.number.isRequired,
+    analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
-    activeProject: PropTypes.number.isRequired,
+    activeProject: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    activeProjectId: PropTypes.number.isRequired,
     setAryPageActiveSort: PropTypes.func.isRequired,
     setAryPageActivePage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
+    analysisFramework: {},
 };
 
 const mapStateToProps = state => ({
-    activeProject: activeProjectIdFromStateSelector(state),
+    activeProjectId: activeProjectIdFromStateSelector(state),
+    activeProject: activeProjectFromStateSelector(state),
 
-    projectId: projectIdFromRouteSelector(state),
+    analysisFramework: analysisFrameworkForProjectSelector(state),
     activePage: aryPageActivePageSelector(state),
     activeSort: aryPageActiveSortSelector(state),
     filters: aryPageFilterSelector(state),
@@ -80,20 +124,20 @@ const requestOptions = {
         method: methods.GET,
         query: ({
             props: {
-                activeProject,
+                activeProjectId,
                 activeSort,
                 filters,
                 activePage,
             },
         }) => ({
-            project: activeProject,
+            project: activeProjectId,
             ordering: activeSort,
             ...getFiltersForRequest(filters),
             offset: (activePage - 1) * MAX_ARYS_PER_REQUEST,
             limit: MAX_ARYS_PER_REQUEST,
         }),
         onPropsChanged: [
-            'activeProject',
+            'activeProjectId',
             'activeSort',
             'filters',
             'activePage',
@@ -142,6 +186,24 @@ export default class Arys extends React.PureComponent {
             onArysListGet: this.handleArysGet,
         });
 
+        this.views = {
+            [LIST_VIEW]: {
+                component: this.renderListView,
+                wrapContainer: true,
+                // mount: true,
+                // lazyMount: true,
+            },
+            [VIZ_VIEW]: {
+                component: ArysViz,
+                wrapContainer: true,
+                // mount: true,
+                // lazyMount: true,
+                rendererParams: () => ({
+                    projectId: this.props.activeProjectId,
+                }),
+            },
+        };
+
         this.headers = [
             {
                 key: 'lead__title',
@@ -185,14 +247,44 @@ export default class Arys extends React.PureComponent {
                 modifier: row => (
                     <ActionButtons
                         row={row}
-                        activeProject={this.props.activeProject}
+                        activeProject={this.props.activeProjectId}
                         onRemoveAry={this.handleRemoveAry}
                     />
                 ),
             },
         ];
 
-        this.state = { arys: [] };
+        this.state = {
+            arys: [],
+
+            view: LIST_VIEW,
+        };
+    }
+
+    getTabs = memoize((analysisFramework, isVisualizationEnabled) => {
+        if (isVisualizationEnabled && isVisualizationEnabled.assessment) {
+            return {
+                tabs: {
+                    [LIST_VIEW]: LIST_VIEW,
+                    [VIZ_VIEW]: VIZ_VIEW,
+                },
+                showTabs: true,
+            };
+        }
+        return {
+            tabs: {
+                [LIST_VIEW]: LIST_VIEW,
+            },
+            showTabs: false,
+        };
+    })
+
+    tabRendererParams = key => ({
+        view: key,
+    });
+
+    handleHashChange = (view) => {
+        this.setState({ view });
     }
 
     // UI
@@ -277,24 +369,21 @@ export default class Arys extends React.PureComponent {
         this.props.setAryPageActiveSort({ activeSort });
     }
 
-    render() {
+    renderListView = () => {
         const {
             arys,
-            arysCount,
         } = this.state;
-
         const {
-            className,
-            activeProject,
             filters,
-            activePage,
-            projectId,
+            activeProjectId,
             requests: {
                 arysGetRequest: {
                     pending: loadingArys,
                 },
             },
         } = this.props;
+
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         // FIXME: Fix re-rendering
         const EmptyComponent = TableEmptyComponent({
@@ -303,7 +392,7 @@ export default class Arys extends React.PureComponent {
                     <span>{ _ts('assessments', 'emptyMessage') }</span>
                     <Link
                         className={styles.emptyLinkMessage}
-                        to={reverseRoute(pathNames.leads, { projectId })}
+                        to={reverseRoute(pathNames.leads, { projectId: activeProjectId })}
                     >
                         { _ts('assessments', 'emptyLinkMessage') }
                     </Link>
@@ -312,32 +401,79 @@ export default class Arys extends React.PureComponent {
             filteredEmptyText: _ts('assessments', 'emptyWithFilterMessage'),
         });
 
-        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
+        return (
+            <div className={styles.tableContainer}>
+                <RawTable
+                    data={arys}
+                    dataModifier={this.aryModifier}
+                    headerModifier={this.headerModifier}
+                    headers={this.headers}
+                    onHeaderClick={this.handleTableHeaderClick}
+                    keySelector={this.aryKeyExtractor}
+                    className={styles.arysTable}
+                    emptyComponent={EmptyComponent}
+                    isFiltered={!isFilterEmpty}
+                    pending={loadingArys}
+                />
+            </div>
+        );
+    }
+
+    render() {
+        const {
+            view,
+            arysCount,
+        } = this.state;
+
+        const {
+            className,
+            analysisFramework,
+            activeProjectId,
+            activePage,
+            activeProject: { isVisualizationEnabled },
+        } = this.props;
+
+        const {
+            tabs,
+            showTabs,
+        } = this.getTabs(analysisFramework, isVisualizationEnabled);
+
 
         return (
             <Page
                 className={_cs(className, styles.arys)}
                 headerClassName={styles.header}
-                header={<FilterArysForm className={styles.filters} />}
+                header={
+                    <React.Fragment>
+                        {
+                            view === LIST_VIEW &&
+                                <FilterArysForm className={styles.filters} />
+                        }
+                        <ScrollTabs
+                            className={_cs(styles.tabs, !showTabs && styles.hideTabs)}
+                            tabs={tabs}
+                            useHash
+                            replaceHistory
+                            renderer={Tab}
+                            blankClassName={styles.blank}
+                            onHashChange={this.handleHashChange}
+                            activeClassName={styles.activeTab}
+                            rendererParams={this.tabRendererParams}
+                            defaultHash={LIST_VIEW}
+                        />
+                    </React.Fragment>
+                }
                 mainContentClassName={styles.mainContent}
                 mainContent={
-                    <div className={styles.tableContainer}>
-                        <RawTable
-                            data={arys}
-                            dataModifier={this.aryModifier}
-                            headerModifier={this.headerModifier}
-                            headers={this.headers}
-                            onHeaderClick={this.handleTableHeaderClick}
-                            keySelector={this.aryKeyExtractor}
-                            className={styles.arysTable}
-                            emptyComponent={EmptyComponent}
-                            isFiltered={!isFilterEmpty}
-                            pending={loadingArys}
-                        />
-                    </div>
+                    <MultiViewContainer
+                        views={this.views}
+                        useHash
+                        containerClassName={styles.container}
+                    />
                 }
                 footerClassName={styles.footer}
                 footer={
+                    view === LIST_VIEW &&
                     <React.Fragment>
                         <div className={styles.buttonContainer}>
                             <Link
@@ -345,7 +481,7 @@ export default class Arys extends React.PureComponent {
                                 to={
                                     reverseRoute(
                                         pathNames.plannedArys,
-                                        { projectId: activeProject },
+                                        { projectId: activeProjectId },
                                     )
                                 }
                             >

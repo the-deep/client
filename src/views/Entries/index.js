@@ -268,7 +268,7 @@ export default class Entries extends React.PureComponent {
     }
 
     getTabs = memoize((framework, isVisualizationEnabled) => {
-        if (isVisualizationEnabled && framework.properties && framework.properties.statsConfig) {
+        if (isVisualizationEnabled && isVisualizationEnabled.entry) {
             return {
                 tabs: {
                     [LIST_VIEW]: LIST_VIEW,
