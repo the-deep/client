@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { listToMap } from '@togglecorp/fujs';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
@@ -25,7 +26,7 @@ const EntryGroupItem = (props) => {
         title,
         order,
         className: classNameFromProps,
-        disabled,
+        pending,
         entryGroupServerId,
         entryGroupKey,
         labels,
@@ -108,7 +109,7 @@ const EntryGroupItem = (props) => {
                 labelId: key,
                 selected: false,
 
-                disabled,
+                disabled: pending,
                 onSelectionSet,
                 onSelectionClear,
 
@@ -151,7 +152,7 @@ const EntryGroupItem = (props) => {
             };
         },
         [
-            disabled, entryMap, tabularFields,
+            pending, entryMap, tabularFields,
             entryGroupKey, entryGroupServerId, selectionMap,
             onSelectionClear, onSelectionSet,
         ],
@@ -159,6 +160,9 @@ const EntryGroupItem = (props) => {
 
     return (
         <div className={className}>
+            {pending && (
+                <LoadingAnimation />
+            )}
             <div className={styles.labelHeader}>
                 <h3 className={styles.heading}>
                     {/* FIXME: use strings */}
@@ -172,7 +176,7 @@ const EntryGroupItem = (props) => {
                             // FIXME: uses strings
                             title="Edit group"
                             iconName="edit"
-                            disabled={disabled}
+                            disabled={pending}
                             modal={
                                 <EntryGroupEditModal
                                     title={title}
@@ -190,7 +194,7 @@ const EntryGroupItem = (props) => {
                             // FIXME: uses strings
                             title="Delete group"
                             iconName="delete"
-                            disabled={disabled}
+                            disabled={pending}
                             onClick={handleDelete}
                         />
                     }
@@ -210,7 +214,7 @@ EntryGroupItem.propTypes = {
     title: PropTypes.string,
     order: PropTypes.number.isRequired,
     className: PropTypes.string,
-    disabled: PropTypes.bool,
+    pending: PropTypes.bool,
     entryGroupServerId: PropTypes.number,
     entryGroupKey: PropTypes.string.isRequired,
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -226,7 +230,7 @@ EntryGroupItem.defaultProps = {
     selections: [],
     title: undefined,
     className: undefined,
-    disabled: false,
+    pending: false,
     entryGroupServerId: undefined,
     labels: [],
     entries: [],
