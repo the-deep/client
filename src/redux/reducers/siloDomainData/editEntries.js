@@ -471,8 +471,6 @@ const addEntry = (state, action) => {
         ...otherEntry
     } = entry;
 
-    console.warn(action);
-
     // Add order to entries during creation
     const maxEntryOrder = entries.reduce(
         (acc, e) => {

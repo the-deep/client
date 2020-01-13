@@ -434,13 +434,13 @@ export default class EditEntries extends React.PureComponent {
     handleExcerptCreate = ({ type, value, dropped }) => {
         this.addEntry({
             leadId: this.props.leadId,
+            dropped,
             entry: {
                 analysisFramework: this.props.analysisFramework.id,
                 excerptType: type,
                 excerptValue: value,
                 attributes: this.calculateFirstTimeAttributes({}),
             },
-            dropped,
         });
     }
 
@@ -459,6 +459,7 @@ export default class EditEntries extends React.PureComponent {
                 excerptValue,
                 value,
                 faramElementName,
+                dropped,
             } = faramInfo;
 
             // Create attribute using faramElementName and value
@@ -472,6 +473,7 @@ export default class EditEntries extends React.PureComponent {
 
             this.addEntry({
                 leadId: this.props.leadId,
+                dropped,
                 entry: {
                     excerptType,
                     excerptValue,

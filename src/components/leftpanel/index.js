@@ -375,6 +375,7 @@ export default class LeftPane extends React.PureComponent {
         this.props.onExcerptCreate({
             type: 'excerpt',
             value: text,
+            dropped: true,
         });
     }
 
