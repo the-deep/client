@@ -1,40 +1,27 @@
 import React from 'react';
-import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
-import Faram from '@togglecorp/faram';
-
-import TextInput from '#rsci/TextInput';
-import SelectInput from '#rsci/SelectInput';
-import Button from '#rsca/Button';
 
 import {
     RequestCoordinator,
     RequestClient,
     methods,
 } from '#request';
-import { getMatrix2dStructures } from '#utils/framework';
-import {
-    crisisTypeOptionList,
-    dataCollectionTechniqueOptionList,
-    enumerationSkillOptionList,
-    questionImportanceOptionList,
-    defaultKeySelector,
-    defaultLabelSelector,
-    questionTypeOptionList,
-} from '#constants/dummy';
 
 import {
-    FrameworkElement,
+    QuestionFormElement,
+    QuestionnaireElement,
     QuestionElement,
-    Requests,
     AddRequestProps,
+    Requests,
+    FrameworkElement,
 } from '#typings';
 
-import ResponseInput from './ResponseInput';
-import FrameworkAttributeInput from './FrameworkAttributeInput';
+import QuestionForm from '#qbc/QuestionForm';
 
 
 import styles from './styles.scss';
+
+type FaramValues = QuestionFormElement;
+interface FaramErrors {}
 
 interface ComponentProps {
     framework: FrameworkElement;
@@ -50,8 +37,8 @@ interface Params {
 }
 
 interface State {
-    faramValues: QuestionElement | undefined;
-    faramErrors: {};
+    faramValues: FaramValues;
+    faramErrors: FaramErrors;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -71,17 +58,14 @@ const requests: Requests<ComponentProps, Params> = {
     },
 };
 
-const defaultQuestionValue: QuestionElement = {
-    id: undefined,
-    frameworkId: undefined,
+const defaultQuestionValue: QuestionFormElement = {
     responseOptionList: [],
-    type: undefined,
     frameworkAttribute: {
         type: 'sector',
     },
 };
 
-class QuestionForm extends React.PureComponent<Props, State> {
+class FrameworkQuestionForm extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
 
@@ -93,15 +77,13 @@ class QuestionForm extends React.PureComponent<Props, State> {
         };
     }
 
-    private getFrameworkOptions = memoize(getMatrix2dStructures)
-
-    private handleFaramChange = (faramValues: QuestionElement) => {
+    private handleFaramChange = (faramValues: FaramValues) => {
         this.setState({
             faramValues,
         });
     }
 
-    private handleFaramValidationSuccess = (faramValues: QuestionElement) => {
+    private handleFaramValidationSuccess = (faramValues: QuestionFormElement) => {
         const {
             framework,
             requests: {
@@ -145,130 +127,22 @@ class QuestionForm extends React.PureComponent<Props, State> {
             faramErrors,
         } = this.state;
 
-        const {
-            sectorList,
-            subsectorList,
-            dimensionList,
-            subdimensionList,
-        } = this.getFrameworkOptions(framework);
-
         return (
-            <Faram
-                className={_cs(className, styles.questionForm)}
+            <QuestionForm
+                className={className}
                 schema={schema}
                 onChange={this.handleFaramChange}
-                value={faramValues}
-                error={faramErrors}
+                faramValues={faramValues}
+                faramErrors={faramErrors}
                 onValidationSuccess={this.handleFaramValidationSuccess}
-            >
-                <section className={styles.basic}>
-                    <header className={styles.header}>
-                        <h3 className={styles.heading}>
-                            Basic details
-                        </h3>
-                    </header>
-                    <div className={styles.content}>
-                        <TextInput
-                            faramElementName="title"
-                            className={styles.input}
-                            label="Title"
-                        />
-                        <ResponseInput
-                            faramElementName="responseOptions"
-                            className={styles.input}
-                            label="Response options"
-                        />
-                        <SelectInput
-                            options={questionTypeOptionList}
-                            faramElementName="type"
-                            className={styles.input}
-                            label="Type"
-                            keySelector={defaultKeySelector}
-                            labelSelector={defaultLabelSelector}
-                        />
-                        <TextInput
-                            faramElementName="enumeratorInstructions"
-                            className={styles.input}
-                            label="Enumerator instructions"
-                        />
-                        <TextInput
-                            faramElementName="respondentInstuctions"
-                            className={styles.input}
-                            label="Respondent instructions"
-                        />
-                    </div>
-                </section>
-                <section className={styles.frameworkDetails}>
-                    <header className={styles.header}>
-                        <h3 className={styles.heading}>
-                            Framework
-                        </h3>
-                    </header>
-                    <div className={styles.content}>
-                        <FrameworkAttributeInput
-                            faramElementName="frameworkAttribute"
-                            sectorList={sectorList}
-                            subsectorList={subsectorList}
-                            dimensionList={dimensionList}
-                            subdimensionList={subdimensionList}
-                        />
-                    </div>
-                </section>
-                <section className={styles.metadata}>
-                    <header className={styles.header}>
-                        <h3 className={styles.heading}>
-                            Metadata
-                        </h3>
-                    </header>
-                    <div className={styles.content}>
-                        <TextInput
-                            className={styles.input}
-                            label="Title"
-                        />
-                        <SelectInput
-                            options={crisisTypeOptionList}
-                            className={styles.input}
-                            label="Crisis type"
-                            keySelector={defaultKeySelector}
-                            labelSelector={defaultLabelSelector}
-                        />
-                        <SelectInput
-                            options={enumerationSkillOptionList}
-                            className={styles.input}
-                            label="Enumerator skill"
-                            keySelector={defaultKeySelector}
-                            labelSelector={defaultLabelSelector}
-                        />
-                        <SelectInput
-                            options={dataCollectionTechniqueOptionList}
-                            className={styles.input}
-                            label="Data collection technique"
-                            keySelector={defaultKeySelector}
-                            labelSelector={defaultLabelSelector}
-                        />
-                        <TextInput
-                            className={styles.input}
-                            label="Question label"
-                        />
-                        <SelectInput
-                            className={styles.input}
-                            options={questionImportanceOptionList}
-                            label="Question importance"
-                            keySelector={defaultKeySelector}
-                            labelSelector={defaultLabelSelector}
-                        />
-                    </div>
-                </section>
-                <Button type="submit">
-                    Save
-                </Button>
-            </Faram>
+                framework={framework}
+            />
         );
     }
 }
 
 export default RequestCoordinator(
     RequestClient(requests)(
-        QuestionForm,
+        FrameworkQuestionForm,
     ),
 );
