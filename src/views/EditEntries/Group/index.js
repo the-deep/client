@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rscv/List/ListView';
 import ResizableH from '#rscv/Resizable/ResizableH';
+
 import Cloak from '#components/general/Cloak';
 
 import {
     editEntriesFilteredEntriesSelector,
     editEntriesFilteredEntryGroupsSelector,
+    editEntriesEntryGroupStatusesSelector,
     editEntriesLabelsSelector,
     fieldsMapForTabularBookSelector,
     editEntriesMarkAsDeletedEntryGroupAction,
@@ -19,7 +21,7 @@ import {
     editEntriesSetEntryGroupDataAction,
 } from '#redux';
 
-import { entryGroupAccessor } from '#entities/editEntries';
+import { entryGroupAccessor, ENTRY_STATUS } from '#entities/editEntries';
 
 import EntryGroupItem from './EntryGroupItem';
 import LeftPanel from './LeftPane';
@@ -39,6 +41,7 @@ const propTypes = {
     clearEntryGroupSelection: PropTypes.func.isRequired,
     markAsDeletedEntryGroup: PropTypes.func.isRequired,
     setEntryGroupData: PropTypes.func.isRequired,
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -47,6 +50,7 @@ const defaultProps = {
     entryGroups: [],
     entries: [],
     labels: [],
+    statuses: {},
 };
 
 const mapStateToProps = (state, props) => ({
@@ -54,6 +58,7 @@ const mapStateToProps = (state, props) => ({
     entryGroups: editEntriesFilteredEntryGroupsSelector(state),
     labels: editEntriesLabelsSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
+    statuses: editEntriesEntryGroupStatusesSelector(state),
 });
 
 
@@ -139,6 +144,7 @@ export default class Group extends React.PureComponent {
             labels,
             entries,
             tabularFields,
+            statuses,
         } = this.props;
         const {
             title,
@@ -166,6 +172,8 @@ export default class Group extends React.PureComponent {
             onSelectionSet: this.setEntryGroupSelection,
             onEntryGroupDataSet: this.setEntryGroupData,
             onSelectionClear: this.clearEntryGroupSelection,
+
+            pending: statuses[key] === ENTRY_STATUS.requesting,
         };
     }
 

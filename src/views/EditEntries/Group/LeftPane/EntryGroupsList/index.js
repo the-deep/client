@@ -9,8 +9,6 @@ import _cs from '#cs';
 
 import {
     editEntriesLeadSelector,
-    // editEntriesFilteredEntriesSelector,
-    // editEntriesStatusesSelector,
     editEntriesEntryGroupsSelector,
     editEntriesEntryGroupStatusesSelector,
     editEntriesMarkAsDeletedEntryGroupAction,
@@ -22,8 +20,6 @@ import styles from './styles.scss';
 
 const mapStateToProps = state => ({
     lead: editEntriesLeadSelector(state),
-    // filteredEntries: editEntriesFilteredEntriesSelector(state),
-    // statuses: editEntriesStatusesSelector(state),
     entryGroups: editEntriesEntryGroupsSelector(state),
     statuses: editEntriesEntryGroupStatusesSelector(state),
 });
