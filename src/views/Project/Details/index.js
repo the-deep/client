@@ -25,6 +25,7 @@ import Users from './Users';
 import Regions from './Regions';
 import Frameworks from './Frameworks';
 import WordCategories from './WordCategories';
+import EntriesConfig from './EntriesConfig';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -113,6 +114,7 @@ export default class ProjectDetails extends React.PureComponent {
             regions: _ts('project', 'regionsTitle'),
             frameworks: _ts('project', 'analysisFrameworkTitle'),
             categoryEditors: _ts('project', 'categoryEditorTitle'),
+            entriesConfig: _ts('project', 'entriesConfigTitle'),
         };
 
         this.defaultHash = 'general';
@@ -190,6 +192,22 @@ export default class ProjectDetails extends React.PureComponent {
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <WordCategories
+                                className={styles.view}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
+            },
+            entriesConfig: {
+                mount: true,
+                lazyMount: true,
+                wrapContainer: true,
+                component: () => (
+                    <Cloak
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <EntriesConfig
                                 className={styles.view}
                                 projectId={this.props.projectId}
                             />

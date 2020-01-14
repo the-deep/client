@@ -1,0 +1,22 @@
+.entry-config {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-foreground);
+    overflow-y: auto;
+
+    .header {
+        display: flex;
+        align-items: center;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) var(--spacing-medium);
+
+        .heading {
+            flex-grow: 1;
+            text-transform: capitalize;
+        }
+    }
+
+    .container {
+        flex-grow: 1;
+    }
+}

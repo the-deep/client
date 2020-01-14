@@ -463,7 +463,7 @@
         "1124": "Remove project",
         "1126": "Failed to save project.",
         "1127": "Failed to create new category editor.",
-        "1129": "Group",
+        "1129": "Groups",
         "1130": "Progress reports of June",
         "1131": "Add lead group",
         "1132": "Failed to create lead group",
@@ -1067,7 +1067,14 @@
         "-50180114": "Reload",
         "-97219656": "Edit points/polygons",
         "-8007367": "Start Planned Assessment Export",
-        "-76059043": "Failed to load assessments visualization data. "
+        "-76059043": "Failed to load assessments visualization data. ",
+        "-79392542": "Delete entry label",
+        "-7812601": "Are you sure you want to delete this entry label?",
+        "-68751877": "Entries Count",
+        "-80269151": "Entry Labels",
+        "-68282781": "Order",
+        "-76519235": "Add new entry",
+        "-47675119": "Entry Groups"
     },
     "links": {
         "browserExtension": {
@@ -2106,7 +2113,8 @@
             "afCloneFatal": -48269508,
             "noAfSelectedText": -86287086,
             "entriesVizErrorMessage": -9524324,
-            "arysVizErrorMessage": -76059043
+            "arysVizErrorMessage": -76059043,
+            "entriesConfigTitle": -47675119
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -3077,6 +3085,26 @@
         "editEntry.group.leftpane": {
             "entriesListingTabLabel": 15,
             "entryGroupsListingTabLabel": 175
+        },
+        "project.entryGroups": {
+            "actionsHeaderTitle": 16,
+            "colorHeaderTitle": 764,
+            "createdByHeaderTitle": 538,
+            "deleteEntryLabelButtonTitle": -79392542,
+            "deleteEntryLabelConfirmation": -7812601,
+            "entriesCountHeaderTitle": -68751877,
+            "titleHeaderTitle": 13,
+            "entryLabelsHeader": -80269151
+        },
+        "project.entryGroups.editForm": {
+            "cancelButtonLabel": 61,
+            "entryLabelColorLabel": 764,
+            "entryLabelOrderLabel": -68282781,
+            "entryLabelOrderPlaceholder": -68282781,
+            "entryLabelTitleLabel": 13,
+            "entryLabelTitlePlaceholder": 13,
+            "saveButtonLabel": 25,
+            "newEntryLabel": -76519235
         }
     }
 }
