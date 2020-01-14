@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import FormattedTextArea from '#rsci/FormattedTextArea';
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 
 import DataSeries from '#components/viz/DataSeries';
 import Cloak from '#components/general/Cloak';
@@ -16,6 +18,7 @@ const propTypes = {
     className: PropTypes.string,
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
+    droppedExcerpt: PropTypes.string,
     image: PropTypes.string,
     tabularField: PropTypes.number,
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -32,6 +35,7 @@ const defaultProps = {
     className: '',
     entryType: undefined,
     excerpt: undefined,
+    droppedExcerpt: undefined,
     image: undefined,
     tabularField: undefined,
     tabularFieldData: undefined,
@@ -215,10 +219,11 @@ export default class Excerpt extends React.PureComponent {
             tabularFieldData,
             entryState,
         } = this.props;
-        const className = `
-            ${styles.dataSeries}
-            data-series
-        `;
+
+        const className = _cs(
+            styles.dataSeries,
+            'data-series',
+        );
 
         return (
             <DataSeries
@@ -240,33 +245,32 @@ export default class Excerpt extends React.PureComponent {
             highlightHidden,
         } = this.props;
 
-        const className = `
-            ${styles.text}
-            text
-        `;
+        const highlightTitle = highlightHidden
+            ? _ts('widgets.tagging.excerpt', 'showHighlightTitle')
+            : _ts('widgets.tagging.excerpt', 'hideHighlightTitle');
 
         return (
-            <>
-                { droppedExcerpt && (
-                    <Button
-                        transparent
-                        onClick={this.handleHighlightHiddenChange}
-                    >
-                        {/* FIXME: use strings */}
-                        { highlightHidden ? 'Show highlight' : 'Hide highlight' }
-                    </Button>
-                )}
-                { droppedExcerpt && droppedExcerpt !== excerpt && (
-                    <Button
-                        transparent
-                        onClick={this.handleReset}
-                    >
-                        {/* FIXME: use strings */}
-                        Reset Excerpt
-                    </Button>
-                )}
+            <div className={styles.textContainer}>
+                <div className={styles.floatingButtonContainer}>
+                    { droppedExcerpt && (
+                        <AccentButton
+                            className={styles.floatingButton}
+                            iconName={highlightHidden ? 'faEye' : 'faEyeDisabled'}
+                            onClick={this.handleHighlightHiddenChange}
+                            title={highlightTitle}
+                        />
+                    )}
+                    { droppedExcerpt && droppedExcerpt !== excerpt && (
+                        <Button
+                            className={styles.floatingButton}
+                            iconName="undo"
+                            onClick={this.handleReset}
+                            title={_ts('widgets.tagging.excerpt', 'resetExcerptTitle')}
+                        />
+                    )}
+                </div>
                 <FormattedTextArea
-                    className={className}
+                    className={_cs(styles.text, 'text')}
                     showLabel={false}
                     value={excerpt}
                     onChange={this.handleTextChange}
@@ -274,7 +278,7 @@ export default class Excerpt extends React.PureComponent {
                     readOnly={readOnly}
                     showFormatButton={!!entryType}
                 />
-            </>
+            </div>
         );
     }
 
@@ -289,11 +293,11 @@ export default class Excerpt extends React.PureComponent {
         const Text = this.renderText;
         const DataSeriesInternal = this.renderDataSeries;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.excerpt}
-            excerpt
-        `;
+        const className = _cs(
+            classNameFromProps,
+            styles.excerpt,
+            'excerpt',
+        );
 
         return (
             <div

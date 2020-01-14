@@ -1067,7 +1067,10 @@
         "-50180114": "Reload",
         "-97219656": "Edit points/polygons",
         "-8007367": "Start Planned Assessment Export",
-        "-76059043": "Failed to load assessments visualization data. "
+        "-76059043": "Failed to load assessments visualization data. ",
+        "-84182062": "Hide Highlight",
+        "-28191340": "Reset Excerpt",
+        "-36912904": "Show Highlight"
     },
     "links": {
         "browserExtension": {
@@ -2488,7 +2491,10 @@
         },
         "widgets.tagging.excerpt": {
             "dropHereText": -81226372,
-            "imageAltText": -78904030
+            "imageAltText": -78904030,
+            "hideHighlightTitle": -84182062,
+            "resetExcerptTitle": -28191340,
+            "showHighlightTitle": -36912904
         },
         "widgets.editor.number": {
             "widgetTitlePlaceholder": 13,

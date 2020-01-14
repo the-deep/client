@@ -206,9 +206,11 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptReset={this.handleExcerptReset}
                         onHighlightHiddenChange={this.handleHighlightHiddenChange}
                         onEntryStateChange={this.handleEntryStateChange}
+                        entryStates={this.state.entryStates}
 
                         schema={this.props.schema}
                         computeSchema={this.props.computeSchema}
+                        bookId={this.props.lead && this.props.lead.tabularBook}
                     />
                 ),
                 wrapContainer: true,
