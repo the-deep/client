@@ -20,6 +20,7 @@ declare module '@togglecorp/faram' {
     }
 
 
+    /*
     // NOTE: you need to explicitly pass faramElementName with this typing
     function FaramInputElement<T>(component: React.ComponentType<T>):
         React.ComponentType<Omit<T, 'value' | 'onChange'> & { faramElementName: string; faramInfo?: any }>
@@ -47,4 +48,5 @@ declare module '@togglecorp/faram' {
     // NOTE: you need to explicitly pass faramElementName with this typing
     function FaramSortableListElement<T>(component: React.ComponentType<T>):
         React.ComponentType<Omit<T, 'data' | 'onChange' | 'keySelector'> & { faramElement: boolean }>
+    */
 }

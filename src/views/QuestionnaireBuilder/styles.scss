@@ -15,27 +15,75 @@
 
     .main {
         display: flex;
-        flex-direction: column;
 
-        >.header {
+        .question-list {
             display: flex;
-            align-items: center;
-            flex-shrink: 0;
+            flex-direction: column;
+            flex-grow: 1;
 
-            .heading {
-                flex-grow: 1;
-                padding: var(--spacing-medium);
+            >.header {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+
+                .heading {
+                    flex-grow: 1;
+                    padding: var(--spacing-medium);
+                }
+
+                .actions {
+                    flex-shrink: 0;
+                    padding: 0 var(--spacing-medium);
+                }
             }
 
-            .actions {
-                flex-shrink: 0;
-                padding: 0 var(--spacing-medium);
+            >.content {
+                flex-grow: 1;
+                padding: var(--spacing-extra-large);
+                overflow: auto;
+
+                .question {
+                    margin: auto;
+                    // margin: var(--spacing-medium);
+                    background-color: var(--color-foreground);
+                    max-width: 800px;
+                }
             }
         }
 
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            border-left: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            width: 380px;
+
+            .header {
+                flex-shrink: 0;
+
+                .heading {
+                    padding: var(--spacing-medium);
+                }
+            }
+
+            .content {
+                flex-grow: 1;
+
+                .framework-question {
+                    padding: var(--spacing-medium);
+                }
+            }
+        }
+    }
+
+    .sidebar {
+        >.header {
+            padding: var(--spacing-medium);
+        }
+
         >.content {
-            flex-grow: 1;
-            overflow: auto;
+            padding: var(--spacing-medium);
         }
     }
 }

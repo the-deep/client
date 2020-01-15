@@ -1,6 +1,7 @@
 import {
     WidgetElement,
     Matrix2dFlatCellElement,
+    FrameworkElement,
 } from './framework';
 
 export interface Meta {
@@ -20,6 +21,7 @@ export interface QuestionnaireElement extends QuestionnaireMeta {
     isArchived?: boolean;
     createdAt?: string;
     questions: QuestionElement[];
+    projectFrameworkDetail: FrameworkElement;
 }
 
 export interface QuestionnaireItem extends QuestionnaireMeta {
@@ -39,6 +41,11 @@ export type QuestionType = 'text' | 'number' | 'dateAndTime' | 'select' | 'rank'
 export interface QuestionMeta extends Meta {
     label?: string;
     importance?: number;
+}
+
+export interface QuestionResponseOptionElement {
+    key: string;
+    value: string;
 }
 
 export interface QuestionFormElementFrameworkAttriute {

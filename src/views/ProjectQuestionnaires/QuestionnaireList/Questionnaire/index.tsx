@@ -7,15 +7,10 @@ import { Link } from 'react-router-dom';
 
 import DropdownMenu from '#rsca/DropdownMenu';
 import Button from '#rsca/Button';
+import FormattedDate from '#rscv/FormattedDate';
 
 import { pathNames } from '#constants';
 import { QuestionnaireItem } from '#typings';
-
-import {
-    crisisTypeOptions,
-    dataCollectionTechniqueOptions,
-    enumerationSkillOptions,
-} from '../../options';
 
 import styles from './styles.scss';
 
@@ -63,8 +58,6 @@ class Questionnaire extends React.PureComponent<Props> {
             data,
         } = this.props;
 
-        console.warn(data);
-
         return (
             <div className={_cs(styles.questionnaire, className)}>
                 <header className={styles.header}>
@@ -83,10 +76,13 @@ class Questionnaire extends React.PureComponent<Props> {
                             </div>
                             <div className={styles.created}>
                                 <div className={styles.label}>
-                                    Created on
+                                    Created on:
                                 </div>
                                 <div className={styles.value}>
-                                    { data.createdAt }
+                                    <FormattedDate
+                                        date={data.createdAt}
+                                        mode="dd-MM-yyyy"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -126,19 +122,23 @@ class Questionnaire extends React.PureComponent<Props> {
                 <div className={styles.content}>
                     <MetaOutput
                         label="Crisis type"
-                        value={data.crisisType ? crisisTypeOptions[data.crisisType] : undefined}
+                        value={data.crisisTypeDetail ? data.crisisTypeDetail.title : undefined}
                     />
                     <MetaOutput
                         label="Data collection technique"
-                        value={data.dataCollectionTechnique ?
-                            dataCollectionTechniqueOptions[data.dataCollectionTechnique]
+                        value={data.dataCollectionTechniqueDetail ?
+                            data.dataCollectionTechniqueDetail.value
                             : undefined
                         }
                     />
                     <MetaOutput
+                        label="Required duration (min)"
+                        value={data.requiredDuration}
+                    />
+                    <MetaOutput
                         label="Enumerator skill"
-                        value={data.enumeratorSkill ?
-                            enumerationSkillOptions[data.enumeratorSkill]
+                        value={data.enumeratorSkillDetail ?
+                            data.enumeratorSkillDetail.value
                             : undefined
                         }
                     />

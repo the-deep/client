@@ -262,7 +262,10 @@ export default class ProjectDetails extends React.PureComponent {
                             useHash
                             tabs={this.routes}
                         >
-                            <ButtonLikeLink to={this.getProjectQuestionnaireLink(projectId)}>
+                            <ButtonLikeLink
+                                to={this.getProjectQuestionnaireLink(projectId)}
+                                className={styles.projectQuestionnaireLink}
+                            >
                                 Manage questionares
                             </ButtonLikeLink>
                         </ScrollTabs>

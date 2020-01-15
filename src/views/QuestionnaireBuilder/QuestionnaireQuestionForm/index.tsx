@@ -116,6 +116,8 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
             questions,
         };
 
+        console.warn(patchBody);
+
         questionnairePatchRequest.do({
             questionnaireId: questionnaire.id,
             body: patchBody,

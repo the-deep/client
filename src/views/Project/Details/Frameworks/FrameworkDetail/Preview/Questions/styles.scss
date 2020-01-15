@@ -25,16 +25,6 @@
 }
 
 .question {
-    display: flex;
     margin: var(--spacing-small) var(--spacing-medium);
     background-color: var(--color-foreground);
-    padding: var(--spacing-medium);
-
-    .title {
-        flex-grow: 1;
-    }
-
-    .actions {
-        flex-shrink: 0;
-    }
 }

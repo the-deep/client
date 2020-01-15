@@ -57,6 +57,7 @@ const schema = {
         enumeratorSkill: [],
         dataCollectionTechnique: [],
         importance: [],
+        responseOptions: [],
     },
 };
 
@@ -127,11 +128,6 @@ class QuestionForm extends React.PureComponent<Props> {
                             className={styles.input}
                             label="Title"
                         />
-                        <ResponseInput
-                            faramElementName="responseOptions"
-                            className={styles.input}
-                            label="Response options"
-                        />
                         <SelectInput
                             options={questionTypeOptionList}
                             faramElementName="type"
@@ -139,6 +135,12 @@ class QuestionForm extends React.PureComponent<Props> {
                             label="Type"
                             keySelector={defaultKeySelector}
                             labelSelector={defaultLabelSelector}
+                        />
+                        <ResponseInput
+                            type={faramValues.type}
+                            faramElementName="responseOptions"
+                            className={styles.input}
+                            label="Response options"
                         />
                         <TextInput
                             faramElementName="enumeratorInstruction"

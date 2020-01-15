@@ -1,3 +1,7 @@
+import {
+    QuestionElement,
+} from './questionnaire';
+
 export interface Matrix2dCellElement {
     id: string;
     title?: string;
@@ -68,5 +72,11 @@ export interface Matrix2dWidgetPropertiesElement extends WidgetPropertiesElement
 
 export interface Matrix2dWidgetElement extends WidgetElement {
     properties: Matrix2dWidgetPropertiesElement;
+}
+
+export interface FrameworkElement {
+    id: number;
+    widgets: WidgetElement[];
+    questions: QuestionElement[];
 }
 

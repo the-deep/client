@@ -10,6 +10,7 @@ import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
+import TreeSelection from '#rsci/TreeSelection';
 
 import Page from '#rscv/Page';
 
@@ -29,17 +30,15 @@ import {
     getResponse,
 } from '#request';
 
-import {
-    // questionnaireSelector,
-    questionnaireIdFromRouteSelector,
-} from '#redux';
+import { questionnaireIdFromRouteSelector } from '#redux';
 
+import { createReportStructure } from '#utils/framework';
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 import QuestionnaireForm from '#qbc/QuestionnaireForm';
+import Question from '#qbc/Question';
 
 import QuestionnaireQuestionForm from './QuestionnaireQuestionForm';
-import Question from './Question';
 
 import styles from './styles.scss';
 
@@ -79,6 +78,30 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     },
 };
 
+const questionKeySelector = (q: QuestionElement) => q.id;
+
+const FrameworkQuestion = (p) => {
+    const {
+        onCopyButtonClick,
+        className,
+        ...otherProps
+    } = p;
+
+    return (
+        <div className={_cs(className, styles.frameworkQuestion)}>
+            <Question {...otherProps} />
+            <div className={styles.actions}>
+                <Button
+                    iconName="chevronLeft"
+                    onClick={onCopyButtonClick}
+                >
+                    Copy to questionnaire
+                </Button>
+            </div>
+        </div>
+    );
+};
+
 class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     public state = {
         showQuestionFormModal: false,
@@ -86,11 +109,31 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         questionToEdit: undefined,
     };
 
-    private getQuestionRendererParams = (key: QuestionElement['id'], question: QuestionElement) => ({
-        itemKey: key,
-        question,
-        onEditButtonClick: this.handleEditQuestionButtonClick,
-    })
+    private getQuestionRendererParams = (key: QuestionElement['id'], question: QuestionElement) => {
+        const { requests } = this.props;
+        const questionnaire = getResponse(requests, 'questionnaireGetRequest') as QuestionnaireElement;
+
+        return {
+            data: question,
+            onEditButtonClick: this.handleEditQuestionButtonClick,
+            framework: questionnaire.projectFrameworkDetail,
+            className: styles.question,
+        };
+    }
+
+    private getFrameworkQuestionRendererParams = (key: QuestionElement['id'], question: QuestionElement) => {
+        const { requests } = this.props;
+        const questionnaire = getResponse(requests, 'questionnaireGetRequest') as QuestionnaireElement;
+
+        return {
+            data: question,
+            // onEditButtonClick: this.handleEditQuestionButtonClick,
+            framework: questionnaire.projectFrameworkDetail,
+            className: styles.frameworkQuestion,
+            hideDetails: true,
+            readOnly: true,
+        };
+    }
 
     private handleAddQuestionButtonClick = () => {
         this.setState({
@@ -145,6 +188,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         } = this.state;
 
         const questionnaire = getResponse(requests, 'questionnaireGetRequest') as QuestionnaireElement;
+        console.warn(questionnaire);
 
         return (
             <>
@@ -160,33 +204,57 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 </h3>
                             </header>
                             <div className={styles.content}>
-                                Hello
+                                {questionnaire.projectFrameworkDetail && (
+                                    <TreeSelection
+                                        value={createReportStructure(
+                                            questionnaire.projectFrameworkDetail,
+                                        )}
+                                    />
+                                )}
                             </div>
                         </>
                     )}
                     mainContentClassName={styles.main}
                     mainContent={(
                         <>
-                            <header className={styles.header}>
-                                <h3 className={styles.heading}>
-                                    { questionnaire.title }
-                                </h3>
-                                <div className={styles.actions}>
-                                    <Button onClick={this.handleEditDetailsButtonClick}>
-                                        Edit details
-                                    </Button>
-                                    <Button onClick={this.handleAddQuestionButtonClick}>
-                                        Add question
-                                    </Button>
-                                </div>
-                            </header>
-                            <ListView
-                                className={styles.content}
-                                rendererParams={this.getQuestionRendererParams}
-                                renderer={Question}
-                                data={questionnaire.questions}
-                                keySelector={d => d.id}
-                            />
+                            <div className={styles.questionList}>
+                                <header className={styles.header}>
+                                    <h3 className={styles.heading}>
+                                        { questionnaire.title }
+                                    </h3>
+                                    <div className={styles.actions}>
+                                        <Button onClick={this.handleEditDetailsButtonClick}>
+                                            Edit details
+                                        </Button>
+                                        <Button onClick={this.handleAddQuestionButtonClick}>
+                                            Add question
+                                        </Button>
+                                    </div>
+                                </header>
+                                <ListView
+                                    className={styles.content}
+                                    rendererParams={this.getQuestionRendererParams}
+                                    renderer={Question}
+                                    data={questionnaire.questions}
+                                    keySelector={questionKeySelector}
+                                />
+                            </div>
+                            <div className={styles.rightPanel}>
+                                <header className={styles.header}>
+                                    <h3 className={styles.heading}>
+                                        Framework questions
+                                    </h3>
+                                </header>
+                                {questionnaire.projectFrameworkDetail && (
+                                    <ListView
+                                        className={styles.content}
+                                        rendererParams={this.getFrameworkQuestionRendererParams}
+                                        renderer={FrameworkQuestion}
+                                        data={questionnaire.projectFrameworkDetail.questions}
+                                        keySelector={questionKeySelector}
+                                    />
+                                )}
+                            </div>
                         </>
                     )}
                     headerClassName={styles.header}

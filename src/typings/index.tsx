@@ -25,12 +25,6 @@ export interface AppState {
 export interface AppProps {
 }
 
-export interface FrameworkElement {
-    id: number;
-    widgets: WidgetElement[];
-    questions: QuestionElement[];
-}
-
 export type Requests<Props, Params> = {[key: string]: ClientAttributes<Props, Params>}
 export type AddRequestProps<Props, Params> = NewProps<Props, Params>;
 

@@ -1,0 +1,41 @@
+.question-form {
+    .basic {
+        padding: var(--spacing-small) 0;
+
+        .header {
+            padding: var(--spacing-small) 0;
+        }
+
+        .content {
+            >* {
+                margin: var(--spacing-small);
+            }
+        }
+    }
+
+    .framework-details {
+        padding: var(--spacing-small) 0;
+
+        .header {
+            padding: var(--spacing-small) 0;
+        }
+    }
+
+    .metadata {
+        padding: var(--spacing-small) 0;
+
+        .header {
+            padding: var(--spacing-small) 0;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+
+            >* {
+                flex-basis: calc(50% - 2 * var(--spacing-small));
+                margin: var(--spacing-small);
+            }
+        }
+    }
+}
