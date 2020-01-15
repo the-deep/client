@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FaramOutputElement, _cs } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
+
+import { FaramOutputElement } from '@togglecorp/faram';
 
 import styles from './styles.scss';
 
