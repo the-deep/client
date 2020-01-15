@@ -1075,7 +1075,13 @@
         "-68282781": "Order",
         "-76519235": "Add new entry",
         "-47675119": "Entry Groups",
-        "-26658958": "There was an error while performing this action. Please check your network connection and try again."
+        "-26658958": "There was an error while performing this action. Please check your network connection and try again.",
+        "-94407945": "Mark current entry group for removal",
+        "-79810915": "Unmark current entry group for removal",
+        "-19337357": "Save Entry Group",
+        "-24270008": "Entry groups successfully saved",
+        "-86483548": "{errorCount} entry groups could not be saved.",
+        "-93218852": "Some entry groups were updated in server."
     },
     "links": {
         "browserExtension": {
@@ -1460,7 +1466,12 @@
             "cancelConfirmDetail": -58972891,
             "noLeadMessage": -3048933,
             "noDropMessage": -47892955,
-            "groupTabTitle": 1129
+            "groupTabTitle": 1129,
+            "entryGroupUpdateOverridden": 982,
+            "entryGroupSave": -19337357,
+            "entryGroupSaveSuccess": -24270008,
+            "entryGroupSaveFailure": -86483548,
+            "entryGroupUpdate": -93218852
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
@@ -3098,7 +3109,8 @@
             "entryLabelsHeader": -80269151,
             "addButtonTitle": 301,
             "entryLabelsTitle": -80269151,
-            "entryLabelsFatal": -26658958
+            "entryLabelsFatal": -26658958,
+            "orderHeaderTitle": -68282781
         },
         "project.entryGroups.editForm": {
             "cancelButtonLabel": 61,
@@ -3109,6 +3121,10 @@
             "entryLabelTitlePlaceholder": 13,
             "saveButtonLabel": 25,
             "newEntryLabel": -76519235
+        },
+        "editEntry.group.leftpane.entryGroupList": {
+            "removeEntryGroupButtonTitle": -94407945,
+            "undoRemoveEntryGroupButtonTitle": -79810915
         }
     }
 }

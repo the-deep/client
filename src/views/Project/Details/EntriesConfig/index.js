@@ -87,6 +87,10 @@ const requestOptions = {
 };
 
 const entryLabelKeySelector = d => d.id;
+const defaultSort = {
+    key: 'order',
+    order: 'asc',
+};
 
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -123,30 +127,37 @@ export default class ProjectDetails extends React.PureComponent {
                 ),
             },
             {
+                key: 'order',
+                label: _ts('project.entryGroups', 'orderHeaderTitle'),
+                order: 2,
+                sortable: true,
+                comparator: (a, b) => compareNumber(a.order, b.order),
+            },
+            {
                 key: 'title',
                 label: _ts('project.entryGroups', 'titleHeaderTitle'),
-                order: 2,
+                order: 3,
                 sortable: true,
                 comparator: (a, b) => compareString(a.title, b.title),
             },
             {
                 key: 'createdByName',
                 label: _ts('project.entryGroups', 'createdByHeaderTitle'),
-                order: 3,
+                order: 4,
                 sortable: true,
                 comparator: (a, b) => compareString(a.createdByName, b.createdByName),
             },
             {
                 key: 'entryCount',
                 label: _ts('project.entryGroups', 'entriesCountHeaderTitle'),
-                order: 4,
+                order: 5,
                 sortable: true,
                 comparator: (a, b) => compareNumber(a.entryCount, b.entryCount),
             },
             {
                 key: 'actions',
                 label: _ts('project.entryGroups', 'actionsHeaderTitle'),
-                order: 5,
+                order: 6,
                 modifier: d => (
                     <Actions
                         entryLabel={d}
@@ -240,6 +251,7 @@ export default class ProjectDetails extends React.PureComponent {
                         headers={this.headers}
                         data={entryLabels}
                         keySelector={entryLabelKeySelector}
+                        defaultSort={defaultSort}
                     />
                 </div>
             </div>
