@@ -20,6 +20,7 @@ import {
     methods,
 } from '#request';
 
+import notify from '#notify';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -65,6 +66,25 @@ const requestOptions = {
             }
             closeModal();
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('project.entryGroups', 'entryLabelsFatal'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'entryLabel',
+        },
     },
     addEntryLabelRequest: {
         url: ({
@@ -85,6 +105,25 @@ const requestOptions = {
                 onEntryLabelAdd(response);
             }
             closeModal();
+        },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('project.entryGroups', 'entryLabelsFatal'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'entryLabel',
         },
     },
 };
@@ -198,6 +237,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                         <Button
                             iconName="close"
                             onClick={closeModal}
+                            transparent
                         />
                     )}
                 />
@@ -210,7 +250,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                     error={faramErrors}
                     disabled={pending}
                 >
-                    <ModalBody>
+                    <ModalBody className={styles.modalBody}>
                         {pending && <LoadingAnimation />}
                         <TextInput
                             faramElementName="title"
@@ -218,6 +258,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                             placeholder={_ts('project.entryGroups.editForm', 'entryLabelTitlePlaceholder')}
                         />
                         <ColorInput
+                            className={styles.colorInput}
                             faramElementName="color"
                             label={_ts('project.entryGroups.editForm', 'entryLabelColorLabel')}
                         />

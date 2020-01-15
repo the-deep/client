@@ -12,6 +12,7 @@ import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
 
 import _ts from '#ts';
+import notify from '#notify';
 
 import EntryLabelEditForm from '../EntryLabelEditForm';
 import styles from './styles.scss';
@@ -54,6 +55,22 @@ const requestOptions = {
                 onEntryLabelDelete(entryLabelId);
             }
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('project.entryGroups', 'entryLabelsFatal'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
     },
 };
 
@@ -86,6 +103,11 @@ export default class EntryLabelsActions extends React.PureComponent {
             },
         } = this.props;
 
+        const {
+            entryCount,
+            title,
+        } = entryLabel;
+
         return (
             <div className={styles.actions}>
                 <DangerConfirmButton
@@ -95,7 +117,14 @@ export default class EntryLabelsActions extends React.PureComponent {
                     smallVerticalPadding
                     transparent
                     iconName="delete"
-                    confirmationMessage={_ts('project.entryGroups', 'deleteEntryLabelConfirmation')}
+                    confirmationMessage={_ts(
+                        'project.entryGroups',
+                        'deleteEntryLabelConfirmation',
+                        {
+                            title: (<b>{title}</b>),
+                            entryCount,
+                        },
+                    )}
                 />
                 <ModalButton
                     className={styles.button}

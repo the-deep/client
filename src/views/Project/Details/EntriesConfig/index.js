@@ -18,6 +18,7 @@ import {
 } from '#request';
 
 import _ts from '#ts';
+import notify from '#notify';
 
 import Actions from './EntryLabelsActions';
 import EntryLabelEditForm from './EntryLabelEditForm';
@@ -41,6 +42,17 @@ const requestOptions = {
     projectEntriesLabels: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/entry-labels/`,
         method: methods.GET,
+        query: ({
+            fields: [
+                'id',
+                'project',
+                'created_by_name',
+                'title',
+                'order',
+                'color',
+                'entry_count',
+            ],
+        }),
         onMount: true,
         onSuccess: ({
             params: { setEntryLabels },
@@ -52,10 +64,27 @@ const requestOptions = {
                 setEntryLabels(results);
             }
         },
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('project.entryGroups', 'entryLabelsFatal'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'entryLabelsList',
+        },
     },
 };
-
-// TODO: Handle request failures
 
 const entryLabelKeySelector = d => d.id;
 
@@ -108,11 +137,11 @@ export default class ProjectDetails extends React.PureComponent {
                 comparator: (a, b) => compareString(a.createdByName, b.createdByName),
             },
             {
-                key: 'entriesCount',
+                key: 'entryCount',
                 label: _ts('project.entryGroups', 'entriesCountHeaderTitle'),
                 order: 4,
                 sortable: true,
-                comparator: (a, b) => compareNumber(a.entriesCount, b.entriesCount),
+                comparator: (a, b) => compareNumber(a.entryCount, b.entryCount),
             },
             {
                 key: 'actions',
@@ -140,6 +169,9 @@ export default class ProjectDetails extends React.PureComponent {
         const newEntryLabels = [...entryLabels];
         const selectedEntryLabelIndex = entryLabels.findIndex(e => e.id === entryLabelId);
 
+        if (selectedEntryLabelIndex === -1) {
+            return;
+        }
         newEntryLabels.splice(selectedEntryLabelIndex, 1);
 
         this.setState({ entryLabels: newEntryLabels });
@@ -161,6 +193,9 @@ export default class ProjectDetails extends React.PureComponent {
         const newEntryLabels = [...entryLabels];
         const selectedEntryLabelIndex = entryLabels.findIndex(e => e.id === entryLabelId);
 
+        if (selectedEntryLabelIndex === -1) {
+            return;
+        }
         newEntryLabels.splice(selectedEntryLabelIndex, 1);
         newEntryLabels.push(entryLabel);
 
@@ -170,6 +205,11 @@ export default class ProjectDetails extends React.PureComponent {
     render() {
         const {
             className,
+            requests: {
+                projectEntriesLabels: {
+                    pending,
+                },
+            },
             projectId,
         } = this.props;
         const { entryLabels } = this.state;
@@ -181,7 +221,6 @@ export default class ProjectDetails extends React.PureComponent {
                         {_ts('project.entryGroups', 'entryLabelsHeader')}
                     </h3>
                     <ModalButton
-                        className={styles.button}
                         iconName="add"
                         modal={(
                             <EntryLabelEditForm
@@ -191,12 +230,13 @@ export default class ProjectDetails extends React.PureComponent {
                             />
                         )}
                     >
-                        Add
+                        {_ts('project.entryGroups', 'addButtonTitle')}
                     </ModalButton>
                 </header>
                 <div className={styles.container}>
                     <Table
                         className={styles.table}
+                        pending={pending}
                         headers={this.headers}
                         data={entryLabels}
                         keySelector={entryLabelKeySelector}

@@ -1069,12 +1069,13 @@
         "-8007367": "Start Planned Assessment Export",
         "-76059043": "Failed to load assessments visualization data. ",
         "-79392542": "Delete entry label",
-        "-7812601": "Are you sure you want to delete this entry label?",
+        "-7812601": "Are you sure you want to delete entry label '{title}'? {entryCount} entry(s) are tagged in this label.",
         "-68751877": "Entries Count",
         "-80269151": "Entry Labels",
         "-68282781": "Order",
         "-76519235": "Add new entry",
-        "-47675119": "Entry Groups"
+        "-47675119": "Entry Groups",
+        "-26658958": "There was an error while performing this action. Please check your network connection and try again."
     },
     "links": {
         "browserExtension": {
@@ -3094,7 +3095,10 @@
             "deleteEntryLabelConfirmation": -7812601,
             "entriesCountHeaderTitle": -68751877,
             "titleHeaderTitle": 13,
-            "entryLabelsHeader": -80269151
+            "entryLabelsHeader": -80269151,
+            "addButtonTitle": 301,
+            "entryLabelsTitle": -80269151,
+            "entryLabelsFatal": -26658958
         },
         "project.entryGroups.editForm": {
             "cancelButtonLabel": 61,
