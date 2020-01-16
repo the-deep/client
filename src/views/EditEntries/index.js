@@ -64,7 +64,6 @@ import {
     editEntriesStatusesSelector,
     editEntriesEntryGroupStatusesSelector,
 
-    editEntriesSetEntryHighlightHidden,
     editEntriesClearEntriesAction,
     editEntriesRemoveEntryAction,
     editEntriesSaveEntryAction,
@@ -73,7 +72,6 @@ import {
     editEntriesUpdateEntriesBulkAction,
     editEntriesSetEntryErrorsAction,
     editEntriesSetEntryGroupErrorsAction,
-    editEntriesResetExcerptAction,
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
@@ -137,11 +135,9 @@ const propTypes = {
     setEntryError: PropTypes.func.isRequired,
     setEntryGroupError: PropTypes.func.isRequired,
 
-    resetExcerpt: PropTypes.func.isRequired,
 
     setPending: PropTypes.func.isRequired,
     setEntryGroupPending: PropTypes.func.isRequired,
-    setEntryHighlightHidden: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -182,8 +178,6 @@ const mapDispatchToProps = dispatch => ({
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     setEntryGroupError: params => dispatch(editEntriesSetEntryGroupErrorsAction(params)),
-    setEntryHighlightHidden: params => dispatch(editEntriesSetEntryHighlightHidden(params)),
-    resetExcerpt: params => dispatch(editEntriesResetExcerptAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
@@ -367,9 +361,6 @@ export default class EditEntries extends React.PureComponent {
                     entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
                     statuses: this.props.statuses,
-
-                    onExcerptReset: this.handleExcerptReset,
-                    onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 }),
                 wrapContainer: true,
                 lazyMount: false,
@@ -392,9 +383,6 @@ export default class EditEntries extends React.PureComponent {
                     entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
                     statuses: this.props.statuses,
-
-                    onExcerptReset: this.handleExcerptReset,
-                    onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 }),
                 wrapContainer: true,
                 lazyMount: true,
@@ -524,32 +512,6 @@ export default class EditEntries extends React.PureComponent {
         return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
     }))
 
-    // PERMISSION
-
-    // FIXME: move this inside WidgetFaram
-    setEntryHighlightHidden = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
-            console.warn('No permission to change highlight visibility');
-            return;
-        }
-        this.props.setEntryHighlightHidden(val);
-    }
-
-    // FIXME: move this inside WidgetFaram
-    resetExcerpt = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
-            console.warn('No permission to edit entry excerpt');
-            return;
-        }
-        this.props.resetExcerpt(val);
-    }
-
-    // PERMISSIONS
-
-    shouldDisableEntryChange = (entryId) => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.modify && !!entryId;
-    }
 
     shouldHideEditLink = () => {
         const {
@@ -559,28 +521,6 @@ export default class EditEntries extends React.PureComponent {
         } = this.props;
         return !isAdmin;
     }
-
-    // APIS
-
-    // FIXME: move this inside FaramWidget
-    handleExcerptReset = (entryKey, entryId) => {
-        this.resetExcerpt({
-            leadId: this.props.leadId,
-            key: entryKey,
-            id: entryId,
-        });
-    }
-
-    // FIXME: move this inside FaramWidget
-    handleHighlightHiddenChange = (value, entryKey, entryId) => {
-        this.setEntryHighlightHidden({
-            leadId: this.props.leadId,
-            key: entryKey,
-            id: entryId,
-            value,
-        });
-    }
-
 
     handleValidationFailure = (faramErrors, entryKey) => {
         const proxyRequest = {
@@ -948,7 +888,6 @@ export default class EditEntries extends React.PureComponent {
             entries,
             statuses,
             schema,
-            computeSchema,
         } = this.props;
 
         const savableEntries = this.getSavableEntries(
