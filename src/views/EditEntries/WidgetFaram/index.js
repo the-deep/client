@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 import memoize from 'memoize-one';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
@@ -307,15 +308,23 @@ export default class WidgetFaram extends React.PureComponent {
         const isViewPage = widgetType === VIEW.list;
 
         const entryKey = entryAccessor.key(entry);
+        const isExcerptWidget = widgetId === 'excerptWidget';
 
         const Header = ({ hasError, error }) => (
             <div
-                className={`${styles.header} ${hasError ? styles.error : ''}`}
+                className={_cs(
+                    styles.header,
+                    hasError ? styles.error : '',
+                    isExcerptWidget && styles.excerptWidgetHeader,
+                )}
                 title={error}
             >
                 <h5
                     title={error || title}
-                    className={styles.heading}
+                    className={_cs(
+                        styles.heading,
+                        isExcerptWidget && styles.excerptWidgetHeading,
+                    )}
                 >
                     { hasError && <Icon name="warning" /> }
                     { hasError ? `${title} : ${error}` : title }

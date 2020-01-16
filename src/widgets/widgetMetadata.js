@@ -42,6 +42,12 @@ export const widgetTitlesGroupMap = {
         groupId: 'excerpts',
         hasConditions: false,
     },
+    textWidget: {
+        // NOTE: used as _ts('widgetTitle', 'textWidgetLabel')
+        title: 'textWidgetLabel',
+        groupId: 'misc',
+        hasConditions: false,
+    },
     matrix1dWidget: {
         // NOTE: used as _ts('widgetTitle', 'matrix1DWidgetLabel')
         title: 'matrix1DWidgetLabel',

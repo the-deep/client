@@ -17,6 +17,14 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+
+                &.excerpt-widget-heading {
+                    color: var(--color-text-on-primary);
+                }
+            }
+
+            &.excerpt-widget-header {
+                background-color: var(--color-primary);
             }
 
             .action-buttons {

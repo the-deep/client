@@ -23,6 +23,7 @@ import ConditionalFrameworkPreview from './edit/Conditional/Preview';
 
 // overview
 import ExcerptWidget from './tagging/Excerpt';
+import TextWidget from './tagging/Text';
 import Matrix1dWidget from './tagging/Matrix1d';
 import Matrix1dListWidget from './tagging/Matrix1dList';
 import Matrix2dWidget from './tagging/Matrix2d';
@@ -48,6 +49,7 @@ import Matrix1dListViewWidget from './view/Matrix1dList';
 import Matrix2dListViewWidget from './view/Matrix2dList';
 import NumberMatrixListViewWidget from './view/NumberMatrixList';
 // list
+import TextViewWidget from './view/Text';
 import DateViewWidget from './view/Date';
 import TimeRangeViewWidget from './view/TimeRange';
 import DateRangeViewWidget from './view/DateRange';
@@ -88,6 +90,21 @@ export const globalWidgets = {
         list: {
             altTagComponent: ExcerptWidget,
             viewComponent: ExcerptViewWidget,
+            minSize: { w: 16, h: 7 },
+        },
+    },
+
+    textWidget: {
+        editComponent: DefaultEditWidget,
+
+        overview: {
+            tagComponent: TextWidget,
+            minSize: { w: 16, h: 7 },
+        },
+        list: {
+            tagComponent: TextWidget,
+            altTagComponent: TextWidget,
+            viewComponent: TextViewWidget,
             minSize: { w: 16, h: 7 },
         },
     },

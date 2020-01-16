@@ -1932,7 +1932,8 @@
             "organigramWidgetLabel": 753,
             "scaleWidgetLabel": 757,
             "conditionalWidgetLabel": -86548021,
-            "timeRangeWidgetLabel": -557230
+            "timeRangeWidgetLabel": -557230,
+            "textWidgetLabel": 20
         },
         "pageTitle": {
             "login": 814,
@@ -3093,6 +3094,9 @@
             "assessmentsViz": -76059043,
             "assessmentsVizFailure": -76059043,
             "assessmentsVizFatal": -76059043
+        },
+        "widgets.tagging.text": {
+            "textPlaceholder": 20
         },
         "editEntry.group.leftpane": {
             "entriesListingTabLabel": 15,
