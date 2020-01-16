@@ -52,7 +52,7 @@ export default class GeoViz extends React.PureComponent {
             adminLevels: undefined,
 
             // Unique key to recreate map everytime the user refreshes
-            uniqueKey: randomString(),
+            uniqueKey: randomString(16),
         };
     }
 
@@ -71,7 +71,7 @@ export default class GeoViz extends React.PureComponent {
 
     handleRefresh = () => {
         this.setState({
-            uniqueKey: randomString(),
+            uniqueKey: randomString(16),
         });
     }
 

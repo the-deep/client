@@ -10,9 +10,7 @@ import _ts from '#ts';
 import {
     editEntriesFilteredEntriesSelector,
     editEntriesWidgetsSelector,
-    editEntriesStatusesSelector,
     fieldsMapForTabularBookSelector,
-    // editEntriesTabularDataSelector,
 } from '#redux';
 import {
     entryAccessor,
@@ -33,8 +31,8 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     hash: PropTypes.string,
+    leadId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -42,15 +40,12 @@ const defaultProps = {
     statuses: {},
     widgets: [],
     hash: undefined,
-    // tabularData: {},
 };
 
 const mapStateToProps = (state, props) => ({
     entries: editEntriesFilteredEntriesSelector(state),
-    statuses: editEntriesStatusesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
-    // tabularData: editEntriesTabularDataSelector(state),
 });
 
 @connect(mapStateToProps)
@@ -86,8 +81,6 @@ export default class Listing extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    keySelector = entry => entryAccessor.key(entry)
-
     handleScroll = (e) => {
         this.scrollTop = e.target.scrollTop;
 
@@ -97,14 +90,19 @@ export default class Listing extends React.PureComponent {
         }
     }
 
-    rendererParams = (key, entry) => {
+    rendererParams = (key, entry, index) => {
         const {
-            entries, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             statuses,
-            entryStates,
             tabularFields,
-
-            ...otherProps
+            entryStates,
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            analysisFramework,
+            lead,
+            leadId,
+            bookId,
+            widgets,
         } = this.props;
 
         const fieldId = entryAccessor.tabularField(entry);
@@ -113,10 +111,19 @@ export default class Listing extends React.PureComponent {
         return {
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
+            entryState: entryStates[key],
             tabularData: field,
             widgetType: VIEW.list,
-            entryState: entryStates[key],
-            ...otherProps,
+
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            analysisFramework,
+            lead,
+            leadId,
+            widgets,
+
+            index,
         };
     }
 
@@ -130,7 +137,7 @@ export default class Listing extends React.PureComponent {
                 data={entries}
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
-                keySelector={this.keySelector}
+                keySelector={entryAccessor.key}
                 emptyComponent={EmptyComponent}
             />
         );

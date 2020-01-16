@@ -141,7 +141,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
         this.props.onChange([
             ...this.props.value,
             {
-                key: randomString(),
+                key: randomString(16),
                 type: 'url',
                 name: urlValue,
                 url: urlValue,
@@ -155,7 +155,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
         this.setState({ isBeingDraggedOver: false });
 
         files.forEach((file) => {
-            const key = randomString();
+            const key = randomString(16);
             const uploader = new UploadBuilder()
                 .file(file)
                 .url(urlForUpload)

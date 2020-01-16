@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import LeftPanelOriginal from '#components/leftpanel';
 import SelectInput from '#rsci/SelectInput';
 
-import { activeProjectRoleSelector } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -14,7 +12,6 @@ import EntriesListing from './EntriesListing';
 import styles from './styles.scss';
 
 const propTypes = {
-    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     leadGroup: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeSector: PropTypes.string,
@@ -23,17 +20,11 @@ const propTypes = {
 
 const defaultProps = {
     className: undefined,
-    projectRole: {},
     activeSector: undefined,
     lead: undefined,
     leadGroup: undefined,
 };
 
-const mapStateToProps = state => ({
-    projectRole: activeProjectRoleSelector(state),
-});
-
-@connect(mapStateToProps)
 export default class LeftPanel extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -90,7 +81,6 @@ export default class LeftPanel extends React.PureComponent {
 
     render() {
         const {
-            projectRole,
             lead: leadFromProps,
             leadGroup,
             className,
@@ -116,7 +106,6 @@ export default class LeftPanel extends React.PureComponent {
                 <div className={styles.container}>
                     <LeftPanelOriginal
                         className={styles.leftPanel}
-                        projectRole={projectRole}
                         lead={lead}
                         viewsModifier={this.getViews}
                         tabsModifier={this.getTabs}

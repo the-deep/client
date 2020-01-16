@@ -463,7 +463,7 @@
         "1124": "Remove project",
         "1126": "Failed to save project.",
         "1127": "Failed to create new category editor.",
-        "1129": "Group",
+        "1129": "Groups",
         "1130": "Progress reports of June",
         "1131": "Add lead group",
         "1132": "Failed to create lead group",
@@ -1067,7 +1067,21 @@
         "-50180114": "Reload",
         "-97219656": "Edit points/polygons",
         "-8007367": "Start Planned Assessment Export",
-        "-76059043": "Failed to load assessments visualization data. "
+        "-76059043": "Failed to load assessments visualization data. ",
+        "-79392542": "Delete entry label",
+        "-7812601": "Are you sure you want to delete entry label '{title}'? {entryCount} entry(s) are tagged in this label.",
+        "-68751877": "Entries Count",
+        "-80269151": "Entry Labels",
+        "-68282781": "Order",
+        "-76519235": "Add new entry",
+        "-47675119": "Entry Groups",
+        "-26658958": "There was an error while performing this action. Please check your network connection and try again.",
+        "-94407945": "Mark current entry group for removal",
+        "-79810915": "Unmark current entry group for removal",
+        "-19337357": "Save Entry Group",
+        "-24270008": "Entry groups successfully saved",
+        "-86483548": "{errorCount} entry groups could not be saved.",
+        "-93218852": "Some entry groups were updated in server."
     },
     "links": {
         "browserExtension": {
@@ -1451,7 +1465,13 @@
             "editFrameworkTitle": -59086768,
             "cancelConfirmDetail": -58972891,
             "noLeadMessage": -3048933,
-            "noDropMessage": -47892955
+            "noDropMessage": -47892955,
+            "groupTabTitle": 1129,
+            "entryGroupUpdateOverridden": 982,
+            "entryGroupSave": -19337357,
+            "entryGroupSaveSuccess": -24270008,
+            "entryGroupSaveFailure": -86483548,
+            "entryGroupUpdate": -93218852
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
@@ -2105,7 +2125,8 @@
             "afCloneFatal": -48269508,
             "noAfSelectedText": -86287086,
             "entriesVizErrorMessage": -9524324,
-            "arysVizErrorMessage": -76059043
+            "arysVizErrorMessage": -76059043,
+            "entriesConfigTitle": -47675119
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -2481,7 +2502,8 @@
             "altLabel": 512,
             "removeEntryButtonTitle": 523,
             "undoRemoveEntryButtonTitle": 525,
-            "unnamedExcerptTitle": -39451070
+            "unnamedExcerptTitle": -39451070,
+            "unnamedColumnTitle": -8790199
         },
         "framework.widgetList": {
             "addWidgetButtonLabel": -91895140
@@ -3071,6 +3093,38 @@
             "assessmentsViz": -76059043,
             "assessmentsVizFailure": -76059043,
             "assessmentsVizFatal": -76059043
+        },
+        "editEntry.group.leftpane": {
+            "entriesListingTabLabel": 15,
+            "entryGroupsListingTabLabel": 175
+        },
+        "project.entryGroups": {
+            "actionsHeaderTitle": 16,
+            "colorHeaderTitle": 764,
+            "createdByHeaderTitle": 538,
+            "deleteEntryLabelButtonTitle": -79392542,
+            "deleteEntryLabelConfirmation": -7812601,
+            "entriesCountHeaderTitle": -68751877,
+            "titleHeaderTitle": 13,
+            "entryLabelsHeader": -80269151,
+            "addButtonTitle": 301,
+            "entryLabelsTitle": -80269151,
+            "entryLabelsFatal": -26658958,
+            "orderHeaderTitle": -68282781
+        },
+        "project.entryGroups.editForm": {
+            "cancelButtonLabel": 61,
+            "entryLabelColorLabel": 764,
+            "entryLabelOrderLabel": -68282781,
+            "entryLabelOrderPlaceholder": -68282781,
+            "entryLabelTitleLabel": 13,
+            "entryLabelTitlePlaceholder": 13,
+            "saveButtonLabel": 25,
+            "newEntryLabel": -76519235
+        },
+        "editEntry.group.leftpane.entryGroupList": {
+            "removeEntryGroupButtonTitle": -94407945,
+            "undoRemoveEntryGroupButtonTitle": -79810915
         }
     }
 }

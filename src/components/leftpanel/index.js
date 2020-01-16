@@ -21,6 +21,7 @@ import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
 import {
     currentUserActiveProjectSelector,
+    activeProjectRoleSelector,
 } from '#redux';
 import _ts from '#ts';
 
@@ -124,6 +125,7 @@ const getPaneType = (lead) => {
 };
 
 const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     projectDetails: currentUserActiveProjectSelector(state),
 });
 
@@ -220,7 +222,7 @@ export default class LeftPane extends React.PureComponent {
         return tabs;
     })
 
-    getViews = () => ({
+    getViews = containerClassName => ({
         'simplified-preview': {
             component: SimplifiedLeadPreview,
             rendererParams: () => {
@@ -229,7 +231,7 @@ export default class LeftPane extends React.PureComponent {
                     filteredEntries,
                 } = this.props;
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     leadId,
                     highlights: this.getHighlightsForText(filteredEntries),
                     onLoad: this.handleLoad,
@@ -249,7 +251,7 @@ export default class LeftPane extends React.PureComponent {
                 } = this.props;
                 const { showGraphs } = this.state;
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     bookId: tabularBook,
                     highlights: this.getHighlightsForTabular(filteredEntries),
                     onClick: this.handleHighlightClick,
@@ -272,16 +274,20 @@ export default class LeftPane extends React.PureComponent {
                         isPrivate,
                         categoryEditor,
                     },
+                    projectRole: {
+                        entryPermissions = {},
+                    },
                 } = this.props;
 
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     leadId,
                     projectId,
                     showNlp: !isPrivate,
                     showNer: !isPrivate,
                     showCategoryEditor: isTruthy(categoryEditor),
                     onEntryAdd: this.handleEntryAdd,
+                    disableEntryAdd: !entryPermissions.create,
                 };
             },
             mount: true,
@@ -299,7 +305,7 @@ export default class LeftPane extends React.PureComponent {
                 } = this.props;
 
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     lead,
                     handleScreenshot: this.handleScreenshot,
                     showScreenshot: entryPermissions.create,
@@ -314,7 +320,7 @@ export default class LeftPane extends React.PureComponent {
             rendererParams: () => {
                 const { images } = this.state;
                 return {
-                    className: styles.container,
+                    className: containerClassName,
                     images,
                 };
             },

@@ -20,26 +20,27 @@ import {
     ENTRY_STATUS,
 } from '#entities/editEntries';
 import {
-    leadIdFromRoute,
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
-    editEntriesStatusesSelector,
 
+    editEntriesAddEntryAction,
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetEntryCommentsCountAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
-    routeSelector,
 } from '#redux';
 import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
 
+import {
+    calculateFirstTimeAttributes,
+} from '../entryDataCalculator';
 import WidgetFaram from '../WidgetFaram';
-import LeadPane from './LeadPane';
+import LeftPane from './LeftPane';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -49,15 +50,14 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
-    routeUrl: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entryStates: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
-    onExcerptCreate: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    addEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -72,18 +72,15 @@ const defaultProps = {
 
 
 const mapStateToProps = (state, props) => ({
-    leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
-    routeUrl: routeSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
-    statuses: editEntriesStatusesSelector(state),
-
     tabularFields: fieldsMapForTabularBookSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
+    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
@@ -101,26 +98,27 @@ export default class Overview extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const entryIdFromRoute = urlParams.get('entry_id');
         const {
             setSelectedEntryKey,
             leadId,
             entries,
         } = this.props;
-        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
-        const entryLocalId = entryAccessor.key(entry);
 
         this.state = {
             mountModalButton: false,
         };
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryIdFromRoute = urlParams.get('entry_id');
+        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
+        const entryLocalId = entryAccessor.key(entry);
         if (entryLocalId) {
             setSelectedEntryKey({
                 leadId,
                 key: entryLocalId,
             });
         }
+
         this.showInitial = !!entryLocalId;
     }
 
@@ -165,9 +163,33 @@ export default class Overview extends React.PureComponent {
         });
     }
 
+    // can only create entry
+    handleExcerptCreate = (excerptData) => {
+        const {
+            leadId,
+            analysisFramework,
+            lead,
+        } = this.props;
+
+        const { type, value } = excerptData;
+
+        this.props.addEntry({
+            leadId,
+            entry: {
+                analysisFramework: analysisFramework.id,
+                excerptType: type,
+                excerptValue: value,
+                attributes: calculateFirstTimeAttributes(
+                    {},
+                    analysisFramework,
+                    lead,
+                ),
+            },
+        });
+    }
+
     handleEmptyExcerptCreate = () => {
-        // NOTE: onExcerptCreate should be passed to widgetfaram as well
-        this.props.onExcerptCreate({ type: 'excerpt', value: '' });
+        this.handleExcerptCreate({ type: 'excerpt', value: '' });
     }
 
     handleEntryDelete = () => {
@@ -200,16 +222,19 @@ export default class Overview extends React.PureComponent {
     render() {
         const {
             entry,
-            leadId, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
-            entries, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            leadId,
+            entries,
+            lead,
+            analysisFramework,
             statuses,
             selectedEntryKey,
             entryStates,
-            routeUrl, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            widgets,
 
             tabularFields,
-
-            ...otherProps
         } = this.props;
 
         const { mountModalButton } = this.state;
@@ -219,16 +244,18 @@ export default class Overview extends React.PureComponent {
 
         const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
-        const field = tabularFields[fieldId];
 
         return (
             <ResizableH
                 className={styles.overview}
                 leftChild={
-                    <LeadPane
+                    <LeftPane
                         className={styles.leftPanel}
-                        onExcerptCreate={this.props.onExcerptCreate}
+                        onExcerptCreate={this.handleExcerptCreate}
                         tabularFields={tabularFields}
+                        selectedEntryKey={this.props.selectedEntryKey}
+                        filteredEntries={this.props.entries}
+                        statuses={this.props.statuses}
                     />
                 }
                 rightChild={
@@ -246,13 +273,43 @@ export default class Overview extends React.PureComponent {
                                         />
                                     }
                                 />
+                                {mountModalButton && (
+                                    <ModalButton
+                                        className={
+                                            _cs(
+                                                styles.entryCommentButton,
+                                                unresolvedCommentCount > 0 && styles.accented,
+                                            )
+                                        }
+                                        disabled={isFalsy(entryAccessor.serverId(entry))}
+                                        initialShowModal={this.showInitial}
+                                        modal={
+                                            <EntryCommentModal
+                                                entryServerId={entryAccessor.serverId(entry)}
+                                                onCommentsCountChange={
+                                                    this.handleCommentsCountChange
+                                                }
+                                            />
+                                        }
+                                    >
+                                        <Icon
+                                            name="chat"
+                                            className={styles.commentIcon}
+                                        />
+                                        {unresolvedCommentCount > 0 &&
+                                            <div className={styles.commentCount}>
+                                                {unresolvedCommentCount}
+                                            </div>
+                                        }
+                                    </ModalButton>
+                                )}
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
                                     render={
                                         <DangerButton
                                             onClick={this.handleEntryDelete}
                                             disabled={pending}
-                                            iconName="remove"
+                                            iconName="delete"
                                             title={_ts('editEntry.overview', 'deleteExcerptTooltip')}
                                         />
                                     }
@@ -270,34 +327,6 @@ export default class Overview extends React.PureComponent {
                                 showLabel={false}
                                 hideClearButton
                             />
-                            {mountModalButton && (
-                                <ModalButton
-                                    className={
-                                        _cs(
-                                            styles.entryCommentButton,
-                                            unresolvedCommentCount > 0 && styles.accented,
-                                        )
-                                    }
-                                    disabled={isFalsy(entryAccessor.serverId(entry))}
-                                    initialShowModal={this.showInitial}
-                                    modal={
-                                        <EntryCommentModal
-                                            entryServerId={entryAccessor.serverId(entry)}
-                                            onCommentsCountChange={this.handleCommentsCountChange}
-                                        />
-                                    }
-                                >
-                                    <Icon
-                                        name="chat"
-                                        className={styles.commentIcon}
-                                    />
-                                    {unresolvedCommentCount > 0 &&
-                                        <div className={styles.commentCount}>
-                                            {unresolvedCommentCount}
-                                        </div>
-                                    }
-                                </ModalButton>
-                            )}
                         </header>
                         <WidgetFaram
                             className={styles.content}
@@ -305,12 +334,18 @@ export default class Overview extends React.PureComponent {
                             // NOTE: removed dismount on key change behavior
                             // to persist active UI state
                             // key={key}
+                            widgetType={VIEW.overview}
                             entry={entry}
                             pending={pending}
-                            widgetType={VIEW.overview}
+                            widgets={widgets}
                             entryState={entryStates[key]}
-                            tabularData={field}
-                            {...otherProps}
+                            tabularData={tabularFields[fieldId]}
+                            schema={schema}
+                            computeSchema={computeSchema}
+                            onEntryStateChange={onEntryStateChange}
+                            analysisFramework={analysisFramework}
+                            lead={lead}
+                            leadId={leadId}
                         />
                     </React.Fragment>
                 }

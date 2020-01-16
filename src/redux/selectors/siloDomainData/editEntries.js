@@ -6,7 +6,9 @@ import {
 } from '@togglecorp/fujs';
 import {
     entryAccessor,
+    entryGroupAccessor,
     calculateEntryState,
+    calculateEntryGroupState,
 } from '#entities/editEntries';
 
 import {
@@ -37,6 +39,19 @@ export const editEntriesLeadSelector = createSelector(
     editEntry => editEntry.lead || emptyObject,
 );
 
+export const editEntriesLabelsSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.labels || emptyArray,
+
+    editEntry => [...(editEntry.labels || emptyArray)].sort(
+        (a, b) => (
+            compareNumber(a.order, b.order)
+            || compareNumber(a.id, b.id)
+        ),
+    ),
+
+);
+
 export const editEntriesEntriesSelector = createSelector(
     editEntriesForLeadSelector,
     editEntry => [...(editEntry.entries || emptyArray)].sort(
@@ -44,6 +59,41 @@ export const editEntriesEntriesSelector = createSelector(
             compareNumber(entryAccessor.order(a), entryAccessor.order(b))
             || compareNumber(entryAccessor.serverId(a), entryAccessor.serverId(b))
         ),
+    ),
+);
+
+export const editEntriesEntryGroupsSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => [...(editEntry.entryGroups || emptyArray)].sort(
+        (a, b) => (
+            compareNumber(entryGroupAccessor.order(a), entryGroupAccessor.order(b))
+            || compareNumber(entryGroupAccessor.serverId(a), entryGroupAccessor.serverId(b))
+        ),
+    ),
+);
+
+export const editEntriesFilteredEntryGroupsSelector = createSelector(
+    editEntriesEntryGroupsSelector,
+    entryGroups => entryGroups.filter(
+        entry => !entryAccessor.isMarkedAsDeleted(entry),
+    ),
+);
+
+export const editEntriesEntryGroupRestsSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.entryGroupRests || emptyObject,
+);
+
+export const editEntriesEntryGroupStatusesSelector = createSelector(
+    editEntriesEntryGroupsSelector,
+    editEntriesEntryGroupRestsSelector,
+    (entryGroups, rests) => listToMap(
+        entryGroups,
+        entryGroup => entryGroupAccessor.key(entryGroup),
+        (entryGroup, key) => calculateEntryGroupState({
+            entryGroup,
+            restPending: !!rests[key],
+        }),
     ),
 );
 

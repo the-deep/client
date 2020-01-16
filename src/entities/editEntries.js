@@ -11,33 +11,57 @@ import {
     pick,
 } from '#utils/common';
 
+const getLocalData = (item = {}) => item.localData;
+const getData = (item = {}) => item.data;
+const getServerData = (item = {}) => item.serverData;
+
+const getLocalDataSafe = item => getLocalData(item) || {};
+const getDataSafe = item => getData(item) || {};
+const getServerDataSafe = item => getServerData(item) || {};
+
 export const entryAccessor = {
-    localData: (entry = {}) => entry.localData,
-    data: (entry = {}) => entry.data,
-    serverData: (entry = {}) => entry.serverData,
+    localData: getLocalData,
+    data: getData,
+    serverData: getServerData,
 
-    key: (entry = {}) => (entry.localData || {}).id,
-    error: (entry = {}) => (entry.localData || {}).error,
-    color: (entry = {}) => (entry.localData || {}).color,
-    isMarkedAsDeleted: (entry = {}) => !!(entry.localData || {}).isMarkedAsDeleted,
-    isPristine: (entry = {}) => !!(entry.localData || {}).isPristine,
-    hasError: (entry = {}) => !!(entry.localData || {}).hasError,
-    hasServerError: (entry = {}) => !!(entry.localData || {}).hasServerError,
+    key: entry => getLocalDataSafe(entry).id,
+    error: entry => getLocalDataSafe(entry).error,
+    color: entry => getLocalDataSafe(entry).color,
+    isMarkedAsDeleted: entry => getLocalDataSafe(entry).isMarkedAsDeleted,
+    isPristine: entry => getLocalDataSafe(entry).isPristine,
+    hasError: entry => getLocalDataSafe(entry).hasError,
+    hasServerError: entry => getLocalDataSafe(entry).hasServerError,
 
-    dataAttributes: (entry = {}) => (entry.data || {}).attributes,
-    dataAttribute: (entry = {}, attributeId) => (
-        (((entry.data || {}).attributes || {})[attributeId] || {}).data
+    dataAttributes: entry => getDataSafe(entry).attributes,
+    dataAttribute: (entry, attributeId) => (
+        ((getDataSafe(entry).attributes || {})[attributeId] || {}).data
     ),
-    entryType: (entry = {}) => (entry.data || {}).entryType,
-    excerpt: (entry = {}) => (entry.data || {}).excerpt,
-    tabularField: (entry = {}) => (entry.data || {}).tabularField,
-    order: (entry = {}) => (entry.data || {}).order,
-    serverId: (entry = {}) => (entry.data || {}).id,
+    entryType: entry => getDataSafe(entry).entryType,
+    excerpt: entry => getDataSafe(entry).excerpt,
+    tabularField: entry => getDataSafe(entry).tabularField,
+    order: entry => getDataSafe(entry).order,
+    serverId: entry => getDataSafe(entry).id,
 
-    unresolvedCommentCount: (entry = {}) =>
-        (entry.serverData || {}).unresolvedCommentCount || 0,
+    unresolvedCommentCount: entry => getServerDataSafe(entry).unresolvedCommentCount || 0,
+    versionId: entry => getServerDataSafe(entry).versionId,
+};
 
-    versionId: (entry = {}) => (entry.serverData || {}).versionId,
+export const entryGroupAccessor = {
+    localData: getLocalData,
+    data: getData,
+    serverData: getServerData,
+
+    key: entryGroup => getLocalDataSafe(entryGroup).id,
+    error: entryGroup => getLocalDataSafe(entryGroup).error,
+    isMarkedAsDeleted: entryGroup => getLocalDataSafe(entryGroup).isMarkedAsDeleted,
+    isPristine: entryGroup => getLocalDataSafe(entryGroup).isPristine,
+    hasError: entryGroup => getLocalDataSafe(entryGroup).hasError,
+    hasServerError: entryGroup => getLocalDataSafe(entryGroup).hasServerError,
+
+    order: entryGroup => getDataSafe(entryGroup).order,
+    serverId: entryGroup => getDataSafe(entryGroup).id,
+
+    versionId: entryGroup => getServerDataSafe(entryGroup).versionId,
 };
 
 export const ENTRY_STATUS = {
@@ -55,11 +79,11 @@ export const ENTRY_STATUS = {
     nonPristine: 'nonPristine',
 };
 
-export const calculateEntryState = ({ entry, restPending }) => {
-    const serverId = entryAccessor.serverId(entry);
-    const pristine = entryAccessor.isPristine(entry);
-    const hasLocalError = entryAccessor.hasError(entry);
-    const hasServerError = entryAccessor.hasServerError(entry);
+const calculateState = ({ item, restPending, accessor }) => {
+    const serverId = accessor.serverId(item);
+    const pristine = accessor.isPristine(item);
+    const hasLocalError = accessor.hasError(item);
+    const hasServerError = accessor.hasServerError(item);
 
     if (restPending) {
         return ENTRY_STATUS.requesting;
@@ -75,19 +99,22 @@ export const calculateEntryState = ({ entry, restPending }) => {
     return ENTRY_STATUS.pristine;
 };
 
-export const DIFF_ACTION = {
-    // do nothing to the local state
-    noop: 'noop',
-    // add it to list of entry in local state
-    add: 'add',
-    // remote it from the list of entry in local state
-    remove: 'remove',
-    // update it to the list of entry in local state
-    replace: 'replace',
-};
+export const calculateEntryState = ({ entry, restPending }) => (
+    calculateState({ item: entry, restPending, accessor: entryAccessor })
+);
+
+export const calculateEntryGroupState = ({ entryGroup, restPending }) => (
+    calculateState({ item: entryGroup, restPending, accessor: entryGroupAccessor })
+);
 
 export const createEntry = ({
-    key, serverId, versionId, data = {}, isPristine = false, hasError = false, color,
+    key,
+    serverId,
+    versionId,
+    data = {},
+    isPristine = false,
+    hasError = false,
+    color,
 }) => {
     const keysToPick = [
         'excerpt',
@@ -142,51 +169,113 @@ export const createEntry = ({
     return update(entrySkeleton, settings);
 };
 
-export const createDiff = (locals, remotes) => {
+export const createEntryGroup = ({
+    key,
+    serverId,
+    versionId,
+    data = {},
+    isPristine = false,
+    hasError = false,
+}) => {
+    const keysToPick = [
+        'order',
+        'title',
+        'selections',
+        'createdAt',
+    ];
+    const pickedData = pick(data, keysToPick);
+
+    const entrySkeleton = {
+        localData: {
+            id: undefined,
+            isPristine: true,
+            hasError: false,
+            hasSeverError: false,
+            error: undefined,
+            isMarkedAsDeleted: false,
+        },
+        serverData: {
+            versionId: undefined,
+        },
+        data: {
+            id: undefined, // serverId
+            order: 0,
+        },
+    };
+    const settings = {
+        localData: {
+            id: { $set: key },
+            isPristine: { $set: isPristine },
+            hasError: { $set: hasError },
+            error: { $set: undefined },
+        },
+        serverData: {
+            versionId: { $set: versionId },
+        },
+        data: {
+            $set: { id: serverId, ...pickedData },
+        },
+    };
+
+    return update(entrySkeleton, settings);
+};
+
+export const DIFF_ACTION = {
+    // do nothing to the local state
+    noop: 'noop',
+    // add it to list of item in local state
+    add: 'add',
+    // remote it from the list of item in local state
+    remove: 'remove',
+    // update it to the list of item in local state
+    replace: 'replace',
+};
+
+export const createDiff = (locals, remotes, accessor = entryAccessor, create = createEntry) => {
     // accumulate action 'add'
-    const localEntriesMapByServerId = listToMap(
+    const localItemsMapByServerId = listToMap(
         locals,
-        entryAccessor.serverId,
-        (entry, key) => (key ? true : undefined),
+        accessor.serverId,
+        (item, key) => (key ? true : undefined),
     );
-    const localEntriesMapByKey = listToMap(
+    const localItemsMapByKey = listToMap(
         locals,
-        entryAccessor.key,
-        (entry, key) => (key ? true : undefined),
+        accessor.key,
+        (item, key) => (key ? true : undefined),
     );
 
     const actionsFoo = remotes.reduce(
-        (acc, remoteEntry) => {
+        (acc, remoteItem) => {
             const {
                 id: remoteServerId,
                 versionId: remoteVersionId,
                 clientId: remoteKey,
-            } = remoteEntry;
+            } = remoteItem;
 
             // NOTE: there may not be a clientId
 
-            // Try to find localEntry first be serverId then by clientId
-            // NOTE: Sometimes, a entry is saved in server but the serverId
+            // Try to find localItem first be serverId then by clientId
+            // NOTE: Sometimes, a item is saved in server but the serverId
             // hasn't been updated locally because of network error (or some exception in code)
-            // which can result in duplicated entries locally
-            const localEntry = localEntriesMapByServerId[remoteServerId]
-                || (remoteKey ? localEntriesMapByKey[remoteKey] : undefined);
+            // which can result in duplicated items locally
+            const localItem = localItemsMapByServerId[remoteServerId]
+                || (remoteKey ? localItemsMapByKey[remoteKey] : undefined);
 
-            if (!localEntry) {
-                // NOTE: New remote entry has been added
-                const localId = remoteKey || randomString();
-                const newEntry = createEntry({
+            if (!localItem) {
+                // NOTE: New remote item has been added
+                const localId = remoteKey || randomString(16);
+                const newItem = create({
                     key: localId,
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
-                    data: remoteEntry,
+                    data: remoteItem,
                     isPristine: true,
                     hasError: false,
                 });
                 acc.push({
                     serverId: remoteServerId,
                     action: DIFF_ACTION.add,
-                    entry: newEntry,
+                    item: newItem,
                 });
             }
             return acc;
@@ -195,38 +284,38 @@ export const createDiff = (locals, remotes) => {
     );
 
     // Accumulate other actions
-    const remoteEntriesMapByServerId = listToMap(remotes, remoteEntry => remoteEntry.id);
-    const remoteEntriesMapByClientId = listToMap(remotes, remoteEntry => remoteEntry.clientId);
+    const remoteItemsMapByServerId = listToMap(remotes, remoteItem => remoteItem.id);
+    const remoteItemsMapByClientId = listToMap(remotes, remoteItem => remoteItem.clientId);
 
     const actionsBar = locals.reduce(
-        (arr, localEntry) => {
-            const localId = entryAccessor.key(localEntry);
-            const localServerId = entryAccessor.serverId(localEntry);
-            const localVersionId = entryAccessor.versionId(localEntry);
+        (arr, localItem) => {
+            const localId = accessor.key(localItem);
+            const localServerId = accessor.serverId(localItem);
+            const localVersionId = accessor.versionId(localItem);
 
-            const remoteEntry = remoteEntriesMapByServerId[localServerId]
-                || remoteEntriesMapByClientId[localId];
+            const remoteItem = remoteItemsMapByServerId[localServerId]
+                || remoteItemsMapByClientId[localId];
 
             if (
-                remoteEntry && (
-                    isFalsy(localVersionId) || localVersionId < remoteEntry.versionId
+                remoteItem && (
+                    isFalsy(localVersionId) || localVersionId < remoteItem.versionId
                 )
             ) {
-                // this entry was updated on server
-                const { id: remoteServerId, versionId: remoteVersionId } = remoteEntry;
-                const newEntry = createEntry({
+                // this item was updated on server
+                const { id: remoteServerId, versionId: remoteVersionId } = remoteItem;
+                const newItem = create({
                     key: localId,
                     serverId: remoteServerId, // here
                     versionId: remoteVersionId,
-                    data: remoteEntry,
+                    data: remoteItem,
                     isPristine: true,
                     hasError: false,
                 });
 
-                const localPristine = entryAccessor.isPristine(localEntry);
-                const localError = entryAccessor.hasError(localEntry);
-                const localValues = entryAccessor.data(localEntry);
-                const newEntryOnSkip = createEntry({
+                const localPristine = accessor.isPristine(localItem);
+                const localError = accessor.hasError(localItem);
+                const localValues = accessor.data(localItem);
+                const newItemOnSkip = create({
                     key: localId,
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
@@ -239,19 +328,19 @@ export const createDiff = (locals, remotes) => {
                     id: localId,
                     serverId: remoteServerId,
                     action: DIFF_ACTION.replace,
-                    entry: newEntry,
-                    entryOnSkip: newEntryOnSkip,
+                    item: newItem,
+                    itemOnSkip: newItemOnSkip,
                 });
-            } else if (!remoteEntry && isTruthy(localServerId)) {
-                // this entry was removed from server
+            } else if (!remoteItem && isTruthy(localServerId)) {
+                // this item was removed from server
                 arr.push({
                     id: localId,
                     serverId: localServerId,
                     action: DIFF_ACTION.remove,
                 });
             } else {
-                // this local entry has not been saved
-                // or the entry has not changed in server
+                // this local item has not been saved
+                // or the item has not changed in server
                 arr.push({
                     id: localId,
                     action: DIFF_ACTION.noop,
@@ -265,35 +354,35 @@ export const createDiff = (locals, remotes) => {
     return [...actionsFoo, ...actionsBar];
 };
 
-export const applyDiff = (localEntries = [], diffs = []) => (
+export const applyDiff = (localItems = [], diffs = [], accessor = entryAccessor) => (
     diffs
         .reduce(
             (acc, diff) => {
-                const index = localEntries.findIndex(e => entryAccessor.key(e) === diff.id);
+                const index = localItems.findIndex(e => accessor.key(e) === diff.id);
                 switch (diff.action) {
                     case DIFF_ACTION.add: {
-                        const remoteEntry = diff.entry;
+                        const remoteItem = diff.item;
                         if (!diff.skip) {
-                            acc.push(remoteEntry);
+                            acc.push(remoteItem);
                         } // else don't push
                         break;
                     }
                     case DIFF_ACTION.remove:
                         if (diff.skip) {
-                            acc.push(localEntries[index]);
+                            acc.push(localItems[index]);
                         } // else skip adding to push
                         break;
                     case DIFF_ACTION.replace: {
                         if (!diff.skip) {
-                            acc.push(diff.entry);
+                            acc.push(diff.item);
                         } else {
-                            acc.push(diff.entryOnSkip);
+                            acc.push(diff.itemOnSkip);
                         }
                         break;
                     }
                     case DIFF_ACTION.noop: {
                         // push as it is
-                        acc.push(localEntries[index]);
+                        acc.push(localItems[index]);
                         break;
                     }
                     default:
@@ -305,11 +394,11 @@ export const applyDiff = (localEntries = [], diffs = []) => (
             [],
         )
         .sort((a, b) => {
-            const aValue = entryAccessor.data(a);
+            const aValue = accessor.data(a);
             const aOrder = aValue.order;
             const aCreatedAt = aValue.createdAt;
 
-            const bValue = entryAccessor.data(b);
+            const bValue = accessor.data(b);
             const bOrder = bValue.order;
             const bCreatedAt = bValue.createdAt;
 

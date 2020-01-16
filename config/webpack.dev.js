@@ -11,6 +11,7 @@ const getEnvVariables = require('./env.js');
 
 const appBase = process.cwd();
 const eslintFile = path.resolve(appBase, '.eslintrc-loader.js');
+const nodeModulesSrc = path.resolve(appBase, 'node_modules');
 const appSrc = path.resolve(appBase, 'src/');
 const appDist = path.resolve(appBase, 'build/');
 const appIndexJs = path.resolve(appBase, 'src/index.js');
@@ -71,6 +72,7 @@ module.exports = (env) => {
                 {
                     test: /\.(js|jsx|ts|tsx)$/,
                     include: appSrc,
+                    exclude: nodeModulesSrc,
                     use: [
                         'babel-loader',
                         {
@@ -84,6 +86,7 @@ module.exports = (env) => {
                 {
                     test: /\.scss$/,
                     include: appSrc,
+                    exclude: nodeModulesSrc,
                     use: [
                         'style-loader',
                         {
@@ -106,6 +109,7 @@ module.exports = (env) => {
                 },
                 {
                     test: /\.(png|jpg|gif|svg)$/,
+                    exclude: nodeModulesSrc,
                     use: [
                         {
                             loader: 'file-loader',

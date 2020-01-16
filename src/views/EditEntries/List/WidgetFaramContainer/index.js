@@ -18,7 +18,6 @@ import { entryAccessor } from '#entities/editEntries';
 import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesSetEntryCommentsCountAction,
-    leadIdFromRoute,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
@@ -40,6 +39,8 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+
+    index: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -49,17 +50,13 @@ const defaultProps = {
     entry: undefined,
 };
 
-const mapStateToProps = state => ({
-    leadId: leadIdFromRoute(state),
-});
-
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(undefined, mapDispatchToProps)
 export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -119,8 +116,15 @@ export default class WidgetFaramContainer extends React.PureComponent {
             pending,
             widgetType,
             entry,
-
-            ...otherProps
+            index,
+            entryState,
+            tabularData,
+            schema,
+            computeSchema,
+            onEntryStateChange,
+            analysisFramework,
+            lead,
+            leadId,
         } = this.props;
 
         const {
@@ -137,28 +141,10 @@ export default class WidgetFaramContainer extends React.PureComponent {
                 className={_cs(classNameFromProps, styles.widgetFaramContainer)}
             >
                 <header className={_cs('widget-container-header', styles.header)}>
-                    <Cloak
-                        hide={this.shouldHideEntryDelete}
-                        render={
-                            <DangerButton
-                                iconName="delete"
-                                title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
-                                onClick={this.handleEntryDelete}
-                                disabled={pending}
-                            />
-                        }
-                    />
-                    <Cloak
-                        hide={this.shouldHideEntryEdit}
-                        render={
-                            <WarningButton
-                                onClick={this.handleEdit}
-                                title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
-                                iconName="edit"
-                                // NOTE: no need to disable edit on save pending
-                            />
-                        }
-                    />
+                    <h3 className={styles.heading}>
+                        {/* FIXME: use strings */}
+                        {`Entry ${index + 1}`}
+                    </h3>
                     <ModalButton
                         disabled={isFalsy(entryServerId)}
                         className={
@@ -184,15 +170,47 @@ export default class WidgetFaramContainer extends React.PureComponent {
                             </div>
                         }
                     </ModalButton>
+                    <Cloak
+                        hide={this.shouldHideEntryEdit}
+                        render={
+                            <WarningButton
+                                className={styles.button}
+                                onClick={this.handleEdit}
+                                title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
+                                iconName="edit"
+                                // NOTE: no need to disable edit on save pending
+                            />
+                        }
+                    />
+                    <Cloak
+                        hide={this.shouldHideEntryDelete}
+                        render={
+                            <DangerButton
+                                className={styles.button}
+                                iconName="delete"
+                                title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
+                                onClick={this.handleEntryDelete}
+                                disabled={pending}
+                            />
+                        }
+                    />
                 </header>
                 <WidgetFaram
                     className={_cs('widget', styles.widget)}
-                    entry={entry}
-                    widgets={widgets}
-                    pending={pending}
                     widgetType={widgetType}
+                    entry={entry}
+                    pending={pending}
+                    widgets={widgets}
                     actionComponent={HeaderComponent}
-                    {...otherProps}
+
+                    entryState={entryState}
+                    tabularData={tabularData}
+                    schema={schema}
+                    computeSchema={computeSchema}
+                    onEntryStateChange={onEntryStateChange}
+                    analysisFramework={analysisFramework}
+                    lead={lead}
+                    leadId={leadId}
                 />
             </div>
         );

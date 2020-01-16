@@ -192,7 +192,7 @@ export function isLeadNextDisabled(leads, activeLeadKey) {
 }
 
 export function getNewLeadKey(prefix = 'lead') {
-    const uid = randomString();
+    const uid = randomString(16);
     return `${prefix}-${uid}`;
 }
 

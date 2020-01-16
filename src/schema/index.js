@@ -11,6 +11,7 @@ import connectors from './connectors';
 import userExports from './userExports';
 import token from './token';
 import userGroups from './userGroups';
+import entryGroups from './entryGroups';
 import users from './users';
 import analysisFrameworks from './analysisFrameworks';
 import assessmentRegistry from './assessmentRegistry';
@@ -128,6 +129,7 @@ const dict = new Dict(
     ...userExports,
     ...token,
     ...userGroups,
+    ...entryGroups,
     ...users,
     ...analysisFrameworks,
     ...assessmentRegistry,

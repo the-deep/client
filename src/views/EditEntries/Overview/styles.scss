@@ -40,26 +40,6 @@
                 padding: 0 var(--spacing-medium);
             }
 
-            .entry-comment-button {
-                display: flex;
-                align-items: center;
-                margin-right: var(--spacing-medium);
-                padding: var(--spacing-extra-small) var(--spacing-small);
-
-                .comment-count {
-                    padding-left: var(--spacing-small);
-                }
-
-                .comment-icon {
-                    font-size: var(--font-size-large);
-                }
-
-                &.accented {
-                    border-color: var(--color-accent);
-                    color: var(--color-accent);
-                }
-            }
-
             .action-buttons {
                 display: flex;
                 flex-shrink: 0;
@@ -69,8 +49,29 @@
                 }
 
                 .add-new-entry-button {
-                    margin-right: var(--spacing-extra-small);
+                    margin-right: var(--spacing-medium);
                 }
+
+                .entry-comment-button {
+                    display: flex;
+                    align-items: center;
+                    margin-right: var(--spacing-extra-small);
+                    padding: var(--spacing-extra-small) var(--spacing-small);
+
+                    .comment-count {
+                        padding-left: var(--spacing-small);
+                    }
+
+                    .comment-icon {
+                        font-size: var(--font-size-large);
+                    }
+
+                    &.accented {
+                        border-color: var(--color-accent);
+                        color: var(--color-accent);
+                    }
+                }
+
             }
         }
 

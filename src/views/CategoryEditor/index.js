@@ -306,7 +306,7 @@ export default class CategoryEditor extends React.PureComponent {
     }
 
     addNewCategory = (title) => {
-        const key = randomString();
+        const key = randomString(16);
         const newCategory = {
             categoryEditorId: this.props.categoryEditorId,
             id: key,
@@ -326,7 +326,7 @@ export default class CategoryEditor extends React.PureComponent {
 
     addNewSubcategory = ({ title, description }) => {
         const { newSubcategoryLevel: level } = this;
-        const id = randomString();
+        const id = randomString(16);
         this.props.addNewSubcategory({
             categoryEditorId: this.props.categoryEditorId,
             level,

@@ -3,10 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 import produce from 'immer';
+import memoize from 'memoize-one';
 
-import { reverseRoute } from '@togglecorp/fujs';
+import { reverseRoute, listToMap, isDefined } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
+import { FgRestBuilder } from '#rsu/rest';
 import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import update from '#rsu/immutable-update';
@@ -20,9 +22,33 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 
 import BackLink from '#components/general/BackLink';
 import Cloak from '#components/general/Cloak';
-import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
+import {
+    createDiff,
+    createEntryGroup,
+    getApplicableDiffCount,
+    getApplicableAndModifyingDiffCount,
+    entryAccessor,
+    entryGroupAccessor,
+    ENTRY_STATUS,
+} from '#entities/editEntries';
 
-import { RequestCoordinator } from '#request';
+import {
+    createUrlForDeleteEntryGroup,
+    createParamsForEntryGroupCreate,
+    createParamsForEntryGroupEdit,
+    createUrlForEntryGroupEdit,
+    createUrlForEntryGroupCreate,
+    createUrlForDeleteEntry,
+    createParamsForDeleteEntry,
+    createParamsForEntryCreate,
+    createParamsForEntryEdit,
+    createUrlForEntryEdit,
+    urlForEntryCreate,
+} from '#rest';
+
+import schemaValidator from '#schema';
+
+import { RequestCoordinator, RequestClient } from '#request';
 import { pathNames } from '#constants';
 import {
     leadIdFromRoute,
@@ -36,6 +62,7 @@ import {
     editEntriesSchemaSelector,
     editEntriesComputeSchemaSelector,
     editEntriesStatusesSelector,
+    editEntriesEntryGroupStatusesSelector,
 
     editEntriesAddEntryAction,
     editEntriesClearEntriesAction,
@@ -46,162 +73,365 @@ import {
     editEntriesUpdateEntriesBulkAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
+    editEntriesSetEntryGroupErrorsAction,
     editEntriesSetExcerptAction,
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
+    editEntriesResetEntryGroupUiStateAction,
+    editEntriesSetLabelsAction,
+    editEntriesEntryGroupsSelector,
+    editEntriesSetEntryGroupsAction,
+    editEntriesEntryGroupsClearEntriesAction,
+    editEntriesRemoveEntryGroupAction,
+    editEntriesSetEntryGroupPendingAction,
+    editEntriesSaveEntryGroupAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
-    activeProjectRoleSelector,
 } from '#redux';
 import notify from '#notify';
 import _ts from '#ts';
 import { VIEW } from '#widgets';
 
-import EditEntryDataRequest from './requests/EditEntryDataRequest';
-import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
-import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
-
-import {
-    calculateEntryColor,
-    calculateFirstTimeAttributes,
-} from './entryDataCalculator';
+import { calculateEntryColor } from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
+import Group from './Group';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     leadId: PropTypes.number.isRequired,
-    projectId: PropTypes.number.isRequired,
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-
-    addEntry: PropTypes.func.isRequired,
-    clearEntries: PropTypes.func.isRequired,
-    removeEntry: PropTypes.func.isRequired,
-    saveEntry: PropTypes.func.isRequired,
-    setAnalysisFramework: PropTypes.func.isRequired,
-    setEntries: PropTypes.func.isRequired,
-    updateEntriesBulk: PropTypes.func.isRequired,
-    setEntryData: PropTypes.func.isRequired,
-    setEntryError: PropTypes.func.isRequired,
-    setExcerpt: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
-    setLead: PropTypes.func.isRequired,
-    setPending: PropTypes.func.isRequired,
-    setRegions: PropTypes.func.isRequired,
-
+    entryGroupStatuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     resetUiState: PropTypes.func.isRequired,
     routeUrl: PropTypes.string.isRequired,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+
+    entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
+    setAnalysisFramework: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    setEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setLead: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setRegions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setEntriesCommentsCount: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    resetEntryGroupUiState: PropTypes.func.isRequired,
+
+    clearEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    clearEntryGroups: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    removeEntry: PropTypes.func.isRequired,
+    removeEntryGroup: PropTypes.func.isRequired,
+    saveEntry: PropTypes.func.isRequired,
+    saveEntryGroup: PropTypes.func.isRequired,
+    updateEntriesBulk: PropTypes.func.isRequired,
+    setEntryError: PropTypes.func.isRequired,
+    setEntryGroupError: PropTypes.func.isRequired,
+    setPending: PropTypes.func.isRequired,
+    setEntryGroupPending: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    projectRole: {},
     analysisFramework: undefined,
     entries: [],
+    entryGroups: [],
     statuses: {},
+    entryGroupStatuses: {},
     schema: {},
     computeSchema: {},
 };
 
 const mapStateToProps = state => ({
-    projectRole: activeProjectRoleSelector(state),
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
     entries: editEntriesEntriesSelector(state),
+    entryGroups: editEntriesEntryGroupsSelector(state),
     lead: editEntriesLeadSelector(state),
     leadId: leadIdFromRoute(state),
     projectId: projectIdFromRoute(state),
     schema: editEntriesSchemaSelector(state),
     computeSchema: editEntriesComputeSchemaSelector(state),
     statuses: editEntriesStatusesSelector(state),
+    entryGroupStatuses: editEntriesEntryGroupStatusesSelector(state),
     routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
+    clearEntryGroups: params => dispatch(editEntriesEntryGroupsClearEntriesAction(params)),
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
+    removeEntryGroup: params => dispatch(editEntriesRemoveEntryGroupAction(params)),
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
+    saveEntryGroup: params => dispatch(editEntriesSaveEntryGroupAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    setEntryGroups: params => dispatch(editEntriesSetEntryGroupsAction(params)),
     setEntriesCommentsCount: params => dispatch(editEntriesSetEntriesCommentsCountAction(params)),
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
+    setEntryGroupError: params => dispatch(editEntriesSetEntryGroupErrorsAction(params)),
     setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
+    setEntryGroupPending: params => dispatch(editEntriesSetEntryGroupPendingAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
+    resetEntryGroupUiState: params => dispatch(editEntriesResetEntryGroupUiStateAction(params)),
+    setLabels: params => dispatch(editEntriesSetLabelsAction(params)),
 });
 
-@RequestCoordinator
+const requestOptions = {
+    editEntryDataRequest: {
+        extras: {
+            schemaName: 'entriesForEditEntriesGetResponse',
+        },
+        url: ({ props }) => `/v2/edit-entries-data/${props.leadId}/`,
+        onPropsChanged: ['leadId', 'projectId'],
+        onMount: true,
+        onSuccess: ({ response, props, params }) => {
+            const {
+                leadId,
+                projectId: projectIdFromUrl,
+                entries: entriesFromProps,
+                entryGroups: entryGroupsFromProps,
+                setEntriesCommentsCount,
+                setAnalysisFramework,
+                setEntries,
+                setEntryGroups,
+                setGeoOptions,
+                setLead,
+                setRegions,
+                setLabels,
+                clearEntries,
+                clearEntryGroups,
+            } = props;
+            const {
+                setProjectMismatch,
+                cancelMode,
+            } = params;
+
+            if (cancelMode) {
+                clearEntries({ leadId });
+                clearEntryGroups({ leadId });
+            }
+
+            /*
+            const newResponse = {
+                ...response,
+                labels: [
+                    { id: 1, order: 1, title: 'Problem', color: 'red' },
+                    { id: 2, order: 2, title: 'Solution', color: 'orange' },
+                    { id: 3, order: 3, title: 'Remarks', color: 'blue' },
+                ],
+                entryGroups: [
+                    {
+                        id: 1,
+                        clientId: 'pipkbabx',
+                        versionId: 3,
+                        order: 1,
+                        title: 'Group first',
+                        selections: [
+                            {
+                                id: 1,
+                                entryId: 52,
+                                entryClientId: 'xv9sn3a6',
+                                labelId: 1,
+                            },
+                            {
+                                id: 2,
+                                entryId: 53,
+                                entryClientId: 'xlpebkgu',
+                                labelId: 2,
+                            },
+                        ],
+                    },
+                ],
+            };
+            */
+
+            const {
+                lead,
+                geoOptions,
+                analysisFramework,
+                entries,
+                entryGroups,
+                regions,
+                entryLabels,
+            } = response;
+
+            const projectMismatch = projectIdFromUrl !== lead.project;
+            setProjectMismatch(projectMismatch);
+
+            if (projectMismatch) {
+                console.error(`Expected project id to be ${projectIdFromUrl}, but got ${lead.project}`);
+                return;
+            }
+
+            setLead({ lead });
+
+            setAnalysisFramework({ analysisFramework });
+
+            setGeoOptions({
+                projectId: lead.project,
+                locations: geoOptions,
+            });
+
+            setRegions({
+                projectId: lead.project,
+                regions,
+            });
+
+            setEntriesCommentsCount({ leadId, entries });
+
+            setLabels({ leadId, labels: entryLabels });
+
+            // Calculate color for each entry in the diff
+            const diffs = createDiff(cancelMode ? [] : entriesFromProps, entries)
+                .map((diff) => {
+                    if (!diff.item) {
+                        return diff;
+                    }
+
+                    const {
+                        item: { data: { attributes = {} } = {} },
+                    } = diff;
+                    const color = calculateEntryColor(
+                        attributes,
+                        analysisFramework,
+                    );
+                    return {
+                        ...diff,
+                        item: {
+                            ...diff.item,
+                            localData: {
+                                ...diff.item.localData,
+                                color,
+                            },
+                        },
+                    };
+                });
+
+            if (getApplicableDiffCount(diffs) > 0) {
+                setEntries({ leadId, entryActions: diffs });
+
+                if (getApplicableAndModifyingDiffCount(diffs) > 0) {
+                    notify.send({
+                        type: notify.type.WARNING,
+                        title: _ts('editEntry', 'entryUpdate'),
+                        message: _ts('editEntry', 'entryUpdateOverridden'),
+                        duration: notify.duration.SLOW,
+                    });
+                }
+            }
+
+            const entryGroupDiffs = createDiff(
+                cancelMode ? [] : entryGroupsFromProps,
+                entryGroups,
+                entryGroupAccessor,
+                createEntryGroup,
+            );
+            if (getApplicableDiffCount(entryGroupDiffs) > 0) {
+                setEntryGroups({ leadId, entryGroupActions: entryGroupDiffs });
+
+                if (getApplicableAndModifyingDiffCount(entryGroupDiffs) > 0) {
+                    notify.send({
+                        type: notify.type.WARNING,
+                        title: _ts('editEntry', 'entryGroupUpdate'),
+                        message: _ts('editEntry', 'entryGroupUpdateOverridden'),
+                        duration: notify.duration.SLOW,
+                    });
+                }
+            }
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requestOptions)
 export default class EditEntries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static calculateSavableEntries = (entries, statuses) => entries.filter((entry) => {
-        const entryKey = entryAccessor.key(entry);
-        const status = statuses[entryKey];
-        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
-    })
-
     constructor(props) {
         super(props);
 
+        const {
+            requests,
+        } = this.props;
+        requests.editEntryDataRequest.setDefaultParams({
+            setProjectMismatch: (value) => {
+                this.setState({ projectMismatch: value });
+            },
+        });
+
         this.state = {
-            pendingEditEntryData: true,
             pendingSaveAll: false,
+            pendingSaveAllEntryGroup: false,
             projectMismatch: false,
             entryStates: {},
         };
 
         this.views = {
             [VIEW.overview]: {
-                component: () => (
-                    <Overview
-                        // injected inside WidgetFaram
-                        onChange={this.handleChange}
-                        onExcerptChange={this.handleExcerptChange}
-                        onExcerptCreate={this.handleExcerptCreate}
-                        schema={this.props.schema}
-                        computeSchema={this.props.computeSchema}
-                        entryStates={this.state.entryStates}
-                        onEntryStateChange={this.handleEntryStateChange}
-                        bookId={this.props.lead && this.props.lead.tabularBook}
-                    />
-                ),
+                component: Overview,
+                rendererParams: () => ({
+                    // injected inside WidgetFaram
+                    schema: this.props.schema,
+                    computeSchema: this.props.computeSchema,
+                    onEntryStateChange: this.handleEntryStateChange,
+                    analysisFramework: this.props.analysisFramework,
+                    lead: this.props.lead,
+                    leadId: this.props.leadId,
+
+                    entryStates: this.state.entryStates,
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+                    statuses: this.props.statuses,
+                }),
                 wrapContainer: true,
                 lazyMount: false,
                 mount: true,
             },
-
             [VIEW.list]: {
-                component: () => (
-                    <Listing
-                        // NOTE: to re-render Listing when has changes
-                        hash={window.location.hash}
-                        // injected inside WidgetFaram
-                        onChange={this.handleChange}
-                        onExcerptChange={this.handleExcerptChange}
-                        onExcerptCreate={this.handleExcerptCreate}
-                        schema={this.props.schema}
-                        computeSchema={this.props.computeSchema}
-                        entryStates={this.state.entryStates}
-                        onEntryStateChange={this.handleEntryStateChange}
-                        bookId={this.props.lead && this.props.lead.tabularBook}
-                    />
-                ),
+                component: Listing,
+                rendererParams: () => ({
+                    // NOTE: to re-render Listing when has changes
+                    hash: window.location.hash,
+
+                    // injected inside WidgetFaram
+                    schema: this.props.schema,
+                    computeSchema: this.props.computeSchema,
+                    onEntryStateChange: this.handleEntryStateChange,
+                    analysisFramework: this.props.analysisFramework,
+                    lead: this.props.lead,
+                    leadId: this.props.leadId,
+
+                    entryStates: this.state.entryStates,
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+                    statuses: this.props.statuses,
+                }),
+                wrapContainer: true,
+                lazyMount: true,
+                mount: true,
+            },
+            [VIEW.group]: {
+                component: Group,
+                rendererParams: () => ({
+                    leadId: this.props.leadId,
+                    bookId: this.props.lead && this.props.lead.tabularBook,
+                }),
                 wrapContainer: true,
                 lazyMount: true,
                 mount: true,
@@ -211,6 +441,7 @@ export default class EditEntries extends React.PureComponent {
         this.tabs = {
             [VIEW.overview]: _ts('editEntry', 'overviewTabTitle'),
             [VIEW.list]: _ts('editEntry', 'listTabTitle'),
+            [VIEW.group]: _ts('editEntry', 'groupTabTitle'),
         };
 
         this.defaultHash = VIEW.overview;
@@ -236,117 +467,88 @@ export default class EditEntries extends React.PureComponent {
                         duration: notify.duration.MEDIUM,
                     });
                 }
-                this.setState({ pendingSaveAll: false });
+
+                this.setState({
+                    pendingSaveAll: false,
+                    pendingSaveAllEntryGroup: true,
+                }, () => {
+                    this.handleEntryGroupSave();
+                });
             })
             .build();
 
-        this.editEntryDataRequest = new EditEntryDataRequest({
-            getProjectId: () => this.props.projectId,
-            getEntries: () => this.props.entries,
-            setEntriesCommentsCount: this.props.setEntriesCommentsCount,
-            setAnalysisFramework: this.props.setAnalysisFramework,
-            setEntries: this.props.setEntries,
-            setGeoOptions: this.props.setGeoOptions,
-            setLead: this.props.setLead,
-            setRegions: this.props.setRegions,
-            setState: params => this.setState(params),
-            calculateEntryColor,
-        });
-
-        this.savableEntries = EditEntries.calculateSavableEntries(
-            this.props.entries,
-            this.props.statuses,
-        );
-    }
-
-    componentWillMount() {
-        const { leadId, resetUiState } = this.props;
-        resetUiState(leadId);
+        this.saveEntryGroupRequestCoordinator = new CoordinatorBuilder()
+            .maxActiveActors(4)
+            .preSession(() => {
+                this.setState({ pendingSaveAllEntryGroup: true });
+            })
+            .postSession((totalErrors) => {
+                if (totalErrors > 0) {
+                    notify.send({
+                        type: notify.type.ERROR,
+                        title: _ts('editEntry', 'entryGroupSave'),
+                        message: _ts('editEntry', 'entryGroupSaveFailure', { errorCount: totalErrors }),
+                        duration: notify.duration.SLOW,
+                    });
+                } else {
+                    notify.send({
+                        type: notify.type.SUCCESS,
+                        title: _ts('editEntry', 'entryGroupSave'),
+                        message: _ts('editEntry', 'entryGroupSaveSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                }
+                this.setState({ pendingSaveAllEntryGroup: false });
+            })
+            .build();
     }
 
     componentDidMount() {
-        const { leadId, entries, analysisFramework } = this.props;
+        const {
+            leadId,
+            entries,
+            analysisFramework,
+
+            resetUiState,
+            resetEntryGroupUiState,
+            updateEntriesBulk,
+        } = this.props;
+
+        resetUiState(leadId);
+        resetEntryGroupUiState(leadId);
 
         // Update all entries with new color
         if (entries && analysisFramework && entries.length > 0) {
             const bulkData = entries.reduce((acc, entry) => {
                 const entryKey = entryAccessor.key(entry);
                 acc[entryKey] = { localData: {} };
-                acc[entryKey].localData.color = this.calculateEntryColor(
+                acc[entryKey].localData.color = calculateEntryColor(
                     entryAccessor.dataAttributes(entry),
+                    analysisFramework,
                 );
                 return acc;
             }, {});
 
-            this.props.updateEntriesBulk({ leadId, bulkData });
-        }
-
-        this.editEntryDataRequest.init({ leadId });
-        this.editEntryDataRequest.start();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { leadId } = nextProps;
-        if (this.props.leadId !== leadId && leadId) {
-            this.saveRequestCoordinator.stop();
-
-            this.editEntryDataRequest.init({ leadId });
-            this.editEntryDataRequest.start();
-        }
-
-        if (
-            this.props.entries !== nextProps.entries ||
-            this.props.statuses !== nextProps.statuses
-        ) {
-            this.savableEntries = EditEntries.calculateSavableEntries(
-                nextProps.entries,
-                nextProps.statuses,
-            );
+            updateEntriesBulk({ leadId, bulkData });
         }
     }
 
     componentWillUnmount() {
-        this.editEntryDataRequest.stop();
         this.saveRequestCoordinator.stop();
+        this.saveEntryGroupRequestCoordinator.stop();
     }
 
-    // PERMISSION
+    getSavableEntries = memoize((entries, statuses) => entries.filter((entry) => {
+        const entryKey = entryAccessor.key(entry);
+        const status = statuses[entryKey];
+        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
+    }))
 
-    setExcerpt = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
-            console.warn('No permission to edit entry excerpt');
-            return;
-        }
-        this.props.setExcerpt(val);
-    }
-
-    setEntryData = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
-            console.warn('No permission to edit entry');
-            return;
-        }
-        this.props.setEntryData(val);
-    }
-
-    addEntry = (val) => {
-        if (this.shouldDisableEntryCreate()) {
-            console.warn('No permission to create entry');
-            return;
-        }
-        this.props.addEntry(val);
-    }
-
-    // PERMISSIONS
-
-    shouldDisableEntryChange = (entryId) => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.modify && !!entryId;
-    }
-
-    shouldDisableEntryCreate = () => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.create;
-    }
+    getSavableEntryGroups = memoize((entryGroups, statuses) => entryGroups.filter((entryGroup) => {
+        const entryGroupKey = entryAccessor.key(entryGroup);
+        const status = statuses[entryGroupKey];
+        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
+    }))
 
     shouldHideEditLink = () => {
         const {
@@ -357,127 +559,18 @@ export default class EditEntries extends React.PureComponent {
         return !isAdmin;
     }
 
-    // CALCULATIONS
-
-    calculateFirstTimeAttributes = attributes => calculateFirstTimeAttributes(
-        attributes,
-        this.props.analysisFramework,
-        this.props.lead,
-    )
-
-    calculateEntryColor = attributes => calculateEntryColor(
-        attributes,
-        this.props.analysisFramework,
-    )
-
     // APIS
-
-    // can only edit entry
-    handleExcerptChange = ({ type, value }, entryKey, entryId) => {
-        if (!entryKey) {
-            console.warn('There is no entry key while changing excerpt.');
-            // this.handleExcerptCreate({ type, value });
-        } else {
-            this.setExcerpt({
-                leadId: this.props.leadId,
-                key: entryKey,
-                id: entryId,
-                excerptType: type,
-                excerptValue: value,
-            });
-        }
-    }
-
-    // can only create entry
-    handleExcerptCreate = ({ type, value }) => {
-        this.addEntry({
-            leadId: this.props.leadId,
-            entry: {
-                analysisFramework: this.props.analysisFramework.id,
-                excerptType: type,
-                excerptValue: value,
-                attributes: this.calculateFirstTimeAttributes({}),
-            },
-        });
-    }
-
-    // FARAM
-
-    // can edit/create entry
-    // create when 'newEntry' is on info or entryKey is undefined
-    handleChange = (faramValues, faramErrors, faramInfo, entryKey, entryId) => {
-        const { analysisFramework } = this.props;
-        if (faramInfo.action === 'newEntry') {
-            // TODO: if excerpt already exists modify existing entry
-            // instead of creating a new one
-
-            const {
-                excerptType,
-                excerptValue,
-                value,
-                faramElementName,
-            } = faramInfo;
-
-            // Create attribute using faramElementName and value
-            let attributes = value;
-            [...faramElementName].reverse().forEach((key) => {
-                attributes = { [key]: attributes };
-            });
-
-            attributes = this.calculateFirstTimeAttributes(attributes);
-            const color = this.calculateEntryColor(attributes);
-
-            this.addEntry({
-                leadId: this.props.leadId,
-                entry: {
-                    excerptType,
-                    excerptValue,
-                    lead: this.props.leadId,
-                    attributes,
-                    color,
-                    analysisFramework: analysisFramework.id,
-                },
-            });
-        } else if (entryKey === undefined && faramInfo.isComputed) {
-            console.warn('Ignoring entry change if there is no entry key and the change is from entry creation.');
-            // pass
-        } else if (entryKey === undefined) {
-            const excerptValue = '';
-            const excerptType = 'excerpt';
-
-            const attributes = this.calculateFirstTimeAttributes(faramValues);
-            const color = this.calculateEntryColor(attributes);
-
-            this.addEntry({
-                leadId: this.props.leadId,
-                entry: {
-                    excerptType,
-                    excerptValue,
-                    lead: this.props.leadId,
-                    attributes,
-                    color,
-                    analysisFramework: analysisFramework.id,
-                },
-            });
-        } else {
-            const color = this.calculateEntryColor(faramValues);
-            this.setEntryData({
-                leadId: this.props.leadId,
-                key: entryKey,
-                id: entryId,
-                values: faramValues,
-                errors: faramErrors,
-                info: faramInfo,
-                color,
-            });
-        }
-    }
 
     handleValidationFailure = (faramErrors, entryKey) => {
         const proxyRequest = {
             start: () => {
-                this.props.setEntryError({
-                    leadId: this.props.leadId,
+                const {
+                    setEntryError,
+                    leadId,
+                } = this.props;
+
+                setEntryError({
+                    leadId,
                     key: entryKey,
                     errors: faramErrors,
                 });
@@ -497,31 +590,78 @@ export default class EditEntries extends React.PureComponent {
         };
         const newEntry = update(entry, settings);
 
-        const request = new EditEntrySaveRequest({
-            setPending: this.props.setPending,
-            saveEntry: this.props.saveEntry,
-            setEntryServerError: (data) => {
-                console.warn('Entry save error', data);
-                this.props.setEntryError({
-                    leadId: this.props.leadId,
+        const {
+            leadId,
+            setPending,
+            setEntryError,
+            analysisFramework,
+            saveEntry,
+        } = this.props;
+
+        const entryData = {
+            ...entryAccessor.data(newEntry),
+            clientId: entryKey,
+        };
+
+        let urlForEntry;
+        let paramsForEntry;
+        const serverId = entryAccessor.serverId(entry);
+        if (serverId) {
+            urlForEntry = createUrlForEntryEdit(serverId);
+            paramsForEntry = () => createParamsForEntryEdit(entryData);
+        } else {
+            urlForEntry = urlForEntryCreate;
+            paramsForEntry = () => createParamsForEntryCreate(entryData);
+        }
+
+        const request = new FgRestBuilder()
+            .url(urlForEntry)
+            .params(paramsForEntry)
+            .preLoad(() => {
+                setPending({ leadId, entryKey, pending: true });
+            })
+            .afterLoad(() => {
+                setPending({ leadId, entryKey, pending: false });
+            })
+            .success((response) => {
+                try {
+                    schemaValidator.validate(response, 'entry');
+                    const color = calculateEntryColor(response.attributes, analysisFramework);
+                    saveEntry({
+                        leadId,
+                        entryKey,
+                        response,
+                        color,
+                    });
+                    this.saveRequestCoordinator.notifyComplete(entryKey);
+                } catch (err) {
+                    console.error(err);
+                    this.saveRequestCoordinator.notifyComplete(entryKey, true);
+                }
+            })
+            .failure(() => {
+                console.warn('Entry save error', ({ leadId, entryKey }));
+                setEntryError({
+                    leadId,
                     key: entryKey,
                     // TODO: handle error messages later
                     errors: undefined,
                     isServerError: true,
                 });
-            },
-            getCoordinator: () => this.saveRequestCoordinator,
-            calculateEntryColor: this.calculateEntryColor,
-        });
-        request.init({
-            leadId: this.props.leadId,
-            entryKey: entryAccessor.key(newEntry),
-            entryData: {
-                ...entryAccessor.data(newEntry),
-                clientId: entryKey,
-            },
-            serverId: entryAccessor.serverId(newEntry),
-        });
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
+            })
+            .fatal(() => {
+                console.warn('Entry save error', ({ leadId, entryKey }));
+                setEntryError({
+                    leadId,
+                    key: entryKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
+            })
+            .build();
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
@@ -530,8 +670,12 @@ export default class EditEntries extends React.PureComponent {
     handleDeleteLocalEntry = (entryKey) => {
         const pseudoRequest = {
             start: () => {
-                this.props.removeEntry({
-                    leadId: this.props.leadId,
+                const {
+                    removeEntry,
+                    leadId,
+                } = this.props;
+                removeEntry({
+                    leadId,
                     key: entryKey,
                 });
                 this.saveRequestCoordinator.notifyComplete(entryKey);
@@ -542,31 +686,261 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleDeleteEntry = (entryKey, entry) => {
-        const request = new EditEntryDeleteRequest({
-            setPending: this.props.setPending,
-            removeEntry: this.props.removeEntry,
-            setEntryServerError: (data) => {
-                console.warn('Entry delete error', data);
-                this.props.setEntryError({
-                    leadId: this.props.leadId,
+        const {
+            leadId,
+            setPending,
+            removeEntry,
+            setEntryError,
+        } = this.props;
+
+        const serverId = entryAccessor.serverId(entry);
+
+        const request = new FgRestBuilder()
+            .url(createUrlForDeleteEntry(serverId))
+            .params(createParamsForDeleteEntry)
+            .preLoad(() => {
+                setPending({ leadId, entryKey, pending: true });
+            })
+            .afterLoad(() => {
+                setPending({ leadId, entryKey, pending: false });
+            })
+            .success(() => {
+                removeEntry({
+                    leadId,
+                    key: entryKey,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey);
+            })
+            .failure(() => {
+                console.warn('Entry delete error', ({ leadId, entryKey }));
+                setEntryError({
+                    leadId,
                     key: entryKey,
                     // TODO: handle error messages later
                     errors: undefined,
                     isServerError: true,
                 });
-            },
-            getCoordinator: () => this.saveRequestCoordinator,
-        });
-        request.init({
-            leadId: this.props.leadId,
-            entryKey: entryAccessor.key(entry),
-            serverId: entryAccessor.serverId(entry),
-        });
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
+            })
+            .fatal(() => {
+                console.warn('Entry delete error', ({ leadId, entryKey }));
+                setEntryError({
+                    leadId,
+                    key: entryKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
+            })
+            .build();
+
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
+    handleDeleteLocalEntryGroup = (entryGroupKey) => {
+        const pseudoRequest = {
+            start: () => {
+                const {
+                    removeEntryGroup,
+                    leadId,
+                } = this.props;
+                removeEntryGroup({
+                    leadId,
+                    key: entryGroupKey,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
+            },
+            stop: () => {}, // no-op
+        };
+        this.saveEntryGroupRequestCoordinator.add(entryGroupKey, pseudoRequest);
+    }
+
+    handleDeleteEntryGroup = (entryGroupKey, entryGroup) => {
+        const {
+            leadId,
+            setEntryGroupPending,
+            removeEntryGroup,
+            setEntryGroupError,
+        } = this.props;
+
+        const serverId = entryGroupAccessor.serverId(entryGroup);
+
+        const request = new FgRestBuilder()
+            .url(createUrlForDeleteEntryGroup(leadId, serverId))
+            .params(createParamsForDeleteEntry)
+            .preLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: true });
+            })
+            .afterLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: false });
+            })
+            .success(() => {
+                removeEntryGroup({
+                    leadId,
+                    key: entryGroupKey,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
+            })
+            .failure(() => {
+                console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
+                setEntryGroupError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
+            })
+            .fatal(() => {
+                console.warn('Entry group delete error', ({ leadId, entryGroupKey }));
+                setEntryGroupError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
+            })
+            .build();
+
+        this.saveEntryGroupRequestCoordinator.add(entryGroupKey, request);
+    }
+
+    handleSaveEntryGroup = (entryGroupKey, entryGroup) => {
+        const {
+            entries,
+            setEntryGroupPending,
+            leadId,
+            setEntryGroupError,
+            saveEntryGroup,
+        } = this.props;
+        // NOTE: no need to use filteredEntries,
+        // at this point there should only be saved entries
+        const entryMap = listToMap(
+            entries,
+            entryAccessor.key,
+            entry => entry,
+        );
+
+        const entryGroupData = entryGroupAccessor.data(entryGroup);
+
+        const newEntryGroupData = {
+            ...entryGroupData,
+            clientId: entryGroupKey,
+            title: entryGroupData.title
+                ? entryGroupData.title
+                : `Group ${entryGroupData.order}`,
+            selections: entryGroupData.selections
+                .map((selection) => {
+                    const entry = entryMap[selection.entryClientId];
+                    if (!entry || entryAccessor.isMarkedAsDeleted(entry)) {
+                        // NOTE: entry was deleted
+                        return undefined;
+                    }
+                    const entryServerId = entryAccessor.serverId(entry);
+                    if (!entryServerId) {
+                        // NOTE: entry has not been saved
+                        return selection;
+                    }
+                    return {
+                        ...selection,
+                        entryId: entryServerId,
+                    };
+                })
+                .filter(isDefined),
+        };
+
+        let urlForEntryGroup;
+        let paramsForEntryGroup;
+        const serverId = entryGroupAccessor.serverId(entryGroup);
+        if (serverId) {
+            urlForEntryGroup = createUrlForEntryGroupEdit(leadId, serverId);
+            paramsForEntryGroup = () => createParamsForEntryGroupEdit(newEntryGroupData);
+        } else {
+            urlForEntryGroup = createUrlForEntryGroupCreate(leadId);
+            paramsForEntryGroup = () => createParamsForEntryGroupCreate(newEntryGroupData);
+        }
+
+        const request = new FgRestBuilder()
+            .url(urlForEntryGroup)
+            .params(paramsForEntryGroup)
+            .preLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: true });
+            })
+            .afterLoad(() => {
+                setEntryGroupPending({ leadId, entryGroupKey, pending: false });
+            })
+            .success((response) => {
+                try {
+                    // TODO: write schema
+                    // schemaValidator.validate(response, 'entry');
+                    saveEntryGroup({
+                        leadId,
+                        entryGroupKey,
+                        response,
+                    });
+                    this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey);
+                } catch (err) {
+                    console.error(err);
+                    this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
+                }
+            })
+            .failure(() => {
+                console.warn('Entry Group save error', ({ leadId, entryGroupKey }));
+                setEntryGroupError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
+            })
+            .fatal(() => {
+                console.warn('Entry Group save error', ({ leadId, entryGroupKey }));
+                setEntryGroupError({
+                    leadId,
+                    key: entryGroupKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
+                this.saveEntryGroupRequestCoordinator.notifyComplete(entryGroupKey, true);
+            })
+            .build();
+
+        this.saveEntryGroupRequestCoordinator.add(entryGroupKey, request);
+    }
+
+    handleCancel = () => {
+        const { requests } = this.props;
+        requests.editEntryDataRequest.do({
+            cancelMode: true,
+        });
+    }
+
     handleSave = () => {
-        this.savableEntries.forEach((entry) => {
+        const {
+            entries,
+            statuses,
+            schema,
+            computeSchema,
+        } = this.props;
+
+        const savableEntries = this.getSavableEntries(
+            entries,
+            statuses,
+        );
+
+        if (savableEntries.length <= 0) {
+            this.handleEntryGroupSave();
+            return;
+        }
+
+        savableEntries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
             const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
@@ -581,8 +955,8 @@ export default class EditEntries extends React.PureComponent {
                     value: entryAccessor.dataAttributes(entry),
                     error: entryAccessor.error(entry),
 
-                    schema: this.props.schema,
-                    computeSchema: this.props.computeSchema,
+                    schema,
+                    computeSchema,
                     onChange: this.handleChange,
 
                     onValidationFailure: (errors) => {
@@ -598,11 +972,40 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.start();
     }
 
-    handleCancel = () => {
-        const { leadId } = this.props;
-        this.props.clearEntries({ leadId });
-        this.editEntryDataRequest.init({ leadId });
-        this.editEntryDataRequest.start();
+    handleEntryGroupSave = () => {
+        const {
+            entryGroups,
+            entryGroupStatuses,
+        } = this.props;
+
+        const savableEntryGroups = this.getSavableEntryGroups(
+            entryGroups,
+            entryGroupStatuses,
+        );
+
+        if (savableEntryGroups.length <= 0) {
+            // NOTE: pendingSaveAllEntryGroup is set to true by entry save coordinator
+            this.setState({ pendingSaveAllEntryGroup: false });
+            return;
+        }
+
+        savableEntryGroups.forEach((entryGroup) => {
+            const entryGroupKey = entryGroupAccessor.key(entryGroup);
+            const isMarkedAsDeleted = entryGroupAccessor.isMarkedAsDeleted(entryGroup);
+
+            if (isMarkedAsDeleted) {
+                if (entryGroupAccessor.serverId(entryGroup)) {
+                    this.handleDeleteEntryGroup(entryGroupKey, entryGroup);
+                } else {
+                    this.handleDeleteLocalEntryGroup(entryGroupKey);
+                }
+            } else {
+                this.handleSaveEntryGroup(entryGroupKey, entryGroup);
+            }
+        });
+
+        // TODO:
+        this.saveEntryGroupRequestCoordinator.start();
     }
 
     handleEntryStateChange = (entryKey, value) => {
@@ -625,11 +1028,20 @@ export default class EditEntries extends React.PureComponent {
             analysisFramework: {
                 id: analysisFrameworkId,
             } = {},
+            requests: {
+                editEntryDataRequest: {
+                    pending: pendingEditEntryData,
+                },
+            },
+            entries,
+            statuses,
+            entryGroups,
+            entryGroupStatuses,
         } = this.props;
 
         const {
-            pendingEditEntryData,
             pendingSaveAll,
+            pendingSaveAllEntryGroup,
             projectMismatch,
         } = this.state;
 
@@ -649,9 +1061,24 @@ export default class EditEntries extends React.PureComponent {
             analysisFrameworkId,
         });
 
-        const hasSavableEntries = this.savableEntries.length > 0;
+        const savableEntries = this.getSavableEntries(
+            entries,
+            statuses,
+        );
+
+        const savableEntryGroups = this.getSavableEntryGroups(
+            entryGroups,
+            entryGroupStatuses,
+        );
+
+        const hasSavableEntries = savableEntries.length > 0;
+
+        const hasSavableEntryGroups = savableEntryGroups.length > 0;
+
+        const hasSavableItems = hasSavableEntries || hasSavableEntryGroups;
+
         const isSaveDisabled = (
-            pendingSaveAll || projectMismatch || !hasSavableEntries
+            pendingSaveAllEntryGroup || pendingSaveAll || projectMismatch || !hasSavableItems
         );
 
         return (
@@ -662,7 +1089,7 @@ export default class EditEntries extends React.PureComponent {
                             const { routeUrl } = this.props;
                             if (location.pathname === routeUrl) {
                                 return true;
-                            } else if (!hasSavableEntries) {
+                            } else if (!hasSavableItems) {
                                 return true;
                             }
                             return _ts('common', 'youHaveUnsavedChanges');
@@ -690,8 +1117,8 @@ export default class EditEntries extends React.PureComponent {
                                 <Cloak
                                     hide={this.shouldHideEditLink}
                                     render={
-                                        /* viewsAcl not used because it
-                                            doesn't consider admin of af */
+                                        // viewsAcl not used because it doesn't
+                                        // consider admin of af
                                         <Link
                                             className={styles.editFrameworkLink}
                                             to={frameworkPath}
@@ -714,7 +1141,7 @@ export default class EditEntries extends React.PureComponent {
                                 <SuccessButton
                                     disabled={isSaveDisabled}
                                     onClick={this.handleSave}
-                                    pending={pendingSaveAll}
+                                    pending={pendingSaveAll || pendingSaveAllEntryGroup}
                                 >
                                     { _ts('editEntry', 'saveButtonTitle') }
                                 </SuccessButton>
