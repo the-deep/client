@@ -171,7 +171,7 @@ export default class Overview extends React.PureComponent {
             lead,
         } = this.props;
 
-        const { type, value } = excerptData;
+        const { type, value, dropped } = excerptData;
 
         this.props.addEntry({
             leadId,
@@ -185,6 +185,7 @@ export default class Overview extends React.PureComponent {
                     lead,
                 ),
             },
+            dropped,
         });
     }
 

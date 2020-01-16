@@ -124,6 +124,8 @@ const getPaneType = (lead) => {
     return fileTypeToLeadPaneTypeMap[fileType];
 };
 
+const defaultSelectionColor = '#c0c0c0';
+
 const mapStateToProps = state => ({
     projectRole: activeProjectRoleSelector(state),
     projectDetails: currentUserActiveProjectSelector(state),
@@ -334,12 +336,14 @@ export default class LeftPane extends React.PureComponent {
 
     getHighlightsForText = memoize(entries => (
         entries
+            .filter(e => !entryAccessor.isHighlightHidden(e))
             .filter(e => entryAccessor.entryType(e) === 'excerpt')
             .map(entry => ({
                 key: entryAccessor.key(entry),
-                // text is used by simplified lead preview
-                text: entryAccessor.excerpt(entry),
-                color: entryAccessor.color(entry) || '#c0c0c0',
+                // TODO:
+                // change condition to see if highlight cleared
+                text: entryAccessor.droppedExcerpt(entry),
+                color: entryAccessor.color(entry) || defaultSelectionColor,
             }))
     ))
 
@@ -349,7 +353,7 @@ export default class LeftPane extends React.PureComponent {
             .map(entry => ({
                 key: entryAccessor.key(entry),
                 tabularFieldId: entryAccessor.tabularField(entry),
-                color: entryAccessor.color(entry) || '#c0c0c0',
+                color: entryAccessor.color(entry) || defaultSelectionColor,
             }))
     ))
 
@@ -377,6 +381,7 @@ export default class LeftPane extends React.PureComponent {
         this.props.onExcerptCreate({
             type: 'excerpt',
             value: text,
+            dropped: true,
         });
     }
 

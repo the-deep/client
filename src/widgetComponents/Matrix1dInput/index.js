@@ -70,6 +70,7 @@ export default class Matrix1dInput extends React.PureComponent {
                 action: 'newEntry',
                 excerptType: type,
                 excerptValue: data,
+                dropped: true,
                 value: {
                     [key]: {
                         [cellKey]: true,

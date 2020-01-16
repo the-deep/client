@@ -1081,7 +1081,10 @@
         "-19337357": "Save Entry Group",
         "-24270008": "Entry groups successfully saved",
         "-86483548": "{errorCount} entry groups could not be saved.",
-        "-93218852": "Some entry groups were updated in server."
+        "-93218852": "Some entry groups were updated in server.",
+        "-84182062": "Hide Highlight",
+        "-28191340": "Reset Excerpt",
+        "-36912904": "Show Highlight"
     },
     "links": {
         "browserExtension": {
@@ -2511,7 +2514,10 @@
         },
         "widgets.tagging.excerpt": {
             "dropHereText": -81226372,
-            "imageAltText": -78904030
+            "imageAltText": -78904030,
+            "hideHighlightTitle": -84182062,
+            "resetExcerptTitle": -28191340,
+            "showHighlightTitle": -36912904
         },
         "widgets.editor.number": {
             "widgetTitlePlaceholder": 13,

@@ -14,6 +14,8 @@ import {
     editEntriesAddEntryAction,
     editEntriesSetEntryDataAction,
     editEntriesSetExcerptAction,
+    editEntriesSetEntryHighlightHidden,
+    editEntriesResetExcerptAction,
 } from '#redux';
 
 import { entryAccessor } from '#entities/editEntries';
@@ -44,12 +46,18 @@ const propTypes = {
     pending: PropTypes.bool,
     disabled: PropTypes.bool,
 
+    // onExcerptReset: PropTypes.func.isRequired,
+    // onHighlightHiddenChange: PropTypes.func.isRequired,
+
     actionComponent: PropTypes.func,
 
     addEntry: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setExcerpt: PropTypes.func.isRequired,
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
+    setEntryHighlightHidden: PropTypes.func.isRequired,
+    resetExcerpt: PropTypes.func.isRequired,
 
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -83,6 +91,8 @@ const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+    setEntryHighlightHidden: params => dispatch(editEntriesSetEntryHighlightHidden(params)),
+    resetExcerpt: params => dispatch(editEntriesResetExcerptAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -116,6 +126,24 @@ export default class WidgetFaram extends React.PureComponent {
         }
         const { setEntryData } = this.props;
         setEntryData(val);
+    }
+
+    setEntryHighlightHidden = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to change highlight visibility');
+            return;
+        }
+        const { setEntryHighlightHidden } = this.props;
+        setEntryHighlightHidden(val);
+    }
+
+    resetExcerpt = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry excerpt');
+            return;
+        }
+        const { resetExcerpt } = this.props;
+        resetExcerpt(val);
     }
 
     addEntry = (val) => {
@@ -159,6 +187,7 @@ export default class WidgetFaram extends React.PureComponent {
                 excerptValue,
                 value,
                 faramElementName,
+                dropped,
             } = faramInfo;
 
             // Create attribute using faramElementName and value
@@ -184,6 +213,7 @@ export default class WidgetFaram extends React.PureComponent {
                     color,
                     analysisFramework: analysisFramework.id,
                 },
+                dropped,
             });
         } else if (entryKey === undefined && faramInfo.isComputed) {
             console.warn('Ignoring entry change if there is no entry key and the change is from entry creation.');
@@ -209,6 +239,7 @@ export default class WidgetFaram extends React.PureComponent {
                     color,
                     analysisFramework: analysisFramework.id,
                 },
+                dropped: false,
             });
         } else {
             const color = calculateEntryColor(faramValues, analysisFramework);
@@ -225,6 +256,39 @@ export default class WidgetFaram extends React.PureComponent {
     }
 
     // can only edit entry
+    handleHighlightHiddenChange = (value) => {
+        const {
+            entry,
+            leadId,
+        } = this.props;
+
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
+
+        this.setEntryHighlightHidden({
+            leadId,
+            key: entryKey,
+            id: entryId,
+            value,
+        });
+    }
+
+    handleExcerptReset = () => {
+        const {
+            entry,
+            leadId,
+        } = this.props;
+
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
+
+        this.resetExcerpt({
+            leadId,
+            key: entryKey,
+            id: entryId,
+        });
+    }
+
     handleExcerptChange = (excerptData) => {
         const {
             leadId,
@@ -258,7 +322,7 @@ export default class WidgetFaram extends React.PureComponent {
             lead,
         } = this.props;
 
-        const { type, value } = excerptData;
+        const { type, value, dropped } = excerptData;
 
         this.addEntry({
             leadId,
@@ -272,6 +336,7 @@ export default class WidgetFaram extends React.PureComponent {
                     lead,
                 ),
             },
+            dropped,
         });
     }
 
@@ -368,9 +433,12 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             entryType,
             excerpt,
+            droppedExcerpt,
             image,
             tabularField,
         } = entryAccessor.data(entry) || {};
+
+        const highlightHidden = entryAccessor.isHighlightHidden(entry);
 
         let widgetProps = {
             widgetName: widgetId,
@@ -392,6 +460,7 @@ export default class WidgetFaram extends React.PureComponent {
                 ...widgetProps,
                 entryType,
                 excerpt,
+                droppedExcerpt,
                 image,
                 tabularField,
                 tabularFieldData: tabularData,
@@ -406,8 +475,11 @@ export default class WidgetFaram extends React.PureComponent {
         if (levelTwoWidgets.includes(widgetId)) {
             widgetProps = {
                 ...widgetProps,
+                highlightHidden,
+                onHighlightHiddenChange: this.handleHighlightHiddenChange,
                 onExcerptChange: this.handleExcerptChange,
                 onExcerptCreate: this.handleExcerptCreate,
+                onExcerptReset: this.handleExcerptReset,
             };
         }
 

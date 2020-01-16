@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import {
-    activeProjectRoleSelector,
     editEntriesLeadSelector,
     editEntriesEntriesSelector,
     editEntriesSetSelectedEntryKeyAction,

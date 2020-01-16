@@ -41,6 +41,7 @@ export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMM
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
 
 export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
+export const EEB__RESET_ENTRY_EXCERPT = 'siloDomainData/EEB__RESET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
@@ -53,6 +54,14 @@ export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 
 export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
+export const EEB__SET_ENTRY_HIGHLIGHT_HIDDEN = 'siloDomainData/EEB__SET_ENTRY_HIGHLIGHT_HIDDEN';
+
+export const editEntriesSetEntryHighlightHidden = ({ leadId, key, value }) => ({
+    type: EEB__SET_ENTRY_HIGHLIGHT_HIDDEN,
+    leadId,
+    key,
+    value,
+});
 
 
 // NOTE: these are added newly
@@ -113,10 +122,11 @@ export const editEntriesFormatAllEntriesAction = ({ leadId, modifiable }) => ({
     modifiable,
 });
 
-export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
+export const editEntriesAddEntryAction = ({ leadId, entry, dropped }) => ({
     type: EEB__ADD_ENTRY,
     leadId,
     entry,
+    dropped,
 });
 
 export const editEntriesRemoveEntryAction = ({ leadId, key }) => ({
@@ -161,6 +171,12 @@ export const editEntriesClearEntriesAction = ({ leadId }) => ({
 
 export const editEntriesSetSelectedEntryKeyAction = ({ leadId, key }) => ({
     type: EEB__SET_SELECTED_ENTRY_KEY,
+    leadId,
+    key,
+});
+
+export const editEntriesResetExcerptAction = ({ leadId, key }) => ({
+    type: EEB__RESET_ENTRY_EXCERPT,
     leadId,
     key,
 });
@@ -504,6 +520,7 @@ const setEntryExcerpt = (state, action) => {
     const tabularField = excerptType === 'dataSeries' ? excerptValue : undefined;
 
     const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
+
     const settings = {
         editEntries: {
             [leadId]: {
@@ -527,8 +544,40 @@ const setEntryExcerpt = (state, action) => {
     return update(state, settings);
 };
 
+const resetEntryExcerpt = (state, action) => {
+    const { leadId, key } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
+    const entry = entries[entryIndex];
+    const { droppedExcerpt } = entryAccessor.data(entry);
+
+    // NOTE: currently this only works for text type excerpt
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    [entryIndex]: {
+                        data: {
+                            excerpt: { $set: droppedExcerpt },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
+                            hasServerError: { $set: false },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const addEntry = (state, action) => {
-    const { entry, leadId } = action;
+    const { entry, leadId, dropped } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -558,6 +607,7 @@ const addEntry = (state, action) => {
         ...otherEntry,
         entryType: excerptType,
         excerpt: excerptType === 'excerpt' ? excerptValue : undefined,
+        droppedExcerpt: excerptType === 'excerpt' && dropped ? excerptValue : undefined,
         image: excerptType === 'image' ? excerptValue : undefined,
         tabularField: excerptType === 'dataSeries' ? excerptValue : undefined,
         lead: leadId,
@@ -586,8 +636,8 @@ const addEntry = (state, action) => {
     return update(state, settings);
 };
 
-const setEntryData = (state, action) => {
-    const { leadId, key, values, errors, info, color } = action;
+const setEntryHighlightHidden = (state, action) => {
+    const { leadId, key, value } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -598,6 +648,43 @@ const setEntryData = (state, action) => {
 
     let newState = state;
 
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    [entryIndex]: {
+                        data: {
+                            highlightHidden: {
+                                $set: value,
+                            },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    newState = update(newState, settings);
+
+    return newState;
+};
+
+const setEntryData = (state, action) => {
+    const { leadId, key, values, errors, color /* , info */ } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    const entryIndex = entries.findIndex(
+        entry => entryAccessor.key(entry) === key,
+    );
+
+    let newState = state;
+
+    /*
+    // NOTE: I don't think this has been used anywhere
     if (info.action === 'changeExcerpt') {
         const excerpt = info.type === 'excerpt' ? info.value : undefined;
         const image = info.type === 'image' ? info.value : undefined;
@@ -626,6 +713,7 @@ const setEntryData = (state, action) => {
 
         newState = update(newState, settings);
     }
+    */
 
     const settings = {
         editEntries: {
@@ -1294,6 +1382,8 @@ const reducers = {
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,
     [EEB__SET_ENTRY_EXCERPT]: setEntryExcerpt,
+    [EEB__RESET_ENTRY_EXCERPT]: resetEntryExcerpt,
+    [EEB__SET_ENTRY_HIGHLIGHT_HIDDEN]: setEntryHighlightHidden,
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,
