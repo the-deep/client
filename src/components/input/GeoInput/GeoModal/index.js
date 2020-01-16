@@ -352,7 +352,7 @@ export default class GeoModal extends React.PureComponent {
                                     showHintAndError={false}
                                     placeholder={_ts('components.geo.geoModal', 'geoAreasPlaceholder')}
                                     maxDisplayOptions={MAX_DISPLAY_OPTIONS}
-                                    hideSelectAllButton
+                                    // hideSelectAllButton
                                 />
                             </div>
                         </div>
