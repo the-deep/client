@@ -23,7 +23,7 @@ export default class ProjectGet extends AbstractTask {
             .params(createParamsForGet)
             .success((response) => {
                 try {
-                    schema.validate(response, 'projectsMiniGetResponse');
+                    // schema.validate(response, 'projectsMiniGetResponse');
                     const { userId } = activeUserSelector(store.getState());
 
                     store.dispatch(setUserProjectsAction({
