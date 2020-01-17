@@ -16,7 +16,7 @@ import requestOptions from './requests';
 import styles from './styles.scss';
 
 
-const vizRendererUrl = process.env.REACT_APP_ARY_VIZ_URL || 'https://matthewsmawfield.github.io/deepviz-assessments/';
+const vizRendererUrl = process.env.REACT_APP_ARY_VIZ_URL || 'https://the-deep.github.io/deepviz-assessments/';
 
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
