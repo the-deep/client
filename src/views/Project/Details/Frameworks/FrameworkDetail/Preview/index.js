@@ -4,9 +4,10 @@ import React from 'react';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
+import QuestionList from '#qbc/QuestionList';
+
 import Overview from './Overview';
 import List from './List';
-import Questions from './Questions';
 import styles from './styles.scss';
 
 
@@ -33,6 +34,8 @@ export default class ProjectAfDetail extends React.PureComponent {
         const rendererParams = () => ({
             framework: this.props.framework,
             className: styles.view,
+            readOnly: true,
+            hideDetails: true,
         });
 
         this.views = {
@@ -47,7 +50,7 @@ export default class ProjectAfDetail extends React.PureComponent {
             },
 
             questions: {
-                component: Questions,
+                component: QuestionList,
                 rendererParams,
             },
         };

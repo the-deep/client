@@ -5,12 +5,14 @@ import Faram from '@togglecorp/faram';
 import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
 import SelectInput from '#rsci/SelectInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     RequestCoordinator,
     RequestClient,
     methods,
     getResponse,
+    isAnyRequestPending,
 } from '#request';
 
 import {
@@ -74,6 +76,16 @@ const requestOptions: Requests<ComponentProps, Params> = {
         url: '/questionnaires/',
         method: methods.POST,
         body: ({ params: { body } = { body: undefined } }) => body,
+        onSuccess: ({
+            params,
+            response,
+        }) => {
+            if (!params || !params.onSuccess) {
+                return;
+            }
+
+            params.onSuccess(response);
+        },
     },
     questionnairePatchRequest: {
         url: ({ params }) => {
@@ -85,6 +97,16 @@ const requestOptions: Requests<ComponentProps, Params> = {
         },
         method: methods.PATCH,
         body: ({ params: { body } = { body: undefined } }) => body,
+        onSuccess: ({
+            params,
+            response,
+        }) => {
+            if (!params || !params.onSuccess) {
+                return;
+            }
+
+            params.onSuccess(response);
+        },
     },
     questionnaireOptionsRequest: {
         url: '/questionnaires/options/',
@@ -112,12 +134,14 @@ class AddQuestionnaireForm extends React.PureComponent<Props, State> {
                 questionnairePatchRequest,
             },
             value,
+            onRequestSuccess,
         } = this.props;
 
         if (value) {
             questionnairePatchRequest.do({
                 questionnaireId: value.id,
                 body: faramValues,
+                onSuccess: onRequestSuccess,
             });
         } else {
             questionnaireCreateRequest.do({
@@ -126,6 +150,7 @@ class AddQuestionnaireForm extends React.PureComponent<Props, State> {
                     questions: [],
                     ...faramValues,
                 },
+                onSuccess: onRequestSuccess,
             });
         }
     }
@@ -144,6 +169,7 @@ class AddQuestionnaireForm extends React.PureComponent<Props, State> {
         const {
             className,
             requests,
+            pending: pendingFromProps,
         } = this.props;
 
         const {
@@ -158,6 +184,8 @@ class AddQuestionnaireForm extends React.PureComponent<Props, State> {
             faramErrors,
         } = this.state;
 
+        const pending = pendingFromProps || isAnyRequestPending(requests);
+
         return (
             <Faram
                 schema={questionnaireMetaSchema}
@@ -166,7 +194,9 @@ class AddQuestionnaireForm extends React.PureComponent<Props, State> {
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 value={faramValues}
                 error={faramErrors}
+                disabled={pending}
             >
+                { pending && <LoadingAnimation /> }
                 <TextInput
                     faramElementName="title"
                     className={styles.input}

@@ -6,6 +6,8 @@ import {
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -21,6 +23,7 @@ import {
     QuestionElement,
     Requests,
     AddRequestProps,
+    FrameworkElement,
 } from '#typings';
 
 import {
@@ -28,6 +31,7 @@ import {
     RequestCoordinator,
     RequestClient,
     getResponse,
+    isAnyRequestPending,
 } from '#request';
 
 import { questionnaireIdFromRouteSelector } from '#redux';
@@ -80,7 +84,15 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
 
 const questionKeySelector = (q: QuestionElement) => q.id;
 
-const FrameworkQuestion = (p) => {
+interface FrameworkQuestionElement {
+    onCopyButtonClick: (id: QuestionElement['id']) => void;
+    className?: string;
+    onEditButtonClick: (id: QuestionElement['id']) => void;
+    data: QuestionElement;
+    framework: FrameworkElement;
+}
+
+const FrameworkQuestion = (p: FrameworkQuestionElement) => {
     const {
         onCopyButtonClick,
         className,
@@ -91,12 +103,13 @@ const FrameworkQuestion = (p) => {
         <div className={_cs(className, styles.frameworkQuestion)}>
             <Question {...otherProps} />
             <div className={styles.actions}>
-                <Button
-                    iconName="chevronLeft"
+                <AccentButton
+                    iconName="copyOutline"
                     onClick={onCopyButtonClick}
+                    disabled
                 >
-                    Copy to questionnaire
-                </Button>
+                    Copy
+                </AccentButton>
             </div>
         </div>
     );
@@ -175,6 +188,25 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleQuestionFormRequestSuccess = () => {
+        this.setState({
+            showQuestionFormModal: false,
+            questionToEdit: undefined,
+        });
+
+        const { requests } = this.props;
+        requests.questionnaireGetRequest.do();
+    }
+
+    private handleQuestionnaireFormRequestSuccess = () => {
+        this.setState({
+            showEditDetailFormModal: false,
+        });
+
+        const { requests } = this.props;
+        requests.questionnaireGetRequest.do();
+    }
+
     public render() {
         const {
             className,
@@ -188,7 +220,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         } = this.state;
 
         const questionnaire = getResponse(requests, 'questionnaireGetRequest') as QuestionnaireElement;
-        console.warn(questionnaire);
+        const pending = isAnyRequestPending(requests);
 
         return (
             <>
@@ -211,12 +243,22 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                         )}
                                     />
                                 )}
+                                {questionnaire.projectFrameworkDetail && (
+                                    <ListView
+                                        className={styles.frameworkQuestionList}
+                                        rendererParams={this.getFrameworkQuestionRendererParams}
+                                        renderer={FrameworkQuestion}
+                                        data={questionnaire.projectFrameworkDetail.questions}
+                                        keySelector={questionKeySelector}
+                                    />
+                                )}
                             </div>
                         </>
                     )}
                     mainContentClassName={styles.main}
                     mainContent={(
                         <>
+                            { pending && <LoadingAnimation /> }
                             <div className={styles.questionList}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
@@ -242,18 +284,9 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <div className={styles.rightPanel}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
-                                        Framework questions
+                                        Diagnostics
                                     </h3>
                                 </header>
-                                {questionnaire.projectFrameworkDetail && (
-                                    <ListView
-                                        className={styles.content}
-                                        rendererParams={this.getFrameworkQuestionRendererParams}
-                                        renderer={FrameworkQuestion}
-                                        data={questionnaire.projectFrameworkDetail.questions}
-                                        keySelector={questionKeySelector}
-                                    />
-                                )}
                             </div>
                         </>
                     )}
@@ -285,6 +318,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <QuestionnaireQuestionForm
                                 questionnaire={questionnaire}
                                 value={questionToEdit}
+                                onRequestSuccess={this.handleQuestionFormRequestSuccess}
                             />
                         </ModalBody>
                     </Modal>
@@ -303,6 +337,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         <ModalBody>
                             <QuestionnaireForm
                                 value={questionnaire}
+                                onRequestSuccess={this.handleQuestionnaireFormRequestSuccess}
                             />
                         </ModalBody>
                     </Modal>

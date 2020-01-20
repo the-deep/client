@@ -6,6 +6,7 @@ import {
 import memoize from 'memoize-one';
 
 import Page from '#rscv/Page';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import VerticalTabs from '#rscv/VerticalTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
@@ -29,6 +30,7 @@ import {
     RequestClient,
     methods,
     getResults,
+    getPending,
 } from '#request';
 
 import QuestionnaireList from './QuestionnaireList';
@@ -115,6 +117,11 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
         this.setState({ showEditQuestionnaireModal: false });
     }
 
+    private handleQuestionnaireFormRequestSuccess = () => {
+        this.setState({ showEditQuestionnaireModal: false });
+        this.props.requests.questionnaireRequest.do();
+    }
+
     private tabs: {[key in TabElement]: string} = {
         active: 'Active',
         archived: 'Archived',
@@ -126,6 +133,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
             rendererParams: () => ({
                 title: 'Active questionnaires',
                 questionnaireList: this.getQuestionnaireListForCurrentView(),
+                className: styles.content,
             }),
         },
         archived: {
@@ -133,6 +141,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
             rendererParams: () => ({
                 title: 'Archived questionnaires',
                 questionnaireList: this.getQuestionnaireListForCurrentView(),
+                className: styles.content,
             }),
         },
     }
@@ -148,6 +157,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
         const { showEditQuestionnaireModal } = this.state;
 
         const questionnaireList = getResults(requests, 'questionnaireRequest') as QuestionnaireElement[];
+        const pending = getPending(requests, 'questionnaireRequest');
         const questionnaireCounts = this.getQuestionnaireCounts(questionnaireList);
         const frameworkName = this.getFrameworkName(questionnaireList);
 
@@ -201,6 +211,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                             </div>
                             <div className={styles.actions}>
                                 <Button
+                                    disabled={pending}
                                     onClick={this.handleAddQuestionnaireButtonClick}
                                 >
                                     New questionnaire
@@ -209,10 +220,13 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                         </>
                     )}
                     mainContent={(
-                        <MultiViewContainer
-                            views={this.views}
-                            useHash
-                        />
+                        <>
+                            { pending && <LoadingAnimation /> }
+                            <MultiViewContainer
+                                views={this.views}
+                                useHash
+                            />
+                        </>
                     )}
                     headerClassName={styles.header}
                     header={(
@@ -240,6 +254,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                         />
                         <ModalBody>
                             <QuestionnaireForm
+                                onRequestSuccess={this.handleQuestionnaireFormRequestSuccess}
                                 projectId={projectId}
                             />
                         </ModalBody>

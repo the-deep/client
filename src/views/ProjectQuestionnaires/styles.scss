@@ -73,6 +73,16 @@
             padding: var(--spacing-medium);
         }
     }
+
+    .main {
+        display: flex;
+        flex-direction: column;
+
+        .content {
+            flex-grow: 1;
+            overflow: auto;
+        }
+    }
 }
 
 .edit-questionnaire-modal {

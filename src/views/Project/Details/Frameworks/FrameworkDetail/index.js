@@ -227,7 +227,16 @@ export default class FrameworkDetail extends React.PureComponent {
                             active={activeView}
                         />
                         <div className={styles.actionButtons}>
-                            {/* <AddQuestionsButton /> */}
+                            <ButtonLikeLink
+                                type="accent"
+                                className={styles.addQuestionsButton}
+                                to={reverseRoute(
+                                    pathNames.frameworkQuestions,
+                                    { analysisFrameworkId },
+                                )}
+                            >
+                                Add questions
+                            </ButtonLikeLink>
                             {(canUse && !readOnly) &&
                                 <UseFrameworkButton
                                     disabled={pending}

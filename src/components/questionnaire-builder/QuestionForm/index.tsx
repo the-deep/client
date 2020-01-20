@@ -6,6 +6,7 @@ import { _cs } from '@togglecorp/fujs';
 import TextInput from '#rsci/TextInput';
 import SelectInput from '#rsci/SelectInput';
 import Button from '#rsca/Button';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import ResponseInput from '#qbc/ResponseInput';
 import FrameworkAttributeInput from '#qbc/FrameworkAttributeInput';
@@ -39,6 +40,7 @@ interface ComponentProps {
     faramErrors: FaramErrors;
     onValidationSuccess: (faramValues: FaramValues) => void;
     onChange: (faramValues: FaramValues, faramError: FaramErrors) => void;
+    pending?: boolean;
 }
 
 interface Params {
@@ -87,6 +89,7 @@ class QuestionForm extends React.PureComponent<Props> {
             onChange,
             onValidationSuccess,
             requests,
+            pending: pendingFromProps,
         } = this.props;
 
         const {
@@ -104,7 +107,7 @@ class QuestionForm extends React.PureComponent<Props> {
             questionImportanceOptions: questionImportanceOptionList,
         } = getResponse(requests, 'questionnaireOptionsRequest');
 
-        const pending = isAnyRequestPending(requests);
+        const pending = pendingFromProps || isAnyRequestPending(requests);
 
         return (
             <Faram
@@ -116,6 +119,7 @@ class QuestionForm extends React.PureComponent<Props> {
                 onValidationSuccess={onValidationSuccess}
                 disabled={pending}
             >
+                { pending && <LoadingAnimation /> }
                 <section className={styles.basic}>
                     <header className={styles.header}>
                         <h4 className={styles.heading}>

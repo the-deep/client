@@ -244,6 +244,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'userGroup');
 
+    frameworkQuestions: {
+        order: 99,
+        type: ROUTE.private,
+        path: '/frameworks/:analysisFrameworkId/questions/',
+        loader: () => import('../views/FrameworkQuestions'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'projectQuestionnare');
+
     analysisFramework: {
         order: 100,
         type: ROUTE.private,

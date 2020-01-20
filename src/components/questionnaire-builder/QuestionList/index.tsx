@@ -48,6 +48,9 @@ const AddQuestionModal = ({
 interface Props {
     framework: FrameworkElement;
     className?: string;
+    heading?: string;
+    hideDetails?: boolean;
+    readOnly?: boolean;
 }
 
 interface State {
@@ -70,6 +73,8 @@ class Questions extends React.PureComponent<Props, State> {
         onEditButtonClick: this.handleEditQuestionButtonClick,
         className: styles.question,
         framework: this.props.framework,
+        readOnly: this.props.readOnly,
+        hideDetails: this.props.hideDetails,
     })
 
     private handleEditQuestionButtonClick = (questionKey: QuestionElement['id']) => {
@@ -104,6 +109,8 @@ class Questions extends React.PureComponent<Props, State> {
         const {
             className,
             framework,
+            heading = 'Questions',
+            readOnly,
         } = this.props;
 
         const {
@@ -115,16 +122,18 @@ class Questions extends React.PureComponent<Props, State> {
             <div className={_cs(styles.questions, className)}>
                 <header className={styles.header}>
                     <h3 className={styles.heading}>
-                        Questions
+                        { heading }
                     </h3>
-                    <div className={styles.actions}>
-                        <Button
-                            className={styles.addQuestionButton}
-                            onClick={this.handleAddQuestionButtonClick}
-                        >
-                            Add question
-                        </Button>
-                    </div>
+                    { !readOnly && (
+                        <div className={styles.actions}>
+                            <Button
+                                className={styles.addQuestionButton}
+                                onClick={this.handleAddQuestionButtonClick}
+                            >
+                                Add question
+                            </Button>
+                        </div>
+                    )}
                 </header>
                 <ListView
                     className={styles.content}

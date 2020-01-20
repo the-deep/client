@@ -1,14 +1,15 @@
 import React from 'react';
 
+
 import {
     RequestCoordinator,
     RequestClient,
     methods,
+    getPending,
 } from '#request';
 
 import {
     QuestionFormElement,
-    QuestionnaireElement,
     QuestionElement,
     AddRequestProps,
     Requests,
@@ -50,7 +51,7 @@ const schema = {
     },
 };
 
-const requests: Requests<ComponentProps, Params> = {
+const requestOptions: Requests<ComponentProps, Params> = {
     frameworkPatchRequest: {
         url: ({ params: { frameworkId } = { frameworkId: undefined } }) => `/analysis-frameworks/${frameworkId}/`,
         method: methods.PATCH,
@@ -104,7 +105,7 @@ class FrameworkQuestionForm extends React.PureComponent<Props, State> {
             }
         }
 
-        questions.push(faramValues);
+        questions.push(faramValues as QuestionElement);
 
         const patchBody = {
             questions,
@@ -120,7 +121,10 @@ class FrameworkQuestionForm extends React.PureComponent<Props, State> {
         const {
             framework,
             className,
+            requests,
         } = this.props;
+
+        const pending = getPending(requests, 'frameworkPatchRequest');
 
         const {
             faramValues,
@@ -136,13 +140,14 @@ class FrameworkQuestionForm extends React.PureComponent<Props, State> {
                 faramErrors={faramErrors}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 framework={framework}
+                pending={pending}
             />
         );
     }
 }
 
 export default RequestCoordinator(
-    RequestClient(requests)(
+    RequestClient(requestOptions)(
         FrameworkQuestionForm,
     ),
 );

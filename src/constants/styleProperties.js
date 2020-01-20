@@ -52,6 +52,8 @@ const styleProperties = {
         heightMatrixHeader: '20px',
 
         widthProjectDetailLeftPane: '280px',
+        widthQuestionIcon: '48px',
+        heightQuestionIcon: '48px',
     },
 };
 

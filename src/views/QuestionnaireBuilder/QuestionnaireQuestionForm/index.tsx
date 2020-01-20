@@ -5,6 +5,7 @@ import {
     RequestCoordinator,
     RequestClient,
     methods,
+    getPending,
 } from '#request';
 
 import {
@@ -13,6 +14,7 @@ import {
     QuestionElement,
     AddRequestProps,
     Requests,
+    FrameworkElement,
 } from '#typings';
 
 import QuestionForm from '#qbc/QuestionForm';
@@ -24,6 +26,7 @@ interface ComponentProps {
     className?: string;
     value?: QuestionElement;
     questionnaire: QuestionnaireElement;
+    onRequestSuccess: (q: QuestionElement[]) => void;
 }
 
 interface Params {
@@ -31,6 +34,7 @@ interface Params {
     body: {
         questions: QuestionElement[];
     };
+    onSuccess: (q: QuestionElement[]) => void;
 }
 
 interface State {
@@ -56,6 +60,16 @@ const requestOptions: Requests<ComponentProps, Params> = {
             }
 
             return params.body;
+        },
+        onSuccess: ({
+            params,
+            response,
+        }) => {
+            if (!params || !params.onSuccess) {
+                return;
+            }
+
+            params.onSuccess((response as FrameworkElement).questions);
         },
     },
 };
@@ -93,6 +107,7 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
                 questionnairePatchRequest,
             },
             value,
+            onRequestSuccess,
         } = this.props;
 
         const questions = [
@@ -116,11 +131,10 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
             questions,
         };
 
-        console.warn(patchBody);
-
         questionnairePatchRequest.do({
             questionnaireId: questionnaire.id,
             body: patchBody,
+            onSuccess: onRequestSuccess,
         });
     }
 
@@ -128,12 +142,15 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
         const {
             className,
             questionnaire,
+            requests,
         } = this.props;
 
         const {
             faramValues,
             faramErrors,
         } = this.state;
+
+        const pending = getPending(requests, 'questionnairePatchRequest');
 
         return (
             <QuestionForm
@@ -143,6 +160,7 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
                 onChange={this.handleFaramChange}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 framework={questionnaire.projectFrameworkDetail}
+                pending={pending}
             />
         );
     }

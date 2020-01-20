@@ -263,6 +263,7 @@ export default class ProjectDetails extends React.PureComponent {
                             tabs={this.routes}
                         >
                             <ButtonLikeLink
+                                type="accent"
                                 to={this.getProjectQuestionnaireLink(projectId)}
                                 className={styles.projectQuestionnaireLink}
                             >

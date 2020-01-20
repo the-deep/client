@@ -8,6 +8,20 @@ import Button from '#rsca/Button';
 import FrameworkAttributeOutput from '#qbc/FrameworkAttributeOutput';
 import ResponseOutput from '#qbc/ResponseOutput';
 
+import TextIcon from '#resources/img/questionnaire-icons/text.png';
+import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
+import SelectIcon from '#resources/img/questionnaire-icons/select one.png';
+import DateAndTimeIcon from '#resources/img/questionnaire-icons/date and time.png';
+import RankIcon from '#resources/img/questionnaire-icons/rank.png';
+import LocationIcon from '#resources/img/questionnaire-icons/location.png';
+import ImageIcon from '#resources/img/questionnaire-icons/image.png';
+import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
+import VideoIcon from '#resources/img/questionnaire-icons/video.png';
+import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
+import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
+import RangeIcon from '#resources/img/questionnaire-icons/range.png';
+
+
 import {
     QuestionElement,
     FrameworkElement,
@@ -24,6 +38,21 @@ interface Props {
     hideDetails?: boolean;
     readOnly?: boolean;
 }
+
+const iconMap = {
+    text: TextIcon,
+    number: NumberIcon,
+    dateAndTime: DateAndTimeIcon,
+    select: SelectIcon,
+    rank: RankIcon,
+    location: LocationIcon,
+    image: ImageIcon,
+    audio: AudioIcon,
+    video: VideoIcon,
+    fileUpload: FileUploadIcon,
+    barcode: BarcodeIcon,
+    range: RangeIcon,
+};
 
 class Question extends React.PureComponent<Props> {
     private getFrameworkOptions = memoize(getMatrix2dStructures)
@@ -63,8 +92,10 @@ class Question extends React.PureComponent<Props> {
             <div className={_cs(className, styles.question)}>
                 <div className={styles.brief}>
                     <div className={styles.left}>
-                        <Icon
-                            name="checkAll"
+                        <img
+                            className={styles.icon}
+                            src={iconMap[data.type]}
+                            alt={data.type}
                         />
                     </div>
                     <div className={styles.right}>

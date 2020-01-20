@@ -5,9 +5,18 @@
         display: flex;
 
         >.left {
+            display: flex;
+            align-items: center;
             flex-shrink: 0;
             background-color: var(--color-background);
             padding: var(--spacing-medium);
+
+            .icon {
+                width: var(--width-question-icon);
+                height: var(--height-question-icon);
+                object-fit: contain;
+                object-position: center center;
+            }
         }
 
         >.right {
