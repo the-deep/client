@@ -15,6 +15,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import HintAndError from '#rsci/HintAndError';
 import Label from '#rsci/Label';
+import featuresMapping from '#constants/features';
 
 import { activeUserSelector } from '#redux';
 
@@ -216,9 +217,10 @@ export default class GeoInput extends React.PureComponent {
         const polygons = this.getPolygons(value);
         const options = this.getAllGeoOptions(geoOptionsByRegion);
 
-        const polygonSupportIndex = accessibleFeatures.findIndex(f => f.key === 'polygon_support_geo');
+        const polygonSupportIndex = accessibleFeatures
+            .findIndex(f => f.key === featuresMapping.polygonSupportGeo);
         const isPolygonFeatureEnabled = polygonSupportIndex !== -1;
-        const shouldEnablePloygon = isPolygonFeatureEnabled && polygonsEnabled;
+        const shouldEnablePolygon = isPolygonFeatureEnabled && polygonsEnabled;
 
         return (
             <div className={className}>
@@ -278,7 +280,7 @@ export default class GeoInput extends React.PureComponent {
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
                         modalLeftComponent={modalLeftComponent}
-                        polygonsEnabled={shouldEnablePloygon}
+                        polygonsEnabled={shouldEnablePolygon}
                     />
                 )}
             </div>
