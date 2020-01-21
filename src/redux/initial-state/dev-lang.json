@@ -1084,7 +1084,8 @@
         "-93218852": "Some entry groups were updated in server.",
         "-84182062": "Hide Highlight",
         "-28191340": "Reset Excerpt",
-        "-36912904": "Show Highlight"
+        "-36912904": "Show Highlight",
+        "-5446515": "Search text widget"
     },
     "links": {
         "browserExtension": {
@@ -1528,7 +1529,8 @@
             "commentCreatedByFilterLabel": -95143967,
             "commentCreatedByPlaceholder": 17,
             "commentStatusOptionsFilterLabel": -84296296,
-            "commentStatusPlaceholder": 8
+            "commentStatusPlaceholder": 8,
+            "textSearchPlaceholder": -5446515
         },
         "export": {
             "headerExport": 600,
