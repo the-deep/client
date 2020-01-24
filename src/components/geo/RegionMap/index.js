@@ -4,7 +4,7 @@ import produce from 'immer';
 import memoize from 'memoize-one';
 import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
 
-
+import boundError from '#rscg/BoundError';
 import { FgRestBuilder } from '#rsu/rest';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -12,6 +12,8 @@ import Button from '#rsca/Button';
 import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+
+import ComponentError from '#components/error/ComponentError';
 
 import Map from '#re-map';
 import MapBounds from '#re-map/MapBounds';
@@ -32,6 +34,8 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const ErrorDecorator = boundError(ComponentError);
 
 const getIdFromFeature = feature => (
     feature.id
@@ -147,7 +151,7 @@ const defaultProps = {
     onPolygonClick: undefined,
 };
 
-export default class RegionMap extends React.PureComponent {
+class RegionMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -913,3 +917,5 @@ export default class RegionMap extends React.PureComponent {
         );
     }
 }
+
+export default ErrorDecorator(RegionMap);
