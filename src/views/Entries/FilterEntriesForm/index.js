@@ -262,6 +262,14 @@ export default class FilterEntriesForm extends React.PureComponent {
                         placeholder={_ts('entries', 'timePlaceholder')}
                     />
                 );
+            case 'text':
+                return (
+                    <SearchInput
+                        {...props}
+                        showHintAndError={false}
+                        placeholder={_ts('entries', 'textSearchPlaceholder')}
+                    />
+                );
             default:
                 return null;
         }
