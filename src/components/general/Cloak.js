@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import { mapToMap } from '@togglecorp/fujs';
+import featuresMapping from '#constants/features';
 
 import {
     activeUserSelector,
@@ -60,9 +61,10 @@ const defaultProps = {
 };
 
 const allAccessibleFeatures = {
-    accessZoomableImage: featureList => featureList.includes('zoomable_image'),
-    accessPrivateProject: featureList => featureList.includes('private_project'),
-    accessEntryVisualizationConfiguration: featureList => featureList.includes('entry_visualization_configuration'),
+    accessZoomableImage: featureList => featureList.includes(featuresMapping.zoomableImage),
+    accessPrivateProject: featureList => featureList.includes(featuresMapping.privateProject),
+    accessEntryVisualizationConfiguration: featureList =>
+        featureList.includes(featuresMapping.entryVizConfig),
 };
 
 @connect(mapStateToProps, undefined)

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import {
     _cs,
@@ -14,14 +15,24 @@ import AccentButton from '#rsca/Button/AccentButton';
 import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import HintAndError from '#rsci/HintAndError';
 import Label from '#rsci/Label';
+import featuresMapping from '#constants/features';
+
+import { activeUserSelector } from '#redux';
 
 import GeoModal from './GeoModal';
 import styles from './styles.scss';
 
 const MAX_DISPLAY_OPTIONS = 100;
 
+const mapStateToProps = state => ({
+    activeUser: activeUserSelector(state),
+});
+
 const propTypes = {
     className: PropTypes.string,
+    activeUser: PropTypes.shape({
+        accessibleFeatures: PropTypes.array,
+    }),
 
     onChange: PropTypes.func,
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -53,6 +64,7 @@ const defaultProps = {
     className: undefined,
     label: undefined,
     showLabel: true,
+    activeUser: {},
     onChange: undefined,
     geoOptionsByRegion: {},
     disabled: false,
@@ -72,6 +84,7 @@ const defaultProps = {
 };
 
 @FaramInputElement
+@connect(mapStateToProps, undefined)
 export default class GeoInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -187,10 +200,12 @@ export default class GeoInput extends React.PureComponent {
             placeholder,
             emptyComponent,
             polygonsEnabled,
+            activeUser: {
+                accessibleFeatures = [],
+            },
         } = this.props;
-        const {
-            showModal,
-        } = this.state;
+
+        const { showModal } = this.state;
 
         const className = _cs(
             classNameFromProps,
@@ -201,6 +216,11 @@ export default class GeoInput extends React.PureComponent {
         const selections = this.getSelections(value);
         const polygons = this.getPolygons(value);
         const options = this.getAllGeoOptions(geoOptionsByRegion);
+
+        const polygonSupportIndex = accessibleFeatures
+            .findIndex(f => f.key === featuresMapping.polygonSupportGeo);
+        const isPolygonFeatureEnabled = polygonSupportIndex !== -1;
+        const shouldEnablePolygon = isPolygonFeatureEnabled && polygonsEnabled;
 
         return (
             <div className={className}>
@@ -260,7 +280,7 @@ export default class GeoInput extends React.PureComponent {
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
                         modalLeftComponent={modalLeftComponent}
-                        polygonsEnabled={polygonsEnabled}
+                        polygonsEnabled={shouldEnablePolygon}
                     />
                 )}
             </div>
