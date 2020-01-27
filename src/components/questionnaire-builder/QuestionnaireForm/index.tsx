@@ -35,6 +35,7 @@ interface ComponentProps {
     className?: string;
     projectId: ProjectElement['id'];
     value: QuestionElement;
+    pending?: boolean;
 }
 
 type FaramValues = QuestionnaireFormElement;
@@ -49,6 +50,7 @@ type FaramErrors = {
 
 interface Params {
     body: RequestBody;
+    questionnaireId: number;
 }
 
 interface State {

@@ -227,6 +227,18 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                 <Page
                     className={_cs(styles.questionnaireBuilder, className)}
                     headerAboveSidebar
+                    headerClassName={styles.header}
+                    header={(
+                        <>
+                            <BackLink
+                                className={styles.backLink}
+                                defaultLink={reverseRoute(pathNames.homeScreen, {})}
+                            />
+                            <h2 className={styles.heading}>
+                                {questionnaire.title}
+                            </h2>
+                        </>
+                    )}
                     sidebarClassName={styles.sidebar}
                     sidebar={(
                         <>
@@ -288,18 +300,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     </h3>
                                 </header>
                             </div>
-                        </>
-                    )}
-                    headerClassName={styles.header}
-                    header={(
-                        <>
-                            <BackLink
-                                className={styles.backLink}
-                                defaultLink={reverseRoute(pathNames.homeScreen, {})}
-                            />
-                            <h2 className={styles.heading}>
-                                Questionnaire builder ({questionnaire.title})
-                            </h2>
                         </>
                     )}
                 />

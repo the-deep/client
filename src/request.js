@@ -62,6 +62,8 @@ const coordinatorOptions = {
 
         // NOTE: This is a hack to bypass auth for S3 requests
         // Need to fix this through use of new react-rest-request@2
+        // FIXME: react-rest-request@2 has been used
+        // need to fix this using extras
         const doNotAuth = body && body.$noAuth;
 
         const {

@@ -69,7 +69,8 @@ body {
     h4,
     h5 {
         margin: 0;
-        text-transform: uppercase;
+        // text-transform: uppercase;
+        text-transform: capitalize;
         color: var(--color-primary);
         font-family: var(--font-family-heading);
         font-weight: var(--font-weight-heading);

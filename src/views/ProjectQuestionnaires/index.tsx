@@ -1,27 +1,33 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     _cs,
     reverseRoute,
 } from '@togglecorp/fujs';
-import memoize from 'memoize-one';
-
-import Page from '#rscv/Page';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import VerticalTabs from '#rscv/VerticalTabs';
-import MultiViewContainer from '#rscv/MultiViewContainer';
+import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import modalize from '#rscg/Modalize';
 import Modal from '#rscv/Modal';
-import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
+import ModalHeader from '#rscv/Modal/Header';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import Page from '#rscv/Page';
+import VerticalTabs from '#rscv/VerticalTabs';
 
 import QuestionnaireForm from '#qbc/QuestionnaireForm';
+
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
+import {
+    projectIdFromRouteSelector,
+    projectDetailsSelector,
+} from '#redux';
 
 import {
-    QuestionnaireElement,
+    ProjectElement,
     AddRequestProps,
+    AppState,
     Requests,
 } from '#typings';
 
@@ -29,8 +35,6 @@ import {
     RequestCoordinator,
     RequestClient,
     methods,
-    getResults,
-    getPending,
 } from '#request';
 
 import QuestionnaireList from './QuestionnaireList';
@@ -38,16 +42,60 @@ import QuestionnaireList from './QuestionnaireList';
 
 import styles from './styles.scss';
 
+const ModalButton = modalize(PrimaryButton);
+
+const AddQuestionnaireModal = ({
+    projectId,
+    closeModal,
+    onSuccess,
+}: {
+    projectId: number;
+    closeModal?: () => void;
+    onSuccess: () => void;
+}) => {
+    const handleSuccess = useCallback(
+        () => {
+            onSuccess();
+            if (closeModal) {
+                closeModal();
+            }
+        },
+        [closeModal, onSuccess],
+    );
+
+    return (
+        <Modal className={styles.editQuestionnaireModal}>
+            <ModalHeader
+                // FIXME: use strings
+                title="Edit questionnaire details"
+                rightComponent={
+                    <Button
+                        iconName="close"
+                        onClick={closeModal}
+                        transparent
+                    />
+                }
+            />
+            <ModalBody>
+                <QuestionnaireForm
+                    onRequestSuccess={handleSuccess}
+                    projectId={projectId}
+                />
+            </ModalBody>
+        </Modal>
+    );
+};
+
 
 interface ComponentProps {
     className?: string;
-    activeProjectId: number;
-    projectName: string;
-    frameworkName: string;
+    projectId: number;
+    projectDetail: ProjectElement;
 }
 
 interface State {
-    showEditQuestionnaireModal: boolean;
+    // NOTE: used to re-fetch questionnaire list
+    fetchTimestamp: number;
 }
 
 type TabElement = 'active' | 'archived';
@@ -58,90 +106,61 @@ interface Params {
 type Props = AddRequestProps<ComponentProps, Params>;
 
 const requestOptions: Requests<ComponentProps, Params> = {
-    questionnaireRequest: {
-        url: '/questionnaires/',
+    questionnaireMetaRequest: {
+        url: ({ props }) => `/projects/${props.projectId}/questionnaire-meta`,
+        onPropsChanged: ['projectId'],
         method: methods.GET,
         onMount: true,
+        // FIXME: write onFailure, onFatal
     },
 };
 
-const getHashFromBrowser = () => window.location.hash.substr(2);
+const mapStateToProps = (state: AppState) => ({
+    projectDetail: projectDetailsSelector(state),
+    projectId: projectIdFromRouteSelector(state),
+});
+
+const tabs: {[key in TabElement]: string} = {
+    // FIXME: use strings
+    active: 'Active',
+    // FIXME: use strings
+    archived: 'Archived',
+};
 
 class ProjectQuestionnaires extends React.PureComponent<Props, State> {
     public state = {
-        showEditQuestionnaireModal: false,
-    }
-
-    private getQuestionnaireListForCurrentView = () => {
-        const { requests } = this.props;
-
-        const questionnaireList = getResults(requests, 'questionnaireRequest') as QuestionnaireElement[];
-        const currentView = getHashFromBrowser();
-
-        if (currentView === 'active') {
-            return questionnaireList.filter(q => !q.isArchived);
-        }
-
-        if (currentView === 'archived') {
-            return questionnaireList.filter(q => q.isArchived);
-        }
-
-        return [];
-    }
-
-    private getQuestionnaireCounts = memoize((questionnaireList: QuestionnaireElement[]) => ({
-        active: questionnaireList.filter(q => !q.isArchived).length,
-        archived: questionnaireList.filter(q => q.isArchived).length,
-    }))
-
-    private getFrameworkName = (questionnaireList) => {
-        if (!questionnaireList || questionnaireList.length === 0) {
-            return '';
-        }
-
-        const firstQuestionnaire = questionnaireList[0];
-
-        if (!firstQuestionnaire.projectFrameworkDetail) {
-            return '';
-        }
-
-        return firstQuestionnaire.projectFrameworkDetail.title;
-    }
-
-
-    private handleAddQuestionnaireButtonClick = () => {
-        this.setState({ showEditQuestionnaireModal: true });
-    }
-
-    private handleCloseEditQuestionnaireModalButton = () => {
-        this.setState({ showEditQuestionnaireModal: false });
+        fetchTimestamp: 0,
     }
 
     private handleQuestionnaireFormRequestSuccess = () => {
-        this.setState({ showEditQuestionnaireModal: false });
-        this.props.requests.questionnaireRequest.do();
+        this.setState({
+            fetchTimestamp: new Date().getTime(),
+        });
     }
-
-    private tabs: {[key in TabElement]: string} = {
-        active: 'Active',
-        archived: 'Archived',
-    };
 
     private views = {
         active: {
             component: QuestionnaireList,
             rendererParams: () => ({
+                // FIXME: use strings
                 title: 'Active questionnaires',
-                questionnaireList: this.getQuestionnaireListForCurrentView(),
                 className: styles.content,
+                projectId: this.props.projectId,
+                fetchTimestamp: this.state.fetchTimestamp,
+                onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
+                archived: false,
             }),
         },
         archived: {
             component: QuestionnaireList,
             rendererParams: () => ({
+                // FIXME: use strings
                 title: 'Archived questionnaires',
-                questionnaireList: this.getQuestionnaireListForCurrentView(),
                 className: styles.content,
+                projectId: this.props.projectId,
+                archived: true,
+                fetchTimestamp: this.state.fetchTimestamp,
+                onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
             }),
         },
     }
@@ -149,17 +168,41 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
     public render() {
         const {
             className,
-            activeProjectId: projectId,
-            projectName,
-            requests,
+            projectId,
+            projectDetail,
+            requests: {
+                questionnaireMetaRequest: {
+                    response,
+                },
+            },
         } = this.props;
 
-        const { showEditQuestionnaireModal } = this.state;
+        let frameworkName = '-';
+        let counts: {[key in TabElement]: number} | undefined;
 
-        const questionnaireList = getResults(requests, 'questionnaireRequest') as QuestionnaireElement[];
-        const pending = getPending(requests, 'questionnaireRequest');
-        const questionnaireCounts = this.getQuestionnaireCounts(questionnaireList);
-        const frameworkName = this.getFrameworkName(questionnaireList);
+        if (response) {
+            const {
+                archivedCount,
+                activeCount,
+                analysisFramework,
+            } = response as {
+                archivedCount: number;
+                activeCount: number;
+                analysisFramework?: {
+                    id: number;
+                    title: string;
+                };
+            };
+
+            if (analysisFramework) {
+                frameworkName = analysisFramework.title;
+            }
+
+            counts = {
+                active: activeCount,
+                archived: archivedCount,
+            };
+        }
 
         return (
             <>
@@ -167,19 +210,45 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                     className={_cs(styles.projectQuestionnaires, className)}
                     mainContentClassName={styles.main}
                     headerAboveSidebar
+                    headerClassName={styles.header}
+                    header={(
+                        <>
+                            <BackLink
+                                className={styles.backLink}
+                                defaultLink={reverseRoute(pathNames.projects, { projectId })}
+                            />
+                            <h2 className={styles.heading}>
+                                {/* FIXME: use strings */}
+                                Project questionnaires
+                            </h2>
+                            <ModalButton
+                                modal={
+                                    <AddQuestionnaireModal
+                                        onSuccess={this.handleQuestionnaireFormRequestSuccess}
+                                        projectId={projectId}
+                                    />
+                                }
+                            >
+                                {/* FIXME: use strings */}
+                                New questionnaire
+                            </ModalButton>
+                        </>
+                    )}
                     sidebarClassName={styles.sidebar}
                     sidebar={(
                         <>
                             <div className={styles.projectDetails}>
                                 <h3 className={styles.heading}>
+                                    {/* FIXME: use strings */}
                                     Project
                                 </h3>
                                 <div className={styles.content}>
                                     <div className={styles.projectName}>
-                                        { projectName }
+                                        { projectDetail.title }
                                     </div>
                                     <div className={styles.frameworkName}>
                                         <div className={styles.label}>
+                                            {/* FIXME: use strings */}
                                             Analysis framework
                                         </div>
                                         <div className={styles.value}>
@@ -190,83 +259,45 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                             </div>
                             <div className={styles.questionnaires}>
                                 <h3 className={styles.heading}>
+                                    {/* FIXME: use strings */}
                                     Questionnaires
                                 </h3>
                                 <div className={styles.content}>
                                     <VerticalTabs
-                                        tabs={this.tabs}
+                                        tabs={tabs}
                                         useHash
+                                        replaceHistory
                                         modifier={(itemKey: TabElement) => (
                                             <div className={styles.tab}>
                                                 <div className={styles.label}>
-                                                    { this.tabs[itemKey] }
+                                                    { tabs[itemKey] }
                                                 </div>
                                                 <div className={styles.count}>
-                                                    { questionnaireCounts[itemKey] }
+                                                    { counts ? counts[itemKey] : '-' }
                                                 </div>
                                             </div>
                                         )}
                                     />
                                 </div>
                             </div>
-                            <div className={styles.actions}>
-                                <Button
-                                    disabled={pending}
-                                    onClick={this.handleAddQuestionnaireButtonClick}
-                                >
-                                    New questionnaire
-                                </Button>
-                            </div>
                         </>
                     )}
                     mainContent={(
-                        <>
-                            { pending && <LoadingAnimation /> }
-                            <MultiViewContainer
-                                views={this.views}
-                                useHash
-                            />
-                        </>
-                    )}
-                    headerClassName={styles.header}
-                    header={(
-                        <>
-                            <BackLink
-                                className={styles.backLink}
-                                defaultLink={reverseRoute(pathNames.projects, { projectId })}
-                            />
-                            <h2 className={styles.heading}>
-                                Project questionnaires
-                            </h2>
-                        </>
+                        <MultiViewContainer
+                            views={this.views}
+                            useHash
+                        />
                     )}
                 />
-                {showEditQuestionnaireModal && (
-                    <Modal className={styles.editQuestionnaireModal}>
-                        <ModalHeader
-                            title="Edit questionnaire details"
-                            rightComponent={
-                                <Button
-                                    iconName="close"
-                                    onClick={this.handleCloseEditQuestionnaireModalButton}
-                                />
-                            }
-                        />
-                        <ModalBody>
-                            <QuestionnaireForm
-                                onRequestSuccess={this.handleQuestionnaireFormRequestSuccess}
-                                projectId={projectId}
-                            />
-                        </ModalBody>
-                    </Modal>
-                )}
             </>
         );
     }
 }
 
-export default RequestCoordinator(
-    RequestClient(requestOptions)(
-        ProjectQuestionnaires,
+export default connect(mapStateToProps)(
+    RequestCoordinator(
+        RequestClient(requestOptions)(
+            ProjectQuestionnaires,
+        ),
     ),
 );

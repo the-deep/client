@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
-import {
-    _cs,
-    reverseRoute,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import notify from '#notify';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -22,8 +18,6 @@ import {
     unsetProjectDetailsAction,
     currentUserProjectsSelector,
 } from '#redux';
-import { pathNames } from '#constants';
-import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
 import _ts from '#ts';
 
@@ -225,10 +219,6 @@ export default class ProjectDetails extends React.PureComponent {
         };
     }
 
-    getProjectQuestionnaireLink = memoize(projectId => (
-        reverseRoute(pathNames.projectQuestionnaires, { projectId })
-    ))
-
     handleProjectDelete = () => {
         const {
             requests: {
@@ -261,15 +251,7 @@ export default class ProjectDetails extends React.PureComponent {
                             replaceHistory
                             useHash
                             tabs={this.routes}
-                        >
-                            <ButtonLikeLink
-                                type="accent"
-                                to={this.getProjectQuestionnaireLink(projectId)}
-                                className={styles.projectQuestionnaireLink}
-                            >
-                                Manage questionares
-                            </ButtonLikeLink>
-                        </ScrollTabs>
+                        />
                         <MultiViewContainer
                             useHash
                             activeClassName={styles.active}

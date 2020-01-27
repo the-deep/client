@@ -31,6 +31,17 @@ export interface QuestionnaireItem extends QuestionnaireMeta {
     dateCreated: string;
     frameworkId: number;
     questions: QuestionElement[];
+    createdAt: string;
+
+    crisisTypeDetail?: {
+        title: string;
+    };
+    dataCollectionTechniqueDetail?: {
+        value: string;
+    };
+    enumeratorSkillDetail?: {
+        value: string;
+    };
 }
 
 export interface ResponseOptionElement {

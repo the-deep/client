@@ -78,5 +78,6 @@ export interface FrameworkElement {
     id: number;
     widgets: WidgetElement[];
     questions: QuestionElement[];
+    title: string;
 }
 
