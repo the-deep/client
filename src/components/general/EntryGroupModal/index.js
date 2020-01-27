@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 import FloatingContainer from '#rscv/FloatingContainer';
 import List from '#rscv/List';
+import Button from '#rsca/Button';
 import { entryGroupAccessor } from '#entities/editEntries';
 import {
     editEntriesLabelsSelector,
@@ -24,18 +25,22 @@ const propTypes = {
     closeModal: PropTypes.func,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    leadId: PropTypes.number,
     selectedEntryKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]),
+    selectedEntryServerId: PropTypes.number,
 };
 
 const defaultProps = {
     className: undefined,
     closeModal: undefined,
+    leadId: undefined,
     entryGroups: [],
     labels: [],
     selectedEntryKey: undefined,
+    selectedEntryServerId: undefined,
 };
 
 const mapStateToProps = state => ({
@@ -96,17 +101,23 @@ export default class EntryCommentModal extends React.PureComponent {
     }
 
     labelsHeaderRendererParams = (key, data) => {
-        const { title } = data;
+        const {
+            title,
+            color,
+        } = data;
 
         return ({
             label: title,
+            color,
         });
     }
 
     groupRendererParams = (key, data) => {
         const {
             labels,
+            leadId,
             selectedEntryKey,
+            selectedEntryServerId,
         } = this.props;
 
         const {
@@ -117,10 +128,13 @@ export default class EntryCommentModal extends React.PureComponent {
         } = data;
 
         return ({
+            leadId,
             title,
             labels,
             selections,
+            groupKey: key,
             selectedEntryKey,
+            selectedEntryServerId,
         });
     }
 
@@ -130,6 +144,7 @@ export default class EntryCommentModal extends React.PureComponent {
             entryGroups,
             labels,
             closeModal,
+            leadId,
         } = this.props;
 
         return (
@@ -142,8 +157,12 @@ export default class EntryCommentModal extends React.PureComponent {
                 onBlur={closeModal}
                 showHaze
             >
-                <header>
-                    header
+                <header className={styles.header}>
+                    <Button
+                        transparent
+                        iconName="close"
+                        onClick={closeModal}
+                    />
                 </header>
                 <div className={styles.content}>
                     <table>

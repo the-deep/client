@@ -1,5 +1,6 @@
 const iconNames = {
     add: 'ion-plus',
+    addCircle: 'ion-android-add-circle',
     addPerson: 'ion-person-add',
     applyAll: 'ion-ios-world',
     applyAllBelow: 'ion-android-arrow-dropdown-circle',

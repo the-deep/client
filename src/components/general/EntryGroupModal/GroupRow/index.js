@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import List from '#rscv/List';
 
@@ -11,6 +12,7 @@ const propTypes = {
     title: PropTypes.string,
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    groupKey: PropTypes.string.isRequired,
     selectedEntryKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -31,10 +33,13 @@ export default class GroupRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    labelsHeaderRendererParams = (key, data) => {
+    cellRendererParams = (key, data) => {
         const {
+            leadId,
+            groupKey,
             selections,
             selectedEntryKey,
+            selectedEntryServerId,
         } = this.props;
 
         const {
@@ -47,10 +52,15 @@ export default class GroupRow extends React.PureComponent {
             (s.labelId === key) && (s.entryClientId === selectedEntryKey));
 
         return ({
-            label: title,
-            isSelected,
-            isCurrentEntryTagged: isSelected && isCurrentEntryTagged,
             color,
+            isSelected,
+            label: title,
+            labelId: key,
+            leadId,
+            entryGroupKey: groupKey,
+            selectedEntryKey,
+            selectedEntryServerId,
+            isCurrentEntryTagged: isSelected && isCurrentEntryTagged,
         });
     }
 
@@ -62,13 +72,13 @@ export default class GroupRow extends React.PureComponent {
         } = this.props;
 
         return (
-            <tr className={className} >
-                <td>
+            <tr className={_cs(className, styles.groupRow)} >
+                <td className={styles.groupTitle} >
                     {title}
                 </td>
                 <List
                     data={labels}
-                    rendererParams={this.labelsHeaderRendererParams}
+                    rendererParams={this.cellRendererParams}
                     renderer={Cell}
                     keySelector={labelKeySelector}
                 />

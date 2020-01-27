@@ -294,6 +294,8 @@ export default class Overview extends React.PureComponent {
                                     modal={
                                         <EntryGroupModal
                                             selectedEntryKey={selectedEntryKey}
+                                            selectedEntryServerId={entryAccessor.serverId(entry)}
+                                            leadId={leadId}
                                         />
                                     }
                                 />

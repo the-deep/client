@@ -1,3 +1,11 @@
 .container {
-    padding: var(--spacing-medium);
+    .header {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--spacing-extra-small);
+    }
+
+    .content {
+        padding: var(--spacing-small);
+    }
 }

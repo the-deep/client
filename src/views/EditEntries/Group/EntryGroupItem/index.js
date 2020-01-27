@@ -226,6 +226,7 @@ EntryGroupItem.propTypes = {
     onSelectionClear: PropTypes.func.isRequired,
     onEntryGroupDataSet: PropTypes.func.isRequired,
 };
+
 EntryGroupItem.defaultProps = {
     selections: [],
     title: undefined,
