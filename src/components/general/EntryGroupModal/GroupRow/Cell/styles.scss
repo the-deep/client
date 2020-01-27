@@ -1,0 +1,15 @@
+.cell {
+    &.selected {
+        background-color: #ffeac5;
+    }
+
+    &.tagged {
+        background: repeating-linear-gradient(
+            -45deg,
+            var(--color-selected-group),
+            var(--color-selected-group) 3px,
+            var(--color-selected-group-hatch) 3px,
+            var(--color-selected-group-hatch) 6px,
+        );
+    }
+}

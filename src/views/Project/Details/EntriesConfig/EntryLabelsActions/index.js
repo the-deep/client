@@ -30,10 +30,12 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     onEntryLabelDelete: PropTypes.func.isRequired,
     onEntryLabelEdit: PropTypes.func.isRequired,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     projectId: undefined,
+    readOnly: false,
 };
 
 const requestOptions = {
@@ -101,6 +103,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                     pending,
                 },
             },
+            readOnly,
         } = this.props;
 
         const {
@@ -117,6 +120,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                     smallVerticalPadding
                     transparent
                     iconName="delete"
+                    disabled={readOnly}
                     confirmationMessage={_ts(
                         'project.entryGroups',
                         'deleteEntryLabelConfirmation',
@@ -130,6 +134,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                     className={styles.button}
                     iconName="edit"
                     transparent
+                    disabled={readOnly}
                     pending={pending}
                     modal={(
                         <EntryLabelEditForm

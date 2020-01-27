@@ -46,6 +46,7 @@ const iconNames = {
     fig: 'fa fa-file-image-o',
     fork: 'ion-fork-repo',
     format: 'ion-android-list',
+    folder: 'ion-ios-folder-outline',
     forward: 'ion-forward',
     globe: 'ion-earth',
     googleDrive: 'ion-social-googleplus-outline',

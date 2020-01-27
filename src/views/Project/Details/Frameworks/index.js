@@ -94,6 +94,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             projectId,
             readOnly,
             className,
+            setFrameworkList,
         } = this.props;
 
         const activeFrameworkId = activeFrameworkIdFromState || usedFrameworkId;
@@ -112,7 +113,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                     usedFrameworkId={usedFrameworkId}
 
                     setActiveFramework={this.setActiveFramework}
-                    setFrameworkList={this.props.setFrameworkList}
+                    setFrameworkList={setFrameworkList}
                 />
                 <FrameworkDetail
                     frameworkList={frameworkList}

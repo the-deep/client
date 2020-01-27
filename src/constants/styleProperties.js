@@ -12,6 +12,8 @@ const styleProperties = {
         colorTextSuccess: '#43a047',
         colorTextOnHightlight: defaultColors.colorTextOnLight,
         colorShadowLight: 'rgba(0, 0, 0, .1)',
+        colorSelectedGroup: '#ffeac5',
+        colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
     },
 
     dimens: {

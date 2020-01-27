@@ -40,22 +40,29 @@
                 padding: 0 var(--spacing-medium);
             }
 
-            .action-buttons {
+            .left-action-buttons {
+                display: flex;
+                align-items: center;
+                align-self: stretch;
+                flex-shrink: 0;
+                border-right: var(--width-separator-thin) solid var(--color-separator);
+
+                .add-new-entry-button {
+                    margin: 0 var(--spacing-small);
+                }
+            }
+
+            .right-action-buttons {
                 display: flex;
                 flex-shrink: 0;
 
                 button {
-                    margin: 0 var(--spacing-small);
-                }
-
-                .add-new-entry-button {
-                    margin-right: var(--spacing-medium);
+                    margin: 0 var(--spacing-extra-small);
                 }
 
                 .entry-comment-button {
                     display: flex;
                     align-items: center;
-                    margin-right: var(--spacing-extra-small);
                     padding: var(--spacing-extra-small) var(--spacing-small);
 
                     .comment-count {
@@ -71,7 +78,6 @@
                         color: var(--color-accent);
                     }
                 }
-
             }
         }
 

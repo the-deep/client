@@ -8,6 +8,7 @@ import {
 
 import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
+import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
@@ -262,7 +263,7 @@ export default class Overview extends React.PureComponent {
                 rightChild={
                     <React.Fragment>
                         <header className={styles.header}>
-                            <div className={styles.actionButtons}>
+                            <div className={styles.leftActionButtons}>
                                 <Cloak
                                     hide={Overview.shouldHideEntryAdd}
                                     render={
@@ -271,6 +272,28 @@ export default class Overview extends React.PureComponent {
                                             className={styles.addNewEntryButton}
                                             iconName="add"
                                             title={_ts('editEntry.overview', 'addExcerptTooltip')}
+                                        />
+                                    }
+                                />
+                            </div>
+                            <SelectInput
+                                className={styles.entrySelectInput}
+                                placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
+                                keySelector={Overview.entryKeySelector}
+                                labelSelector={this.entryLabelSelector}
+                                onChange={this.handleEntrySelect}
+                                options={this.props.entries}
+                                value={selectedEntryKey}
+                                showHintAndError={false}
+                                showLabel={false}
+                                hideClearButton
+                            />
+                            <div className={styles.rightActionButtons}>
+                                <ModalButton
+                                    iconName="folder"
+                                    modal={
+                                        <EntryGroupModal
+                                            selectedEntryKey={selectedEntryKey}
                                         />
                                     }
                                 />
@@ -316,18 +339,6 @@ export default class Overview extends React.PureComponent {
                                     }
                                 />
                             </div>
-                            <SelectInput
-                                className={styles.entrySelectInput}
-                                placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
-                                keySelector={Overview.entryKeySelector}
-                                labelSelector={this.entryLabelSelector}
-                                onChange={this.handleEntrySelect}
-                                options={this.props.entries}
-                                value={selectedEntryKey}
-                                showHintAndError={false}
-                                showLabel={false}
-                                hideClearButton
-                            />
                         </header>
                         <WidgetFaram
                             className={styles.content}
