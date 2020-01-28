@@ -26,6 +26,8 @@ const entrySchema = [];
             unresolvedCommentCount: { type: 'uint' },
             entryType: { type: 'string', required: true },
             informationDate: { type: 'string' },
+            droppedExcerpt: { type: 'string' },
+            highlightHidden: { type: 'boolean' },
             /*
             exportData: {
                 arrayType: {

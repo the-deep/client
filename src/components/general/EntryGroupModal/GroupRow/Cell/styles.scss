@@ -2,17 +2,18 @@
     position: relative;
 
     &.selected {
-        background-color: #ffeac5;
+        background-color: var(--color-selected-group);
     }
 
     &.tagged {
-        background: repeating-linear-gradient(
-            -45deg,
-            var(--color-selected-group),
-            var(--color-selected-group) 3px,
-            var(--color-selected-group-hatch) 3px,
-            var(--color-selected-group-hatch) 6px,
-        );
+        // background: repeating-linear-gradient(
+        //     -45deg,
+        //     var(--color-selected-group),
+        //     var(--color-selected-group) 3px,
+        //     var(--color-selected-group-hatch) 3px,
+        //     var(--color-selected-group-hatch) 6px,
+        // );
+        background-color: var(--color-accent);
     }
 
     .button {

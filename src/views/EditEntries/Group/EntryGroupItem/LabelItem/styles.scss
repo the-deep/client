@@ -6,7 +6,7 @@
     margin: var(--spacing-small);
     background-color: var(--color-foreground);
     padding: var(--spacing-small);
-    height: 120px;
+    max-height: 240px;
 
     .preview-title {
         display: flex;

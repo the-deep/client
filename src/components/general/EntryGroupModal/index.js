@@ -9,16 +9,23 @@ import { connect } from 'react-redux';
 import FloatingContainer from '#rscv/FloatingContainer';
 import List from '#rscv/List';
 import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 import { entryGroupAccessor } from '#entities/editEntries';
 import {
     editEntriesLabelsSelector,
     editEntriesFilteredEntryGroupsSelector,
+
+    editEntriesAddEntryGroupAction,
 } from '#redux';
+import EntryGroupEditModal from '#components/general/EntryGroupEditModal';
+import _ts from '#ts';
 
 import LabelHeader from './LabelHeader';
 import GroupRow from './GroupRow';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -31,6 +38,7 @@ const propTypes = {
         PropTypes.number,
     ]),
     selectedEntryServerId: PropTypes.number,
+    addEntryGroup: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -48,10 +56,14 @@ const mapStateToProps = state => ({
     labels: editEntriesLabelsSelector(state),
 });
 
+const mapDispatchToProps = dispatch => ({
+    addEntryGroup: params => dispatch(editEntriesAddEntryGroupAction(params)),
+});
+
 const WINDOW_PADDING = 24;
 const labelKeySelector = d => d.id;
 
-@connect(mapStateToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class EntryCommentModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -100,6 +112,21 @@ export default class EntryCommentModal extends React.PureComponent {
         }
     }
 
+    handleEntryGroupCreate = (values) => {
+        const {
+            leadId,
+            addEntryGroup,
+        } = this.props;
+
+        addEntryGroup({
+            leadId,
+            entryGroup: {
+                ...values,
+                selections: [],
+            },
+        });
+    }
+
     labelsHeaderRendererParams = (key, data) => {
         const {
             title,
@@ -144,7 +171,6 @@ export default class EntryCommentModal extends React.PureComponent {
             entryGroups,
             labels,
             closeModal,
-            leadId,
         } = this.props;
 
         return (
@@ -154,18 +180,23 @@ export default class EntryCommentModal extends React.PureComponent {
                 onClose={this.handleModalClose}
                 focusTrap
                 closeOnEscape
-                onBlur={closeModal}
                 showHaze
             >
-                <header className={styles.header}>
+                <header className={styles.header} >
+                    <h4 className={styles.heading} >
+                        {_ts('editEntry.groupModal', 'addToEntryGroup')}
+                    </h4>
                     <Button
+                        className={styles.button}
                         transparent
                         iconName="close"
                         onClick={closeModal}
                     />
                 </header>
                 <div className={styles.content}>
-                    <table>
+                    <table
+                        cellSpacing={5}
+                    >
                         <thead>
                             <tr>
                                 <th />
@@ -186,6 +217,19 @@ export default class EntryCommentModal extends React.PureComponent {
                             />
                         </tbody>
                     </table>
+                    <ModalButton
+                        transparent
+                        iconName="add"
+                        modal={
+                            <EntryGroupEditModal
+                                className={styles.addEntryGroupModal}
+                                onSave={this.handleEntryGroupCreate}
+                                isCreate
+                            />
+                        }
+                    >
+                        {_ts('editEntry.groupModal', 'createEntryGroupTitle')}
+                    </ModalButton>
                 </div>
             </FloatingContainer>
         );

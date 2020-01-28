@@ -1,11 +1,38 @@
 .container {
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    max-width: var(--entry-group-modal-max-width);
+    max-height: var(--entry-group-modal-max-height);
+    overflow-y: auto;
+
     .header {
         display: flex;
-        justify-content: flex-end;
-        padding: var(--spacing-extra-small);
+        align-items: center;
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small);
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .button {
+            flex-shrink: 0;
+        }
     }
 
     .content {
+        flex-grow: 1;
         padding: var(--spacing-small);
+        overflow: auto;
+
+        .new-group {
+            font-weight: var(--font-weight-bold);
+        }
     }
+}
+
+.add-entry-group-modal {
+    z-index: 10;
 }

@@ -1085,7 +1085,14 @@
         "-84182062": "Hide Highlight",
         "-28191340": "Reset Excerpt",
         "-36912904": "Show Highlight",
-        "-5446515": "Search text widget"
+        "-5446515": "Search text widget",
+        "-91462875": "Edit Entry Group",
+        "-11049053": "Add entry group",
+        "-16565787": "Clear entry",
+        "-25488943": "Group {order}",
+        "-18186537": "Delete entry group",
+        "-48762166": "Create entry group",
+        "-24599331": "Add to Entry Group"
     },
     "links": {
         "browserExtension": {
@@ -3137,6 +3144,24 @@
         "editEntry.group.leftpane.entryGroupList": {
             "removeEntryGroupButtonTitle": -94407945,
             "undoRemoveEntryGroupButtonTitle": -79810915
+        },
+        "editEntry.group.editModal": {
+            "cancelButtonTitle": 61,
+            "editEntryGroupModalTitle": -91462875,
+            "entryGroupTitleLabel": 13,
+            "saveButtonTitle": 25,
+            "createEntryGroupModalTitle": -48762166
+        },
+        "editEntry.group": {
+            "addEntryGroupButtonLabel": -11049053,
+            "clearEntryButtonTitle": -16565787,
+            "defaultGroupTitle": -25488943,
+            "deleteEntryGroupButtonTitle": -18186537,
+            "editEntryGroupButtonTitle": -91462875
+        },
+        "editEntry.groupModal": {
+            "createEntryGroupTitle": -11049053,
+            "addToEntryGroup": -24599331
         }
     }
 }
