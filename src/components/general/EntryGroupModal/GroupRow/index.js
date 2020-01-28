@@ -13,6 +13,7 @@ const propTypes = {
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     groupKey: PropTypes.string.isRequired,
+    readOnly: PropTypes.bool.isRequired,
     selectedEntryKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -38,6 +39,7 @@ export default class GroupRow extends React.PureComponent {
             leadId,
             groupKey,
             selections,
+            readOnly,
             selectedEntryKey,
             selectedEntryServerId,
         } = this.props;
@@ -57,6 +59,7 @@ export default class GroupRow extends React.PureComponent {
             label: title,
             labelId: key,
             leadId,
+            readOnly,
             entryGroupKey: groupKey,
             selectedEntryKey,
             selectedEntryServerId,

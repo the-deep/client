@@ -1092,7 +1092,8 @@
         "-25488943": "Group {order}",
         "-18186537": "Delete entry group",
         "-48762166": "Create entry group",
-        "-24599331": "Add to Entry Group"
+        "-24599331": "Add to Entry Group",
+        "-19686228": "There are no entry groups in this lead."
     },
     "links": {
         "browserExtension": {
@@ -3161,7 +3162,8 @@
         },
         "editEntry.groupModal": {
             "createEntryGroupTitle": -11049053,
-            "addToEntryGroup": -24599331
+            "addToEntryGroup": -24599331,
+            "noEntryGroupsText": -19686228
         }
     }
 }

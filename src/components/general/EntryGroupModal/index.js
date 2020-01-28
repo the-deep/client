@@ -39,6 +39,7 @@ const propTypes = {
     ]),
     selectedEntryServerId: PropTypes.number,
     addEntryGroup: PropTypes.func.isRequired,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -49,6 +50,7 @@ const defaultProps = {
     labels: [],
     selectedEntryKey: undefined,
     selectedEntryServerId: undefined,
+    readOnly: false,
 };
 
 const mapStateToProps = state => ({
@@ -145,6 +147,7 @@ export default class EntryCommentModal extends React.PureComponent {
             leadId,
             selectedEntryKey,
             selectedEntryServerId,
+            readOnly,
         } = this.props;
 
         const {
@@ -158,6 +161,7 @@ export default class EntryCommentModal extends React.PureComponent {
             leadId,
             title,
             labels,
+            readOnly,
             selections,
             groupKey: key,
             selectedEntryKey,
@@ -171,7 +175,10 @@ export default class EntryCommentModal extends React.PureComponent {
             entryGroups,
             labels,
             closeModal,
+            readOnly,
         } = this.props;
+
+        const hasEntryGroups = entryGroups.length > 0;
 
         return (
             <FloatingContainer
@@ -194,42 +201,49 @@ export default class EntryCommentModal extends React.PureComponent {
                     />
                 </header>
                 <div className={styles.content}>
-                    <table
-                        cellSpacing={5}
-                    >
-                        <thead>
-                            <tr>
-                                <th />
+                    {hasEntryGroups ? (
+                        <table
+                            cellSpacing={5}
+                        >
+                            <thead>
+                                <tr>
+                                    <th />
+                                    <List
+                                        data={labels}
+                                        rendererParams={this.labelsHeaderRendererParams}
+                                        renderer={LabelHeader}
+                                        keySelector={labelKeySelector}
+                                    />
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <List
-                                    data={labels}
-                                    rendererParams={this.labelsHeaderRendererParams}
-                                    renderer={LabelHeader}
-                                    keySelector={labelKeySelector}
+                                    data={entryGroups}
+                                    rendererParams={this.groupRendererParams}
+                                    renderer={GroupRow}
+                                    keySelector={entryGroupAccessor.key}
                                 />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <List
-                                data={entryGroups}
-                                rendererParams={this.groupRendererParams}
-                                renderer={GroupRow}
-                                keySelector={entryGroupAccessor.key}
-                            />
-                        </tbody>
-                    </table>
-                    <ModalButton
-                        transparent
-                        iconName="add"
-                        modal={
-                            <EntryGroupEditModal
-                                className={styles.addEntryGroupModal}
-                                onSave={this.handleEntryGroupCreate}
-                                isCreate
-                            />
-                        }
-                    >
-                        {_ts('editEntry.groupModal', 'createEntryGroupTitle')}
-                    </ModalButton>
+                            </tbody>
+                        </table>
+                    ) : (
+                        _ts('editEntry.groupModal', 'noEntryGroupsText')
+                    )}
+                    {!readOnly && (
+                        <ModalButton
+                            className={styles.addGroupButton}
+                            transparent
+                            iconName="add"
+                            modal={
+                                <EntryGroupEditModal
+                                    className={styles.addEntryGroupModal}
+                                    onSave={this.handleEntryGroupCreate}
+                                    isCreate
+                                />
+                            }
+                        >
+                            {_ts('editEntry.groupModal', 'createEntryGroupTitle')}
+                        </ModalButton>
+                    )}
                 </div>
             </FloatingContainer>
         );

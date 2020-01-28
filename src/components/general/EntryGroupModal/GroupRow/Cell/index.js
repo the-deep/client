@@ -15,6 +15,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    readOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool,
     isCurrentEntryTagged: PropTypes.bool,
 };
@@ -44,7 +45,12 @@ export default class EntryGroupModalCell extends React.PureComponent {
             entryGroupKey,
             labelId,
             leadId,
+            readOnly,
         } = this.props;
+
+        if (readOnly) {
+            return;
+        }
 
         setEntryGroupSelection({
             leadId,
@@ -63,7 +69,12 @@ export default class EntryGroupModalCell extends React.PureComponent {
             entryGroupKey,
             labelId,
             leadId,
+            readOnly,
         } = this.props;
+
+        if (readOnly) {
+            return;
+        }
 
         clearEntryGroupSelection({
             entryGroupKey,
@@ -74,6 +85,7 @@ export default class EntryGroupModalCell extends React.PureComponent {
 
     render() {
         const {
+            readOnly,
             className,
             isSelected,
             isCurrentEntryTagged,
@@ -86,6 +98,7 @@ export default class EntryGroupModalCell extends React.PureComponent {
                     styles.cell,
                     isSelected && styles.selected,
                     isCurrentEntryTagged && styles.tagged,
+                    readOnly && styles.readOnly,
                 )}
             >
                 {isCurrentEntryTagged && (
@@ -94,7 +107,7 @@ export default class EntryGroupModalCell extends React.PureComponent {
                         onClick={this.handleEntryRemove}
                     />
                 )}
-                {!isSelected && (
+                {(!readOnly && !isSelected) && (
                     <button
                         className={_cs(styles.button, styles.addButtonCell)}
                         onClick={this.handleEntryAdd}

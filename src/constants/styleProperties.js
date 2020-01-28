@@ -35,6 +35,7 @@ const styleProperties = {
 
         entryGroupModalMaxHeight: '60vh',
         entryGroupModalMaxWidth: '60vw',
+        entryGroupModalMinWidth: '360px',
 
         widthModalLarge: '80vw',
         heightModalMedium: '70vh',
