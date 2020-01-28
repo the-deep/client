@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import FloatingContainer from '#rscv/FloatingContainer';
 import List from '#rscv/List';
 import Button from '#rsca/Button';
+import Message from '#rscv/Message';
 import modalize from '#rscg/Modalize';
 import { entryGroupAccessor } from '#entities/editEntries';
 import {
@@ -226,7 +227,9 @@ export default class EntryCommentModal extends React.PureComponent {
                             </tbody>
                         </table>
                     ) : (
-                        _ts('editEntry.groupModal', 'noEntryGroupsText')
+                        <Message>
+                            {_ts('editEntry.groupModal', 'noEntryGroupsText')}
+                        </Message>
                     )}
                     {!readOnly && (
                         <ModalButton
@@ -237,7 +240,7 @@ export default class EntryCommentModal extends React.PureComponent {
                                 <EntryGroupEditModal
                                     className={styles.addEntryGroupModal}
                                     onSave={this.handleEntryGroupCreate}
-                                    isCreate
+                                    createMode
                                 />
                             }
                         >

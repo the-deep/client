@@ -18,12 +18,21 @@ const propTypes = {
     readOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool,
     isCurrentEntryTagged: PropTypes.bool,
+    selectedEntryKey: PropTypes.string,
+    selectedEntryServerId: PropTypes.number,
+    entryGroupKey: PropTypes.string.isRequired,
+    labelId: PropTypes.number.isRequired,
+    leadId: PropTypes.number.isRequired,
+    setEntryGroupSelection: PropTypes.func.isRequired,
+    clearEntryGroupSelection: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: undefined,
     isSelected: false,
     isCurrentEntryTagged: false,
+    selectedEntryKey: undefined,
+    selectedEntryServerId: undefined,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -37,7 +46,6 @@ export default class EntryGroupModalCell extends React.PureComponent {
     static defaultProps = defaultProps;
 
     handleEntryAdd = () => {
-        console.warn('add entry');
         const {
             selectedEntryKey,
             selectedEntryServerId,
@@ -103,12 +111,14 @@ export default class EntryGroupModalCell extends React.PureComponent {
             >
                 {isCurrentEntryTagged && (
                     <button
+                        type="button"
                         className={styles.button}
                         onClick={this.handleEntryRemove}
                     />
                 )}
                 {(!readOnly && !isSelected) && (
                     <button
+                        type="button"
                         className={_cs(styles.button, styles.addButtonCell)}
                         onClick={this.handleEntryAdd}
                     >

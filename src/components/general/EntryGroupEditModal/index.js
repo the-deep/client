@@ -26,7 +26,7 @@ const EntryGroupEditModal = (props) => {
         closeModal,
         title,
         onSave,
-        isCreate,
+        createMode,
         className,
     } = props;
 
@@ -65,7 +65,7 @@ const EntryGroupEditModal = (props) => {
             onClose={closeModal}
         >
             <ModalHeader
-                title={isCreate ? (
+                title={createMode ? (
                     _ts('editEntry.group.editModal', 'createEntryGroupModalTitle')
                 ) : (
                     _ts('editEntry.group.editModal', 'editEntryGroupModalTitle')
@@ -116,13 +116,13 @@ EntryGroupEditModal.propTypes = {
     className: PropTypes.string,
     onSave: PropTypes.func.isRequired,
     closeModal: PropTypes.func,
-    isCreate: PropTypes.bool,
+    createMode: PropTypes.bool,
 };
 EntryGroupEditModal.defaultProps = {
     title: undefined,
     className: undefined,
     closeModal: () => {},
-    isCreate: false,
+    createMode: false,
 };
 
 export default EntryGroupEditModal;

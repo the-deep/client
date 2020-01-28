@@ -14,6 +14,8 @@ const propTypes = {
     selections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     groupKey: PropTypes.string.isRequired,
     readOnly: PropTypes.bool.isRequired,
+    selectedEntryServerId: PropTypes.number.isRequired,
+    leadId: PropTypes.number.isRequired,
     selectedEntryKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

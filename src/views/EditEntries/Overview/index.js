@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
     _cs,
     isFalsy,
+    isNotDefined,
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
@@ -290,7 +291,8 @@ export default class Overview extends React.PureComponent {
                             />
                             <div className={styles.rightActionButtons}>
                                 <ModalButton
-                                    iconName="folder"
+                                    iconName="album"
+                                    disabled={isNotDefined(selectedEntryKey)}
                                     modal={
                                         <EntryGroupModal
                                             selectedEntryKey={selectedEntryKey}

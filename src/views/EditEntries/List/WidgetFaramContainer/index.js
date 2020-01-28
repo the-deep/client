@@ -8,6 +8,7 @@ import {
 
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
+import EntryGroupModal from '#components/general/EntryGroupModal';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -128,13 +129,13 @@ export default class WidgetFaramContainer extends React.PureComponent {
         } = this.props;
 
         const {
-            data: {
-                id: entryServerId,
-            },
             serverData: {
                 unresolvedCommentCount,
             },
         } = entry;
+
+        const entryServerId = entryAccessor.serverId(entry);
+        const entryKey = entryAccessor.key(entry);
 
         return (
             <div
@@ -145,6 +146,16 @@ export default class WidgetFaramContainer extends React.PureComponent {
                         {/* FIXME: use strings */}
                         {`Entry ${index + 1}`}
                     </h3>
+                    <ModalButton
+                        iconName="album"
+                        modal={
+                            <EntryGroupModal
+                                selectedEntryKey={entryKey}
+                                selectedEntryServerId={entryAccessor.serverId(entry)}
+                                leadId={leadId}
+                            />
+                        }
+                    />
                     <ModalButton
                         disabled={isFalsy(entryServerId)}
                         className={

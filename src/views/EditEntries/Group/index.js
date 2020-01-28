@@ -208,7 +208,7 @@ export default class Group extends React.PureComponent {
                                         modal={
                                             <EntryGroupEditModal
                                                 onSave={this.handleEntryGroupCreate}
-                                                isCreate
+                                                createMode
                                             />
                                         }
                                         iconName="add"
