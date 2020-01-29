@@ -6,6 +6,20 @@ import { QuestionResponseOptionElement } from '#typings';
 
 import styles from './styles.scss';
 
+interface ResponseOptionsProps {
+    className?: string;
+    value: QuestionResponseOptionElement;
+}
+
+const ResponseOption = ({
+    className,
+    value,
+}: ResponseOptionsProps) => (
+    <div className={_cs(styles.responseOption, className)}>
+        { value.value }
+    </div>
+);
+
 interface Props {
     className?: string;
     value: QuestionResponseOptionElement[];
@@ -15,19 +29,11 @@ interface Props {
 
 const responseOptionKeySelector = (d: QuestionResponseOptionElement) => d.key;
 
-const ResponseOption = ({
-    className,
-    value,
-}: {
-    className?: string;
-    value: QuestionResponseOptionElement;
-}) => (
-    <div className={_cs(styles.responseOption, className)}>
-        { value.value }
-    </div>
-);
-
 class ResponseOutput extends React.PureComponent<Props> {
+    public static defaultProps = {
+        value: [],
+    }
+
     getResponseOptionRendererParams = (
         key: QuestionResponseOptionElement['key'],
         value: QuestionResponseOptionElement,
@@ -39,7 +45,7 @@ class ResponseOutput extends React.PureComponent<Props> {
     public render() {
         const {
             className,
-            value = [],
+            value,
             type,
         } = this.props;
 

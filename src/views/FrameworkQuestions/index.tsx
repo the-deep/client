@@ -6,6 +6,8 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 
+import Button from '#rsca/Button';
+import ListView from '#rscv/List/ListView';
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -27,7 +29,8 @@ import {
 } from '#typings';
 import { afIdFromRouteSelector } from '#redux';
 import BackLink from '#components/general/BackLink';
-import QuestionList from '#qbc/QuestionList';
+import Question from '#qbc/Question';
+import QuestionModalForFramework from '#qbc/QuestionModalForFramework';
 
 import styles from './styles.scss';
 
@@ -43,6 +46,8 @@ interface Params {
 }
 
 interface State {
+    showQuestionModal: boolean;
+    questionToEdit: QuestionElement | undefined;
 }
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
@@ -60,9 +65,18 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     },
 };
 
-const questionKeySelector = (q: QuestionElement) => q.id;
+const questionKeySelector = (d: QuestionElement) => d.id;
 
-class FrameworkQuestions extends React.PureComponent<Props> {
+class FrameworkQuestions extends React.PureComponent<Props, State> {
+    public constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            showQuestionModal: false,
+            questionToEdit: undefined,
+        };
+    }
+
     private getQuestionRendererParams = (key: QuestionElement['id'], question: QuestionElement) => {
         const { requests } = this.props;
         const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
@@ -71,7 +85,43 @@ class FrameworkQuestions extends React.PureComponent<Props> {
             data: question,
             framework,
             className: styles.question,
+            onEditButtonClick: this.handleEditQuestionButtonClick,
         };
+    }
+
+    private handleEditQuestionButtonClick = (questionKey: QuestionElement['id']) => {
+        const { requests } = this.props;
+        const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
+
+        const question = framework.questions.find(d => d.id === questionKey);
+        this.setState({
+            showQuestionModal: true,
+            questionToEdit: question,
+        });
+    }
+
+    private handleAddQuestionButtonClick = () => {
+        this.setState({
+            showQuestionModal: true,
+            questionToEdit: undefined,
+        });
+    }
+
+    private handleAddQuestionModalCloseButtonClick = () => {
+        this.setState({
+            showQuestionModal: false,
+            questionToEdit: undefined,
+        });
+    }
+
+    private handleQuestionFormRequestSuccess = () => {
+        this.setState({
+            showQuestionModal: false,
+            questionToEdit: undefined,
+        });
+
+        const { requests } = this.props;
+        requests.frameworkGetRequest.do();
     }
 
     public render() {
@@ -83,16 +133,35 @@ class FrameworkQuestions extends React.PureComponent<Props> {
         const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
         const pending = getPending(requests, 'frameworkGetRequest');
 
+        const {
+            showQuestionModal,
+            questionToEdit,
+        } = this.state;
+
         return (
             <>
                 <Page
                     headerAboveSidebar
                     className={_cs(className, styles.frameworkQuestions)}
+                    headerClassName={styles.header}
+                    header={(
+                        <>
+                            <BackLink
+                                className={styles.backLink}
+                                defaultLink={reverseRoute(pathNames.homeScreen, {})}
+                            />
+                            <h2 className={styles.heading}>
+                                {/* FIXME: use strings */}
+                                Framework questions
+                            </h2>
+                        </>
+                    )}
                     sidebarClassName={styles.sidebar}
                     sidebar={(
                         <>
                             <header className={styles.header}>
                                 <h3 className={styles.heading}>
+                                    {/* FIXME: use strings */}
                                     Analysis framework
                                 </h3>
                             </header>
@@ -102,30 +171,46 @@ class FrameworkQuestions extends React.PureComponent<Props> {
                     mainContent={(
                         <>
                             { pending && <LoadingAnimation /> }
-                            <QuestionList
-                                className={styles.questionList}
-                                heading={framework.title}
-                                framework={framework}
-                            />
+                            <div className={_cs(styles.questionList, className)}>
+                                <header className={styles.header}>
+                                    <h3 className={styles.heading}>
+                                        {/* FIXME: use strings */}
+                                        Questions
+                                    </h3>
+                                    <div className={styles.actions}>
+                                        <Button
+                                            className={styles.addQuestionButton}
+                                            onClick={this.handleAddQuestionButtonClick}
+                                        >
+                                            {/* FIXME: use strings */}
+                                            Add question
+                                        </Button>
+                                    </div>
+                                </header>
+                                <ListView
+                                    className={styles.content}
+                                    data={framework.questions}
+                                    keySelector={questionKeySelector}
+                                    renderer={Question}
+                                    rendererParams={this.getQuestionRendererParams}
+                                />
+                                {showQuestionModal && (
+                                    <QuestionModalForFramework
+                                        value={questionToEdit}
+                                        framework={framework}
+                                        onRequestSuccess={this.handleQuestionFormRequestSuccess}
+                                        closeModal={this.handleAddQuestionModalCloseButtonClick}
+                                    />
+                                )}
+                            </div>
                             <div className={styles.rightPanel}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
-                                        Diagnostics
+                                        {/* FIXME: use strings */}
+                                        This space is intentionally left blank
                                     </h3>
                                 </header>
                             </div>
-                        </>
-                    )}
-                    headerClassName={styles.header}
-                    header={(
-                        <>
-                            <BackLink
-                                className={styles.backLink}
-                                defaultLink={reverseRoute(pathNames.homeScreen, {})}
-                            />
-                            <h2 className={styles.heading}>
-                                Framework questions
-                            </h2>
                         </>
                     )}
                 />

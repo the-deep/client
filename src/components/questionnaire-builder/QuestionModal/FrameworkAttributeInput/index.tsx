@@ -32,15 +32,11 @@ interface Props {
     subdimensionList: Matrix2dFlatSubdimensionElement[];
 }
 
-interface State {
-}
-
 const keySelector = (d: Matrix2dFlatCellElement) => d.id;
+
 const labelSelector = (d: Matrix2dFlatCellElement) => d.title;
 
-type QuestionType = QuestionElement['frameworkAttribute']['type'];
-
-class FrameworkAttributeInput extends React.PureComponent<Props, State> {
+class FrameworkAttributeInput extends React.PureComponent<Props> {
     private getInputValues = memoize((value: QuestionElement['frameworkAttribute']) => {
         if (!value) {
             return {};
@@ -72,7 +68,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props, State> {
         };
     })
 
-    private handleTypeInputChange = (type: QuestionType) => {
+    private handleTypeInputChange = (type: QuestionElement['frameworkAttribute']['type']) => {
         const { onChange } = this.props;
 
         onChange({
@@ -175,6 +171,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props, State> {
         return (
             <div className={_cs(styles.frameworkAttributeInput, className)}>
                 <SegmentInput
+                    // FIXME: use strings
                     label="Attribute type"
                     options={frameworkAttributeTypeOptionList}
                     keySelector={defaultKeySelector}
@@ -192,6 +189,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props, State> {
                             options={sectorList}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
+                            // FIXME: use strings
                             label="Sector"
                             value={sectorValue}
                             showHintAndError={false}
@@ -202,6 +200,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props, State> {
                             options={subsectorList}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
+                            // FIXME: use strings
                             label="Subsector"
                             value={subsectorValue}
                             showHintAndError={false}
@@ -216,6 +215,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props, State> {
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             options={dimensionList}
+                            // FIXME: use strings
                             label="Dimension"
                             value={dimensionValue}
                             showHintAndError={false}
@@ -226,7 +226,8 @@ class FrameworkAttributeInput extends React.PureComponent<Props, State> {
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             options={subdimensionList}
-                            label="Dimension"
+                            // FIXME: use strings
+                            label="Subdimension"
                             value={subdimensionValue}
                             showHintAndError={false}
                         />

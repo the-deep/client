@@ -1,8 +1,6 @@
 import React from 'react';
 
-
 import {
-    RequestCoordinator,
     RequestClient,
     methods,
     getPending,
@@ -16,8 +14,7 @@ import {
     FrameworkElement,
 } from '#typings';
 
-import QuestionForm from '#qbc/QuestionForm';
-
+import QuestionModal from '#qbc/QuestionModal';
 
 import styles from './styles.scss';
 
@@ -25,9 +22,11 @@ type FaramValues = QuestionFormElement;
 interface FaramErrors {}
 
 interface ComponentProps {
-    framework: FrameworkElement;
     className?: string;
     value?: QuestionElement;
+    framework: FrameworkElement;
+    onRequestSuccess: (q: QuestionElement[]) => void;
+    closeModal: () => void;
 }
 
 interface Params {
@@ -37,53 +36,29 @@ interface Params {
     };
 }
 
-interface State {
-    faramValues: FaramValues;
-    faramErrors: FaramErrors;
-}
-
 type Props = AddRequestProps<ComponentProps, Params>;
-
-const schema = {
-    fields: {
-        title: [],
-        type: [],
-    },
-};
 
 const requestOptions: Requests<ComponentProps, Params> = {
     frameworkPatchRequest: {
         url: ({ params: { frameworkId } = { frameworkId: undefined } }) => `/analysis-frameworks/${frameworkId}/`,
         method: methods.PATCH,
-        body: ({ params: { body } = { body: undefined } }) => body,
+        body: ({ params }) => {
+            if (!params || !params.body) {
+                return {};
+            }
+
+            return params.body;
+        },
+        onSuccess: ({
+            props,
+            response,
+        }) => {
+            props.onRequestSuccess((response as FrameworkElement).questions);
+        },
     },
 };
 
-const defaultQuestionValue: QuestionFormElement = {
-    responseOptionList: [],
-    frameworkAttribute: {
-        type: 'sector',
-    },
-};
-
-class FrameworkQuestionForm extends React.PureComponent<Props, State> {
-    public constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            faramValues: props.value
-                ? props.value
-                : defaultQuestionValue,
-            faramErrors: {},
-        };
-    }
-
-    private handleFaramChange = (faramValues: FaramValues) => {
-        this.setState({
-            faramValues,
-        });
-    }
-
+class QuestionModalForFramework extends React.PureComponent<Props> {
     private handleFaramValidationSuccess = (faramValues: QuestionFormElement) => {
         const {
             framework,
@@ -122,32 +97,25 @@ class FrameworkQuestionForm extends React.PureComponent<Props, State> {
             framework,
             className,
             requests,
+            value,
+            closeModal,
         } = this.props;
 
         const pending = getPending(requests, 'frameworkPatchRequest');
 
-        const {
-            faramValues,
-            faramErrors,
-        } = this.state;
-
         return (
-            <QuestionForm
+            <QuestionModal
                 className={className}
-                schema={schema}
-                onChange={this.handleFaramChange}
-                faramValues={faramValues}
-                faramErrors={faramErrors}
-                onValidationSuccess={this.handleFaramValidationSuccess}
+                onSuccess={this.handleFaramValidationSuccess}
+                closeModal={closeModal}
                 framework={framework}
                 pending={pending}
+                value={value}
             />
         );
     }
 }
 
-export default RequestCoordinator(
-    RequestClient(requestOptions)(
-        FrameworkQuestionForm,
-    ),
+export default RequestClient(requestOptions)(
+    QuestionModalForFramework,
 );

@@ -133,7 +133,6 @@ export const getMatrix2dStructures = (framework: FrameworkElement) => {
     const dimensionList: Matrix2dFlatDimensionElement[] = [];
     let subdimensionList: Matrix2dFlatSubdimensionElement[] = [];
 
-
     matrix2dList.forEach((matrix2d) => {
         const {
             properties: {

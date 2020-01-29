@@ -16,7 +16,7 @@ import {
     getPending,
 } from '#request';
 
-import Questionnaire from './Questionnaire';
+import Questionnaire from '#qbc/Questionnaire';
 import styles from './styles.scss';
 
 type ViewMode = 'active' | 'archived';
@@ -97,9 +97,6 @@ class QuestionnaireList extends React.PureComponent<Props> {
             questionnaireId,
             archived: false,
         });
-    }
-
-    private hanldeUnarchive = () => {
     }
 
     public render() {

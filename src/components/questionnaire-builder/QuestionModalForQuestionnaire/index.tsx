@@ -1,8 +1,6 @@
 import React from 'react';
-// import { _cs } from '@togglecorp/fujs';
 
 import {
-    RequestCoordinator,
     RequestClient,
     methods,
     getPending,
@@ -14,19 +12,16 @@ import {
     QuestionElement,
     AddRequestProps,
     Requests,
-    FrameworkElement,
 } from '#typings';
 
-import QuestionForm from '#qbc/QuestionForm';
-
-type FaramValues = QuestionFormElement;
-interface FaramErrors {}
+import QuestionModal from '#qbc/QuestionModal';
 
 interface ComponentProps {
     className?: string;
     value?: QuestionElement;
     questionnaire: QuestionnaireElement;
     onRequestSuccess: (q: QuestionElement[]) => void;
+    closeModal: () => void;
 }
 
 interface Params {
@@ -34,12 +29,6 @@ interface Params {
     body: {
         questions: QuestionElement[];
     };
-    onSuccess: (q: QuestionElement[]) => void;
-}
-
-interface State {
-    faramValues: FaramValues;
-    faramErrors: FaramErrors;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -62,44 +51,15 @@ const requestOptions: Requests<ComponentProps, Params> = {
             return params.body;
         },
         onSuccess: ({
-            params,
+            props,
             response,
         }) => {
-            if (!params || !params.onSuccess) {
-                return;
-            }
-
-            params.onSuccess((response as FrameworkElement).questions);
+            props.onRequestSuccess((response as QuestionnaireElement).questions);
         },
     },
 };
 
-const defaultQuestionValue: QuestionFormElement = {
-    responseOptionList: [],
-    frameworkAttribute: {
-        type: 'sector',
-    },
-};
-
-class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
-    public constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            faramValues: props.value
-                ? props.value
-                : defaultQuestionValue,
-            faramErrors: {},
-        };
-    }
-
-    private handleFaramChange = (faramValues: FaramValues, faramErrors: FaramErrors) => {
-        this.setState({
-            faramValues,
-            faramErrors,
-        });
-    }
-
+class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
     private handleFaramValidationSuccess = (faramValues: QuestionFormElement) => {
         const {
             questionnaire,
@@ -107,13 +67,11 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
                 questionnairePatchRequest,
             },
             value,
-            onRequestSuccess,
         } = this.props;
 
         const questions = [
             ...questionnaire.questions,
         ];
-
         if (value && value.id) {
             const currentQuestionIndex = questions.findIndex(d => d.id === value.id);
 
@@ -121,7 +79,6 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
                 questions.splice(currentQuestionIndex, 1);
             }
         }
-
         questions.push({
             ...value,
             ...(faramValues as QuestionElement),
@@ -134,41 +91,32 @@ class QuestionnaireQuestionForm extends React.PureComponent<Props, State> {
         questionnairePatchRequest.do({
             questionnaireId: questionnaire.id,
             body: patchBody,
-            onSuccess: onRequestSuccess,
         });
     }
 
     render() {
         const {
             className,
-            questionnaire,
             requests,
+            closeModal,
+            value,
         } = this.props;
-
-        const {
-            faramValues,
-            faramErrors,
-        } = this.state;
 
         const pending = getPending(requests, 'questionnairePatchRequest');
 
         return (
-            <QuestionForm
+            <QuestionModal
                 className={className}
-                faramValues={faramValues}
-                faramErrors={faramErrors}
-                onChange={this.handleFaramChange}
-                onValidationSuccess={this.handleFaramValidationSuccess}
-                framework={questionnaire.projectFrameworkDetail}
+                onSuccess={this.handleFaramValidationSuccess}
+                closeModal={closeModal}
                 pending={pending}
+                value={value}
             />
         );
     }
 }
 
 
-export default RequestCoordinator(
-    RequestClient(requestOptions)(
-        QuestionnaireQuestionForm,
-    ),
+export default RequestClient(requestOptions)(
+    QuestionModalForQuestionnaire,
 );

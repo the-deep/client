@@ -94,5 +94,20 @@ export interface QuestionElement extends QuestionMeta {
     respondentInstruction?: string;
     frameworkId: number | undefined;
     frameworkAttribute: QuestionElementFrameworkAttribute;
+
+    crisisTypeDetail?: {
+        title: string;
+    };
+    dataCollectionTechniqueDetail?: {
+        value: string;
+    };
+    enumeratorSkillDetail?: {
+        value: string;
+    };
+    importanceDetail?: {
+        value: string;
+    };
+
+    responseOptions?: QuestionResponseOptionElement[];
 }
 

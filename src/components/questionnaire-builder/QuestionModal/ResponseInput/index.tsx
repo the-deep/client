@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     _cs,
     randomString,
@@ -15,6 +15,60 @@ import { QuestionResponseOptionElement } from '#typings';
 
 import styles from './styles.scss';
 
+interface QuestionResponseOptionsProps {
+    className?: string;
+    optionKey: QuestionResponseOptionElement['key'];
+    value: QuestionResponseOptionElement['value'];
+    onChange: (
+        optionKey: QuestionResponseOptionElement['key'],
+        newValue: QuestionResponseOptionElement['value'],
+    ) => void;
+    onDelete: (
+        optionKey: QuestionResponseOptionElement['key'],
+    ) => void;
+}
+
+const QuestionResponseOption = ({
+    onDelete,
+    onChange,
+    optionKey,
+    value,
+    className,
+    ...otherProps
+}: QuestionResponseOptionsProps) => {
+    const handleChange = useCallback(
+        (newValue: string) => {
+            onChange(optionKey, newValue);
+        },
+        [onChange, optionKey],
+    );
+
+    const handleDelete = useCallback(
+        () => {
+            onDelete(optionKey);
+        },
+        [onDelete, optionKey],
+    );
+
+
+    return (
+        <div className={_cs(className, styles.responseOption)}>
+            <TextInput
+                className={styles.textInput}
+                value={value}
+                onChange={handleChange}
+                {...otherProps}
+            />
+            <DangerButton
+                className={styles.deleteButton}
+                iconName="delete"
+                onClick={handleDelete}
+            />
+        </div>
+    );
+};
+
+
 interface Props {
     label?: string;
     className?: string;
@@ -23,27 +77,7 @@ interface Props {
     onChange: (newValue: QuestionResponseOptionElement[]) => void;
 }
 
-const QuestionResponseOption = ({
-    onDeleteButtonClick,
-    optionKey,
-    value,
-    className,
-    ...otherProps
-}) => (
-    <div className={_cs(className, styles.responseOption)}>
-        <TextInput
-            className={styles.textInput}
-            value={value}
-            {...otherProps}
-        />
-        <DangerButton
-            className={styles.deleteButton}
-            iconName="delete"
-            onClick={() => onDeleteButtonClick(optionKey)}
-        />
-    </div>
-);
-
+const questionResponseKeySelector = (d: QuestionResponseOptionElement) => d.key;
 
 class ResponseInput extends React.PureComponent<Props> {
     private getOptionRendererParams = (
@@ -54,8 +88,8 @@ class ResponseInput extends React.PureComponent<Props> {
         showHintAndError: false,
         optionKey: key,
         value: value.value,
-        onChange: (newValue: QuestionResponseOptionElement['key']) => { this.handleOptionInputChange(key, newValue); },
-        onDeleteButtonClick: this.handleDeleteButtonClick,
+        onChange: this.handleOptionInputChange,
+        onDelete: this.handleDeleteButtonClick,
         className: styles.option,
     })
 
@@ -67,7 +101,6 @@ class ResponseInput extends React.PureComponent<Props> {
 
         const newOptionValue = [...value];
         const optionIndex = newOptionValue.findIndex(d => d.key === optionKey);
-
         if (optionIndex !== -1) {
             newOptionValue.splice(optionIndex, 1);
             onChange(newOptionValue);
@@ -104,7 +137,7 @@ class ResponseInput extends React.PureComponent<Props> {
         const newValue = [...value];
 
         newValue.push({
-            key: `question-option-${randomString(8)}`,
+            key: `question-option-${randomString()}`,
             value: '',
         });
 
@@ -131,7 +164,7 @@ class ResponseInput extends React.PureComponent<Props> {
                 <ListView
                     className={styles.optionList}
                     data={value}
-                    keySelector={d => d.key}
+                    keySelector={questionResponseKeySelector}
                     renderer={QuestionResponseOption}
                     rendererParams={this.getOptionRendererParams}
                 />
@@ -139,6 +172,7 @@ class ResponseInput extends React.PureComponent<Props> {
                     onClick={this.handleAddOptionButtonClick}
                     iconName="add"
                 >
+                    {/* FIXME: use strings */}
                     Add option
                 </Button>
             </div>

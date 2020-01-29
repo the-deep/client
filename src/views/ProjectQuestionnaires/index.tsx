@@ -1,21 +1,17 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
     _cs,
     reverseRoute,
 } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 
-import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import modalize from '#rscg/Modalize';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
-import ModalHeader from '#rscv/Modal/Header';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 
-import QuestionnaireForm from '#qbc/QuestionnaireForm';
+import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
@@ -43,49 +39,6 @@ import QuestionnaireList from './QuestionnaireList';
 import styles from './styles.scss';
 
 const ModalButton = modalize(PrimaryButton);
-
-const AddQuestionnaireModal = ({
-    projectId,
-    closeModal,
-    onSuccess,
-}: {
-    projectId: number;
-    closeModal?: () => void;
-    onSuccess: () => void;
-}) => {
-    const handleSuccess = useCallback(
-        () => {
-            onSuccess();
-            if (closeModal) {
-                closeModal();
-            }
-        },
-        [closeModal, onSuccess],
-    );
-
-    return (
-        <Modal className={styles.editQuestionnaireModal}>
-            <ModalHeader
-                // FIXME: use strings
-                title="Edit questionnaire details"
-                rightComponent={
-                    <Button
-                        iconName="close"
-                        onClick={closeModal}
-                        transparent
-                    />
-                }
-            />
-            <ModalBody>
-                <QuestionnaireForm
-                    onRequestSuccess={handleSuccess}
-                    projectId={projectId}
-                />
-            </ModalBody>
-        </Modal>
-    );
-};
-
 
 interface ComponentProps {
     className?: string;
@@ -223,7 +176,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                             </h2>
                             <ModalButton
                                 modal={
-                                    <AddQuestionnaireModal
+                                    <QuestionnaireModal
                                         onSuccess={this.handleQuestionnaireFormRequestSuccess}
                                         projectId={projectId}
                                     />

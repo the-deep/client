@@ -9,16 +9,14 @@ import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
-import Modal from '#rscv/Modal';
-import ModalHeader from '#rscv/Modal/Header';
-import ModalBody from '#rscv/Modal/Body';
+import modalize from '#rscg/Modalize';
 import TreeSelection from '#rsci/TreeSelection';
 
 import Page from '#rscv/Page';
 
 import {
     AppState,
-    AppProps,
+    // AppProps,
     QuestionnaireElement,
     QuestionElement,
     Requests,
@@ -34,50 +32,57 @@ import {
     isAnyRequestPending,
 } from '#request';
 
-import { questionnaireIdFromRouteSelector } from '#redux';
+import {
+    questionnaireIdFromRouteSelector,
+    projectIdFromRouteSelector,
+} from '#redux';
 
 import { createReportStructure } from '#utils/framework';
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
-import QuestionnaireForm from '#qbc/QuestionnaireForm';
-import Question from '#qbc/Question';
 
-import QuestionnaireQuestionForm from './QuestionnaireQuestionForm';
+import Question from '#qbc/Question';
+import QuestionnaireModal from '#qbc/QuestionnaireModal';
+import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
 import styles from './styles.scss';
 
-interface PropsFromAppState {
-    questionnaireId: QuestionnaireElement['id'];
-}
+const ModalButton = modalize(Button);
 
 interface ComponentProps {
     className?: string;
 }
 
-interface Params {
-}
-
 interface State {
     showQuestionFormModal: boolean;
-    showEditDetailFormModal: boolean;
     questionToEdit?: QuestionElement;
 }
 
+interface PropsFromAppState {
+    questionnaireId: QuestionnaireElement['id'];
+    projectId: number;
+}
+
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
+
+
+interface Params {
+}
 type Props = AddRequestProps<ComponentPropsWithAppState, Params>;
 
-const mapStateToProps = (state: AppState, props: AppProps) => ({
+const mapStateToProps = (state: AppState) => ({
     questionnaireId: questionnaireIdFromRouteSelector(state),
+    projectId: projectIdFromRouteSelector(state),
 });
 
 const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     questionnaireGetRequest: {
-        url: ({ props: { questionnaireId } }: { props: Props }) => `/questionnaires/${questionnaireId}/`,
+        url: ({ props: { questionnaireId } }) => `/questionnaires/${questionnaireId}/`,
         onMount: true,
         method: methods.GET,
     },
     questionnairePatchRequest: {
-        url: ({ props: { questionnaireId } }: { props: Props }) => `/questionnaires/${questionnaireId}/`,
+        url: ({ props: { questionnaireId } }) => `/questionnaires/${questionnaireId}/`,
         method: methods.PATCH,
     },
 };
@@ -85,9 +90,9 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
 const questionKeySelector = (q: QuestionElement) => q.id;
 
 interface FrameworkQuestionElement {
-    onCopyButtonClick: (id: QuestionElement['id']) => void;
+    onCopyButtonClick?: (id: QuestionElement['id']) => void;
+    onEditButtonClick?: (id: QuestionElement['id']) => void;
     className?: string;
-    onEditButtonClick: (id: QuestionElement['id']) => void;
     data: QuestionElement;
     framework: FrameworkElement;
 }
@@ -108,6 +113,7 @@ const FrameworkQuestion = (p: FrameworkQuestionElement) => {
                     onClick={onCopyButtonClick}
                     disabled
                 >
+                    {/* FIXME: use strings */}
                     Copy
                 </AccentButton>
             </div>
@@ -118,7 +124,6 @@ const FrameworkQuestion = (p: FrameworkQuestionElement) => {
 class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     public state = {
         showQuestionFormModal: false,
-        showEditDetailFormModal: false,
         questionToEdit: undefined,
     };
 
@@ -169,22 +174,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         }
     }
 
-    private handleEditDetailsButtonClick = () => {
-        this.setState({
-            showEditDetailFormModal: true,
-        });
-    }
-
     private handleCloseQuestionFormModalButtonClick = () => {
         this.setState({
             showQuestionFormModal: false,
             questionToEdit: undefined,
-        });
-    }
-
-    private handleEditDetailsFormModalCloseButtonClick = () => {
-        this.setState({
-            showEditDetailFormModal: false,
         });
     }
 
@@ -199,10 +192,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     }
 
     private handleQuestionnaireFormRequestSuccess = () => {
-        this.setState({
-            showEditDetailFormModal: false,
-        });
-
         const { requests } = this.props;
         requests.questionnaireGetRequest.do();
     }
@@ -211,11 +200,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         const {
             className,
             requests,
+            projectId,
         } = this.props;
 
         const {
             showQuestionFormModal,
-            showEditDetailFormModal,
             questionToEdit,
         } = this.state;
 
@@ -244,25 +233,32 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         <>
                             <header className={styles.header}>
                                 <h3 className={styles.heading}>
+                                    {/* FIXME: use strings */}
                                     Analysis framework
                                 </h3>
                             </header>
                             <div className={styles.content}>
                                 {questionnaire.projectFrameworkDetail && (
-                                    <TreeSelection
-                                        value={createReportStructure(
-                                            questionnaire.projectFrameworkDetail,
-                                        )}
-                                    />
-                                )}
-                                {questionnaire.projectFrameworkDetail && (
-                                    <ListView
-                                        className={styles.frameworkQuestionList}
-                                        rendererParams={this.getFrameworkQuestionRendererParams}
-                                        renderer={FrameworkQuestion}
-                                        data={questionnaire.projectFrameworkDetail.questions}
-                                        keySelector={questionKeySelector}
-                                    />
+                                    <>
+                                        <h4>
+                                            Matrix 2D
+                                        </h4>
+                                        <TreeSelection
+                                            value={createReportStructure(
+                                                questionnaire.projectFrameworkDetail,
+                                            )}
+                                        />
+                                        <h4>
+                                            Questions from Framework
+                                        </h4>
+                                        <ListView
+                                            className={styles.frameworkQuestionList}
+                                            rendererParams={this.getFrameworkQuestionRendererParams}
+                                            renderer={FrameworkQuestion}
+                                            data={questionnaire.projectFrameworkDetail.questions}
+                                            keySelector={questionKeySelector}
+                                        />
+                                    </>
                                 )}
                             </div>
                         </>
@@ -274,13 +270,26 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <div className={styles.questionList}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
-                                        { questionnaire.title }
+                                        {/* FIXME: use strings */}
+                                        Questions
                                     </h3>
                                     <div className={styles.actions}>
-                                        <Button onClick={this.handleEditDetailsButtonClick}>
+                                        <ModalButton
+                                            modal={(
+                                                <QuestionnaireModal
+                                                    value={questionnaire}
+                                                    projectId={projectId}
+                                                    onRequestSuccess={
+                                                        this.handleQuestionnaireFormRequestSuccess
+                                                    }
+                                                />
+                                            )}
+                                        >
+                                            {/* FIXME: use strings */}
                                             Edit details
-                                        </Button>
+                                        </ModalButton>
                                         <Button onClick={this.handleAddQuestionButtonClick}>
+                                            {/* FIXME: use strings */}
                                             Add question
                                         </Button>
                                     </div>
@@ -296,6 +305,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <div className={styles.rightPanel}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
+                                        {/* FIXME: use strings */}
                                         Diagnostics
                                     </h3>
                                 </header>
@@ -304,43 +314,12 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     )}
                 />
                 {showQuestionFormModal && (
-                    <Modal>
-                        <ModalHeader
-                            title="Add / edit question"
-                            rightComponent={
-                                <Button
-                                    iconName="close"
-                                    onClick={this.handleCloseQuestionFormModalButtonClick}
-                                />
-                            }
-                        />
-                        <ModalBody>
-                            <QuestionnaireQuestionForm
-                                questionnaire={questionnaire}
-                                value={questionToEdit}
-                                onRequestSuccess={this.handleQuestionFormRequestSuccess}
-                            />
-                        </ModalBody>
-                    </Modal>
-                )}
-                {showEditDetailFormModal && (
-                    <Modal>
-                        <ModalHeader
-                            title="Edit questionnaire details"
-                            rightComponent={
-                                <Button
-                                    iconName="close"
-                                    onClick={this.handleEditDetailsFormModalCloseButtonClick}
-                                />
-                            }
-                        />
-                        <ModalBody>
-                            <QuestionnaireForm
-                                value={questionnaire}
-                                onRequestSuccess={this.handleQuestionnaireFormRequestSuccess}
-                            />
-                        </ModalBody>
-                    </Modal>
+                    <QuestionModalForQuestionnaire
+                        value={questionToEdit}
+                        questionnaire={questionnaire}
+                        onRequestSuccess={this.handleQuestionFormRequestSuccess}
+                        closeModal={this.handleCloseQuestionFormModalButtonClick}
+                    />
                 )}
             </>
         );

@@ -7,7 +7,7 @@ import {
 
 import DropdownMenu from '#rsca/DropdownMenu';
 import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
 
 import { pathNames } from '#constants';
@@ -15,10 +15,15 @@ import { QuestionnaireItem } from '#typings';
 
 import styles from './styles.scss';
 
+interface MetaOutputProps {
+    label: string;
+    value: string | number | undefined;
+}
+
 const MetaOutput = ({
     label,
     value,
-}: { label: string; value: string | number | undefined }) => (
+}: MetaOutputProps) => (
     <div className={styles.metaOutput}>
         <div className={styles.label}>
             { label }
@@ -32,16 +37,18 @@ const MetaOutput = ({
     </div>
 );
 
-const DropdownButton = ({
-    className,
-    title,
-    ...otherProps
-}: {
+interface DropdownButtonProps {
     className?: string;
     title: string;
     disabled?: boolean;
     onClick?: () => void;
-}) => (
+}
+
+const DropdownButton = ({
+    className,
+    title,
+    ...otherProps
+}: DropdownButtonProps) => (
     <Button
         className={_cs(className, styles.dropdownButton)}
         transparent
@@ -62,14 +69,29 @@ interface Props {
 }
 
 class Questionnaire extends React.PureComponent<Props> {
+    private handleArchive = () => {
+        const {
+            onArchive,
+            questionnaireKey,
+        } = this.props;
+
+        onArchive(questionnaireKey);
+    }
+
+    private handleUnarchive = () => {
+        const {
+            onUnarchive,
+            questionnaireKey,
+        } = this.props;
+
+        onUnarchive(questionnaireKey);
+    }
+
     public render() {
         const {
             className,
             data,
             archived,
-            questionnaireKey,
-            onUnarchive,
-            onArchive,
             disabled,
         } = this.props;
 
@@ -119,15 +141,14 @@ class Questionnaire extends React.PureComponent<Props> {
                             </Link>
                         )}
                         {archived && (
-                            <PrimaryButton
-                                onClick={() => {
-                                    onUnarchive(questionnaireKey);
-                                }}
+                            <AccentButton
+                                transparent
+                                onClick={this.handleUnarchive}
                                 disabled={disabled}
                             >
                                 {/* FIXME: use strings */}
                                 Unarchive
-                            </PrimaryButton>
+                            </AccentButton>
                         )}
                         <DropdownMenu
                             iconName="moreVertical"
@@ -158,9 +179,7 @@ class Questionnaire extends React.PureComponent<Props> {
                                     disabled={disabled}
                                     // FIXME: use strings
                                     title="Archive"
-                                    onClick={() => {
-                                        onArchive(questionnaireKey);
-                                    }}
+                                    onClick={this.handleArchive}
                                 />
                             )}
                         </DropdownMenu>

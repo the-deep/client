@@ -5,19 +5,28 @@ import { QuestionElementFrameworkAttribute } from '#typings';
 
 import styles from './styles.scss';
 
+interface ItemWithTitle {
+    id: string | number;
+    title?: string;
+}
+
 interface Props {
     className?: string;
     data: QuestionElementFrameworkAttribute;
+    sectorList: ItemWithTitle[];
+    subsectorList: ItemWithTitle[];
+    dimensionList: ItemWithTitle[];
+    subdimensionList: ItemWithTitle[];
 }
 
 class FrameworkAttributeOutput extends React.PureComponent<Props> {
     private getAttributeTitle = (
-        type,
-        value,
-        sectorList,
-        subsectorList,
-        dimensionList,
-        subdimensionList,
+        type: QuestionElementFrameworkAttribute['type'],
+        value: QuestionElementFrameworkAttribute['value'],
+        sectorList: ItemWithTitle[],
+        subsectorList: ItemWithTitle[],
+        dimensionList: ItemWithTitle[],
+        subdimensionList: ItemWithTitle[],
     ) => {
         const dataSource = {
             sector: sectorList,
@@ -27,8 +36,10 @@ class FrameworkAttributeOutput extends React.PureComponent<Props> {
         };
 
         const attribute = dataSource[type].find(d => d.id === value);
-
-        return attribute.title;
+        if (attribute) {
+            return attribute.title;
+        }
+        return '';
     }
 
     public render() {

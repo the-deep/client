@@ -4,10 +4,10 @@ import React from 'react';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
-import QuestionList from '#qbc/QuestionList';
-
 import Overview from './Overview';
 import List from './List';
+import QuestionList from './QuestionList';
+
 import styles from './styles.scss';
 
 

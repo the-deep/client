@@ -5,8 +5,12 @@ import { _cs } from '@togglecorp/fujs';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 
-import FrameworkAttributeOutput from '#qbc/FrameworkAttributeOutput';
-import ResponseOutput from '#qbc/ResponseOutput';
+import {
+    QuestionElement,
+    FrameworkElement,
+    QuestionType,
+} from '#typings';
+import { getMatrix2dStructures } from '#utils/framework';
 
 import TextIcon from '#resources/img/questionnaire-icons/text.png';
 import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
@@ -21,25 +25,13 @@ import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
 import RangeIcon from '#resources/img/questionnaire-icons/range.png';
 
-
-import {
-    QuestionElement,
-    FrameworkElement,
-} from '#typings';
-import { getMatrix2dStructures } from '#utils/framework';
-
+import FrameworkAttributeOutput from './FrameworkAttributeOutput';
+import ResponseOutput from './ResponseOutput';
 import styles from './styles.scss';
 
-interface Props {
-    data: QuestionElement;
-    className?: string;
-    onEditButtonClick: (key: QuestionElement['id']) => void;
-    framework: FrameworkElement;
-    hideDetails?: boolean;
-    readOnly?: boolean;
-}
-
-const iconMap = {
+const iconMap: {
+    [key in QuestionType]: string;
+} = {
     text: TextIcon,
     number: NumberIcon,
     dateAndTime: DateAndTimeIcon,
@@ -49,10 +41,26 @@ const iconMap = {
     image: ImageIcon,
     audio: AudioIcon,
     video: VideoIcon,
-    fileUpload: FileUploadIcon,
+    file: FileUploadIcon,
     barcode: BarcodeIcon,
     range: RangeIcon,
+
+    // FIXME: use other icons later
+    note: TextIcon,
+    url: TextIcon,
+    printer: TextIcon,
+    acknowledge: TextIcon,
+    signature: TextIcon,
 };
+
+interface Props {
+    data: QuestionElement;
+    className?: string;
+    onEditButtonClick?: (key: QuestionElement['id']) => void;
+    framework: FrameworkElement;
+    hideDetails?: boolean;
+    readOnly?: boolean;
+}
 
 class Question extends React.PureComponent<Props> {
     private getFrameworkOptions = memoize(getMatrix2dStructures)
@@ -94,7 +102,7 @@ class Question extends React.PureComponent<Props> {
                     <div className={styles.left}>
                         <img
                             className={styles.icon}
-                            src={iconMap[data.type]}
+                            src={data.type ? iconMap[data.type] : undefined}
                             alt={data.type}
                         />
                     </div>
@@ -123,6 +131,7 @@ class Question extends React.PureComponent<Props> {
                                     {data.importanceDetail && (
                                         <div className={styles.importance}>
                                             <div className={styles.label}>
+                                                {/* FIXME: use strings */}
                                                 Importance:
                                             </div>
                                             <div className={styles.value}>
@@ -136,15 +145,17 @@ class Question extends React.PureComponent<Props> {
                                 <div className={styles.right}>
                                     <Button
                                         iconName="delete"
-                                        onClick={this.handleDeleteButtonClick}
+                                        // onClick={this.handleDeleteButtonClick}
                                         disabled
                                     >
+                                        {/* FIXME: use strings */}
                                         Delete
                                     </Button>
                                     <Button
                                         iconName="edit"
                                         onClick={this.handleEditButtonClick}
                                     >
+                                        {/* FIXME: use strings */}
                                         Edit
                                     </Button>
                                 </div>
@@ -166,6 +177,7 @@ class Question extends React.PureComponent<Props> {
                     <div className={styles.details}>
                         <div className={styles.labels}>
                             <div className={styles.heading}>
+                                {/* FIXME: use strings */}
                                 Question labels
                             </div>
                             <div className={styles.content}>
@@ -175,6 +187,7 @@ class Question extends React.PureComponent<Props> {
                         {data.type === 'select' && (
                             <div className={styles.responseOptions}>
                                 <div className={styles.heading}>
+                                    {/* FIXME: use strings */}
                                     Response options
                                 </div>
                                 <div className={styles.content}>
@@ -187,6 +200,7 @@ class Question extends React.PureComponent<Props> {
                         )}
                         <div className={styles.enumeratorInstruction}>
                             <div className={styles.heading}>
+                                {/* FIXME: use strings */}
                                 Enumerator instructions
                             </div>
                             <div className={styles.content}>
@@ -195,7 +209,8 @@ class Question extends React.PureComponent<Props> {
                         </div>
                         <div className={styles.respondentInstruction}>
                             <div className={styles.heading}>
-                                Respondendent instructions
+                                {/* FIXME: use strings */}
+                                Respondent instructions
                             </div>
                             <div className={styles.content}>
                                 { data.respondentInstruction }
