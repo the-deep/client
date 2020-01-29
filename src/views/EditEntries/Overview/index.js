@@ -25,6 +25,9 @@ import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
 
+    editEntriesLabelsSelector,
+    editEntriesFilteredEntryGroupsSelector,
+
     editEntriesAddEntryAction,
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
@@ -60,12 +63,16 @@ const propTypes = {
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
+    entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     entry: undefined,
     widgets: [],
     entries: [],
+    entryGroups: [],
+    labels: [],
     statuses: {},
     tabularFields: {},
     entryStates: {},
@@ -79,6 +86,9 @@ const mapStateToProps = (state, props) => ({
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
+
+    entryGroups: editEntriesFilteredEntryGroupsSelector(state),
+    labels: editEntriesLabelsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -238,6 +248,9 @@ export default class Overview extends React.PureComponent {
             widgets,
 
             tabularFields,
+
+            entryGroups,
+            labels,
         } = this.props;
 
         const { mountModalButton } = this.state;
@@ -290,17 +303,23 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.rightActionButtons}>
-                                <ModalButton
-                                    iconName="album"
-                                    disabled={isNotDefined(selectedEntryKey)}
-                                    modal={
-                                        <EntryGroupModal
-                                            selectedEntryKey={selectedEntryKey}
-                                            selectedEntryServerId={entryAccessor.serverId(entry)}
-                                            leadId={leadId}
-                                        />
-                                    }
-                                />
+                                {labels.length > 0 && (
+                                    <ModalButton
+                                        iconName="album"
+                                        disabled={isNotDefined(selectedEntryKey)}
+                                        modal={
+                                            <EntryGroupModal
+                                                entryGroups={entryGroups}
+                                                labels={labels}
+                                                selectedEntryKey={selectedEntryKey}
+                                                selectedEntryServerId={
+                                                    entryAccessor.serverId(entry)
+                                                }
+                                                leadId={leadId}
+                                            />
+                                        }
+                                    />
+                                )}
                                 {mountModalButton && (
                                     <ModalButton
                                         className={

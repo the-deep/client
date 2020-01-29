@@ -83,6 +83,7 @@ import {
     editEntriesRemoveEntryGroupAction,
     editEntriesSetEntryGroupPendingAction,
     editEntriesSaveEntryGroupAction,
+    editEntriesLabelsSelector,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -162,6 +163,7 @@ const mapStateToProps = state => ({
     statuses: editEntriesStatusesSelector(state),
     entryGroupStatuses: editEntriesEntryGroupStatusesSelector(state),
     routeUrl: routeUrlSelector(state),
+    labels: editEntriesLabelsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -400,12 +402,6 @@ export default class EditEntries extends React.PureComponent {
             },
         };
 
-        this.tabs = {
-            [VIEW.overview]: _ts('editEntry', 'overviewTabTitle'),
-            [VIEW.list]: _ts('editEntry', 'listTabTitle'),
-            [VIEW.group]: _ts('editEntry', 'groupTabTitle'),
-        };
-
         this.defaultHash = VIEW.overview;
 
         this.saveRequestCoordinator = new CoordinatorBuilder()
@@ -512,6 +508,21 @@ export default class EditEntries extends React.PureComponent {
         return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
     }))
 
+    getTabs = (labels = []) => {
+        const tabs = {
+            [VIEW.overview]: _ts('editEntry', 'overviewTabTitle'),
+            [VIEW.list]: _ts('editEntry', 'listTabTitle'),
+            [VIEW.group]: _ts('editEntry', 'groupTabTitle'),
+        };
+
+        if (labels.length > 0) {
+            return tabs;
+        }
+
+        delete tabs[VIEW.group];
+
+        return tabs;
+    }
 
     shouldHideEditLink = () => {
         const {
@@ -992,6 +1003,7 @@ export default class EditEntries extends React.PureComponent {
             statuses,
             entryGroups,
             entryGroupStatuses,
+            labels,
         } = this.props;
 
         const {
@@ -1025,6 +1037,8 @@ export default class EditEntries extends React.PureComponent {
             entryGroups,
             entryGroupStatuses,
         );
+
+        const tabs = this.getTabs(labels);
 
         const hasSavableEntries = savableEntries.length > 0;
 
@@ -1062,7 +1076,7 @@ export default class EditEntries extends React.PureComponent {
                             </h4>
                             <ScrollTabs
                                 className={styles.tabs}
-                                tabs={this.tabs}
+                                tabs={tabs}
                                 useHash
                                 replaceHistory
                                 defaultHash={this.defaultHash}

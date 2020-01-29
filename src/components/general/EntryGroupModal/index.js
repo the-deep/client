@@ -13,9 +13,6 @@ import Message from '#rscv/Message';
 import modalize from '#rscg/Modalize';
 import { entryGroupAccessor } from '#entities/editEntries';
 import {
-    editEntriesLabelsSelector,
-    editEntriesFilteredEntryGroupsSelector,
-
     editEntriesAddEntryGroupAction,
 } from '#redux';
 import EntryGroupEditModal from '#components/general/EntryGroupEditModal';
@@ -54,11 +51,6 @@ const defaultProps = {
     readOnly: false,
 };
 
-const mapStateToProps = state => ({
-    entryGroups: editEntriesFilteredEntryGroupsSelector(state),
-    labels: editEntriesLabelsSelector(state),
-});
-
 const mapDispatchToProps = dispatch => ({
     addEntryGroup: params => dispatch(editEntriesAddEntryGroupAction(params)),
 });
@@ -66,7 +58,7 @@ const mapDispatchToProps = dispatch => ({
 const WINDOW_PADDING = 24;
 const labelKeySelector = d => d.id;
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 export default class EntryCommentModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

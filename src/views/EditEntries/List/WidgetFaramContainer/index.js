@@ -17,6 +17,9 @@ import Cloak from '#components/general/Cloak';
 
 import { entryAccessor } from '#entities/editEntries';
 import {
+    editEntriesLabelsSelector,
+    editEntriesFilteredEntryGroupsSelector,
+
     editEntriesSetSelectedEntryKeyAction,
     editEntriesSetEntryCommentsCountAction,
     editEntriesMarkAsDeletedEntryAction,
@@ -42,6 +45,8 @@ const propTypes = {
     setEntryCommentsCount: PropTypes.func.isRequired,
 
     index: PropTypes.number.isRequired,
+    entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -49,7 +54,14 @@ const defaultProps = {
     pending: false,
     className: '',
     entry: undefined,
+    entryGroups: [],
+    labels: [],
 };
+
+const mapStateToProps = state => ({
+    entryGroups: editEntriesFilteredEntryGroupsSelector(state),
+    labels: editEntriesLabelsSelector(state),
+});
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
@@ -57,7 +69,7 @@ const mapDispatchToProps = dispatch => ({
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
-@connect(undefined, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -126,6 +138,8 @@ export default class WidgetFaramContainer extends React.PureComponent {
             analysisFramework,
             lead,
             leadId,
+            entryGroups,
+            labels,
         } = this.props;
 
         const {
@@ -146,16 +160,20 @@ export default class WidgetFaramContainer extends React.PureComponent {
                         {/* FIXME: use strings */}
                         {`Entry ${index + 1}`}
                     </h3>
-                    <ModalButton
-                        iconName="album"
-                        modal={
-                            <EntryGroupModal
-                                selectedEntryKey={entryKey}
-                                selectedEntryServerId={entryAccessor.serverId(entry)}
-                                leadId={leadId}
-                            />
-                        }
-                    />
+                    {labels.length > 0 && (
+                        <ModalButton
+                            iconName="album"
+                            modal={
+                                <EntryGroupModal
+                                    entryGroups={entryGroups}
+                                    labels={labels}
+                                    selectedEntryKey={entryKey}
+                                    selectedEntryServerId={entryAccessor.serverId(entry)}
+                                    leadId={leadId}
+                                />
+                            }
+                        />
+                    )}
                     <ModalButton
                         disabled={isFalsy(entryServerId)}
                         className={
