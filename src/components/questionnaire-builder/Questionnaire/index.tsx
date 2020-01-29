@@ -157,11 +157,13 @@ class Questionnaire extends React.PureComponent<Props> {
                             iconName="moreVertical"
                             hideDropdownIcon
                         >
-                            <DropdownButton
-                                disabled
-                                // FIXME: use strings
-                                title="Copy"
-                            />
+                            {!archived && (
+                                <DropdownButton
+                                    disabled
+                                    // FIXME: use strings
+                                    title="Copy"
+                                />
+                            )}
                             <DropdownButton
                                 disabled
                                 // FIXME: use strings

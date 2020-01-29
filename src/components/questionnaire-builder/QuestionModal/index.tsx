@@ -106,6 +106,7 @@ class QuestionModal extends React.PureComponent<Props, State> {
                 enumeratorSkill: [],
                 dataCollectionTechnique: [],
                 importance: [],
+                // FIXME: this should be dynamic, only available if type is 'select'
                 responseOptions: [],
             },
         };
