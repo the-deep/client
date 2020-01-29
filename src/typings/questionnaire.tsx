@@ -32,6 +32,7 @@ export interface QuestionnaireItem extends QuestionnaireMeta {
     frameworkId: number;
     questions: QuestionElement[];
     createdAt: string;
+    project: number;
 
     crisisTypeDetail?: {
         title: string;

@@ -132,7 +132,10 @@ class Questionnaire extends React.PureComponent<Props> {
                                 className={styles.editQuestionnaireLink}
                                 to={reverseRoute(
                                     pathNames.questionnaireBuilder,
-                                    { questionnaireId: data.id },
+                                    {
+                                        questionnaireId: data.id,
+                                        projectId: data.project,
+                                    },
                                 )}
                                 disabled={disabled}
                             >

@@ -61,7 +61,7 @@ export const routes = {
     discoverProjects: {
         order: 13,
         type: ROUTE.private,
-        path: '/discover/projects/',
+        path: '/discover-projects/',
         loader: () => import('../views/DiscoverProjects'),
         links: allLinks,
     }, //  _ts('pageTitle', 'discoverProjects');
@@ -127,7 +127,7 @@ export const routes = {
     clusterViz: {
         order: 34,
         type: ROUTE.private,
-        path: '/projects/:projectId/clusterviz',
+        path: '/projects/:projectId/clusterviz/',
         loader: () => import('../views/ClusterViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'clusterViz');
@@ -167,7 +167,7 @@ export const routes = {
     editEntries: {
         order: 41,
         type: ROUTE.private,
-        path: '/projects/:projectId/leads/:leadId/edit-entries/',
+        path: '/projects/:projectId/leads/:leadId/entries/edit/',
         loader: () => import('../views/EditEntries'),
         links: allLinks,
     }, // _ts('pageTitle', 'editEntries');
@@ -191,7 +191,7 @@ export const routes = {
     editAry: {
         order: 51,
         type: ROUTE.private,
-        path: '/projects/:projectId/leads/:leadId/edit-ary/',
+        path: '/projects/:projectId/leads/:leadId/ary/edit/',
         loader: () => import('../views/EditAry'),
         links: allLinks,
     }, // _ts('pageTitle', 'editAry');
@@ -199,7 +199,7 @@ export const routes = {
     editLeadGroupAssessment: {
         order: 51,
         type: ROUTE.private,
-        path: '/projects/:projectId/lead-group/:leadGroupId/edit-ary/',
+        path: '/projects/:projectId/lead-groups/:leadGroupId/ary/edit/',
         loader: () => import('../views/EditAry'),
         links: allLinks,
     }, // _ts('pageTitle', 'editLeadGroupAssessment');
@@ -207,7 +207,7 @@ export const routes = {
     export: {
         order: 60,
         type: ROUTE.private,
-        path: '/projects/:projectId/export/',
+        path: '/projects/:projectId/exports/create/',
         loader: () => import('../views/Export'),
         links: allLinks,
     }, // _ts('pageTitle', 'export');
@@ -263,7 +263,7 @@ export const routes = {
     categoryEditor: {
         order: 110,
         type: ROUTE.private,
-        path: '/category-editors/:categoryEditorId/',
+        path: '/category-editors/:categoryEditorId/edit/',
         loader: () => import('../views/CategoryEditor'),
         links: allLinks,
     }, // _ts('pageTitle', 'categoryEditor');
@@ -311,7 +311,8 @@ export const routes = {
     questionnaireBuilder: {
         order: 180,
         type: ROUTE.private,
-        path: '/questionnaire-builder/:questionnaireId?/',
+
+        path: '/projects/:projectId/questionnaires/:questionnaireId/edit/',
         loader: () => import('../views/QuestionnaireBuilder'),
         links: allLinks,
     }, // _ts('pageTitle', 'questionnaireBuilder');
