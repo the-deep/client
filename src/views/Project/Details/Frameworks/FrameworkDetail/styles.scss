@@ -50,11 +50,15 @@
                     flex-shrink: 0;
                     padding: var(--spacing-small) var(--spacing-medium);
 
-                    button {
+                    .button {
                         margin-left: var(--spacing-small);
                     }
 
                     .edit-framework-link {
+                        margin-left: var(--spacing-small);
+                    }
+
+                    .edit-questions-link {
                         margin-left: var(--spacing-small);
                     }
                 }

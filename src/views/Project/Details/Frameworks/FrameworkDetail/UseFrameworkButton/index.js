@@ -21,10 +21,12 @@ const propTypes = {
     setProjectFramework: PropTypes.func.isRequired,
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     disabled: false,
+    className: undefined,
 };
 
 const requestOptions = {
@@ -78,6 +80,7 @@ export default class UseFrameworkButton extends React.PureComponent {
             requests: {
                 useFrameworkRequest: { pending },
             },
+            className,
         } = this.props;
 
         const useFrameworkButtonLabel = _ts('project.framework', 'useFrameworkButtonTitle');
@@ -96,6 +99,7 @@ export default class UseFrameworkButton extends React.PureComponent {
 
         return (
             <WarningConfirmButton
+                className={className}
                 iconName="check"
                 onClick={this.handleFrameworkConfirmClose}
                 disabled={disabled || pending}

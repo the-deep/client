@@ -8,8 +8,8 @@ import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
-import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import Badge from '#components/viewer/Badge';
 
@@ -34,8 +34,8 @@ import EditFrameworkModal from './EditFrameworkModal';
 
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
 const AccentModalButton = modalize(AccentButton);
-const WarningModalButton = modalize(WarningButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -227,27 +227,8 @@ export default class FrameworkDetail extends React.PureComponent {
                             active={activeView}
                         />
                         <div className={styles.actionButtons}>
-                            <ButtonLikeLink
-                                type="accent"
-                                className={styles.addQuestionsButton}
-                                to={reverseRoute(
-                                    pathNames.frameworkQuestions,
-                                    { analysisFrameworkId },
-                                )}
-                            >
-                                Add questions
-                            </ButtonLikeLink>
-                            {(canUse && !readOnly) &&
-                                <UseFrameworkButton
-                                    disabled={pending}
-                                    frameworkId={analysisFrameworkId}
-                                    frameworkTitle={frameworkTitle}
-                                    projectId={projectId}
-                                    setProjectFramework={setProjectFramework}
-                                />
-                            }
                             {canEditFramework &&
-                                <WarningModalButton
+                                <ModalButton
                                     disabled={pending}
                                     modal={
                                         <EditFrameworkModal
@@ -260,7 +241,7 @@ export default class FrameworkDetail extends React.PureComponent {
                                     }
                                 >
                                     { _ts('project.framework', 'editFrameworkButtonTitle') }
-                                </WarningModalButton>
+                                </ModalButton>
                             }
                             {canEditFramework &&
                                 <ButtonLikeLink
@@ -273,8 +254,29 @@ export default class FrameworkDetail extends React.PureComponent {
                                     { _ts('project.framework', 'editWidgetsButtonTitle') }
                                 </ButtonLikeLink>
                             }
+                            {/* FIXME: show only if user has permission */}
+                            <ButtonLikeLink
+                                className={styles.editQuestionsLink}
+                                to={reverseRoute(
+                                    pathNames.frameworkQuestions,
+                                    { analysisFrameworkId },
+                                )}
+                            >
+                                Edit questions
+                            </ButtonLikeLink>
+                            {(canUse && !readOnly) &&
+                                <UseFrameworkButton
+                                    className={styles.button}
+                                    disabled={pending}
+                                    frameworkId={analysisFrameworkId}
+                                    frameworkTitle={frameworkTitle}
+                                    projectId={projectId}
+                                    setProjectFramework={setProjectFramework}
+                                />
+                            }
                             {canCloneFramework &&
                                 <AccentModalButton
+                                    className={styles.button}
                                     disabled={pending}
                                     modal={
                                         <AddFrameworkModal
