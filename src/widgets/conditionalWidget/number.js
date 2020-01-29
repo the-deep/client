@@ -61,7 +61,6 @@ const isInBetween = {
     ),
 };
 
-
 export default {
     isLessThan,
     isGreaterThan,
