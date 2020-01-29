@@ -1087,13 +1087,14 @@
         "-36912904": "Show Highlight",
         "-5446515": "Search text widget",
         "-91462875": "Edit Entry Group",
-        "-11049053": "Add entry group",
+        "-11049053": "Add Entry Group",
         "-16565787": "Clear entry",
         "-25488943": "Group {order}",
-        "-18186537": "Delete entry group",
-        "-48762166": "Create entry group",
+        "-18186537": "Delete Entry Group",
+        "-48762166": "Create Entry Group",
         "-24599331": "Entry group - quick add",
-        "-19686228": "There are no entry groups in this lead."
+        "-19686228": "There are no entry groups in this lead.",
+        "-1797082": "Text Widgets"
     },
     "links": {
         "browserExtension": {
@@ -1583,7 +1584,8 @@
             "startedStatusLabel": 629,
             "dimensionFirstExportTypeLabel": -51656640,
             "sectorFirstExportTypeLabel": -74878255,
-            "orderMatrix2D": -49902146
+            "orderMatrix2D": -49902146,
+            "textWidgetLabel": -1797082
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

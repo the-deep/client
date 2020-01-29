@@ -51,6 +51,21 @@ const createReportStructureLevelForExport = (nodes = emptyList) => (
         }))
 );
 
+const createTextWidgetIds = textWidgets => (
+    textWidgets
+        .filter(tw => tw.selected)
+        .map((tw) => {
+            if (tw.isConditional) {
+                return ([
+                    tw.conditionalId,
+                    tw.id,
+                    tw.actualTitle,
+                ]);
+            }
+            return tw.id;
+        })
+);
+
 const EXPORT_CLASS = {
     assessmentExport: 'assessment-export',
     entriesExport: 'entries-export',
@@ -66,6 +81,7 @@ const EXPORT_ITEM = {
 const propTypes = {
     className: PropTypes.string,
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    textWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
     decoupledEntries: PropTypes.bool.isRequired,
     projectId: PropTypes.number.isRequired,
@@ -81,6 +97,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     reportStructure: undefined,
+    textWidgets: [],
     selectedLeads: {},
     entriesFilters: {},
     geoOptions: {},
@@ -160,6 +177,7 @@ export default class ExportHeader extends React.PureComponent {
             decoupledEntries,
             analysisFramework,
             geoOptions,
+            textWidgets,
             requests: {
                 exportRequest,
             },
@@ -184,6 +202,7 @@ export default class ExportHeader extends React.PureComponent {
                 levels: node.sublevels,
             }));
         const reportStructure = createReportStructureForExport(struct);
+        const textWidgetIds = createTextWidgetIds(textWidgets);
 
         const otherFilters = {
             project: projectId,
@@ -199,6 +218,7 @@ export default class ExportHeader extends React.PureComponent {
             // for pdf or word
             report_levels: reportLevels,
             report_structure: reportStructure,
+            text_widget_ids: textWidgetIds,
 
             // entry or assessment
             export_item: exportItem,

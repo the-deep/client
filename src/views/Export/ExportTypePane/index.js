@@ -20,16 +20,21 @@ import styles from './styles.scss';
 
 const propTypes = {
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    textWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
     reportStructureVariant: PropTypes.string.isRequired,
     decoupledEntries: PropTypes.bool.isRequired,
     onExportTypeChange: PropTypes.func.isRequired,
     onReportStructureChange: PropTypes.func.isRequired,
+    onTextWidgetsChange: PropTypes.func.isRequired,
     onReportStructureVariantChange: PropTypes.func.isRequired,
     onDecoupledEntriesChange: PropTypes.func.isRequired,
 };
 
-const defaultProps = { reportStructure: undefined };
+const defaultProps = {
+    reportStructure: undefined,
+    textWidgets: [],
+};
 
 
 const SECTOR_FIRST = 'sectorFirst';
@@ -119,7 +124,9 @@ export default class ExportTypePane extends React.PureComponent {
             reportStructure,
             reportStructureVariant,
             onReportStructureChange,
+            onTextWidgetsChange,
             onReportStructureVariantChange,
+            textWidgets,
         } = this.props;
 
         if (!reportStructure) {
@@ -146,6 +153,14 @@ export default class ExportTypePane extends React.PureComponent {
                     value={reportStructure}
                     onChange={onReportStructureChange}
                 />
+                {textWidgets.length > 0 && (
+                    <TreeSelection
+                        key="tree-selection-text"
+                        label={_ts('export', 'textWidgetLabel')}
+                        value={textWidgets}
+                        onChange={onTextWidgetsChange}
+                    />
+                )}
             </>
         );
     }
