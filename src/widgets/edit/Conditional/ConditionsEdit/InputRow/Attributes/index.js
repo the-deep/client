@@ -6,6 +6,7 @@ import { FaramGroup } from '@togglecorp/faram';
 
 import GeoInput from '#components/input/GeoInput';
 import SelectInput from '#rsci/SelectInput';
+import TextInput from '#rsci/TextInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Checkbox from '#rsci/Checkbox';
 import NumberInput from '#rsci/NumberInput';
@@ -113,6 +114,19 @@ export default class ConditionAttribute extends React.PureComponent {
         } else if (attribute.type === 'number') {
             return (
                 <NumberInput
+                    className={styles.input}
+                    key={attribute.key}
+                    faramElementName={attribute.key}
+                    label={attribute.title}
+                    showHintAndError={false}
+                />
+            );
+        } else if (attribute.type === 'boolean') {
+            // NOTE: for boolean, we do not need any input
+            return null;
+        } else if (attribute.type === 'text') {
+            return (
+                <TextInput
                     className={styles.input}
                     key={attribute.key}
                     faramElementName={attribute.key}

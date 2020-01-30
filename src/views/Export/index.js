@@ -68,6 +68,8 @@ const defaultProps = {
     geoOptions: {},
 };
 
+const emptyObject = {};
+
 const SECTOR_FIRST = 'sectorFirst';
 const DIMENSION_FIRST = 'dimensionFirst';
 
@@ -128,11 +130,14 @@ export default class Export extends React.PureComponent {
             SECTOR_FIRST,
         );
 
+        const textWidgets = this.getTextWidgetsFromFramework(analysisFramework);
+
         this.state = {
             activeExportTypeKey: 'word',
             previewId: undefined,
             decoupledEntries: true,
 
+            textWidgets,
             reportStructure,
             reportStructureVariant: SECTOR_FIRST,
 
@@ -170,6 +175,51 @@ export default class Export extends React.PureComponent {
                 ),
             });
         }
+    }
+
+    getTextWidgetsFromFramework = ({ widgets } = {}) => {
+        if (!widgets) {
+            return [];
+        }
+        const textWidgets = widgets
+            .filter(w => w.widgetId === 'textWidget')
+            .map(w => ({
+                title: w.title,
+                key: w.key,
+                id: w.id,
+                selected: true,
+                draggable: true,
+            }));
+
+        const textWidgetsInsideConditionals = widgets
+            .filter(w => w.widgetId === 'conditionalWidget')
+            .map((conditional) => {
+                const {
+                    title,
+                    id,
+                    properties: {
+                        data: {
+                            widgets: widgetsInsideConditional = [],
+                        } = {},
+                    } = {},
+                } = conditional;
+
+                return widgetsInsideConditional
+                    .filter(w => (w.widget || emptyObject).widgetId === 'textWidget')
+                    .map(({ widget }) => (
+                        {
+                            id: widget.key,
+                            title: `${title} › ${widget.title}`,
+                            actualTitle: widget.title,
+                            conditionalId: id,
+                            isConditional: true,
+                            selected: true,
+                            draggable: true,
+                        }
+                    ));
+            }).flat();
+
+        return [...textWidgets, ...textWidgetsInsideConditionals];
     }
 
     handleSelectedLeadsSet = (response) => {
@@ -296,6 +346,10 @@ export default class Export extends React.PureComponent {
         this.setState({ reportStructure: value });
     }
 
+    handleTextWidgetsSelection = (textWidgets) => {
+        this.setState({ textWidgets });
+    }
+
     handleReportStructureVariantChange = (value) => {
         const { analysisFramework } = this.props;
 
@@ -328,6 +382,7 @@ export default class Export extends React.PureComponent {
             reportStructureVariant,
             decoupledEntries,
             selectedLeads,
+            textWidgets,
             leads = [],
         } = this.state;
 
@@ -365,6 +420,7 @@ export default class Export extends React.PureComponent {
                         pending={pendingLeads || pendingAf || pendingGeoOptions}
                         analysisFramework={analysisFramework}
                         geoOptions={geoOptions}
+                        textWidgets={textWidgets}
                     />
                 }
                 mainContentClassName={styles.mainContent}
@@ -404,10 +460,12 @@ export default class Export extends React.PureComponent {
                         <ExportTypePane
                             activeExportTypeKey={activeExportTypeKey}
                             reportStructure={reportStructure}
+                            textWidgets={textWidgets}
                             reportStructureVariant={reportStructureVariant}
                             decoupledEntries={decoupledEntries}
                             onExportTypeChange={this.handleExportTypeSelectButtonClick}
                             onReportStructureChange={this.handleReportStructureChange}
+                            onTextWidgetsChange={this.handleTextWidgetsSelection}
                             onReportStructureVariantChange={this.handleReportStructureVariantChange}
                             onDecoupledEntriesChange={this.handleDecoupledEntriesChange}
                             analysisFramework={analysisFramework}

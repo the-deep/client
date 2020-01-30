@@ -8,6 +8,7 @@ import scaleConditions from './scale';
 import selectConditions from './select';
 import dateConditions from './date';
 import timeConditions from './time';
+import textConditions from './text';
 import dateRangeConditions from './dateRange';
 import timeRangeConditions from './timeRange';
 import organigramConditions from './organigram';
@@ -39,6 +40,7 @@ export const conditionsAsMap = {
     dateRangeWidget: dateRangeConditions,
     timeRangeWidget: timeRangeConditions,
     timeWidget: timeConditions,
+    textWidget: textConditions,
     organigramWidget: organigramConditions,
     numberMatrixWidget: numberMatrixConditions,
     geoWidget: geoOptions,
