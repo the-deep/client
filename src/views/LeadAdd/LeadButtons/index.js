@@ -190,7 +190,7 @@ export default class LeadButtons extends React.PureComponent {
                 title: doc.name,
                 sourceType: LEAD_TYPE.dropbox,
             },
-            drive: {
+            dropbox: {
                 title: doc.name,
                 fileUrl: doc.link,
             },
