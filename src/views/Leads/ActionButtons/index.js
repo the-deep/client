@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
-import { reverseRoute } from '@togglecorp/fujs';
+import { reverseRoute, formatDateToString } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
@@ -81,27 +81,7 @@ export default class ActionButtons extends React.PureComponent {
                 },
             ),
             state: {
-                serverId: row.id,
-                faramValues: {
-                    title: row.title,
-                    sourceType: row.sourceType,
-                    project: row.project,
-                    source: row.source,
-                    author: row.author,
-                    sourceRaw: row.sourceRaw,
-                    authorRaw: row.authorRaw,
-                    confidentiality: row.confidentiality,
-                    assignee: row.assignee,
-                    publishedOn: row.publishedOn,
-                    attachment: row.attachment,
-                    website: row.website,
-                    leadGroup: row.leadGroup,
-                    url: row.url,
-                    text: row.text,
-                    tabularBook: row.tabularBook,
-                    emmTriggers: row.emmTriggers,
-                    emmEntities: row.emmEntities,
-                },
+                lead: row,
             },
         };
 

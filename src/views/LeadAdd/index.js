@@ -94,6 +94,8 @@ import {
     getNewLeadKey,
     isLeadPrevDisabled,
     isLeadNextDisabled,
+
+    getFaramValuesFromLead,
 } from './utils';
 import styles from './styles.scss';
 
@@ -248,11 +250,12 @@ class LeadAdd extends React.PureComponent {
             },
             history,
         } = this.props;
-        const { serverId, faramValues } = routeState;
+        const { lead: leadFromState } = routeState;
 
-        if (isDefined(serverId)) {
+        if (isDefined(leadFromState)) {
+            const serverId = leadFromState.id;
             const lead = {
-                faramValues,
+                faramValues: getFaramValuesFromLead(leadFromState),
                 serverId,
             };
             this.handleLeadsAdd([lead]);
@@ -925,7 +928,7 @@ class LeadAdd extends React.PureComponent {
                             topChild={
                                 <LeadDetail
                                     projects={projects}
-                                    // key={activeLeadKey}
+                                    key={activeLeadKey}
                                     // activeUserId={userId}
                                     lead={activeLead}
                                     onChange={changeLead}
