@@ -22,7 +22,7 @@ const textContains = {
         title: 'Text Contains',
         type: 'text',
     }],
-    test: ({ value }, { value: attrValue }) => (
+    test: ({ value }, { textContains: attrValue }) => (
         caseInsensitiveSubmatch(value, attrValue)
     ),
 };
