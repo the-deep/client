@@ -166,6 +166,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         } = {},
                         filtersData,
                         connectorsList,
+                        selectedLeads,
                     } = this.state;
 
                     const {
@@ -192,7 +193,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
                             setConnectorActivePage={this.setConnectorActivePage}
-                            selectedLeads={this.state.selectedLeads[selectedConnector]}
+                            selectedLeads={selectedLeads[selectedConnector]}
                             setConnectorLeadSelection={this.setConnectorLeadSelection}
                             onSelectAllClick={this.handleSelectAllLead}
                             leadsUrlMap={leadsUrlMap}

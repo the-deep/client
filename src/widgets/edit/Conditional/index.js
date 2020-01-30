@@ -237,7 +237,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                 labelSelector={ConditionalWidgetEdit.itemLabelSelector}
                                 label={_ts('widgets.editor.conditional', 'defaultWidgetLabel')}
                                 placeholder={_ts('widgets.editor.conditional', 'defaultWidgetPlaceholder')}
-
                             />
                         </div>
                         <div className={styles.widgetsContainer}>
