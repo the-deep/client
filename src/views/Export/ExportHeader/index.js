@@ -53,16 +53,16 @@ const createReportStructureLevelForExport = (nodes = emptyList) => (
 
 const createTextWidgetIds = textWidgets => (
     textWidgets
-        .filter(tw => tw.selected)
-        .map((tw) => {
-            if (tw.isConditional) {
+        .filter(widget => widget.selected)
+        .map((widget) => {
+            if (widget.isConditional) {
                 return ([
-                    tw.conditionalId,
-                    tw.id,
-                    tw.actualTitle,
+                    widget.conditionalId,
+                    widget.id,
+                    widget.actualTitle,
                 ]);
             }
-            return tw.id;
+            return widget.id;
         })
 );
 

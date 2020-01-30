@@ -122,6 +122,7 @@ export default class ConditionAttribute extends React.PureComponent {
                 />
             );
         } else if (attribute.type === 'boolean') {
+            // NOTE: for boolean, we do not need any input
             return null;
         } else if (attribute.type === 'text') {
             return (
