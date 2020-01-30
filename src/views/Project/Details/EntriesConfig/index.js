@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import {
     _cs,
-    compareString,
     compareNumber,
 } from '@togglecorp/fujs';
 
-import Table from '#rscv/Table';
-import ColorInput from '#rsci/ColorInput';
 import Button from '#rsca/Button';
+import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
 
 import {
@@ -20,8 +19,8 @@ import {
 import _ts from '#ts';
 import notify from '#notify';
 
-import Actions from './EntryLabelsActions';
 import EntryLabelEditForm from './EntryLabelEditForm';
+import EntryLabelCard from './EntryLabelCard';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -35,7 +34,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     projectId: undefined,
     readOnly: false,
 };
@@ -89,10 +88,6 @@ const requestOptions = {
 };
 
 const entryLabelKeySelector = d => d.id;
-const defaultSort = {
-    key: 'order',
-    order: 'asc',
-};
 
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -113,70 +108,30 @@ export default class ProjectDetails extends React.PureComponent {
         this.state = {
             entryLabels: [],
         };
-
-        this.headers = [
-            {
-                key: 'color',
-                label: _ts('project.entryGroups', 'colorHeaderTitle'),
-                order: 1,
-                modifier: d => (
-                    <ColorInput
-                        value={d.color}
-                        readOnly
-                        showHintAndError={false}
-                        showLabel={false}
-                    />
-                ),
-            },
-            {
-                key: 'order',
-                label: _ts('project.entryGroups', 'orderHeaderTitle'),
-                order: 2,
-                sortable: true,
-                comparator: (a, b) => compareNumber(a.order, b.order),
-            },
-            {
-                key: 'title',
-                label: _ts('project.entryGroups', 'titleHeaderTitle'),
-                order: 3,
-                sortable: true,
-                comparator: (a, b) => compareString(a.title, b.title),
-            },
-            {
-                key: 'createdByName',
-                label: _ts('project.entryGroups', 'createdByHeaderTitle'),
-                order: 4,
-                sortable: true,
-                comparator: (a, b) => compareString(a.createdByName, b.createdByName),
-            },
-            {
-                key: 'entryCount',
-                label: _ts('project.entryGroups', 'entriesCountHeaderTitle'),
-                order: 5,
-                sortable: true,
-                comparator: (a, b) => compareNumber(a.entryCount, b.entryCount),
-            },
-            {
-                key: 'actions',
-                label: _ts('project.entryGroups', 'actionsHeaderTitle'),
-                order: 6,
-                modifier: d => (
-                    <Actions
-                        entryLabel={d}
-                        entryLabelId={d.id}
-                        projectId={this.props.projectId}
-                        onEntryLabelDelete={this.handleEntryLabelDelete}
-                        onEntryLabelEdit={this.handleEntryLabelEdit}
-                        readOnly={this.props.readOnly}
-                    />
-                ),
-            },
-        ];
     }
+
+    getOrderedEntryLabel = memoize((entryLabels) => {
+        if (!entryLabels || entryLabels.length <= 1) {
+            return entryLabels;
+        }
+        return [...entryLabels].sort((a, b) => compareNumber(a.order, b.order));
+    });
 
     setEntryLabels = (entryLabels) => {
         this.setState({ entryLabels });
     };
+
+    entryLabelRendererParams = (key, data) => {
+        const { projectId } = this.props;
+
+        return ({
+            className: styles.card,
+            projectId,
+            entryLabel: data,
+            onEntryLabelDelete: this.handleEntryLabelDelete,
+            onEntryLabelEdit: this.handleEntryLabelEdit,
+        });
+    }
 
     handleEntryLabelDelete = (entryLabelId) => {
         const { entryLabels } = this.state;
@@ -230,6 +185,8 @@ export default class ProjectDetails extends React.PureComponent {
 
         const { entryLabels } = this.state;
 
+        const orderedEntryLabel = this.getOrderedEntryLabel(entryLabels);
+
         return (
             <div className={_cs(className, styles.entryConfig)}>
                 <header className={styles.header}>
@@ -251,13 +208,20 @@ export default class ProjectDetails extends React.PureComponent {
                     </ModalButton>
                 </header>
                 <div className={styles.container}>
-                    <Table
-                        className={styles.table}
-                        pending={pending}
-                        headers={this.headers}
-                        data={entryLabels}
+                    <ListView
+                        className={styles.cards}
+                        data={orderedEntryLabel}
                         keySelector={entryLabelKeySelector}
-                        defaultSort={defaultSort}
+                        renderer={EntryLabelCard}
+                        rendererParams={this.entryLabelRendererParams}
+                        pending={pending}
+                        disabled={readOnly}
+                        // TODO: Currently disabled as onChange is not handled, handle onChange
+                        // disabled
+                        // itemClassName={styles.card}
+                        // axis="xy"
+                        // lockAxis=""
+                        // showDragHandle={false}
                     />
                 </div>
             </div>

@@ -3132,7 +3132,9 @@
             "addButtonTitle": 301,
             "entryLabelsTitle": -80269151,
             "entryLabelsFatal": -26658958,
-            "orderHeaderTitle": -68282781
+            "orderHeaderTitle": -68282781,
+            "createdByTitle": 538,
+            "entriesCountCardHeaderTitle": 15
         },
         "project.entryGroups.editForm": {
             "cancelButtonLabel": 61,

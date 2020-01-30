@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
     _cs,
     isDefined,
@@ -13,7 +14,6 @@ import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
-import { Link } from 'react-router-dom';
 import {
     leadsForProjectTableViewSelector,
 } from '#redux';

@@ -1,3 +1,9 @@
+.card {
+    flex-basis: var(--width-entry-label-card);
+    background-color: var(--color-foreground);
+    cursor: grab;
+}
+
 .entry-config {
     display: flex;
     flex-direction: column;
@@ -22,8 +28,13 @@
         flex-grow: 1;
         overflow-y: auto;
 
-        .table {
+        .cards {
+            display: flex;
+            align-content: flex-start;
+            align-items: flex-start;
             flex-grow: 1;
+            flex-wrap: wrap;
+            justify-content: flex-start;
         }
     }
 }

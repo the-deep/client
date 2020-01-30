@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestCoordinator,
@@ -20,6 +21,7 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 
 const propTypes = {
+    className: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number,
 
@@ -34,6 +36,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: undefined,
     projectId: undefined,
     readOnly: false,
 };
@@ -94,6 +97,7 @@ export default class EntryLabelsActions extends React.PureComponent {
 
     render() {
         const {
+            className,
             projectId,
             entryLabel,
             entryLabelId,
@@ -112,7 +116,21 @@ export default class EntryLabelsActions extends React.PureComponent {
         } = entryLabel;
 
         return (
-            <div className={styles.actions}>
+            <div className={_cs(className, styles.actions)}>
+                <ModalButton
+                    className={styles.button}
+                    iconName="edit"
+                    transparent
+                    pending={pending}
+                    modal={(
+                        <EntryLabelEditForm
+                            entryLabelId={entryLabelId}
+                            entryLabel={entryLabel}
+                            onEntryLabelEdit={onEntryLabelEdit}
+                            projectId={projectId}
+                        />
+                    )}
+                />
                 <DangerConfirmButton
                     className={styles.button}
                     title={_ts('project.entryGroups', 'deleteEntryLabelButtonTitle')}
@@ -128,21 +146,6 @@ export default class EntryLabelsActions extends React.PureComponent {
                             title: (<b>{title}</b>),
                             entryCount,
                         },
-                    )}
-                />
-                <ModalButton
-                    className={styles.button}
-                    iconName="edit"
-                    transparent
-                    disabled={readOnly}
-                    pending={pending}
-                    modal={(
-                        <EntryLabelEditForm
-                            entryLabelId={entryLabelId}
-                            entryLabel={entryLabel}
-                            onEntryLabelEdit={onEntryLabelEdit}
-                            projectId={projectId}
-                        />
                     )}
                 />
             </div>

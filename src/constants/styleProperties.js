@@ -40,6 +40,9 @@ const styleProperties = {
         widthModalLarge: '80vw',
         heightModalMedium: '70vh',
 
+        heightEntryLabelCard: '144px',
+        widthEntryLabelCard: '320px',
+
         widthTableCheckbox: '56px',
         widthTableDateTime: '120px',
         widthTableIcon: '56px',
