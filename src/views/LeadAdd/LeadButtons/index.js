@@ -24,6 +24,7 @@ import {
     supportedGoogleDriveMimeTypes,
     supportedDropboxExtension,
     supportedFileTypes,
+    getFaramValuesFromLeadCandidate,
 } from '../utils';
 
 import ConnectorSelectModal from './ConnectorSelectModal';
@@ -210,21 +211,7 @@ export default class LeadButtons extends React.PureComponent {
         } = this.props;
 
         const leads = selectedLeads.map(lead => ({
-            faramValues: {
-                title: lead.title,
-                website: lead.website,
-                url: lead.url,
-                publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
-                source: lead.source,
-                author: lead.author,
-                // sourceDetail: lead.sourceDetail,
-                // authorDetail: lead.authorDetail,
-                sourceSuggestion: lead.sourceRaw,
-                authorSuggestion: lead.authorRaw,
-                sourceType: LEAD_TYPE.website,
-                emmEntities: lead.emmEntities,
-                emmTriggers: lead.emmTriggers,
-            },
+            faramValues: getFaramValuesFromLeadCandidate(lead),
         }));
 
         onLeadsAdd(leads);

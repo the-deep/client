@@ -47,6 +47,7 @@ export default class SelectedWidgetItem extends React.PureComponent {
                 <FaramGroup faramElementName={String(index)}>
                     <FrameworkEditButton
                         faramElementName="widget"
+                        widgetId={widgetId}
                         renderer={Widget}
                     />
                     <ConditionsEditButton
