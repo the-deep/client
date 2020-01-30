@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useMemo } from 'react';
 
-import { listToMap } from '@togglecorp/fujs';
+import {
+    _cs,
+    listToMap,
+} from '@togglecorp/fujs';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
@@ -10,12 +13,12 @@ import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';
+import EntryGroupEditModal from '#components/general/EntryGroupEditModal';
 
 import { entryAccessor } from '#entities/editEntries';
 
-import _cs from '#cs';
+import _ts from '#ts';
 
-import EntryGroupEditModal from './EntryGroupEditModal';
 import LabelItem from './LabelItem';
 import styles from './styles.scss';
 
@@ -158,6 +161,8 @@ const EntryGroupItem = (props) => {
         ],
     );
 
+    const groupTitle = title || _ts('editEntry.group', 'defaultGroupTitle', { order });
+
     return (
         <div className={className}>
             {pending && (
@@ -165,16 +170,14 @@ const EntryGroupItem = (props) => {
             )}
             <div className={styles.labelHeader}>
                 <h3 className={styles.heading}>
-                    {/* FIXME: use strings */}
-                    {title || `Group ${order}`}
+                    {groupTitle}
                 </h3>
                 <Cloak
                     hide={shouldHideEntryGroupEdit}
                     render={
                         <WarningModalButton
                             className={styles.button}
-                            // FIXME: uses strings
-                            title="Edit group"
+                            title={_ts('editEntry.group', 'editEntryGroupButtonTitle')}
                             iconName="edit"
                             disabled={pending}
                             modal={
@@ -191,8 +194,7 @@ const EntryGroupItem = (props) => {
                     render={
                         <DangerButton
                             className={styles.button}
-                            // FIXME: uses strings
-                            title="Delete group"
+                            title={_ts('editEntry.group', 'deleteEntryGroupButtonTitle')}
                             iconName="delete"
                             disabled={pending}
                             onClick={handleDelete}
@@ -226,6 +228,7 @@ EntryGroupItem.propTypes = {
     onSelectionClear: PropTypes.func.isRequired,
     onEntryGroupDataSet: PropTypes.func.isRequired,
 };
+
 EntryGroupItem.defaultProps = {
     selections: [],
     title: undefined,

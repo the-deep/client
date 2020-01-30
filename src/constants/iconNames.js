@@ -1,5 +1,6 @@
 const iconNames = {
     add: 'ion-plus',
+    addCircle: 'ion-android-add-circle',
     addPerson: 'ion-person-add',
     applyAll: 'ion-ios-world',
     applyAllBelow: 'ion-android-arrow-dropdown-circle',
@@ -10,7 +11,7 @@ const iconNames = {
     camera: 'ion-camera',
     chart: 'fa fa-sitemap',
     chatOutline: 'ion-ios-chatboxes-outline',
-    chat: 'ion-chatbubble-working',
+    chat: 'ion-chatbox-working',
     check: 'ion-checkmark',
     checkAll: 'ion-android-done-all',
     checkCircle: 'ion-checkmark-circled',
@@ -46,6 +47,7 @@ const iconNames = {
     fig: 'fa fa-file-image-o',
     fork: 'ion-fork-repo',
     format: 'ion-android-list',
+    album: 'ion-ios-albums',
     forward: 'ion-forward',
     globe: 'ion-earth',
     googleDrive: 'ion-social-googleplus-outline',

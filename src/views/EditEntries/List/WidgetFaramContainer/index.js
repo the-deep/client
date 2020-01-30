@@ -7,7 +7,7 @@ import {
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
-import Icon from '#rscg/Icon';
+import EntryGroupModal from '#components/general/EntryGroupModal';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -16,6 +16,9 @@ import Cloak from '#components/general/Cloak';
 
 import { entryAccessor } from '#entities/editEntries';
 import {
+    editEntriesLabelsSelector,
+    editEntriesFilteredEntryGroupsSelector,
+
     editEntriesSetSelectedEntryKeyAction,
     editEntriesSetEntryCommentsCountAction,
     editEntriesMarkAsDeletedEntryAction,
@@ -41,6 +44,8 @@ const propTypes = {
     setEntryCommentsCount: PropTypes.func.isRequired,
 
     index: PropTypes.number.isRequired,
+    entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -48,7 +53,14 @@ const defaultProps = {
     pending: false,
     className: '',
     entry: undefined,
+    entryGroups: [],
+    labels: [],
 };
+
+const mapStateToProps = state => ({
+    entryGroups: editEntriesFilteredEntryGroupsSelector(state),
+    labels: editEntriesLabelsSelector(state),
+});
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
@@ -56,7 +68,7 @@ const mapDispatchToProps = dispatch => ({
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
-@connect(undefined, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -125,16 +137,18 @@ export default class WidgetFaramContainer extends React.PureComponent {
             analysisFramework,
             lead,
             leadId,
+            entryGroups,
+            labels,
         } = this.props;
 
         const {
-            data: {
-                id: entryServerId,
-            },
             serverData: {
                 unresolvedCommentCount,
             },
         } = entry;
+
+        const entryServerId = entryAccessor.serverId(entry);
+        const entryKey = entryAccessor.key(entry);
 
         return (
             <div
@@ -145,6 +159,20 @@ export default class WidgetFaramContainer extends React.PureComponent {
                         {/* FIXME: use strings */}
                         {`Entry ${index + 1}`}
                     </h3>
+                    {labels.length > 0 && (
+                        <ModalButton
+                            iconName="album"
+                            modal={
+                                <EntryGroupModal
+                                    entryGroups={entryGroups}
+                                    labels={labels}
+                                    selectedEntryKey={entryKey}
+                                    selectedEntryServerId={entryAccessor.serverId(entry)}
+                                    leadId={leadId}
+                                />
+                            }
+                        />
+                    )}
                     <ModalButton
                         disabled={isFalsy(entryServerId)}
                         className={
@@ -159,11 +187,8 @@ export default class WidgetFaramContainer extends React.PureComponent {
                                 onCommentsCountChange={this.handleCommentsCountChange}
                             />
                         }
+                        iconName="chat"
                     >
-                        <Icon
-                            className={styles.icon}
-                            name="chat"
-                        />
                         {unresolvedCommentCount > 0 &&
                             <div className={styles.commentCount}>
                                 {unresolvedCommentCount}

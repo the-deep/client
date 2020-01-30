@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 import {
     _cs,
     isFalsy,
+    isNotDefined,
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
+import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
-import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -22,6 +23,9 @@ import {
 import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
+
+    editEntriesLabelsSelector,
+    editEntriesFilteredEntryGroupsSelector,
 
     editEntriesAddEntryAction,
     editEntriesSelectedEntryKeySelector,
@@ -58,12 +62,16 @@ const propTypes = {
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
+    entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     entry: undefined,
     widgets: [],
     entries: [],
+    entryGroups: [],
+    labels: [],
     statuses: {},
     tabularFields: {},
     entryStates: {},
@@ -77,6 +85,9 @@ const mapStateToProps = (state, props) => ({
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
+
+    entryGroups: editEntriesFilteredEntryGroupsSelector(state),
+    labels: editEntriesLabelsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -236,6 +247,9 @@ export default class Overview extends React.PureComponent {
             widgets,
 
             tabularFields,
+
+            entryGroups,
+            labels,
         } = this.props;
 
         const { mountModalButton } = this.state;
@@ -262,7 +276,7 @@ export default class Overview extends React.PureComponent {
                 rightChild={
                     <React.Fragment>
                         <header className={styles.header}>
-                            <div className={styles.actionButtons}>
+                            <div className={styles.leftActionButtons}>
                                 <Cloak
                                     hide={Overview.shouldHideEntryAdd}
                                     render={
@@ -274,6 +288,37 @@ export default class Overview extends React.PureComponent {
                                         />
                                     }
                                 />
+                            </div>
+                            <SelectInput
+                                className={styles.entrySelectInput}
+                                placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
+                                keySelector={Overview.entryKeySelector}
+                                labelSelector={this.entryLabelSelector}
+                                onChange={this.handleEntrySelect}
+                                options={this.props.entries}
+                                value={selectedEntryKey}
+                                showHintAndError={false}
+                                showLabel={false}
+                                hideClearButton
+                            />
+                            <div className={styles.rightActionButtons}>
+                                {labels.length > 0 && (
+                                    <ModalButton
+                                        iconName="album"
+                                        disabled={isNotDefined(selectedEntryKey)}
+                                        modal={
+                                            <EntryGroupModal
+                                                entryGroups={entryGroups}
+                                                labels={labels}
+                                                selectedEntryKey={selectedEntryKey}
+                                                selectedEntryServerId={
+                                                    entryAccessor.serverId(entry)
+                                                }
+                                                leadId={leadId}
+                                            />
+                                        }
+                                    />
+                                )}
                                 {mountModalButton && (
                                     <ModalButton
                                         className={
@@ -292,11 +337,8 @@ export default class Overview extends React.PureComponent {
                                                 }
                                             />
                                         }
+                                        iconName="chat"
                                     >
-                                        <Icon
-                                            name="chat"
-                                            className={styles.commentIcon}
-                                        />
                                         {unresolvedCommentCount > 0 &&
                                             <div className={styles.commentCount}>
                                                 {unresolvedCommentCount}
@@ -316,18 +358,6 @@ export default class Overview extends React.PureComponent {
                                     }
                                 />
                             </div>
-                            <SelectInput
-                                className={styles.entrySelectInput}
-                                placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
-                                keySelector={Overview.entryKeySelector}
-                                labelSelector={this.entryLabelSelector}
-                                onChange={this.handleEntrySelect}
-                                options={this.props.entries}
-                                value={selectedEntryKey}
-                                showHintAndError={false}
-                                showLabel={false}
-                                hideClearButton
-                            />
                         </header>
                         <WidgetFaram
                             className={styles.content}

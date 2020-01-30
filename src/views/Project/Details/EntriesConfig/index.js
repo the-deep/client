@@ -31,11 +31,13 @@ const propTypes = {
     projectId: PropTypes.number,
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     projectId: undefined,
+    readOnly: false,
 };
 
 const requestOptions = {
@@ -165,6 +167,7 @@ export default class ProjectDetails extends React.PureComponent {
                         projectId={this.props.projectId}
                         onEntryLabelDelete={this.handleEntryLabelDelete}
                         onEntryLabelEdit={this.handleEntryLabelEdit}
+                        readOnly={this.props.readOnly}
                     />
                 ),
             },
@@ -222,7 +225,9 @@ export default class ProjectDetails extends React.PureComponent {
                 },
             },
             projectId,
+            readOnly,
         } = this.props;
+
         const { entryLabels } = this.state;
 
         return (
@@ -233,6 +238,7 @@ export default class ProjectDetails extends React.PureComponent {
                     </h3>
                     <ModalButton
                         iconName="add"
+                        disabled={readOnly}
                         modal={(
                             <EntryLabelEditForm
                                 onEntryLabelAdd={this.handleEntryLabelAdd}

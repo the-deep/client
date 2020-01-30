@@ -10,7 +10,6 @@ import memoize from 'memoize-one';
 
 import { entriesSetEntryCommentsCountAction } from '#redux';
 import modalize from '#rscg/Modalize';
-import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 
@@ -189,11 +188,8 @@ export default class Entry extends React.PureComponent {
                                 onCommentsCountChange={this.handleCommentsCountChange}
                             />
                         }
+                        iconName="chat"
                     >
-                        <Icon
-                            className={styles.icon}
-                            name="chat"
-                        />
                         {commentCount > 0 &&
                             <div className={styles.commentCount}>
                                 {commentCount}

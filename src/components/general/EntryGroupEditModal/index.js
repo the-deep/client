@@ -9,8 +9,11 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalFooter from '#rscv/Modal/Footer';
+import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
+
+import _ts from '#ts';
 
 const schema = {
     fields: {
@@ -23,6 +26,8 @@ const EntryGroupEditModal = (props) => {
         closeModal,
         title,
         onSave,
+        createMode,
+        className,
     } = props;
 
     const [faramValues, setFaramValues] = useState({ title });
@@ -55,13 +60,18 @@ const EntryGroupEditModal = (props) => {
 
     return (
         <Modal
+            className={className}
             closeOnEscape
             onClose={closeModal}
         >
             <ModalHeader
-                title="Edit Entry Group"
+                title={createMode ? (
+                    _ts('editEntry.group.editModal', 'createEntryGroupModalTitle')
+                ) : (
+                    _ts('editEntry.group.editModal', 'editEntryGroupModalTitle')
+                )}
                 rightComponent={
-                    <DangerButton
+                    <Button
                         onClick={closeModal}
                         transparent
                         iconName="close"
@@ -80,18 +90,21 @@ const EntryGroupEditModal = (props) => {
                     <NonFieldErrors faramElement />
                     <TextInput
                         faramElementName="title"
-                        // FIXME: use strings
-                        label="Title"
+                        label={_ts('editEntry.group.editModal', 'entryGroupTitleLabel')}
                         autoFocus
                     />
                 </ModalBody>
                 <ModalFooter>
+                    <DangerButton
+                        onClick={closeModal}
+                    >
+                        {_ts('editEntry.group.editModal', 'cancelButtonTitle')}
+                    </DangerButton>
                     <PrimaryButton
                         type="submit"
                         disabled={pristine}
                     >
-                        {/* FIXME: use strings */}
-                        Save
+                        {_ts('editEntry.group.editModal', 'saveButtonTitle')}
                     </PrimaryButton>
                 </ModalFooter>
             </Faram>
@@ -100,12 +113,16 @@ const EntryGroupEditModal = (props) => {
 };
 EntryGroupEditModal.propTypes = {
     title: PropTypes.string,
+    className: PropTypes.string,
     onSave: PropTypes.func.isRequired,
     closeModal: PropTypes.func,
+    createMode: PropTypes.bool,
 };
 EntryGroupEditModal.defaultProps = {
     title: undefined,
+    className: undefined,
     closeModal: () => {},
+    createMode: false,
 };
 
 export default EntryGroupEditModal;

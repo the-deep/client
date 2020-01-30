@@ -12,6 +12,8 @@ const styleProperties = {
         colorTextSuccess: '#43a047',
         colorTextOnHightlight: defaultColors.colorTextOnLight,
         colorShadowLight: 'rgba(0, 0, 0, .1)',
+        colorSelectedGroup: '#f0f0f0',
+        colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
     },
 
     dimens: {
@@ -30,6 +32,10 @@ const styleProperties = {
         entryCommentDropdownWidth: '96px',
         entryCommentModalMaxHeight: '80vh',
         entryCommentModalWidth: '360px',
+
+        entryGroupModalMaxHeight: '60vh',
+        entryGroupModalMaxWidth: '60vw',
+        entryGroupModalMinWidth: '360px',
 
         widthModalLarge: '80vw',
         heightModalMedium: '70vh',

@@ -7,6 +7,7 @@ import ListView from '#rscv/List/ListView';
 import ResizableH from '#rscv/Resizable/ResizableH';
 
 import Cloak from '#components/general/Cloak';
+import modalize from '#rscg/Modalize';
 
 import {
     editEntriesFilteredEntriesSelector,
@@ -22,11 +23,16 @@ import {
 } from '#redux';
 
 import { entryGroupAccessor, ENTRY_STATUS } from '#entities/editEntries';
+import EntryGroupEditModal from '#components/general/EntryGroupEditModal';
+
+import _ts from '#ts';
 
 import EntryGroupItem from './EntryGroupItem';
 import LeftPanel from './LeftPane';
 
 import styles from './styles.scss';
+
+const PrimaryModalButton = modalize(PrimaryButton);
 
 const propTypes = {
     bookId: PropTypes.number,
@@ -125,7 +131,7 @@ export default class Group extends React.PureComponent {
         });
     }
 
-    handleEntryGroupCreate = () => {
+    handleEntryGroupCreate = (values) => {
         const {
             leadId,
             addEntryGroup,
@@ -134,6 +140,7 @@ export default class Group extends React.PureComponent {
         addEntryGroup({
             leadId,
             entryGroup: {
+                ...values,
                 selections: [],
             },
         });
@@ -197,13 +204,17 @@ export default class Group extends React.PureComponent {
                             <Cloak
                                 hide={this.shouldHideEntryGroupCreate}
                                 render={(
-                                    <PrimaryButton
-                                        onClick={this.handleEntryGroupCreate}
+                                    <PrimaryModalButton
+                                        modal={
+                                            <EntryGroupEditModal
+                                                onSave={this.handleEntryGroupCreate}
+                                                createMode
+                                            />
+                                        }
                                         iconName="add"
                                     >
-                                        {/* FIXME: use strings */}
-                                        Add Entry Group
-                                    </PrimaryButton>
+                                        {_ts('editEntry.group', 'addEntryGroupButtonLabel')}
+                                    </PrimaryModalButton>
                                 )}
                             />
                         </header>

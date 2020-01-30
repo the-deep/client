@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
+
+import _ts from '#ts';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import DropZoneTwo from '#rsci/DropZoneTwo';
 import Cloak from '#components/general/Cloak';
-
-import _cs from '#cs';
 
 import EntryPreview from '../../../EntryPreview';
 import styles from './styles.scss';
@@ -93,8 +94,7 @@ const LabelItem = (props) => {
                             <DangerButton
                                 className={styles.button}
                                 transparent
-                                // FIXME: uses strings
-                                title="Clear entry"
+                                title={_ts('editEntry.group', 'clearEntryButtonTitle')}
                                 iconName="close"
                                 disabled={disabled}
                                 onClick={handleSelectionClear}
