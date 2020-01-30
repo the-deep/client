@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import TextArea from '#rsci/TextArea';
+import FormattedTextArea from '#rsci/FormattedTextArea';
 
 import _ts from '#ts';
 
@@ -21,7 +21,7 @@ export default class TextWidget extends React.PureComponent {
     render() {
         return (
             <div className={styles.text}>
-                <TextArea
+                <FormattedTextArea
                     className={styles.text}
                     faramElementName="value"
                     placeholder={_ts('widgets.tagging.text', 'textPlaceholder')}

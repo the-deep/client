@@ -494,6 +494,7 @@ export default class WidgetFaram extends React.PureComponent {
             'excerptWidget',
             'matrix1dWidget',
             'matrix2dWidget',
+            'textWidget',
         ] : [
             'excerptWidget',
         ];
