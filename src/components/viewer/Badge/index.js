@@ -13,13 +13,17 @@ const propTypes = {
     title: PropTypes.string,
     tooltip: PropTypes.string,
     icon: PropTypes.string,
+    iconClassName: PropTypes.string,
     noBorder: PropTypes.bool,
+    iconStyle: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     noBorder: false,
     icon: '',
     className: '',
+    iconClassName: '',
+    iconStyle: undefined,
     title: '',
     tooltip: '',
 };
@@ -34,6 +38,8 @@ export default class Badge extends React.PureComponent {
             noBorder,
             title,
             icon,
+            iconClassName,
+            iconStyle,
             tooltip,
         } = this.props;
 
@@ -50,7 +56,11 @@ export default class Badge extends React.PureComponent {
                 }
             >
                 {isTruthyString(icon) &&
-                    <Icon name={icon} />
+                    <Icon
+                        name={icon}
+                        style={iconStyle}
+                        className={iconClassName}
+                    />
                 }
                 {isTruthyString(title) &&
                     <div className={styles.title}>

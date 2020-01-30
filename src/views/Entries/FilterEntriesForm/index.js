@@ -200,11 +200,6 @@ export default class FilterEntriesForm extends React.PureComponent {
         });
     }
 
-    handleEntryGroupFilterChange = (value) => {
-        const transformedValues = value.join(',');
-        this.handleFilterChange('lead_group_labels', transformedValues);
-    }
-
     renderFilter = ({ title, key, properties: filter }) => {
         const { filters } = this.state;
         if (!filter || !filter.type) {
