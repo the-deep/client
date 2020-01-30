@@ -3,14 +3,17 @@ import React, { Fragment } from 'react';
 import update from 'immutability-helper';
 import { FaramInputElement } from '@togglecorp/faram';
 
+import Modal from '#rscv/Modal';
 import AccentButton from '#rsca/Button/AccentButton';
 
 import _ts from '#ts';
+import styles from './styles.scss';
 
 const propTypes = {
     value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired,
     renderer: PropTypes.func.isRequired,
+    widgetId: PropTypes.string.isRequired,
 };
 
 @FaramInputElement
@@ -26,6 +29,7 @@ export default class FrameworkEditButton extends React.PureComponent {
 
     handleEditClick = () => {
         const { value: widget } = this.props;
+
         this.setState({
             showModal: true,
             widgetKey: widget.key,
@@ -80,7 +84,10 @@ export default class FrameworkEditButton extends React.PureComponent {
     }
 
     render() {
-        const { renderer: Widget } = this.props;
+        const {
+            renderer: Widget,
+            widgetId,
+        } = this.props;
 
         const {
             widgetKey,
@@ -101,14 +108,25 @@ export default class FrameworkEditButton extends React.PureComponent {
                 >
                     {_ts('framework.widgetEditor', 'editTooltip')}
                 </AccentButton>
-                {
-                    showModal &&
+                {(widgetId === 'matrix2dWidget' && showModal) && (
+                    <Modal className={styles.modal} >
+                        <Widget
+                            title={widgetTitle}
+                            widgetKey={widgetKey}
+                            data={widgetData}
+                            properties={widgetProperties}
+                            onSave={this.handleSave}
+                            onChange={this.handleChange}
+                            closeModal={this.handleCancel}
+                        />
+                    </Modal>
+                )}
+                {(widgetId !== 'matrix2dWidget' && showModal) &&
                     <Widget
-                        widgetKey={widgetKey}
                         title={widgetTitle}
+                        widgetKey={widgetKey}
                         data={widgetData}
                         properties={widgetProperties}
-
                         onSave={this.handleSave}
                         onChange={this.handleChange}
                         closeModal={this.handleCancel}
