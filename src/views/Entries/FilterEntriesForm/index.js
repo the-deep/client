@@ -13,6 +13,7 @@ import DateFilter from '#rsci/DateFilter';
 import TimeFilter from '#rsci/TimeFilter';
 import RangeFilter from '#rsci/RangeFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 
@@ -94,6 +95,11 @@ export default class FilterEntriesForm extends React.PureComponent {
     static optionLabelSelector = (d = {}) => d.value;
     static optionKeySelector = (d = {}) => d.key;
 
+    static optionTitleSelector = (d = {}) => d.title;
+    static optionIdSelector = (d = {}) => d.id;
+
+    static identitySelector = d => d;
+
     constructor(props) {
         super(props);
 
@@ -164,7 +170,6 @@ export default class FilterEntriesForm extends React.PureComponent {
         return entryFilterOptionsRequest;
     }
 
-
     handleApplyFilter = () => {
         const { filters } = this.state;
         this.props.setEntriesViewFilter({ filters });
@@ -184,6 +189,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             ...this.state.filters,
             ...{ [key]: values },
         };
+
         this.setState({
             filters,
             pristine: false,
@@ -193,7 +199,6 @@ export default class FilterEntriesForm extends React.PureComponent {
             }
         });
     }
-
 
     renderFilter = ({ title, key, properties: filter }) => {
         const { filters } = this.state;
@@ -289,7 +294,11 @@ export default class FilterEntriesForm extends React.PureComponent {
 
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
-        const { createdBy } = entryFilterOptions;
+        const {
+            createdBy,
+            projectEntryLabel,
+            leadEntryGroup,
+        } = entryFilterOptions;
 
         return (
             <div className={_cs(styles.entriesFilters, className)} >
@@ -334,6 +343,27 @@ export default class FilterEntriesForm extends React.PureComponent {
                     value={filters.comment_assignee || emptyList}
                     disabled={pending}
                     placeholder={_ts('entries', 'createdByPlaceholder')}
+                />
+                <MultiSelectInput
+                    className={styles.entriesFilter}
+                    keySelector={FilterEntriesForm.optionIdSelector}
+                    labelSelector={FilterEntriesForm.optionTitleSelector}
+                    options={projectEntryLabel}
+                    label={_ts('entries', 'entryLabelsFilterLabel')}
+                    onChange={(value) => { this.handleFilterChange('project_entry_labels', value); }}
+                    showHintAndError={false}
+                    value={filters.project_entry_labels || emptyList}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
+                />
+                <SearchInput
+                    className={styles.entriesFilter}
+                    label={_ts('entries', 'entryGroupsFilterLabel')}
+                    onChange={(value) => { this.handleFilterChange('lead_group_label', value); }}
+                    showHintAndError={false}
+                    disabled={pending}
+                    value={filters.lead_group_label}
+                    placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}

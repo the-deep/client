@@ -5,6 +5,23 @@ import { isFalsy } from '@togglecorp/fujs';
 const entrySchema = [];
 
 {
+    const name = 'projectLabel';
+    const schema = {
+        doc: {
+            name: 'project label for entry',
+            description: 'project label for entry',
+        },
+        fields: {
+            labelId: { type: 'number', required: true },
+            labelColor: { type: 'string' },
+            labelTitle: { type: 'string' },
+            count: { type: 'number' },
+        },
+    };
+    entrySchema.push({ name, schema });
+}
+
+{
     const name = 'entry';
     const schema = {
         doc: {
@@ -25,6 +42,7 @@ const entrySchema = [];
             resolvedCommentCount: { type: 'uint' },
             unresolvedCommentCount: { type: 'uint' },
             entryType: { type: 'string', required: true },
+            projectLabels: { type: 'array.projectLabel' },
             informationDate: { type: 'string' },
             droppedExcerpt: { type: 'string' },
             highlightHidden: { type: 'boolean' },

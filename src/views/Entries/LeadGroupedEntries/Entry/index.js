@@ -9,11 +9,13 @@ import {
 import memoize from 'memoize-one';
 
 import { entriesSetEntryCommentsCountAction } from '#redux';
+import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 
 import EntryCommentModal from '#components/general/EntryCommentModal';
+import Badge from '#components/viewer/Badge';
 
 import {
     fetchWidgetViewComponent,
@@ -61,6 +63,8 @@ const widgetKeySelector = widget => widget.key;
 
 const emptySchema = { fields: {} };
 
+const entryLabelKeySelector = d => d.labelId;
+
 @connect(null, mapDispatchToProps)
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
@@ -87,6 +91,13 @@ export default class Entry extends React.PureComponent {
 
         setEntryCommentsCount({ entry, projectId, leadId });
     }
+
+    entryLabelsRendererParams = (key, data) => ({
+        title: `${data.labelTitle} (${data.count})`,
+        className: styles.entryLabel,
+        icon: 'circle',
+        iconStyle: { color: data.labelColor },
+    });
 
     renderWidgetHeader = (widget) => {
         const { title } = widget;
@@ -166,6 +177,7 @@ export default class Entry extends React.PureComponent {
                 id: entryId,
                 attributes,
                 unresolvedCommentCount: commentCount,
+                projectLabels,
             },
         } = this.props;
 
@@ -174,28 +186,38 @@ export default class Entry extends React.PureComponent {
         return (
             <React.Fragment>
                 <header className={_cs('entry-container-header', styles.entryHeader)}>
-                    <ModalButton
-                        className={
-                            _cs(
-                                styles.button,
-                                commentCount > 0 && styles.accented,
-                            )
-                        }
-                        disabled={isFalsy(entryId)}
-                        modal={
-                            <EntryCommentModal
-                                entryServerId={entryId}
-                                onCommentsCountChange={this.handleCommentsCountChange}
-                            />
-                        }
-                        iconName="chat"
-                    >
-                        {commentCount > 0 &&
-                            <div className={styles.commentCount}>
-                                {commentCount}
-                            </div>
-                        }
-                    </ModalButton>
+                    <div className={styles.rightContainer}>
+                        <ListView
+                            data={projectLabels}
+                            className={styles.entryLabels}
+                            rendererParams={this.entryLabelsRendererParams}
+                            renderer={Badge}
+                            keySelector={entryLabelKeySelector}
+                            emptyComponent={null}
+                        />
+                        <ModalButton
+                            className={
+                                _cs(
+                                    styles.button,
+                                    commentCount > 0 && styles.accented,
+                                )
+                            }
+                            disabled={isFalsy(entryId)}
+                            modal={
+                                <EntryCommentModal
+                                    entryServerId={entryId}
+                                    onCommentsCountChange={this.handleCommentsCountChange}
+                                />
+                            }
+                            iconName="chat"
+                        >
+                            {commentCount > 0 &&
+                                <div className={styles.commentCount}>
+                                    {commentCount}
+                                </div>
+                            }
+                        </ModalButton>
+                    </div>
                 </header>
                 <Faram
                     className={_cs(classNameFromProps, styles.entry)}

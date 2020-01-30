@@ -1539,7 +1539,11 @@
             "commentCreatedByPlaceholder": 17,
             "commentStatusOptionsFilterLabel": -84296296,
             "commentStatusPlaceholder": 8,
-            "textSearchPlaceholder": -5446515
+            "textSearchPlaceholder": -5446515,
+            "entryGroupsFilterLabel": -47675119,
+            "entryGroupsFilterPlaceholder": 14,
+            "entryLabelsFilterPlaceholder": 14,
+            "entryLabelsFilterLabel": -80269151
         },
         "export": {
             "headerExport": 600,
