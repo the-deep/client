@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import {
     _cs,
+    compareNumber,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -108,6 +110,13 @@ export default class ProjectDetails extends React.PureComponent {
         };
     }
 
+    getOrderedEntryLabel = memoize((entryLabels) => {
+        if (!entryLabels || entryLabels.length <= 1) {
+            return entryLabels;
+        }
+        return [...entryLabels].sort((a, b) => compareNumber(a.order, b.order));
+    });
+
     setEntryLabels = (entryLabels) => {
         this.setState({ entryLabels });
     };
@@ -176,6 +185,8 @@ export default class ProjectDetails extends React.PureComponent {
 
         const { entryLabels } = this.state;
 
+        const orderedEntryLabel = this.getOrderedEntryLabel(entryLabels);
+
         return (
             <div className={_cs(className, styles.entryConfig)}>
                 <header className={styles.header}>
@@ -199,7 +210,7 @@ export default class ProjectDetails extends React.PureComponent {
                 <div className={styles.container}>
                     <ListView
                         className={styles.cards}
-                        data={entryLabels}
+                        data={orderedEntryLabel}
                         keySelector={entryLabelKeySelector}
                         renderer={EntryLabelCard}
                         rendererParams={this.entryLabelRendererParams}
