@@ -508,21 +508,21 @@ export default class EditEntries extends React.PureComponent {
         return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
     }))
 
-    getTabs = (labels = []) => {
+    getTabs = memoize((labels) => {
         const tabs = {
             [VIEW.overview]: _ts('editEntry', 'overviewTabTitle'),
             [VIEW.list]: _ts('editEntry', 'listTabTitle'),
             [VIEW.group]: _ts('editEntry', 'groupTabTitle'),
         };
 
-        if (labels.length > 0) {
+        if (labels && labels.length > 0) {
             return tabs;
         }
 
         delete tabs[VIEW.group];
 
         return tabs;
-    }
+    })
 
     shouldHideEditLink = () => {
         const {

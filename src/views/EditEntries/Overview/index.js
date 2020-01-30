@@ -11,7 +11,6 @@ import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
-import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -338,11 +337,8 @@ export default class Overview extends React.PureComponent {
                                                 }
                                             />
                                         }
+                                        iconName="chat"
                                     >
-                                        <Icon
-                                            name="chat"
-                                            className={styles.commentIcon}
-                                        />
                                         {unresolvedCommentCount > 0 &&
                                             <div className={styles.commentCount}>
                                                 {unresolvedCommentCount}

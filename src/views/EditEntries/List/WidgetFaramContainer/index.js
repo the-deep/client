@@ -7,7 +7,6 @@ import {
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
-import Icon from '#rscg/Icon';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
@@ -188,11 +187,8 @@ export default class WidgetFaramContainer extends React.PureComponent {
                                 onCommentsCountChange={this.handleCommentsCountChange}
                             />
                         }
+                        iconName="chat"
                     >
-                        <Icon
-                            className={styles.icon}
-                            name="chat"
-                        />
                         {unresolvedCommentCount > 0 &&
                             <div className={styles.commentCount}>
                                 {unresolvedCommentCount}

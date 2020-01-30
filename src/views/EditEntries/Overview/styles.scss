@@ -48,7 +48,7 @@
                 border-right: var(--width-separator-thin) solid var(--color-separator);
 
                 .add-new-entry-button {
-                    margin: 0 var(--spacing-small);
+                    margin: 0 var(--spacing-medium);
                 }
             }
 
@@ -67,10 +67,6 @@
 
                     .comment-count {
                         padding-left: var(--spacing-small);
-                    }
-
-                    .comment-icon {
-                        font-size: var(--font-size-large);
                     }
 
                     &.accented {
