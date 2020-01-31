@@ -55,6 +55,7 @@
             .right-action-buttons {
                 display: flex;
                 flex-shrink: 0;
+                margin-right: var(--spacing-medium);
 
                 button {
                     margin: 0 var(--spacing-extra-small);
