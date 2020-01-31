@@ -1,6 +1,22 @@
 const entryGroupsSchema = [];
 
 {
+    const name = 'entryLabelOrder';
+    const schema = {
+        doc: {
+            name: 'Entry Label Order',
+            description: 'Response for entry label order',
+        },
+        fields: {
+            id: { type: 'number', required: true },
+            project: { type: 'number', required: true },
+            title: { type: 'string', required: true },
+            order: { type: 'number', required: true },
+        },
+    };
+    entryGroupsSchema.push({ name, schema });
+}
+{
     const name = 'entryLabelMini';
     const schema = {
         doc: {

@@ -21,6 +21,7 @@ const propTypes = {
     entryLabel: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onEntryLabelDelete: PropTypes.func.isRequired,
     onEntryLabelEdit: PropTypes.func.isRequired,
+    readOnly: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -39,6 +40,7 @@ export default class EntryLabelCard extends React.PureComponent {
             projectId,
             onEntryLabelDelete,
             onEntryLabelEdit,
+            readOnly,
         } = this.props;
 
         const {
@@ -51,7 +53,13 @@ export default class EntryLabelCard extends React.PureComponent {
         } = entryLabel;
 
         return (
-            <div className={_cs(className, styles.labelCard)}>
+            <div
+                className={_cs(
+                    className,
+                    styles.labelCard,
+                    readOnly && styles.readOnly,
+                )}
+            >
                 <header className={styles.header}>
                     <h4
                         className={styles.heading}
@@ -63,14 +71,16 @@ export default class EntryLabelCard extends React.PureComponent {
                         />
                         {title}
                     </h4>
-                    <ActionButtons
-                        className={styles.actionButtons}
-                        entryLabel={entryLabel}
-                        entryLabelId={entryLabelId}
-                        projectId={projectId}
-                        onEntryLabelDelete={onEntryLabelDelete}
-                        onEntryLabelEdit={onEntryLabelEdit}
-                    />
+                    {!readOnly && (
+                        <ActionButtons
+                            className={styles.actionButtons}
+                            entryLabel={entryLabel}
+                            entryLabelId={entryLabelId}
+                            projectId={projectId}
+                            onEntryLabelDelete={onEntryLabelDelete}
+                            onEntryLabelEdit={onEntryLabelEdit}
+                        />
+                    )}
                 </header>
                 <footer className={styles.footer}>
                     <div className={_cs(styles.createdBy, styles.labelValue)}>
@@ -92,7 +102,7 @@ export default class EntryLabelCard extends React.PureComponent {
                             {_ts('project.entryGroups', 'entriesCountCardHeaderTitle')}
                         </div>
                         <div>
-                            {entryCount}
+                            {entryCount || 0}
                         </div>
                     </div>
                 </footer>

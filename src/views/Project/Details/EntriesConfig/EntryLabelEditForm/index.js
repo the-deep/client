@@ -4,7 +4,6 @@ import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
-import NumberInput from '#rsci/NumberInput';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
@@ -28,6 +27,8 @@ import styles from './styles.scss';
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number,
+    // eslint-disable-next-line react/no-unused-prop-types
+    newOrder: PropTypes.number,
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     entryLabel: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -41,6 +42,7 @@ const defaultProps = {
     entryLabel: undefined,
     entryLabelId: undefined,
     isAddForm: false,
+    newOrder: undefined,
 };
 
 const requestOptions = {
@@ -93,7 +95,13 @@ const requestOptions = {
             },
         }) => `/projects/${projectId}/entry-labels/`,
         method: methods.POST,
-        body: ({ params: { body } }) => body,
+        body: ({
+            params: { body },
+            props: { newOrder },
+        }) => ({
+            ...body,
+            order: newOrder,
+        }),
         onSuccess: ({
             props: {
                 onEntryLabelAdd,
@@ -144,7 +152,6 @@ export default class EntryLabelsActions extends React.PureComponent {
         const faramValues = !isAddForm ? ({
             title: entryLabel.title,
             color: entryLabel.color,
-            order: entryLabel.order,
         }) : {
             color: '#414141',
         };
@@ -159,7 +166,6 @@ export default class EntryLabelsActions extends React.PureComponent {
             fields: {
                 title: [requiredCondition],
                 color: [requiredCondition],
-                order: [requiredCondition],
             },
         };
     }
@@ -261,11 +267,6 @@ export default class EntryLabelsActions extends React.PureComponent {
                             className={styles.colorInput}
                             faramElementName="color"
                             label={_ts('project.entryGroups.editForm', 'entryLabelColorLabel')}
-                        />
-                        <NumberInput
-                            faramElementName="order"
-                            label={_ts('project.entryGroups.editForm', 'entryLabelOrderLabel')}
-                            placeholder={_ts('project.entryGroups.editForm', 'entryLabelOrderPlaceholder')}
                         />
                     </ModalBody>
                     <ModalFooter>

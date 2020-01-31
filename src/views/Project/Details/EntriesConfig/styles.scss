@@ -1,7 +1,25 @@
-.card {
-    flex-basis: var(--width-entry-label-card);
+.card-container {
+    position: relative;
     background-color: var(--color-foreground);
-    cursor: grab;
+    padding: var(--spacing-small);
+    width: auto;
+
+    .card {
+        border: var(--width-separator-thin) solid var(--color-separator);
+        width: var(--width-entry-label-card);
+        height: var(--height-entry-label-card);
+    }
+
+    .drag-handle {
+        position: absolute;
+        top: var(--spacing-large);
+        left: var(--spacing-large);
+        z-index: 1;
+        background-color: var(--color-foreground);
+        cursor: grab;
+        padding: var(--spacing-extra-small-alt) var(--spacing-small);
+        font-size: var(--font-size-large);
+    }
 }
 
 .entry-config {
@@ -24,8 +42,10 @@
 
     .container {
         display: flex;
+        position: relative;
         flex-direction: column;
         flex-grow: 1;
+        padding: calc(var(--spacing-medium) - var(--spacing-small));
         overflow-y: auto;
 
         .cards {
@@ -34,7 +54,30 @@
             align-items: flex-start;
             flex-grow: 1;
             flex-wrap: wrap;
-            justify-content: flex-start;
+            justify-content: center;
+            overflow-y: auto;
+
+            .card-container {
+                .drag-handle {
+                    opacity: 0;
+                }
+
+                &:hover {
+                    .drag-handle {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        :global {
+            .list-view-empty {
+                align-content: unset;
+                align-items: unset;
+                flex-wrap: unset;
+                justify-content: unset;
+            }
         }
     }
 }
+

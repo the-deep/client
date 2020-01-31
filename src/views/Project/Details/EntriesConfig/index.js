@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import memoize from 'memoize-one';
 import {
     _cs,
     compareNumber,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
-import ListView from '#rscv/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Icon from '#rscg/Icon';
+import SortableListView from '#rscv/SortableListView';
 import modalize from '#rscg/Modalize';
 
 import {
@@ -39,6 +40,13 @@ const defaultProps = {
     readOnly: false,
 };
 
+const getOrderedEntryLabel = (entryLabels) => {
+    if (!entryLabels || entryLabels.length <= 1) {
+        return entryLabels;
+    }
+    return [...entryLabels].sort((a, b) => compareNumber(a.order, b.order));
+};
+
 const requestOptions = {
     projectEntriesLabels: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/entry-labels/`,
@@ -62,7 +70,8 @@ const requestOptions = {
             } = {},
         }) => {
             if (setEntryLabels) {
-                setEntryLabels(results);
+                const ordererEntryLabels = getOrderedEntryLabel(results);
+                setEntryLabels(ordererEntryLabels);
             }
         },
         onFailure: ({ error: { messageForNotification } }) => {
@@ -85,7 +94,40 @@ const requestOptions = {
             schemaName: 'entryLabelsList',
         },
     },
+    entryLabelsOrderUpdate: {
+        url: ({ props: { projectId } }) => `/projects/${projectId}/entry-labels/bulk-update-order/`,
+        query: ({
+            fields: [
+                'id',
+                'order',
+                'title',
+                'project',
+            ],
+        }),
+        method: methods.POST,
+        body: ({ params: { body } }) => body,
+        onFailure: ({ error: { messageForNotification } }) => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: messageForNotification,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.entryGroups', 'entryLabelsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('project.entryGroups', 'entryLabelsFatal'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'array.entryLabelOrder',
+        },
+    },
 };
+
 
 const entryLabelKeySelector = d => d.id;
 
@@ -110,19 +152,15 @@ export default class ProjectDetails extends React.PureComponent {
         };
     }
 
-    getOrderedEntryLabel = memoize((entryLabels) => {
-        if (!entryLabels || entryLabels.length <= 1) {
-            return entryLabels;
-        }
-        return [...entryLabels].sort((a, b) => compareNumber(a.order, b.order));
-    });
-
     setEntryLabels = (entryLabels) => {
         this.setState({ entryLabels });
     };
 
     entryLabelRendererParams = (key, data) => {
-        const { projectId } = this.props;
+        const {
+            projectId,
+            readOnly,
+        } = this.props;
 
         return ({
             className: styles.card,
@@ -130,6 +168,7 @@ export default class ProjectDetails extends React.PureComponent {
             entryLabel: data,
             onEntryLabelDelete: this.handleEntryLabelDelete,
             onEntryLabelEdit: this.handleEntryLabelEdit,
+            readOnly,
         });
     }
 
@@ -157,6 +196,29 @@ export default class ProjectDetails extends React.PureComponent {
         this.setState({ entryLabels: newEntryLabels });
     }
 
+    handleEntryLabelOrderChange = (entryLabels) => {
+        if (entryLabels === this.state.entryLabels) {
+            return;
+        }
+
+        const {
+            requests: {
+                entryLabelsOrderUpdate,
+            },
+        } = this.props;
+
+        const entryLabelsOrderMap = entryLabels.map((label, index) => ({
+            id: label.id,
+            order: index + 1,
+        }));
+
+        this.setState({ entryLabels }, () => {
+            entryLabelsOrderUpdate.do({
+                body: entryLabelsOrderMap,
+            });
+        });
+    }
+
     handleEntryLabelEdit = (entryLabelId, entryLabel) => {
         const { entryLabels } = this.state;
         const newEntryLabels = [...entryLabels];
@@ -171,6 +233,13 @@ export default class ProjectDetails extends React.PureComponent {
         this.setState({ entryLabels: newEntryLabels });
     }
 
+    renderDragHandle = () => (
+        <Icon
+            className={styles.dragHandle}
+            name="hamburger"
+        />
+    );
+
     render() {
         const {
             className,
@@ -178,14 +247,15 @@ export default class ProjectDetails extends React.PureComponent {
                 projectEntriesLabels: {
                     pending,
                 },
+                entryLabelsOrderUpdate: {
+                    pending: entryLabelsPending,
+                },
             },
             projectId,
             readOnly,
         } = this.props;
 
         const { entryLabels } = this.state;
-
-        const orderedEntryLabel = this.getOrderedEntryLabel(entryLabels);
 
         return (
             <div className={_cs(className, styles.entryConfig)}>
@@ -201,6 +271,7 @@ export default class ProjectDetails extends React.PureComponent {
                                 onEntryLabelAdd={this.handleEntryLabelAdd}
                                 projectId={projectId}
                                 isAddForm
+                                newOrder={entryLabels.length + 1}
                             />
                         )}
                     >
@@ -208,20 +279,20 @@ export default class ProjectDetails extends React.PureComponent {
                     </ModalButton>
                 </header>
                 <div className={styles.container}>
-                    <ListView
+                    {entryLabelsPending && <LoadingAnimation />}
+                    <SortableListView
                         className={styles.cards}
-                        data={orderedEntryLabel}
+                        data={entryLabels}
+                        onChange={this.handleEntryLabelOrderChange}
                         keySelector={entryLabelKeySelector}
                         renderer={EntryLabelCard}
                         rendererParams={this.entryLabelRendererParams}
                         pending={pending}
                         disabled={readOnly}
-                        // TODO: Currently disabled as onChange is not handled, handle onChange
-                        // disabled
-                        // itemClassName={styles.card}
-                        // axis="xy"
-                        // lockAxis=""
-                        // showDragHandle={false}
+                        dragHandleModifier={this.renderDragHandle}
+                        itemClassName={styles.cardContainer}
+                        axis="xy"
+                        lockAxis=""
                     />
                 </div>
             </div>

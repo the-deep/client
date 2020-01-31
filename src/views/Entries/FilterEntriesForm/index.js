@@ -297,8 +297,9 @@ export default class FilterEntriesForm extends React.PureComponent {
         const {
             createdBy,
             projectEntryLabel,
-            leadEntryGroup,
         } = entryFilterOptions;
+
+        const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
 
         return (
             <div className={_cs(styles.entriesFilters, className)} >
@@ -344,27 +345,31 @@ export default class FilterEntriesForm extends React.PureComponent {
                     disabled={pending}
                     placeholder={_ts('entries', 'createdByPlaceholder')}
                 />
-                <MultiSelectInput
-                    className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionIdSelector}
-                    labelSelector={FilterEntriesForm.optionTitleSelector}
-                    options={projectEntryLabel}
-                    label={_ts('entries', 'entryLabelsFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('project_entry_labels', value); }}
-                    showHintAndError={false}
-                    value={filters.project_entry_labels || emptyList}
-                    disabled={pending}
-                    placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
-                />
-                <SearchInput
-                    className={styles.entriesFilter}
-                    label={_ts('entries', 'entryGroupsFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('lead_group_label', value); }}
-                    showHintAndError={false}
-                    disabled={pending}
-                    value={filters.lead_group_label}
-                    placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
-                />
+                {showEntryLabelFilters && (
+                    <>
+                        <MultiSelectInput
+                            className={styles.entriesFilter}
+                            keySelector={FilterEntriesForm.optionIdSelector}
+                            labelSelector={FilterEntriesForm.optionTitleSelector}
+                            options={projectEntryLabel}
+                            label={_ts('entries', 'entryLabelsFilterLabel')}
+                            onChange={(value) => { this.handleFilterChange('project_entry_labels', value); }}
+                            showHintAndError={false}
+                            value={filters.project_entry_labels || emptyList}
+                            disabled={pending}
+                            placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
+                        />
+                        <SearchInput
+                            className={styles.entriesFilter}
+                            label={_ts('entries', 'entryGroupsFilterLabel')}
+                            onChange={(value) => { this.handleFilterChange('lead_group_label', value); }}
+                            showHintAndError={false}
+                            disabled={pending}
+                            value={filters.lead_group_label}
+                            placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
+                        />
+                    </>
+                )}
                 <MultiSelectInput
                     className={styles.entriesFilter}
                     keySelector={FilterEntriesForm.optionKeySelector}
