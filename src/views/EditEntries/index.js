@@ -788,6 +788,7 @@ export default class EditEntries extends React.PureComponent {
             leadId,
             setEntryGroupError,
             saveEntryGroup,
+            labels,
         } = this.props;
         // NOTE: no need to use filteredEntries,
         // at this point there should only be saved entries
@@ -798,6 +799,12 @@ export default class EditEntries extends React.PureComponent {
         );
 
         const entryGroupData = entryGroupAccessor.data(entryGroup);
+
+        const labelMap = listToMap(
+            labels,
+            label => label.id,
+            label => label,
+        );
 
         const newEntryGroupData = {
             ...entryGroupData,
@@ -822,7 +829,11 @@ export default class EditEntries extends React.PureComponent {
                         entryId: entryServerId,
                     };
                 })
-                .filter(isDefined),
+                .filter(isDefined)
+                .filter((selection) => {
+                    const label = labelMap[selection.labelId];
+                    return !!label;
+                }),
         };
 
         let urlForEntryGroup;
