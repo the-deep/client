@@ -134,13 +134,21 @@ export default class WidgetEditor extends React.PureComponent {
         const widthBlocks = Math.ceil(layout.width / gridSize.width);
         const heightBlocks = Math.ceil(layout.height / gridSize.height);
 
+        const isExcerptWidget = widgetId === 'excerptWidget';
+
         const headingClassName = _cs(
             styles.heading,
             hideButtons && styles.disabled,
+            isExcerptWidget && styles.excerptWidgetHeading,
         );
 
         return (
-            <div className={styles.header}>
+            <div
+                className={_cs(
+                    styles.header,
+                    isExcerptWidget && styles.excerptWidgetHeader,
+                )}
+            >
                 <h5
                     title={title}
                     className={headingClassName}

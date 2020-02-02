@@ -62,9 +62,11 @@
                     opacity: 0;
                 }
 
-                &:hover {
-                    .drag-handle {
-                        opacity: 1;
+                &:not(.disable-hover) {
+                    &:hover {
+                        .drag-handle {
+                            opacity: 1;
+                        }
                     }
                 }
             }

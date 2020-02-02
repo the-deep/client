@@ -22,6 +22,7 @@ const propTypes = {
     onEntryLabelDelete: PropTypes.func.isRequired,
     onEntryLabelEdit: PropTypes.func.isRequired,
     readOnly: PropTypes.bool.isRequired,
+    disableHover: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -41,6 +42,7 @@ export default class EntryLabelCard extends React.PureComponent {
             onEntryLabelDelete,
             onEntryLabelEdit,
             readOnly,
+            disableHover,
         } = this.props;
 
         const {
@@ -58,6 +60,7 @@ export default class EntryLabelCard extends React.PureComponent {
                     className,
                     styles.labelCard,
                     readOnly && styles.readOnly,
+                    disableHover && styles.disableHover,
                 )}
             >
                 <header className={styles.header}>

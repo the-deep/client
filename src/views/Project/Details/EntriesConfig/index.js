@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import produce from 'immer';
 import {
     _cs,
     compareNumber,
@@ -148,6 +149,7 @@ export default class ProjectDetails extends React.PureComponent {
         });
 
         this.state = {
+            disableHover: false,
             entryLabels: [],
         };
     }
@@ -161,6 +163,7 @@ export default class ProjectDetails extends React.PureComponent {
             projectId,
             readOnly,
         } = this.props;
+        const { disableHover } = this.state;
 
         return ({
             className: styles.card,
@@ -169,6 +172,7 @@ export default class ProjectDetails extends React.PureComponent {
             onEntryLabelDelete: this.handleEntryLabelDelete,
             onEntryLabelEdit: this.handleEntryLabelEdit,
             readOnly,
+            disableHover,
         });
     }
 
@@ -197,6 +201,8 @@ export default class ProjectDetails extends React.PureComponent {
     }
 
     handleEntryLabelOrderChange = (entryLabels) => {
+        this.setState({ disableHover: false });
+
         if (entryLabels === this.state.entryLabels) {
             return;
         }
@@ -221,16 +227,20 @@ export default class ProjectDetails extends React.PureComponent {
 
     handleEntryLabelEdit = (entryLabelId, entryLabel) => {
         const { entryLabels } = this.state;
-        const newEntryLabels = [...entryLabels];
-        const selectedEntryLabelIndex = entryLabels.findIndex(e => e.id === entryLabelId);
-
-        if (selectedEntryLabelIndex === -1) {
-            return;
-        }
-        newEntryLabels.splice(selectedEntryLabelIndex, 1);
-        newEntryLabels.push(entryLabel);
+        const newEntryLabels = produce(entryLabels, (safeLabels) => {
+            const selectedEntryLabelIndex = safeLabels.findIndex(e => e.id === entryLabelId);
+            if (selectedEntryLabelIndex === -1) {
+                return;
+            }
+            // eslint-disable-next-line no-param-reassign
+            safeLabels[selectedEntryLabelIndex] = entryLabel;
+        });
 
         this.setState({ entryLabels: newEntryLabels });
+    }
+
+    handleSortStart = () => {
+        this.setState({ disableHover: true });
     }
 
     renderDragHandle = () => (
@@ -255,7 +265,10 @@ export default class ProjectDetails extends React.PureComponent {
             readOnly,
         } = this.props;
 
-        const { entryLabels } = this.state;
+        const {
+            entryLabels,
+            disableHover,
+        } = this.state;
 
         return (
             <div className={_cs(className, styles.entryConfig)}>
@@ -290,7 +303,11 @@ export default class ProjectDetails extends React.PureComponent {
                         pending={pending}
                         disabled={readOnly}
                         dragHandleModifier={this.renderDragHandle}
-                        itemClassName={styles.cardContainer}
+                        itemClassName={_cs(
+                            styles.cardContainer,
+                            disableHover && styles.disableHover,
+                        )}
+                        onSortStart={this.handleSortStart}
                         axis="xy"
                         lockAxis=""
                     />

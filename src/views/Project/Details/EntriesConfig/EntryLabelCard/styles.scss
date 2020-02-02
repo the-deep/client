@@ -16,6 +16,7 @@
             display: flex;
             align-items: center;
             flex-grow: 1;
+            text-transform: none;
             font-weight: var(--font-weight-bold);
 
             .circle {
@@ -63,9 +64,11 @@
         }
     }
 
-    &:hover {
-        .action-buttons {
-            opacity: 1;
+    &:not(.disable-hover) {
+        &:hover {
+            .action-buttons {
+                opacity: 1;
+            }
         }
     }
 

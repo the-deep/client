@@ -11,6 +11,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     title: PropTypes.string,
+    titleClassName: PropTypes.string,
     tooltip: PropTypes.string,
     icon: PropTypes.string,
     iconClassName: PropTypes.string,
@@ -21,7 +22,8 @@ const propTypes = {
 const defaultProps = {
     noBorder: false,
     icon: '',
-    className: '',
+    className: undefined,
+    titleClassName: undefined,
     iconClassName: '',
     iconStyle: undefined,
     title: '',
@@ -35,6 +37,7 @@ export default class Badge extends React.PureComponent {
     render() {
         const {
             className,
+            titleClassName,
             noBorder,
             title,
             icon,
@@ -63,7 +66,7 @@ export default class Badge extends React.PureComponent {
                     />
                 }
                 {isTruthyString(title) &&
-                    <div className={styles.title}>
+                    <div className={_cs(styles.title, titleClassName)}>
                         {title}
                     </div>
                 }
