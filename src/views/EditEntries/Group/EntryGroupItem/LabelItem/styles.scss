@@ -17,6 +17,8 @@
 
         .heading {
             flex-grow: 1;
+            text-transform: none;
+            font-size: var(--font-size-medium);
         }
 
         .button {

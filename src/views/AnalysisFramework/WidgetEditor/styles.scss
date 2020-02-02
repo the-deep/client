@@ -26,6 +26,14 @@
                     &.disabled {
                         color: var(--color-text-label);
                     }
+
+                    &.excerpt-widget-heading {
+                        color: var(--color-text-on-primary);
+                    }
+                }
+
+                &.excerpt-widget-header {
+                    background-color: var(--color-primary);
                 }
 
                 .action-buttons {

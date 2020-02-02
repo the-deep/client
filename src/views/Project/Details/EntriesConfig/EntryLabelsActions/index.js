@@ -115,6 +115,26 @@ export default class EntryLabelsActions extends React.PureComponent {
             title,
         } = entryLabel;
 
+        const confirmMessage = entryCount === 1 ? (
+            _ts(
+                'project.entryGroups',
+                'deleteEntryLabelConfirmationSingular',
+                {
+                    title: (<b>{title}</b>),
+                    entryCount,
+                },
+            )
+        ) : (
+            _ts(
+                'project.entryGroups',
+                'deleteEntryLabelConfirmationPlural',
+                {
+                    title: (<b>{title}</b>),
+                    entryCount,
+                },
+            )
+        );
+
         return (
             <div className={_cs(className, styles.actions)}>
                 <ModalButton
@@ -139,14 +159,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                     transparent
                     iconName="delete"
                     disabled={readOnly}
-                    confirmationMessage={_ts(
-                        'project.entryGroups',
-                        'deleteEntryLabelConfirmation',
-                        {
-                            title: (<b>{title}</b>),
-                            entryCount,
-                        },
-                    )}
+                    confirmationMessage={confirmMessage}
                 />
             </div>
         );

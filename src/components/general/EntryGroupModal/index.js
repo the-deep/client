@@ -219,9 +219,11 @@ export default class EntryCommentModal extends React.PureComponent {
                             </tbody>
                         </table>
                     ) : (
-                        <Message>
-                            {_ts('editEntry.groupModal', 'noEntryGroupsText')}
-                        </Message>
+                        <div>
+                            <Message>
+                                {_ts('editEntry.groupModal', 'noEntryGroupsText')}
+                            </Message>
+                        </div>
                     )}
                     {!readOnly && (
                         <ModalButton

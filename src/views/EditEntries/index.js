@@ -476,7 +476,7 @@ export default class EditEntries extends React.PureComponent {
         resetEntryGroupUiState(leadId);
 
         // Update all entries with new color
-        if (entries && analysisFramework && entries.length > 0) {
+        if (entries && analysisFramework && analysisFramework.widgets && entries.length > 0) {
             const bulkData = entries.reduce((acc, entry) => {
                 const entryKey = entryAccessor.key(entry);
                 acc[entryKey] = { localData: {} };

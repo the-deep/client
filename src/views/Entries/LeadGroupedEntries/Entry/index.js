@@ -94,6 +94,7 @@ export default class Entry extends React.PureComponent {
 
     entryLabelsRendererParams = (key, data) => ({
         title: `${data.labelTitle} (${data.count})`,
+        titleClassName: styles.title,
         className: styles.entryLabel,
         icon: 'circle',
         iconStyle: { color: data.labelColor },

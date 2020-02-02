@@ -238,7 +238,9 @@ export default class EntryLabelsActions extends React.PureComponent {
         return (
             <Modal className={styles.entryGroupEditForm} >
                 <ModalHeader
+                    className={styles.modalHeader}
                     title={modalTitle}
+                    headingClassName={styles.heading}
                     rightComponent={(
                         <Button
                             iconName="close"

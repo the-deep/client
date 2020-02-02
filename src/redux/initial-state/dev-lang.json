@@ -1073,7 +1073,7 @@
         "-68751877": "Entries Count",
         "-80269151": "Entry Labels",
         "-68282781": "Order",
-        "-76519235": "Add new entry",
+        "-76519235": "Add new entry label",
         "-47675119": "Entry Groups",
         "-26658958": "There was an error while performing this action. Please check your network connection and try again.",
         "-94407945": "Mark current entry group for removal",
@@ -1085,16 +1085,17 @@
         "-84182062": "Hide Highlight",
         "-28191340": "Reset Excerpt",
         "-36912904": "Show Highlight",
-        "-5446515": "Search text widget",
+        "-5446515": "Search free text widget",
         "-91462875": "Edit Entry Group",
         "-11049053": "Add Entry Group",
         "-16565787": "Clear entry",
         "-25488943": "Group {order}",
         "-18186537": "Delete Entry Group",
         "-48762166": "Create Entry Group",
-        "-24599331": "Entry group - quick add",
+        "-24599331": "Entry groups - quick add",
         "-19686228": "There are no entry groups in this lead.",
-        "-1797082": "Text Widgets"
+        "-1797082": "Free Text Widgets",
+        "-48510558": "Free text"
     },
     "links": {
         "browserExtension": {
@@ -1952,7 +1953,7 @@
             "scaleWidgetLabel": 757,
             "conditionalWidgetLabel": -86548021,
             "timeRangeWidgetLabel": -557230,
-            "textWidgetLabel": 20
+            "textWidgetLabel": -48510558
         },
         "pageTitle": {
             "login": 814,
@@ -3129,7 +3130,7 @@
             "colorHeaderTitle": 764,
             "createdByHeaderTitle": 538,
             "deleteEntryLabelButtonTitle": -79392542,
-            "deleteEntryLabelConfirmation": -7812601,
+            "deleteEntryLabelConfirmationSingular": -7812601,
             "entriesCountHeaderTitle": -68751877,
             "titleHeaderTitle": 13,
             "entryLabelsHeader": -80269151,
