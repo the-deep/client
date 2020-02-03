@@ -25,7 +25,7 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(PrimaryButton);
 
-const MAX_QUESTIONNAIRE_PER_PAGE = 1;
+const MAX_QUESTIONNAIRE_PER_PAGE = 10;
 
 type ViewMode = 'active' | 'archived';
 

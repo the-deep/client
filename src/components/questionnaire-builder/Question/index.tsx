@@ -204,7 +204,7 @@ class Question extends React.PureComponent<Props> {
                                 Enumerator instructions
                             </div>
                             <div className={styles.content}>
-                                { data.enumeratorInstruction }
+                                { data.enumeratorInstruction || '-' }
                             </div>
                         </div>
                         <div className={styles.respondentInstruction}>
@@ -213,7 +213,7 @@ class Question extends React.PureComponent<Props> {
                                 Respondent instructions
                             </div>
                             <div className={styles.content}>
-                                { data.respondentInstruction }
+                                { data.respondentInstruction || '-' }
                             </div>
                         </div>
                     </div>

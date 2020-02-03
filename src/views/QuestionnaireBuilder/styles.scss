@@ -1,4 +1,8 @@
 .questionnaire-builder {
+    display: flex;
+    height: 100%;
+    overflow: auto;
+
     >.header {
         display: flex;
         align-items: center;
@@ -19,9 +23,16 @@
         flex-direction: column;
         overflow: auto;
 
-        >.header {
-            flex-shrink: 0;
-            padding: var(--spacing-medium);
+        .project-details {
+            padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+
+            .heading {
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+
+            .value {
+                padding: 0 var(--spacing-medium);
+            }
         }
 
         >.content {
@@ -81,7 +92,6 @@
                 .question {
                     margin: var(--spacing-medium) auto;
                     background-color: var(--color-foreground);
-                    max-width: 800px;
                 }
             }
         }
@@ -108,5 +118,4 @@
             }
         }
     }
-
 }
