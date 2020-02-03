@@ -5,6 +5,7 @@ import {
     isTruthyString,
 } from '@togglecorp/fujs';
 
+import Tooltip from '#rscv/Tooltip';
 import Icon from '#rscg/Icon';
 import styles from './styles.scss';
 
@@ -12,7 +13,7 @@ const propTypes = {
     className: PropTypes.string,
     title: PropTypes.string,
     titleClassName: PropTypes.string,
-    tooltip: PropTypes.string,
+    tooltip: PropTypes.node,
     icon: PropTypes.string,
     iconClassName: PropTypes.string,
     noBorder: PropTypes.bool,
@@ -27,7 +28,7 @@ const defaultProps = {
     iconClassName: '',
     iconStyle: undefined,
     title: '',
-    tooltip: '',
+    tooltip: undefined,
 };
 
 export default class Badge extends React.PureComponent {
@@ -47,30 +48,31 @@ export default class Badge extends React.PureComponent {
         } = this.props;
 
         return (
-            <div
-                title={tooltip}
-                className={
-                    _cs(
-                        className,
-                        styles.badge,
-                        noBorder && styles.noBorder,
-                        !isTruthyString(icon) && styles.noIcon,
-                    )
-                }
-            >
-                {isTruthyString(icon) &&
-                    <Icon
-                        name={icon}
-                        style={iconStyle}
-                        className={iconClassName}
-                    />
-                }
-                {isTruthyString(title) &&
-                    <div className={_cs(styles.title, titleClassName)}>
-                        {title}
-                    </div>
-                }
-            </div>
+            <Tooltip tooltip={tooltip} >
+                <div
+                    className={
+                        _cs(
+                            className,
+                            styles.badge,
+                            noBorder && styles.noBorder,
+                            !isTruthyString(icon) && styles.noIcon,
+                        )
+                    }
+                >
+                    {isTruthyString(icon) &&
+                        <Icon
+                            name={icon}
+                            style={iconStyle}
+                            className={iconClassName}
+                        />
+                    }
+                    {isTruthyString(title) &&
+                        <div className={_cs(styles.title, titleClassName)}>
+                            {title}
+                        </div>
+                    }
+                </div>
+            </Tooltip>
         );
     }
 }

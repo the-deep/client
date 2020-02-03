@@ -1069,7 +1069,7 @@
         "-8007367": "Start Planned Assessment Export",
         "-76059043": "Failed to load assessments visualization data. ",
         "-79392542": "Delete entry label",
-        "-7812601": "Are you sure you want to delete entry label '{title}'? {entryCount} entry(s) are tagged in this label.",
+        "-7812601": "Are you sure you want to delete  label {title}? {entryCount} entry is tagged with this label.",
         "-68751877": "Entries Count",
         "-80269151": "Entry Labels",
         "-68282781": "Order",
@@ -1095,7 +1095,9 @@
         "-24599331": "Entry groups - quick add",
         "-19686228": "There are no entry groups in this lead.",
         "-1797082": "Free Text Widgets",
-        "-48510558": "Free text"
+        "-48510558": "Free text",
+        "-84489142": "Are you sure you want to delete label {title}? {entryCount} entries are tagged with this label.",
+        "-46865311": "Are you sure you want to reset this excerpt to dropped text? You cannot undo this action."
     },
     "links": {
         "browserExtension": {
@@ -1544,7 +1546,8 @@
             "entryGroupsFilterLabel": -47675119,
             "entryGroupsFilterPlaceholder": 14,
             "entryLabelsFilterPlaceholder": 14,
-            "entryLabelsFilterLabel": -80269151
+            "entryLabelsFilterLabel": -80269151,
+            "entryGroupsHeaderTooltip": -47675119
         },
         "export": {
             "headerExport": 600,
@@ -2534,7 +2537,8 @@
             "imageAltText": -78904030,
             "hideHighlightTitle": -84182062,
             "resetExcerptTitle": -28191340,
-            "showHighlightTitle": -36912904
+            "showHighlightTitle": -36912904,
+            "resetExcerptConfirmation": -46865311
         },
         "widgets.editor.number": {
             "widgetTitlePlaceholder": 13,
@@ -3139,7 +3143,8 @@
             "entryLabelsFatal": -26658958,
             "orderHeaderTitle": -68282781,
             "createdByTitle": 538,
-            "entriesCountCardHeaderTitle": 15
+            "entriesCountCardHeaderTitle": 15,
+            "deleteEntryLabelConfirmationPlural": -84489142
         },
         "project.entryGroups.editForm": {
             "cancelButtonLabel": 61,

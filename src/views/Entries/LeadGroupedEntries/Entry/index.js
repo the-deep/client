@@ -15,7 +15,6 @@ import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 
 import EntryCommentModal from '#components/general/EntryCommentModal';
-import Badge from '#components/viewer/Badge';
 
 import {
     fetchWidgetViewComponent,
@@ -23,6 +22,7 @@ import {
     VIEW,
 } from '#widgets';
 
+import EntryLabelBadge from './EntryLabel';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -96,18 +96,31 @@ export default class Entry extends React.PureComponent {
         title: `${data.labelTitle} (${data.count})`,
         titleClassName: styles.title,
         className: styles.entryLabel,
-        icon: 'circle',
-        iconStyle: { color: data.labelColor },
+        labelColor: data.labelColor,
+        groups: data.groups,
     });
 
     renderWidgetHeader = (widget) => {
-        const { title } = widget;
+        const {
+            title,
+            widgetId,
+        } = widget;
+
+        const isExcerptWidget = widgetId === 'excerptWidget';
 
         return (
-            <div className={styles.header}>
+            <div
+                className={_cs(
+                    styles.header,
+                    isExcerptWidget && styles.excerptWidgetHeader,
+                )}
+            >
                 <h5
                     title={title}
-                    className={styles.heading}
+                    className={_cs(
+                        styles.heading,
+                        isExcerptWidget && styles.excerptWidgetHeading,
+                    )}
                 >
                     { title }
                 </h5>
@@ -192,7 +205,7 @@ export default class Entry extends React.PureComponent {
                             data={projectLabels}
                             className={styles.entryLabels}
                             rendererParams={this.entryLabelsRendererParams}
-                            renderer={Badge}
+                            renderer={EntryLabelBadge}
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
                         />

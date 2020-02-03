@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
 
 import FormattedTextArea from '#rsci/FormattedTextArea';
-import Button from '#rsca/Button';
+import ConfirmButton from '#rsca/ConfirmButton';
 import AccentButton from '#rsca/Button/AccentButton';
 
 import DataSeries from '#components/viz/DataSeries';
@@ -261,11 +261,12 @@ export default class Excerpt extends React.PureComponent {
                         />
                     )}
                     { droppedExcerpt && droppedExcerpt !== excerpt && (
-                        <Button
+                        <ConfirmButton
                             className={styles.floatingButton}
                             iconName="undo"
                             onClick={this.handleReset}
                             title={_ts('widgets.tagging.excerpt', 'resetExcerptTitle')}
+                            confirmationMessage={_ts('widgets.tagging.excerpt', 'resetExcerptConfirmation')}
                         />
                     )}
                 </div>
