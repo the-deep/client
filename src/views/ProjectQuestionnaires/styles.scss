@@ -21,29 +21,10 @@
                 padding: var(--spacing-small) var(--spacing-medium);
             }
 
-            .content {
-                .project-name {
-                    padding: var(--spacing-small) var(--spacing-medium);
-                    font-weight: var(--font-weight-bold);
-                }
-
-                .framework-name {
-                    padding: var(--spacing-small) 0;
-
-                    .label {
-                        padding: 0 var(--spacing-medium);
-                        text-transform: uppercase;
-                        color: var(--color-text-label);
-                        font-size: var(--font-size-small);
-                    }
-
-                    .value {
-                        padding: 0 var(--spacing-medium);
-                    }
-                }
+            .value {
+                padding: 0 var(--spacing-medium);
             }
         }
-
 
         .questionnaires {
             padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;

@@ -5,13 +5,9 @@ import {
 } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import modalize from '#rscg/Modalize';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
-
-import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
@@ -38,7 +34,6 @@ import QuestionnaireList from './QuestionnaireList';
 
 import styles from './styles.scss';
 
-const ModalButton = modalize(PrimaryButton);
 
 interface ComponentProps {
     className?: string;
@@ -47,8 +42,8 @@ interface ComponentProps {
 }
 
 interface State {
-    // NOTE: used to re-fetch questionnaire list
-    fetchTimestamp: number;
+    currentPageForActiveTab: number;
+    currentPageForArchivedTab: number;
 }
 
 type TabElement = 'active' | 'archived';
@@ -81,14 +76,14 @@ const tabs: {[key in TabElement]: string} = {
 };
 
 class ProjectQuestionnaires extends React.PureComponent<Props, State> {
-    public state = {
-        fetchTimestamp: 0,
-    }
+    public constructor(props: Props) {
+        super(props);
 
-    private handleQuestionnaireFormRequestSuccess = () => {
-        this.setState({
-            fetchTimestamp: new Date().getTime(),
-        });
+        // NOTE: may need to save this in redux
+        this.state = {
+            currentPageForActiveTab: 1,
+            currentPageForArchivedTab: 1,
+        };
     }
 
     private views = {
@@ -99,9 +94,10 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                 title: 'Active questionnaires',
                 className: styles.content,
                 projectId: this.props.projectId,
-                fetchTimestamp: this.state.fetchTimestamp,
                 onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
                 archived: false,
+                activePage: this.state.currentPageForActiveTab,
+                onActivePageChange: this.handleCurrentPageChangeForActiveTab,
             }),
         },
         archived: {
@@ -112,10 +108,19 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                 className: styles.content,
                 projectId: this.props.projectId,
                 archived: true,
-                fetchTimestamp: this.state.fetchTimestamp,
                 onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
+                activePage: this.state.currentPageForArchivedTab,
+                onActivePageChange: this.handleCurrentPageChangeForArchivedTab,
             }),
         },
+    }
+
+    private handleCurrentPageChangeForActiveTab = (page: number) => {
+        this.setState({ currentPageForActiveTab: page });
+    }
+
+    private handleCurrentPageChangeForArchivedTab = (page: number) => {
+        this.setState({ currentPageForArchivedTab: page });
     }
 
     public render() {
@@ -172,19 +177,8 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                             />
                             <h2 className={styles.heading}>
                                 {/* FIXME: use strings */}
-                                Project questionnaires
+                                Questionnaires
                             </h2>
-                            <ModalButton
-                                modal={
-                                    <QuestionnaireModal
-                                        onSuccess={this.handleQuestionnaireFormRequestSuccess}
-                                        projectId={projectId}
-                                    />
-                                }
-                            >
-                                {/* FIXME: use strings */}
-                                New questionnaire
-                            </ModalButton>
                         </>
                     )}
                     sidebarClassName={styles.sidebar}
@@ -195,19 +189,15 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
                                     {/* FIXME: use strings */}
                                     Project
                                 </h3>
-                                <div className={styles.content}>
-                                    <div className={styles.projectName}>
-                                        { projectDetail.title }
-                                    </div>
-                                    <div className={styles.frameworkName}>
-                                        <div className={styles.label}>
-                                            {/* FIXME: use strings */}
-                                            Analysis framework
-                                        </div>
-                                        <div className={styles.value}>
-                                            { frameworkName }
-                                        </div>
-                                    </div>
+                                <div className={styles.value}>
+                                    { projectDetail.title || '-'}
+                                </div>
+                                <h3 className={styles.heading}>
+                                    {/* FIXME: use strings */}
+                                    Analysis Framework
+                                </h3>
+                                <div className={styles.value}>
+                                    { frameworkName || '-'}
                                 </div>
                             </div>
                             <div className={styles.questionnaires}>

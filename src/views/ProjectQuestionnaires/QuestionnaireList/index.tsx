@@ -1,23 +1,31 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import modalize from '#rscg/Modalize';
 import ListView from '#rscv/List/ListView';
+import Pager from '#rscv/Pager';
+
+import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import {
     QuestionnaireItem,
     Requests,
     AddRequestProps,
+    MultiResponse,
 } from '#typings';
 
 import {
     RequestClient,
     methods,
-    getResults,
-    getPending,
 } from '#request';
 
 import Questionnaire from '#qbc/Questionnaire';
 import styles from './styles.scss';
+
+const ModalButton = modalize(PrimaryButton);
+
+const MAX_QUESTIONNAIRE_PER_PAGE = 1;
 
 type ViewMode = 'active' | 'archived';
 
@@ -26,13 +34,20 @@ interface ComponentProps {
     title: string;
     projectId: number;
     archived: boolean;
-    fetchTimestamp: number;
     onQuestionnaireMetaReload: () => void;
+    activePage: number;
+    onActivePageChange: (page: number) => void;
+}
+
+interface State {
+    questionnaires: QuestionnaireItem[];
+    questionnaireCount: number;
 }
 
 interface Params {
     archived?: boolean;
     questionnaireId?: number;
+    setQuestionnaires?: (questionnaires: QuestionnaireItem[], totalCount: number) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -43,11 +58,22 @@ const requestOptions: Requests<ComponentProps, Params> = {
         query: ({ props }) => ({
             project: props.projectId,
             is_archived: props.archived,
+            offset: (props.activePage - 1) * MAX_QUESTIONNAIRE_PER_PAGE,
+            limit: MAX_QUESTIONNAIRE_PER_PAGE,
         }),
         // FIXME: use `/projects/<id>/questionnaires/` api
-        onPropsChanged: ['projectId', 'archived', 'fetchTimestamp'],
+        onPropsChanged: ['projectId', 'archived', 'activePage'],
         method: methods.GET,
         onMount: true,
+        onSuccess: ({ response, params }) => {
+            if (!params || !params.setQuestionnaires) {
+                return;
+            }
+
+            const questionnaireResponse = response as MultiResponse<QuestionnaireItem>;
+            const { results, count } = questionnaireResponse;
+            params.setQuestionnaires(results, count);
+        },
         // FIXME: write onFailure, onFatal
     },
     questionnaireArchiveRequest: {
@@ -68,11 +94,41 @@ const requestOptions: Requests<ComponentProps, Params> = {
         },
         // FIXME: write onFailure, onFatal
     },
+    questionnaireDeleteRequest: {
+        url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
+        method: methods.DELETE,
+        onSuccess: ({ props }) => {
+            // NOTE: re-trigger questionnaire request
+            props.requests.questionnaireRequest.do();
+            props.onQuestionnaireMetaReload();
+        },
+        // FIXME: write onFailure, onFatal
+    },
 };
 
 const questionnaireKeySelector = (q: QuestionnaireItem) => q.id;
 
-class QuestionnaireList extends React.PureComponent<Props> {
+class QuestionnaireList extends React.PureComponent<Props, State> {
+    public constructor(props: Props) {
+        super(props);
+        this.state = {
+            questionnaires: [],
+            questionnaireCount: 0,
+        };
+
+        this.props.requests.questionnaireRequest.setDefaultParams({
+            setQuestionnaires: (
+                questionnaires: QuestionnaireItem[],
+                questionnaireCount: number,
+            ) => {
+                this.setState({
+                    questionnaires,
+                    questionnaireCount,
+                });
+            },
+        });
+    }
+
     private getQuestionnaireRendererParams = (
         key: QuestionnaireItem['id'],
         questionnaire: QuestionnaireItem,
@@ -83,6 +139,7 @@ class QuestionnaireList extends React.PureComponent<Props> {
         disabled: this.props.requests.questionnaireArchiveRequest.pending,
         onArchive: this.handleArchive,
         onUnarchive: this.handleUnarchive,
+        onDelete: this.handleDelete,
     })
 
     private handleArchive = (questionnaireId: number) => {
@@ -99,15 +156,35 @@ class QuestionnaireList extends React.PureComponent<Props> {
         });
     }
 
+    private handleDelete = (questionnaireId: number) => {
+        this.props.requests.questionnaireDeleteRequest.do({
+            questionnaireId,
+        });
+    }
+
+    private handleQuestionnaireFormRequestSuccess = () => {
+        this.props.requests.questionnaireRequest.do();
+    }
+
     public render() {
         const {
             className,
             title,
-            requests,
+            projectId,
+            archived,
+            requests: {
+                questionnaireRequest: {
+                    pending,
+                    response: questionnaireResponse,
+                },
+            },
+            activePage,
+            onActivePageChange,
         } = this.props;
-
-        const pending = getPending(requests, 'questionnaireRequest');
-        const questionnaireList = getResults(requests, 'questionnaireRequest') as QuestionnaireItem[] | undefined;
+        const {
+            questionnaires,
+            questionnaireCount,
+        } = this.state;
 
         return (
             <div className={_cs(className, styles.questionnaireList)}>
@@ -115,14 +192,35 @@ class QuestionnaireList extends React.PureComponent<Props> {
                     <h3 className={styles.heading}>
                         { title }
                     </h3>
+                    {!archived && (
+                        <ModalButton
+                            modal={
+                                <QuestionnaireModal
+                                    onRequestSuccess={this.handleQuestionnaireFormRequestSuccess}
+                                    projectId={projectId}
+                                />
+                            }
+                        >
+                            {/* FIXME: use strings */}
+                            Add questionnaire
+                        </ModalButton>
+                    )}
                 </header>
                 <ListView
                     className={styles.content}
-                    data={questionnaireList}
+                    data={questionnaires}
                     renderer={Questionnaire}
                     rendererParams={this.getQuestionnaireRendererParams}
                     keySelector={questionnaireKeySelector}
                     pending={pending}
+                />
+                <Pager
+                    activePage={activePage}
+                    itemsCount={questionnaireCount}
+                    maxItemsPerPage={MAX_QUESTIONNAIRE_PER_PAGE}
+                    showItemsPerPageChange={false}
+                    onPageClick={onActivePageChange}
+                    // onItemsPerPageChange={this.handleLeadsPerPageChange}
                 />
             </div>
         );

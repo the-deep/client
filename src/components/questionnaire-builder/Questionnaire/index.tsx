@@ -23,19 +23,24 @@ interface MetaOutputProps {
 const MetaOutput = ({
     label,
     value,
-}: MetaOutputProps) => (
-    <div className={styles.metaOutput}>
-        <div className={styles.label}>
-            { label }
+}: MetaOutputProps) => {
+    if (!value) {
+        return null;
+    }
+
+    return (
+        <div
+            className={styles.metaOutput}
+            title={label}
+        >
+            <div
+                className={styles.name}
+            >
+                { value }
+            </div>
         </div>
-        <div className={styles.separator}>
-            :
-        </div>
-        <div className={styles.value}>
-            { value }
-        </div>
-    </div>
-);
+    );
+};
 
 interface DropdownButtonProps {
     className?: string;
@@ -66,6 +71,7 @@ interface Props {
     disabled?: boolean;
     onArchive: (id: number) => void;
     onUnarchive: (id: number) => void;
+    onDelete: (id: number) => void;
 }
 
 class Questionnaire extends React.PureComponent<Props> {
@@ -87,12 +93,31 @@ class Questionnaire extends React.PureComponent<Props> {
         onUnarchive(questionnaireKey);
     }
 
+    private handleDelete = () => {
+        const {
+            onDelete,
+            questionnaireKey,
+        } = this.props;
+
+        onDelete(questionnaireKey);
+    }
+
     public render() {
         const {
             className,
-            data,
             archived,
             disabled,
+            data: {
+                id,
+                title,
+                questions,
+                createdAt,
+                project,
+                crisisTypeDetail,
+                dataCollectionTechniqueDetail,
+                requiredDuration,
+                enumeratorSkillDetail,
+            },
         } = this.props;
 
         return (
@@ -100,26 +125,27 @@ class Questionnaire extends React.PureComponent<Props> {
                 <header className={styles.header}>
                     <div className={styles.left}>
                         <h4 className={styles.heading}>
-                            { data.title }
+                            { title }
                         </h4>
                         <div className={styles.info}>
                             <div className={styles.questions}>
                                 <div className={styles.value}>
-                                    { data.questions.length }
+                                    { questions.length }
                                 </div>
                                 <div className={styles.label}>
                                     {/* FIXME: use strings */}
                                     questions
                                 </div>
                             </div>
+                            <div>—</div>
                             <div className={styles.created}>
                                 <div className={styles.label}>
                                     {/* FIXME: use strings */}
-                                    Created on:
+                                    created
                                 </div>
                                 <div className={styles.value}>
                                     <FormattedDate
-                                        value={data.createdAt}
+                                        value={createdAt}
                                         mode="dd-MM-yyyy"
                                     />
                                 </div>
@@ -133,8 +159,8 @@ class Questionnaire extends React.PureComponent<Props> {
                                 to={reverseRoute(
                                     pathNames.questionnaireBuilder,
                                     {
-                                        questionnaireId: data.id,
-                                        projectId: data.project,
+                                        questionnaireId: id,
+                                        projectId: project,
                                     },
                                 )}
                                 disabled={disabled}
@@ -159,11 +185,25 @@ class Questionnaire extends React.PureComponent<Props> {
                         >
                             {!archived && (
                                 <DropdownButton
+                                    disabled={disabled}
+                                    // FIXME: use strings
+                                    title="Archive"
+                                    onClick={this.handleArchive}
+                                />
+                            )}
+                            {!archived && (
+                                <DropdownButton
                                     disabled
                                     // FIXME: use strings
                                     title="Copy"
                                 />
                             )}
+                            <DropdownButton
+                                disabled={disabled}
+                                // FIXME: use strings
+                                title="Delete"
+                                onClick={this.handleDelete}
+                            />
                             <DropdownButton
                                 disabled
                                 // FIXME: use strings
@@ -179,14 +219,6 @@ class Questionnaire extends React.PureComponent<Props> {
                                 // FIXME: use strings
                                 title="Export data collection plan"
                             />
-                            {!archived && (
-                                <DropdownButton
-                                    disabled={disabled}
-                                    // FIXME: use strings
-                                    title="Archive"
-                                    onClick={this.handleArchive}
-                                />
-                            )}
                         </DropdownMenu>
                     </div>
                 </header>
@@ -194,28 +226,32 @@ class Questionnaire extends React.PureComponent<Props> {
                     <MetaOutput
                         // FIXME: use strings
                         label="Crisis type"
-                        value={data.crisisTypeDetail ? data.crisisTypeDetail.title : undefined}
+                        value={crisisTypeDetail ? crisisTypeDetail.title : undefined}
                     />
                     <MetaOutput
                         // FIXME: use strings
                         label="Data collection technique"
                         value={
-                            data.dataCollectionTechniqueDetail
-                                ? data.dataCollectionTechniqueDetail.value
+                            dataCollectionTechniqueDetail
+                                ? dataCollectionTechniqueDetail.value
                                 : undefined
                         }
                     />
                     <MetaOutput
                         // FIXME: use strings
-                        label="Required duration (min)"
-                        value={data.requiredDuration}
+                        label="Required duration"
+                        value={
+                            requiredDuration
+                                ? `${requiredDuration} min`
+                                : undefined
+                        }
                     />
                     <MetaOutput
                         // FIXME: use strings
                         label="Enumerator skill"
                         value={
-                            data.enumeratorSkillDetail
-                                ? data.enumeratorSkillDetail.value
+                            enumeratorSkillDetail
+                                ? enumeratorSkillDetail.value
                                 : undefined
                         }
                     />

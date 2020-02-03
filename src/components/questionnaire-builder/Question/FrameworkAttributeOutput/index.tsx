@@ -12,7 +12,7 @@ interface ItemWithTitle {
 
 interface Props {
     className?: string;
-    data: QuestionElementFrameworkAttribute;
+    data?: QuestionElementFrameworkAttribute;
     sectorList: ItemWithTitle[];
     subsectorList: ItemWithTitle[];
     dimensionList: ItemWithTitle[];
@@ -51,6 +51,10 @@ class FrameworkAttributeOutput extends React.PureComponent<Props> {
             dimensionList,
             subdimensionList,
         } = this.props;
+
+        if (!data) {
+            return null;
+        }
 
         const title = this.getAttributeTitle(
             data.type,
