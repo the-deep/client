@@ -16,6 +16,7 @@ const entrySchema = [];
             labelColor: { type: 'string' },
             labelTitle: { type: 'string' },
             count: { type: 'number' },
+            groups: { type: 'array.string' },
         },
     };
     entrySchema.push({ name, schema });

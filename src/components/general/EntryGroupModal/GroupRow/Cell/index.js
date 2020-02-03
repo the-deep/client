@@ -15,6 +15,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    color: PropTypes.string,
     readOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool,
     isCurrentEntryTagged: PropTypes.bool,
@@ -28,6 +29,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    color: '#008975',
     className: undefined,
     isSelected: false,
     isCurrentEntryTagged: false,
@@ -93,11 +95,14 @@ export default class EntryGroupModalCell extends React.PureComponent {
 
     render() {
         const {
+            color,
             readOnly,
             className,
             isSelected,
             isCurrentEntryTagged,
         } = this.props;
+
+        const taggedCellColor = isCurrentEntryTagged ? { backgroundColor: color } : {};
 
         return (
             <td
@@ -105,9 +110,9 @@ export default class EntryGroupModalCell extends React.PureComponent {
                     className,
                     styles.cell,
                     isSelected && styles.selected,
-                    isCurrentEntryTagged && styles.tagged,
                     readOnly && styles.readOnly,
                 )}
+                style={taggedCellColor}
             >
                 {isCurrentEntryTagged && (
                     <button

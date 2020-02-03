@@ -269,6 +269,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                             className={styles.colorInput}
                             faramElementName="color"
                             label={_ts('project.entryGroups.editForm', 'entryLabelColorLabel')}
+                            type="palette"
                         />
                     </ModalBody>
                     <ModalFooter>
