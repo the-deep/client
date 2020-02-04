@@ -21,9 +21,12 @@ import styles from './styles.scss';
 const propTypes = {
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     textWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    entryFilterOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
     reportStructureVariant: PropTypes.string.isRequired,
     decoupledEntries: PropTypes.bool.isRequired,
+    showGroups: PropTypes.bool.isRequired,
+    onShowGroupsChange: PropTypes.bool.isRequired,
     onExportTypeChange: PropTypes.func.isRequired,
     onReportStructureChange: PropTypes.func.isRequired,
     onTextWidgetsChange: PropTypes.func.isRequired,
@@ -34,6 +37,7 @@ const propTypes = {
 const defaultProps = {
     reportStructure: undefined,
     textWidgets: [],
+    entryFilterOptions: {},
 };
 
 
@@ -127,6 +131,11 @@ export default class ExportTypePane extends React.PureComponent {
             onTextWidgetsChange,
             onReportStructureVariantChange,
             textWidgets,
+            showGroups,
+            onShowGroupsChange,
+            entryFilterOptions: {
+                projectEntryLabel,
+            },
         } = this.props;
 
         if (!reportStructure) {
@@ -137,31 +146,55 @@ export default class ExportTypePane extends React.PureComponent {
             );
         }
 
+        const showTextWidgetSelection = textWidgets.length > 0;
+        const showEntryGroupsSelection = projectEntryLabel && projectEntryLabel.length > 0;
+        const showContentSettings = showTextWidgetSelection || showEntryGroupsSelection;
+
         return (
-            <>
-                <SegmentInput
-                    label={_ts('export', 'orderMatrix2D')}
-                    keySelector={ExportTypePane.reportVariantKeySelector}
-                    labelSelector={ExportTypePane.reportVariantLabelSelector}
-                    value={reportStructureVariant}
-                    onChange={onReportStructureVariantChange}
-                    options={reportStructureOptions}
-                />
-                <TreeSelection
-                    key="tree-selection"
-                    label={_ts('export', 'reportStructureLabel')}
-                    value={reportStructure}
-                    onChange={onReportStructureChange}
-                />
-                {textWidgets.length > 0 && (
-                    <TreeSelection
-                        key="tree-selection-text"
-                        label={_ts('export', 'textWidgetLabel')}
-                        value={textWidgets}
-                        onChange={onTextWidgetsChange}
+            <div className={styles.reportOptions}>
+                <div>
+                    <h4 className={styles.heading}>
+                        { _ts('export', 'reportStructureLabel')}
+                    </h4>
+                    <SegmentInput
+                        label={_ts('export', 'orderMatrix2D')}
+                        keySelector={ExportTypePane.reportVariantKeySelector}
+                        labelSelector={ExportTypePane.reportVariantLabelSelector}
+                        value={reportStructureVariant}
+                        onChange={onReportStructureVariantChange}
+                        options={reportStructureOptions}
                     />
+                    <TreeSelection
+                        label={_ts('export', 'structureLabel')}
+                        value={reportStructure}
+                        onChange={onReportStructureChange}
+                    />
+                </div>
+                {showContentSettings && (
+                    <div className={styles.contentSettings}>
+                        <h4 className={styles.heading}>
+                            { _ts('export', 'contentSettingsText')}
+                        </h4>
+                        <div>
+                            {showEntryGroupsSelection && (
+                                <Checkbox
+                                    label={_ts('export', 'showEntryGroupsLabel')}
+                                    value={showGroups}
+                                    className={styles.showGroupCheckbox}
+                                    onChange={onShowGroupsChange}
+                                />
+                            )}
+                            {showTextWidgetSelection && (
+                                <TreeSelection
+                                    label={_ts('export', 'textWidgetLabel')}
+                                    value={textWidgets}
+                                    onChange={onTextWidgetsChange}
+                                />
+                            )}
+                        </div>
+                    </div>
                 )}
-            </>
+            </div>
         );
     }
 

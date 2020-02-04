@@ -12,7 +12,6 @@ export * from './connectors';
 export * from './discoverProjects';
 export * from './docs';
 export * from './entries';
-export * from './entryFilterOptions';
 export * from './export';
 export * from './external';
 export * from './file';

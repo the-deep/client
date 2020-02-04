@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
+import {
+    methods,
+    RequestClient,
+} from '#request';
 import {
     doesObjectHaveNoData,
     _cs,
@@ -13,7 +16,6 @@ import DateFilter from '#rsci/DateFilter';
 import TimeFilter from '#rsci/TimeFilter';
 import RangeFilter from '#rsci/RangeFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
-import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 
@@ -27,10 +29,6 @@ import {
     entryFilterOptionsForProjectSelector,
     setEntryFilterOptionsAction,
 } from '#redux';
-import {
-    createUrlForEntryFilterOptions,
-    createParamsForGet,
-} from '#rest';
 import _ts from '#ts';
 
 import GeoFilter from './GeoFilter';
@@ -87,7 +85,26 @@ const commentStatusOptions = [
     },
 ];
 
+const requestOptions = {
+    entryFilterOptionsRequest: {
+        url: '/entry-options/',
+        query: ({ props: { activeProject } }) => ({
+            project: activeProject,
+        }),
+        onMount: true,
+        method: methods.GET,
+        onPropsChanged: ['activeProject'],
+        onSuccess: ({ props, response }) => {
+            props.setEntryFilterOptions({
+                projectId: props.activeProject,
+                entryFilterOptions: response,
+            });
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requestOptions)
 export default class FilterEntriesForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -103,26 +120,17 @@ export default class FilterEntriesForm extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const { entriesFilters } = this.props;
+
         this.state = {
             pristine: true,
-            filters: this.props.entriesFilters,
+            filters: entriesFilters,
         };
     }
 
-    componentWillMount() {
-        const { activeProject } = this.props;
-        this.requestProjectEntryFilterOptions(activeProject);
-    }
-
     componentWillReceiveProps(nextProps) {
-        const {
-            entriesFilters: oldFilter,
-            activeProject: oldActiveProject,
-        } = this.props;
-        const {
-            entriesFilters: newFilter,
-            activeProject: newActiveProject,
-        } = nextProps;
+        const { entriesFilters: oldFilter } = this.props;
+        const { entriesFilters: newFilter } = nextProps;
 
         if (oldFilter !== newFilter) {
             this.setState({
@@ -130,44 +138,6 @@ export default class FilterEntriesForm extends React.PureComponent {
                 filters: newFilter,
             });
         }
-
-        if (oldActiveProject !== newActiveProject) {
-            this.requestProjectEntryFilterOptions(newActiveProject);
-        }
-    }
-
-
-    componentWillUnmount() {
-        this.entryFilterOptionsRequest.stop();
-    }
-
-    // REST
-
-    requestProjectEntryFilterOptions = (activeProject) => {
-        if (this.entryFilterOptionsRequest) {
-            this.entryFilterOptionsRequest.stop();
-        }
-
-        // eslint-disable-next-line max-len
-        this.entryFilterOptionsRequest = this.createRequestForProjectEntryFilterOptions(activeProject);
-        this.entryFilterOptionsRequest.start();
-    }
-
-    createRequestForProjectEntryFilterOptions = (activeProject) => {
-        const urlForProjectFilterOptions = createUrlForEntryFilterOptions(activeProject);
-
-        const entryFilterOptionsRequest = new FgRestBuilder()
-            .url(urlForProjectFilterOptions)
-            .params(createParamsForGet)
-            .success((response) => {
-                this.props.setEntryFilterOptions({
-                    projectId: activeProject,
-                    entryFilterOptions: response,
-                });
-            })
-            .build();
-
-        return entryFilterOptionsRequest;
     }
 
     handleApplyFilter = () => {
@@ -177,8 +147,10 @@ export default class FilterEntriesForm extends React.PureComponent {
 
     handleClearFilter = () => {
         const { pristine } = this.state;
+
         if (pristine) {
-            this.props.unsetEntriesViewFilter();
+            const { unsetEntriesViewFilter } = this.props;
+            unsetEntriesViewFilter();
         } else {
             this.setState({ filters: {} });
         }

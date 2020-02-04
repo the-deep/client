@@ -213,7 +213,7 @@ export default class WidgetEditor extends React.PureComponent {
         );
 
         const otherProps = {};
-        if (widgetId === 'excerptWidget') {
+        if (widgetId === 'excerptWidget' || widgetId === 'textWidget') {
             otherProps.showFormatButton = false;
         }
 
