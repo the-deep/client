@@ -307,7 +307,7 @@
         "718": "Matrix 1D",
         "723": "Matrix 2D",
         "733": "Tooltip",
-        "737": "Multiple Selection",
+        "737": "Multiple selection",
         "742": "Number matrix",
         "748": "Rows",
         "749": "Add row",
@@ -732,7 +732,7 @@
         "-86245438": "Max value (optional)",
         "-18776228": "Just me",
         "-84222321": "All project members",
-        "-78389530": "Single Selection",
+        "-78389530": "Single selection",
         "-35292998": "I want to receive approval notifications by email for when other users request to join my projects",
         "-63441199": "I want to receive news and updates from DEEP",
         "-43376795": "Failed to fetch cluster data.",
@@ -794,7 +794,7 @@
         "-30665346": "Are you sure you want to remove the Usergroup {title}? All users in this project who are associated with the group will also be removed.  If you would like to keep these users, please unassign them from {title}.",
         "-42425639": "Linked group",
         "-99213668": "Independent member",
-        "-557230": "Time Range",
+        "-557230": "Time range",
         "-87861842": "dd-mm-yyyy",
         "-78904030": "Excerpt Image",
         "-99467671": "No matching conditions.",
@@ -1097,7 +1097,8 @@
         "-1797082": "Free Text Widgets",
         "-48510558": "Free text",
         "-84489142": "Are you sure you want to delete label {title}? {entryCount} entries are tagged with this label.",
-        "-46865311": "Are you sure you want to reset this excerpt to dropped text? You cannot undo this action."
+        "-46865311": "Are you sure you want to reset this excerpt to dropped text? You cannot undo this action.",
+        "-4332303": "Select an option (optional)"
     },
     "links": {
         "browserExtension": {
@@ -1820,7 +1821,8 @@
             "addAuthorTitle": -56022972,
             "addPublisherModalTitle": -44615843,
             "addPublisherTitle": -44615843,
-            "searchInputEmptyText": -24511724
+            "searchInputEmptyText": -24511724,
+            "authorPlaceholder": -4332303
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

@@ -27,6 +27,7 @@ const propTypes = {
     onExcerptCreate: PropTypes.func,
     onExcerptReset: PropTypes.func,
     disabled: PropTypes.bool,
+    showFormatButton: PropTypes.bool,
     readOnly: PropTypes.bool,
     highlightHidden: PropTypes.bool,
 };
@@ -41,6 +42,7 @@ const defaultProps = {
     tabularFieldData: undefined,
     disabled: false,
     readOnly: false,
+    showFormatButton: true,
     onExcerptChange: () => {},
     onExcerptCreate: () => {},
     onExcerptReset: () => {},
@@ -243,6 +245,7 @@ export default class Excerpt extends React.PureComponent {
             disabled,
             readOnly,
             highlightHidden,
+            showFormatButton,
         } = this.props;
 
         const highlightTitle = highlightHidden
@@ -277,7 +280,7 @@ export default class Excerpt extends React.PureComponent {
                     onChange={this.handleTextChange}
                     disabled={disabled}
                     readOnly={readOnly}
-                    showFormatButton={!!entryType}
+                    showFormatButton={!!entryType && showFormatButton}
                 />
             </div>
         );

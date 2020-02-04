@@ -13,12 +13,12 @@
     .drag-handle {
         position: absolute;
         top: var(--spacing-large);
-        left: var(--spacing-large);
+        left: calc(var(--spacing-medium-alt) + var(--spacing-small));
         z-index: 1;
         background-color: var(--color-foreground);
         cursor: grab;
-        padding: var(--spacing-extra-small-alt) var(--spacing-small);
-        font-size: var(--font-size-large);
+        padding: 0 var(--spacing-small);
+        font-size: var(--font-size-extra-large);
     }
 }
 

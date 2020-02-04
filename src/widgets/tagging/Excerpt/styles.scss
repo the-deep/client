@@ -1,3 +1,7 @@
+:root {
+    --margin-right-floating-button: -6px;
+}
+
 .excerpt {
     position: relative;
     height: 100%;
@@ -21,9 +25,10 @@
         .floating-button-container {
             display: none;
             position: absolute;
-            top: var(--spacing-small);
+            top: var(--spacing-extra-small);
             right: var(--spacing-small);
             z-index: 1;
+            margin-right: var(--margin-right-floating-button);
 
             .floating-button {
                 margin-bottom: var(--spacing-small);

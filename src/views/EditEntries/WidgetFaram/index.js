@@ -530,11 +530,11 @@ export default class WidgetFaram extends React.PureComponent {
 
         const error = entryAccessor.error(entry);
 
-        const className = `
-            ${styles.widgetFaram}
-            ${classNameFromProps}
-            'widget-faram'
-        `;
+        const className = _cs(
+            styles.widgetFaram,
+            classNameFromProps,
+            'widget-faram',
+        );
 
         const filteredWidgets = this.getWidgets(widgets, widgetType);
 
