@@ -80,7 +80,7 @@ const requestOptions = {
                 'title',
                 'description',
                 'widgets',
-                'questions',
+                // 'questions',
                 'members',
                 'role',
                 'is_private',
@@ -111,8 +111,8 @@ export default class FrameworkDetail extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            // activeView: 'overview',
-            activeView: 'questions',
+            activeView: 'overview',
+            // activeView: 'questions',
             editFrameworkDetails: {
                 title: '',
                 description: '',
@@ -125,7 +125,7 @@ export default class FrameworkDetail extends React.PureComponent {
 
             // TODO: entryQuestionTitle --> entryQuestionsTitle
             // *Question__s
-            questions: _ts('project.framework', 'entryQuestionTitle'),
+            // questions: _ts('project.framework', 'entryQuestionTitle'),
         };
 
         this.props.setDefaultRequestParams({

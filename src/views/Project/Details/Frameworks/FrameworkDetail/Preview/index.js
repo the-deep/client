@@ -6,7 +6,7 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import Overview from './Overview';
 import List from './List';
-import QuestionList from './QuestionList';
+// import QuestionList from './QuestionList';
 
 import styles from './styles.scss';
 
@@ -35,7 +35,7 @@ export default class ProjectAfDetail extends React.PureComponent {
             framework: this.props.framework,
             className: styles.view,
             readOnly: true,
-            hideDetails: true,
+            // hideDetails: true,
         });
 
         this.views = {
@@ -49,10 +49,12 @@ export default class ProjectAfDetail extends React.PureComponent {
                 rendererParams,
             },
 
+            /*
             questions: {
                 component: QuestionList,
                 rendererParams,
             },
+            */
         };
     }
 
@@ -63,6 +65,7 @@ export default class ProjectAfDetail extends React.PureComponent {
             activeView,
         } = this.props;
 
+        // FIXME: only show loading animation if it is actually loading
         if (!framework) {
             return <LoadingAnimation />;
         }
