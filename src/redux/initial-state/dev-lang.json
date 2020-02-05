@@ -1106,7 +1106,8 @@
         "-72874810": "Active questionnaires",
         "-30617552": "Archived",
         "-10356474": "Archived Questionnaires",
-        "-16166235": "Add Questionnaire"
+        "-16166235": "Add Questionnaire",
+        "-88114396": "Questionnaire Status"
     },
     "links": {
         "browserExtension": {
@@ -3195,7 +3196,8 @@
             "archivedTabTitle": -30617552,
             "frameworkLabel": 379,
             "projectLabel": 31,
-            "questionnairesHeaderTitle": -91998400
+            "questionnairesHeaderTitle": -91998400,
+            "questionnaireStatus": -88114396
         },
         "project.questionnaire.list": {
             "addQuestionnaireButtonLabel": -16166235

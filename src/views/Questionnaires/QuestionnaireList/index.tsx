@@ -1,5 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
+import { produce } from 'immer';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import modalize from '#rscg/Modalize';
@@ -142,6 +143,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         onArchive: this.handleArchive,
         onUnarchive: this.handleUnarchive,
         onDelete: this.handleDelete,
+        onEdit: this.handleEdit,
     })
 
     private handleArchive = (questionnaireId: number) => {
@@ -168,6 +170,23 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         this.props.requests.questionnaireRequest.do();
     }
 
+    private handleEdit = (questionnaire: MiniQuestionnaireElement) => {
+        const { questionnaires } = this.state;
+        const { id: questionnaireId } = questionnaire;
+
+        const newQuestionnaires = produce(questionnaires,
+            (safeQuestionnaires: MiniQuestionnaireElement[]) => {
+                const selectedIndex = safeQuestionnaires.findIndex(e => e.id === questionnaireId);
+                if (selectedIndex === -1) {
+                    return;
+                }
+                // eslint-disable-next-line no-param-reassign
+                safeQuestionnaires[selectedIndex] = questionnaire;
+            });
+
+        this.setState({ questionnaires: newQuestionnaires });
+    }
+
     public render() {
         const {
             className,
@@ -177,8 +196,6 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             requests: {
                 questionnaireRequest: {
                     pending,
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-                    response: questionnaireResponse,
                 },
             },
             activePage,
@@ -193,9 +210,9 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         return (
             <div className={_cs(className, styles.questionnaireList)}>
                 <header className={styles.header}>
-                    <h3 className={styles.heading}>
+                    <h2 className={styles.heading}>
                         { title }
-                    </h3>
+                    </h2>
                     {!archived && (
                         <ModalButton
                             modal={
@@ -224,7 +241,6 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                         maxItemsPerPage={MAX_QUESTIONNAIRE_PER_PAGE}
                         showItemsPerPageChange={false}
                         onPageClick={onActivePageChange}
-                        // onItemsPerPageChange={this.handleLeadsPerPageChange}
                     />
                 </footer>
             </div>

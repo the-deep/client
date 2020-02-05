@@ -2,27 +2,23 @@
     margin: var(--spacing-large) auto;
     border: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
+    padding: var(--spacing-large);
     width: 100%;
-    // max-width: 640px;
 
     .header {
         display: flex;
-        padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+        align-items: flex-start;
 
         .left {
             flex-grow: 1;
 
-            .heading {
-                padding: var(--spacing-small) var(--spacing-medium);
-            }
-
             .info {
                 display: flex;
+                padding: var(--spacing-small-alt) 0;
 
                 .questions,
                 .created {
                     display: flex;
-                    padding: 0 calc(var(--spacing-medium) - var(--spacing-extra-small));
 
                     .label {
                         padding: 0 var(--spacing-extra-small);
@@ -39,20 +35,18 @@
             display: flex;
             align-items: center;
             flex-shrink: 0;
-            padding: var(--spacing-medium);
 
             .edit-questionnaire-link {
-                padding: var(--spacing-extra-small) var(--spacing-small);
+                margin-right: var(--spacing-small);
                 color: var(--color-accent);
                 font-size: var(--font-size-small);
                 font-weight: var(--font-weight-bold);
             }
         }
-
     }
 
     .content {
-        padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
+        padding-top: var(--spacing-small);
     }
 }
 

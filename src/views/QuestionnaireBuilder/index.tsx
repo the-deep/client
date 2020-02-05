@@ -8,13 +8,10 @@ import {
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
-// import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import ListView from '#rscv/List/ListView';
 import ProgressBar from '#rsu/../v2/View/ProgressBar';
-import modalize from '#rscg/Modalize';
-// import TreeSelection from '#rsci/TreeSelection';
 
 import Page from '#rscv/Page';
 
@@ -41,18 +38,14 @@ import {
     projectDetailsSelector,
 } from '#redux';
 
-// import { createReportStructure } from '#utils/framework';
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 
 import MetaOutput from '#qbc/MetaOutput';
 import Question from '#qbc/Question';
-import QuestionnaireModal from '#qbc/QuestionnaireModal';
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
 import styles from './styles.scss';
-
-const ModalButton = modalize(Button);
 
 /*
 interface FrameworkQuestionElement {
@@ -248,11 +241,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         requests.questionnaireGetRequest.do();
     }
 
-    private handleQuestionnaireFormRequestSuccess = () => {
-        const { requests } = this.props;
-        requests.questionnaireGetRequest.do();
-    }
-
     public render() {
         const {
             className,
@@ -264,7 +252,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     pending: frameworkGetPending,
                 },
             },
-            projectId,
             projectDetail,
         } = this.props;
 
@@ -388,20 +375,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                         Questions
                                     </h3>
                                     <div className={styles.actions}>
-                                        <ModalButton
-                                            modal={(
-                                                <QuestionnaireModal
-                                                    value={questionnaire}
-                                                    projectId={projectId}
-                                                    onRequestSuccess={
-                                                        this.handleQuestionnaireFormRequestSuccess
-                                                    }
-                                                />
-                                            )}
-                                        >
-                                            {/* FIXME: use strings */}
-                                            Edit details
-                                        </ModalButton>
                                         <Button onClick={this.handleAddQuestionButtonClick}>
                                             {/* FIXME: use strings */}
                                             Add question

@@ -180,20 +180,25 @@ class Questionnaires extends React.PureComponent<Props, State> {
                     sidebar={(
                         <>
                             <div className={styles.projectDetails}>
-                                <h3 className={styles.heading}>
+                                <h4 className={styles.heading}>
                                     {_ts('project.questionnaire', 'projectLabel')}
-                                </h3>
+                                </h4>
                                 <div className={styles.value}>
                                     { projectDetail.title || '-'}
                                 </div>
-                                <h3 className={styles.heading}>
+                                <h4 className={styles.heading}>
                                     {_ts('project.questionnaire', 'frameworkLabel')}
-                                </h3>
+                                </h4>
                                 <div className={styles.value}>
                                     { frameworkName || '-'}
                                 </div>
                             </div>
                             <div className={styles.questionnaires}>
+                                <header className={styles.header}>
+                                    <h4 className={styles.heading}>
+                                        {_ts('project.questionnaire', 'questionnaireStatus')}
+                                    </h4>
+                                </header>
                                 <VerticalTabs
                                     tabs={tabs}
                                     useHash

@@ -8,6 +8,12 @@
         padding: 0 var(--spacing-small);
     }
 
+    &:first-child {
+        .name {
+            padding-left: 0;
+        }
+    }
+
     &:not(:last-child) {
         &:after {
             content: '•';

@@ -27,7 +27,15 @@
         }
 
         .questionnaires {
-            padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+            padding: var(--spacing-medium) 0;
+
+            .header {
+                .heading {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                }
+
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            }
 
             .tab {
                 display: flex;
@@ -48,6 +56,7 @@
         display: flex;
         flex-direction: column;
         background-color: var(--color-foreground)!important;
+        padding: var(--spacing-extra-large) 0;
         overflow-y: auto;
 
         .content {
