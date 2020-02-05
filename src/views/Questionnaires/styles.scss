@@ -29,43 +29,30 @@
         .questionnaires {
             padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
 
-            .heading {
-                padding: var(--spacing-small) var(--spacing-medium);
-            }
+            .tab {
+                display: flex;
+                text-transform: none;
 
-            .content {
-                .tab {
-                    display: flex;
-                    text-transform: none;
+                .label {
+                    flex-grow: 1;
+                }
 
-                    .label {
-                        flex-grow: 1;
-                    }
-
-                    .count {
-                        flex-shrink: 0;
-                    }
+                .count {
+                    flex-shrink: 0;
                 }
             }
-        }
-
-
-        .actions {
-            padding: var(--spacing-medium);
         }
     }
 
     .main {
         display: flex;
         flex-direction: column;
+        background-color: var(--color-foreground)!important;
+        overflow-y: auto;
 
         .content {
             flex-grow: 1;
             overflow: auto;
         }
     }
-}
-
-.edit-questionnaire-modal {
-    width: 400px;
 }

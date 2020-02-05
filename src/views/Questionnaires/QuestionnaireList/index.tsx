@@ -20,6 +20,7 @@ import {
     RequestClient,
     methods,
 } from '#request';
+import _ts from '#ts';
 
 import Questionnaire from '#qbc/Questionnaire';
 import styles from './styles.scss';
@@ -176,12 +177,14 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             requests: {
                 questionnaireRequest: {
                     pending,
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
                     response: questionnaireResponse,
                 },
             },
             activePage,
             onActivePageChange,
         } = this.props;
+
         const {
             questionnaires,
             questionnaireCount,
@@ -202,8 +205,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                                 />
                             }
                         >
-                            {/* FIXME: use strings */}
-                            Add questionnaire
+                            {_ts('project.questionnaire.list', 'addQuestionnaireButtonLabel')}
                         </ModalButton>
                     )}
                 </header>
@@ -215,14 +217,16 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                     keySelector={questionnaireKeySelector}
                     pending={pending}
                 />
-                <Pager
-                    activePage={activePage}
-                    itemsCount={questionnaireCount}
-                    maxItemsPerPage={MAX_QUESTIONNAIRE_PER_PAGE}
-                    showItemsPerPageChange={false}
-                    onPageClick={onActivePageChange}
-                    // onItemsPerPageChange={this.handleLeadsPerPageChange}
-                />
+                <footer className={styles.footer}>
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={questionnaireCount}
+                        maxItemsPerPage={MAX_QUESTIONNAIRE_PER_PAGE}
+                        showItemsPerPageChange={false}
+                        onPageClick={onActivePageChange}
+                        // onItemsPerPageChange={this.handleLeadsPerPageChange}
+                    />
+                </footer>
             </div>
         );
     }

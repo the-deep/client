@@ -1,18 +1,35 @@
+:root {
+    --width-questionnaire: 640px;
+}
+
 .questionnaire-list {
     display: flex;
     flex-direction: column;
+    margin: auto;
+    padding: var(--spacing-medium);
+    width: var(--width-questionnaire);
+    max-width: var(--width-questionnaire);
+    overflow-y: auto;
 
     .header {
+        display: flex;
+        align-items: center;
         flex-shrink: 0;
-        // background-color: var(--color-foreground);
 
         .heading {
+            flex-grow: 1;
             padding: var(--spacing-medium);
         }
     }
 
     .content {
         flex-grow: 1;
-        overflow: auto;
+        overflow-y: auto;
+    }
+
+    .footer {
+        display: flex;
+        flex-shrink: 0;
+        justify-content: flex-end;
     }
 }
