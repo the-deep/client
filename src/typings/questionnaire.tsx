@@ -78,6 +78,8 @@ export interface BaseQuestionElement {
     requiredDuration?: number;
 
     frameworkAttribute?: QuestionElementFrameworkAttribute;
+
+    isArchived?: boolean;
 }
 
 export interface FrameworkQuestionElement extends BaseQuestionElement {
@@ -102,7 +104,7 @@ export interface MiniQuestionnaireElement extends DbEntity {
     crisisType?: number;
     crisisTypeDetail?: IdTitle;
 
-    requiredDuration?: number;
+    requiredDuration: number;
 
     activeQuestionsCount: number;
 }
@@ -119,7 +121,7 @@ export interface QuestionnaireElement extends DbEntity {
     crisisType?: number;
     crisisTypeDetail?: IdTitle;
 
-    requiredDuration?: number;
+    requiredDuration: number;
 
     // activeQuestionsCount: number;
     questions: QuestionnaireQuestionElement[];

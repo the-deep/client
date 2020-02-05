@@ -216,11 +216,7 @@ class Questionnaire extends React.PureComponent<Props> {
                     <MetaOutput
                         // FIXME: use strings
                         label="Required duration"
-                        value={
-                            requiredDuration
-                                ? `${requiredDuration} min`
-                                : undefined
-                        }
+                        value={`${requiredDuration} min`}
                     />
                 </div>
             </div>

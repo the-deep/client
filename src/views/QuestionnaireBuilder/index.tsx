@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import {
     _cs,
     reverseRoute,
+    isDefined,
+    sum,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -10,6 +12,7 @@ import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import ListView from '#rscv/List/ListView';
+import ProgressBar from '#rsu/../v2/View/ProgressBar';
 import modalize from '#rscg/Modalize';
 // import TreeSelection from '#rsci/TreeSelection';
 
@@ -42,6 +45,7 @@ import {
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 
+import MetaOutput from '#qbc/MetaOutput';
 import Question from '#qbc/Question';
 import QuestionnaireModal from '#qbc/QuestionnaireModal';
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
@@ -294,6 +298,26 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             );
         }
 
+        const {
+            title,
+            questions,
+            crisisTypeDetail,
+            dataCollectionTechniqueDisplay,
+            enumeratorSkillDisplay,
+            requiredDuration,
+        } = questionnaire;
+
+        const selectedQuestions = questions.filter(question => !question.isArchived);
+
+        const totalQuestions = selectedQuestions.length;
+
+        const totalTimeRequired = sum(
+            selectedQuestions
+                .map(question => question.requiredDuration)
+                .filter(isDefined),
+        );
+        const percent = Math.round(100 * (totalTimeRequired / requiredDuration));
+
         return (
             <>
                 <Page
@@ -307,7 +331,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 defaultLink={reverseRoute(pathNames.homeScreen, {})}
                             />
                             <h2 className={styles.heading}>
-                                {questionnaire.title}
+                                {title}
                             </h2>
                         </>
                     )}
@@ -388,17 +412,70 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     className={styles.content}
                                     rendererParams={this.getQuestionRendererParams}
                                     renderer={Question}
-                                    data={questionnaire.questions}
+                                    data={questions}
                                     keySelector={questionKeySelector}
                                 />
                             </div>
                             <div className={styles.rightPanel}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
-                                        {/* FIXME: use strings */}
-                                        Diagnostics
+                                        {title}
                                     </h3>
                                 </header>
+                                <div className={styles.content}>
+                                    <div>
+                                        <MetaOutput
+                                            // FIXME: use strings
+                                            label="Crisis type"
+                                            value={
+                                                crisisTypeDetail
+                                                    ? crisisTypeDetail.title
+                                                    : undefined
+                                            }
+                                        />
+                                        <MetaOutput
+                                            // FIXME: use strings
+                                            label="Data collection technique"
+                                            value={dataCollectionTechniqueDisplay}
+                                        />
+                                        <MetaOutput
+                                            // FIXME: use strings
+                                            label="Enumerator skill"
+                                            value={enumeratorSkillDisplay}
+                                        />
+                                        <MetaOutput
+                                            // FIXME: use strings
+                                            label="Required duration"
+                                            value={
+                                                requiredDuration
+                                                    ? `${requiredDuration} min`
+                                                    : undefined
+                                            }
+                                        />
+                                    </div>
+                                    <h4>
+                                        Questions
+                                    </h4>
+                                    <div>
+                                        <div>Selected</div>
+                                        <div>{totalQuestions}</div>
+                                        <div>Time Required</div>
+                                        <div>{`${totalTimeRequired} min`}</div>
+                                    </div>
+                                    <h4>
+                                        Questionnaire
+                                    </h4>
+                                    <div>
+                                        <div>Theoretic Time</div>
+                                        <div>{`${requiredDuration} min`}</div>
+                                    </div>
+                                    <ProgressBar
+                                        progress={percent}
+                                    />
+                                    <div>
+                                        {`Your questionnaire is currently using ${percent}% of the time you determined`}
+                                    </div>
+                                </div>
                             </div>
                         </>
                     )}

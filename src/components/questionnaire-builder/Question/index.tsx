@@ -99,6 +99,7 @@ class Question extends React.PureComponent<Props> {
             enumeratorSkillDisplay,
             dataCollectionTechniqueDisplay,
             importanceDisplay,
+            requiredDuration,
         } = data;
 
         return (
@@ -134,6 +135,15 @@ class Question extends React.PureComponent<Props> {
                                         // FIXME: use strings
                                         label="Enumerator skill"
                                         value={enumeratorSkillDisplay}
+                                    />
+                                    <MetaOutput
+                                        // FIXME: use strings
+                                        label="Required duration"
+                                        value={
+                                            requiredDuration
+                                                ? `${requiredDuration} min`
+                                                : undefined
+                                        }
                                     />
                                     <MetaOutput
                                         // FIXME: use strings
