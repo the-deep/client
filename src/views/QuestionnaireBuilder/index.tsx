@@ -16,22 +16,20 @@ import modalize from '#rscg/Modalize';
 import Page from '#rscv/Page';
 
 import {
-    AppState,
-    // AppProps,
     QuestionnaireElement,
-    QuestionElement,
-    Requests,
-    AddRequestProps,
+    QuestionnaireQuestionElement,
     FrameworkElement,
     ProjectElement,
+
+    AppState,
+    Requests,
+    AddRequestProps,
 } from '#typings';
 
 import {
     methods,
     RequestCoordinator,
     RequestClient,
-    getResponse,
-    isAnyRequestPending,
 } from '#request';
 
 import {
@@ -53,10 +51,10 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 
 interface FrameworkQuestionElement {
-    onCopyButtonClick?: (id: QuestionElement['id']) => void;
-    onEditButtonClick?: (id: QuestionElement['id']) => void;
+    onCopyButtonClick?: (id: QuestionnaireQuestionElement['id']) => void;
+    onEditButtonClick?: (id: QuestionnaireQuestionElement['id']) => void;
     className?: string;
-    data: QuestionElement;
+    data: QuestionnaireQuestionElement;
     framework: FrameworkElement;
 }
 
@@ -67,7 +65,7 @@ interface ComponentProps {
 
 interface State {
     showQuestionFormModal: boolean;
-    questionToEdit?: QuestionElement;
+    questionToEdit?: QuestionnaireQuestionElement;
     questionnaire?: QuestionnaireElement;
 }
 
@@ -105,7 +103,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
 
 type Props = AddRequestProps<ComponentPropsWithAppState, Params>;
 
-const questionKeySelector = (q: QuestionElement) => q.id;
+const questionKeySelector = (q: QuestionnaireQuestionElement) => q.id;
 
 /*
 const FrameworkQuestion = (p: FrameworkQuestionElement) => {
@@ -148,20 +146,20 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private getQuestionRendererParams = (key: QuestionElement['id'], question: QuestionElement) => {
+    private getQuestionRendererParams = (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => {
         const { questionnaire } = this.state;
         return {
             data: question,
             onEditButtonClick: this.handleEditQuestionButtonClick,
-            framework: (questionnaire as QuestionnaireElement).projectFrameworkDetail,
+            // framework: (questionnaire as QuestionnaireElement).projectFrameworkDetail,
             className: styles.question,
         };
     }
 
     /*
     private getFrameworkQuestionRendererParams = (
-        key: QuestionElement['id'],
-        question: QuestionElement,
+        key: QuestionnaireQuestionElement['id'],
+        question: QuestionnaireQuestionElement,
     ) => {
         const { questionnaire } = this.state;
 
@@ -182,7 +180,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleEditQuestionButtonClick = (questionId: QuestionElement['id']) => {
+    private handleEditQuestionButtonClick = (questionId: QuestionnaireQuestionElement['id']) => {
         const { questionnaire } = this.state;
 
         if (!questionnaire) {
@@ -296,9 +294,9 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     Analysis Framework
                                 </h3>
                                 <div className={styles.value}>
-                                    {questionnaire.projectFrameworkDetail
+                                    {/* questionnaire.projectFrameworkDetail
                                         ? questionnaire.projectFrameworkDetail.title
-                                        : '-'}
+                                        : '-' */}
                                 </div>
                             </div>
                             {/* questionnaire.projectFrameworkDetail && (

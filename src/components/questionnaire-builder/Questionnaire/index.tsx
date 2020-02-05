@@ -11,7 +11,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
 
 import { pathNames } from '#constants';
-import { QuestionnaireItem } from '#typings';
+import { MiniQuestionnaireElement } from '#typings';
 
 import styles from './styles.scss';
 
@@ -65,8 +65,8 @@ const DropdownButton = ({
 
 interface Props {
     className?: string;
-    questionnaireKey: QuestionnaireItem['id'];
-    data: QuestionnaireItem;
+    questionnaireKey: MiniQuestionnaireElement['id'];
+    data: MiniQuestionnaireElement;
     archived?: boolean;
     disabled?: boolean;
     onArchive: (id: number) => void;
@@ -110,13 +110,13 @@ class Questionnaire extends React.PureComponent<Props> {
             data: {
                 id,
                 title,
-                questions,
                 createdAt,
                 project,
                 crisisTypeDetail,
-                dataCollectionTechniqueDetail,
                 requiredDuration,
-                enumeratorSkillDetail,
+                enumeratorSkillDisplay,
+                dataCollectionTechniqueDisplay,
+                activeQuestionsCount,
             },
         } = this.props;
 
@@ -130,7 +130,7 @@ class Questionnaire extends React.PureComponent<Props> {
                         <div className={styles.info}>
                             <div className={styles.questions}>
                                 <div className={styles.value}>
-                                    { questions.length }
+                                    {activeQuestionsCount}
                                 </div>
                                 <div className={styles.label}>
                                     {/* FIXME: use strings */}
@@ -231,11 +231,7 @@ class Questionnaire extends React.PureComponent<Props> {
                     <MetaOutput
                         // FIXME: use strings
                         label="Data collection technique"
-                        value={
-                            dataCollectionTechniqueDetail
-                                ? dataCollectionTechniqueDetail.value
-                                : undefined
-                        }
+                        value={dataCollectionTechniqueDisplay}
                     />
                     <MetaOutput
                         // FIXME: use strings
@@ -249,11 +245,7 @@ class Questionnaire extends React.PureComponent<Props> {
                     <MetaOutput
                         // FIXME: use strings
                         label="Enumerator skill"
-                        value={
-                            enumeratorSkillDetail
-                                ? enumeratorSkillDetail.value
-                                : undefined
-                        }
+                        value={enumeratorSkillDisplay}
                     />
                 </div>
             </div>

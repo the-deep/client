@@ -163,18 +163,18 @@ export default class ProjectPanel extends React.PureComponent {
                         />
                     }
                 </div>
-                <Cloak
-                    hide={ProjectPanel.shouldHideProjectDeleteButton}
-                    render={
-                        <div className={styles.actionButtons}>
-                            <ButtonLikeLink
-                                type="accent"
-                                to={this.getProjectQuestionnaireLink(projectId)}
-                                className={styles.button}
-                            >
-                                {/* FIXME: use strings */}
-                                Manage questionnaires
-                            </ButtonLikeLink>
+                <div className={styles.actionButtons}>
+                    <ButtonLikeLink
+                        type="accent"
+                        to={this.getProjectQuestionnaireLink(projectId)}
+                        className={styles.button}
+                    >
+                        {/* FIXME: use strings */}
+                        Manage questionnaires
+                    </ButtonLikeLink>
+                    <Cloak
+                        hide={ProjectPanel.shouldHideProjectDeleteButton}
+                        render={
                             <DangerConfirmButton
                                 iconName="delete"
                                 onClick={this.handleProjectDelete}
@@ -189,9 +189,9 @@ export default class ProjectPanel extends React.PureComponent {
                             >
                                 {_ts('project', 'deleteButtonTitle')}
                             </DangerConfirmButton>
-                        </div>
-                    }
-                />
+                        }
+                    />
+                </div>
             </div>
         );
     }

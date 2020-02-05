@@ -1,9 +1,9 @@
 import { listToMap } from '@togglecorp/fujs';
 
-import { BasicElement } from '#typings';
+import { KeyValueElement } from '#typings';
 
-export const defaultKeySelector = (d: BasicElement) => d.key;
-export const defaultLabelSelector = (d: BasicElement) => d.value;
+export const defaultKeySelector = (d: KeyValueElement) => d.key;
+export const defaultLabelSelector = (d: KeyValueElement) => d.value;
 
 export const crisisTypeOptionList = [
     { key: 'flood', value: 'Flood' },

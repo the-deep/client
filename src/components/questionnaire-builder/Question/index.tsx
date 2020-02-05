@@ -2,11 +2,10 @@ import React from 'react';
 import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
-import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 
 import {
-    QuestionElement,
+    BaseQuestionElement,
     FrameworkElement,
     QuestionType,
 } from '#typings';
@@ -54,10 +53,10 @@ const iconMap: {
 };
 
 interface Props {
-    data: QuestionElement;
+    data: BaseQuestionElement;
     className?: string;
-    onEditButtonClick?: (key: QuestionElement['id']) => void;
-    framework: FrameworkElement;
+    onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
+    framework?: FrameworkElement;
     hideDetails?: boolean;
     readOnly?: boolean;
 }
@@ -85,16 +84,9 @@ class Question extends React.PureComponent<Props> {
             hideDetails,
         } = this.props;
 
-        if (!data || !framework) {
+        if (!data) {
             return null;
         }
-
-        const {
-            sectorList,
-            subsectorList,
-            dimensionList,
-            subdimensionList,
-        } = this.getFrameworkOptions(framework);
 
         return (
             <div className={_cs(className, styles.question)}>
@@ -118,24 +110,24 @@ class Question extends React.PureComponent<Props> {
                                             { data.crisisTypeDetail.title }
                                         </div>
                                     )}
-                                    {data.enumeratorSkillDetail && (
+                                    {data.enumeratorSkillDisplay && (
                                         <div className={styles.enumeratorSkill}>
-                                            { data.enumeratorSkillDetail.value }
+                                            { data.enumeratorSkillDisplay }
                                         </div>
                                     )}
-                                    {data.dataCollectionTechniqueDetail && (
+                                    {data.dataCollectionTechniqueDisplay && (
                                         <div className={styles.dataCollectionTechnique}>
-                                            { data.dataCollectionTechniqueDetail.value }
+                                            { data.dataCollectionTechniqueDisplay }
                                         </div>
                                     )}
-                                    {data.importanceDetail && (
+                                    {data.importanceDisplay && (
                                         <div className={styles.importance}>
                                             <div className={styles.label}>
                                                 {/* FIXME: use strings */}
                                                 Importance:
                                             </div>
                                             <div className={styles.value}>
-                                                { data.importanceDetail.value }
+                                                { data.importanceDisplay }
                                             </div>
                                         </div>
                                     )}
@@ -164,26 +156,14 @@ class Question extends React.PureComponent<Props> {
                         <div className={styles.bottom}>
                             <FrameworkAttributeOutput
                                 className={styles.frameworkAttribute}
-                                sectorList={sectorList}
-                                subsectorList={subsectorList}
-                                dimensionList={dimensionList}
-                                subdimensionList={subdimensionList}
                                 data={data.frameworkAttribute}
+                                {...this.getFrameworkOptions(framework)}
                             />
                         </div>
                     </div>
                 </div>
                 {!hideDetails && (
                     <div className={styles.details}>
-                        <div className={styles.labels}>
-                            <div className={styles.heading}>
-                                {/* FIXME: use strings */}
-                                Question labels
-                            </div>
-                            <div className={styles.content}>
-                                -
-                            </div>
-                        </div>
                         {data.type === 'select' && (
                             <div className={styles.responseOptions}>
                                 <div className={styles.heading}>

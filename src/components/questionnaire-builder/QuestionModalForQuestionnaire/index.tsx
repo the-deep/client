@@ -7,27 +7,28 @@ import {
 } from '#request';
 
 import {
-    QuestionFormElement,
     QuestionnaireElement,
-    QuestionElement,
+    BaseQuestionElement,
     AddRequestProps,
     Requests,
 } from '#typings';
 
 import QuestionModal from '#qbc/QuestionModal';
 
+type FaramValues = unknown;
+
 interface ComponentProps {
     className?: string;
-    value?: QuestionElement;
+    value?: BaseQuestionElement;
     questionnaire: QuestionnaireElement;
-    onRequestSuccess: (q: QuestionElement[]) => void;
+    onRequestSuccess: (q: BaseQuestionElement[]) => void;
     closeModal: () => void;
 }
 
 interface Params {
     questionnaireId: number | undefined;
     body: {
-        questions: QuestionElement[];
+        questions: BaseQuestionElement[];
     };
 }
 
@@ -60,7 +61,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
 };
 
 class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
-    private handleFaramValidationSuccess = (faramValues: QuestionFormElement) => {
+    private handleFaramValidationSuccess = (faramValues: FaramValues) => {
         const {
             questionnaire,
             requests: {
@@ -81,7 +82,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
         }
         questions.push({
             ...value,
-            ...(faramValues as QuestionElement),
+            ...(faramValues as BaseQuestionElement),
         });
 
         const patchBody = {

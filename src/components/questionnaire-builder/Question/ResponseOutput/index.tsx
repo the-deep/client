@@ -2,13 +2,13 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
-import { QuestionResponseOptionElement } from '#typings';
+import { KeyValueElement } from '#typings';
 
 import styles from './styles.scss';
 
 interface ResponseOptionsProps {
     className?: string;
-    value: QuestionResponseOptionElement;
+    value: KeyValueElement;
 }
 
 const ResponseOption = ({
@@ -22,12 +22,12 @@ const ResponseOption = ({
 
 interface Props {
     className?: string;
-    value: QuestionResponseOptionElement[];
+    value: KeyValueElement[];
     itemClassName?: string;
     type: string;
 }
 
-const responseOptionKeySelector = (d: QuestionResponseOptionElement) => d.key;
+const responseOptionKeySelector = (d: KeyValueElement) => d.key;
 
 class ResponseOutput extends React.PureComponent<Props> {
     public static defaultProps = {
@@ -35,8 +35,8 @@ class ResponseOutput extends React.PureComponent<Props> {
     }
 
     getResponseOptionRendererParams = (
-        key: QuestionResponseOptionElement['key'],
-        value: QuestionResponseOptionElement,
+        key: KeyValueElement['key'],
+        value: KeyValueElement,
     ) => ({
         className: this.props.itemClassName,
         value,

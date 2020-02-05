@@ -9,7 +9,8 @@ import Pager from '#rscv/Pager';
 import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import {
-    QuestionnaireItem,
+    MiniQuestionnaireElement,
+
     Requests,
     AddRequestProps,
     MultiResponse,
@@ -40,14 +41,14 @@ interface ComponentProps {
 }
 
 interface State {
-    questionnaires: QuestionnaireItem[];
+    questionnaires: MiniQuestionnaireElement[];
     questionnaireCount: number;
 }
 
 interface Params {
     archived?: boolean;
     questionnaireId?: number;
-    setQuestionnaires?: (questionnaires: QuestionnaireItem[], totalCount: number) => void;
+    setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -70,7 +71,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 return;
             }
 
-            const questionnaireResponse = response as MultiResponse<QuestionnaireItem>;
+            const questionnaireResponse = response as MultiResponse<MiniQuestionnaireElement>;
             const { results, count } = questionnaireResponse;
             params.setQuestionnaires(results, count);
         },
@@ -106,7 +107,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
     },
 };
 
-const questionnaireKeySelector = (q: QuestionnaireItem) => q.id;
+const questionnaireKeySelector = (q: MiniQuestionnaireElement) => q.id;
 
 class QuestionnaireList extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
@@ -118,7 +119,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
 
         this.props.requests.questionnaireRequest.setDefaultParams({
             setQuestionnaires: (
-                questionnaires: QuestionnaireItem[],
+                questionnaires: MiniQuestionnaireElement[],
                 questionnaireCount: number,
             ) => {
                 this.setState({
@@ -130,8 +131,8 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
     }
 
     private getQuestionnaireRendererParams = (
-        key: QuestionnaireItem['id'],
-        questionnaire: QuestionnaireItem,
+        key: MiniQuestionnaireElement['id'],
+        questionnaire: MiniQuestionnaireElement,
     ) => ({
         questionnaireKey: key,
         data: questionnaire,

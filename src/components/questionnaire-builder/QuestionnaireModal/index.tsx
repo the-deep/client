@@ -22,11 +22,11 @@ import {
 } from '#request';
 
 import {
-    QuestionnaireFormElement,
+    QuestionnaireElement,
     ProjectElement,
     AddRequestProps,
     Requests,
-    QuestionElement,
+    BaseQuestionElement,
     BasicElement,
 } from '#typings';
 
@@ -37,10 +37,18 @@ import {
 
 import styles from './styles.scss';
 
+type FormKeys = 'title'
+    | 'crisisType'
+    | 'enumeratorSkill'
+    | 'dataCollectionTechnique'
+    | 'requiredDuration';
+
+type QuestionnaireFormElement = Partial<Pick<QuestionnaireElement, FormKeys>>;
+
 interface ComponentProps {
     className?: string;
     projectId: ProjectElement['id'];
-    value?: QuestionElement;
+    value?: BaseQuestionElement;
     pending?: boolean;
     closeModal?: () => void;
     onRequestSuccess: (response: unknown) => void;
@@ -49,7 +57,7 @@ interface ComponentProps {
 type FaramValues = QuestionnaireFormElement;
 interface RequestBody extends FaramValues {
     project?: ProjectElement['id'];
-    questions?: QuestionElement[];
+    questions?: BaseQuestionElement[];
 }
 
 type FaramErrors = {

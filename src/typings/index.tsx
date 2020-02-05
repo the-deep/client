@@ -3,18 +3,20 @@ import {
     ClientAttributes,
 } from '@togglecorp/react-rest-request';
 
-import { WidgetElement } from './framework';
-import { QuestionElement } from './questionnaire';
+// Basic
 
 export interface BasicElement {
     id: string;
     title: string;
 }
 
+// Used
 export interface KeyValueElement {
     key: string;
     value: string;
 }
+
+// Redux
 
 export interface AppState {
     domainData: any;
@@ -25,7 +27,10 @@ export interface AppState {
 export interface AppProps {
 }
 
+// Request
+
 export type Requests<Props, Params> = {[key: string]: ClientAttributes<Props, Params>}
+
 export type AddRequestProps<Props, Params> = NewProps<Props, Params>;
 
 export interface MultiResponse<T> {
@@ -34,7 +39,6 @@ export interface MultiResponse<T> {
     previous?: string;
     results: T[];
 }
-
 
 export * from './framework';
 export * from './questionnaire';

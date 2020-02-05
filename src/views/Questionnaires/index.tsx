@@ -18,6 +18,7 @@ import {
 
 import {
     ProjectElement,
+
     AddRequestProps,
     AppState,
     Requests,
@@ -75,7 +76,7 @@ const tabs: {[key in TabElement]: string} = {
     archived: 'Archived',
 };
 
-class ProjectQuestionnaires extends React.PureComponent<Props, State> {
+class Questionnaires extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
 
@@ -240,7 +241,7 @@ class ProjectQuestionnaires extends React.PureComponent<Props, State> {
 export default connect(mapStateToProps)(
     RequestCoordinator(
         RequestClient(requestOptions)(
-            ProjectQuestionnaires,
+            Questionnaires,
         ),
     ),
 );

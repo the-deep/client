@@ -6,7 +6,7 @@ import { FaramInputElement } from '@togglecorp/faram';
 import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import {
-    QuestionElement,
+    QuestionElementFrameworkAttribute,
     Matrix2dFlatSectorElement,
     Matrix2dFlatSubsectorElement,
     Matrix2dFlatDimensionElement,
@@ -24,8 +24,8 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    value: QuestionElement['frameworkAttribute'];
-    onChange: (newValue: QuestionElement['frameworkAttribute']) => void;
+    value: QuestionElementFrameworkAttribute;
+    onChange: (newValue: QuestionElementFrameworkAttribute) => void;
     sectorList: Matrix2dFlatSectorElement[];
     subsectorList: Matrix2dFlatSubsectorElement[];
     dimensionList: Matrix2dFlatDimensionElement[];
@@ -37,7 +37,7 @@ const keySelector = (d: Matrix2dFlatCellElement) => d.id;
 const labelSelector = (d: Matrix2dFlatCellElement) => d.title;
 
 class FrameworkAttributeInput extends React.PureComponent<Props> {
-    private getInputValues = memoize((value: QuestionElement['frameworkAttribute']) => {
+    private getInputValues = memoize((value: QuestionElementFrameworkAttribute) => {
         if (!value) {
             return {};
         }
@@ -68,7 +68,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props> {
         };
     })
 
-    private handleTypeInputChange = (type: QuestionElement['frameworkAttribute']['type']) => {
+    private handleTypeInputChange = (type: QuestionElementFrameworkAttribute['type']) => {
         const { onChange } = this.props;
 
         onChange({

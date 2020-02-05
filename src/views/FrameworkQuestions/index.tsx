@@ -20,10 +20,11 @@ import {
 } from '#request';
 import { pathNames } from '#constants';
 import {
-    QuestionElement,
+    FrameworkQuestionElement,
+    FrameworkElement,
+
     Requests,
     AddRequestProps,
-    FrameworkElement,
     AppState,
     AppProps,
 } from '#typings';
@@ -47,7 +48,7 @@ interface Params {
 
 interface State {
     showQuestionModal: boolean;
-    questionToEdit: QuestionElement | undefined;
+    questionToEdit: FrameworkQuestionElement | undefined;
 }
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
@@ -65,7 +66,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     },
 };
 
-const questionKeySelector = (d: QuestionElement) => d.id;
+const questionKeySelector = (d: FrameworkQuestionElement) => d.id;
 
 class FrameworkQuestions extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
@@ -77,7 +78,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         };
     }
 
-    private getQuestionRendererParams = (key: QuestionElement['id'], question: QuestionElement) => {
+    private getQuestionRendererParams = (key: FrameworkQuestionElement['id'], question: FrameworkQuestionElement) => {
         const { requests } = this.props;
         const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
 
@@ -89,7 +90,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         };
     }
 
-    private handleEditQuestionButtonClick = (questionKey: QuestionElement['id']) => {
+    private handleEditQuestionButtonClick = (questionKey: FrameworkQuestionElement['id']) => {
         const { requests } = this.props;
         const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
 

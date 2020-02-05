@@ -24,8 +24,10 @@ import {
 } from '#request';
 
 import {
+    KeyValueElement,
+    BasicElement,
     FrameworkElement,
-    QuestionFormElement,
+    BaseQuestionElement,
     AddRequestProps,
     Requests,
 } from '#typings';
@@ -34,14 +36,27 @@ import FrameworkAttributeInput from './FrameworkAttributeInput';
 import ResponseInput from './ResponseInput';
 import styles from './styles.scss';
 
+type QuestionKeys = 'title'
+    | 'type'
+    | 'enumeratorInstruction'
+    | 'respondentInstruction'
+    | 'crisisType'
+    | 'enumeratorSkill'
+    | 'dataCollectionTechnique'
+    | 'importance'
+    | 'responseOptions'
+    | 'frameworkAttribute';
+
+type QuestionFormElement = Partial<Pick<BaseQuestionElement, QuestionKeys>>;
+
 const defaultQuestionValue: QuestionFormElement = {
-    responseOptionList: [],
+    responseOptions: [],
     frameworkAttribute: {
         type: 'sector',
     },
 };
 
-type FaramValues = Partial<QuestionFormElement>;
+type FaramValues = QuestionFormElement;
 
 interface FaramErrors {}
 
@@ -73,11 +88,11 @@ const requestOptions: Requests<ComponentProps, Params> = {
     },
 };
 
-const crisisTypeKeySelector = d => d.id;
-const crisisTypeLabelSelector = d => d.title;
+const crisisTypeKeySelector = (d: BasicElement) => d.id;
+const crisisTypeLabelSelector = (d: BasicElement) => d.title;
 
-const defaultKeySelector = d => d.key;
-const defaultLabelSelector = d => d.value;
+const defaultKeySelector = (d: KeyValueElement) => d.key;
+const defaultLabelSelector = (d: KeyValueElement) => d.value;
 
 interface Schema {
     fields: {
@@ -222,7 +237,7 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                     label="Enumerator instructions"
                                 />
                                 <TextInput
-                                    faramElementName="respondentInstuction"
+                                    faramElementName="respondentInstruction"
                                     className={styles.input}
                                     // FIXME: use strings
                                     label="Respondent instructions"

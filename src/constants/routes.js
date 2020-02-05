@@ -80,7 +80,7 @@ export const routes = {
         order: 18,
         type: ROUTE.private,
         path: '/projects/:projectId/questionnaires/',
-        loader: () => import('../views/ProjectQuestionnaires'),
+        loader: () => import('../views/Questionnaires'),
         links: allLinks,
     }, // _ts('pageTitle', 'projectQuestionnare');
 

@@ -7,8 +7,7 @@ import {
 } from '#request';
 
 import {
-    QuestionFormElement,
-    QuestionElement,
+    BaseQuestionElement,
     AddRequestProps,
     Requests,
     FrameworkElement,
@@ -18,21 +17,21 @@ import QuestionModal from '#qbc/QuestionModal';
 
 import styles from './styles.scss';
 
-type FaramValues = QuestionFormElement;
+type FaramValues = unknown;
 interface FaramErrors {}
 
 interface ComponentProps {
     className?: string;
-    value?: QuestionElement;
+    value?: BaseQuestionElement;
     framework: FrameworkElement;
-    onRequestSuccess: (q: QuestionElement[]) => void;
+    onRequestSuccess: (q: BaseQuestionElement[]) => void;
     closeModal: () => void;
 }
 
 interface Params {
     frameworkId: FrameworkElement['id'];
     body: {
-        questions: QuestionElement[];
+        questions: BaseQuestionElement[];
     };
 }
 
@@ -59,7 +58,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
 };
 
 class QuestionModalForFramework extends React.PureComponent<Props> {
-    private handleFaramValidationSuccess = (faramValues: QuestionFormElement) => {
+    private handleFaramValidationSuccess = (faramValues: FaramValues) => {
         const {
             framework,
             requests: {
@@ -80,7 +79,7 @@ class QuestionModalForFramework extends React.PureComponent<Props> {
             }
         }
 
-        questions.push(faramValues as QuestionElement);
+        questions.push(faramValues as BaseQuestionElement);
 
         const patchBody = {
             questions,

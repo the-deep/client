@@ -1,11 +1,11 @@
 import _ts from '#ts';
 import {
     FrameworkElement,
+    Matrix2dWidgetElement,
     Matrix2dFlatSectorElement,
     Matrix2dFlatSubsectorElement,
     Matrix2dFlatDimensionElement,
     Matrix2dFlatSubdimensionElement,
-    Matrix2dWidgetElement,
 } from '#typings';
 
 export const SECTOR_FIRST = 'sectorFirst';
@@ -51,7 +51,7 @@ export const mapReportLevelsToNodes = levels => levels.map(level => ({
 }));
 
 export const createReportStructure = (
-    analysisFramework,
+    analysisFramework: FrameworkElement,
     reportStructureVariant = SECTOR_FIRST,
 ) => {
     if (!analysisFramework) {
@@ -113,7 +113,7 @@ const emptyObject = {
     subdimensionList: [],
 };
 
-export const getMatrix2dStructures = (framework: FrameworkElement) => {
+export const getMatrix2dStructures = (framework: FrameworkElement | undefined) => {
     if (!framework) {
         return emptyObject;
     }
