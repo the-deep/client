@@ -40,4 +40,16 @@
 
         }
     }
+
+    .report-options {
+        .heading {
+            margin-bottom: var(--spacing-small);
+        }
+
+        .content-settings {
+            .show-group-checkbox {
+                margin-bottom: var(--spacing-small-alt);
+            }
+        }
+    }
 }

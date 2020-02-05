@@ -212,6 +212,11 @@ export default class WidgetEditor extends React.PureComponent {
             isDisabled && styles.disabled,
         );
 
+        const otherProps = {};
+        if (widgetId === 'excerptWidget' || widgetId === 'textWidget') {
+            otherProps.showFormatButton = false;
+        }
+
         return (
             <div className={className}>
                 <FaramGroup faramElementName={String(id)}>
@@ -226,6 +231,7 @@ export default class WidgetEditor extends React.PureComponent {
                             image={undefined}
 
                             disabled
+                            {...otherProps}
                         />
                     </FaramGroup>
                 </FaramGroup>

@@ -27,6 +27,7 @@ const propTypes = {
     onExcerptCreate: PropTypes.func,
     onExcerptReset: PropTypes.func,
     disabled: PropTypes.bool,
+    showFormatButton: PropTypes.bool,
     readOnly: PropTypes.bool,
     highlightHidden: PropTypes.bool,
 };
@@ -41,6 +42,7 @@ const defaultProps = {
     tabularFieldData: undefined,
     disabled: false,
     readOnly: false,
+    showFormatButton: true,
     onExcerptChange: () => {},
     onExcerptCreate: () => {},
     onExcerptReset: () => {},
@@ -172,6 +174,7 @@ export default class Excerpt extends React.PureComponent {
             entryState,
             entryKey,
         } = this.props;
+
         onEntryStateChange(entryKey, value);
     }
 
@@ -187,17 +190,12 @@ export default class Excerpt extends React.PureComponent {
     renderExcerptImage = () => {
         const { image } = this.props;
 
-        const className = `
-            ${styles.image}
-            image
-        `;
-
         return (
             <Cloak
                 hide={Excerpt.shouldHideZoomable}
                 render={
                     <Image
-                        className={className}
+                        className={_cs(styles.image, 'image')}
                         src={image}
                         alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
                         zoomable
@@ -205,7 +203,7 @@ export default class Excerpt extends React.PureComponent {
                 }
                 renderOnHide={
                     <img
-                        className={`${className} ${styles.imageAlt}`}
+                        className={_cs(styles.imageAlt, styles.image, 'image')}
                         src={image}
                         alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
                     />
@@ -243,6 +241,7 @@ export default class Excerpt extends React.PureComponent {
             disabled,
             readOnly,
             highlightHidden,
+            showFormatButton,
         } = this.props;
 
         const highlightTitle = highlightHidden
@@ -251,25 +250,6 @@ export default class Excerpt extends React.PureComponent {
 
         return (
             <div className={styles.textContainer}>
-                <div className={styles.floatingButtonContainer}>
-                    { droppedExcerpt && (
-                        <AccentButton
-                            className={styles.floatingButton}
-                            iconName={highlightHidden ? 'faEye' : 'faEyeDisabled'}
-                            onClick={this.handleHighlightHiddenChange}
-                            title={highlightTitle}
-                        />
-                    )}
-                    { droppedExcerpt && droppedExcerpt !== excerpt && (
-                        <ConfirmButton
-                            className={styles.floatingButton}
-                            iconName="undo"
-                            onClick={this.handleReset}
-                            title={_ts('widgets.tagging.excerpt', 'resetExcerptTitle')}
-                            confirmationMessage={_ts('widgets.tagging.excerpt', 'resetExcerptConfirmation')}
-                        />
-                    )}
-                </div>
                 <FormattedTextArea
                     className={_cs(styles.text, 'text')}
                     showLabel={false}
@@ -277,7 +257,28 @@ export default class Excerpt extends React.PureComponent {
                     onChange={this.handleTextChange}
                     disabled={disabled}
                     readOnly={readOnly}
-                    showFormatButton={!!entryType}
+                    showFormatButton={!!entryType && showFormatButton}
+                    extraButtons={(
+                        <>
+                            { droppedExcerpt && (
+                                <AccentButton
+                                    className={styles.floatingButton}
+                                    iconName={highlightHidden ? 'faEye' : 'faEyeDisabled'}
+                                    onClick={this.handleHighlightHiddenChange}
+                                    title={highlightTitle}
+                                />
+                            )}
+                            { droppedExcerpt && droppedExcerpt !== excerpt && (
+                                <ConfirmButton
+                                    className={styles.floatingButton}
+                                    iconName="undo"
+                                    onClick={this.handleReset}
+                                    title={_ts('widgets.tagging.excerpt', 'resetExcerptTitle')}
+                                    confirmationMessage={_ts('widgets.tagging.excerpt', 'resetExcerptConfirmation')}
+                                />
+                            )}
+                        </>
+                    )}
                 />
             </div>
         );

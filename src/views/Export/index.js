@@ -16,6 +16,7 @@ import {
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
     activeProjectRoleSelector,
+    entryFilterOptionsForProjectSelector,
 } from '#redux';
 
 import {
@@ -37,6 +38,7 @@ const mapStateToProps = state => ({
     projectId: projectIdFromRouteSelector(state),
     analysisFramework: analysisFrameworkForProjectSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
+    entryFilterOptions: entryFilterOptionsForProjectSelector(state),
     filters: leadPageFilterSelector(state),
     geoOptions: geoOptionsForProjectSelector(state),
     projectRole: activeProjectRoleSelector(state),
@@ -54,6 +56,7 @@ const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    entryFilterOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
@@ -66,6 +69,7 @@ const propTypes = {
 const defaultProps = {
     projectRole: {},
     geoOptions: {},
+    entryFilterOptions: {},
 };
 
 const emptyObject = {};
@@ -138,6 +142,7 @@ export default class Export extends React.PureComponent {
             decoupledEntries: true,
 
             textWidgets,
+            showGroups: true,
             reportStructure,
             reportStructureVariant: SECTOR_FIRST,
 
@@ -237,6 +242,10 @@ export default class Export extends React.PureComponent {
             leads,
             selectedLeads,
         });
+    }
+
+    handleShowGroupsChange = (showGroups) => {
+        this.setState({ showGroups });
     }
 
     handleSelectLeadChange = (key, value) => {
@@ -383,6 +392,7 @@ export default class Export extends React.PureComponent {
             decoupledEntries,
             selectedLeads,
             textWidgets,
+            showGroups,
             leads = [],
         } = this.state;
 
@@ -391,6 +401,7 @@ export default class Export extends React.PureComponent {
             entriesFilters,
             projectId,
             geoOptions,
+            entryFilterOptions,
             projectRole: {
                 exportPermissions: {
                     create_only_unprotected: filterOnlyUnprotected,
@@ -417,6 +428,7 @@ export default class Export extends React.PureComponent {
                         reportStructure={reportStructure}
                         decoupledEntries={decoupledEntries}
                         onPreview={this.handlePreview}
+                        showGroups={showGroups}
                         pending={pendingLeads || pendingAf || pendingGeoOptions}
                         analysisFramework={analysisFramework}
                         geoOptions={geoOptions}
@@ -466,6 +478,9 @@ export default class Export extends React.PureComponent {
                             onExportTypeChange={this.handleExportTypeSelectButtonClick}
                             onReportStructureChange={this.handleReportStructureChange}
                             onTextWidgetsChange={this.handleTextWidgetsSelection}
+                            entryFilterOptions={entryFilterOptions}
+                            showGroups={showGroups}
+                            onShowGroupsChange={this.handleShowGroupsChange}
                             onReportStructureVariantChange={this.handleReportStructureVariantChange}
                             onDecoupledEntriesChange={this.handleDecoupledEntriesChange}
                             analysisFramework={analysisFramework}

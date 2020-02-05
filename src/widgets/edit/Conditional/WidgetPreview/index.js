@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 
@@ -16,7 +17,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
 };
 
 export default class WidgetPreview extends React.PureComponent {
@@ -44,7 +45,7 @@ export default class WidgetPreview extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={`${styles.widgetListItem} ${className}`}>
+            <div className={_cs(styles.widgetListItem, className)}>
                 <div className={styles.title}>
                     {title}
                 </div>

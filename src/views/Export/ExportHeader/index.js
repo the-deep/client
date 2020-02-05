@@ -91,6 +91,7 @@ const propTypes = {
     selectedLeads: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onPreview: PropTypes.func.isRequired,
     pending: PropTypes.bool.isRequired,
+    showGroups: PropTypes.bool.isRequired,
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -178,6 +179,7 @@ export default class ExportHeader extends React.PureComponent {
             analysisFramework,
             geoOptions,
             textWidgets,
+            showGroups,
             requests: {
                 exportRequest,
             },
@@ -219,6 +221,7 @@ export default class ExportHeader extends React.PureComponent {
             report_levels: reportLevels,
             report_structure: reportStructure,
             text_widget_ids: textWidgetIds,
+            show_groups: showGroups,
 
             // entry or assessment
             export_item: exportItem,

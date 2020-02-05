@@ -823,6 +823,7 @@ class LeadDetail extends React.PureComponent {
                             searchOptionsPending={pendingSearchedOrganizations}
                             onOptionsChange={this.setOrganizations}
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
+                            placeholder={_ts('addLeads', 'authorPlaceholder')}
                         />
                         <ModalButton
                             className={styles.largeButton}
