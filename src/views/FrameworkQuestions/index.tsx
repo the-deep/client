@@ -21,7 +21,7 @@ import {
 import { pathNames } from '#constants';
 import {
     FrameworkQuestionElement,
-    FrameworkElement,
+    MiniFrameworkElement,
 
     Requests,
     AddRequestProps,
@@ -40,7 +40,7 @@ interface ComponentProps {
 }
 
 interface PropsFromAppState {
-    frameworkId: FrameworkElement['id'];
+    frameworkId: MiniFrameworkElement['id'];
 }
 
 interface Params {
@@ -63,6 +63,10 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         url: ({ props: { frameworkId } }: { props: Props }) => `/analysis-frameworks/${frameworkId}/`,
         onMount: true,
         method: methods.GET,
+        query: {
+            fields: ['id', 'questions', 'widgets', 'title'],
+        },
+        onPropsChanged: ['frameworkId'],
     },
 };
 
@@ -80,7 +84,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
 
     private getQuestionRendererParams = (key: FrameworkQuestionElement['id'], question: FrameworkQuestionElement) => {
         const { requests } = this.props;
-        const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
+        const framework = getResponse(requests, 'frameworkGetRequest') as MiniFrameworkElement;
 
         return {
             data: question,
@@ -92,7 +96,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
 
     private handleEditQuestionButtonClick = (questionKey: FrameworkQuestionElement['id']) => {
         const { requests } = this.props;
-        const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
+        const framework = getResponse(requests, 'frameworkGetRequest') as MiniFrameworkElement;
 
         const question = framework.questions.find(d => d.id === questionKey);
         this.setState({
@@ -131,7 +135,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             requests,
         } = this.props;
 
-        const framework = getResponse(requests, 'frameworkGetRequest') as FrameworkElement;
+        const framework = getResponse(requests, 'frameworkGetRequest') as MiniFrameworkElement;
         const pending = getPending(requests, 'frameworkGetRequest');
 
         const {

@@ -11,18 +11,23 @@ import {
 } from '#typings';
 import { getMatrix2dStructures } from '#utils/framework';
 
-import TextIcon from '#resources/img/questionnaire-icons/text.png';
-import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
-import SelectIcon from '#resources/img/questionnaire-icons/select one.png';
-import DateAndTimeIcon from '#resources/img/questionnaire-icons/date and time.png';
-import RankIcon from '#resources/img/questionnaire-icons/rank.png';
-import LocationIcon from '#resources/img/questionnaire-icons/location.png';
-import ImageIcon from '#resources/img/questionnaire-icons/image.png';
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
-import VideoIcon from '#resources/img/questionnaire-icons/video.png';
-import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
+import DateAndTimeIcon from '#resources/img/questionnaire-icons/date-and-time.png';
+import ImageIcon from '#resources/img/questionnaire-icons/image.png';
+import LocationIcon from '#resources/img/questionnaire-icons/location.png';
+import NoteIcon from '#resources/img/questionnaire-icons/note.png';
+import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
+import PrinterIcon from '#resources/img/questionnaire-icons/printer.png';
 import RangeIcon from '#resources/img/questionnaire-icons/range.png';
+import RankIcon from '#resources/img/questionnaire-icons/rank.png';
+import SelectIcon from '#resources/img/questionnaire-icons/select-one.png';
+import SignatureIcon from '#resources/img/questionnaire-icons/signature.png';
+import TextIcon from '#resources/img/questionnaire-icons/text.png';
+import TriggerAcknowledgeIcon from '#resources/img/questionnaire-icons/trigger-acknowledge.png';
+import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
+import UrlIcon from '#resources/img/questionnaire-icons/url.png';
+import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
 import FrameworkAttributeOutput from './FrameworkAttributeOutput';
 import ResponseOutput from './ResponseOutput';
@@ -31,25 +36,23 @@ import styles from './styles.scss';
 const iconMap: {
     [key in QuestionType]: string;
 } = {
-    text: TextIcon,
-    number: NumberIcon,
-    dateAndTime: DateAndTimeIcon,
-    select: SelectIcon,
-    rank: RankIcon,
-    location: LocationIcon,
-    image: ImageIcon,
+    acknowledge: TriggerAcknowledgeIcon,
     audio: AudioIcon,
-    video: VideoIcon,
-    file: FileUploadIcon,
     barcode: BarcodeIcon,
+    dateAndTime: DateAndTimeIcon,
+    file: FileUploadIcon,
+    image: ImageIcon,
+    location: LocationIcon,
+    note: NoteIcon,
+    number: NumberIcon,
+    printer: PrinterIcon,
     range: RangeIcon,
-
-    // FIXME: use other icons later
-    note: TextIcon,
-    url: TextIcon,
-    printer: TextIcon,
-    acknowledge: TextIcon,
-    signature: TextIcon,
+    rank: RankIcon,
+    select: SelectIcon,
+    signature: SignatureIcon,
+    text: TextIcon,
+    url: UrlIcon,
+    video: VideoIcon,
 };
 
 interface Props {
