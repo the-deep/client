@@ -57,6 +57,7 @@ const requestOptions = {
                 'id',
                 'project',
                 'created_by_name',
+                'created_by',
                 'title',
                 'order',
                 'color',

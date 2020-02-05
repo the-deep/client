@@ -27,6 +27,7 @@ const entryGroupsSchema = [];
             id: { type: 'number', required: true },
             project: { type: 'number', required: true },
             createdByName: { type: 'string', required: true },
+            createdBy: { type: 'number', required: true },
             entryCount: { type: 'number', required: false },
             title: { type: 'string', required: true },
             order: { type: 'number', required: true },
