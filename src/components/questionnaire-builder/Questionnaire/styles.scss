@@ -53,23 +53,6 @@
 
     .content {
         padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
-
-        .meta-output {
-            display: inline-flex;
-            align-items: baseline;
-            padding: var(--spacing-extra-small) 0;
-            color: var(--color-text-label);
-
-            .name {
-                padding: 0 var(--spacing-small);
-            }
-
-            &:not(:last-child) {
-                &:after {
-                    content: '•';
-                }
-            }
-        }
     }
 }
 

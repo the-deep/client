@@ -29,6 +29,7 @@ import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import UrlIcon from '#resources/img/questionnaire-icons/url.png';
 import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
+import MetaOutput from '../MetaOutput';
 import FrameworkAttributeOutput from './FrameworkAttributeOutput';
 import ResponseOutput from './ResponseOutput';
 import styles from './styles.scss';
@@ -91,49 +92,58 @@ class Question extends React.PureComponent<Props> {
             return null;
         }
 
+        const {
+            type,
+            title,
+            crisisTypeDetail,
+            enumeratorSkillDisplay,
+            dataCollectionTechniqueDisplay,
+            importanceDisplay,
+        } = data;
+
         return (
             <div className={_cs(className, styles.question)}>
                 <div className={styles.brief}>
                     <div className={styles.left}>
                         <img
                             className={styles.icon}
-                            src={data.type ? iconMap[data.type] : undefined}
-                            alt={data.type}
+                            src={type ? iconMap[type] : undefined}
+                            alt={type}
                         />
                     </div>
                     <div className={styles.right}>
                         <div className={styles.top}>
                             <div className={styles.left}>
                                 <h4 className={styles.heading}>
-                                    { data.title }
+                                    { title }
                                 </h4>
                                 <div className={styles.basicInfo}>
-                                    {data.crisisTypeDetail && (
-                                        <div className={styles.crisisType}>
-                                            { data.crisisTypeDetail.title }
-                                        </div>
-                                    )}
-                                    {data.enumeratorSkillDisplay && (
-                                        <div className={styles.enumeratorSkill}>
-                                            { data.enumeratorSkillDisplay }
-                                        </div>
-                                    )}
-                                    {data.dataCollectionTechniqueDisplay && (
-                                        <div className={styles.dataCollectionTechnique}>
-                                            { data.dataCollectionTechniqueDisplay }
-                                        </div>
-                                    )}
-                                    {data.importanceDisplay && (
-                                        <div className={styles.importance}>
-                                            <div className={styles.label}>
-                                                {/* FIXME: use strings */}
-                                                Importance:
-                                            </div>
-                                            <div className={styles.value}>
-                                                { data.importanceDisplay }
-                                            </div>
-                                        </div>
-                                    )}
+                                    <MetaOutput
+                                        // FIXME: use strings
+                                        label="Crisis type"
+                                        value={
+                                            crisisTypeDetail ? crisisTypeDetail.title : undefined
+                                        }
+                                    />
+                                    <MetaOutput
+                                        // FIXME: use strings
+                                        label="Data collection technique"
+                                        value={dataCollectionTechniqueDisplay}
+                                    />
+                                    <MetaOutput
+                                        // FIXME: use strings
+                                        label="Enumerator skill"
+                                        value={enumeratorSkillDisplay}
+                                    />
+                                    <MetaOutput
+                                        // FIXME: use strings
+                                        label="Importance"
+                                        value={
+                                            importanceDisplay
+                                                ? `Importance: ${importanceDisplay}`
+                                                : undefined
+                                        }
+                                    />
                                 </div>
                             </div>
                             {!readOnly && (

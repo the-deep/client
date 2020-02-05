@@ -13,34 +13,9 @@ import FormattedDate from '#rscv/FormattedDate';
 import { pathNames } from '#constants';
 import { MiniQuestionnaireElement } from '#typings';
 
+import MetaOutput from '../MetaOutput';
+
 import styles from './styles.scss';
-
-interface MetaOutputProps {
-    label: string;
-    value: string | number | undefined;
-}
-
-const MetaOutput = ({
-    label,
-    value,
-}: MetaOutputProps) => {
-    if (!value) {
-        return null;
-    }
-
-    return (
-        <div
-            className={styles.metaOutput}
-            title={label}
-        >
-            <div
-                className={styles.name}
-            >
-                { value }
-            </div>
-        </div>
-    );
-};
 
 interface DropdownButtonProps {
     className?: string;
@@ -235,17 +210,17 @@ class Questionnaire extends React.PureComponent<Props> {
                     />
                     <MetaOutput
                         // FIXME: use strings
+                        label="Enumerator skill"
+                        value={enumeratorSkillDisplay}
+                    />
+                    <MetaOutput
+                        // FIXME: use strings
                         label="Required duration"
                         value={
                             requiredDuration
                                 ? `${requiredDuration} min`
                                 : undefined
                         }
-                    />
-                    <MetaOutput
-                        // FIXME: use strings
-                        label="Enumerator skill"
-                        value={enumeratorSkillDisplay}
                     />
                 </div>
             </div>
