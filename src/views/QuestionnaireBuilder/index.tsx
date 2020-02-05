@@ -18,7 +18,7 @@ import Page from '#rscv/Page';
 import {
     QuestionnaireElement,
     QuestionnaireQuestionElement,
-    FrameworkElement,
+    MiniFrameworkElement,
     ProjectElement,
 
     AppState,
@@ -50,13 +50,15 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
+/*
 interface FrameworkQuestionElement {
     onCopyButtonClick?: (id: QuestionnaireQuestionElement['id']) => void;
     onEditButtonClick?: (id: QuestionnaireQuestionElement['id']) => void;
     className?: string;
     data: QuestionnaireQuestionElement;
-    framework: FrameworkElement;
+    framework: MiniFrameworkElement;
 }
+*/
 
 interface ComponentProps {
     className?: string;
@@ -67,6 +69,8 @@ interface State {
     showQuestionFormModal: boolean;
     questionToEdit?: QuestionnaireQuestionElement;
     questionnaire?: QuestionnaireElement;
+    // FIXME: use this everywhere
+    framework?: MiniFrameworkElement;
 }
 
 interface PropsFromAppState {
@@ -83,7 +87,8 @@ const mapStateToProps = (state: AppState) => ({
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
 
 interface Params {
-    setQuestionnaire: (questionnaire: QuestionnaireElement) => void;
+    setQuestionnaire?: (questionnaire: QuestionnaireElement) => void;
+    setFramework?: (framework: MiniFrameworkElement) => void;
 }
 
 const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
@@ -91,12 +96,29 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         url: ({ props: { questionnaireId } }) => `/questionnaires/${questionnaireId}/`,
         onMount: true,
         method: methods.GET,
+        onPropsChanged: ['questionnaireId'],
         onSuccess: ({ params, response }) => {
             if (!params || !params.setQuestionnaire) {
                 return;
             }
             const questionnaire = response as QuestionnaireElement;
             params.setQuestionnaire(questionnaire);
+        },
+    },
+    frameworkGetRequest: {
+        url: ({ props: { projectId } }) => `/projects/${projectId}/analysis-framework/`,
+        onMount: true,
+        query: {
+            fields: ['id', 'questions', 'widgets', 'title'],
+        },
+        onPropsChanged: ['projectId'],
+        method: methods.GET,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.setFramework) {
+                return;
+            }
+            const framework = response as MiniFrameworkElement;
+            params.setFramework(framework);
         },
     },
 };
@@ -138,20 +160,26 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             showQuestionFormModal: false,
             questionToEdit: undefined,
             questionnaire: undefined,
+            framework: undefined,
         };
         this.props.requests.questionnaireGetRequest.setDefaultParams({
             setQuestionnaire: (questionnaire: QuestionnaireElement) => {
                 this.setState({ questionnaire });
             },
         });
+        this.props.requests.frameworkGetRequest.setDefaultParams({
+            setFramework: (framework: MiniFrameworkElement) => {
+                this.setState({ framework });
+            },
+        });
     }
 
     private getQuestionRendererParams = (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => {
-        const { questionnaire } = this.state;
+        const { framework } = this.state;
         return {
             data: question,
             onEditButtonClick: this.handleEditQuestionButtonClick,
-            // framework: (questionnaire as QuestionnaireElement).projectFrameworkDetail,
+            framework: framework as MiniFrameworkElement,
             className: styles.question,
         };
     }
@@ -228,6 +256,9 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                 questionnaireGetRequest: {
                     pending: questionnaireGetPending,
                 },
+                frameworkGetRequest: {
+                    pending: frameworkGetPending,
+                },
             },
             projectId,
             projectDetail,
@@ -237,9 +268,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             showQuestionFormModal,
             questionToEdit,
             questionnaire,
+            framework,
         } = this.state;
 
-        if (questionnaireGetPending) {
+        if (questionnaireGetPending || frameworkGetPending) {
             return (
                 <div
                     className={_cs(styles.questionnaireBuilder, className)}
@@ -248,6 +280,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                 </div>
             );
         }
+
         if (!questionnaire) {
             return (
                 <div
@@ -255,7 +288,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                 >
                     <Message>
                         {/* FIXME: use strings */}
-                        Could not get questionnnaire
+                        Could not get questionnaire!
                     </Message>
                 </div>
             );
@@ -294,9 +327,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     Analysis Framework
                                 </h3>
                                 <div className={styles.value}>
-                                    {/* questionnaire.projectFrameworkDetail
-                                        ? questionnaire.projectFrameworkDetail.title
-                                        : '-' */}
+                                    { framework ? framework.title : '-' }
                                 </div>
                             </div>
                             {/* questionnaire.projectFrameworkDetail && (
@@ -378,6 +409,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         questionnaire={questionnaire}
                         onRequestSuccess={this.handleQuestionFormRequestSuccess}
                         closeModal={this.handleCloseQuestionFormModalButtonClick}
+                        framework={framework}
                     />
                 )}
             </>

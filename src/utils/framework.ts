@@ -1,6 +1,7 @@
 import _ts from '#ts';
 import {
     FrameworkElement,
+    MiniFrameworkElement,
     Matrix2dWidgetElement,
     Matrix2dFlatSectorElement,
     Matrix2dFlatSubsectorElement,
@@ -113,7 +114,7 @@ const emptyObject = {
     subdimensionList: [],
 };
 
-export const getMatrix2dStructures = (framework: FrameworkElement | undefined) => {
+export const getMatrix2dStructures = (framework: MiniFrameworkElement | undefined) => {
     if (!framework) {
         return emptyObject;
     }

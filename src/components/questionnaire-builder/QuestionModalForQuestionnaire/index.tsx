@@ -7,8 +7,9 @@ import {
 } from '#request';
 
 import {
+    MiniFrameworkElement,
     QuestionnaireElement,
-    BaseQuestionElement,
+    QuestionnaireQuestionElement,
     AddRequestProps,
     Requests,
 } from '#typings';
@@ -19,16 +20,17 @@ type FaramValues = unknown;
 
 interface ComponentProps {
     className?: string;
-    value?: BaseQuestionElement;
+    value?: QuestionnaireQuestionElement;
+    framework?: MiniFrameworkElement;
     questionnaire: QuestionnaireElement;
-    onRequestSuccess: (q: BaseQuestionElement[]) => void;
+    onRequestSuccess: (q: QuestionnaireQuestionElement[]) => void;
     closeModal: () => void;
 }
 
 interface Params {
     questionnaireId: number | undefined;
     body: {
-        questions: BaseQuestionElement[];
+        questions: QuestionnaireQuestionElement[];
     };
 }
 
@@ -82,7 +84,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
         }
         questions.push({
             ...value,
-            ...(faramValues as BaseQuestionElement),
+            ...(faramValues as QuestionnaireQuestionElement),
         });
 
         const patchBody = {
@@ -101,6 +103,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
             requests,
             closeModal,
             value,
+            framework,
         } = this.props;
 
         const pending = getPending(requests, 'questionnairePatchRequest');
@@ -112,6 +115,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
                 closeModal={closeModal}
                 pending={pending}
                 value={value}
+                framework={framework}
             />
         );
     }

@@ -7,10 +7,10 @@ import {
 } from '#request';
 
 import {
-    BaseQuestionElement,
+    FrameworkQuestionElement,
     AddRequestProps,
     Requests,
-    FrameworkElement,
+    MiniFrameworkElement,
 } from '#typings';
 
 import QuestionModal from '#qbc/QuestionModal';
@@ -22,16 +22,16 @@ interface FaramErrors {}
 
 interface ComponentProps {
     className?: string;
-    value?: BaseQuestionElement;
-    framework: FrameworkElement;
-    onRequestSuccess: (q: BaseQuestionElement[]) => void;
+    value?: FrameworkQuestionElement;
+    framework: MiniFrameworkElement;
+    onRequestSuccess: (q: FrameworkQuestionElement[]) => void;
     closeModal: () => void;
 }
 
 interface Params {
-    frameworkId: FrameworkElement['id'];
+    frameworkId: MiniFrameworkElement['id'];
     body: {
-        questions: BaseQuestionElement[];
+        questions: FrameworkQuestionElement[];
     };
 }
 
@@ -52,7 +52,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props,
             response,
         }) => {
-            props.onRequestSuccess((response as FrameworkElement).questions);
+            props.onRequestSuccess((response as MiniFrameworkElement).questions);
         },
     },
 };
@@ -79,7 +79,7 @@ class QuestionModalForFramework extends React.PureComponent<Props> {
             }
         }
 
-        questions.push(faramValues as BaseQuestionElement);
+        questions.push(faramValues as FrameworkQuestionElement);
 
         const patchBody = {
             questions,

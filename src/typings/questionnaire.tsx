@@ -1,6 +1,6 @@
 import {
     Matrix2dFlatCellElement,
-    // FrameworkElement,
+    FrameworkElement,
 } from './framework';
 
 interface DbEntity {
@@ -123,3 +123,7 @@ export interface QuestionnaireElement extends DbEntity {
     questions: QuestionnaireQuestionElement[];
     // projectFrameworkDetail: FrameworkElement;
 }
+
+// FRAMEWORK
+export type MiniFrameworkElement = Pick<FrameworkElement, 'id' | 'widgets' | 'questions' | 'title'>
+

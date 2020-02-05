@@ -6,7 +6,7 @@ import Button from '#rsca/Button';
 
 import {
     BaseQuestionElement,
-    FrameworkElement,
+    MiniFrameworkElement,
     QuestionType,
 } from '#typings';
 import { getMatrix2dStructures } from '#utils/framework';
@@ -56,7 +56,7 @@ interface Props {
     data: BaseQuestionElement;
     className?: string;
     onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
-    framework?: FrameworkElement;
+    framework?: MiniFrameworkElement;
     hideDetails?: boolean;
     readOnly?: boolean;
 }

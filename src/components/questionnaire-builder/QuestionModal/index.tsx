@@ -26,7 +26,7 @@ import {
 import {
     KeyValueElement,
     BasicElement,
-    FrameworkElement,
+    MiniFrameworkElement,
     BaseQuestionElement,
     AddRequestProps,
     Requests,
@@ -62,7 +62,7 @@ interface FaramErrors {}
 
 interface ComponentProps {
     className?: string;
-    framework?: FrameworkElement;
+    framework?: MiniFrameworkElement;
     value?: QuestionFormElement;
     onSuccess: (faramValues: FaramValues) => void;
     closeModal?: () => void;
@@ -175,6 +175,14 @@ class QuestionModal extends React.PureComponent<Props, State> {
             questionImportanceOptions: questionImportanceOptionList,
         } = getResponse(requests, 'questionnaireOptionsRequest');
 
+        console.warn(framework);
+        const {
+            sectorList,
+            subsectorList,
+            dimensionList,
+            subdimensionList,
+        } = this.getFrameworkOptions(framework);
+
         return (
             <Modal className={styles.editQuestionnaireModal}>
                 <ModalHeader
@@ -244,22 +252,24 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                 />
                             </div>
                         </section>
-                        { framework && (
-                            <section className={styles.frameworkDetails}>
-                                <header className={styles.header}>
-                                    <h4 className={styles.heading}>
-                                        {/* FIXME: use strings */}
-                                        Framework
-                                    </h4>
-                                </header>
-                                <div className={styles.content}>
-                                    <FrameworkAttributeInput
-                                        faramElementName="frameworkAttribute"
-                                        {...this.getFrameworkOptions(framework)}
-                                    />
-                                </div>
-                            </section>
-                        )}
+                        <section className={styles.frameworkDetails}>
+                            <header className={styles.header}>
+                                <h4 className={styles.heading}>
+                                    {/* FIXME: use strings */}
+                                    Framework
+                                </h4>
+                            </header>
+                            <div className={styles.content}>
+                                <FrameworkAttributeInput
+                                    faramElementName="frameworkAttribute"
+                                    disabled={pending || !framework}
+                                    sectorList={sectorList}
+                                    subsectorList={subsectorList}
+                                    dimensionList={dimensionList}
+                                    subdimensionList={subdimensionList}
+                                />
+                            </div>
+                        </section>
                         <section className={styles.metadata}>
                             <header className={styles.header}>
                                 <h4 className={styles.heading}>

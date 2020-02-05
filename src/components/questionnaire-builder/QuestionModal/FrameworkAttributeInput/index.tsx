@@ -26,6 +26,7 @@ interface Props {
     className?: string;
     value: QuestionElementFrameworkAttribute;
     onChange: (newValue: QuestionElementFrameworkAttribute) => void;
+
     sectorList: Matrix2dFlatSectorElement[];
     subsectorList: Matrix2dFlatSubsectorElement[];
     dimensionList: Matrix2dFlatDimensionElement[];
