@@ -8,7 +8,7 @@ type ButtonType = 'default' | 'primary' | 'accent' | 'danger' | 'warning'
 
 interface Props {
     className?: string;
-    type?: ButtonType;
+    type: ButtonType;
 }
 
 const styleTypeMap: {
@@ -21,26 +21,26 @@ const styleTypeMap: {
     warning: styles.warning,
 };
 
+const ButtonLikeLink = (props: Props) => {
+    const {
+        className,
+        type,
+        ...otherProps
+    } = props;
 
-class ButtonLikeLink extends React.PureComponent<Props> {
-    public render() {
-        const {
-            className,
-            type = 'default',
-            ...otherProps
-        } = this.props;
-
-        return (
-            <Link
-                className={_cs(
-                    className,
-                    styles.buttonLikeLink,
-                    styleTypeMap[type],
-                )}
-                {...otherProps}
-            />
-        );
-    }
-}
+    return (
+        <Link
+            className={_cs(
+                className,
+                styles.buttonLikeLink,
+                styleTypeMap[type],
+            )}
+            {...otherProps}
+        />
+    );
+};
+ButtonLikeLink.defaultProps = {
+    type: 'default',
+};
 
 export default ButtonLikeLink;
