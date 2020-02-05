@@ -6,6 +6,7 @@ import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
+import NumberInput from '#rsci/NumberInput';
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
@@ -257,12 +258,12 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                             keySelector={defaultKeySelector}
                             labelSelector={defaultLabelSelector}
                         />
-                        <TextInput
+                        <NumberInput
                             faramElementName="requiredDuration"
                             className={styles.input}
+                            separator=" "
                             // FIXME: use strings
                             label="Required duration (Minutes)"
-                            type="number"
                         />
                     </ModalBody>
                     <ModalFooter>

@@ -103,6 +103,7 @@ export default class ConnectorFormFieldInput extends React.PureComponent {
                         key={data.key}
                         faramElementName={data.key}
                         label={data.title}
+                        separator=" "
                     />
                 );
             default:

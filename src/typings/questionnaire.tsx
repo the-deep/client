@@ -75,6 +75,8 @@ export interface BaseQuestionElement {
     crisisType?: number;
     crisisTypeDetail?: IdTitle;
 
+    requiredDuration?: number;
+
     frameworkAttribute?: QuestionElementFrameworkAttribute;
 }
 

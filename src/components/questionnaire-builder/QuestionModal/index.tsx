@@ -7,6 +7,8 @@ import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
+import SegmentInput from '#rsci/SegmentInput';
+import NumberInput from '#rsci/NumberInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -45,7 +47,8 @@ type QuestionKeys = 'title'
     | 'dataCollectionTechnique'
     | 'importance'
     | 'responseOptions'
-    | 'frameworkAttribute';
+    | 'frameworkAttribute'
+    | 'requiredDuration';
 
 type QuestionFormElement = Partial<Pick<BaseQuestionElement, QuestionKeys>>;
 
@@ -121,6 +124,7 @@ class QuestionModal extends React.PureComponent<Props, State> {
                 enumeratorSkill: [],
                 dataCollectionTechnique: [],
                 importance: [],
+                requiredDuration: [],
                 // FIXME: this should be dynamic, only available if type is 'select'
                 responseOptions: [],
             },
@@ -175,7 +179,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
             questionImportanceOptions: questionImportanceOptionList,
         } = getResponse(requests, 'questionnaireOptionsRequest');
 
-        console.warn(framework);
         const {
             sectorList,
             subsectorList,
@@ -304,7 +307,14 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                     keySelector={defaultKeySelector}
                                     labelSelector={defaultLabelSelector}
                                 />
-                                <SelectInput
+                                <NumberInput
+                                    faramElementName="requiredDuration"
+                                    className={styles.input}
+                                    // FIXME: use strings
+                                    separator=" "
+                                    label="Required duration (Minutes)"
+                                />
+                                <SegmentInput
                                     faramElementName="importance"
                                     className={styles.input}
                                     options={questionImportanceOptionList}

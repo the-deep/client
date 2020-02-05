@@ -119,6 +119,7 @@ export default class ConditionAttribute extends React.PureComponent {
                     faramElementName={attribute.key}
                     label={attribute.title}
                     showHintAndError={false}
+                    separator=" "
                 />
             );
         } else if (attribute.type === 'boolean') {
