@@ -32,6 +32,7 @@ import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 import MetaOutput from '../MetaOutput';
 import FrameworkAttributeOutput from './FrameworkAttributeOutput';
 import ResponseOutput from './ResponseOutput';
+
 import styles from './styles.scss';
 
 const iconMap: {
@@ -60,9 +61,13 @@ interface Props {
     data: BaseQuestionElement;
     className?: string;
     onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
+    onDelete?: (key: BaseQuestionElement['id']) => void;
+    onArchive?: (key: BaseQuestionElement['id']) => void;
+    onUnarchive?: (key: BaseQuestionElement['id']) => void;
     framework?: MiniFrameworkElement;
     hideDetails?: boolean;
     readOnly?: boolean;
+    disabled?: boolean;
 }
 
 class Question extends React.PureComponent<Props> {
@@ -79,18 +84,48 @@ class Question extends React.PureComponent<Props> {
         }
     }
 
+    handleDeleteButtonClick = () => {
+        const {
+            onDelete,
+            data,
+        } = this.props;
+
+        if (onDelete) {
+            onDelete(data.id);
+        }
+    }
+
+    handleArchiveButtonClick = () => {
+        const {
+            onArchive,
+            data,
+        } = this.props;
+
+        if (onArchive) {
+            onArchive(data.id);
+        }
+    }
+
+    handleUnarchiveButtonClick = () => {
+        const {
+            onUnarchive,
+            data,
+        } = this.props;
+
+        if (onUnarchive) {
+            onUnarchive(data.id);
+        }
+    }
+
     public render() {
         const {
             className,
             data,
             framework,
             readOnly,
+            disabled,
             hideDetails,
         } = this.props;
-
-        if (!data) {
-            return null;
-        }
 
         const {
             type,
@@ -100,6 +135,7 @@ class Question extends React.PureComponent<Props> {
             dataCollectionTechniqueDisplay,
             importanceDisplay,
             requiredDuration,
+            isArchived,
         } = data;
 
         return (
@@ -139,11 +175,7 @@ class Question extends React.PureComponent<Props> {
                                     <MetaOutput
                                         // FIXME: use strings
                                         label="Required duration"
-                                        value={
-                                            requiredDuration
-                                                ? `${requiredDuration} min`
-                                                : undefined
-                                        }
+                                        value={requiredDuration ? `${requiredDuration} min` : undefined}
                                     />
                                     <MetaOutput
                                         // FIXME: use strings
@@ -158,17 +190,33 @@ class Question extends React.PureComponent<Props> {
                             </div>
                             {!readOnly && (
                                 <div className={styles.right}>
+                                    {!isArchived ? (
+                                        <Button
+                                            onClick={this.handleArchiveButtonClick}
+                                            disabled={disabled}
+                                        >
+                                            {/* FIXME: use strings */}
+                                            Archive
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={this.handleUnarchiveButtonClick}
+                                            disabled={disabled}
+                                        >
+                                            {/* FIXME: use strings */}
+                                            Unarchive
+                                        </Button>
+                                    )}
                                     <Button
-                                        iconName="delete"
-                                        // onClick={this.handleDeleteButtonClick}
-                                        disabled
+                                        onClick={this.handleDeleteButtonClick}
+                                        disabled={disabled}
                                     >
                                         {/* FIXME: use strings */}
                                         Delete
                                     </Button>
                                     <Button
-                                        iconName="edit"
                                         onClick={this.handleEditButtonClick}
+                                        disabled={disabled}
                                     >
                                         {/* FIXME: use strings */}
                                         Edit
