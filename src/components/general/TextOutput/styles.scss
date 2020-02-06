@@ -62,3 +62,18 @@
         font-weight: var(--font-weight-bold);
     }
 }
+
+.stretched {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .label {
+        flex-grow: 1;
+    }
+
+    .value {
+        flex-shrink: 0;
+        text-align: right;
+    }
+}

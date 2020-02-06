@@ -15,7 +15,6 @@
             flex-grow: 1;
             padding: 0 var(--spacing-medium);
         }
-
     }
 
     .sidebar {
@@ -35,15 +34,45 @@
             }
         }
 
+        .question-status {
+            padding: var(--spacing-medium) 0;
+
+            .header {
+                .heading {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                }
+
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            }
+
+            .tab {
+                display: flex;
+                text-transform: none;
+
+                .label {
+                    flex-grow: 1;
+                }
+
+                .count {
+                    flex-shrink: 0;
+                }
+            }
+        }
+
         >.content {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            padding: var(--spacing-medium);
+            padding: var(--spacing-small) var(--spacing-medium);
             overflow: auto;
+
+            .matrix-filter {
+                overflow-y: auto;
+            }
 
             .framework-question-list {
                 flex-grow: 1;
+                min-height: 480px;
                 overflow: auto;
 
                 .framework-question {
@@ -62,38 +91,11 @@
 
     .main {
         display: flex;
+        background-color: var(--color-foreground);
 
         .question-list {
-            display: flex;
-            flex-direction: column;
             flex-grow: 1;
-
-            >.header {
-                display: flex;
-                align-items: center;
-                flex-shrink: 0;
-
-                .heading {
-                    flex-grow: 1;
-                    padding: var(--spacing-medium);
-                }
-
-                >.actions {
-                    flex-shrink: 0;
-                    padding: 0 var(--spacing-medium);
-                }
-            }
-
-            >.content {
-                flex-grow: 1;
-                padding: var(--spacing-extra-large);
-                overflow: auto;
-
-                .question {
-                    margin: var(--spacing-medium) auto;
-                    background-color: var(--color-foreground);
-                }
-            }
+            background-color: var(--color-foreground);
         }
 
         .right-panel {

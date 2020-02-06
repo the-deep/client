@@ -6,6 +6,7 @@ import {
 } from '@togglecorp/fujs';
 
 import MetaOutput from '#qbc/MetaOutput';
+import TextOutput from '#components/general/TextOutput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ProgressBar from '#rsu/../v2/View/ProgressBar';
 
@@ -16,7 +17,9 @@ import {
 
 import styles from './styles.scss';
 
-interface ComponentProps {
+// FIXME: Use strings throughout this page
+
+interface Props {
     className?: string;
     enumeratorSkill?: string;
     title?: string;
@@ -28,8 +31,6 @@ interface ComponentProps {
     requiredDuration: number;
     questions: QuestionnaireQuestionElement[];
 }
-
-type Props = ComponentProps;
 
 class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
     public render() {
@@ -60,14 +61,9 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
             <div className={_cs(styles.diagnostics, className)}>
                 {showLoadingOverlay && <LoadingAnimation />}
                 <header className={styles.header}>
-                    <h3 className={styles.heading}>
-                        {title}
-                    </h3>
-                </header>
-                <div className={styles.content}>
-                    <div>
+                    <h2>{title}</h2>
+                    <div className={styles.metaOutputContainer}>
                         <MetaOutput
-                            // FIXME: use strings
                             label="Crisis type"
                             value={
                                 crisisTypeDetail
@@ -76,17 +72,14 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                             }
                         />
                         <MetaOutput
-                            // FIXME: use strings
                             label="Data collection technique"
                             value={dataCollectionTechniqueDisplay}
                         />
                         <MetaOutput
-                            // FIXME: use strings
                             label="Enumerator skill"
                             value={enumeratorSkillDisplay}
                         />
                         <MetaOutput
-                            // FIXME: use strings
                             label="Required duration"
                             value={
                                 requiredDuration
@@ -95,26 +88,41 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                             }
                         />
                     </div>
-                    {/* FIXME: use strings */}
-                    <h4>
-                        Questions
-                    </h4>
-                    <div>
-                        <div>Selected</div>
-                        <div>{totalQuestions}</div>
-                        <div>Time Required</div>
-                        <div>{`${totalTimeRequired} min`}</div>
+                </header>
+                <div className={styles.content}>
+                    <div className={styles.section}>
+                        <h3> Questions </h3>
+                        <div className={styles.subContent}>
+                            <TextOutput
+                                className={styles.lineItem}
+                                label="Selected"
+                                value={totalQuestions}
+                                type="stretched"
+                            />
+                            <TextOutput
+                                className={styles.lineItem}
+                                label="Time Required"
+                                value={`${totalTimeRequired} min`}
+                                type="stretched"
+                            />
+                        </div>
                     </div>
-                    <h4>
-                        Questionnaire
-                    </h4>
-                    <div>
-                        <div>Theoretic Time</div>
-                        <div>{`${requiredDuration} min`}</div>
-                    </div>
-                    <ProgressBar progress={percent} />
-                    <div>
-                        {`Your questionnaire is currently using ${percent}% of the time you determined`}
+                    <div className={styles.section}>
+                        <h3> Questionnaire </h3>
+                        <div className={styles.subContent}>
+                            <TextOutput
+                                className={styles.lineItem}
+                                label="Theoretic Time"
+                                value={`${requiredDuration} min`}
+                                type="stretched"
+                            />
+                            <div className={styles.lineItem}>
+                                <ProgressBar progress={percent} />
+                            </div>
+                            <div className={styles.lineItem}>
+                                {`Your questionnaire is currently using ${percent}% of the time you determined`}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
