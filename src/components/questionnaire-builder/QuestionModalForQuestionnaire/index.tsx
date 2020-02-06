@@ -3,7 +3,6 @@ import React from 'react';
 import {
     RequestClient,
     methods,
-    getPending,
 } from '#request';
 
 import {
@@ -20,7 +19,7 @@ type FaramValues = unknown;
 
 interface ComponentProps {
     className?: string;
-    questionnaireId?: number;
+    questionnaireId: number;
     value?: QuestionnaireQuestionElement;
     framework?: MiniFrameworkElement;
     questionnaire: QuestionnaireElement;
@@ -29,19 +28,19 @@ interface ComponentProps {
 }
 
 interface Params {
-    body: QuestionnaireQuestionElement;
+    body?: QuestionnaireQuestionElement;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
 
 const requestOptions: Requests<ComponentProps, Params> = {
-    questionRequest: {
+    questionSaveRequest: {
         url: ({ props: { value, questionnaireId } }) => {
             if (!value || !value.id) {
                 return `/questionnaires/${questionnaireId}/questions/`;
             }
 
-            return `/questionnaires/${questionnaireId}/questions/${value.id}/`;
+            return (`/questionnaires/${questionnaireId}/questions/${value.id}/`);
         },
         method: ({ props: { value } }) => ((value && value.id) ? methods.PATCH : methods.POST),
         body: ({ params }) => {
@@ -64,16 +63,18 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
     private handleFaramValidationSuccess = (faramValues: FaramValues) => {
         const {
             value,
-            requests: { questionRequest },
+            requests: { questionSaveRequest },
             questionnaireId,
         } = this.props;
 
+        const body = faramValues as QuestionnaireQuestionElement;
+
         if (value && value.id) {
-            questionRequest.do({ body: faramValues });
+            questionSaveRequest.do({ body });
         } else {
-            questionRequest.do({
+            questionSaveRequest.do({
                 body: {
-                    ...faramValues,
+                    ...body,
                     questionnaire: questionnaireId,
                 },
             });
@@ -83,13 +84,15 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
     render() {
         const {
             className,
-            requests,
             closeModal,
             value,
             framework,
+            requests: {
+                questionSaveRequest: {
+                    pending,
+                },
+            },
         } = this.props;
-
-        const pending = getPending(requests, 'questionRequest');
 
         return (
             <QuestionModal

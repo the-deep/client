@@ -101,6 +101,12 @@ type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
 interface Params {
     setQuestionnaire?: (questionnaire: QuestionnaireElement) => void;
     setFramework?: (framework: MiniFrameworkElement) => void;
+
+    questionId?: QuestionnaireQuestionElement['id'];
+    onDeleteSuccess?: (questionId: QuestionnaireQuestionElement['id']) => void;
+
+    archive?: boolean;
+    onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
 }
 
 const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
@@ -131,6 +137,35 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             }
             const framework = response as MiniFrameworkElement;
             params.setFramework(framework);
+        },
+    },
+    questionDeleteRequest: {
+        url: ({ props: { questionnaireId }, params }) => (
+            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
+        ),
+        method: methods.DELETE,
+        onSuccess: ({ params }) => {
+            if (!params || !params.onDeleteSuccess || !params.questionId) {
+                return;
+            }
+            params.onDeleteSuccess(params.questionId);
+        },
+    },
+    questionArchiveRequest: {
+        url: ({ props: { questionnaireId }, params }) => (
+            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
+        ),
+        method: methods.PATCH,
+        body: ({ params }) => ({
+            isArchived: params && params.archive,
+        }),
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onArchiveSuccess) {
+                return;
+            }
+            const question = response as QuestionnaireQuestionElement;
+            console.warn(question);
+            params.onArchiveSuccess(question);
         },
     },
 };
@@ -199,6 +234,9 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         return {
             data: question,
             onEditButtonClick: this.handleEditQuestionButtonClick,
+            onDelete: this.handleDeleteQuestion,
+            onArchive: this.handleArchiveQuestion,
+            onUnarchive: this.handleUnarchiveQuestion,
             framework: framework as MiniFrameworkElement,
             className: styles.question,
         };
@@ -249,6 +287,29 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleDeleteQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
+        this.props.requests.questionDeleteRequest.do({
+            questionId,
+            onDeleteSuccess: this.handleQuestionDeleteRequestSuccess,
+        });
+    }
+
+    private handleArchiveQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
+        this.props.requests.questionArchiveRequest.do({
+            questionId,
+            archive: true,
+            onArchiveSuccess: this.handleQuestionArchiveRequestSuccess,
+        });
+    }
+
+    private handleUnarchiveQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
+        this.props.requests.questionArchiveRequest.do({
+            questionId,
+            archive: false,
+            onArchiveSuccess: this.handleQuestionArchiveRequestSuccess,
+        });
+    }
+
     private handleCloseQuestionFormModalButtonClick = () => {
         this.setState({
             showQuestionFormModal: false,
@@ -258,19 +319,22 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
     private handleQuestionFormRequestSuccess = (question: QuestionnaireQuestionElement) => {
         const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
         const { id: questionId } = question;
 
-        const newQuestionnaire = produce(questionnaire,
-            (safeQuestionnaire: QuestionnaireElement) => {
-                const { questions } = safeQuestionnaire;
-                const selectedIndex = questions.findIndex(e => e.id === questionId);
-                if (selectedIndex === -1) {
-                    safeQuestionnaire.questions.push(question);
-                } else {
-                    // eslint-disable-next-line no-param-reassign
-                    safeQuestionnaire.questions[selectedIndex] = question;
-                }
-            });
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+            const selectedIndex = questions.findIndex(e => e.id === questionId);
+            if (selectedIndex === -1) {
+                safeQuestionnaire.questions.push(question);
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                safeQuestionnaire.questions[selectedIndex] = question;
+            }
+        });
 
         this.setState({
             questionnaire: newQuestionnaire,
@@ -283,6 +347,46 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({ treeFilter: value });
     }
 
+    private handleQuestionDeleteRequestSuccess = (questionId: QuestionnaireQuestionElement['id']) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+            const selectedIndex = questions.findIndex(e => e.id === questionId);
+            if (selectedIndex !== -1) {
+                // eslint-disable-next-line no-param-reassign
+                delete safeQuestionnaire.questions[selectedIndex];
+            }
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
+    }
+
+    private handleQuestionArchiveRequestSuccess = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+            const selectedIndex = questions.findIndex(e => e.id === question.id);
+            if (selectedIndex !== -1) {
+                // eslint-disable-next-line no-param-reassign
+                safeQuestionnaire.questions[selectedIndex] = question;
+            }
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
+    }
+
     public render() {
         const {
             className,
@@ -293,9 +397,17 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                 frameworkGetRequest: {
                     pending: frameworkGetPending,
                 },
+                questionDeleteRequest: {
+                    pending: questionDeletePending,
+                },
+                questionArchiveRequest: {
+                    pending: questionArchivePending,
+                },
             },
             projectDetail,
         } = this.props;
+
+        const showLoadingOverlay = questionDeletePending || questionArchivePending;
 
         const {
             showQuestionFormModal,
@@ -432,7 +544,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                         Questions
                                     </h3>
                                     <div className={styles.actions}>
-                                        <Button onClick={this.handleAddQuestionButtonClick}>
+                                        <Button
+                                            onClick={this.handleAddQuestionButtonClick}
+                                            disabled={showLoadingOverlay}
+                                        >
                                             {/* FIXME: use strings */}
                                             Add question
                                         </Button>
@@ -447,6 +562,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 />
                             </div>
                             <div className={styles.rightPanel}>
+                                {showLoadingOverlay && <LoadingAnimation />}
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
                                         {title}

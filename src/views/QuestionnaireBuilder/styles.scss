@@ -98,6 +98,7 @@
 
         .right-panel {
             display: flex;
+            display: relative;
             flex-direction: column;
             flex-shrink: 0;
             border-left: var(--width-separator-thin) solid var(--color-separator);
