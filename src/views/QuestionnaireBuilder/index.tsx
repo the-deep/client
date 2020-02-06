@@ -426,6 +426,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                             }
                                         />
                                     </div>
+                                    {/* FIXME: use strings */}
                                     <h4>
                                         Questions
                                     </h4>
