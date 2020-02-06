@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import { produce } from 'immer';
@@ -13,11 +13,12 @@ import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import Page from '#rscv/Page';
+import VerticalTabs from '#rscv/VerticalTabs';
+import TreeInput from '#rsu/../v2/Input/TreeInput';
 import ListView from '#rsu/../v2/View/ListView';
 import ProgressBar from '#rsu/../v2/View/ProgressBar';
-import TreeInput from '#rsu/../v2/Input/TreeInput';
-
-import Page from '#rscv/Page';
 
 import {
     QuestionnaireElement,
@@ -62,6 +63,118 @@ import Question from '#qbc/Question';
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
 import styles from './styles.scss';
+
+const questionKeySelector = (q: BaseQuestionElement) => q.id;
+
+const FrameworkQuestion = (p: FrameworkQuestionProps) => {
+    const {
+        onCopyButtonClick,
+        className,
+        ...otherProps
+    } = p;
+
+    return (
+        <div className={_cs(className, styles.frameworkQuestion)}>
+            <Question {...otherProps} />
+            <div className={styles.actions}>
+                <AccentButton
+                    iconName="copyOutline"
+                    onClick={onCopyButtonClick}
+                    disabled
+                    // FIXME: use strings
+                >
+                    Copy
+                </AccentButton>
+            </div>
+        </div>
+    );
+};
+
+interface QuestionListProps {
+    title: string;
+    questions?: QuestionnaireQuestionElement[];
+    showLoadingOverlay?: boolean;
+    onAddQuestionClick: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
+    onArchive: () => void;
+    onUnarchive: () => void;
+    framework?: MiniFrameworkElement;
+    archived: boolean;
+}
+
+const QuestionList = (props: QuestionListProps) => {
+    const {
+        title,
+        showLoadingOverlay,
+        questions,
+        framework,
+        onAddQuestionClick, // this.handleAddQuestionButtonClick
+        onEdit, // this.handleEditQuestionButtonClick,
+        onDelete, // this.handleDeleteQuestion,
+        onArchive, // this.handleArchiveQuestion,
+        onUnarchive, // this.handleUnarchiveQuestion,
+        archived,
+    } = props;
+
+    const getQuestionRendererParams = useCallback(
+        (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => ({
+            data: question,
+            onEditButtonClick: onEdit,
+            onDelete,
+            onArchive,
+            onUnarchive,
+            framework,
+            className: styles.question,
+        }),
+        [framework, onEdit, onDelete, onArchive, onUnarchive],
+    );
+
+    const filteredQuestions = useMemo(
+        () => {
+            if (!questions) {
+                return undefined;
+            }
+            return questions.filter(question => !!question.isArchived === archived);
+        },
+        [archived, questions],
+    );
+
+    return (
+        <div className={styles.questionList}>
+            <header className={styles.header}>
+                <h3 className={styles.heading}>
+                    {title}
+                </h3>
+                { !archived &&
+                    <div className={styles.actions}>
+                        <Button
+                            onClick={onAddQuestionClick}
+                            disabled={showLoadingOverlay}
+                        >
+                            {/* FIXME: use strings */}
+                            Add question
+                        </Button>
+                    </div>
+                }
+            </header>
+            <ListView
+                className={styles.content}
+                rendererParams={getQuestionRendererParams}
+                renderer={Question}
+                data={filteredQuestions}
+                keySelector={questionKeySelector}
+            />
+        </div>
+    );
+};
+
+type TabElement = 'active' | 'archived';
+
+const tabs: {[key in TabElement]: string} = {
+    active: 'Active',
+    archived: 'Parking Lot',
+};
 
 interface FrameworkQuestionProps {
     onCopyButtonClick?: (id: BaseQuestionElement['id']) => void;
@@ -172,32 +285,6 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
 
 type Props = AddRequestProps<ComponentPropsWithAppState, Params>;
 
-const questionKeySelector = (q: BaseQuestionElement) => q.id;
-
-const FrameworkQuestion = (p: FrameworkQuestionProps) => {
-    const {
-        onCopyButtonClick,
-        className,
-        ...otherProps
-    } = p;
-
-    return (
-        <div className={_cs(className, styles.frameworkQuestion)}>
-            <Question {...otherProps} />
-            <div className={styles.actions}>
-                <AccentButton
-                    iconName="copyOutline"
-                    onClick={onCopyButtonClick}
-                    disabled
-                    // FIXME: use strings
-                >
-                    Copy
-                </AccentButton>
-            </div>
-        </div>
-    );
-};
-
 class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
@@ -228,20 +315,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private getQuestionRendererParams = (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => {
-        const { framework } = this.state;
-
-        return {
-            data: question,
-            onEditButtonClick: this.handleEditQuestionButtonClick,
-            onDelete: this.handleDeleteQuestion,
-            onArchive: this.handleArchiveQuestion,
-            onUnarchive: this.handleUnarchiveQuestion,
-            framework: framework as MiniFrameworkElement,
-            className: styles.question,
-        };
-    }
-
     private getFrameworkQuestionRendererParams = (
         key: FrameworkQuestionElement['id'],
         question: FrameworkQuestionElement,
@@ -260,6 +333,45 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     private getFrameworkMatrices = memoize(getFrameworkMatrices)
 
     private getFilteredQuestions = memoize(getFilteredQuestions)
+
+    private views = {
+        active: {
+            component: QuestionList,
+            rendererParams: () => ({
+                title: 'Active Questions',
+                onAddQuestionClick: this.handleAddQuestionButtonClick,
+                onEdit: this.handleEditQuestionButtonClick,
+                onDelete: this.handleDeleteQuestion,
+                onArchive: this.handleArchiveQuestion,
+                onUnarchive: this.handleUnarchiveQuestion,
+                framework: this.state.framework,
+                questions: this.state.questionnaire
+                    ? this.state.questionnaire.questions
+                    : undefined,
+                showLoadingOverlay: this.props.requests.questionDeleteRequest.pending
+                    || this.props.requests.questionArchiveRequest.pending,
+                archived: false,
+            }),
+        },
+        archived: {
+            component: QuestionList,
+            rendererParams: () => ({
+                title: 'Parking Lot Questions',
+                onAddQuestionClick: this.handleAddQuestionButtonClick,
+                onEdit: this.handleEditQuestionButtonClick,
+                onDelete: this.handleDeleteQuestion,
+                onArchive: this.handleArchiveQuestion,
+                onUnarchive: this.handleUnarchiveQuestion,
+                framework: this.state.framework,
+                questions: this.state.questionnaire
+                    ? this.state.questionnaire.questions
+                    : undefined,
+                showLoadingOverlay: this.props.requests.questionDeleteRequest.pending
+                    || this.props.requests.questionArchiveRequest.pending,
+                archived: true,
+            }),
+        },
+    }
 
     private handleAddQuestionButtonClick = () => {
         this.setState({
@@ -387,6 +499,33 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
+    private tabsModifier = (itemKey: TabElement) => {
+        const { questionnaire } = this.state;
+
+        const totalCount = questionnaire
+            ? questionnaire.questions.length
+            : 0;
+        const activeCount = questionnaire
+            ? questionnaire.questions.filter(question => !question.isArchived).length
+            : 0;
+
+        const counts: {[key in TabElement]: number} = {
+            active: activeCount,
+            archived: totalCount - activeCount,
+        };
+
+        return (
+            <div className={styles.tab}>
+                <div className={styles.label}>
+                    { tabs[itemKey] }
+                </div>
+                <div className={styles.count}>
+                    { counts[itemKey] }
+                </div>
+            </div>
+        );
+    }
+
     public render() {
         const {
             className,
@@ -497,6 +636,17 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     { framework ? framework.title : '-' }
                                 </div>
                             </div>
+                            <header className={styles.header}>
+                                <h4 className={styles.heading}>
+                                    Question Status
+                                </h4>
+                            </header>
+                            <VerticalTabs
+                                tabs={tabs}
+                                useHash
+                                replaceHistory
+                                modifier={this.tabsModifier}
+                            />
                             {framework && (
                                 <div className={styles.content}>
                                     <h3>
@@ -537,30 +687,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     mainContentClassName={styles.main}
                     mainContent={(
                         <>
-                            <div className={styles.questionList}>
-                                <header className={styles.header}>
-                                    <h3 className={styles.heading}>
-                                        {/* FIXME: use strings */}
-                                        Questions
-                                    </h3>
-                                    <div className={styles.actions}>
-                                        <Button
-                                            onClick={this.handleAddQuestionButtonClick}
-                                            disabled={showLoadingOverlay}
-                                        >
-                                            {/* FIXME: use strings */}
-                                            Add question
-                                        </Button>
-                                    </div>
-                                </header>
-                                <ListView
-                                    className={styles.content}
-                                    rendererParams={this.getQuestionRendererParams}
-                                    renderer={Question}
-                                    data={questions}
-                                    keySelector={questionKeySelector}
-                                />
-                            </div>
+                            <MultiViewContainer
+                                views={this.views}
+                                useHash
+                            />
                             <div className={styles.rightPanel}>
                                 {showLoadingOverlay && <LoadingAnimation />}
                                 <header className={styles.header}>
