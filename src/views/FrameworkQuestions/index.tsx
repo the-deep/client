@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import {
     _cs,
@@ -7,16 +8,16 @@ import {
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
-import ListView from '#rscv/List/ListView';
+import ListView from '#rsu/../v2/View/ListView';
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
+import TreeInput from '#rsu/../v2/Input/TreeInput';
 
 import {
     methods,
     RequestCoordinator,
     RequestClient,
-    getResponse,
-    getPending,
 } from '#request';
 import { pathNames } from '#constants';
 import {
@@ -29,6 +30,16 @@ import {
     AppProps,
 } from '#typings';
 import { afIdFromRouteSelector } from '#redux';
+
+import {
+    getFrameworkMatrices,
+    getFilteredQuestions,
+
+    treeItemKeySelector,
+    treeItemLabelSelector,
+    treeItemParentKeySelector,
+} from '#entities/questionnaire';
+
 import BackLink from '#components/general/BackLink';
 import Question from '#qbc/Question';
 import QuestionModalForFramework from '#qbc/QuestionModalForFramework';
@@ -44,11 +55,14 @@ interface PropsFromAppState {
 }
 
 interface Params {
+    setFramework?: (framework: MiniFrameworkElement) => void;
 }
 
 interface State {
     showQuestionModal: boolean;
     questionToEdit: FrameworkQuestionElement | undefined;
+    treeFilter: string[];
+    framework?: MiniFrameworkElement;
 }
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
@@ -67,6 +81,13 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             fields: ['id', 'questions', 'widgets', 'title'],
         },
         onPropsChanged: ['frameworkId'],
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.setFramework) {
+                return;
+            }
+            const framework = response as MiniFrameworkElement;
+            params.setFramework(framework);
+        },
     },
 };
 
@@ -79,12 +100,17 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         this.state = {
             showQuestionModal: false,
             questionToEdit: undefined,
+            treeFilter: [],
         };
+        this.props.requests.frameworkGetRequest.setDefaultParams({
+            setFramework: (framework: MiniFrameworkElement) => {
+                this.setState({ framework });
+            },
+        });
     }
 
     private getQuestionRendererParams = (key: FrameworkQuestionElement['id'], question: FrameworkQuestionElement) => {
-        const { requests } = this.props;
-        const framework = getResponse(requests, 'frameworkGetRequest') as MiniFrameworkElement;
+        const { framework } = this.state;
 
         return {
             data: question,
@@ -94,9 +120,15 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         };
     }
 
+    private getFrameworkMatrices = memoize(getFrameworkMatrices)
+
+    private getFilteredQuestions = memoize(getFilteredQuestions)
+
     private handleEditQuestionButtonClick = (questionKey: FrameworkQuestionElement['id']) => {
-        const { requests } = this.props;
-        const framework = getResponse(requests, 'frameworkGetRequest') as MiniFrameworkElement;
+        const { framework } = this.state;
+        if (!framework) {
+            return;
+        }
 
         const question = framework.questions.find(d => d.id === questionKey);
         this.setState({
@@ -129,19 +161,49 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         requests.frameworkGetRequest.do();
     }
 
+    private handleTreeInputChange = (value: string[]) => {
+        this.setState({ treeFilter: value });
+    }
+
     public render() {
         const {
             className,
-            requests,
+            requests: {
+                frameworkGetRequest: {
+                    pending: frameworkGetPending,
+                },
+            },
         } = this.props;
-
-        const framework = getResponse(requests, 'frameworkGetRequest') as MiniFrameworkElement;
-        const pending = getPending(requests, 'frameworkGetRequest');
 
         const {
             showQuestionModal,
             questionToEdit,
+            framework,
+            treeFilter,
         } = this.state;
+
+        if (frameworkGetPending) {
+            return (
+                <div
+                    className={_cs(styles.frameworkQuestions, className)}
+                >
+                    <LoadingAnimation />
+                </div>
+            );
+        }
+
+        if (!framework) {
+            return (
+                <div
+                    className={_cs(styles.frameworkQuestions, className)}
+                >
+                    <Message>
+                        {/* FIXME: use strings */}
+                        Could not get framework!
+                    </Message>
+                </div>
+            );
+        }
 
         return (
             <>
@@ -156,8 +218,9 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                 defaultLink={reverseRoute(pathNames.homeScreen, {})}
                             />
                             <h2 className={styles.heading}>
-                                {/* FIXME: use strings */}
-                                Framework questions
+                                {framework
+                                    ? `${framework.title} › Questions`
+                                    : 'Framework > Questions'}
                             </h2>
                         </>
                     )}
@@ -165,17 +228,27 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                     sidebar={(
                         <>
                             <header className={styles.header}>
-                                <h3 className={styles.heading}>
-                                    {/* FIXME: use strings */}
-                                    Analysis framework
+                                <h3>
+                                    Filter
                                 </h3>
+                                <h4>
+                                    Matrices
+                                </h4>
+                                <TreeInput
+                                    keySelector={treeItemKeySelector}
+                                    parentKeySelector={treeItemParentKeySelector}
+                                    labelSelector={treeItemLabelSelector}
+                                    onChange={this.handleTreeInputChange}
+                                    value={treeFilter}
+                                    options={this.getFrameworkMatrices(framework)}
+                                    defaultCollapseLevel={0}
+                                />
                             </header>
                         </>
                     )}
                     mainContentClassName={styles.main}
                     mainContent={(
                         <>
-                            { pending && <LoadingAnimation /> }
                             <div className={_cs(styles.questionList, className)}>
                                 <header className={styles.header}>
                                     <h3 className={styles.heading}>
@@ -194,10 +267,16 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                 </header>
                                 <ListView
                                     className={styles.content}
-                                    data={framework.questions}
+                                    data={
+                                        this.getFilteredQuestions(
+                                            framework.questions,
+                                            treeFilter,
+                                        )
+                                    }
                                     keySelector={questionKeySelector}
                                     renderer={Question}
                                     rendererParams={this.getQuestionRendererParams}
+                                    filtered={treeFilter.length > 0}
                                 />
                                 {showQuestionModal && (
                                     <QuestionModalForFramework

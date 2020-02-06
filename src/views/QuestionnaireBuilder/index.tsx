@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 import {
     _cs,
     reverseRoute,
@@ -8,16 +9,21 @@ import {
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import ListView from '#rscv/List/ListView';
+import ListView from '#rsu/../v2/View/ListView';
 import ProgressBar from '#rsu/../v2/View/ProgressBar';
+import TreeInput from '#rsu/../v2/Input/TreeInput';
 
 import Page from '#rscv/Page';
 
 import {
     QuestionnaireElement,
+    FrameworkQuestionElement,
     QuestionnaireQuestionElement,
+    BaseQuestionElement,
+
     MiniFrameworkElement,
     ProjectElement,
 
@@ -38,6 +44,15 @@ import {
     projectDetailsSelector,
 } from '#redux';
 
+import {
+    getFrameworkMatrices,
+    getFilteredQuestions,
+
+    treeItemKeySelector,
+    treeItemLabelSelector,
+    treeItemParentKeySelector,
+} from '#entities/questionnaire';
+
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 
@@ -47,15 +62,13 @@ import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
 import styles from './styles.scss';
 
-/*
-interface FrameworkQuestionElement {
-    onCopyButtonClick?: (id: QuestionnaireQuestionElement['id']) => void;
-    onEditButtonClick?: (id: QuestionnaireQuestionElement['id']) => void;
+interface FrameworkQuestionProps {
+    onCopyButtonClick?: (id: BaseQuestionElement['id']) => void;
+    onEditButtonClick?: (id: BaseQuestionElement['id']) => void;
     className?: string;
-    data: QuestionnaireQuestionElement;
+    data: BaseQuestionElement;
     framework: MiniFrameworkElement;
 }
-*/
 
 interface ComponentProps {
     className?: string;
@@ -68,6 +81,7 @@ interface State {
     questionnaire?: QuestionnaireElement;
     // FIXME: use this everywhere
     framework?: MiniFrameworkElement;
+    treeFilter: string[];
 }
 
 interface PropsFromAppState {
@@ -122,10 +136,9 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
 
 type Props = AddRequestProps<ComponentPropsWithAppState, Params>;
 
-const questionKeySelector = (q: QuestionnaireQuestionElement) => q.id;
+const questionKeySelector = (q: BaseQuestionElement) => q.id;
 
-/*
-const FrameworkQuestion = (p: FrameworkQuestionElement) => {
+const FrameworkQuestion = (p: FrameworkQuestionProps) => {
     const {
         onCopyButtonClick,
         className,
@@ -148,7 +161,6 @@ const FrameworkQuestion = (p: FrameworkQuestionElement) => {
         </div>
     );
 };
-*/
 
 class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
@@ -158,6 +170,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionToEdit: undefined,
             questionnaire: undefined,
             framework: undefined,
+            treeFilter: [],
         };
         this.props.requests.questionnaireGetRequest.setDefaultParams({
             setQuestionnaire: (questionnaire: QuestionnaireElement) => {
@@ -181,22 +194,24 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         };
     }
 
-    /*
     private getFrameworkQuestionRendererParams = (
-        key: QuestionnaireQuestionElement['id'],
-        question: QuestionnaireQuestionElement,
+        key: FrameworkQuestionElement['id'],
+        question: FrameworkQuestionElement,
     ) => {
-        const { questionnaire } = this.state;
+        const { framework } = this.state;
 
         return {
             data: question,
-            framework: questionnaire ? questionnaire.projectFrameworkDetail : undefined,
+            framework: framework as MiniFrameworkElement,
             className: styles.frameworkQuestion,
             hideDetails: true,
             readOnly: true,
         };
     }
-    */
+
+    private getFrameworkMatrices = memoize(getFrameworkMatrices)
+
+    private getFilteredQuestions = memoize(getFilteredQuestions)
 
     private handleAddQuestionButtonClick = () => {
         this.setState({
@@ -241,6 +256,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         requests.questionnaireGetRequest.do();
     }
 
+    private handleTreeInputChange = (value: string[]) => {
+        this.setState({ treeFilter: value });
+    }
+
     public render() {
         const {
             className,
@@ -260,6 +279,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionToEdit,
             questionnaire,
             framework,
+            treeFilter,
         } = this.state;
 
         if (questionnaireGetPending || frameworkGetPending) {
@@ -341,28 +361,41 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     { framework ? framework.title : '-' }
                                 </div>
                             </div>
-                            {/* questionnaire.projectFrameworkDetail && (
+                            {framework && (
                                 <div className={styles.content}>
+                                    <h3>
+                                        Add from Framework
+                                    </h3>
                                     <h4>
-                                        Matrix 2D
+                                        Matrices
                                     </h4>
-                                    <TreeSelection
-                                        value={createReportStructure(
-                                            questionnaire.projectFrameworkDetail,
-                                        )}
+                                    <TreeInput
+                                        keySelector={treeItemKeySelector}
+                                        parentKeySelector={treeItemParentKeySelector}
+                                        labelSelector={treeItemLabelSelector}
+                                        onChange={this.handleTreeInputChange}
+                                        value={treeFilter}
+                                        options={this.getFrameworkMatrices(framework)}
+                                        defaultCollapseLevel={0}
                                     />
                                     <h4>
-                                        Questions from Framework
+                                        Questions
                                     </h4>
                                     <ListView
                                         className={styles.frameworkQuestionList}
                                         rendererParams={this.getFrameworkQuestionRendererParams}
                                         renderer={FrameworkQuestion}
-                                        data={questionnaire.projectFrameworkDetail.questions}
+                                        data={
+                                            this.getFilteredQuestions(
+                                                framework.questions,
+                                                treeFilter,
+                                            )
+                                        }
                                         keySelector={questionKeySelector}
+                                        filtered={treeFilter.length > 0}
                                     />
                                 </div>
-                            ) */}
+                            )}
                         </>
                     )}
                     mainContentClassName={styles.main}
