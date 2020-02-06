@@ -295,10 +295,10 @@ export default class Navbar extends React.PureComponent {
                     </span>
                 </Link>
 
-                <Cloak
-                    {...projectSelectInputLink}
-                    render={
-                        <div className={styles.projectSelectInputWrapper}>
+                <div className={styles.projectSelectInputWrapper}>
+                    <Cloak
+                        {...projectSelectInputLink}
+                        render={
                             <SelectInput
                                 hideClearButton
                                 keySelector={Navbar.projectKeySelector}
@@ -312,9 +312,9 @@ export default class Navbar extends React.PureComponent {
                                 className={styles.projectSelectInput}
                                 value={activeProject}
                             />
-                        </div>
-                    }
-                />
+                        }
+                    />
+                </div>
 
                 <NavMenu
                     links={this.validNavLinks}
