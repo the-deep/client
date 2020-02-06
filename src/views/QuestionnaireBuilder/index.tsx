@@ -5,8 +5,6 @@ import { produce } from 'immer';
 import {
     _cs,
     reverseRoute,
-    isDefined,
-    sum,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -14,11 +12,11 @@ import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
-import TreeInput from '#rsu/../v2/Input/TreeInput';
 import ListView from '#rsu/../v2/View/ListView';
-import ProgressBar from '#rsu/../v2/View/ProgressBar';
+import TreeInput from '#rsu/../v2/Input/TreeInput';
+
+import Page from '#rscv/Page';
 
 import {
     QuestionnaireElement,
@@ -58,10 +56,10 @@ import {
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 
-import MetaOutput from '#qbc/MetaOutput';
 import Question from '#qbc/Question';
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
+import Diagnostics from './Diagnostics';
 import styles from './styles.scss';
 
 const questionKeySelector = (q: BaseQuestionElement) => q.id;
@@ -558,9 +556,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         if (questionnaireGetPending || frameworkGetPending) {
             return (
-                <div
-                    className={_cs(styles.questionnaireBuilder, className)}
-                >
+                <div className={_cs(styles.questionnaireBuilder, className)} >
                     <LoadingAnimation />
                 </div>
             );
@@ -568,9 +564,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         if (!questionnaire) {
             return (
-                <div
-                    className={_cs(styles.questionnaireBuilder, className)}
-                >
+                <div className={_cs(styles.questionnaireBuilder, className)} >
                     <Message>
                         {/* FIXME: use strings */}
                         Could not get questionnaire!
@@ -588,17 +582,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             enumeratorSkillDisplay,
             requiredDuration,
         } = questionnaire;
-
-        const selectedQuestions = questions.filter(question => !question.isArchived);
-
-        const totalQuestions = selectedQuestions.length;
-
-        const totalTimeRequired = sum(
-            selectedQuestions
-                .map(question => question.requiredDuration)
-                .filter(isDefined),
-        );
-        const percent = Math.round(100 * (totalTimeRequired / requiredDuration));
 
         return (
             <>
@@ -691,67 +674,16 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 views={this.views}
                                 useHash
                             />
-                            <div className={styles.rightPanel}>
-                                {showLoadingOverlay && <LoadingAnimation />}
-                                <header className={styles.header}>
-                                    <h3 className={styles.heading}>
-                                        {title}
-                                    </h3>
-                                </header>
-                                <div className={styles.content}>
-                                    <div>
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Crisis type"
-                                            value={
-                                                crisisTypeDetail
-                                                    ? crisisTypeDetail.title
-                                                    : undefined
-                                            }
-                                        />
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Data collection technique"
-                                            value={dataCollectionTechniqueDisplay}
-                                        />
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Enumerator skill"
-                                            value={enumeratorSkillDisplay}
-                                        />
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Required duration"
-                                            value={
-                                                requiredDuration
-                                                    ? `${requiredDuration} min`
-                                                    : undefined
-                                            }
-                                        />
-                                    </div>
-                                    {/* FIXME: use strings */}
-                                    <h4>
-                                        Questions
-                                    </h4>
-                                    <div>
-                                        <div>Selected</div>
-                                        <div>{totalQuestions}</div>
-                                        <div>Time Required</div>
-                                        <div>{`${totalTimeRequired} min`}</div>
-                                    </div>
-                                    <h4>
-                                        Questionnaire
-                                    </h4>
-                                    <div>
-                                        <div>Theoretic Time</div>
-                                        <div>{`${requiredDuration} min`}</div>
-                                    </div>
-                                    <ProgressBar progress={percent} />
-                                    <div>
-                                        {`Your questionnaire is currently using ${percent}% of the time you determined`}
-                                    </div>
-                                </div>
-                            </div>
+                            <Diagnostics
+                                className={styles.rightPanel}
+                                crisisTypeDetail={crisisTypeDetail}
+                                dataCollectionTechniqueDisplay={dataCollectionTechniqueDisplay}
+                                enumeratorSkillDisplay={enumeratorSkillDisplay}
+                                questions={questions}
+                                requiredDuration={requiredDuration}
+                                showLoadingOverlay={showLoadingOverlay}
+                                title={title}
+                            />
                         </>
                     )}
                 />
