@@ -32,6 +32,7 @@ import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 import MetaOutput from '../MetaOutput';
 import FrameworkAttributeOutput from './FrameworkAttributeOutput';
 import ResponseOutput from './ResponseOutput';
+
 import styles from './styles.scss';
 
 const iconMap: {
@@ -139,11 +140,7 @@ class Question extends React.PureComponent<Props> {
                                     <MetaOutput
                                         // FIXME: use strings
                                         label="Required duration"
-                                        value={
-                                            requiredDuration
-                                                ? `${requiredDuration} min`
-                                                : undefined
-                                        }
+                                        value={requiredDuration ? `${requiredDuration} min` : undefined}
                                     />
                                     <MetaOutput
                                         // FIXME: use strings

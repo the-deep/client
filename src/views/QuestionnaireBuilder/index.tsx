@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import { produce } from 'immer';
 import {
     _cs,
     reverseRoute,
@@ -165,6 +166,13 @@ const FrameworkQuestion = (p: FrameworkQuestionProps) => {
 class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
+        const {
+            requests: {
+                questionnaireGetRequest,
+                frameworkGetRequest,
+            },
+        } = this.props;
+
         this.state = {
             showQuestionFormModal: false,
             questionToEdit: undefined,
@@ -172,12 +180,13 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             framework: undefined,
             treeFilter: [],
         };
-        this.props.requests.questionnaireGetRequest.setDefaultParams({
+
+        questionnaireGetRequest.setDefaultParams({
             setQuestionnaire: (questionnaire: QuestionnaireElement) => {
                 this.setState({ questionnaire });
             },
         });
-        this.props.requests.frameworkGetRequest.setDefaultParams({
+        frameworkGetRequest.setDefaultParams({
             setFramework: (framework: MiniFrameworkElement) => {
                 this.setState({ framework });
             },
@@ -186,6 +195,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
     private getQuestionRendererParams = (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => {
         const { framework } = this.state;
+
         return {
             data: question,
             onEditButtonClick: this.handleEditQuestionButtonClick,
@@ -246,14 +256,27 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleQuestionFormRequestSuccess = () => {
+    private handleQuestionFormRequestSuccess = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+        const { id: questionId } = question;
+
+        const newQuestionnaire = produce(questionnaire,
+            (safeQuestionnaire: QuestionnaireElement) => {
+                const { questions } = safeQuestionnaire;
+                const selectedIndex = questions.findIndex(e => e.id === questionId);
+                if (selectedIndex === -1) {
+                    safeQuestionnaire.questions.push(question);
+                } else {
+                    // eslint-disable-next-line no-param-reassign
+                    safeQuestionnaire.questions[selectedIndex] = question;
+                }
+            });
+
         this.setState({
+            questionnaire: newQuestionnaire,
             showQuestionFormModal: false,
             questionToEdit: undefined,
         });
-
-        const { requests } = this.props;
-        requests.questionnaireGetRequest.do();
     }
 
     private handleTreeInputChange = (value: string[]) => {
@@ -306,6 +329,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         }
 
         const {
+            id: questionnaireId,
             title,
             questions,
             crisisTypeDetail,
@@ -476,9 +500,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                         <div>Theoretic Time</div>
                                         <div>{`${requiredDuration} min`}</div>
                                     </div>
-                                    <ProgressBar
-                                        progress={percent}
-                                    />
+                                    <ProgressBar progress={percent} />
                                     <div>
                                         {`Your questionnaire is currently using ${percent}% of the time you determined`}
                                     </div>
@@ -491,6 +513,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     <QuestionModalForQuestionnaire
                         value={questionToEdit}
                         questionnaire={questionnaire}
+                        questionnaireId={questionnaireId}
                         onRequestSuccess={this.handleQuestionFormRequestSuccess}
                         closeModal={this.handleCloseQuestionFormModalButtonClick}
                         framework={framework}

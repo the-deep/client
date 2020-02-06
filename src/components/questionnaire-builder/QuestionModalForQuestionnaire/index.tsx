@@ -20,32 +20,30 @@ type FaramValues = unknown;
 
 interface ComponentProps {
     className?: string;
+    questionnaireId?: number;
     value?: QuestionnaireQuestionElement;
     framework?: MiniFrameworkElement;
     questionnaire: QuestionnaireElement;
-    onRequestSuccess: (q: QuestionnaireQuestionElement[]) => void;
+    onRequestSuccess: (q: QuestionnaireQuestionElement) => void;
     closeModal: () => void;
 }
 
 interface Params {
-    questionnaireId: number | undefined;
-    body: {
-        questions: QuestionnaireQuestionElement[];
-    };
+    body: QuestionnaireQuestionElement;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
 
 const requestOptions: Requests<ComponentProps, Params> = {
-    questionnairePatchRequest: {
-        url: ({ params }) => {
-            if (!params || !params.questionnaireId) {
-                return '';
+    questionRequest: {
+        url: ({ props: { value, questionnaireId } }) => {
+            if (!value || !value.id) {
+                return `/questionnaires/${questionnaireId}/questions/`;
             }
 
-            return `/questionnaires/${params.questionnaireId}/`;
+            return `/questionnaires/${questionnaireId}/questions/${value.id}/`;
         },
-        method: methods.PATCH,
+        method: ({ props: { value } }) => ((value && value.id) ? methods.PATCH : methods.POST),
         body: ({ params }) => {
             if (!params || !params.body) {
                 return {};
@@ -57,7 +55,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props,
             response,
         }) => {
-            props.onRequestSuccess((response as QuestionnaireElement).questions);
+            props.onRequestSuccess(response as QuestionnaireQuestionElement);
         },
     },
 };
@@ -65,36 +63,21 @@ const requestOptions: Requests<ComponentProps, Params> = {
 class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
     private handleFaramValidationSuccess = (faramValues: FaramValues) => {
         const {
-            questionnaire,
-            requests: {
-                questionnairePatchRequest,
-            },
             value,
+            requests: { questionRequest },
+            questionnaireId,
         } = this.props;
 
-        const questions = [
-            ...questionnaire.questions,
-        ];
         if (value && value.id) {
-            const currentQuestionIndex = questions.findIndex(d => d.id === value.id);
-
-            if (currentQuestionIndex !== -1) {
-                questions.splice(currentQuestionIndex, 1);
-            }
+            questionRequest.do({ body: faramValues });
+        } else {
+            questionRequest.do({
+                body: {
+                    ...faramValues,
+                    questionnaire: questionnaireId,
+                },
+            });
         }
-        questions.push({
-            ...value,
-            ...(faramValues as QuestionnaireQuestionElement),
-        });
-
-        const patchBody = {
-            questions,
-        };
-
-        questionnairePatchRequest.do({
-            questionnaireId: questionnaire.id,
-            body: patchBody,
-        });
     }
 
     render() {
@@ -106,7 +89,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
             framework,
         } = this.props;
 
-        const pending = getPending(requests, 'questionnairePatchRequest');
+        const pending = getPending(requests, 'questionRequest');
 
         return (
             <QuestionModal
