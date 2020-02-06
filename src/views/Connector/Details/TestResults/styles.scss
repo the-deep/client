@@ -2,14 +2,6 @@
     width: var(--width-connector-test-modal);
     height: var(--height-connector-test-modal);
 
-    .header {
-        :global {
-            .modal-header {
-                text-transform: capitalize;
-            }
-        }
-    }
-
     .modal-body {
         display: flex;
         flex-direction: column;

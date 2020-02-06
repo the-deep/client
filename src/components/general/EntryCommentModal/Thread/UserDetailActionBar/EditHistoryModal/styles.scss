@@ -2,10 +2,6 @@
     z-index: 10;
     width: var(--entry-comment-modal-width);
 
-    .heading {
-        text-transform: capitalize;
-    }
-
     .modal-body {
         max-height: var(--entry-comment-max-height-comment-history);
         overflow-y: auto;

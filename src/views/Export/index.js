@@ -23,6 +23,12 @@ import {
     RequestCoordinator,
     RequestClient,
 } from '#request';
+
+import {
+    SECTOR_FIRST,
+    createReportStructure as createReportStructureFromUtils,
+} from '#utils/framework';
+
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
 import _ts from '#ts';
 
@@ -72,11 +78,6 @@ const defaultProps = {
     entryFilterOptions: {},
 };
 
-const emptyObject = {};
-
-const SECTOR_FIRST = 'sectorFirst';
-const DIMENSION_FIRST = 'dimensionFirst';
-
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -86,36 +87,6 @@ export default class Export extends React.PureComponent {
 
     static exportButtonKeyExtractor = d => d.key;
     static leadKeyExtractor = d => d.id
-
-    // NOTE: This function generates dimension first level
-    static transformMatrix2dLevels = ({
-        sectors: widgetSec,
-        dimensions: widgetDim,
-    } = {}) => {
-        const dimensionFirstLevels = widgetDim.map((d) => {
-            const subDims = d.subdimensions;
-
-            const sublevels = subDims.map((sd) => {
-                const sectors = widgetSec.map(s => ({
-                    id: `${s.id}-${d.id}-${sd.id}`,
-                    title: s.title,
-                }));
-                return ({
-                    id: `${d.id}-${sd.id}`,
-                    title: sd.title,
-                    sublevels: sectors,
-                });
-            });
-
-            return ({
-                id: d.id,
-                title: d.title,
-                sublevels,
-            });
-        });
-
-        return dimensionFirstLevels;
-    }
 
     constructor(props) {
         super(props);
@@ -210,7 +181,7 @@ export default class Export extends React.PureComponent {
                 } = conditional;
 
                 return widgetsInsideConditional
-                    .filter(w => (w.widget || emptyObject).widgetId === 'textWidget')
+                    .filter(w => w.widget && w.widget.widgetId === 'textWidget')
                     .map(({ widget }) => (
                         {
                             id: widget.key,
@@ -298,58 +269,7 @@ export default class Export extends React.PureComponent {
         });
     }
 
-    createReportStructure = memoize((analysisFramework, reportStructureVariant) => {
-        if (!analysisFramework) {
-            return undefined;
-        }
-
-        const { exportables, widgets } = analysisFramework;
-        if (!exportables || !widgets) {
-            return undefined;
-        }
-
-        const nodes = [];
-        exportables.forEach((exportable) => {
-            const levels = exportable.data && exportable.data.report &&
-                exportable.data.report.levels;
-            const widget = widgets.find(w => w.key === exportable.widgetKey);
-
-            if (!levels || !widget) {
-                return;
-            }
-
-            if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
-                if (!widget.properties) {
-                    return;
-                }
-                const newLevels = Export.transformMatrix2dLevels(widget.properties.data);
-                nodes.push({
-                    title: widget.title,
-                    key: String(exportable.id),
-                    selected: true,
-                    draggable: true,
-                    nodes: ExportTypePane.mapReportLevelsToNodes(newLevels),
-                });
-            } else {
-                nodes.push({
-                    title: widget.title,
-                    key: String(exportable.id),
-                    selected: true,
-                    draggable: true,
-                    nodes: ExportTypePane.mapReportLevelsToNodes(levels),
-                });
-            }
-        });
-
-        nodes.push({
-            title: _ts('export', 'uncategorizedTitle'),
-            key: 'uncategorized',
-            selected: true,
-            draggable: true,
-        });
-
-        return nodes;
-    })
+    createReportStructure = memoize(createReportStructureFromUtils)
 
     handleReportStructureChange = (value) => {
         this.setState({ reportStructure: value });

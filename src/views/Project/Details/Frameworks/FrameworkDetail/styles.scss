@@ -1,11 +1,10 @@
-@import '~base-scss/utils';
-
 .framework-details {
     display: flex;
     flex-direction: column;
 
     // required to fix overflow of preview
     // No idea why this works though
+    // TODO: Inspect and remove this
     width: 1px;
 
     .header {
@@ -51,12 +50,15 @@
                     flex-shrink: 0;
                     padding: var(--spacing-small) var(--spacing-medium);
 
-                    button {
+                    .button {
                         margin-left: var(--spacing-small);
                     }
 
                     .edit-framework-link {
-                        @include button-like-link(var(--color-warning));
+                        margin-left: var(--spacing-small);
+                    }
+
+                    .edit-questions-link {
                         margin-left: var(--spacing-small);
                     }
                 }
@@ -76,5 +78,6 @@
 
     .preview {
         flex-grow: 1;
+        overflow: auto;
     }
 }

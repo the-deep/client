@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import Overview from './Overview';
 import List from './List';
+// import QuestionList from './QuestionList';
+
 import styles from './styles.scss';
 
 
@@ -22,7 +23,6 @@ const defaultProps = {
     framework: undefined,
 };
 
-const emptyObject = {};
 
 export default class ProjectAfDetail extends React.PureComponent {
     static propTypes = propTypes;
@@ -33,6 +33,9 @@ export default class ProjectAfDetail extends React.PureComponent {
 
         const rendererParams = () => ({
             framework: this.props.framework,
+            className: styles.view,
+            readOnly: true,
+            // hideDetails: true,
         });
 
         this.views = {
@@ -45,6 +48,13 @@ export default class ProjectAfDetail extends React.PureComponent {
                 component: List,
                 rendererParams,
             },
+
+            /*
+            questions: {
+                component: QuestionList,
+                rendererParams,
+            },
+            */
         };
     }
 
@@ -55,6 +65,7 @@ export default class ProjectAfDetail extends React.PureComponent {
             activeView,
         } = this.props;
 
+        // FIXME: only show loading animation if it is actually loading
         if (!framework) {
             return <LoadingAnimation />;
         }
@@ -66,17 +77,10 @@ export default class ProjectAfDetail extends React.PureComponent {
 
         return (
             <div className={className}>
-                <Faram
-                    readOnly
-                    schema={emptyObject}
-                    value={emptyObject}
-                    error={emptyObject}
-                >
-                    <MultiViewContainer
-                        views={this.views}
-                        active={activeView}
-                    />
-                </Faram>
+                <MultiViewContainer
+                    views={this.views}
+                    active={activeView}
+                />
             </div>
         );
     }

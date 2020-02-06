@@ -229,6 +229,7 @@ export default class FieldEditModal extends React.PureComponent {
                     <NumberInput
                         faramElementName="adminLevel"
                         label={_ts('tabular.fieldEditModal', 'adminLevelTitle')} // Admin Level
+                        separator=" "
                     />
                 </React.Fragment>
             );

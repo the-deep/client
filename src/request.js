@@ -62,6 +62,8 @@ const coordinatorOptions = {
 
         // NOTE: This is a hack to bypass auth for S3 requests
         // Need to fix this through use of new react-rest-request@2
+        // FIXME: react-rest-request@2 has been used
+        // need to fix this using extras
         const doNotAuth = body && body.$noAuth;
 
         const {
@@ -138,3 +140,39 @@ export const RequestCoordinator = compose(
 );
 
 export const RequestClient = createRequestClient;
+
+export const getResponse = (requests, key, defaultValue = {}) => {
+    const { response = defaultValue } = (requests || {})[key];
+    return response;
+};
+
+export const getResults = (requests, key, defaultValue = []) => {
+    const {
+        response: {
+            results = defaultValue,
+        } = {},
+    } = (requests || {})[key];
+
+    return results;
+};
+
+export const getPending = (requests, key) => {
+    const {
+        pending,
+    } = (requests || {})[key];
+
+    return pending;
+};
+
+export const isAnyRequestPending = (requests) => {
+    if (!requests) {
+        return undefined;
+    }
+
+    const requestKeys = Object.keys(requests);
+    const pending = requestKeys.some(
+        requestKey => requests[requestKey].pending,
+    );
+
+    return pending;
+};

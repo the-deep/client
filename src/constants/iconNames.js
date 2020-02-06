@@ -71,6 +71,7 @@ const iconNames = {
     map: 'ion-android-map',
     minusOutline: 'ion-ios-minus-outline',
     more: 'ion-more',
+    moreVertical: 'ion-android-more-vertical',
     msword: 'fa fa-file-word-o',
     next: 'ion-chevron-right',
     noSearch: 'fa fa-search-minus',

@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
 import {
     RequestCoordinator,
@@ -22,6 +25,7 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
+import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import Badge from '#components/viewer/Badge';
 
@@ -114,6 +118,10 @@ export default class ProjectPanel extends React.PureComponent {
     static shouldHideProjectDeleteButton = ({ setupPermissions }) => !setupPermissions.delete;
     static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
 
+    getProjectQuestionnaireLink = memoize(projectId => (
+        reverseRoute(pathNames.projectQuestionnaires, { projectId })
+    ))
+
     handleProjectDelete = () => {
         const {
             requests: {
@@ -135,6 +143,7 @@ export default class ProjectPanel extends React.PureComponent {
                 title,
                 isPrivate,
             },
+            projectId,
         } = this.props;
 
         return (
@@ -154,10 +163,18 @@ export default class ProjectPanel extends React.PureComponent {
                         />
                     }
                 </div>
-                <Cloak
-                    hide={ProjectPanel.shouldHideProjectDeleteButton}
-                    render={
-                        <div className={styles.actionButtons}>
+                <div className={styles.actionButtons}>
+                    <ButtonLikeLink
+                        type="accent"
+                        to={this.getProjectQuestionnaireLink(projectId)}
+                        className={styles.button}
+                    >
+                        {/* FIXME: use strings */}
+                        Manage questionnaires
+                    </ButtonLikeLink>
+                    <Cloak
+                        hide={ProjectPanel.shouldHideProjectDeleteButton}
+                        render={
                             <DangerConfirmButton
                                 iconName="delete"
                                 onClick={this.handleProjectDelete}
@@ -168,13 +185,13 @@ export default class ProjectPanel extends React.PureComponent {
                                 challengeLabel={_ts('project', 'deleteConfirmLabel')}
                                 challengePlaceholder={_ts('project', 'deleteConfirmPlaceholder')}
                                 challengeValue={title}
-                                className={styles.deleteButton}
+                                className={styles.button}
                             >
                                 {_ts('project', 'deleteButtonTitle')}
                             </DangerConfirmButton>
-                        </div>
-                    }
-                />
+                        }
+                    />
+                </div>
             </div>
         );
     }

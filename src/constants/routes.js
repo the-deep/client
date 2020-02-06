@@ -3,7 +3,10 @@ import {
     mapObjectToArray,
 } from '#utils/common';
 
-import { allLinks, noLinks } from './linksAcl';
+import {
+    allLinks,
+    noLinks,
+} from './linksAcl';
 
 export const ROUTE = {
     exclusivelyPublic: 'exclusively-public',
@@ -58,7 +61,7 @@ export const routes = {
     discoverProjects: {
         order: 13,
         type: ROUTE.private,
-        path: '/discover/projects/',
+        path: '/discover-projects/',
         loader: () => import('../views/DiscoverProjects'),
         links: allLinks,
     }, //  _ts('pageTitle', 'discoverProjects');
@@ -72,6 +75,14 @@ export const routes = {
         links: allLinks,
     }, //  _ts('pageTitle', 'discoverUserGroups');
     */
+
+    projectQuestionnaires: {
+        order: 18,
+        type: ROUTE.private,
+        path: '/projects/:projectId/questionnaires/',
+        loader: () => import('../views/Questionnaires'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'projectQuestionnare');
 
     projects: {
         order: 20,
@@ -112,10 +123,11 @@ export const routes = {
         loader: () => import('../views/LeadsViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'leadsViz');
+
     clusterViz: {
         order: 34,
         type: ROUTE.private,
-        path: '/projects/:projectId/clusterviz',
+        path: '/projects/:projectId/clusterviz/',
         loader: () => import('../views/ClusterViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'clusterViz');
@@ -155,7 +167,7 @@ export const routes = {
     editEntries: {
         order: 41,
         type: ROUTE.private,
-        path: '/projects/:projectId/leads/:leadId/edit-entries/',
+        path: '/projects/:projectId/leads/:leadId/entries/edit/',
         loader: () => import('../views/EditEntries'),
         links: allLinks,
     }, // _ts('pageTitle', 'editEntries');
@@ -179,14 +191,15 @@ export const routes = {
     editAry: {
         order: 51,
         type: ROUTE.private,
-        path: '/projects/:projectId/leads/:leadId/edit-ary/',
+        path: '/projects/:projectId/leads/:leadId/ary/edit/',
         loader: () => import('../views/EditAry'),
         links: allLinks,
     }, // _ts('pageTitle', 'editAry');
+
     editLeadGroupAssessment: {
         order: 51,
         type: ROUTE.private,
-        path: '/projects/:projectId/lead-group/:leadGroupId/edit-ary/',
+        path: '/projects/:projectId/lead-groups/:leadGroupId/ary/edit/',
         loader: () => import('../views/EditAry'),
         links: allLinks,
     }, // _ts('pageTitle', 'editLeadGroupAssessment');
@@ -194,7 +207,7 @@ export const routes = {
     export: {
         order: 60,
         type: ROUTE.private,
-        path: '/projects/:projectId/export/',
+        path: '/projects/:projectId/exports/create/',
         loader: () => import('../views/Export'),
         links: allLinks,
     }, // _ts('pageTitle', 'export');
@@ -231,6 +244,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'userGroup');
 
+    frameworkQuestions: {
+        order: 99,
+        type: ROUTE.private,
+        path: '/frameworks/:analysisFrameworkId/questions/',
+        loader: () => import('../views/FrameworkQuestions'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'projectQuestionnare');
+
     analysisFramework: {
         order: 100,
         type: ROUTE.private,
@@ -242,7 +263,7 @@ export const routes = {
     categoryEditor: {
         order: 110,
         type: ROUTE.private,
-        path: '/category-editors/:categoryEditorId/',
+        path: '/category-editors/:categoryEditorId/edit/',
         loader: () => import('../views/CategoryEditor'),
         links: allLinks,
     }, // _ts('pageTitle', 'categoryEditor');
@@ -286,6 +307,16 @@ export const routes = {
         loader: () => import('../views/Visualization'),
         links: allLinks,
     }, // _ts('pageTitle', 'visualization');
+
+    questionnaireBuilder: {
+        order: 180,
+        type: ROUTE.private,
+
+        path: '/projects/:projectId/questionnaires/:questionnaireId/edit/',
+        loader: () => import('../views/QuestionnaireBuilder'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'questionnaireBuilder');
+
 
     projectDenied: {
         order: 970,

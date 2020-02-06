@@ -24,6 +24,10 @@
         .action-buttons {
             flex-shrink: 0;
             padding-left: var(--spacing-medium);
+
+            .button {
+                margin-left: var(--spacing-small);
+            }
         }
     }
 

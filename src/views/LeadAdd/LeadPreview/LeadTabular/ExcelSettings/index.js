@@ -53,6 +53,7 @@ export default class ExcelSettings extends React.PureComponent {
                             label={_ts('addLeads.tabular', 'headerRowLabel')}
                             placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
                             disabled={sheet.noHeaders || sheet.skip || disabled}
+                            separator=" "
                         />
                         <div className={styles.rightContent}>
                             <Checkbox

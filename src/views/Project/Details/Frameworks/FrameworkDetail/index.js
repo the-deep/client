@@ -1,17 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { reverseRoute } from '@togglecorp/fujs';
 
-import {
-    reverseRoute,
-} from '@togglecorp/fujs';
+import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
-import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import Badge from '#components/viewer/Badge';
 
@@ -36,8 +34,8 @@ import EditFrameworkModal from './EditFrameworkModal';
 
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
 const AccentModalButton = modalize(AccentButton);
-const WarningModalButton = modalize(WarningButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -82,6 +80,7 @@ const requestOptions = {
                 'title',
                 'description',
                 'widgets',
+                // 'questions',
                 'members',
                 'role',
                 'is_private',
@@ -113,6 +112,7 @@ export default class FrameworkDetail extends React.PureComponent {
         super(props);
         this.state = {
             activeView: 'overview',
+            // activeView: 'questions',
             editFrameworkDetails: {
                 title: '',
                 description: '',
@@ -122,6 +122,10 @@ export default class FrameworkDetail extends React.PureComponent {
         this.tabs = {
             overview: _ts('project.framework', 'entryOverviewTitle'),
             list: _ts('project.framework', 'entryListTitle'),
+
+            // TODO: entryQuestionTitle --> entryQuestionsTitle
+            // *Question__s
+            // questions: _ts('project.framework', 'entryQuestionTitle'),
         };
 
         this.props.setDefaultRequestParams({
@@ -223,17 +227,8 @@ export default class FrameworkDetail extends React.PureComponent {
                             active={activeView}
                         />
                         <div className={styles.actionButtons}>
-                            {(canUse && !readOnly) &&
-                                <UseFrameworkButton
-                                    disabled={pending}
-                                    frameworkId={analysisFrameworkId}
-                                    frameworkTitle={frameworkTitle}
-                                    projectId={projectId}
-                                    setProjectFramework={setProjectFramework}
-                                />
-                            }
                             {canEditFramework &&
-                                <WarningModalButton
+                                <ModalButton
                                     disabled={pending}
                                     modal={
                                         <EditFrameworkModal
@@ -246,10 +241,10 @@ export default class FrameworkDetail extends React.PureComponent {
                                     }
                                 >
                                     { _ts('project.framework', 'editFrameworkButtonTitle') }
-                                </WarningModalButton>
+                                </ModalButton>
                             }
                             {canEditFramework &&
-                                <Link
+                                <ButtonLikeLink
                                     className={styles.editFrameworkLink}
                                     to={reverseRoute(
                                         pathNames.analysisFramework,
@@ -257,10 +252,31 @@ export default class FrameworkDetail extends React.PureComponent {
                                     )}
                                 >
                                     { _ts('project.framework', 'editWidgetsButtonTitle') }
-                                </Link>
+                                </ButtonLikeLink>
+                            }
+                            {/* FIXME: show only if user has permission */}
+                            <ButtonLikeLink
+                                className={styles.editQuestionsLink}
+                                to={reverseRoute(
+                                    pathNames.frameworkQuestions,
+                                    { analysisFrameworkId },
+                                )}
+                            >
+                                Edit questions
+                            </ButtonLikeLink>
+                            {(canUse && !readOnly) &&
+                                <UseFrameworkButton
+                                    className={styles.button}
+                                    disabled={pending}
+                                    frameworkId={analysisFrameworkId}
+                                    frameworkTitle={frameworkTitle}
+                                    projectId={projectId}
+                                    setProjectFramework={setProjectFramework}
+                                />
                             }
                             {canCloneFramework &&
                                 <AccentModalButton
+                                    className={styles.button}
                                     disabled={pending}
                                     modal={
                                         <AddFrameworkModal

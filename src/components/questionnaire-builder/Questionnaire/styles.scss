@@ -1,0 +1,68 @@
+.questionnaire {
+    margin: var(--spacing-large) auto;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+    width: 100%;
+    // max-width: 640px;
+
+    .header {
+        display: flex;
+        padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+
+        .left {
+            flex-grow: 1;
+
+            .heading {
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+
+            .info {
+                display: flex;
+
+                .questions,
+                .created {
+                    display: flex;
+                    padding: 0 calc(var(--spacing-medium) - var(--spacing-extra-small));
+
+                    .label {
+                        padding: 0 var(--spacing-extra-small);
+                    }
+
+                    .value {
+                        padding: 0 var(--spacing-extra-small);
+                    }
+                }
+            }
+        }
+
+        .right {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            padding: var(--spacing-medium);
+
+            .edit-questionnaire-link {
+                padding: var(--spacing-extra-small) var(--spacing-small);
+                color: var(--color-accent);
+                font-size: var(--font-size-small);
+                font-weight: var(--font-weight-bold);
+            }
+        }
+
+    }
+
+    .content {
+        padding: var(--spacing-medium) calc(var(--spacing-medium) - var(--spacing-small));
+    }
+}
+
+.dropdown-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+
+    &:hover {
+        background-color: var(--color-background-hover);
+    }
+}
+
