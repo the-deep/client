@@ -38,22 +38,28 @@ export interface QuestionElementFrameworkAttribute {
 }
 
 export type QuestionType = 'text'
-    | 'number'
-    | 'dateAndTime'
-    | 'select'
+    | 'integer'
+    | 'decimal'
+    | 'range'
+    | 'select_one'
+    | 'select_multiple'
     | 'rank'
-    | 'location'
+    | 'geopoint'
+    | 'geotrace'
+    | 'geoshape'
+    | 'date'
+    | 'time'
+    | 'dateTime'
+    | 'file'
     | 'image'
     | 'audio'
     | 'video'
-    | 'file'
     | 'barcode'
-    | 'range'
+    | 'calculate'
     | 'note'
-    | 'url'
-    | 'printer'
     | 'acknowledge'
-    | 'signature';
+    | 'hidden';
+
 
 export interface BaseQuestionElement {
     id: number;
@@ -80,6 +86,7 @@ export interface BaseQuestionElement {
     frameworkAttribute?: QuestionElementFrameworkAttribute;
 
     isArchived?: boolean;
+    isRequired?: boolean;
 }
 
 export interface FrameworkQuestionElement extends BaseQuestionElement {

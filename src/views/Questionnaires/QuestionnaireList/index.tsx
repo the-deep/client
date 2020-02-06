@@ -212,6 +212,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             }))
         ));
 
+        // TODO: Order questions
         const { questions } = questionnaire;
 
         const workbook = new Excel.Workbook();
@@ -227,12 +228,16 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         settings.getRow(1).font = { bold: true };
 
         const surveyColumns = [
-            'type', 'name', 'label', // base columns
-            'required', 'constraint', 'constraint_message', 'calculation', 'appearance', // extra columns
+            'type', 'name', 'label', 'hint', 'default', 'read_only',
+            'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
+            'parameters', 'body::accuracyThreshold', 'relevant',
         ];
         const surveyDefaultMeta = ['start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber'];
         const choicesColumns = ['list name', 'name', 'label'];
-        const settingsColumns = ['form_title', 'form_id', 'public_key', 'submission_url', 'default_language', 'version'];
+        const settingsColumns = [
+            'form_title', 'form_id',
+            'public_key', 'submission_url', 'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
+        ];
 
         // Specify columns
         choices.columns = getColumns(choicesColumns);
@@ -258,6 +263,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                     type: question.type,
                     name: question_key,
                     label: question.title,
+                    required: question.isRequired ? 'yes' : '',
                 };
 
                 // Choice types requires choice name in type "type_name choice_key"
