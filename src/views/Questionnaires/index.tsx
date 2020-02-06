@@ -35,6 +35,22 @@ import QuestionnaireList from './QuestionnaireList';
 
 import styles from './styles.scss';
 
+interface QuestionnaireMeta {
+    archivedCount: number;
+    activeCount: number;
+    analysisFramework?: {
+        id: number;
+        title: string;
+    };
+}
+
+type TabElement = 'active' | 'archived';
+
+const tabs: {[key in TabElement]: string} = {
+    active: _ts('project.questionnaire', 'activeTabTitle'),
+    archived: _ts('project.questionnaire', 'archivedTabTitle'),
+};
+
 interface ComponentProps {
     className?: string;
     projectId: number;
@@ -44,11 +60,16 @@ interface ComponentProps {
 interface State {
     currentPageForActiveTab: number;
     currentPageForArchivedTab: number;
+    questionnaireMeta?: QuestionnaireMeta;
 }
 
-type TabElement = 'active' | 'archived';
+const mapStateToProps = (state: AppState) => ({
+    projectDetail: projectDetailsSelector(state),
+    projectId: projectIdFromRouteSelector(state),
+});
 
 interface Params {
+    setQuestionnaireMeta?: (questionnaireMeta: QuestionnaireMeta) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -59,18 +80,14 @@ const requestOptions: Requests<ComponentProps, Params> = {
         onPropsChanged: ['projectId'],
         method: methods.GET,
         onMount: true,
-        // FIXME: write onFailure, onFatal
+        onSuccess: ({ response, params }) => {
+            if (!params || !params.setQuestionnaireMeta) {
+                return;
+            }
+            const questionnaireMeta = response as QuestionnaireMeta;
+            params.setQuestionnaireMeta(questionnaireMeta);
+        },
     },
-};
-
-const mapStateToProps = (state: AppState) => ({
-    projectDetail: projectDetailsSelector(state),
-    projectId: projectIdFromRouteSelector(state),
-});
-
-const tabs: {[key in TabElement]: string} = {
-    active: _ts('project.questionnaire', 'activeTabTitle'),
-    archived: _ts('project.questionnaire', 'archivedTabTitle'),
 };
 
 class Questionnaires extends React.PureComponent<Props, State> {
@@ -81,7 +98,13 @@ class Questionnaires extends React.PureComponent<Props, State> {
         this.state = {
             currentPageForActiveTab: 1,
             currentPageForArchivedTab: 1,
+            questionnaireMeta: undefined,
         };
+        this.props.requests.questionnaireMetaRequest.setDefaultParams({
+            setQuestionnaireMeta: (questionnaireMeta: QuestionnaireMeta) => {
+                this.setState({ questionnaireMeta });
+            },
+        });
     }
 
     private views = {
@@ -119,44 +142,39 @@ class Questionnaires extends React.PureComponent<Props, State> {
         this.setState({ currentPageForArchivedTab: page });
     }
 
+    private tabsModifier = (itemKey: TabElement) => {
+        const { questionnaireMeta } = this.state;
+
+        const counts: {[key in TabElement]: number} = {
+            active: questionnaireMeta ? questionnaireMeta.activeCount : 0,
+            archived: questionnaireMeta ? questionnaireMeta.archivedCount : 0,
+        };
+
+        return (
+            <div className={styles.tab}>
+                <div className={styles.label}>
+                    { tabs[itemKey] }
+                </div>
+                <div className={styles.count}>
+                    { counts[itemKey] }
+                </div>
+            </div>
+        );
+    }
+
     public render() {
         const {
             className,
             projectId,
             projectDetail,
-            requests: {
-                questionnaireMetaRequest: {
-                    response,
-                },
-            },
         } = this.props;
+        const {
+            questionnaireMeta,
+        } = this.state;
 
-        let frameworkName = '-';
-        let counts: {[key in TabElement]: number} | undefined;
-
-        if (response) {
-            const {
-                archivedCount,
-                activeCount,
-                analysisFramework,
-            } = response as {
-                archivedCount: number;
-                activeCount: number;
-                analysisFramework?: {
-                    id: number;
-                    title: string;
-                };
-            };
-
-            if (analysisFramework) {
-                frameworkName = analysisFramework.title;
-            }
-
-            counts = {
-                active: activeCount,
-                archived: archivedCount,
-            };
-        }
+        const frameworkName = questionnaireMeta && questionnaireMeta.analysisFramework
+            ? questionnaireMeta.analysisFramework.title
+            : '-';
 
         return (
             <>
@@ -203,16 +221,7 @@ class Questionnaires extends React.PureComponent<Props, State> {
                                     tabs={tabs}
                                     useHash
                                     replaceHistory
-                                    modifier={(itemKey: TabElement) => (
-                                        <div className={styles.tab}>
-                                            <div className={styles.label}>
-                                                { tabs[itemKey] }
-                                            </div>
-                                            <div className={styles.count}>
-                                                { counts ? counts[itemKey] : '-' }
-                                            </div>
-                                        </div>
-                                    )}
+                                    modifier={this.tabsModifier}
                                 />
                             </div>
                         </>
