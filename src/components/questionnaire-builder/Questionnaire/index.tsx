@@ -6,9 +6,11 @@ import {
 } from '@togglecorp/fujs';
 
 import DropdownMenu from '#rsca/DropdownMenu';
+import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
+import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import { pathNames } from '#constants';
 import { MiniQuestionnaireElement } from '#typings';
@@ -38,6 +40,8 @@ const DropdownButton = ({
     </Button>
 );
 
+const ModalButton = modalize(Button);
+
 interface Props {
     className?: string;
     questionnaireKey: MiniQuestionnaireElement['id'];
@@ -47,6 +51,7 @@ interface Props {
     onArchive: (id: number) => void;
     onUnarchive: (id: number) => void;
     onDelete: (id: number) => void;
+    onEdit: (questionnaire: MiniQuestionnaireElement) => void;
 }
 
 class Questionnaire extends React.PureComponent<Props> {
@@ -82,26 +87,29 @@ class Questionnaire extends React.PureComponent<Props> {
             className,
             archived,
             disabled,
-            data: {
-                id,
-                title,
-                createdAt,
-                project,
-                crisisTypeDetail,
-                requiredDuration,
-                enumeratorSkillDisplay,
-                dataCollectionTechniqueDisplay,
-                activeQuestionsCount,
-            },
+            data,
+            onEdit,
         } = this.props;
+
+        const {
+            id,
+            title,
+            createdAt,
+            project,
+            crisisTypeDetail,
+            requiredDuration,
+            enumeratorSkillDisplay,
+            dataCollectionTechniqueDisplay,
+            activeQuestionsCount,
+        } = data;
 
         return (
             <div className={_cs(styles.questionnaire, className)}>
                 <header className={styles.header}>
                     <div className={styles.left}>
-                        <h4 className={styles.heading}>
+                        <h3 className={styles.heading}>
                             { title }
-                        </h4>
+                        </h3>
                         <div className={styles.info}>
                             <div className={styles.questions}>
                                 <div className={styles.value}>
@@ -129,20 +137,36 @@ class Questionnaire extends React.PureComponent<Props> {
                     </div>
                     <div className={styles.right}>
                         {!archived && (
-                            <Link
-                                className={styles.editQuestionnaireLink}
-                                to={reverseRoute(
-                                    pathNames.questionnaireBuilder,
-                                    {
-                                        questionnaireId: id,
-                                        projectId: project,
-                                    },
-                                )}
-                                disabled={disabled}
-                            >
-                                {/* FIXME: use strings */}
-                                Edit
-                            </Link>
+                            <>
+                                <Link
+                                    className={styles.editQuestionnaireLink}
+                                    to={reverseRoute(
+                                        pathNames.questionnaireBuilder,
+                                        {
+                                            questionnaireId: id,
+                                            projectId: project,
+                                        },
+                                    )}
+                                    disabled={disabled}
+                                >
+                                    {/* FIXME: use strings */}
+                                    Edit Questions
+                                </Link>
+                                <ModalButton
+                                    transparent
+                                    disabled={disabled}
+                                    modal={(
+                                        <QuestionnaireModal
+                                            value={data}
+                                            projectId={project}
+                                            onRequestSuccess={onEdit}
+                                        />
+                                    )}
+                                >
+                                    {/* FIXME: use strings */}
+                                    Edit details
+                                </ModalButton>
+                            </>
                         )}
                         {archived && (
                             <AccentButton
@@ -155,8 +179,7 @@ class Questionnaire extends React.PureComponent<Props> {
                             </AccentButton>
                         )}
                         <DropdownMenu
-                            iconName="moreVertical"
-                            hideDropdownIcon
+                            dropdownIcon="menuDots"
                         >
                             {!archived && (
                                 <DropdownButton

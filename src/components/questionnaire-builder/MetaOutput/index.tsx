@@ -1,13 +1,16 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
 interface MetaOutputProps {
+    className?: string;
     label: string;
     value?: string | number;
 }
 
 const MetaOutput = ({
+    className,
     label,
     value,
 }: MetaOutputProps) => {
@@ -17,12 +20,10 @@ const MetaOutput = ({
 
     return (
         <div
-            className={styles.metaOutput}
+            className={_cs(styles.metaOutput, className)}
             title={label}
         >
-            <div
-                className={styles.name}
-            >
+            <div className={styles.name} >
                 { value }
             </div>
         </div>

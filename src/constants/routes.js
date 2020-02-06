@@ -82,7 +82,7 @@ export const routes = {
         path: '/projects/:projectId/questionnaires/',
         loader: () => import('../views/Questionnaires'),
         links: allLinks,
-    }, // _ts('pageTitle', 'projectQuestionnare');
+    }, // _ts('pageTitle', 'projectQuestionnaires');
 
     projects: {
         order: 20,

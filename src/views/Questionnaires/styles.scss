@@ -27,45 +27,41 @@
         }
 
         .questionnaires {
-            padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
+            padding: var(--spacing-medium) 0;
 
-            .heading {
-                padding: var(--spacing-small) var(--spacing-medium);
+            .header {
+                .heading {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                }
+
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
             }
 
-            .content {
-                .tab {
-                    display: flex;
-                    text-transform: none;
+            .tab {
+                display: flex;
+                text-transform: none;
 
-                    .label {
-                        flex-grow: 1;
-                    }
+                .label {
+                    flex-grow: 1;
+                }
 
-                    .count {
-                        flex-shrink: 0;
-                    }
+                .count {
+                    flex-shrink: 0;
                 }
             }
-        }
-
-
-        .actions {
-            padding: var(--spacing-medium);
         }
     }
 
     .main {
         display: flex;
         flex-direction: column;
+        background-color: var(--color-foreground)!important;
+        padding: var(--spacing-extra-large) 0;
+        overflow-y: auto;
 
         .content {
             flex-grow: 1;
             overflow: auto;
         }
     }
-}
-
-.edit-questionnaire-modal {
-    width: 400px;
 }

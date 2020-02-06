@@ -208,14 +208,6 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                     />
                                 )}
                             </div>
-                            <div className={styles.rightPanel}>
-                                <header className={styles.header}>
-                                    <h3 className={styles.heading}>
-                                        {/* FIXME: use strings */}
-                                        This space is intentionally left blank
-                                    </h3>
-                                </header>
-                            </div>
                         </>
                     )}
                 />

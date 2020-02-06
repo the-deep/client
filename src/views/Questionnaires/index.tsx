@@ -29,12 +29,11 @@ import {
     RequestClient,
     methods,
 } from '#request';
+import _ts from '#ts';
 
 import QuestionnaireList from './QuestionnaireList';
 
-
 import styles from './styles.scss';
-
 
 interface ComponentProps {
     className?: string;
@@ -70,10 +69,8 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 const tabs: {[key in TabElement]: string} = {
-    // FIXME: use strings
-    active: 'Active',
-    // FIXME: use strings
-    archived: 'Archived',
+    active: _ts('project.questionnaire', 'activeTabTitle'),
+    archived: _ts('project.questionnaire', 'archivedTabTitle'),
 };
 
 class Questionnaires extends React.PureComponent<Props, State> {
@@ -91,8 +88,7 @@ class Questionnaires extends React.PureComponent<Props, State> {
         active: {
             component: QuestionnaireList,
             rendererParams: () => ({
-                // FIXME: use strings
-                title: 'Active questionnaires',
+                title: _ts('project.questionnaire', 'activeQuestionnairePageHeader'),
                 className: styles.content,
                 projectId: this.props.projectId,
                 onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
@@ -104,8 +100,7 @@ class Questionnaires extends React.PureComponent<Props, State> {
         archived: {
             component: QuestionnaireList,
             rendererParams: () => ({
-                // FIXME: use strings
-                title: 'Archived questionnaires',
+                title: _ts('project.questionnaire', 'archivedQuestionnairePageHeader'),
                 className: styles.content,
                 projectId: this.props.projectId,
                 archived: true,
@@ -177,8 +172,7 @@ class Questionnaires extends React.PureComponent<Props, State> {
                                 defaultLink={reverseRoute(pathNames.projects, { projectId })}
                             />
                             <h2 className={styles.heading}>
-                                {/* FIXME: use strings */}
-                                Questionnaires
+                                {_ts('project.questionnaire', 'questionnairesHeaderTitle')}
                             </h2>
                         </>
                     )}
@@ -186,43 +180,40 @@ class Questionnaires extends React.PureComponent<Props, State> {
                     sidebar={(
                         <>
                             <div className={styles.projectDetails}>
-                                <h3 className={styles.heading}>
-                                    {/* FIXME: use strings */}
-                                    Project
-                                </h3>
+                                <h4 className={styles.heading}>
+                                    {_ts('project.questionnaire', 'projectLabel')}
+                                </h4>
                                 <div className={styles.value}>
                                     { projectDetail.title || '-'}
                                 </div>
-                                <h3 className={styles.heading}>
-                                    {/* FIXME: use strings */}
-                                    Analysis Framework
-                                </h3>
+                                <h4 className={styles.heading}>
+                                    {_ts('project.questionnaire', 'frameworkLabel')}
+                                </h4>
                                 <div className={styles.value}>
                                     { frameworkName || '-'}
                                 </div>
                             </div>
                             <div className={styles.questionnaires}>
-                                <h3 className={styles.heading}>
-                                    {/* FIXME: use strings */}
-                                    Questionnaires
-                                </h3>
-                                <div className={styles.content}>
-                                    <VerticalTabs
-                                        tabs={tabs}
-                                        useHash
-                                        replaceHistory
-                                        modifier={(itemKey: TabElement) => (
-                                            <div className={styles.tab}>
-                                                <div className={styles.label}>
-                                                    { tabs[itemKey] }
-                                                </div>
-                                                <div className={styles.count}>
-                                                    { counts ? counts[itemKey] : '-' }
-                                                </div>
+                                <header className={styles.header}>
+                                    <h4 className={styles.heading}>
+                                        {_ts('project.questionnaire', 'questionnaireStatus')}
+                                    </h4>
+                                </header>
+                                <VerticalTabs
+                                    tabs={tabs}
+                                    useHash
+                                    replaceHistory
+                                    modifier={(itemKey: TabElement) => (
+                                        <div className={styles.tab}>
+                                            <div className={styles.label}>
+                                                { tabs[itemKey] }
                                             </div>
-                                        )}
-                                    />
-                                </div>
+                                            <div className={styles.count}>
+                                                { counts ? counts[itemKey] : '-' }
+                                            </div>
+                                        </div>
+                                    )}
+                                />
                             </div>
                         </>
                     )}
