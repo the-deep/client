@@ -24,7 +24,7 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    value: QuestionElementFrameworkAttribute;
+    value?: QuestionElementFrameworkAttribute;
     onChange: (newValue: QuestionElementFrameworkAttribute) => void;
 
     sectorList: Matrix2dFlatSectorElement[];
@@ -38,7 +38,7 @@ const keySelector = (d: Matrix2dFlatCellElement) => d.id;
 const labelSelector = (d: Matrix2dFlatCellElement) => d.title;
 
 class FrameworkAttributeInput extends React.PureComponent<Props> {
-    private getInputValues = memoize((value: QuestionElementFrameworkAttribute) => {
+    private getInputValues = memoize((value: QuestionElementFrameworkAttribute | undefined) => {
         if (!value) {
             return {};
         }
@@ -156,10 +156,6 @@ class FrameworkAttributeInput extends React.PureComponent<Props> {
             dimensionList,
             subdimensionList,
         } = this.props;
-
-        if (!value) {
-            return null;
-        }
 
         const {
             typeValue,

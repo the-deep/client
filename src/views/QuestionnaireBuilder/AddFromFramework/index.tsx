@@ -85,7 +85,7 @@ class AddFromFramework extends React.PureComponent<Props> {
                     labelSelector={treeItemLabelSelector}
                     onChange={onTreeInputChange}
                     value={treeFilter}
-                    options={this.getFrameworkMatrices(framework)}
+                    options={this.getFrameworkMatrices(framework, framework.questions)}
                     defaultCollapseLevel={0}
                 />
                 <h4> Questions </h4>

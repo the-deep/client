@@ -583,7 +583,9 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                     labelSelector={treeItemLabelSelector}
                                     onChange={this.handleTreeInputChange}
                                     value={treeFilter}
-                                    options={this.getFrameworkMatrices(framework)}
+                                    options={
+                                        this.getFrameworkMatrices(framework, framework.questions)
+                                    }
                                     defaultCollapseLevel={0}
                                 />
                             </div>
