@@ -44,12 +44,38 @@
 
     >.content {
         flex-grow: 1;
+    }
+}
 
-        .question {
-            margin: var(--spacing-medium) auto;
-            background-color: var(--color-foreground);
-            width: var(--width-question);
-            max-width: var(--width-question);
+.question-container {
+    position: relative;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small);
+    width: auto;
+
+    .question {
+        margin: var(--spacing-medium) auto;
+        background-color: var(--color-foreground);
+        width: var(--width-question);
+        max-width: var(--width-question);
+    }
+
+    .drag-handle {
+        position: absolute;
+        top: calc(var(--spacing-large) - 2px);
+        left: calc((100% - var(--width-question)) / 2);
+        transition: var(--duration-transition-medium) all ease-in-out;
+        opacity: 0;
+        z-index: 1;
+        background-color: var(--color-foreground);
+        cursor: grab;
+        padding: 0 var(--spacing-small);
+        font-size: var(--font-size-extra-large);
+    }
+
+    &:hover {
+        .drag-handle {
+            opacity: 1;
         }
     }
 }

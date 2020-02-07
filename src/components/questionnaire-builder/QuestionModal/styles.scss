@@ -1,8 +1,22 @@
 .question-form {
-    position: relative;
+    .modal-body {
+        padding: 0;
+        height: 480px;
+
+        .tabs {
+            .tab {
+                flex-grow: 1;
+                text-align: center;
+            }
+
+            .blank-tab {
+                display: none;
+            }
+        }
+    }
 
     .basic {
-        padding: var(--spacing-small) 0;
+        padding: 0 var(--spacing-medium);
 
         .header {
             padding: var(--spacing-small) 0;
@@ -16,15 +30,20 @@
     }
 
     .framework-details {
-        padding: var(--spacing-small) 0;
+        padding: 0 var(--spacing-medium);
 
         .header {
             padding: var(--spacing-small) 0;
         }
+
+        .framework-attribute-input {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     .metadata {
-        padding: var(--spacing-small) 0;
+        padding: 0 var(--spacing-medium);
 
         .header {
             padding: var(--spacing-small) 0;

@@ -7,7 +7,9 @@ import {
 import Button from '#rsca/Button';
 import Question from '#qbc/Question';
 import Checkbox from '#rsu/../v2/Input/Checkbox';
-import ListView from '#rsu/../v2/View/ListView';
+// import ListView from '#rsu/../v2/View/ListView';
+import Icon from '#rscg/Icon';
+import SortableListView from '#rscv/SortableListView';
 
 import {
     MiniFrameworkElement,
@@ -40,6 +42,13 @@ interface QuestionListProps {
     archived: boolean;
     filtered?: boolean;
 }
+
+const renderDragHandle = () => (
+    <Icon
+        className={styles.dragHandle}
+        name="hamburger"
+    />
+);
 
 const QuestionList = (props: QuestionListProps) => {
     const {
@@ -256,10 +265,12 @@ const QuestionList = (props: QuestionListProps) => {
                     )}
                 </div>
             </header>
-            <ListView
+            <SortableListView
                 className={styles.content}
                 rendererParams={getQuestionRendererParams}
                 renderer={Question}
+                dragHandleModifier={renderDragHandle}
+                itemClassName={styles.questionContainer}
                 data={filteredQuestions}
                 keySelector={questionKeySelector}
                 pending={showLoadingOverlay}
