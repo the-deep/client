@@ -7,7 +7,6 @@ import {
 import Button from '#rsca/Button';
 import Question from '#qbc/Question';
 import Checkbox from '#rsu/../v2/Input/Checkbox';
-// import ListView from '#rsu/../v2/View/ListView';
 import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 
@@ -30,6 +29,7 @@ interface QuestionListProps {
     className?: string;
     questions?: BaseQuestionElement[];
     showLoadingOverlay?: boolean;
+    onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
@@ -65,6 +65,7 @@ const QuestionList = (props: QuestionListProps) => {
         onBulkDelete,
         onBulkArchive,
         onBulkUnArchive,
+        onOrderChange,
         archived,
         filtered,
     } = props;
@@ -117,9 +118,19 @@ const QuestionList = (props: QuestionListProps) => {
     const filteredQuestions = useMemo(
         () => {
             if (!questions) {
-                return undefined;
+                return [];
             }
             return questions.filter(question => !!question.isArchived === archived);
+        },
+        [archived, questions],
+    );
+
+    const percolateQuestions = useMemo(
+        () => {
+            if (!questions) {
+                return [];
+            }
+            return questions.filter(question => !!question.isArchived !== archived);
         },
         [archived, questions],
     );
@@ -196,6 +207,18 @@ const QuestionList = (props: QuestionListProps) => {
         [filteredQuestions, selectedQuestions, onBulkUnArchive],
     );
 
+    const handleOrderChange = useCallback(
+        (orderedQuestions: QuestionnaireQuestionElement[]) => {
+            if (onOrderChange) {
+                onOrderChange([
+                    ...orderedQuestions,
+                    ...percolateQuestions,
+                ]);
+            }
+        },
+        [onOrderChange, percolateQuestions],
+    );
+
     const isAllSelected = filteredQuestions
         && filteredQuestions.every(q => selectedQuestions[q.id]);
 
@@ -269,12 +292,14 @@ const QuestionList = (props: QuestionListProps) => {
                 className={styles.content}
                 rendererParams={getQuestionRendererParams}
                 renderer={Question}
-                dragHandleModifier={renderDragHandle}
-                itemClassName={styles.questionContainer}
                 data={filteredQuestions}
                 keySelector={questionKeySelector}
                 pending={showLoadingOverlay}
                 filtered={filtered}
+                onChange={handleOrderChange}
+                dragHandleModifier={renderDragHandle}
+                itemClassName={styles.questionContainer}
+                disabled={!onOrderChange}
             />
         </div>
     );

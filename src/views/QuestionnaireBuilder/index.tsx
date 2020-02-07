@@ -264,6 +264,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         className: styles.questionList,
                         onAdd: this.handleAddQuestionButtonClick,
                         onEdit: this.handleEditQuestionButtonClick,
+                        onOrderChange: this.handleOrderChange,
                         onDelete: this.handleDeleteQuestion,
                         onArchive: this.handleArchiveQuestion,
                         onBulkDelete: this.handleBulkDelete,
@@ -503,6 +504,22 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
     private handleTreeInputChange = (value: string[]) => {
         this.setState({ treeFilter: value });
+    }
+
+    private handleOrderChange = (questions: QuestionnaireQuestionElement[]) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            // eslint-disable-next-line no-param-reassign
+            safeQuestionnaire.questions = questions;
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
     }
 
     private handleQuestionDeleteRequestSuccess = (questionId: QuestionnaireQuestionElement['id']) => {
