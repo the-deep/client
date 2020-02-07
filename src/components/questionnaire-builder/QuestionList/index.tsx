@@ -10,7 +10,6 @@ import Checkbox from '#rsu/../v2/Input/Checkbox';
 import ListView from '#rsu/../v2/View/ListView';
 
 import {
-    QuestionnaireQuestionElement,
     MiniFrameworkElement,
     BaseQuestionElement,
     BulkActionId,
@@ -27,7 +26,7 @@ interface Selection {
 interface QuestionListProps {
     title: string;
     className?: string;
-    questions?: QuestionnaireQuestionElement[];
+    questions?: BaseQuestionElement[];
     showLoadingOverlay?: boolean;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
@@ -39,6 +38,7 @@ interface QuestionListProps {
     onBulkUnArchive?: (questionIds: BulkActionId[]) => void;
     framework?: MiniFrameworkElement;
     archived: boolean;
+    filtered?: boolean;
 }
 
 const QuestionList = (props: QuestionListProps) => {
@@ -57,13 +57,14 @@ const QuestionList = (props: QuestionListProps) => {
         onBulkArchive,
         onBulkUnArchive,
         archived,
+        filtered,
     } = props;
 
     const [selectedQuestions, setSelectedQuestions] = useState<Selection>({});
     const [expandedQuestions, setExpandedQuestions] = useState<Selection>({});
 
     const handleQuestionSelectChange = useCallback(
-        (key: QuestionnaireQuestionElement['id'], value: boolean) => {
+        (key: BaseQuestionElement['id'], value: boolean) => {
             setSelectedQuestions(selection => ({
                 ...selection,
                 [key]: value,
@@ -73,7 +74,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const handleQuestionExpandChange = useCallback(
-        (key: QuestionnaireQuestionElement['id'], value: boolean) => {
+        (key: BaseQuestionElement['id'], value: boolean) => {
             setExpandedQuestions(selection => ({
                 ...selection,
                 [key]: value,
@@ -83,7 +84,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const getQuestionRendererParams = useCallback(
-        (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => ({
+        (key: BaseQuestionElement['id'], question: BaseQuestionElement) => ({
             data: question,
             onEditButtonClick: onEdit,
             onDelete,
@@ -262,6 +263,7 @@ const QuestionList = (props: QuestionListProps) => {
                 data={filteredQuestions}
                 keySelector={questionKeySelector}
                 pending={showLoadingOverlay}
+                filtered={filtered}
             />
         </div>
     );

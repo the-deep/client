@@ -96,8 +96,11 @@ export function getFrameworkMatrices(framework: MiniFrameworkElement | undefined
     ];
 }
 
-export function getFilteredQuestions(questions: FrameworkQuestionElement[], values: string[]) {
-    if (values.length <= 0) {
+export function getFilteredQuestions(
+    questions: FrameworkQuestionElement[] | undefined,
+    values: string[],
+) {
+    if (!questions || values.length <= 0) {
         return questions;
     }
 
