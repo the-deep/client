@@ -1,18 +1,19 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import Faram from '@togglecorp/faram';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import TextInput from '#rsci/TextInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import NumberInput from '#rsci/NumberInput';
 import SelectInput from '#rsci/SelectInput';
+import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
-import ModalHeader from '#rscv/Modal/Header';
 import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
 
 import {
     RequestCoordinator,
@@ -62,12 +63,18 @@ interface RequestBody extends FaramValues {
 }
 
 type FaramErrors = {
-    [key in keyof QuestionnaireFormElement]: string | undefined;
+    [key: string]: string | undefined | string [];
+    // $internal: string[];
+}
+
+interface Error {
+    faramErrors: FaramErrors;
 }
 
 interface Params {
-    body: RequestBody;
+    body?: RequestBody;
     questionnaireId?: number;
+    setFaramErrors?: (faramErrors: FaramErrors) => void;
 }
 
 interface State {
@@ -91,6 +98,18 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 props.closeModal();
             }
         },
+        onFailure: ({ error, params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors((error as Error).faramErrors);
+        },
+        onFatal: ({ params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors({ $internal: ['Some error ocurred!'] });
+        },
     },
     questionnairePatchRequest: {
         url: ({ params }) => {
@@ -111,6 +130,18 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 props.closeModal();
             }
         },
+        onFailure: ({ error, params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors((error as Error).faramErrors);
+        },
+        onFatal: ({ params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors({ $internal: ['Some error ocurred!'] });
+        },
     },
     questionnaireOptionsRequest: {
         url: '/questionnaires/options/',
@@ -122,11 +153,11 @@ const requestOptions: Requests<ComponentProps, Params> = {
 
 const questionnaireMetaSchema = {
     fields: {
-        title: [],
+        title: [requiredCondition],
         crisisType: [],
-        enumeratorSkill: [],
-        dataCollectionTechnique: [],
-        requiredDuration: [],
+        enumeratorSkill: [requiredCondition],
+        dataCollectionTechnique: [requiredCondition],
+        requiredDuration: [requiredCondition],
     },
 };
 
@@ -158,6 +189,9 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
             questionnairePatchRequest.do({
                 questionnaireId: value.id,
                 body: faramValues,
+                setFaramErrors: (faramErrors: FaramErrors) => {
+                    this.setState({ faramErrors });
+                },
             });
         } else {
             questionnaireCreateRequest.do({
@@ -165,6 +199,9 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                     project: projectId,
                     questions: [],
                     ...faramValues,
+                },
+                setFaramErrors: (faramErrors: FaramErrors) => {
+                    this.setState({ faramErrors });
                 },
             });
         }
@@ -225,6 +262,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                 >
                     <ModalBody>
                         { pending && <LoadingAnimation /> }
+                        <NonFieldErrors faramElement />
                         <TextInput
                             faramElementName="title"
                             className={styles.input}
