@@ -1,0 +1,21 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: var(--spacing-small) var(--spacing-medium);
+    overflow: auto;
+
+    .matrix-filter {
+        overflow-y: auto;
+    }
+
+    .framework-question-list {
+        flex-grow: 1;
+        min-height: 480px;
+        overflow: auto;
+
+        .framework-question {
+            margin-bottom: var(--spacing-small);
+        }
+    }
+}
