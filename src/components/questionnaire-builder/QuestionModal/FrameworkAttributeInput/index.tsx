@@ -169,6 +169,10 @@ class FrameworkAttributeInput extends React.PureComponent<Props> {
             subdimensionValue,
         } = this.getInputValues(value);
 
+        const filteredSubsectorList = subsectorList.filter(ss => ss.sectorId === sectorValue);
+        const filteredSubdimensionList = subdimensionList
+            .filter(ss => ss.dimensionId === dimensionValue);
+
         return (
             <div className={_cs(styles.frameworkAttributeInput, className)}>
                 <SegmentInput
@@ -198,7 +202,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props> {
                         <SelectInput
                             className={styles.input}
                             onChange={this.handleSubsectorInputChange}
-                            options={subsectorList}
+                            options={filteredSubsectorList}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             // FIXME: use strings
@@ -226,7 +230,7 @@ class FrameworkAttributeInput extends React.PureComponent<Props> {
                             onChange={this.handleSubdimensionInputChange}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
-                            options={subdimensionList}
+                            options={filteredSubdimensionList}
                             // FIXME: use strings
                             label="Subdimension"
                             value={subdimensionValue}

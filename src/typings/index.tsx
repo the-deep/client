@@ -40,6 +40,14 @@ export interface MultiResponse<T> {
     results: T[];
 }
 
+export interface ViewComponent<T> {
+    component: React.ComponentType<T>;
+    rendererParams?: () => T;
+    wrapContainer?: boolean;
+    mount?: boolean;
+    lazyMount?: boolean;
+}
+
 export * from './framework';
 export * from './questionnaire';
 export * from './project';

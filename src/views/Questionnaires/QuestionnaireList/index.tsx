@@ -6,7 +6,7 @@ import { produce } from 'immer';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import modalize from '#rscg/Modalize';
-import ListView from '#rscv/List/ListView';
+import ListView from '#rsu/../v2/View/ListView';
 import Pager from '#rscv/Pager';
 
 import QuestionnaireModal from '#qbc/QuestionnaireModal';

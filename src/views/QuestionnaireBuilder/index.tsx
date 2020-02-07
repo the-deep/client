@@ -17,6 +17,7 @@ import {
     QuestionnaireElement,
     QuestionnaireQuestionElement,
     BaseQuestionElement,
+    ViewComponent,
 
     MiniFrameworkElement,
     ProjectElement,
@@ -98,7 +99,7 @@ interface Params {
     onDeleteSuccess?: (questionId: QuestionnaireQuestionElement['id']) => void;
 
     body?: BulkActionId[];
-    copyBody?: QuestionnaireQuestionElement['id'][];
+    copyBody?: CopyBody;
     onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
     onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
     onBulkUnArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
@@ -107,6 +108,8 @@ interface Params {
     onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
     onCopySuccess?: (question: QuestionnaireQuestionElement) => void;
 }
+
+const EmptyComponent = () => <div />;
 
 const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     questionnaireGetRequest: {
@@ -184,7 +187,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         url: ({ props: { questionnaireId } }) => (
             `/questionnaires/${questionnaireId}/questions/bulk-delete/`
         ),
-        body: ({ params: { body } }) => body,
+        body: ({ params }) => params && params.body,
         method: methods.POST,
         onSuccess: ({ params, response }) => {
             if (!params || !params.onBulkDeleteSuccess || !params.body) {
@@ -197,7 +200,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         url: ({ props: { questionnaireId } }) => (
             `/questionnaires/${questionnaireId}/questions/bulk-archive/`
         ),
-        body: ({ params: { body } }) => body,
+        body: ({ params }) => params && params.body,
         method: methods.POST,
         onSuccess: ({ params, response }) => {
             if (!params || !params.onBulkArchiveSuccess || !params.body) {
@@ -210,7 +213,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         url: ({ props: { questionnaireId } }) => (
             `/questionnaires/${questionnaireId}/questions/bulk-unarchive/`
         ),
-        body: ({ params: { body } }) => body,
+        body: ({ params }) => params && params.body,
         method: methods.POST,
         onSuccess: ({ params, response }) => {
             if (!params || !params.onBulkUnArchiveSuccess || !params.body) {
@@ -241,6 +244,95 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             treeFilter: [],
         };
 
+        this.views = {
+            active: {
+                component: QuestionList,
+                rendererParams: () => {
+                    const {
+                        requests: {
+                            questionDeleteRequest,
+                            questionArchiveRequest,
+                            copyToQuestionnaireRequest,
+                            bulkQuestionDeleteRequest,
+                            bulkQuestionArchiveRequest,
+                            bulkQuestionUnArchiveRequest,
+                        },
+                    } = this.props;
+
+                    return ({
+                        title: 'Active Questions',
+                        className: styles.questionList,
+                        onAdd: this.handleAddQuestionButtonClick,
+                        onEdit: this.handleEditQuestionButtonClick,
+                        onDelete: this.handleDeleteQuestion,
+                        onArchive: this.handleArchiveQuestion,
+                        onBulkDelete: this.handleBulkDelete,
+                        onBulkArchive: this.handleBulkArchive,
+                        framework: this.state.framework,
+                        questions: this.state.questionnaire
+                            ? this.state.questionnaire.questions
+                            : undefined,
+                        showLoadingOverlay: questionDeleteRequest.pending
+                            || questionArchiveRequest.pending
+                            || copyToQuestionnaireRequest.pending
+                            || bulkQuestionDeleteRequest.pending
+                            || bulkQuestionArchiveRequest.pending
+                            || bulkQuestionUnArchiveRequest.pending,
+                        archived: false,
+                    });
+                },
+            },
+            archived: {
+                component: QuestionList,
+                rendererParams: () => {
+                    const {
+                        requests: {
+                            questionDeleteRequest,
+                            questionArchiveRequest,
+                            copyToQuestionnaireRequest,
+                            bulkQuestionDeleteRequest,
+                            bulkQuestionArchiveRequest,
+                            bulkQuestionUnArchiveRequest,
+                        },
+                    } = this.props;
+
+                    return ({
+                        title: 'Parking Lot Questions',
+                        className: styles.questionList,
+                        onUnarchive: this.handleUnarchiveQuestion,
+                        onBulkUnArchive: this.handleBulkUnArchive,
+                        framework: this.state.framework,
+                        questions: this.state.questionnaire
+                            ? this.state.questionnaire.questions
+                            : undefined,
+                        showLoadingOverlay: questionDeleteRequest.pending
+                            || questionArchiveRequest.pending
+                            || copyToQuestionnaireRequest.pending
+                            || bulkQuestionDeleteRequest.pending
+                            || bulkQuestionArchiveRequest.pending
+                            || bulkQuestionUnArchiveRequest.pending,
+                        archived: true,
+                    });
+                },
+            },
+        };
+
+        this.addViews = {
+            active: {
+                component: AddFromFramework,
+                rendererParams: () => ({
+                    treeFilter: this.state.treeFilter,
+                    framework: this.state.framework,
+                    onTreeInputChange: this.handleTreeInputChange,
+                    onCopy: this.handleCopyClick,
+                    copyDisabled: false,
+                }),
+            },
+            archived: {
+                component: EmptyComponent,
+            },
+        };
+
         questionnaireGetRequest.setDefaultParams({
             setQuestionnaire: (questionnaire: QuestionnaireElement) => {
                 this.setState({ questionnaire });
@@ -253,103 +345,33 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private views = {
-        active: {
-            component: QuestionList,
-            rendererParams: () => {
-                const {
-                    requests: {
-                        questionDeleteRequest,
-                        questionArchiveRequest,
-                        copyToQuestionnaireRequest,
-                        bulkQuestionDeleteRequest,
-                        bulkQuestionArchiveRequest,
-                        bulkQuestionUnArchiveRequest,
-                    },
-                } = this.props;
-
-                return ({
-                    title: 'Active Questions',
-                    className: styles.questionList,
-                    onAdd: this.handleAddQuestionButtonClick,
-                    onEdit: this.handleEditQuestionButtonClick,
-                    onDelete: this.handleDeleteQuestion,
-                    onArchive: this.handleArchiveQuestion,
-                    onBulkDelete: this.handleBulkDelete,
-                    onBulkArchive: this.handleBulkArchive,
-                    framework: this.state.framework,
-                    questions: this.state.questionnaire
-                        ? this.state.questionnaire.questions
-                        : undefined,
-                    showLoadingOverlay: questionDeleteRequest.pending
-                        || questionArchiveRequest.pending
-                        || copyToQuestionnaireRequest.pending
-                        || bulkQuestionDeleteRequest.pending
-                        || bulkQuestionArchiveRequest.pending
-                        || bulkQuestionUnArchiveRequest.pending,
-                    archived: false,
-                });
-            },
-        },
-        archived: {
-            component: QuestionList,
-            rendererParams: () => {
-                const {
-                    requests: {
-                        questionDeleteRequest,
-                        questionArchiveRequest,
-                        copyToQuestionnaireRequest,
-                        bulkQuestionDeleteRequest,
-                        bulkQuestionArchiveRequest,
-                        bulkQuestionUnArchiveRequest,
-                    },
-                } = this.props;
-
-                return ({
-                    title: 'Parking Lot Questions',
-                    className: styles.questionList,
-                    onUnarchive: this.handleUnarchiveQuestion,
-                    onBulkUnArchive: this.handleBulkUnArchive,
-                    framework: this.state.framework,
-                    questions: this.state.questionnaire
-                        ? this.state.questionnaire.questions
-                        : undefined,
-                    showLoadingOverlay: questionDeleteRequest.pending
-                        || questionArchiveRequest.pending
-                        || copyToQuestionnaireRequest.pending
-                        || bulkQuestionDeleteRequest.pending
-                        || bulkQuestionArchiveRequest.pending
-                        || bulkQuestionUnArchiveRequest.pending,
-                    archived: true,
-                });
-            },
-        },
+    private views: {
+        active: ViewComponent<React.ComponentProps<typeof QuestionList>>;
+        archived: ViewComponent<React.ComponentProps<typeof QuestionList>>;
     }
 
-    private addViews = {
-        active: {
-            component: AddFromFramework,
-            rendererParams: () => ({
-                treeFilter: this.state.treeFilter,
-                framework: this.state.framework,
-                onTreeInputChange: this.handleTreeInputChange,
-                onCopy: this.handleCopyClick,
-            }),
-        },
-        archived: {
-            component: () => <div />,
-        },
+    private addViews: {
+        active: ViewComponent<React.ComponentProps<typeof AddFromFramework>>;
+        archived: ViewComponent<React.ComponentProps<typeof EmptyComponent>>;
     }
 
     private handleCopyClick = (questionId: BaseQuestionElement['id']) => {
         const {
-            questionnaire: {
-                id: questionnaireId,
-                questions,
-            },
+            questionnaire,
         } = this.state;
 
-        const newOrder = questions ? 1 : questions.length + 1;
+        if (!questionnaire) {
+            return;
+        }
+
+        const {
+            id: questionnaireId,
+            questions,
+        } = questionnaire;
+
+        const newOrder = questions
+            ? questions.length + 1
+            : 1;
 
         const copyBody = {
             frameworkQuestionId: questionId,
@@ -623,7 +645,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionToEdit,
             questionnaire,
             framework,
-            treeFilter,
         } = this.state;
 
         if (questionnaireGetPending || frameworkGetPending) {

@@ -30,10 +30,10 @@ interface QuestionListProps {
     questions?: QuestionnaireQuestionElement[];
     showLoadingOverlay?: boolean;
     onAdd?: () => void;
-    onEdit?: () => void;
-    onDelete?: () => void;
-    onArchive?: () => void;
-    onUnarchive?: () => void;
+    onEdit?: (key: BaseQuestionElement['id']) => void;
+    onDelete?: (key: BaseQuestionElement['id']) => void;
+    onArchive?: (key: BaseQuestionElement['id']) => void;
+    onUnarchive?: (key: BaseQuestionElement['id']) => void;
     onBulkDelete?: (questionIds: BulkActionId[]) => void;
     onBulkArchive?: (questionIds: BulkActionId[]) => void;
     onBulkUnArchive?: (questionIds: BulkActionId[]) => void;

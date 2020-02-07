@@ -18,6 +18,7 @@ import {
 
 import {
     ProjectElement,
+    ViewComponent,
 
     AddRequestProps,
     AppState,
@@ -105,33 +106,38 @@ class Questionnaires extends React.PureComponent<Props, State> {
                 this.setState({ questionnaireMeta });
             },
         });
+
+        this.views = {
+            active: {
+                component: QuestionnaireList,
+                rendererParams: () => ({
+                    title: _ts('project.questionnaire', 'activeQuestionnairePageHeader'),
+                    className: styles.content,
+                    projectId: this.props.projectId,
+                    onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
+                    archived: false,
+                    activePage: this.state.currentPageForActiveTab,
+                    onActivePageChange: this.handleCurrentPageChangeForActiveTab,
+                }),
+            },
+            archived: {
+                component: QuestionnaireList,
+                rendererParams: () => ({
+                    title: _ts('project.questionnaire', 'archivedQuestionnairePageHeader'),
+                    className: styles.content,
+                    projectId: this.props.projectId,
+                    archived: true,
+                    onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
+                    activePage: this.state.currentPageForArchivedTab,
+                    onActivePageChange: this.handleCurrentPageChangeForArchivedTab,
+                }),
+            },
+        };
     }
 
-    private views = {
-        active: {
-            component: QuestionnaireList,
-            rendererParams: () => ({
-                title: _ts('project.questionnaire', 'activeQuestionnairePageHeader'),
-                className: styles.content,
-                projectId: this.props.projectId,
-                onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
-                archived: false,
-                activePage: this.state.currentPageForActiveTab,
-                onActivePageChange: this.handleCurrentPageChangeForActiveTab,
-            }),
-        },
-        archived: {
-            component: QuestionnaireList,
-            rendererParams: () => ({
-                title: _ts('project.questionnaire', 'archivedQuestionnairePageHeader'),
-                className: styles.content,
-                projectId: this.props.projectId,
-                archived: true,
-                onQuestionnaireMetaReload: this.props.requests.questionnaireMetaRequest.do,
-                activePage: this.state.currentPageForArchivedTab,
-                onActivePageChange: this.handleCurrentPageChangeForArchivedTab,
-            }),
-        },
+    private views: {
+        active: ViewComponent<React.ComponentProps<typeof QuestionnaireList>>;
+        archived: ViewComponent<React.ComponentProps<typeof QuestionnaireList>>;
     }
 
     private handleCurrentPageChangeForActiveTab = (page: number) => {
