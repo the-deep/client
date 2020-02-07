@@ -7,7 +7,6 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 
-import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -328,6 +327,55 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     || this.props.requests.questionArchiveRequest.pending,
                 archived: true,
             }),
+        },
+    }
+
+    private addViews = {
+        active: {
+            component: () => {
+                const {
+                    framework,
+                    treeFilter,
+                } = this.state;
+
+                if (!framework) {
+                    return null;
+                }
+
+                return (
+                    <div className={styles.content}>
+                        <h3> Add from Framework </h3>
+                        <h4> Matrices </h4>
+                        <TreeInput
+                            className={styles.matrixFilter}
+                            keySelector={treeItemKeySelector}
+                            parentKeySelector={treeItemParentKeySelector}
+                            labelSelector={treeItemLabelSelector}
+                            onChange={this.handleTreeInputChange}
+                            value={treeFilter}
+                            options={this.getFrameworkMatrices(framework)}
+                            defaultCollapseLevel={0}
+                        />
+                        <h4> Questions </h4>
+                        <ListView
+                            className={styles.frameworkQuestionList}
+                            rendererParams={this.getFrameworkQuestionRendererParams}
+                            renderer={Question}
+                            data={
+                                this.getFilteredQuestions(
+                                    framework.questions,
+                                    treeFilter,
+                                )
+                            }
+                            keySelector={questionKeySelector}
+                            filtered={treeFilter.length > 0}
+                        />
+                    </div>
+                );
+            },
+        },
+        archived: {
+            component: () => <div />,
         },
     }
 
@@ -692,36 +740,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     modifier={this.tabsModifier}
                                 />
                             </div>
-                            {framework && (
-                                <div className={styles.content}>
-                                    <h3> Add from Framework </h3>
-                                    <h4> Matrices </h4>
-                                    <TreeInput
-                                        className={styles.matrixFilter}
-                                        keySelector={treeItemKeySelector}
-                                        parentKeySelector={treeItemParentKeySelector}
-                                        labelSelector={treeItemLabelSelector}
-                                        onChange={this.handleTreeInputChange}
-                                        value={treeFilter}
-                                        options={this.getFrameworkMatrices(framework)}
-                                        defaultCollapseLevel={0}
-                                    />
-                                    <h4> Questions </h4>
-                                    <ListView
-                                        className={styles.frameworkQuestionList}
-                                        rendererParams={this.getFrameworkQuestionRendererParams}
-                                        renderer={Question}
-                                        data={
-                                            this.getFilteredQuestions(
-                                                framework.questions,
-                                                treeFilter,
-                                            )
-                                        }
-                                        keySelector={questionKeySelector}
-                                        filtered={treeFilter.length > 0}
-                                    />
-                                </div>
-                            )}
+                            <MultiViewContainer
+                                views={this.addViews}
+                                useHash
+                            />
                         </>
                     )}
                     mainContentClassName={styles.main}
