@@ -1,4 +1,5 @@
 .question {
+    position: relative;
     border: var(--width-separator-thin) solid var(--color-separator);
 
     .brief {
@@ -25,6 +26,9 @@
 
             .top {
                 display: flex;
+                outline: 0;
+                border: none;
+                background-color: var(--color-foreground);
 
                 >.left {
                     flex-grow: 1;
@@ -110,5 +114,11 @@
         .respondent-instruction {
             padding: calc(var(--spacing-medium) - var(--spacing-extra-small)) 0;
         }
+    }
+
+    .copy-button {
+        position: absolute;
+        right: var(--spacing-extra-small);
+        bottom: var(--spacing-extra-small);
     }
 }

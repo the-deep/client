@@ -41,6 +41,8 @@ const iconNames = {
     email: 'fa fa-envelope',
     error: 'ion-android-alert',
     expand: 'ion-arrow-expand',
+    expandContent: 'ion-android-expand',
+    contractContent: 'ion-android-contract',
     eye: 'ion-eye',
     eyeDisabled: 'ion-eye-disabled',
     faEye: 'fa fa-eye',

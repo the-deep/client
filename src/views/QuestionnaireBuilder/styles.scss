@@ -76,14 +76,7 @@
                 overflow: auto;
 
                 .framework-question {
-                    position: relative;
                     padding: var(--spacing-extra-small);
-
-                    .actions {
-                        position: absolute;
-                        right: var(--spacing-extra-small);
-                        bottom: var(--spacing-extra-small);
-                    }
                 }
             }
         }

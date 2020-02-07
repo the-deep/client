@@ -3,6 +3,7 @@ import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
+import Checkbox from '#rsu/../v2/Input/Checkbox';
 
 import {
     BaseQuestionElement,
@@ -65,16 +66,25 @@ interface Props {
     data: BaseQuestionElement;
     className?: string;
     onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
+    onCopy?: (key: BaseQuestionElement['id']) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
     framework?: MiniFrameworkElement;
-    hideDetails?: boolean;
+    expanded?: boolean;
     readOnly?: boolean;
     disabled?: boolean;
+    selected?: boolean;
+    copyDisabled?: boolean;
+    onSelectChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
+    onExpandChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
 }
 
 class Question extends React.PureComponent<Props> {
+    public static defaultProps = {
+        expanded: false,
+    };
+
     private getFrameworkOptions = memoize(getMatrix2dStructures)
 
     handleEditButtonClick = () => {
@@ -121,14 +131,58 @@ class Question extends React.PureComponent<Props> {
         }
     }
 
+    handleCopy = () => {
+        const {
+            onCopy,
+            data,
+        } = this.props;
+
+        if (onCopy) {
+            onCopy(data.id);
+        }
+    }
+
+    handleCheckboxClick = () => {
+        const {
+            data: {
+                id: questionId,
+            },
+            selected,
+            onSelectChange,
+        } = this.props;
+
+        if (onSelectChange) {
+            onSelectChange(questionId, !selected);
+        }
+    }
+
+    handleExpandClick = () => {
+        const {
+            data: {
+                id: questionId,
+            },
+            expanded,
+            onExpandChange,
+        } = this.props;
+
+        if (onExpandChange) {
+            onExpandChange(questionId, !expanded);
+        }
+    }
+
     public render() {
         const {
+            selected,
             className,
             data,
             framework,
             readOnly,
             disabled,
-            hideDetails,
+            expanded,
+            onCopy,
+            onSelectChange,
+            onExpandChange,
+            copyDisabled,
         } = this.props;
 
         const {
@@ -144,16 +198,29 @@ class Question extends React.PureComponent<Props> {
 
         return (
             <div className={_cs(className, styles.question)}>
+                {onSelectChange && (
+                    <Checkbox
+                        value={selected}
+                        onChange={this.handleCheckboxClick}
+                    />
+                )}
                 <div className={styles.brief}>
                     <div className={styles.left}>
                         <img
                             className={styles.icon}
-                            src={type ? iconMap[type] : undefined}
+                            src={(type ? iconMap[type] : undefined)}
                             alt={type}
                         />
                     </div>
                     <div className={styles.right}>
-                        <div className={styles.top}>
+                        {onExpandChange && (
+                            <Button
+                                onClick={this.handleExpandClick}
+                                iconName={expanded ? 'chevronDown' : 'chevronRight'}
+                                transparent
+                            />
+                        )}
+                        <div className={styles.top} >
                             <div className={styles.left}>
                                 <h4 className={styles.heading}>
                                     { title }
@@ -237,7 +304,7 @@ class Question extends React.PureComponent<Props> {
                         </div>
                     </div>
                 </div>
-                {!hideDetails && (
+                {expanded && (
                     <div className={styles.details}>
                         {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
                             <div className={styles.responseOptions}>
@@ -272,6 +339,16 @@ class Question extends React.PureComponent<Props> {
                             </div>
                         </div>
                     </div>
+                )}
+                {onCopy && (
+                    <Button
+                        className={styles.copyButton}
+                        onClick={this.handleCopy}
+                        iconName="copyOutline"
+                        disabled={copyDisabled}
+                    >
+                        Copy
+                    </Button>
                 )}
             </div>
         );

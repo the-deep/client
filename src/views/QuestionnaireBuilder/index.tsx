@@ -32,6 +32,7 @@ import {
 } from '#typings';
 
 import {
+    getPending,
     methods,
     RequestCoordinator,
     RequestClient,
@@ -65,44 +66,12 @@ import styles from './styles.scss';
 
 const questionKeySelector = (q: BaseQuestionElement) => q.id;
 
-const FrameworkQuestion = (p: FrameworkQuestionProps) => {
-    const {
-        onCopyButtonClick,
-        className,
-        ...otherProps
-    } = p;
-
-    return (
-        <div className={_cs(className, styles.frameworkQuestion)}>
-            <Question {...otherProps} />
-            <div className={styles.actions}>
-                <AccentButton
-                    iconName="copyOutline"
-                    onClick={onCopyButtonClick}
-                    disabled
-                    // FIXME: use strings
-                >
-                    Copy
-                </AccentButton>
-            </div>
-        </div>
-    );
-};
-
 type TabElement = 'active' | 'archived';
 
 const tabs: {[key in TabElement]: string} = {
     active: 'Active',
     archived: 'Parking Lot',
 };
-
-interface FrameworkQuestionProps {
-    onCopyButtonClick?: (id: BaseQuestionElement['id']) => void;
-    onEditButtonClick?: (id: BaseQuestionElement['id']) => void;
-    className?: string;
-    data: BaseQuestionElement;
-    framework: MiniFrameworkElement;
-}
 
 interface ComponentProps {
     className?: string;
@@ -131,6 +100,12 @@ const mapStateToProps = (state: AppState) => ({
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
 
+type CopyBody = {
+    questionnaireId?: number;
+    frameworkQuestionId?: number;
+    newOrder?: number;
+}
+
 interface Params {
     setQuestionnaire?: (questionnaire: QuestionnaireElement) => void;
     setFramework?: (framework: MiniFrameworkElement) => void;
@@ -138,8 +113,15 @@ interface Params {
     questionId?: QuestionnaireQuestionElement['id'];
     onDeleteSuccess?: (questionId: QuestionnaireQuestionElement['id']) => void;
 
+    body?: QuestionnaireQuestionElement['id'][];
+    copyBody?: QuestionnaireQuestionElement['id'][];
+    onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
+    onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
+    onBulkUnArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
+
     archive?: boolean;
     onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
+    onCopySuccess?: (question: QuestionnaireQuestionElement) => void;
 }
 
 const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
@@ -184,6 +166,19 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             params.onDeleteSuccess(params.questionId);
         },
     },
+    copyToQuestionnaireRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/af-question-copy/`
+        ),
+        body: ({ params }) => params && params.copyBody,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onCopySuccess) {
+                return;
+            }
+            params.onCopySuccess(response as QuestionnaireQuestionElement);
+        },
+    },
     questionArchiveRequest: {
         url: ({ props: { questionnaireId }, params }) => (
             `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
@@ -199,6 +194,45 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             const question = response as QuestionnaireQuestionElement;
             console.warn(question);
             params.onArchiveSuccess(question);
+        },
+    },
+    bulkQuestionDeleteRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/bulk-delete/`
+        ),
+        body: ({ params: { body } }) => body,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onBulkDeleteSuccess || !params.body) {
+                return;
+            }
+            params.onBulkDeleteSuccess(response as number[]);
+        },
+    },
+    bulkQuestionArchiveRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/bulk-archive/`
+        ),
+        body: ({ params: { body } }) => body,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onBulkArchiveSuccess || !params.body) {
+                return;
+            }
+            params.onBulkArchiveSuccess(response as number[], true);
+        },
+    },
+    bulkQuestionUnArchiveRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/bulk-unarchive/`
+        ),
+        body: ({ params: { body } }) => body,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onBulkUnArchiveSuccess || !params.body) {
+                return;
+            }
+            params.onBulkUnArchiveSuccess(response as number[], false);
         },
     },
 };
@@ -240,12 +274,16 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         question: FrameworkQuestionElement,
     ) => {
         const { framework } = this.state;
+        const { requests } = this.props;
+        const copyDisabled = getPending(requests, 'copyToQuestionnaireRequest');
 
         return {
             data: question,
             framework: framework as MiniFrameworkElement,
             className: styles.frameworkQuestion,
-            hideDetails: true,
+            onCopy: this.handleCopyClick,
+            copyDisabled,
+            expanded: false,
             readOnly: true,
         };
     }
@@ -260,11 +298,12 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             rendererParams: () => ({
                 title: 'Active Questions',
                 className: styles.questionList,
-                onAddQuestionClick: this.handleAddQuestionButtonClick,
+                onAdd: this.handleAddQuestionButtonClick,
                 onEdit: this.handleEditQuestionButtonClick,
                 onDelete: this.handleDeleteQuestion,
                 onArchive: this.handleArchiveQuestion,
-                onUnarchive: this.handleUnarchiveQuestion,
+                onBulkDelete: this.handleBulkDelete,
+                onBulkArchive: this.handleBulkArchive,
                 framework: this.state.framework,
                 questions: this.state.questionnaire
                     ? this.state.questionnaire.questions
@@ -279,11 +318,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             rendererParams: () => ({
                 title: 'Parking Lot Questions',
                 className: styles.questionList,
-                onAddQuestionClick: this.handleAddQuestionButtonClick,
-                onEdit: this.handleEditQuestionButtonClick,
-                onDelete: this.handleDeleteQuestion,
-                onArchive: this.handleArchiveQuestion,
                 onUnarchive: this.handleUnarchiveQuestion,
+                onBulkUnArchive: this.handleBulkUnArchive,
                 framework: this.state.framework,
                 questions: this.state.questionnaire
                     ? this.state.questionnaire.questions
@@ -293,6 +329,41 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                 archived: true,
             }),
         },
+    }
+
+    private handleCopyClick = (questionId: BaseQuestionElement['id']) => {
+        const {
+            questionnaire: {
+                id: questionnaireId,
+                questions,
+            },
+        } = this.state;
+
+        const newOrder = questions ? 1 : questions.length + 1;
+
+        const copyBody = {
+            frameworkQuestionId: questionId,
+            questionnaireId,
+            newOrder,
+        };
+
+        this.props.requests.copyToQuestionnaireRequest.do({
+            onCopySuccess: this.handleCopySuccess,
+            copyBody,
+        });
+    }
+
+    private handleCopySuccess = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            safeQuestionnaire.questions.push(question);
+        });
+
+        this.setState({ questionnaire: newQuestionnaire });
     }
 
     private handleAddQuestionButtonClick = () => {
@@ -325,6 +396,27 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.props.requests.questionDeleteRequest.do({
             questionId,
             onDeleteSuccess: this.handleQuestionDeleteRequestSuccess,
+        });
+    }
+
+    private handleBulkDelete = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+        this.props.requests.bulkQuestionDeleteRequest.do({
+            body: questionIds,
+            onBulkDeleteSuccess: this.handleBulkQuestionDeleteSuccess,
+        });
+    }
+
+    private handleBulkArchive = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+        this.props.requests.bulkQuestionArchiveRequest.do({
+            body: questionIds,
+            onBulkArchiveSuccess: this.handleBulkArchiveSuccess,
+        });
+    }
+
+    private handleBulkUnArchive = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+        this.props.requests.bulkQuestionUnArchiveRequest.do({
+            body: questionIds,
+            onBulkUnArchiveSuccess: this.handleBulkArchiveSuccess,
         });
     }
 
@@ -392,8 +484,54 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex !== -1) {
                 // eslint-disable-next-line no-param-reassign
-                delete safeQuestionnaire.questions[selectedIndex];
+                safeQuestionnaire.questions.splice(selectedIndex, 1);
             }
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
+    }
+
+    private handleBulkQuestionDeleteSuccess = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+
+            questionIds.forEach((questionId: number) => {
+                const selectedIndex = questions.findIndex(e => e.id === questionId);
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeQuestionnaire.questions.splice(selectedIndex, 1);
+                }
+            });
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
+    }
+
+    private handleBulkArchiveSuccess = (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+
+            questionIds.forEach((questionId: number) => {
+                const selectedIndex = questions.findIndex(e => e.id === questionId);
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeQuestionnaire.questions[selectedIndex].isArchived = archiveStatus;
+                }
+            });
         });
 
         this.setState({
@@ -572,7 +710,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     <ListView
                                         className={styles.frameworkQuestionList}
                                         rendererParams={this.getFrameworkQuestionRendererParams}
-                                        renderer={FrameworkQuestion}
+                                        renderer={Question}
                                         data={
                                             this.getFilteredQuestions(
                                                 framework.questions,

@@ -81,6 +81,13 @@ export interface BaseQuestionElement {
     crisisType?: number;
     crisisTypeDetail?: IdTitle;
 
+    showCheckbox?: boolean;
+    selected: boolean;
+    onSelectChange: (key: BaseQuestionElement['id'], value: boolean) => void;
+
+    expanded: boolean;
+    onExpandChange: (key: BaseQuestionElement['id'], value: boolean) => void;
+
     requiredDuration?: number;
 
     frameworkAttribute?: QuestionElementFrameworkAttribute;
