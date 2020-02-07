@@ -13,9 +13,16 @@ import {
     Requests,
 } from '#typings';
 
-import QuestionModal from '#qbc/QuestionModal';
+import QuestionModal, { FaramValues, FaramErrors } from '#qbc/QuestionModal';
 
-type FaramValues = unknown;
+interface Error {
+    faramErrors: FaramErrors;
+}
+
+interface State {
+    faramValues: FaramValues;
+    faramErrors: FaramErrors;
+}
 
 interface ComponentProps {
     className?: string;
@@ -29,6 +36,7 @@ interface ComponentProps {
 
 interface Params {
     body?: QuestionnaireQuestionElement;
+    setFaramErrors?: (faramErrors: FaramErrors) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -56,10 +64,42 @@ const requestOptions: Requests<ComponentProps, Params> = {
         }) => {
             props.onRequestSuccess(response as QuestionnaireQuestionElement);
         },
+        onFailure: ({ error, params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors((error as Error).faramErrors);
+        },
+        onFatal: ({ params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors({ $internal: ['Some error ocurred!'] });
+        },
     },
 };
 
-class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
+class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
+    public constructor(props: Props) {
+        super(props);
+        const { value } = this.props;
+        this.state = {
+            faramValues: value || {},
+            faramErrors: {},
+        };
+    }
+
+    private handleFaramValueChange = (faramValues: FaramValues, faramErrors: FaramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+        });
+    }
+
+    private handleFaramErrorChange = (faramErrors: FaramErrors) => {
+        this.setState({ faramErrors });
+    }
+
     private handleFaramValidationSuccess = (faramValues: FaramValues) => {
         const {
             value,
@@ -70,13 +110,17 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
         const body = faramValues as QuestionnaireQuestionElement;
 
         if (value && value.id) {
-            questionSaveRequest.do({ body });
+            questionSaveRequest.do({
+                body,
+                setFaramErrors: this.handleFaramErrorChange,
+            });
         } else {
             questionSaveRequest.do({
                 body: {
                     ...body,
                     questionnaire: questionnaireId,
                 },
+                setFaramErrors: this.handleFaramErrorChange,
             });
         }
     }
@@ -85,7 +129,6 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
         const {
             className,
             closeModal,
-            value,
             framework,
             requests: {
                 questionSaveRequest: {
@@ -94,14 +137,22 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props> {
             },
         } = this.props;
 
+        const {
+            faramValues,
+            faramErrors,
+        } = this.state;
+
         return (
             <QuestionModal
                 className={className}
-                onSuccess={this.handleFaramValidationSuccess}
                 closeModal={closeModal}
                 pending={pending}
-                value={value}
                 framework={framework}
+                value={faramValues}
+                error={faramErrors}
+                onSuccess={this.handleFaramValidationSuccess}
+                onValueChange={this.handleFaramValueChange}
+                onErrorChange={this.handleFaramErrorChange}
             />
         );
     }

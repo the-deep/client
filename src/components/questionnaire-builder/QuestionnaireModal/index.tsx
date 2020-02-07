@@ -64,7 +64,6 @@ interface RequestBody extends FaramValues {
 
 type FaramErrors = {
     [key: string]: string | undefined | string [];
-    // $internal: string[];
 }
 
 interface Error {

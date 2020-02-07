@@ -90,7 +90,7 @@ export interface BaseQuestionElement {
 }
 
 export interface FrameworkQuestionElement extends BaseQuestionElement {
-    framework: number;
+    analysisFramework: number;
 }
 
 export interface QuestionnaireQuestionElement extends BaseQuestionElement {
