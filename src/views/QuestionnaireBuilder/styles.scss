@@ -85,6 +85,7 @@
     .main {
         display: flex;
         background-color: var(--color-foreground);
+        overflow: auto;
 
         .question-list {
             flex-grow: 1;

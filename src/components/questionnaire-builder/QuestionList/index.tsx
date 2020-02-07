@@ -13,6 +13,7 @@ import {
     QuestionnaireQuestionElement,
     MiniFrameworkElement,
     BaseQuestionElement,
+    BulkActionId,
 } from '#typings';
 
 import styles from './styles.scss';
@@ -33,9 +34,9 @@ interface QuestionListProps {
     onDelete?: () => void;
     onArchive?: () => void;
     onUnarchive?: () => void;
-    onBulkDelete?: (questionIds: BaseQuestionElement['id'][]) => void;
-    onBulkArchive?: (questionIds: BaseQuestionElement['id'][]) => void;
-    onBulkUnArchive?: (questionIds: BaseQuestionElement['id'][]) => void;
+    onBulkDelete?: (questionIds: BulkActionId[]) => void;
+    onBulkArchive?: (questionIds: BulkActionId[]) => void;
+    onBulkUnArchive?: (questionIds: BulkActionId[]) => void;
     framework?: MiniFrameworkElement;
     archived: boolean;
 }
@@ -145,10 +146,12 @@ const QuestionList = (props: QuestionListProps) => {
             const questionIds = filteredQuestions
                 ? filteredQuestions
                     .filter(q => selectedQuestions[q.id])
-                    .map(q => q.id)
+                    .map(q => ({ id: q.id }))
                 : [];
 
-            onBulkDelete(questionIds);
+            if (onBulkDelete) {
+                onBulkDelete(questionIds);
+            }
         },
         [filteredQuestions, selectedQuestions, onBulkDelete],
     );
@@ -158,10 +161,12 @@ const QuestionList = (props: QuestionListProps) => {
             const questionIds = filteredQuestions
                 ? filteredQuestions
                     .filter(q => selectedQuestions[q.id])
-                    .map(q => q.id)
+                    .map(q => ({ id: q.id }))
                 : [];
 
-            onBulkArchive(questionIds);
+            if (onBulkArchive) {
+                onBulkArchive(questionIds);
+            }
         },
         [filteredQuestions, selectedQuestions, onBulkArchive],
     );
@@ -171,10 +176,12 @@ const QuestionList = (props: QuestionListProps) => {
             const questionIds = filteredQuestions
                 ? filteredQuestions
                     .filter(q => selectedQuestions[q.id])
-                    .map(q => q.id)
+                    .map(q => ({ id: q.id }))
                 : [];
 
-            onBulkUnArchive(questionIds);
+            if (onBulkUnArchive) {
+                onBulkUnArchive(questionIds);
+            }
         },
         [filteredQuestions, selectedQuestions, onBulkUnArchive],
     );
@@ -189,38 +196,46 @@ const QuestionList = (props: QuestionListProps) => {
         <div className={_cs(styles.questionList, className)}>
             <header className={styles.header}>
                 <Checkbox
-                    value={isAllSelected}
+                    className={styles.checkbox}
+                    value={isAllSelected && filteredQuestions && filteredQuestions.length > 0}
                     indeterminate={isSomeSelected}
                     onChange={handleSelectAllCheckboxClick}
                 />
-                <h3 className={styles.heading}>
+                <h2 className={styles.heading}>
                     {title}
-                </h3>
+                </h2>
                 <div className={styles.actions}>
                     <Button
+                        className={styles.button}
                         onClick={handleExpandAllButtonClick}
                         iconName={isAllExpanded ? 'contractContent' : 'expandContent'}
                     />
                     { (!isSomeSelected && onAdd) &&
                         <Button
+                            iconName="add"
+                            className={styles.button}
                             onClick={onAdd}
                             disabled={showLoadingOverlay}
                         >
                             {/* FIXME: use strings */}
-                            Add question
+                            Add
                         </Button>
                     }
                     { (isSomeSelected && onBulkArchive) && (
                         <Button
+                            iconName="archive"
                             onClick={handleBulkArchive}
+                            className={styles.button}
                             disabled={showLoadingOverlay}
                         >
-                            Archive
+                            Send to Parking Lot
                         </Button>
                     )}
                     { (isSomeSelected && onBulkDelete) && (
                         <Button
+                            iconName="delete"
                             onClick={handleBulkDelete}
+                            className={styles.button}
                             disabled={showLoadingOverlay}
                         >
                             Delete
@@ -229,6 +244,8 @@ const QuestionList = (props: QuestionListProps) => {
                     { (isSomeSelected && onBulkUnArchive) && (
                         <Button
                             onClick={handleBulkUnArchive}
+                            iconName="unarchive"
+                            className={styles.button}
                             disabled={showLoadingOverlay}
                         >
                             Recover from Parking Lot

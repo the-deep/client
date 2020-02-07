@@ -28,6 +28,7 @@ import {
     AppState,
     Requests,
     AddRequestProps,
+    BulkActionId,
 } from '#typings';
 
 import {
@@ -112,7 +113,7 @@ interface Params {
     questionId?: QuestionnaireQuestionElement['id'];
     onDeleteSuccess?: (questionId: QuestionnaireQuestionElement['id']) => void;
 
-    body?: QuestionnaireQuestionElement['id'][];
+    body?: BulkActionId[];
     copyBody?: QuestionnaireQuestionElement['id'][];
     onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
     onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
@@ -294,39 +295,73 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     private views = {
         active: {
             component: QuestionList,
-            rendererParams: () => ({
-                title: 'Active Questions',
-                className: styles.questionList,
-                onAdd: this.handleAddQuestionButtonClick,
-                onEdit: this.handleEditQuestionButtonClick,
-                onDelete: this.handleDeleteQuestion,
-                onArchive: this.handleArchiveQuestion,
-                onBulkDelete: this.handleBulkDelete,
-                onBulkArchive: this.handleBulkArchive,
-                framework: this.state.framework,
-                questions: this.state.questionnaire
-                    ? this.state.questionnaire.questions
-                    : undefined,
-                showLoadingOverlay: this.props.requests.questionDeleteRequest.pending
-                    || this.props.requests.questionArchiveRequest.pending,
-                archived: false,
-            }),
+            rendererParams: () => {
+                const {
+                    requests: {
+                        questionDeleteRequest,
+                        questionArchiveRequest,
+                        copyToQuestionnaireRequest,
+                        bulkQuestionDeleteRequest,
+                        bulkQuestionArchiveRequest,
+                        bulkQuestionUnArchiveRequest,
+                    },
+                } = this.props;
+
+                return ({
+                    title: 'Active Questions',
+                    className: styles.questionList,
+                    onAdd: this.handleAddQuestionButtonClick,
+                    onEdit: this.handleEditQuestionButtonClick,
+                    onDelete: this.handleDeleteQuestion,
+                    onArchive: this.handleArchiveQuestion,
+                    onBulkDelete: this.handleBulkDelete,
+                    onBulkArchive: this.handleBulkArchive,
+                    framework: this.state.framework,
+                    questions: this.state.questionnaire
+                        ? this.state.questionnaire.questions
+                        : undefined,
+                    showLoadingOverlay: questionDeleteRequest.pending
+                        || questionArchiveRequest.pending
+                        || copyToQuestionnaireRequest.pending
+                        || bulkQuestionDeleteRequest.pending
+                        || bulkQuestionArchiveRequest.pending
+                        || bulkQuestionUnArchiveRequest.pending,
+                    archived: false,
+                });
+            },
         },
         archived: {
             component: QuestionList,
-            rendererParams: () => ({
-                title: 'Parking Lot Questions',
-                className: styles.questionList,
-                onUnarchive: this.handleUnarchiveQuestion,
-                onBulkUnArchive: this.handleBulkUnArchive,
-                framework: this.state.framework,
-                questions: this.state.questionnaire
-                    ? this.state.questionnaire.questions
-                    : undefined,
-                showLoadingOverlay: this.props.requests.questionDeleteRequest.pending
-                    || this.props.requests.questionArchiveRequest.pending,
-                archived: true,
-            }),
+            rendererParams: () => {
+                const {
+                    requests: {
+                        questionDeleteRequest,
+                        questionArchiveRequest,
+                        copyToQuestionnaireRequest,
+                        bulkQuestionDeleteRequest,
+                        bulkQuestionArchiveRequest,
+                        bulkQuestionUnArchiveRequest,
+                    },
+                } = this.props;
+
+                return ({
+                    title: 'Parking Lot Questions',
+                    className: styles.questionList,
+                    onUnarchive: this.handleUnarchiveQuestion,
+                    onBulkUnArchive: this.handleBulkUnArchive,
+                    framework: this.state.framework,
+                    questions: this.state.questionnaire
+                        ? this.state.questionnaire.questions
+                        : undefined,
+                    showLoadingOverlay: questionDeleteRequest.pending
+                        || questionArchiveRequest.pending
+                        || copyToQuestionnaireRequest.pending
+                        || bulkQuestionDeleteRequest.pending
+                        || bulkQuestionArchiveRequest.pending
+                        || bulkQuestionUnArchiveRequest.pending,
+                    archived: true,
+                });
+            },
         },
     }
 
@@ -447,21 +482,21 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleBulkDelete = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+    private handleBulkDelete = (questionIds: BulkActionId[]) => {
         this.props.requests.bulkQuestionDeleteRequest.do({
             body: questionIds,
             onBulkDeleteSuccess: this.handleBulkQuestionDeleteSuccess,
         });
     }
 
-    private handleBulkArchive = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+    private handleBulkArchive = (questionIds: BulkActionId[]) => {
         this.props.requests.bulkQuestionArchiveRequest.do({
             body: questionIds,
             onBulkArchiveSuccess: this.handleBulkArchiveSuccess,
         });
     }
 
-    private handleBulkUnArchive = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+    private handleBulkUnArchive = (questionIds: BulkActionId[]) => {
         this.props.requests.bulkQuestionUnArchiveRequest.do({
             body: questionIds,
             onBulkUnArchiveSuccess: this.handleBulkArchiveSuccess,

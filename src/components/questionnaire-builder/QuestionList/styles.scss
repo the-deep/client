@@ -5,11 +5,12 @@
 .question-list {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: auto;
 
     >.header {
         display: flex;
         position: sticky;
+        position: relative;
         top: 0;
         align-items: center;
         flex-shrink: 0;
@@ -20,6 +21,13 @@
         width: var(--width-question);
         max-width: var(--width-question);
 
+        .checkbox {
+            position: absolute;
+            top: calc(50% - (var(--font-size-extra-large) / 2));
+            left: -36px;
+            font-size: var(--font-size-extra-large);
+        }
+
         .heading {
             flex-grow: 1;
             padding: var(--spacing-medium) 0;
@@ -27,6 +35,10 @@
 
         >.actions {
             flex-shrink: 0;
+
+            .button {
+                margin-left: var(--spacing-small);
+            }
         }
     }
 

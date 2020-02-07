@@ -81,19 +81,16 @@ export interface BaseQuestionElement {
     crisisType?: number;
     crisisTypeDetail?: IdTitle;
 
-    showCheckbox?: boolean;
-    selected: boolean;
-    onSelectChange: (key: BaseQuestionElement['id'], value: boolean) => void;
-
-    expanded: boolean;
-    onExpandChange: (key: BaseQuestionElement['id'], value: boolean) => void;
-
     requiredDuration?: number;
 
     frameworkAttribute?: QuestionElementFrameworkAttribute;
 
     isArchived?: boolean;
     isRequired?: boolean;
+}
+
+export interface BulkActionId {
+    id: BaseQuestionElement['id'];
 }
 
 export interface FrameworkQuestionElement extends BaseQuestionElement {
@@ -122,6 +119,7 @@ export interface MiniQuestionnaireElement extends DbEntity {
 
     activeQuestionsCount: number;
 }
+
 
 export interface QuestionnaireElement extends DbEntity {
     project: number;

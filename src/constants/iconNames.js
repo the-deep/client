@@ -116,6 +116,8 @@ const iconNames = {
     upload: 'ion-android-upload',
     uploadFa: 'fa fa-upload',
     user: 'ion-android-contact',
+    unarchive: 'ion-ios-upload-outline',
+    archive: 'ion-ios-download-outline',
     userGroup: 'ion-android-contacts',
     verticalBar: 'ion-connection-bars',
     visualization: 'ion-stats-bars',
