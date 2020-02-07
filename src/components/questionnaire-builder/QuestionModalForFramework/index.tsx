@@ -29,7 +29,7 @@ interface ComponentProps {
     className?: string;
     value?: FrameworkQuestionElement;
     framework: MiniFrameworkElement;
-    onRequestSuccess: (q: FrameworkQuestionElement[]) => void;
+    onRequestSuccess: (q: FrameworkQuestionElement) => void;
     closeModal: () => void;
 }
 
@@ -61,7 +61,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props,
             response,
         }) => {
-            props.onRequestSuccess((response as MiniFrameworkElement).questions);
+            props.onRequestSuccess((response as FrameworkQuestionElement));
         },
         onFailure: ({ error, params }) => {
             if (!params || !params.setFaramErrors) {

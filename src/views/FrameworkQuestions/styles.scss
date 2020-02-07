@@ -21,6 +21,7 @@
             flex-direction: column;
             flex-grow: 1;
             overflow: auto;
+            background-color: var(--color-foreground);
 
             .header {
                 display: flex;
@@ -52,12 +53,40 @@
     }
 
     .sidebar {
-        >.header {
-            padding: var(--spacing-medium);
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .question-status {
+            padding: var(--spacing-medium) 0;
+
+            .header {
+                .heading {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                }
+
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            }
+
+            .tab {
+                display: flex;
+                text-transform: none;
+
+                .label {
+                    flex-grow: 1;
+                }
+
+                .count {
+                    flex-shrink: 0;
+                }
+            }
         }
 
-        >.content {
-            padding: var(--spacing-medium);
+        .matrix-filter {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: var(--spacing-small) var(--spacing-medium);
         }
     }
 }

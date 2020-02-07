@@ -141,18 +141,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             params.setFramework(framework);
         },
     },
-    questionDeleteRequest: {
-        url: ({ props: { questionnaireId }, params }) => (
-            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
-        ),
-        method: methods.DELETE,
-        onSuccess: ({ params }) => {
-            if (!params || !params.onDeleteSuccess || !params.questionId) {
-                return;
-            }
-            params.onDeleteSuccess(params.questionId);
-        },
-    },
+
     copyToQuestionnaireRequest: {
         url: ({ props: { questionnaireId } }) => (
             `/questionnaires/${questionnaireId}/questions/af-question-copy/`
@@ -164,6 +153,18 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
                 return;
             }
             params.onCopySuccess(response as QuestionnaireQuestionElement);
+        },
+    },
+    questionDeleteRequest: {
+        url: ({ props: { questionnaireId }, params }) => (
+            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
+        ),
+        method: methods.DELETE,
+        onSuccess: ({ params }) => {
+            if (!params || !params.onDeleteSuccess || !params.questionId) {
+                return;
+            }
+            params.onDeleteSuccess(params.questionId);
         },
     },
     questionArchiveRequest: {
@@ -179,7 +180,6 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
                 return;
             }
             const question = response as QuestionnaireQuestionElement;
-            console.warn(question);
             params.onArchiveSuccess(question);
         },
     },

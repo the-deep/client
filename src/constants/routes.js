@@ -250,7 +250,7 @@ export const routes = {
         path: '/frameworks/:analysisFrameworkId/questions/',
         loader: () => import('../views/FrameworkQuestions'),
         links: allLinks,
-    }, // _ts('pageTitle', 'projectQuestionnare');
+    }, // _ts('pageTitle', 'frameworkQuestions');
 
     analysisFramework: {
         order: 100,

@@ -1107,7 +1107,8 @@
         "-30617552": "Archived",
         "-10356474": "Archived Questionnaires",
         "-16166235": "Add Questionnaire",
-        "-88114396": "Questionnaire Status"
+        "-88114396": "Questionnaire Status",
+        "-25976066": "Framework Questions"
     },
     "links": {
         "browserExtension": {
@@ -2012,7 +2013,8 @@
             "plannedArys": -41526057,
             "projectQuestionnare": -91998400,
             "questionnaireBuilder": -7536745,
-            "projectQuestionnaires": -91998400
+            "projectQuestionnaires": -91998400,
+            "frameworkQuestions": -25976066
         },
         "project.general": {
             "projectNameLabel": 103,
