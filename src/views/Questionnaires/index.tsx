@@ -10,6 +10,7 @@ import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 
 import BackLink from '#components/general/BackLink';
+import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
 import { pathNames } from '#constants';
 import {
     projectIdFromRouteSelector,
@@ -233,10 +234,17 @@ class Questionnaires extends React.PureComponent<Props, State> {
                         </>
                     )}
                     mainContent={(
-                        <MultiViewContainer
-                            views={this.views}
-                            useHash
-                        />
+                        <>
+                            <MultiViewContainer
+                                views={this.views}
+                                useHash
+                            />
+                            <img
+                                className={styles.ifrcLogo}
+                                src={IfrcLogo}
+                                alt="IFRC Logo"
+                            />
+                        </>
                     )}
                 />
             </>
