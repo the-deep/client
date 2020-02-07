@@ -52,6 +52,7 @@ interface Props {
     onUnarchive: (id: number) => void;
     onDelete: (id: number) => void;
     onEdit: (questionnaire: MiniQuestionnaireElement) => void;
+    onXLSFormExport: (id: number) => void;
 }
 
 class Questionnaire extends React.PureComponent<Props> {
@@ -80,6 +81,15 @@ class Questionnaire extends React.PureComponent<Props> {
         } = this.props;
 
         onDelete(questionnaireKey);
+    }
+
+    private handleXLSFormExport = () => {
+        const {
+            onXLSFormExport,
+            questionnaireKey,
+        } = this.props;
+
+        onXLSFormExport(questionnaireKey);
     }
 
     public render() {
@@ -201,6 +211,11 @@ class Questionnaire extends React.PureComponent<Props> {
                                 // FIXME: use strings
                                 title="Delete"
                                 onClick={this.handleDelete}
+                            />
+                            <DropdownButton
+                                // FIXME: use strings
+                                title="Export to XLSForm"
+                                onClick={this.handleXLSFormExport}
                             />
                             <DropdownButton
                                 disabled

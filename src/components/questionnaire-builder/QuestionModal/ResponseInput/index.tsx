@@ -152,7 +152,7 @@ class ResponseInput extends React.PureComponent<Props> {
             value,
         } = this.props;
 
-        if (type !== 'select') {
+        if (!type || !['select_one', 'select_multiple', 'rank'].includes(type)) {
             return null;
         }
 

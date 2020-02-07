@@ -18,15 +18,12 @@ import ImageIcon from '#resources/img/questionnaire-icons/image.png';
 import LocationIcon from '#resources/img/questionnaire-icons/location.png';
 import NoteIcon from '#resources/img/questionnaire-icons/note.png';
 import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
-import PrinterIcon from '#resources/img/questionnaire-icons/printer.png';
 import RangeIcon from '#resources/img/questionnaire-icons/range.png';
 import RankIcon from '#resources/img/questionnaire-icons/rank.png';
 import SelectIcon from '#resources/img/questionnaire-icons/select-one.png';
-import SignatureIcon from '#resources/img/questionnaire-icons/signature.png';
 import TextIcon from '#resources/img/questionnaire-icons/text.png';
 import TriggerAcknowledgeIcon from '#resources/img/questionnaire-icons/trigger-acknowledge.png';
 import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
-import UrlIcon from '#resources/img/questionnaire-icons/url.png';
 import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
 import MetaOutput from '../MetaOutput';
@@ -41,20 +38,27 @@ const iconMap: {
     acknowledge: TriggerAcknowledgeIcon,
     audio: AudioIcon,
     barcode: BarcodeIcon,
-    dateAndTime: DateAndTimeIcon,
+    date: DateAndTimeIcon,
+    time: DateAndTimeIcon,
+    dateTime: DateAndTimeIcon,
     file: FileUploadIcon,
     image: ImageIcon,
-    location: LocationIcon,
+    geopoint: LocationIcon,
+    geotrace: LocationIcon,
+    geoshape: LocationIcon,
     note: NoteIcon,
-    number: NumberIcon,
-    printer: PrinterIcon,
+    integer: NumberIcon,
+    decimal: NumberIcon,
     range: RangeIcon,
     rank: RankIcon,
-    select: SelectIcon,
-    signature: SignatureIcon,
+    select_one: SelectIcon,
+    select_multiple: SelectIcon,
     text: TextIcon,
-    url: UrlIcon,
     video: VideoIcon,
+
+    // TODO: get icon for these
+    calculate: NumberIcon,
+    hidden: TextIcon,
 };
 
 interface Props {
@@ -235,7 +239,7 @@ class Question extends React.PureComponent<Props> {
                 </div>
                 {!hideDetails && (
                     <div className={styles.details}>
-                        {data.type === 'select' && (
+                        {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
                             <div className={styles.responseOptions}>
                                 <div className={styles.heading}>
                                     {/* FIXME: use strings */}

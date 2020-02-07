@@ -49,7 +49,7 @@ class ResponseOutput extends React.PureComponent<Props> {
             type,
         } = this.props;
 
-        if (type !== 'select') {
+        if (!type || !['select_one', 'select_multiple', 'rank'].includes(type)) {
             return null;
         }
 

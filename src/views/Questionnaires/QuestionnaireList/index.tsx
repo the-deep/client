@@ -1,4 +1,6 @@
 import React from 'react';
+import Excel from 'exceljs';
+import { saveAs } from 'file-saver';
 import { _cs } from '@togglecorp/fujs';
 import { produce } from 'immer';
 
@@ -11,6 +13,8 @@ import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import {
     MiniQuestionnaireElement,
+    QuestionnaireElement,
+    BaseQuestionElement,
 
     Requests,
     AddRequestProps,
@@ -51,6 +55,7 @@ interface Params {
     archived?: boolean;
     questionnaireId?: number;
     setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
+    onQuestionsLoad?: (questionnaire: QuestionnaireElement) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -78,6 +83,17 @@ const requestOptions: Requests<ComponentProps, Params> = {
             params.setQuestionnaires(results, count);
         },
         // FIXME: write onFailure, onFatal
+    },
+    questionnaireGetRequest: {
+        url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
+        method: methods.GET,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onQuestionsLoad) {
+                return;
+            }
+            const questionnaire = response as QuestionnaireElement;
+            params.onQuestionsLoad(questionnaire);
+        },
     },
     questionnaireArchiveRequest: {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
@@ -144,6 +160,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         onUnarchive: this.handleUnarchive,
         onDelete: this.handleDelete,
         onEdit: this.handleEdit,
+        onXLSFormExport: this.handleXLSFormExport,
     })
 
     private handleArchive = (questionnaireId: number) => {
@@ -185,6 +202,107 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             });
 
         this.setState({ questionnaires: newQuestionnaires });
+    }
+
+    private exportQuestionsToXLSForm = (questionnaire: QuestionnaireElement) => {
+        // TODO: Order questions
+        const { questions } = questionnaire;
+        const activeQuestions = questions.filter(question => !question.isArchived);
+
+        const getColumns = ((columns: string[]) => (
+            columns.map(col => ({
+                key: col,
+                header: col,
+                width: 20,
+            }))
+        ));
+
+        const hasChoices = (question: BaseQuestionElement) => (
+            ['select_one', 'select_multiple', 'rank'].includes(question.type)
+        );
+
+        const workbook = new Excel.Workbook();
+
+        // Sheets
+        const survey = workbook.addWorksheet('survey');
+        const choices = workbook.addWorksheet('choices');
+        const settings = workbook.addWorksheet('settings');
+
+        // Bold all column values
+        survey.getRow(1).font = { bold: true };
+        survey.columns = getColumns([
+            'type', 'name', 'label', 'hint', 'default', 'read_only',
+            'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
+            'parameters', 'body::accuracyThreshold', 'relevant',
+        ]);
+
+        choices.getRow(1).font = { bold: true };
+        choices.columns = getColumns([
+            'list name', 'name', 'label',
+        ]);
+
+        settings.getRow(1).font = { bold: true };
+        settings.columns = getColumns([
+            'form_title', 'form_id',
+            'public_key', 'submission_url', 'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
+        ]);
+
+        // Schema: Adding default meta
+        const surveyDefaultMeta = ['start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber'];
+        survey.addRows(
+            surveyDefaultMeta.map(meta => ({ type: meta, name: meta })),
+        );
+        // Schema: Add survey questions
+        survey.addRows(
+            activeQuestions.map((question) => {
+                const questionKey = `question_${question.id}`;
+                const questionChoiceKey = `${questionKey}_choices`;
+                return {
+                    // NOTE: Choice types requires choice name in type "type_name choice_key"
+                    type: hasChoices(question) ? `${question.type} ${questionChoiceKey}` : question.type,
+                    name: questionKey,
+                    label: question.title,
+                    required: question.isRequired ? 'yes' : '',
+                };
+            }),
+        );
+
+        choices.addRows(
+            activeQuestions
+                .filter(hasChoices)
+                .map((question) => {
+                    const questionKey = `question_${question.id}`;
+                    const questionChoiceKey = `${questionKey}_choices`;
+                    const options = question.responseOptions || [];
+                    return options.map(option => ({
+                        'list name': questionChoiceKey,
+                        name: option.key,
+                        label: option.value,
+                    }));
+                })
+                .flat(),
+        );
+
+        // Add XForm Settings
+        settings.addRow({
+            form_title: questionnaire.title,
+            form_id: `Form ${questionnaire.id}`,
+        });
+
+        // Save file to local
+        workbook.xlsx.writeBuffer().then((data) => {
+            const blob = new Blob(
+                [data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+            );
+            saveAs(blob, `${questionnaire.title} XForm Export.xlsx`);
+        });
+    }
+
+    private handleXLSFormExport = (questionnaireId: number) => {
+        this.props.requests.questionnaireGetRequest.do({
+            questionnaireId,
+            onQuestionsLoad: this.exportQuestionsToXLSForm,
+        });
     }
 
     public render() {
