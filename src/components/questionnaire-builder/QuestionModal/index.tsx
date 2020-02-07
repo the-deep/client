@@ -218,11 +218,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
                         <NonFieldErrors faramElement />
                         {activeTab === 'basic' && (
                             <section className={styles.basic}>
-                                <header className={styles.header}>
-                                    <h4 className={styles.heading}>
-                                        Basic details
-                                    </h4>
-                                </header>
                                 <div className={styles.content}>
                                     <TextInput
                                         faramElementName="title"
@@ -258,11 +253,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
                         )}
                         {activeTab === 'frameworkDetails' && (
                             <section className={styles.frameworkDetails}>
-                                <header className={styles.header}>
-                                    <h4 className={styles.heading}>
-                                        Framework
-                                    </h4>
-                                </header>
                                 <div className={styles.content}>
                                     <FrameworkAttributeInput
                                         className={styles.frameworkAttributeInput}
@@ -278,11 +268,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
                         )}
                         {activeTab === 'metadata' && (
                             <section className={styles.metadata}>
-                                <header className={styles.header}>
-                                    <h4 className={styles.heading}>
-                                        Metadata
-                                    </h4>
-                                </header>
                                 <div className={styles.content}>
                                     <SelectInput
                                         faramElementName="crisisType"

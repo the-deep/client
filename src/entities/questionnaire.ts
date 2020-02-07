@@ -14,7 +14,10 @@ export const treeItemKeySelector = (item: TreeItem) => item.key;
 export const treeItemParentKeySelector = (item: TreeItem) => item.parentKey;
 export const treeItemLabelSelector = (item: TreeItem) => item.title;
 
-export function getFrameworkMatrices(framework: MiniFrameworkElement | undefined): TreeItem[] {
+export function getFrameworkMatrices(
+    framework: MiniFrameworkElement | undefined,
+    questions?: FrameworkQuestionElement[],
+): TreeItem[] {
     if (!framework) {
         return [];
     }
