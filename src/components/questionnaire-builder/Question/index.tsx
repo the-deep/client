@@ -55,6 +55,10 @@ const iconMap: {
     select_multiple: SelectIcon,
     text: TextIcon,
     video: VideoIcon,
+
+    // TODO: get icon for these
+    calculate: NumberIcon,
+    hidden: TextIcon,
 };
 
 interface Props {
@@ -235,7 +239,7 @@ class Question extends React.PureComponent<Props> {
                 </div>
                 {!hideDetails && (
                     <div className={styles.details}>
-                        {['select_one', 'select_multiple'].includes(data.type) && (
+                        {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
                             <div className={styles.responseOptions}>
                                 <div className={styles.heading}>
                                     {/* FIXME: use strings */}

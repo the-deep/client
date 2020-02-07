@@ -14,6 +14,7 @@ import QuestionnaireModal from '#qbc/QuestionnaireModal';
 import {
     MiniQuestionnaireElement,
     QuestionnaireElement,
+    BaseQuestionElement,
 
     Requests,
     AddRequestProps,
@@ -204,6 +205,10 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
     }
 
     private exportQuestionsToXLSForm = (questionnaire: QuestionnaireElement) => {
+        // TODO: Order questions
+        const { questions } = questionnaire;
+        const activeQuestions = questions.filter(question => !question.isArchived);
+
         const getColumns = ((columns: string[]) => (
             columns.map(col => ({
                 key: col,
@@ -212,8 +217,9 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             }))
         ));
 
-        // TODO: Order questions
-        const { questions } = questionnaire;
+        const hasChoices = (question: BaseQuestionElement) => (
+            ['select_one', 'select_multiple', 'rank'].includes(question.type)
+        );
 
         const workbook = new Excel.Workbook();
 
@@ -224,65 +230,64 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
 
         // Bold all column values
         survey.getRow(1).font = { bold: true };
-        choices.getRow(1).font = { bold: true };
-        settings.getRow(1).font = { bold: true };
-
-        const surveyColumns = [
+        survey.columns = getColumns([
             'type', 'name', 'label', 'hint', 'default', 'read_only',
             'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
             'parameters', 'body::accuracyThreshold', 'relevant',
-        ];
-        const surveyDefaultMeta = ['start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber'];
-        const choicesColumns = ['list name', 'name', 'label'];
-        const settingsColumns = [
+        ]);
+
+        choices.getRow(1).font = { bold: true };
+        choices.columns = getColumns([
+            'list name', 'name', 'label',
+        ]);
+
+        settings.getRow(1).font = { bold: true };
+        settings.columns = getColumns([
             'form_title', 'form_id',
             'public_key', 'submission_url', 'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
-        ];
+        ]);
 
-        // Specify columns
-        choices.columns = getColumns(choicesColumns);
-        survey.columns = getColumns(surveyColumns);
-        settings.columns = getColumns(settingsColumns);
+        // Schema: Adding default meta
+        const surveyDefaultMeta = ['start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber'];
+        survey.addRows(
+            surveyDefaultMeta.map(meta => ({ type: meta, name: meta })),
+        );
+        // Schema: Add survey questions
+        survey.addRows(
+            activeQuestions.map((question) => {
+                const questionKey = `question_${question.id}`;
+                const questionChoiceKey = `${questionKey}_choices`;
+                return {
+                    // NOTE: Choice types requires choice name in type "type_name choice_key"
+                    type: hasChoices(question) ? `${question.type} ${questionChoiceKey}` : question.type,
+                    name: questionKey,
+                    label: question.title,
+                    required: question.isRequired ? 'yes' : '',
+                };
+            }),
+        );
+
+        choices.addRows(
+            activeQuestions
+                .filter(hasChoices)
+                .map((question) => {
+                    const questionKey = `question_${question.id}`;
+                    const questionChoiceKey = `${questionKey}_choices`;
+                    const options = question.responseOptions || [];
+                    return options.map(option => ({
+                        'list name': questionChoiceKey,
+                        name: option.key,
+                        label: option.value,
+                    }));
+                })
+                .flat(),
+        );
 
         // Add XForm Settings
         settings.addRow({
             form_title: questionnaire.title,
             form_id: `Form ${questionnaire.id}`,
         });
-
-        // Schema: Adding default meta
-        surveyDefaultMeta.forEach(meta => (
-            survey.addRow({ type: meta, name: meta })
-        ));
-
-        // Schema: Add survey questions
-        survey.addRows(
-            questions.filter(question => !question.isArchived).map((question) => {
-                const question_key = `question_${question.id}`;
-                const row = {
-                    type: question.type,
-                    name: question_key,
-                    label: question.title,
-                    required: question.isRequired ? 'yes' : '',
-                };
-
-                // Choice types requires choice name in type "type_name choice_key"
-                if (['select_one', 'select_multiple', 'rank'].includes(question.type)) {
-                    const question_choice_key = `${question_key}_choices`;
-                    const options = question.responseOptions || [];
-                    choices.addRows(
-                        options.map(option => ({
-                            'list name': question_choice_key,
-                            name: option.key,
-                            label: option.value,
-                        })),
-                    );
-                    row.type += ` ${question_choice_key}`;
-                }
-
-                return row;
-            }),
-        );
 
         // Save file to local
         workbook.xlsx.writeBuffer().then((data) => {
