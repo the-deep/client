@@ -200,6 +200,7 @@ const QuestionList = (props: QuestionListProps) => {
                     value={isAllSelected && filteredQuestions && filteredQuestions.length > 0}
                     indeterminate={isSomeSelected}
                     onChange={handleSelectAllCheckboxClick}
+                    disabled={showLoadingOverlay}
                 />
                 <h2 className={styles.heading}>
                     {title}
@@ -209,6 +210,7 @@ const QuestionList = (props: QuestionListProps) => {
                         className={styles.button}
                         onClick={handleExpandAllButtonClick}
                         iconName={isAllExpanded ? 'contractContent' : 'expandContent'}
+                        disabled={showLoadingOverlay}
                     />
                     { (!isSomeSelected && onAdd) &&
                         <Button
