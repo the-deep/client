@@ -574,13 +574,9 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                     modifier={this.tabsModifier}
                                 />
                             </div>
-                            <header className={styles.header}>
-                                <h3>
-                                    Filter
-                                </h3>
-                                <h4>
-                                    Matrices
-                                </h4>
+                            <div className={styles.matrixFilter}>
+                                <h3> Filter </h3>
+                                <h4> Matrices </h4>
                                 <TreeInput
                                     keySelector={treeItemKeySelector}
                                     parentKeySelector={treeItemParentKeySelector}
@@ -590,7 +586,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                     options={this.getFrameworkMatrices(framework)}
                                     defaultCollapseLevel={0}
                                 />
-                            </header>
+                            </div>
                         </>
                     )}
                     mainContentClassName={styles.main}
