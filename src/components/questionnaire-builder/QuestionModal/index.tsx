@@ -1,14 +1,15 @@
 import React from 'react';
 import memoize from 'memoize-one';
-import Faram from '@togglecorp/faram';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import NumberInput from '#rsci/NumberInput';
+import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
-import SegmentInput from '#rsci/SegmentInput';
-import NumberInput from '#rsci/NumberInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -18,7 +19,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import { getMatrix2dStructures } from '#utils/framework';
 
 import {
-    RequestCoordinator,
     RequestClient,
     methods,
     getResponse,
@@ -52,30 +52,24 @@ type QuestionKeys = 'title'
 
 type QuestionFormElement = Partial<Pick<BaseQuestionElement, QuestionKeys>>;
 
-const defaultQuestionValue: QuestionFormElement = {
-    responseOptions: [],
-    frameworkAttribute: {
-        type: 'sector',
-    },
-};
+export type FaramValues = QuestionFormElement;
 
-type FaramValues = QuestionFormElement;
-
-interface FaramErrors {}
+export interface FaramErrors {
+    [key: string]: string | undefined | string [];
+}
 
 interface ComponentProps {
     className?: string;
     framework?: MiniFrameworkElement;
-    value?: QuestionFormElement;
-    onSuccess: (faramValues: FaramValues) => void;
     closeModal?: () => void;
 
     pending?: boolean;
-}
 
-interface State {
-    faramValues: FaramValues;
-    faramErrors: FaramErrors;
+    value?: FaramValues;
+    error?: FaramErrors;
+    onValueChange: (value: FaramValues, error: FaramErrors) => void;
+    onErrorChange: (error: FaramErrors) => void;
+    onSuccess: (value: FaramValues) => void;
 }
 
 interface Params {
@@ -103,27 +97,22 @@ interface Schema {
     };
 }
 
-class QuestionModal extends React.PureComponent<Props, State> {
+class QuestionModal extends React.PureComponent<Props> {
     public constructor(props: Props) {
         super(props);
 
-        const { value, framework } = this.props;
-
-        this.state = {
-            faramValues: value || defaultQuestionValue,
-            faramErrors: {},
-        };
+        const { framework } = this.props;
 
         const schema: Schema = {
             fields: {
-                title: [],
-                type: [],
+                title: [requiredCondition],
+                type: [requiredCondition],
                 enumeratorInstruction: [],
                 respondentInstruction: [],
                 crisisType: [],
-                enumeratorSkill: [],
-                dataCollectionTechnique: [],
-                importance: [],
+                enumeratorSkill: [requiredCondition],
+                dataCollectionTechnique: [requiredCondition],
+                importance: [requiredCondition],
                 requiredDuration: [],
                 // FIXME: this should be dynamic, only available if type is 'select'
                 responseOptions: [],
@@ -139,22 +128,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
 
     private schema: Schema;
 
-    private handleChange = (faramValues: FaramValues, faramErrors: FaramErrors) => {
-        this.setState({
-            faramValues,
-            faramErrors,
-        });
-    }
-
-    private handleValidationFailure = (faramErrors: FaramErrors) => {
-        this.setState({ faramErrors });
-    }
-
-    private handleValidationSuccess = (faramValues: FaramValues) => {
-        const { onSuccess } = this.props;
-        onSuccess(faramValues);
-    }
-
     render() {
         const {
             requests,
@@ -162,12 +135,13 @@ class QuestionModal extends React.PureComponent<Props, State> {
             framework,
             closeModal,
             pending: pendingFromProps,
-        } = this.props;
+            value,
+            error,
 
-        const {
-            faramValues,
-            faramErrors,
-        } = this.state;
+            onValueChange,
+            onErrorChange,
+            onSuccess,
+        } = this.props;
 
         const pending = isAnyRequestPending(requests) || pendingFromProps;
 
@@ -202,15 +176,16 @@ class QuestionModal extends React.PureComponent<Props, State> {
                 <Faram
                     className={_cs(className, styles.questionForm)}
                     schema={this.schema}
-                    onChange={this.handleChange}
-                    value={faramValues}
-                    error={faramErrors}
-                    onValidationSuccess={this.handleValidationSuccess}
-                    onValidationFailure={this.handleValidationFailure}
+                    onChange={onValueChange}
+                    value={value}
+                    error={error}
+                    onValidationSuccess={onSuccess}
+                    onValidationFailure={onErrorChange}
                     disabled={pending}
                 >
                     <ModalBody>
                         { pending && <LoadingAnimation /> }
+                        <NonFieldErrors faramElement />
                         <section className={styles.basic}>
                             <header className={styles.header}>
                                 <h4 className={styles.heading}>
@@ -235,7 +210,7 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                     labelSelector={defaultLabelSelector}
                                 />
                                 <ResponseInput
-                                    type={faramValues.type}
+                                    type={value && value.type}
                                     faramElementName="responseOptions"
                                     className={styles.input}
                                     // FIXME: use strings
@@ -347,8 +322,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
     }
 }
 
-export default RequestCoordinator(
-    RequestClient(requestOptions)(
-        QuestionModal,
-    ),
+export default RequestClient(requestOptions)(
+    QuestionModal,
 );
