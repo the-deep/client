@@ -15,7 +15,6 @@
             flex-grow: 1;
             padding: 0 var(--spacing-medium);
         }
-
     }
 
     .sidebar {
@@ -35,26 +34,27 @@
             }
         }
 
-        >.content {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            padding: var(--spacing-medium);
-            overflow: auto;
+        .question-status {
+            padding: var(--spacing-medium) 0;
 
-            .framework-question-list {
-                flex-grow: 1;
-                overflow: auto;
+            .header {
+                .heading {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                }
 
-                .framework-question {
-                    position: relative;
-                    padding: var(--spacing-extra-small);
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            }
 
-                    .actions {
-                        position: absolute;
-                        right: var(--spacing-extra-small);
-                        bottom: var(--spacing-extra-small);
-                    }
+            .tab {
+                display: flex;
+                text-transform: none;
+
+                .label {
+                    flex-grow: 1;
+                }
+
+                .count {
+                    flex-shrink: 0;
                 }
             }
         }
@@ -62,38 +62,12 @@
 
     .main {
         display: flex;
+        background-color: var(--color-foreground);
+        overflow: auto;
 
         .question-list {
-            display: flex;
-            flex-direction: column;
             flex-grow: 1;
-
-            >.header {
-                display: flex;
-                align-items: center;
-                flex-shrink: 0;
-
-                .heading {
-                    flex-grow: 1;
-                    padding: var(--spacing-medium);
-                }
-
-                >.actions {
-                    flex-shrink: 0;
-                    padding: 0 var(--spacing-medium);
-                }
-            }
-
-            >.content {
-                flex-grow: 1;
-                padding: var(--spacing-extra-large);
-                overflow: auto;
-
-                .question {
-                    margin: var(--spacing-medium) auto;
-                    background-color: var(--color-foreground);
-                }
-            }
+            background-color: var(--color-foreground);
         }
 
         .right-panel {
@@ -115,7 +89,6 @@
 
             .content {
                 flex-grow: 1;
-
             }
         }
     }

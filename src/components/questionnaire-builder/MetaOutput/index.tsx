@@ -5,6 +5,7 @@ import styles from './styles.scss';
 
 interface MetaOutputProps {
     className?: string;
+    titleClassName?: string;
     label: string;
     value?: string | number;
 }
@@ -13,6 +14,7 @@ const MetaOutput = ({
     className,
     label,
     value,
+    titleClassName,
 }: MetaOutputProps) => {
     if (!value) {
         return null;
@@ -23,7 +25,7 @@ const MetaOutput = ({
             className={_cs(styles.metaOutput, className)}
             title={label}
         >
-            <div className={styles.name} >
+            <div className={_cs(styles.name, titleClassName)} >
                 { value }
             </div>
         </div>

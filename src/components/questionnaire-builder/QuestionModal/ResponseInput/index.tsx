@@ -8,7 +8,7 @@ import { FaramInputElement } from '@togglecorp/faram';
 import DangerButton from '#rsca/Button/DangerButton';
 import Label from '#rsci/Label';
 import TextInput from '#rsci/TextInput';
-import ListView from '#rscv/List/ListView';
+import ListView from '#rsu/../v2/View/ListView';
 import Button from '#rsca/Button';
 
 import { QuestionResponseOptionElement } from '#typings';

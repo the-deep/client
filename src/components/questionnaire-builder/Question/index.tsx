@@ -3,6 +3,8 @@ import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
+import WarningButton from '#rsca/Button/WarningButton';
+import Checkbox from '#rsu/../v2/Input/Checkbox';
 
 import {
     BaseQuestionElement,
@@ -10,6 +12,8 @@ import {
     QuestionType,
 } from '#typings';
 import { getMatrix2dStructures } from '#utils/framework';
+import DropdownMenu from '#rsca/DropdownMenu';
+import DropdownButton from '#components/general/DropdownButton';
 
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
 import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
@@ -65,16 +69,25 @@ interface Props {
     data: BaseQuestionElement;
     className?: string;
     onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
+    onCopy?: (key: BaseQuestionElement['id']) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
     framework?: MiniFrameworkElement;
-    hideDetails?: boolean;
+    expanded?: boolean;
     readOnly?: boolean;
     disabled?: boolean;
+    selected?: boolean;
+    copyDisabled?: boolean;
+    onSelectChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
+    onExpandChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
 }
 
 class Question extends React.PureComponent<Props> {
+    public static defaultProps = {
+        expanded: false,
+    };
+
     private getFrameworkOptions = memoize(getMatrix2dStructures)
 
     handleEditButtonClick = () => {
@@ -121,14 +134,63 @@ class Question extends React.PureComponent<Props> {
         }
     }
 
+    handleCopy = () => {
+        const {
+            onCopy,
+            data,
+        } = this.props;
+
+        if (onCopy) {
+            onCopy(data.id);
+        }
+    }
+
+    handleCheckboxClick = () => {
+        const {
+            data: {
+                id: questionId,
+            },
+            selected,
+            onSelectChange,
+        } = this.props;
+
+        if (onSelectChange) {
+            onSelectChange(questionId, !selected);
+        }
+    }
+
+    handleExpandClick = () => {
+        const {
+            data: {
+                id: questionId,
+            },
+            expanded,
+            onExpandChange,
+        } = this.props;
+
+        if (onExpandChange) {
+            onExpandChange(questionId, !expanded);
+        }
+    }
+
     public render() {
         const {
+            selected,
             className,
             data,
             framework,
             readOnly,
             disabled,
-            hideDetails,
+            expanded,
+            onSelectChange,
+            onExpandChange,
+            copyDisabled,
+            onCopy,
+
+            onArchive,
+            onUnarchive,
+            onEditButtonClick,
+            onDelete,
         } = this.props;
 
         const {
@@ -144,91 +206,99 @@ class Question extends React.PureComponent<Props> {
 
         return (
             <div className={_cs(className, styles.question)}>
+                {onSelectChange && (
+                    <Checkbox
+                        className={styles.checkbox}
+                        value={selected}
+                        onChange={this.handleCheckboxClick}
+                    />
+                )}
                 <div className={styles.brief}>
-                    <div className={styles.left}>
+                    <div className={styles.iconContainer}>
                         <img
                             className={styles.icon}
-                            src={type ? iconMap[type] : undefined}
+                            src={(type ? iconMap[type] : undefined)}
                             alt={type}
                         />
                     </div>
-                    <div className={styles.right}>
-                        <div className={styles.top}>
-                            <div className={styles.left}>
-                                <h4 className={styles.heading}>
-                                    { title }
-                                </h4>
-                                <div className={styles.basicInfo}>
-                                    <MetaOutput
-                                        // FIXME: use strings
-                                        label="Crisis type"
-                                        value={
-                                            crisisTypeDetail ? crisisTypeDetail.title : undefined
-                                        }
-                                    />
-                                    <MetaOutput
-                                        // FIXME: use strings
-                                        label="Data collection technique"
-                                        value={dataCollectionTechniqueDisplay}
-                                    />
-                                    <MetaOutput
-                                        // FIXME: use strings
-                                        label="Enumerator skill"
-                                        value={enumeratorSkillDisplay}
-                                    />
-                                    <MetaOutput
-                                        // FIXME: use strings
-                                        label="Required duration"
-                                        value={requiredDuration ? `${requiredDuration} min` : undefined}
-                                    />
-                                    <MetaOutput
-                                        // FIXME: use strings
-                                        label="Importance"
-                                        value={
-                                            importanceDisplay
-                                                ? `Importance: ${importanceDisplay}`
-                                                : undefined
-                                        }
-                                    />
+                    <div className={styles.detailsContainer}>
+                        {onExpandChange && (
+                            <Button
+                                className={styles.expandButton}
+                                onClick={this.handleExpandClick}
+                                iconName={expanded ? 'chevronDown' : 'chevronRight'}
+                                transparent
+                            />
+                        )}
+                        <div className={styles.detailsRight} >
+                            <div className={styles.top}>
+                                <div className={styles.left}>
+                                    <h3 className={styles.heading}>
+                                        { title }
+                                    </h3>
+                                    <div className={styles.basicInfo}>
+                                        <MetaOutput
+                                            label="Crisis type"
+                                            value={crisisTypeDetail && crisisTypeDetail.title}
+                                        />
+                                        <MetaOutput
+                                            label="Data collection technique"
+                                            value={dataCollectionTechniqueDisplay}
+                                        />
+                                        <MetaOutput
+                                            label="Enumerator skill"
+                                            value={enumeratorSkillDisplay}
+                                        />
+                                        <MetaOutput
+                                            label="Required duration"
+                                            value={requiredDuration && `${requiredDuration} min`}
+                                        />
+                                        <MetaOutput
+                                            label="Importance"
+                                            value={importanceDisplay && `Importance: ${importanceDisplay}`}
+                                        />
+                                    </div>
                                 </div>
+                                {!readOnly && (
+                                    <div className={styles.buttonContainer}>
+                                        {(isArchived && onUnarchive) && (
+                                            <Button
+                                                onClick={this.handleUnarchiveButtonClick}
+                                                disabled={disabled}
+                                            >
+                                                Unarchive
+                                            </Button>
+                                        )}
+                                        {onEditButtonClick && (
+                                            <WarningButton
+                                                onClick={this.handleEditButtonClick}
+                                                disabled={disabled}
+                                                transparent
+                                                iconName="edit"
+                                                title="Edit"
+                                            />
+                                        )}
+                                        {((!isArchived && onArchive) || onDelete) && (
+                                            <DropdownMenu dropdownIcon="menuDots" >
+                                                {(!isArchived && onArchive) && (
+                                                    <DropdownButton
+                                                        onClick={this.handleArchiveButtonClick}
+                                                        disabled={disabled}
+                                                        title="Send to Parking Lot"
+                                                    />
+                                                )}
+                                                {onDelete && (
+                                                    <DropdownButton
+                                                        onClick={this.handleDeleteButtonClick}
+                                                        disabled={disabled}
+                                                        title="Delete"
+                                                    />
+                                                )}
+                                            </DropdownMenu>
+                                        )}
+                                    </div>
+                                )}
                             </div>
-                            {!readOnly && (
-                                <div className={styles.right}>
-                                    {!isArchived ? (
-                                        <Button
-                                            onClick={this.handleArchiveButtonClick}
-                                            disabled={disabled}
-                                        >
-                                            {/* FIXME: use strings */}
-                                            Archive
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            onClick={this.handleUnarchiveButtonClick}
-                                            disabled={disabled}
-                                        >
-                                            {/* FIXME: use strings */}
-                                            Unarchive
-                                        </Button>
-                                    )}
-                                    <Button
-                                        onClick={this.handleDeleteButtonClick}
-                                        disabled={disabled}
-                                    >
-                                        {/* FIXME: use strings */}
-                                        Delete
-                                    </Button>
-                                    <Button
-                                        onClick={this.handleEditButtonClick}
-                                        disabled={disabled}
-                                    >
-                                        {/* FIXME: use strings */}
-                                        Edit
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                        <div className={styles.bottom}>
                             <FrameworkAttributeOutput
                                 className={styles.frameworkAttribute}
                                 data={data.frameworkAttribute}
@@ -237,12 +307,11 @@ class Question extends React.PureComponent<Props> {
                         </div>
                     </div>
                 </div>
-                {!hideDetails && (
+                {expanded && (
                     <div className={styles.details}>
                         {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
                             <div className={styles.responseOptions}>
                                 <div className={styles.heading}>
-                                    {/* FIXME: use strings */}
                                     Response options
                                 </div>
                                 <div className={styles.content}>
@@ -254,24 +323,32 @@ class Question extends React.PureComponent<Props> {
                             </div>
                         )}
                         <div className={styles.enumeratorInstruction}>
-                            <div className={styles.heading}>
-                                {/* FIXME: use strings */}
+                            <h4 className={styles.heading}>
                                 Enumerator instructions
-                            </div>
+                            </h4>
                             <div className={styles.content}>
                                 { data.enumeratorInstruction || '-' }
                             </div>
                         </div>
                         <div className={styles.respondentInstruction}>
-                            <div className={styles.heading}>
-                                {/* FIXME: use strings */}
+                            <h4 className={styles.heading}>
                                 Respondent instructions
-                            </div>
+                            </h4>
                             <div className={styles.content}>
                                 { data.respondentInstruction || '-' }
                             </div>
                         </div>
                     </div>
+                )}
+                {onCopy && (
+                    <Button
+                        className={styles.copyButton}
+                        onClick={this.handleCopy}
+                        iconName="copyOutline"
+                        disabled={copyDisabled}
+                    >
+                        Copy
+                    </Button>
                 )}
             </div>
         );

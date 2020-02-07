@@ -18,7 +18,7 @@ interface KeyValue {
     value: string;
 }
 
-interface IdTitle {
+export interface IdTitle {
     id: number;
     title: string;
 }
@@ -89,6 +89,10 @@ export interface BaseQuestionElement {
     isRequired?: boolean;
 }
 
+export interface BulkActionId {
+    id: BaseQuestionElement['id'];
+}
+
 export interface FrameworkQuestionElement extends BaseQuestionElement {
     analysisFramework: number;
 }
@@ -115,6 +119,7 @@ export interface MiniQuestionnaireElement extends DbEntity {
 
     activeQuestionsCount: number;
 }
+
 
 export interface QuestionnaireElement extends DbEntity {
     project: number;

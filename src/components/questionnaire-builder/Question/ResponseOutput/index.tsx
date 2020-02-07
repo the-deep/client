@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import ListView from '#rscv/List/ListView';
+import ListView from '#rsu/../v2/View/ListView';
 import { KeyValueElement } from '#typings';
 
 import styles from './styles.scss';

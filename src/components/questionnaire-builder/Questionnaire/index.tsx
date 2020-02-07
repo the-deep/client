@@ -11,6 +11,7 @@ import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
 import QuestionnaireModal from '#qbc/QuestionnaireModal';
+import DropdownButton from '#components/general/DropdownButton';
 
 import { pathNames } from '#constants';
 import { MiniQuestionnaireElement } from '#typings';
@@ -18,27 +19,6 @@ import { MiniQuestionnaireElement } from '#typings';
 import MetaOutput from '../MetaOutput';
 
 import styles from './styles.scss';
-
-interface DropdownButtonProps {
-    className?: string;
-    title: string;
-    disabled?: boolean;
-    onClick?: () => void;
-}
-
-const DropdownButton = ({
-    className,
-    title,
-    ...otherProps
-}: DropdownButtonProps) => (
-    <Button
-        className={_cs(className, styles.dropdownButton)}
-        transparent
-        {...otherProps}
-    >
-        { title }
-    </Button>
-);
 
 const ModalButton = modalize(Button);
 

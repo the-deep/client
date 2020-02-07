@@ -1,30 +1,23 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
 import { produce } from 'immer';
 import {
     _cs,
     reverseRoute,
-    isDefined,
-    sum,
 } from '@togglecorp/fujs';
 
-import Button from '#rsca/Button';
-import AccentButton from '#rsca/Button/AccentButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
-import TreeInput from '#rsu/../v2/Input/TreeInput';
-import ListView from '#rsu/../v2/View/ListView';
-import ProgressBar from '#rsu/../v2/View/ProgressBar';
+
+import Page from '#rscv/Page';
 
 import {
     QuestionnaireElement,
-    FrameworkQuestionElement,
     QuestionnaireQuestionElement,
     BaseQuestionElement,
+    ViewComponent,
 
     MiniFrameworkElement,
     ProjectElement,
@@ -32,6 +25,7 @@ import {
     AppState,
     Requests,
     AddRequestProps,
+    BulkActionId,
 } from '#typings';
 
 import {
@@ -46,128 +40,16 @@ import {
     projectDetailsSelector,
 } from '#redux';
 
-import {
-    getFrameworkMatrices,
-    getFilteredQuestions,
-
-    treeItemKeySelector,
-    treeItemLabelSelector,
-    treeItemParentKeySelector,
-} from '#entities/questionnaire';
-
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 
-import MetaOutput from '#qbc/MetaOutput';
-import Question from '#qbc/Question';
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
+import QuestionList from '#qbc/QuestionList';
+import AddFromFramework from './AddFromFramework';
+import Diagnostics from './Diagnostics';
+
 import styles from './styles.scss';
-
-const questionKeySelector = (q: BaseQuestionElement) => q.id;
-
-const FrameworkQuestion = (p: FrameworkQuestionProps) => {
-    const {
-        onCopyButtonClick,
-        className,
-        ...otherProps
-    } = p;
-
-    return (
-        <div className={_cs(className, styles.frameworkQuestion)}>
-            <Question {...otherProps} />
-            <div className={styles.actions}>
-                <AccentButton
-                    iconName="copyOutline"
-                    onClick={onCopyButtonClick}
-                    disabled
-                    // FIXME: use strings
-                >
-                    Copy
-                </AccentButton>
-            </div>
-        </div>
-    );
-};
-
-interface QuestionListProps {
-    title: string;
-    questions?: QuestionnaireQuestionElement[];
-    showLoadingOverlay?: boolean;
-    onAddQuestionClick: () => void;
-    onEdit: () => void;
-    onDelete: () => void;
-    onArchive: () => void;
-    onUnarchive: () => void;
-    framework?: MiniFrameworkElement;
-    archived: boolean;
-}
-
-const QuestionList = (props: QuestionListProps) => {
-    const {
-        title,
-        showLoadingOverlay,
-        questions,
-        framework,
-        onAddQuestionClick, // this.handleAddQuestionButtonClick
-        onEdit, // this.handleEditQuestionButtonClick,
-        onDelete, // this.handleDeleteQuestion,
-        onArchive, // this.handleArchiveQuestion,
-        onUnarchive, // this.handleUnarchiveQuestion,
-        archived,
-    } = props;
-
-    const getQuestionRendererParams = useCallback(
-        (key: QuestionnaireQuestionElement['id'], question: QuestionnaireQuestionElement) => ({
-            data: question,
-            onEditButtonClick: onEdit,
-            onDelete,
-            onArchive,
-            onUnarchive,
-            framework,
-            className: styles.question,
-        }),
-        [framework, onEdit, onDelete, onArchive, onUnarchive],
-    );
-
-    const filteredQuestions = useMemo(
-        () => {
-            if (!questions) {
-                return undefined;
-            }
-            return questions.filter(question => !!question.isArchived === archived);
-        },
-        [archived, questions],
-    );
-
-    return (
-        <div className={styles.questionList}>
-            <header className={styles.header}>
-                <h3 className={styles.heading}>
-                    {title}
-                </h3>
-                { !archived &&
-                    <div className={styles.actions}>
-                        <Button
-                            onClick={onAddQuestionClick}
-                            disabled={showLoadingOverlay}
-                        >
-                            {/* FIXME: use strings */}
-                            Add question
-                        </Button>
-                    </div>
-                }
-            </header>
-            <ListView
-                className={styles.content}
-                rendererParams={getQuestionRendererParams}
-                renderer={Question}
-                data={filteredQuestions}
-                keySelector={questionKeySelector}
-            />
-        </div>
-    );
-};
 
 type TabElement = 'active' | 'archived';
 
@@ -175,14 +57,6 @@ const tabs: {[key in TabElement]: string} = {
     active: 'Active',
     archived: 'Parking Lot',
 };
-
-interface FrameworkQuestionProps {
-    onCopyButtonClick?: (id: BaseQuestionElement['id']) => void;
-    onEditButtonClick?: (id: BaseQuestionElement['id']) => void;
-    className?: string;
-    data: BaseQuestionElement;
-    framework: MiniFrameworkElement;
-}
 
 interface ComponentProps {
     className?: string;
@@ -211,6 +85,12 @@ const mapStateToProps = (state: AppState) => ({
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
 
+type CopyBody = {
+    questionnaireId?: number;
+    frameworkQuestionId?: number;
+    newOrder?: number;
+}
+
 interface Params {
     setQuestionnaire?: (questionnaire: QuestionnaireElement) => void;
     setFramework?: (framework: MiniFrameworkElement) => void;
@@ -218,9 +98,18 @@ interface Params {
     questionId?: QuestionnaireQuestionElement['id'];
     onDeleteSuccess?: (questionId: QuestionnaireQuestionElement['id']) => void;
 
+    body?: BulkActionId[];
+    copyBody?: CopyBody;
+    onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
+    onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
+    onBulkUnArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
+
     archive?: boolean;
     onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
+    onCopySuccess?: (question: QuestionnaireQuestionElement) => void;
 }
+
+const EmptyComponent = () => <div />;
 
 const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     questionnaireGetRequest: {
@@ -264,6 +153,19 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             params.onDeleteSuccess(params.questionId);
         },
     },
+    copyToQuestionnaireRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/af-question-copy/`
+        ),
+        body: ({ params }) => params && params.copyBody,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onCopySuccess) {
+                return;
+            }
+            params.onCopySuccess(response as QuestionnaireQuestionElement);
+        },
+    },
     questionArchiveRequest: {
         url: ({ props: { questionnaireId }, params }) => (
             `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
@@ -279,6 +181,45 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             const question = response as QuestionnaireQuestionElement;
             console.warn(question);
             params.onArchiveSuccess(question);
+        },
+    },
+    bulkQuestionDeleteRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/bulk-delete/`
+        ),
+        body: ({ params }) => params && params.body,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onBulkDeleteSuccess || !params.body) {
+                return;
+            }
+            params.onBulkDeleteSuccess(response as number[]);
+        },
+    },
+    bulkQuestionArchiveRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/bulk-archive/`
+        ),
+        body: ({ params }) => params && params.body,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onBulkArchiveSuccess || !params.body) {
+                return;
+            }
+            params.onBulkArchiveSuccess(response as number[], true);
+        },
+    },
+    bulkQuestionUnArchiveRequest: {
+        url: ({ props: { questionnaireId } }) => (
+            `/questionnaires/${questionnaireId}/questions/bulk-unarchive/`
+        ),
+        body: ({ params }) => params && params.body,
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onBulkUnArchiveSuccess || !params.body) {
+                return;
+            }
+            params.onBulkUnArchiveSuccess(response as number[], false);
         },
     },
 };
@@ -303,6 +244,95 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             treeFilter: [],
         };
 
+        this.views = {
+            active: {
+                component: QuestionList,
+                rendererParams: () => {
+                    const {
+                        requests: {
+                            questionDeleteRequest,
+                            questionArchiveRequest,
+                            copyToQuestionnaireRequest,
+                            bulkQuestionDeleteRequest,
+                            bulkQuestionArchiveRequest,
+                            bulkQuestionUnArchiveRequest,
+                        },
+                    } = this.props;
+
+                    return ({
+                        title: 'Active Questions',
+                        className: styles.questionList,
+                        onAdd: this.handleAddQuestionButtonClick,
+                        onEdit: this.handleEditQuestionButtonClick,
+                        onDelete: this.handleDeleteQuestion,
+                        onArchive: this.handleArchiveQuestion,
+                        onBulkDelete: this.handleBulkDelete,
+                        onBulkArchive: this.handleBulkArchive,
+                        framework: this.state.framework,
+                        questions: this.state.questionnaire
+                            ? this.state.questionnaire.questions
+                            : undefined,
+                        showLoadingOverlay: questionDeleteRequest.pending
+                            || questionArchiveRequest.pending
+                            || copyToQuestionnaireRequest.pending
+                            || bulkQuestionDeleteRequest.pending
+                            || bulkQuestionArchiveRequest.pending
+                            || bulkQuestionUnArchiveRequest.pending,
+                        archived: false,
+                    });
+                },
+            },
+            archived: {
+                component: QuestionList,
+                rendererParams: () => {
+                    const {
+                        requests: {
+                            questionDeleteRequest,
+                            questionArchiveRequest,
+                            copyToQuestionnaireRequest,
+                            bulkQuestionDeleteRequest,
+                            bulkQuestionArchiveRequest,
+                            bulkQuestionUnArchiveRequest,
+                        },
+                    } = this.props;
+
+                    return ({
+                        title: 'Parking Lot Questions',
+                        className: styles.questionList,
+                        onUnarchive: this.handleUnarchiveQuestion,
+                        onBulkUnArchive: this.handleBulkUnArchive,
+                        framework: this.state.framework,
+                        questions: this.state.questionnaire
+                            ? this.state.questionnaire.questions
+                            : undefined,
+                        showLoadingOverlay: questionDeleteRequest.pending
+                            || questionArchiveRequest.pending
+                            || copyToQuestionnaireRequest.pending
+                            || bulkQuestionDeleteRequest.pending
+                            || bulkQuestionArchiveRequest.pending
+                            || bulkQuestionUnArchiveRequest.pending,
+                        archived: true,
+                    });
+                },
+            },
+        };
+
+        this.addViews = {
+            active: {
+                component: AddFromFramework,
+                rendererParams: () => ({
+                    treeFilter: this.state.treeFilter,
+                    framework: this.state.framework,
+                    onTreeInputChange: this.handleTreeInputChange,
+                    onCopy: this.handleCopyClick,
+                    copyDisabled: false,
+                }),
+            },
+            archived: {
+                component: EmptyComponent,
+            },
+        };
+
         questionnaireGetRequest.setDefaultParams({
             setQuestionnaire: (questionnaire: QuestionnaireElement) => {
                 this.setState({ questionnaire });
@@ -315,62 +345,57 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private getFrameworkQuestionRendererParams = (
-        key: FrameworkQuestionElement['id'],
-        question: FrameworkQuestionElement,
-    ) => {
-        const { framework } = this.state;
-
-        return {
-            data: question,
-            framework: framework as MiniFrameworkElement,
-            className: styles.frameworkQuestion,
-            hideDetails: true,
-            readOnly: true,
-        };
+    private views: {
+        active: ViewComponent<React.ComponentProps<typeof QuestionList>>;
+        archived: ViewComponent<React.ComponentProps<typeof QuestionList>>;
     }
 
-    private getFrameworkMatrices = memoize(getFrameworkMatrices)
+    private addViews: {
+        active: ViewComponent<React.ComponentProps<typeof AddFromFramework>>;
+        archived: ViewComponent<React.ComponentProps<typeof EmptyComponent>>;
+    }
 
-    private getFilteredQuestions = memoize(getFilteredQuestions)
+    private handleCopyClick = (questionId: BaseQuestionElement['id']) => {
+        const {
+            questionnaire,
+        } = this.state;
 
-    private views = {
-        active: {
-            component: QuestionList,
-            rendererParams: () => ({
-                title: 'Active Questions',
-                onAddQuestionClick: this.handleAddQuestionButtonClick,
-                onEdit: this.handleEditQuestionButtonClick,
-                onDelete: this.handleDeleteQuestion,
-                onArchive: this.handleArchiveQuestion,
-                onUnarchive: this.handleUnarchiveQuestion,
-                framework: this.state.framework,
-                questions: this.state.questionnaire
-                    ? this.state.questionnaire.questions
-                    : undefined,
-                showLoadingOverlay: this.props.requests.questionDeleteRequest.pending
-                    || this.props.requests.questionArchiveRequest.pending,
-                archived: false,
-            }),
-        },
-        archived: {
-            component: QuestionList,
-            rendererParams: () => ({
-                title: 'Parking Lot Questions',
-                onAddQuestionClick: this.handleAddQuestionButtonClick,
-                onEdit: this.handleEditQuestionButtonClick,
-                onDelete: this.handleDeleteQuestion,
-                onArchive: this.handleArchiveQuestion,
-                onUnarchive: this.handleUnarchiveQuestion,
-                framework: this.state.framework,
-                questions: this.state.questionnaire
-                    ? this.state.questionnaire.questions
-                    : undefined,
-                showLoadingOverlay: this.props.requests.questionDeleteRequest.pending
-                    || this.props.requests.questionArchiveRequest.pending,
-                archived: true,
-            }),
-        },
+        if (!questionnaire) {
+            return;
+        }
+
+        const {
+            id: questionnaireId,
+            questions,
+        } = questionnaire;
+
+        const newOrder = questions
+            ? questions.length + 1
+            : 1;
+
+        const copyBody = {
+            frameworkQuestionId: questionId,
+            questionnaireId,
+            newOrder,
+        };
+
+        this.props.requests.copyToQuestionnaireRequest.do({
+            onCopySuccess: this.handleCopySuccess,
+            copyBody,
+        });
+    }
+
+    private handleCopySuccess = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            safeQuestionnaire.questions.push(question);
+        });
+
+        this.setState({ questionnaire: newQuestionnaire });
     }
 
     private handleAddQuestionButtonClick = () => {
@@ -403,6 +428,27 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.props.requests.questionDeleteRequest.do({
             questionId,
             onDeleteSuccess: this.handleQuestionDeleteRequestSuccess,
+        });
+    }
+
+    private handleBulkDelete = (questionIds: BulkActionId[]) => {
+        this.props.requests.bulkQuestionDeleteRequest.do({
+            body: questionIds,
+            onBulkDeleteSuccess: this.handleBulkQuestionDeleteSuccess,
+        });
+    }
+
+    private handleBulkArchive = (questionIds: BulkActionId[]) => {
+        this.props.requests.bulkQuestionArchiveRequest.do({
+            body: questionIds,
+            onBulkArchiveSuccess: this.handleBulkArchiveSuccess,
+        });
+    }
+
+    private handleBulkUnArchive = (questionIds: BulkActionId[]) => {
+        this.props.requests.bulkQuestionUnArchiveRequest.do({
+            body: questionIds,
+            onBulkUnArchiveSuccess: this.handleBulkArchiveSuccess,
         });
     }
 
@@ -470,8 +516,54 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex !== -1) {
                 // eslint-disable-next-line no-param-reassign
-                delete safeQuestionnaire.questions[selectedIndex];
+                safeQuestionnaire.questions.splice(selectedIndex, 1);
             }
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
+    }
+
+    private handleBulkQuestionDeleteSuccess = (questionIds: QuestionnaireQuestionElement['id'][]) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+
+            questionIds.forEach((questionId: number) => {
+                const selectedIndex = questions.findIndex(e => e.id === questionId);
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeQuestionnaire.questions.splice(selectedIndex, 1);
+                }
+            });
+        });
+
+        this.setState({
+            questionnaire: newQuestionnaire,
+        });
+    }
+
+    private handleBulkArchiveSuccess = (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            const { questions } = safeQuestionnaire;
+
+            questionIds.forEach((questionId: number) => {
+                const selectedIndex = questions.findIndex(e => e.id === questionId);
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeQuestionnaire.questions[selectedIndex].isArchived = archiveStatus;
+                }
+            });
         });
 
         this.setState({
@@ -553,14 +645,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionToEdit,
             questionnaire,
             framework,
-            treeFilter,
         } = this.state;
 
         if (questionnaireGetPending || frameworkGetPending) {
             return (
-                <div
-                    className={_cs(styles.questionnaireBuilder, className)}
-                >
+                <div className={_cs(styles.questionnaireBuilder, className)} >
                     <LoadingAnimation />
                 </div>
             );
@@ -568,9 +657,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         if (!questionnaire) {
             return (
-                <div
-                    className={_cs(styles.questionnaireBuilder, className)}
-                >
+                <div className={_cs(styles.questionnaireBuilder, className)} >
                     <Message>
                         {/* FIXME: use strings */}
                         Could not get questionnaire!
@@ -588,17 +675,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             enumeratorSkillDisplay,
             requiredDuration,
         } = questionnaire;
-
-        const selectedQuestions = questions.filter(question => !question.isArchived);
-
-        const totalQuestions = selectedQuestions.length;
-
-        const totalTimeRequired = sum(
-            selectedQuestions
-                .map(question => question.requiredDuration)
-                .filter(isDefined),
-        );
-        const percent = Math.round(100 * (totalTimeRequired / requiredDuration));
 
         return (
             <>
@@ -621,67 +697,36 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     sidebar={(
                         <>
                             <div className={styles.projectDetails}>
-                                <h3 className={styles.heading}>
-                                    {/* FIXME: use strings */}
+                                <h4 className={styles.heading}>
                                     Project
-                                </h3>
+                                </h4>
                                 <div className={styles.value}>
                                     { projectDetail.title || '-'}
                                 </div>
-                                <h3 className={styles.heading}>
-                                    {/* FIXME: use strings */}
+                                <h4 className={styles.heading}>
                                     Analysis Framework
-                                </h3>
+                                </h4>
                                 <div className={styles.value}>
                                     { framework ? framework.title : '-' }
                                 </div>
                             </div>
-                            <header className={styles.header}>
-                                <h4 className={styles.heading}>
-                                    Question Status
-                                </h4>
-                            </header>
-                            <VerticalTabs
-                                tabs={tabs}
+                            <div className={styles.questionStatus}>
+                                <header className={styles.header}>
+                                    <h4 className={styles.heading}>
+                                        Question Status
+                                    </h4>
+                                </header>
+                                <VerticalTabs
+                                    tabs={tabs}
+                                    useHash
+                                    replaceHistory
+                                    modifier={this.tabsModifier}
+                                />
+                            </div>
+                            <MultiViewContainer
+                                views={this.addViews}
                                 useHash
-                                replaceHistory
-                                modifier={this.tabsModifier}
                             />
-                            {framework && (
-                                <div className={styles.content}>
-                                    <h3>
-                                        Add from Framework
-                                    </h3>
-                                    <h4>
-                                        Matrices
-                                    </h4>
-                                    <TreeInput
-                                        keySelector={treeItemKeySelector}
-                                        parentKeySelector={treeItemParentKeySelector}
-                                        labelSelector={treeItemLabelSelector}
-                                        onChange={this.handleTreeInputChange}
-                                        value={treeFilter}
-                                        options={this.getFrameworkMatrices(framework)}
-                                        defaultCollapseLevel={0}
-                                    />
-                                    <h4>
-                                        Questions
-                                    </h4>
-                                    <ListView
-                                        className={styles.frameworkQuestionList}
-                                        rendererParams={this.getFrameworkQuestionRendererParams}
-                                        renderer={FrameworkQuestion}
-                                        data={
-                                            this.getFilteredQuestions(
-                                                framework.questions,
-                                                treeFilter,
-                                            )
-                                        }
-                                        keySelector={questionKeySelector}
-                                        filtered={treeFilter.length > 0}
-                                    />
-                                </div>
-                            )}
                         </>
                     )}
                     mainContentClassName={styles.main}
@@ -691,67 +736,16 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 views={this.views}
                                 useHash
                             />
-                            <div className={styles.rightPanel}>
-                                {showLoadingOverlay && <LoadingAnimation />}
-                                <header className={styles.header}>
-                                    <h3 className={styles.heading}>
-                                        {title}
-                                    </h3>
-                                </header>
-                                <div className={styles.content}>
-                                    <div>
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Crisis type"
-                                            value={
-                                                crisisTypeDetail
-                                                    ? crisisTypeDetail.title
-                                                    : undefined
-                                            }
-                                        />
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Data collection technique"
-                                            value={dataCollectionTechniqueDisplay}
-                                        />
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Enumerator skill"
-                                            value={enumeratorSkillDisplay}
-                                        />
-                                        <MetaOutput
-                                            // FIXME: use strings
-                                            label="Required duration"
-                                            value={
-                                                requiredDuration
-                                                    ? `${requiredDuration} min`
-                                                    : undefined
-                                            }
-                                        />
-                                    </div>
-                                    {/* FIXME: use strings */}
-                                    <h4>
-                                        Questions
-                                    </h4>
-                                    <div>
-                                        <div>Selected</div>
-                                        <div>{totalQuestions}</div>
-                                        <div>Time Required</div>
-                                        <div>{`${totalTimeRequired} min`}</div>
-                                    </div>
-                                    <h4>
-                                        Questionnaire
-                                    </h4>
-                                    <div>
-                                        <div>Theoretic Time</div>
-                                        <div>{`${requiredDuration} min`}</div>
-                                    </div>
-                                    <ProgressBar progress={percent} />
-                                    <div>
-                                        {`Your questionnaire is currently using ${percent}% of the time you determined`}
-                                    </div>
-                                </div>
-                            </div>
+                            <Diagnostics
+                                className={styles.rightPanel}
+                                crisisTypeDetail={crisisTypeDetail}
+                                dataCollectionTechniqueDisplay={dataCollectionTechniqueDisplay}
+                                enumeratorSkillDisplay={enumeratorSkillDisplay}
+                                questions={questions}
+                                requiredDuration={requiredDuration}
+                                showLoadingOverlay={showLoadingOverlay}
+                                title={title}
+                            />
                         </>
                     )}
                 />
