@@ -128,8 +128,15 @@
     }
 
     .copy-button {
+        display: none;
         position: absolute;
         right: var(--spacing-extra-small);
         bottom: var(--spacing-extra-small);
+    }
+
+    &:hover {
+        .copy-button {
+            display: block;
+        }
     }
 }

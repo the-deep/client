@@ -13,6 +13,7 @@ import VerticalTabs from '#rscv/VerticalTabs';
 
 import Page from '#rscv/Page';
 
+import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
 import {
     QuestionnaireElement,
     QuestionnaireQuestionElement,
@@ -762,6 +763,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 requiredDuration={requiredDuration}
                                 showLoadingOverlay={showLoadingOverlay}
                                 title={title}
+                            />
+                            <img
+                                className={styles.ifrcLogo}
+                                src={IfrcLogo}
+                                alt="IFRC Logo"
                             />
                         </>
                     )}
