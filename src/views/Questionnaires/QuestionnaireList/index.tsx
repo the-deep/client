@@ -8,12 +8,14 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import modalize from '#rscg/Modalize';
 import ListView from '#rsu/../v2/View/ListView';
 import Pager from '#rscv/Pager';
+import FileInput from '#rsci/FileInput';
 
 import QuestionnaireModal from '#qbc/QuestionnaireModal';
 
 import {
     MiniQuestionnaireElement,
     QuestionnaireElement,
+    QuestionType,
     BaseQuestionElement,
 
     Requests,
@@ -29,6 +31,8 @@ import _ts from '#ts';
 
 import Questionnaire from '#qbc/Questionnaire';
 import styles from './styles.scss';
+
+type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id'>;
 
 const ModalButton = modalize(PrimaryButton);
 
@@ -56,11 +60,39 @@ interface Params {
     questionnaireId?: number;
     setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
     onQuestionsLoad?: (questionnaire: QuestionnaireElement) => void;
+    onSuccess?: (questionnaire: QuestionnaireElement) => void;
+    body?: object;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
 
 const requestOptions: Requests<ComponentProps, Params> = {
+    // Used by XLSForm Import
+    questionnaireCreateRequest: {
+        url: '/questionnaires/',
+        method: methods.POST,
+        body: ({ params: { body } = { body: undefined } }) => body,
+        onSuccess: ({
+            response,
+            params: { onSuccess } = {},
+        }) => {
+            if (onSuccess) onSuccess(response as QuestionnaireElement);
+        },
+        // TODO: onFailure, onFatal
+    },
+    questionnairePutRequest: {
+        url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
+        method: methods.PUT,
+        body: ({ params: { body } = { body: undefined } }) => body,
+        onSuccess: ({
+            response,
+        }) => {
+            // TODO: Show success message or show new questionnaire
+            console.warn(response);
+        },
+        // TODO: onFailure, onFatal
+    },
+
     questionnaireRequest: {
         url: '/questionnaires/',
         query: ({ props }) => ({
@@ -128,6 +160,10 @@ const requestOptions: Requests<ComponentProps, Params> = {
 const questionnaireKeySelector = (q: MiniQuestionnaireElement) => q.id;
 
 class QuestionnaireList extends React.PureComponent<Props, State> {
+    static xFormXls = {
+        surveyDefaultMeta: ['start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber'],
+    }
+
     public constructor(props: Props) {
         super(props);
         this.state = {
@@ -161,6 +197,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         onDelete: this.handleDelete,
         onEdit: this.handleEdit,
         onXLSFormExport: this.handleXLSFormExport,
+        onKoboToolboxExport: this.handleKoboToolboxExport,
     })
 
     private handleArchive = (questionnaireId: number) => {
@@ -185,6 +222,132 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
 
     private handleQuestionnaireFormRequestSuccess = () => {
         this.props.requests.questionnaireRequest.do();
+    }
+
+    private handleImportXLSForm = (files: File[]) => {
+        if (files.length <= 0) return;
+
+        const wb = new Excel.Workbook();
+        const reader = new FileReader();
+
+        const getColumnsIndex = ((columns: string[]) => (
+            columns.reduce((acc, col, index) => ({
+                ...acc,
+                [col]: index,
+            }), {})
+        ));
+
+        reader.readAsArrayBuffer(files[0]);
+        reader.onload = () => {
+            const buffer = reader.result as ArrayBuffer;
+            wb.xlsx.load(buffer).then((workbook) => {
+                const survey = workbook.getWorksheet('survey');
+                const choices = workbook.getWorksheet('choices');
+                const settings = workbook.getWorksheet('settings');
+
+                // exceljs doesn't support getcell by header name for readonly
+                const surveyCol = getColumnsIndex(survey.getRow(1).values as string[]) as {
+                    type: number;
+                    name: number;
+                    label: number;
+                    'label::English': number;
+                    required: number;
+                };
+                const choicesCol = getColumnsIndex(choices.getRow(1).values as string[]) as {
+                    'list name': number;
+                    name: number;
+                    label: number;
+                    'label::English': number;
+                };
+                const settingsCol = getColumnsIndex(settings.getRow(1).values as string[]) as {
+                    form_title: number;
+                };
+
+                const questions: BaseQuestionElementWithoutId[] = [];
+                const questionChoices: {[key: string]: { key: string; value: string }[]} = {};
+
+                const formTitle = (settings.getRow(2).values as string[])[settingsCol.form_title];
+
+                choices.eachRow((row, rowIndex) => {
+                    if (rowIndex === 1) return;
+                    const v = row.values as [];
+                    const key = v[choicesCol['list name']];
+                    const name = v[choicesCol.name] as string;
+                    const label = v[choicesCol.label] || v[choicesCol['label::English']] as string;
+                    const choice = { key: name, value: label };
+
+                    if (!(key in questionChoices)) {
+                        questionChoices[key] = [choice];
+                    } else {
+                        questionChoices[key].push(choice);
+                    }
+                });
+
+                // TODO: Pull it from options
+                const supported_types = [
+                    'text', 'integer', 'decimal',
+                    'range', 'select_one', 'select_multiple',
+                    'rank', 'geopoint', 'geotrace',
+                    'geoshape', 'date', 'time',
+                    'dateTime', 'file', 'image',
+                    'audio', 'video', 'barcode',
+                    'calculate', 'acknowledge', 'hidden',
+                ];
+
+                survey.eachRow((row, rowIndex) => {
+                    if (rowIndex === 1) return;
+                    const v = row.values as [];
+                    const type = v[surveyCol.type] as QuestionType;
+
+                    if (
+                        QuestionnaireList.xFormXls.surveyDefaultMeta.includes(type) ||
+                        // Deep Questionnaire doesn't support grouping/repeat
+                        type.match(/^(begin|end)\s\w+/)
+                    ) return;
+
+                    const question: BaseQuestionElementWithoutId = {
+                        type,
+                        title: v[surveyCol.label] || v[choicesCol['label::English']],
+                        isRequired: v[surveyCol.required] === 'yes',
+                    };
+
+                    const selectRegex = /^(?<type>select_one|select_multiple|rank)\s(?<choiceKey>\w+)(\s(?<orOther>or_other))?/;
+                    const match = question.type.trim().match(selectRegex);
+                    if (match && match.groups) {
+                        question.type = match.groups.type as QuestionType;
+                        question.responseOptions = questionChoices[match.groups.choiceKey] || [];
+                        // question.allowOther = match.groups.orOther != undefined;
+                    }
+
+                    if (!supported_types.includes(question.type)) return;
+
+                    questions.push(question);
+                });
+
+                const body = {
+                    title: formTitle,
+                    project: this.props.projectId,
+                };
+
+                this.props.requests.questionnaireCreateRequest.do({
+                    body,
+                    onSuccess: (questionnaire: QuestionnaireElement) => (
+                        // PUT Questions after Questionnaire is created
+                        this.props.requests.questionnairePutRequest.do({
+                            questionnaireId: questionnaire.id,
+                            body: {
+                                ...body,
+                                id: questionnaire.id,
+                                questions: questions.map(question => ({
+                                    ...question,
+                                    questionnaire: questionnaire.id,
+                                })),
+                            },
+                        })
+                    ),
+                });
+            });
+        };
     }
 
     private handleEdit = (questionnaire: MiniQuestionnaireElement) => {
@@ -248,9 +411,8 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         ]);
 
         // Schema: Adding default meta
-        const surveyDefaultMeta = ['start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber'];
         survey.addRows(
-            surveyDefaultMeta.map(meta => ({ type: meta, name: meta })),
+            QuestionnaireList.xFormXls.surveyDefaultMeta.map(meta => ({ type: meta, name: meta })),
         );
         // Schema: Add survey questions
         survey.addRows(
@@ -305,6 +467,11 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleKoboToolboxExport = (questionnaireId: number) => {
+        // TODO: TODO
+        console.warn(questionnaireId);
+    }
+
     public render() {
         const {
             className,
@@ -332,16 +499,29 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                         { title }
                     </h2>
                     {!archived && (
-                        <ModalButton
-                            modal={
-                                <QuestionnaireModal
-                                    onRequestSuccess={this.handleQuestionnaireFormRequestSuccess}
-                                    projectId={projectId}
-                                />
-                            }
-                        >
-                            {_ts('project.questionnaire.list', 'addQuestionnaireButtonLabel')}
-                        </ModalButton>
+                        <div>
+                            <ModalButton
+                                modal={
+                                    <QuestionnaireModal
+                                        onRequestSuccess={
+                                            this.handleQuestionnaireFormRequestSuccess
+                                        }
+                                        projectId={projectId}
+                                    />
+                                }
+                            >
+                                {_ts('project.questionnaire.list', 'addQuestionnaireButtonLabel')}
+                            </ModalButton>
+                            <FileInput
+                                // className={styles.fileInput}
+                                onChange={this.handleImportXLSForm}
+                                showStatus={false}
+                                value=""
+                                accept=".xlsx"
+                            >
+                                {_ts('project.questionnaire.list', 'importQuestionnaireFromXLSFormButtonLabel')}
+                            </FileInput>
+                        </div>
                     )}
                 </header>
                 <ListView

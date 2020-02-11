@@ -33,6 +33,7 @@ interface Props {
     onDelete: (id: number) => void;
     onEdit: (questionnaire: MiniQuestionnaireElement) => void;
     onXLSFormExport: (id: number) => void;
+    onKoboToolboxExport: (id: number) => void;
 }
 
 class Questionnaire extends React.PureComponent<Props> {
@@ -70,6 +71,15 @@ class Questionnaire extends React.PureComponent<Props> {
         } = this.props;
 
         onXLSFormExport(questionnaireKey);
+    }
+
+    private handleKoboToolboxExport = () => {
+        const {
+            onKoboToolboxExport,
+            questionnaireKey,
+        } = this.props;
+
+        onKoboToolboxExport(questionnaireKey);
     }
 
     public render() {
@@ -198,9 +208,9 @@ class Questionnaire extends React.PureComponent<Props> {
                                 onClick={this.handleXLSFormExport}
                             />
                             <DropdownButton
-                                disabled
                                 // FIXME: use strings
                                 title="Export to KoBo"
+                                onClick={this.handleKoboToolboxExport}
                             />
                             <DropdownButton
                                 disabled
