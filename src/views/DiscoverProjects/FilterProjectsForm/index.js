@@ -2,12 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Faram from '@togglecorp/faram';
+import {
+    _cs,
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
-import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import {
     discoverProjectsFiltersSelector,
@@ -18,9 +22,14 @@ import {
     setDiscoverProjectsProjectOptionsAction,
     discoverProjectsProjectOptionsSelector,
 } from '#redux';
-import _ts from '#ts';
 
-import ProjectOptionsRequest from './requests/ProjectOptionsRequest';
+import {
+    RequestClient,
+    methods,
+} from '#request';
+
+import _ts from '#ts';
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -30,10 +39,14 @@ const propTypes = {
 
     setDiscoverProjectFilter: PropTypes.func.isRequired,
     unsetDiscoverProjectFilter: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     setDiscoverProjectProjectOptions: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     projectOptions: PropTypes.object.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -58,10 +71,24 @@ const mapDispatchToProps = dispatch => ({
     ),
 });
 
+const requestOptions = {
+    projectOptionsRequest: {
+        url: '/project-options/',
+        method: methods.GET,
+        onMount: true,
+        onSuccess: ({ props, response }) => {
+            const { setDiscoverProjectProjectOptions } = props;
+
+            setDiscoverProjectProjectOptions(response);
+        },
+    },
+};
+
 const emptyObject = {};
 const emptyList = [];
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requestOptions)
 export default class FilterProjectsForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -102,19 +129,10 @@ export default class FilterProjectsForm extends React.PureComponent {
             fields: {
                 search: [],
                 status: [],
+                regions: [],
                 involvement: [],
             },
         };
-
-        this.projectOptionsRequest = new ProjectOptionsRequest({
-            setState: d => this.setState(d),
-            setProjectOptions: this.props.setDiscoverProjectProjectOptions,
-        });
-    }
-
-    componentDidMount() {
-        this.projectOptionsRequest.init();
-        this.projectOptionsRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -125,10 +143,6 @@ export default class FilterProjectsForm extends React.PureComponent {
                 pristine: true,
             });
         }
-    }
-
-    componentWillUnmount() {
-        this.projectOptionsRequest.stop();
     }
 
     // UI
@@ -161,12 +175,14 @@ export default class FilterProjectsForm extends React.PureComponent {
             className,
             filters,
             projectOptions,
+            requests: {
+                projectOptionsRequest: { pending },
+            },
         } = this.props;
 
         const {
             faramValues,
             pristine,
-            pendingProjectOptionss,
         } = this.state;
 
         const isApplyDisabled = pristine;
@@ -176,12 +192,12 @@ export default class FilterProjectsForm extends React.PureComponent {
 
         return (
             <Faram
-                className={`projects-filters ${className}`}
+                className={_cs(styles.projectFilters, className)}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
                 schema={this.schema}
                 value={faramValues}
-                disabled={pendingProjectOptionss}
+                disabled={pending}
             >
                 <SearchInput
                     faramElementName="search"
@@ -189,7 +205,17 @@ export default class FilterProjectsForm extends React.PureComponent {
                     placeholder={_ts('discoverProjects.filter', 'placeholderSearch')}
                     showHintAndError={false}
                     showLabel
-                    className="projects-filter"
+                    className={styles.projectFilter}
+                />
+                <SearchMultiSelectInput
+                    faramElementName="regions"
+                    label={_ts('discoverProjects.filter', 'regionSelectLabel')}
+                    keySelector={FilterProjectsForm.optionKeySelector}
+                    labelSelector={FilterProjectsForm.optionLabelSelector}
+                    options={projectOptions.regions}
+                    showHintAndError={false}
+                    showLabel
+                    className={styles.projectFilter}
                 />
                 <MultiSegmentInput
                     faramElementName="involvement"
@@ -200,7 +226,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
-                    className="projects-filter"
+                    className={styles.projectFilter}
                 />
                 <MultiSegmentInput
                     faramElementName="status"
@@ -212,18 +238,19 @@ export default class FilterProjectsForm extends React.PureComponent {
                     placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
-                    className="projects-filter"
+                    className={styles.projectFilter}
                 />
                 <Button
-                    className="button apply-filter-button"
-                    disabled={isApplyDisabled || pendingProjectOptionss}
+                    className={styles.button}
+                    disabled={isApplyDisabled}
+                    pending={pending}
                     type="submit"
                 >
                     {_ts('discoverProjects.filter', 'filterApplyFilter')}
                 </Button>
                 <DangerButton
-                    className="button clear-filter-button"
-                    disabled={isClearDisabled || pendingProjectOptionss}
+                    className={styles.button}
+                    disabled={isClearDisabled || pending}
                     onClick={this.handleClearFilters}
                 >
                     {_ts('discoverProjects.filter', 'filterClearFilter')}
