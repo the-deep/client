@@ -58,6 +58,16 @@
                 }
             }
         }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            .add-button {
+                margin: var(--spacing-small);
+            }
+        }
     }
 
     .main {
@@ -65,30 +75,68 @@
         background-color: var(--color-foreground);
         overflow: auto;
 
-        .question-list {
-            flex-grow: 1;
-            background-color: var(--color-foreground);
-        }
-
-        .right-panel {
+        .resizable-container {
             display: flex;
-            display: relative;
-            flex-direction: column;
-            flex-shrink: 0;
-            border-left: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-foreground);
-            width: 300px;
+            flex-grow: 1;
+            height: 100%;
+            overflow: auto;
 
-            .header {
-                flex-shrink: 0;
+            .left {
+                width: 0;
+                height: 100%;
 
-                .heading {
-                    padding: var(--spacing-medium);
+                .add-pane {
+                    display: flex;
+                    display: relative;
+                    flex-direction: column;
+                    flex-shrink: 0;
+                    border-right: var(--width-separator-thin) solid var(--color-separator);
+                    background-color: var(--color-foreground);
+                    height: 100%;
+
+                    .header {
+                        flex-shrink: 0;
+
+                        .heading {
+                            padding: var(--spacing-medium);
+                        }
+                    }
+
+                    .content {
+                        flex-grow: 1;
+                    }
                 }
             }
 
-            .content {
-                flex-grow: 1;
+            .right {
+                width: 100%;
+                height: 100%;
+
+                .question-list {
+                    flex-grow: 1;
+                    background-color: var(--color-foreground);
+                    height: 100%;
+                }
+            }
+
+            &.add-mode {
+                .left {
+                    width: 40%;
+                }
+
+                .right {
+                    width: 60%;
+                }
+            }
+
+            &.closed-mode {
+                .left {
+                    width: 0!important;
+                }
+
+                .right {
+                    width: 100%!important;
+                }
             }
         }
 

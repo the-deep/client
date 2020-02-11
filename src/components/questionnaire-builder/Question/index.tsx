@@ -204,7 +204,7 @@ class Question extends React.PureComponent<Props> {
         } = data;
 
         return (
-            <div className={_cs(className, styles.question)}>
+            <div className={_cs(className, styles.questionContainer)}>
                 {onSelectChange && (
                     <Checkbox
                         className={styles.checkbox}
@@ -212,143 +212,145 @@ class Question extends React.PureComponent<Props> {
                         onChange={this.handleCheckboxClick}
                     />
                 )}
-                <div className={styles.brief}>
-                    <div className={styles.iconContainer}>
-                        <img
-                            className={styles.icon}
-                            src={(type ? iconMap[type] : undefined)}
-                            alt={type}
-                        />
-                    </div>
-                    <div className={styles.detailsContainer}>
-                        {onExpandChange && (
-                            <Button
-                                className={styles.expandButton}
-                                onClick={this.handleExpandClick}
-                                iconName={expanded ? 'chevronDown' : 'chevronRight'}
-                                transparent
+                <div className={styles.question}>
+                    <div className={styles.brief}>
+                        <div className={styles.iconContainer}>
+                            <img
+                                className={styles.icon}
+                                src={(type ? iconMap[type] : undefined)}
+                                alt={type}
                             />
-                        )}
-                        <div className={styles.detailsRight} >
-                            <div className={styles.top}>
-                                <div className={styles.left}>
-                                    <h3 className={styles.heading}>
-                                        { title }
-                                    </h3>
-                                    <div className={styles.basicInfo}>
-                                        <MetaOutput
-                                            label="Crisis type"
-                                            value={crisisTypeDetail && crisisTypeDetail.title}
-                                        />
-                                        <MetaOutput
-                                            label="Data collection technique"
-                                            value={dataCollectionTechniqueDisplay}
-                                        />
-                                        <MetaOutput
-                                            label="Enumerator skill"
-                                            value={enumeratorSkillDisplay}
-                                        />
-                                        <MetaOutput
-                                            label="Required duration"
-                                            value={requiredDuration && `${requiredDuration} min`}
-                                        />
-                                        <MetaOutput
-                                            label="Importance"
-                                            value={importanceDisplay && `Importance: ${importanceDisplay}`}
-                                        />
-                                    </div>
-                                </div>
-                                {!readOnly && (
-                                    <div className={styles.buttonContainer}>
-                                        {(isArchived && onUnarchive) && (
-                                            <Button
-                                                onClick={this.handleUnarchiveButtonClick}
-                                                disabled={disabled}
-                                            >
-                                                Unarchive
-                                            </Button>
-                                        )}
-                                        {onEditButtonClick && (
-                                            <WarningButton
-                                                onClick={this.handleEditButtonClick}
-                                                disabled={disabled}
-                                                transparent
-                                                iconName="edit"
-                                                title="Edit"
+                        </div>
+                        <div className={styles.detailsContainer}>
+                            {onExpandChange && (
+                                <Button
+                                    className={styles.expandButton}
+                                    onClick={this.handleExpandClick}
+                                    iconName={expanded ? 'chevronDown' : 'chevronRight'}
+                                    transparent
+                                />
+                            )}
+                            <div className={styles.detailsRight} >
+                                <div className={styles.top}>
+                                    <div className={styles.left}>
+                                        <h3 className={styles.heading}>
+                                            { title }
+                                        </h3>
+                                        <div className={styles.basicInfo}>
+                                            <MetaOutput
+                                                label="Crisis type"
+                                                value={crisisTypeDetail && crisisTypeDetail.title}
                                             />
-                                        )}
-                                        {((!isArchived && onArchive) || onDelete) && (
-                                            <DropdownMenu dropdownIcon="menuDots" >
-                                                {(!isArchived && onArchive) && (
-                                                    <DropdownButton
-                                                        onClick={this.handleArchiveButtonClick}
-                                                        disabled={disabled}
-                                                        title="Send to Parking Lot"
-                                                    />
-                                                )}
-                                                {onDelete && (
-                                                    <DropdownButton
-                                                        onClick={this.handleDeleteButtonClick}
-                                                        disabled={disabled}
-                                                        title="Delete"
-                                                    />
-                                                )}
-                                            </DropdownMenu>
-                                        )}
+                                            <MetaOutput
+                                                label="Data collection technique"
+                                                value={dataCollectionTechniqueDisplay}
+                                            />
+                                            <MetaOutput
+                                                label="Enumerator skill"
+                                                value={enumeratorSkillDisplay}
+                                            />
+                                            <MetaOutput
+                                                label="Required duration"
+                                                value={requiredDuration && `${requiredDuration} min`}
+                                            />
+                                            <MetaOutput
+                                                label="Importance"
+                                                value={importanceDisplay && `Importance: ${importanceDisplay}`}
+                                            />
+                                        </div>
                                     </div>
-                                )}
+                                    {!readOnly && (
+                                        <div className={styles.buttonContainer}>
+                                            {(isArchived && onUnarchive) && (
+                                                <Button
+                                                    onClick={this.handleUnarchiveButtonClick}
+                                                    disabled={disabled}
+                                                >
+                                                    Unarchive
+                                                </Button>
+                                            )}
+                                            {onEditButtonClick && (
+                                                <WarningButton
+                                                    onClick={this.handleEditButtonClick}
+                                                    disabled={disabled}
+                                                    transparent
+                                                    iconName="edit"
+                                                    title="Edit"
+                                                />
+                                            )}
+                                            {((!isArchived && onArchive) || onDelete) && (
+                                                <DropdownMenu dropdownIcon="menuDots" >
+                                                    {(!isArchived && onArchive) && (
+                                                        <DropdownButton
+                                                            onClick={this.handleArchiveButtonClick}
+                                                            disabled={disabled}
+                                                            title="Send to Parking Lot"
+                                                        />
+                                                    )}
+                                                    {onDelete && (
+                                                        <DropdownButton
+                                                            onClick={this.handleDeleteButtonClick}
+                                                            disabled={disabled}
+                                                            title="Delete"
+                                                        />
+                                                    )}
+                                                </DropdownMenu>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <FrameworkAttributeOutput
+                                    className={styles.frameworkAttribute}
+                                    data={data.frameworkAttribute}
+                                    {...this.getFrameworkOptions(framework)}
+                                />
                             </div>
-                            <FrameworkAttributeOutput
-                                className={styles.frameworkAttribute}
-                                data={data.frameworkAttribute}
-                                {...this.getFrameworkOptions(framework)}
-                            />
                         </div>
                     </div>
-                </div>
-                {expanded && (
-                    <div className={styles.details}>
-                        {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
-                            <div className={styles.responseOptions}>
-                                <div className={styles.heading}>
-                                    Response options
+                    {expanded && (
+                        <div className={styles.details}>
+                            {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
+                                <div className={styles.responseOptions}>
+                                    <div className={styles.heading}>
+                                        Response options
+                                    </div>
+                                    <div className={styles.content}>
+                                        <ResponseOutput
+                                            type={data.type}
+                                            value={data.responseOptions}
+                                        />
+                                    </div>
                                 </div>
+                            )}
+                            <div className={styles.enumeratorInstruction}>
+                                <h4 className={styles.heading}>
+                                    Enumerator instructions
+                                </h4>
                                 <div className={styles.content}>
-                                    <ResponseOutput
-                                        type={data.type}
-                                        value={data.responseOptions}
-                                    />
+                                    { data.enumeratorInstruction || '-' }
                                 </div>
                             </div>
-                        )}
-                        <div className={styles.enumeratorInstruction}>
-                            <h4 className={styles.heading}>
-                                Enumerator instructions
-                            </h4>
-                            <div className={styles.content}>
-                                { data.enumeratorInstruction || '-' }
+                            <div className={styles.respondentInstruction}>
+                                <h4 className={styles.heading}>
+                                    Respondent instructions
+                                </h4>
+                                <div className={styles.content}>
+                                    { data.respondentInstruction || '-' }
+                                </div>
                             </div>
                         </div>
-                        <div className={styles.respondentInstruction}>
-                            <h4 className={styles.heading}>
-                                Respondent instructions
-                            </h4>
-                            <div className={styles.content}>
-                                { data.respondentInstruction || '-' }
-                            </div>
-                        </div>
-                    </div>
-                )}
-                {onCopy && (
-                    <Button
-                        className={styles.copyButton}
-                        onClick={this.handleCopy}
-                        iconName="copyOutline"
-                        disabled={copyDisabled}
-                    >
-                        Copy
-                    </Button>
-                )}
+                    )}
+                    {onCopy && (
+                        <Button
+                            className={styles.copyButton}
+                            onClick={this.handleCopy}
+                            iconName="copyOutline"
+                            disabled={copyDisabled}
+                        >
+                            Copy
+                        </Button>
+                    )}
+                </div>
             </div>
         );
     }

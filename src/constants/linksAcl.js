@@ -22,6 +22,8 @@ export const allLinks = {
     visualization: viewsAcl.visualization,
     adminPanel: viewsAcl.adminPanel,
 
+    projectQuestionnaires: viewsAcl.projectQuestionnaires,
+
     leadsViz: viewsAcl.leadsViz,
     workshop: viewsAcl.workshop,
 

@@ -11,6 +11,7 @@ import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 
 import {
+    QuestionnaireQuestionElement,
     MiniFrameworkElement,
     BaseQuestionElement,
     BulkActionId,

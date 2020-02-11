@@ -1,21 +1,47 @@
-.content {
+.add-from-framework {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding: var(--spacing-small) var(--spacing-medium);
     overflow: auto;
 
-    .matrix-filter {
-        overflow-y: auto;
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--spacing-small) var(--spacing-medium);
+
+        .heading {
+            flex-grow: 1;
+        }
     }
 
-    .framework-question-list {
+    .content {
+        display: flex;
         flex-grow: 1;
-        min-height: 480px;
-        overflow: auto;
+        overflow-y: auto;
 
-        .framework-question {
-            margin-bottom: var(--spacing-small);
+        .selection-container {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            padding-left: var(--spacing-medium);
+            width: 240px;
+            overflow-y: auto;
+
+            .matrix-filter {
+                overflow-y: auto;
+            }
+        }
+
+        .questions-container {
+            padding: 0 var(--spacing-medium);
+            overflow: auto;
+
+            .framework-question-list {
+                .framework-question {
+                    margin-bottom: var(--spacing-small);
+                }
+            }
         }
     }
 }
