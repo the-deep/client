@@ -21,6 +21,13 @@ import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import BackLink from '#components/general/BackLink';
 import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
+import { getFiltersForRequest } from '#entities/lead';
+
+import {
+    RequestCoordinator,
+    RequestClient,
+    methods,
+} from '#request';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -37,14 +44,11 @@ import {
     setDiscoverProjectsProjectPerPageAction,
 } from '#redux';
 
+import notify from '#notify';
 import _ts from '#ts';
 
-import ProjectListRequest from './requests/ProjectListRequest';
-import ProjectJoinRequest from './requests/ProjectJoinRequest';
-import ProjectJoinCancelRequest from './requests/ProjectJoinCancelRequest';
-
-import FilterProjectsForm from './FilterProjectsForm';
 import headers from './headers';
+import FilterProjectsForm from './FilterProjectsForm';
 import Actions from './Actions';
 
 import styles from './styles.scss';
@@ -70,6 +74,7 @@ Admin.propTypes = {
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     projectList: PropTypes.array.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     setProjectList: PropTypes.func.isRequired,
     totalProjectsCount: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -82,7 +87,8 @@ const propTypes = {
     setActiveSort: PropTypes.func.isRequired,
     setActivePage: PropTypes.func.isRequired,
     setProjectPerPage: PropTypes.func.isRequired,
-    setProjectJoin: PropTypes.func.isRequired,
+    setProjectJoin: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -107,8 +113,97 @@ const mapDispatchToProps = dispatch => ({
     setProjectPerPage: params => dispatch(setDiscoverProjectsProjectPerPageAction(params)),
 });
 
+const requestOptions = {
+    projectListRequest: {
+        url: '/projects-stat/',
+        query: ({ props: { filters, activePage, projectsPerPage, activeSort } }) => {
+            const sanitizedFilters = getFiltersForRequest(filters);
+            const projectListRequestOffset = (activePage - 1) * projectsPerPage;
+            const projectListRequestLimit = projectsPerPage;
+
+            return ({
+                ...sanitizedFilters,
+                ordering: activeSort,
+                offset: projectListRequestOffset,
+                limit: projectListRequestLimit,
+            });
+        },
+        onPropsChanged: ['activeSort', 'filters', 'activePage', 'projectsPerPage'],
+        method: methods.GET,
+        onMount: true,
+        onSuccess: ({ props, response }) => {
+            const { setProjectList } = props;
+
+            setProjectList({
+                projectList: response.results,
+                totalProjectsCount: response.count,
+            });
+        },
+        extras: {
+            schemaName: 'projectsGetResponse',
+        },
+    },
+    projectJoinRequest: {
+        url: ({ params: { projectId } }) => `/projects/${projectId}/join/`,
+        method: methods.POST,
+        onSuccess: ({
+            params: {
+                projectId,
+                projectTitle,
+            },
+            props: { setProjectJoin },
+        }) => {
+            setProjectJoin({
+                projectId,
+                isJoining: true,
+            });
+
+            notify.send({
+                title: _ts('discoverProjects', 'discoverProjectsNotificationTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts(
+                    'discoverProjects',
+                    'projectJoinNotification',
+                    { projectName: projectTitle },
+                ),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    },
+    projectJoinCancelRequest: {
+        url: ({ params: { projectId } }) => `/projects/${projectId}/join/cancel/`,
+        method: methods.POST,
+        onSuccess: ({
+            params: {
+                projectId,
+                projectTitle,
+            },
+            props: { setProjectJoin },
+        }) => {
+            setProjectJoin({
+                projectId,
+                isJoining: false,
+            });
+
+            notify.send({
+                title: _ts('discoverProjects', 'discoverProjectsNotificationTitle'),
+                type: notify.type.WARNING,
+                message: _ts(
+                    'discoverProjects',
+                    'projectJoinCancelNotification',
+                    { projectName: projectTitle },
+                ),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    },
+};
+
+const projectKeyExtractor = d => d.id;
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requestOptions)
 export default class DiscoverProjects extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -132,78 +227,6 @@ export default class DiscoverProjects extends React.PureComponent {
         { label: '75', key: 75 },
         { label: '100', key: 100 },
     ];
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            pendingProjectList: false,
-            pendingProjectJoin: false,
-            pendingProjectJoinCancel: false,
-        };
-
-        this.projectListRequest = new ProjectListRequest({
-            setState: d => this.setState(d),
-            setProjectList: props.setProjectList,
-        });
-
-        this.projectJoinRequest = new ProjectJoinRequest({
-            setState: d => this.setState(d),
-            setProjectJoin: this.props.setProjectJoin,
-        });
-
-        this.projectJoinCancelRequest = new ProjectJoinCancelRequest({
-            setState: d => this.setState(d),
-            setProjectJoin: this.props.setProjectJoin,
-        });
-    }
-
-    componentDidMount() {
-        const {
-            activeSort,
-            filters,
-            activePage,
-            projectsPerPage,
-        } = this.props;
-
-        this.projectListRequest.init({
-            activeSort,
-            filters,
-            activePage,
-            projectsPerPage,
-        });
-        this.projectListRequest.start();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            activeSort,
-            filters,
-            activePage,
-            projectsPerPage,
-        } = nextProps;
-
-        if (
-            this.props.activeSort !== activeSort ||
-            this.props.filters !== filters ||
-            this.props.activePage !== activePage ||
-            this.props.projectsPerPage !== projectsPerPage
-        ) {
-            this.projectListRequest.init({
-                activeSort,
-                filters,
-                activePage,
-                projectsPerPage,
-            });
-            this.projectListRequest.start();
-        }
-    }
-
-    componentWillUnmount() {
-        this.projectListRequest.stop();
-        this.projectJoinRequest.stop();
-        this.projectJoinCancelRequest.stop();
-    }
 
     headerModifier = (headerData) => {
         const { activeSort } = this.props;
@@ -367,46 +390,78 @@ export default class DiscoverProjects extends React.PureComponent {
     }
 
     handleProjectJoin = (project) => {
-        this.projectJoinRequest.init({
+        const { requests: { projectJoinRequest } } = this.props;
+
+        projectJoinRequest.do({
             projectId: project.id,
             projectTitle: project.title,
         });
-        this.projectJoinRequest.start();
     }
 
     handleProjectJoinCancel = (project) => {
-        this.projectJoinCancelRequest.init({
+        const { requests: { projectJoinCancelRequest } } = this.props;
+
+        projectJoinCancelRequest.do({
             projectId: project.id,
             projectTitle: project.title,
         });
-        this.projectJoinCancelRequest.start();
     }
 
-    renderHeader = () => {
-        const exitPath = reverseRoute(pathNames.homeScreen);
-
-        return (
-            <React.Fragment>
-                <BackLink
-                    className={styles.backLink}
-                    defaultLink={{ pathname: exitPath }}
-                />
-                <FilterProjectsForm className={styles.filters} />
-            </React.Fragment>
-        );
-    }
-
-    renderFooter = () => {
+    render() {
         const {
+            projectList,
             totalProjectsCount,
             activePage,
             projectsPerPage,
+            filters,
+            requests: {
+                projectListRequest: { pending: pendingProjectList },
+                projectJoinRequest: { pending: pendingProjectJoin },
+                projectJoinCancelRequest: { pending: pendingProjectJoinCancel },
+            },
         } = this.props;
 
+        const pending = (
+            pendingProjectList ||
+            pendingProjectJoin ||
+            pendingProjectJoinCancel
+        );
+
+        const exitPath = reverseRoute(pathNames.homeScreen);
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
+
         return (
-            <React.Fragment>
-                <div />
-                <div className={styles.pagerContainer}>
+            <Page
+                className={styles.discoverProjects}
+                headerClassName={styles.header}
+                header={
+                    <>
+                        <BackLink
+                            className={styles.backLink}
+                            defaultLink={{ pathname: exitPath }}
+                        />
+                        <FilterProjectsForm className={styles.filters} />
+                    </>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <div className={styles.tableContainer}>
+                        <RawTable
+                            data={projectList}
+                            headers={headers}
+                            dataModifier={this.dataModifier}
+                            headerModifier={this.headerModifier}
+                            onHeaderClick={this.handleTableHeaderClick}
+                            keySelector={projectKeyExtractor}
+                            className={styles.projectsTable}
+                            emptyComponent={TableEmptyComponentWithText}
+                            isFiltered={!isFilterEmpty}
+                            pending={pending}
+                        />
+                    </div>
+                }
+                footerClassName={styles.footer}
+                footer={
                     <Pager
                         activePage={activePage}
                         className={styles.pager}
@@ -415,58 +470,7 @@ export default class DiscoverProjects extends React.PureComponent {
                         onPageClick={this.handlePageClick}
                         onItemsPerPageChange={this.handleProjectsPerPageChange}
                     />
-                </div>
-            </React.Fragment>
-        );
-    }
-
-    render() {
-        const { projectList } = this.props;
-        const {
-            pendingProjectList,
-            pendingProjectJoin,
-            pendingProjectJoinCancel,
-        } = this.state;
-
-        const pending = (
-            pendingProjectList ||
-            pendingProjectJoin ||
-            pendingProjectJoinCancel
-        );
-
-        const projectKeyExtractor = d => d.id;
-
-        const Header = this.renderHeader;
-        const Footer = this.renderFooter;
-
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
-
-        return (
-            <Page
-                className={styles.discoverProjects}
-                headerClassName={styles.header}
-                header={<Header />}
-                mainContentClassName={styles.mainContent}
-                mainContent={
-                    <React.Fragment>
-                        <div className={styles.tableContainer}>
-                            <RawTable
-                                data={projectList}
-                                headers={headers}
-                                dataModifier={this.dataModifier}
-                                headerModifier={this.headerModifier}
-                                onHeaderClick={this.handleTableHeaderClick}
-                                keySelector={projectKeyExtractor}
-                                className={styles.projectsTable}
-                                emptyComponent={TableEmptyComponentWithText}
-                                isFiltered={!isFilterEmpty}
-                                pending={pending}
-                            />
-                        </div>
-                    </React.Fragment>
                 }
-                footerClassName={styles.footer}
-                footer={<Footer />}
             />
         );
     }
