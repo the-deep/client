@@ -1147,7 +1147,8 @@
             "placeholderAny": 14,
             "placeholderSearch": 9,
             "filterApplyFilter": 10,
-            "filterClearFilter": 11
+            "filterClearFilter": 11,
+            "regionSelectLabel": 336
         },
         "framework": {
             "analysisFramework": 379,
