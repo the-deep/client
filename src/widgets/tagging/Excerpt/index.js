@@ -155,6 +155,7 @@ export default class Excerpt extends React.PureComponent {
             onExcerptChange({
                 type,
                 value: data,
+                dropped: true,
             });
         }
 
