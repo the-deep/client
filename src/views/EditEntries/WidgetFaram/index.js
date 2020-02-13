@@ -298,7 +298,7 @@ export default class WidgetFaram extends React.PureComponent {
         const entryKey = entryAccessor.key(entry);
         const entryId = entryAccessor.serverId(entry);
 
-        const { type, value } = excerptData;
+        const { type, value, dropped } = excerptData;
 
         if (!entryKey) {
             console.warn('There is no entry key while changing excerpt.');
@@ -310,6 +310,7 @@ export default class WidgetFaram extends React.PureComponent {
                 id: entryId,
                 excerptType: type,
                 excerptValue: value,
+                dropped,
             });
         }
     }

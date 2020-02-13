@@ -181,12 +181,15 @@ export const editEntriesResetExcerptAction = ({ leadId, key }) => ({
     key,
 });
 
-export const editEntriesSetExcerptAction = ({ leadId, key, excerptValue, excerptType }) => ({
+export const editEntriesSetExcerptAction = ({
+    leadId, key, excerptValue, excerptType, dropped,
+}) => ({
     type: EEB__SET_ENTRY_EXCERPT,
     leadId,
     key,
     excerptType,
     excerptValue,
+    dropped,
 });
 
 export const editEntriesSetEntryDataAction = ({ leadId, key, values, errors, info, color }) => ({
@@ -510,7 +513,7 @@ const setSelectedEntryKey = (state, action) => {
 };
 
 const setEntryExcerpt = (state, action) => {
-    const { leadId, key, excerptType, excerptValue } = action;
+    const { leadId, key, excerptType, excerptValue, dropped } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -520,6 +523,11 @@ const setEntryExcerpt = (state, action) => {
     const tabularField = excerptType === 'dataSeries' ? excerptValue : undefined;
 
     const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
+    const entry = entries[entryIndex];
+
+    const droppedExcerpt = excerptType === 'excerpt' && dropped
+        ? excerptValue
+        : entry.data.droppedExcerpt;
 
     const settings = {
         editEntries: {
@@ -529,6 +537,7 @@ const setEntryExcerpt = (state, action) => {
                         data: {
                             entryType: { $set: excerptType },
                             excerpt: { $set: excerpt },
+                            droppedExcerpt: { $set: droppedExcerpt },
                             image: { $set: image },
                             tabularField: { $set: tabularField },
                         },
