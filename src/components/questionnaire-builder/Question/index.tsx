@@ -20,13 +20,13 @@ import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
 import DateAndTimeIcon from '#resources/img/questionnaire-icons/date-and-time.png';
 import ImageIcon from '#resources/img/questionnaire-icons/image.png';
 import LocationIcon from '#resources/img/questionnaire-icons/location.png';
-import NoteIcon from '#resources/img/questionnaire-icons/note.png';
+// import NoteIcon from '#resources/img/questionnaire-icons/note.png';
 import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
 import RangeIcon from '#resources/img/questionnaire-icons/range.png';
 import RankIcon from '#resources/img/questionnaire-icons/rank.png';
 import SelectIcon from '#resources/img/questionnaire-icons/select-one.png';
 import TextIcon from '#resources/img/questionnaire-icons/text.png';
-import TriggerAcknowledgeIcon from '#resources/img/questionnaire-icons/trigger-acknowledge.png';
+// import TriggerAcknowledgeIcon from '#resources/img/questionnaire-icons/trigger-acknowledge.png';
 import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
@@ -39,7 +39,6 @@ import styles from './styles.scss';
 const iconMap: {
     [key in QuestionType]: string;
 } = {
-    acknowledge: TriggerAcknowledgeIcon,
     audio: AudioIcon,
     barcode: BarcodeIcon,
     date: DateAndTimeIcon,
@@ -50,7 +49,6 @@ const iconMap: {
     geopoint: LocationIcon,
     geotrace: LocationIcon,
     geoshape: LocationIcon,
-    note: NoteIcon,
     integer: NumberIcon,
     decimal: NumberIcon,
     range: RangeIcon,
@@ -60,9 +58,10 @@ const iconMap: {
     text: TextIcon,
     video: VideoIcon,
 
-    // TODO: get icon for these
-    calculate: NumberIcon,
-    hidden: TextIcon,
+    // acknowledge: TriggerAcknowledgeIcon,
+    // note: NoteIcon,
+    // calculate: NumberIcon,
+    // hidden: TextIcon,
 };
 
 interface Props {
