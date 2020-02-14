@@ -41,24 +41,30 @@ export type QuestionType = 'text'
     | 'integer'
     | 'decimal'
     | 'range'
+
     | 'select_one'
     | 'select_multiple'
     | 'rank'
+
     | 'geopoint'
     | 'geotrace'
     | 'geoshape'
+
     | 'date'
     | 'time'
     | 'dateTime'
+
     | 'file'
     | 'image'
     | 'audio'
     | 'video'
-    | 'barcode'
+    | 'barcode';
+/*
     | 'calculate'
     | 'note'
     | 'acknowledge'
     | 'hidden';
+*/
 
 
 export interface BaseQuestionElement {
