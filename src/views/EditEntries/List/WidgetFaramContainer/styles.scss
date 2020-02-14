@@ -20,6 +20,19 @@
             flex-grow: 1;
         }
 
+        .entry-labels {
+            display: inline-flex;
+            align-items: center;
+
+            .entry-label {
+                margin-right: var(--spacing-small);
+
+                .title {
+                    text-transform: none;
+                }
+            }
+        }
+
         .button {
             flex-shrink: 0;
             margin-left: var(--spacing-small);
