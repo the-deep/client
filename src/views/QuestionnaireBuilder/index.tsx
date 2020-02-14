@@ -8,7 +8,9 @@ import {
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import Button from '#rsu/../v2/Action/Button';
 import MultiViewContainer from '#rscv/MultiViewContainer';
+import ResizableH from '#rscv/Resizable/ResizableH';
 import VerticalTabs from '#rscv/VerticalTabs';
 
 import Page from '#rscv/Page';
@@ -66,6 +68,7 @@ interface ComponentProps {
 
 interface State {
     showQuestionFormModal: boolean;
+    addFromFramework: boolean;
     questionToEdit?: QuestionnaireQuestionElement;
     questionnaire?: QuestionnaireElement;
     // FIXME: use this everywhere
@@ -322,10 +325,12 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.addViews = {
             active: {
                 component: AddFromFramework,
+                wrapContainer: true,
                 rendererParams: () => ({
                     treeFilter: this.state.treeFilter,
                     framework: this.state.framework,
                     onTreeInputChange: this.handleTreeInputChange,
+                    onPaneClose: this.handleAddFromFrameworkClose,
                     onCopy: this.handleCopyClick,
                     copyDisabled: false,
                 }),
@@ -636,6 +641,14 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         );
     }
 
+    private handleAddFromFrameworkClick = () => {
+        this.setState({ addFromFramework: true });
+    }
+
+    private handleAddFromFrameworkClose = () => {
+        this.setState({ addFromFramework: false });
+    }
+
     public render() {
         const {
             className,
@@ -653,7 +666,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     pending: questionArchivePending,
                 },
             },
-            projectDetail,
         } = this.props;
 
         const showLoadingOverlay = questionDeletePending || questionArchivePending;
@@ -663,6 +675,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionToEdit,
             questionnaire,
             framework,
+            addFromFramework,
         } = this.state;
 
         if (questionnaireGetPending || frameworkGetPending) {
@@ -694,6 +707,9 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             requiredDuration,
         } = questionnaire;
 
+        const activeTab = window.location.hash;
+        const closedMode = activeTab === '#/archived' || !addFromFramework;
+
         return (
             <>
                 <Page
@@ -714,20 +730,16 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     sidebarClassName={styles.sidebar}
                     sidebar={(
                         <>
-                            <div className={styles.projectDetails}>
-                                <h4 className={styles.heading}>
-                                    Project
-                                </h4>
-                                <div className={styles.value}>
-                                    { projectDetail.title || '-'}
-                                </div>
-                                <h4 className={styles.heading}>
-                                    Analysis Framework
-                                </h4>
-                                <div className={styles.value}>
-                                    { framework ? framework.title : '-' }
-                                </div>
-                            </div>
+                            <Diagnostics
+                                frameworkTitle={framework ? framework.title : '-'}
+                                crisisTypeDetail={crisisTypeDetail}
+                                dataCollectionTechniqueDisplay={dataCollectionTechniqueDisplay}
+                                enumeratorSkillDisplay={enumeratorSkillDisplay}
+                                questions={questions}
+                                requiredDuration={requiredDuration}
+                                showLoadingOverlay={showLoadingOverlay}
+                                title={title}
+                            />
                             <div className={styles.questionStatus}>
                                 <header className={styles.header}>
                                     <h4 className={styles.heading}>
@@ -741,35 +753,54 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                     modifier={this.tabsModifier}
                                 />
                             </div>
-                            <MultiViewContainer
-                                views={this.addViews}
-                                useHash
-                            />
+                            {activeTab === '#/active' && (
+                                <div className={styles.buttonContainer}>
+                                    <Button
+                                        className={styles.addButton}
+                                        onClick={this.handleAddFromFrameworkClick}
+                                        iconName="add"
+                                        disabled={addFromFramework}
+                                    >
+                                        Add From Framework
+                                    </Button>
+                                </div>
+                            )}
                         </>
                     )}
                     mainContentClassName={styles.main}
                     mainContent={(
-                        <>
-                            <MultiViewContainer
-                                views={this.views}
-                                useHash
-                            />
-                            <Diagnostics
-                                className={styles.rightPanel}
-                                crisisTypeDetail={crisisTypeDetail}
-                                dataCollectionTechniqueDisplay={dataCollectionTechniqueDisplay}
-                                enumeratorSkillDisplay={enumeratorSkillDisplay}
-                                questions={questions}
-                                requiredDuration={requiredDuration}
-                                showLoadingOverlay={showLoadingOverlay}
-                                title={title}
-                            />
-                            <img
-                                className={styles.ifrcLogo}
-                                src={IfrcLogo}
-                                alt="IFRC Logo"
-                            />
-                        </>
+                        <ResizableH
+                            className={_cs(
+                                styles.resizableContainer,
+                                addFromFramework && styles.addMode,
+                                closedMode && styles.closedMode,
+                            )}
+                            leftContainerClassName={styles.left}
+                            rightContainerClassName={styles.right}
+                            rightChild={
+                                <MultiViewContainer
+                                    views={this.views}
+                                    useHash
+                                />
+                            }
+                            leftChild={
+                                <>
+                                    <MultiViewContainer
+                                        containerClassName={styles.addPane}
+                                        views={this.addViews}
+                                        useHash
+                                    />
+                                    {/*
+                                        <img
+                                            className={styles.ifrcLogo}
+                                            src={IfrcLogo}
+                                            alt="IFRC Logo"
+                                        />
+                                    */}
+                                </>
+                            }
+                            disabled={!addFromFramework}
+                        />
                     )}
                 />
                 {showQuestionFormModal && (

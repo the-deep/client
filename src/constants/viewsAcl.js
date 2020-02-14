@@ -90,6 +90,10 @@ const acl = {
     adminPanel: { hide: notAdmin },
     visualization: { hide: notDev },
 
+    // FIXME: have it's own permission model
+    projectQuestionnaires: { hide: notLeadViewable },
+    questionnaireBuilder: { hide: notLeadEditable },
+
     projectDenied: {},
     fourHundredThree: {},
     fourHundredFour: {},

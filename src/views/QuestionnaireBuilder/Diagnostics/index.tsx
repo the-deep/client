@@ -21,6 +21,7 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
+    frameworkTitle?: string;
     enumeratorSkill?: string;
     title?: string;
     enumeratorSkillDisplay?: string;
@@ -43,6 +44,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
             dataCollectionTechniqueDisplay,
             enumeratorSkillDisplay,
             requiredDuration,
+            frameworkTitle,
         } = this.props;
 
         const selectedQuestions = questions.filter(question => !question.isArchived);
@@ -61,7 +63,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
             <div className={_cs(styles.diagnostics, className)}>
                 {showLoadingOverlay && <LoadingAnimation />}
                 <header className={styles.header}>
-                    <h2>{title}</h2>
+                    <h2> Metadata </h2>
                     <div className={styles.metaOutputContainer}>
                         <MetaOutput
                             label="Crisis type"
@@ -90,6 +92,12 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                     </div>
                 </header>
                 <div className={styles.content}>
+                    <div className={styles.section}>
+                        <h3> Analysis Framework </h3>
+                        <div className={styles.subContent}>
+                            {frameworkTitle}
+                        </div>
+                    </div>
                     <div className={styles.section}>
                         <h3> Questions </h3>
                         <div className={styles.subContent}>
