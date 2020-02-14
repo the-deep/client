@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import {
     _cs,
@@ -7,6 +8,7 @@ import {
 } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
+import ListView from '#rscv/List/ListView';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
@@ -14,7 +16,10 @@ import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
 
-import { entryAccessor } from '#entities/editEntries';
+import {
+    entryAccessor,
+    getEntryGroupsForEntry,
+} from '#entities/editEntries';
 import {
     editEntriesLabelsSelector,
     editEntriesFilteredEntryGroupsSelector,
@@ -23,6 +28,8 @@ import {
     editEntriesSetEntryCommentsCountAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
+
+import EntryLabelBadge from '#components/general/EntryLabel';
 
 import _ts from '#ts';
 
@@ -68,10 +75,14 @@ const mapDispatchToProps = dispatch => ({
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
+const entryLabelKeySelector = d => d.labelId;
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getEntryGroupsForCurrentEntry = memoize(getEntryGroupsForEntry);
 
     containerRef = React.createRef();
     dragEnterCount = 0;
@@ -85,9 +96,16 @@ export default class WidgetFaramContainer extends React.PureComponent {
     )
 
     handleEdit = (e) => {
-        const entryKey = entryAccessor.key(this.props.entry);
-        this.props.setSelectedEntryKey({
-            leadId: this.props.leadId,
+        const {
+            entry,
+            setSelectedEntryKey,
+            leadId,
+        } = this.props;
+
+        const entryKey = entryAccessor.key(entry);
+
+        setSelectedEntryKey({
+            leadId,
             key: entryKey,
         });
         window.location.replace('#/overview');
@@ -95,12 +113,17 @@ export default class WidgetFaramContainer extends React.PureComponent {
     };
 
     handleEntryDelete = () => {
-        const { entry } = this.props;
+        const {
+            entry,
+            leadId,
+            markAsDeletedEntry,
+        } = this.props;
+
         if (!entry) {
             return;
         }
-        this.props.markAsDeletedEntry({
-            leadId: this.props.leadId,
+        markAsDeletedEntry({
+            leadId,
             key: entryAccessor.key(entry),
             value: true,
         });
@@ -120,6 +143,14 @@ export default class WidgetFaramContainer extends React.PureComponent {
 
         setEntryCommentsCount({ entry, leadId });
     }
+
+    entryLabelsRendererParams = (key, data) => ({
+        title: `${data.labelTitle} (${data.count})`,
+        titleClassName: styles.title,
+        className: styles.entryLabel,
+        labelColor: data.labelColor,
+        groups: data.groups,
+    });
 
     render() {
         const {
@@ -150,15 +181,27 @@ export default class WidgetFaramContainer extends React.PureComponent {
         const entryServerId = entryAccessor.serverId(entry);
         const entryKey = entryAccessor.key(entry);
 
+        const entryLabelsForEntry = this.getEntryGroupsForCurrentEntry(
+            entryGroups,
+            entryKey,
+            labels,
+        );
+
         return (
-            <div
-                className={_cs(classNameFromProps, styles.widgetFaramContainer)}
-            >
+            <div className={_cs(classNameFromProps, styles.widgetFaramContainer)} >
                 <header className={_cs('widget-container-header', styles.header)}>
                     <h3 className={styles.heading}>
                         {/* FIXME: use strings */}
                         {`Entry ${index + 1}`}
                     </h3>
+                    <ListView
+                        data={entryLabelsForEntry}
+                        className={styles.entryLabels}
+                        rendererParams={this.entryLabelsRendererParams}
+                        renderer={EntryLabelBadge}
+                        keySelector={entryLabelKeySelector}
+                        emptyComponent={null}
+                    />
                     {labels.length > 0 && (
                         <ModalButton
                             iconName="album"

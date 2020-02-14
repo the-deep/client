@@ -1,6 +1,9 @@
 import update from '#rsu/immutable-update';
 import {
+    isNotDefined,
+    isDefined,
     listToMap,
+    listToGroupList,
     randomString,
     compareDate,
     compareNumber,
@@ -59,11 +62,53 @@ export const entryGroupAccessor = {
     isPristine: entryGroup => getLocalDataSafe(entryGroup).isPristine,
     hasError: entryGroup => getLocalDataSafe(entryGroup).hasError,
     hasServerError: entryGroup => getLocalDataSafe(entryGroup).hasServerError,
+    selections: entryGroup => getDataSafe(entryGroup).selections,
 
     order: entryGroup => getDataSafe(entryGroup).order,
     serverId: entryGroup => getDataSafe(entryGroup).id,
 
     versionId: entryGroup => getServerDataSafe(entryGroup).versionId,
+};
+
+export const getEntryGroupsForEntry = (entryGroups, entryClientId, labels) => {
+    const selections = entryGroups.map((entryGroup) => {
+        const entryGroupData = entryGroupAccessor.data(entryGroup);
+        const entryGroupSelections = entryGroupAccessor.selections(entryGroup);
+
+        if (!entryGroupSelections) {
+            return [];
+        }
+
+        return entryGroupSelections
+            .filter(g => g.entryClientId === entryClientId)
+            .map(g => ({
+                ...g,
+                title: entryGroupData.title,
+            }));
+    }).flat();
+
+    const selectionsByLabel = listToGroupList(selections, d => d.labelId);
+
+    const labelsWithGroups = labels.map((label) => {
+        const currentSelections = selectionsByLabel[label.id];
+
+        if (isNotDefined(currentSelections)) {
+            return undefined;
+        }
+
+        const groups = currentSelections.map(g => g.title);
+        const count = groups.length;
+
+        return ({
+            labelId: label.id,
+            labelColor: label.color,
+            labelTitle: label.title,
+            groups,
+            count,
+        });
+    }).filter(isDefined);
+
+    return labelsWithGroups;
 };
 
 export const ENTRY_STATUS = {

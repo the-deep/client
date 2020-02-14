@@ -10,6 +10,7 @@ import {
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
+import { RequestCoordinator } from '#request';
 
 import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
@@ -141,6 +142,7 @@ const leadKeySelector = d => d.id;
 const MAX_ENTRIES_PER_REQUEST = 50;
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
 export default class Entries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
