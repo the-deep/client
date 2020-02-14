@@ -22,7 +22,7 @@ import {
     VIEW,
 } from '#widgets';
 
-import EntryLabelBadge from './EntryLabel';
+import EntryLabelBadge from '#components/general/EntryLabel';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
