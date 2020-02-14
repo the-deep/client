@@ -259,6 +259,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             entryFilterOptions,
             applyOnChange,
         } = this.props;
+
         const {
             pristine,
             filters,
