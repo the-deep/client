@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rsu/../v2/View/ListView';
 import { KeyValueElement } from '#typings';
+import { isChoicedQuestionType } from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
@@ -49,7 +50,7 @@ class ResponseOutput extends React.PureComponent<Props> {
             type,
         } = this.props;
 
-        if (!type || !['select_one', 'select_multiple', 'rank'].includes(type)) {
+        if (!type || !isChoicedQuestionType(type)) {
             return null;
         }
 
