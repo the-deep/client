@@ -5,14 +5,16 @@ import { _cs } from '@togglecorp/fujs';
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import Checkbox from '#rsu/../v2/Input/Checkbox';
+import DropdownMenu from '#rsca/DropdownMenu';
 
 import {
     BaseQuestionElement,
     MiniFrameworkElement,
     QuestionType,
 } from '#typings';
+import { isChoicedQuestionType } from '#entities/questionnaire';
+
 import { getMatrix2dStructures } from '#utils/framework';
-import DropdownMenu from '#rsca/DropdownMenu';
 import DropdownButton from '#components/general/DropdownButton';
 
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
@@ -309,7 +311,7 @@ class Question extends React.PureComponent<Props> {
                     </div>
                     {expanded && (
                         <div className={styles.details}>
-                            {['select_one', 'select_multiple', 'rank'].includes(data.type) && (
+                            {isChoicedQuestionType(type) && (
                                 <div className={styles.responseOptions}>
                                     <div className={styles.heading}>
                                         Response options

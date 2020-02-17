@@ -12,6 +12,7 @@ import ListView from '#rsu/../v2/View/ListView';
 import Button from '#rsca/Button';
 
 import { QuestionResponseOptionElement } from '#typings';
+import { isChoicedQuestionType } from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
@@ -152,7 +153,7 @@ class ResponseInput extends React.PureComponent<Props> {
             value,
         } = this.props;
 
-        if (!type || !['select_one', 'select_multiple', 'rank'].includes(type)) {
+        if (!type || !isChoicedQuestionType(type)) {
             return null;
         }
 
