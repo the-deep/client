@@ -1,4 +1,4 @@
-import Excel from 'exceljs';
+import Excel from 'exceljs/dist/exceljs.js';
 import { listToMap, Obj, isDefined } from '@togglecorp/fujs';
 
 import {

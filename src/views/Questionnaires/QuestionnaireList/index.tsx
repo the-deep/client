@@ -1,5 +1,5 @@
 import React from 'react';
-import Excel from 'exceljs';
+import Excel from 'exceljs/dist/exceljs.js';
 import { saveAs } from 'file-saver';
 import { _cs } from '@togglecorp/fujs';
 import { produce } from 'immer';
