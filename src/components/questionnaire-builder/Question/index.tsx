@@ -71,6 +71,7 @@ interface Props {
     className?: string;
     onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
     onCopy?: (key: BaseQuestionElement['id']) => void;
+    onClone?: (key: BaseQuestionElement['id']) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
@@ -146,6 +147,17 @@ class Question extends React.PureComponent<Props> {
         }
     }
 
+    handleClone = () => {
+        const {
+            onClone,
+            data,
+        } = this.props;
+
+        if (onClone) {
+            onClone(data.id);
+        }
+    }
+
     handleCheckboxClick = () => {
         const {
             data: {
@@ -192,6 +204,7 @@ class Question extends React.PureComponent<Props> {
             onUnarchive,
             onEditButtonClick,
             onDelete,
+            onClone,
         } = this.props;
 
         const {
@@ -281,7 +294,10 @@ class Question extends React.PureComponent<Props> {
                                                 />
                                             )}
                                             {((!isArchived && onArchive) || onDelete) && (
-                                                <DropdownMenu dropdownIcon="menuDots" >
+                                                <DropdownMenu
+                                                    dropdownIcon="menuDots"
+                                                    closeOnClick
+                                                >
                                                     {(!isArchived && onArchive) && (
                                                         <DropdownButton
                                                             onClick={this.handleArchiveButtonClick}
@@ -294,6 +310,13 @@ class Question extends React.PureComponent<Props> {
                                                             onClick={this.handleDeleteButtonClick}
                                                             disabled={disabled}
                                                             title="Delete"
+                                                        />
+                                                    )}
+                                                    {onClone && (
+                                                        <DropdownButton
+                                                            onClick={this.handleClone}
+                                                            disabled={disabled}
+                                                            title="Clone"
                                                         />
                                                     )}
                                                 </DropdownMenu>

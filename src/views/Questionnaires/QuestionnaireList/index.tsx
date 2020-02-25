@@ -244,6 +244,13 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         onKoboToolboxExport: this.handleKoboToolboxExport,
     })
 
+    private getCloneValue = (
+        questionnaires: MiniQuestionnaireElement[],
+        questionnaireIdForClone: number,
+    ) => (
+        questionnaires.find(q => q.id === questionnaireIdForClone)
+    )
+
     private handleArchive = (questionnaireId: number) => {
         this.props.requests.questionnaireArchiveRequest.do({
             questionnaireId,
@@ -277,7 +284,6 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             questionnaireIdForClone: undefined,
         });
     }
-
 
     private handleEdit = (questionnaire: MiniQuestionnaireElement) => {
         const { questionnaires } = this.state;
@@ -399,7 +405,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         } = this.state;
 
         const fileInputDisabled = createPending || patchPending;
-        const cloneValue = questionnaires.find(q => q.id === questionnaireIdForClone);
+        const cloneValue = this.getCloneValue(questionnaires, questionnaireIdForClone);
 
         return (
             <div className={_cs(className, styles.questionnaireList)}>
@@ -467,13 +473,13 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                 </footer>
                 {showCloneModal && (
                     <QuestionnaireModal
-                        value={cloneValue}
                         onRequestSuccess={
                             this.handleQuestionnaireFormRequestSuccess
                         }
-                        projectId={projectId}
-                        isClone
                         closeModal={this.handleQuestionnaireCloneClose}
+                        projectId={projectId}
+                        value={cloneValue}
+                        isClone
                     />
                 )}
             </div>

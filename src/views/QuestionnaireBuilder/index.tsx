@@ -117,6 +117,7 @@ interface Params {
     archive?: boolean;
     onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
     onCopySuccess?: (question: QuestionnaireQuestionElement) => void;
+    onCloneSuccess?: (question: QuestionnaireQuestionElement) => void;
 }
 
 const EmptyComponent = () => <div />;
@@ -184,6 +185,19 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         },
         onFailure: notifyOnFailure('Question Delete'),
         onFatal: notifyOnFatal('Question Delete'),
+    },
+    questionCloneRequest: {
+        url: ({ props: { questionnaireId }, params }) => (
+            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/clone/`
+        ),
+        body: {},
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onCloneSuccess) {
+                return;
+            }
+            params.onCloneSuccess(response as QuestionnaireQuestionElement);
+        },
     },
     questionArchiveRequest: {
         url: ({ props: { questionnaireId }, params }) => (
@@ -291,6 +305,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         onEdit: this.handleEditQuestionButtonClick,
                         onOrderChange: this.handleOrderChange,
                         onDelete: this.handleDeleteQuestion,
+                        onClone: this.handleCloneQuestion,
                         onArchive: this.handleArchiveQuestion,
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
@@ -426,6 +441,19 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({ questionnaire: newQuestionnaire });
     }
 
+    private handleCloneSuccess = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            safeQuestionnaire.questions.push(question);
+        });
+
+        this.setState({ questionnaire: newQuestionnaire });
+    }
+
     private handleAddQuestionButtonClick = () => {
         this.setState({
             showQuestionFormModal: true,
@@ -456,6 +484,13 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.props.requests.questionDeleteRequest.do({
             questionId,
             onDeleteSuccess: this.handleQuestionDeleteRequestSuccess,
+        });
+    }
+
+    private handleCloneQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
+        this.props.requests.questionCloneRequest.do({
+            questionId,
+            onCloneSuccess: this.handleCloneSuccess,
         });
     }
 

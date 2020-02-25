@@ -60,6 +60,7 @@ interface ComponentProps {
 }
 
 type FaramValues = QuestionnaireFormElement;
+
 interface RequestBody extends FaramValues {
     project?: ProjectElement['id'];
     questions?: BaseQuestionElement[];
@@ -229,15 +230,18 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
             isClone,
         } = this.props;
 
-        if (value && !isClone) {
-            questionnairePatchRequest.do({
-                questionnaireId: value.id,
-                body: faramValues,
+        if (!value) {
+            questionnaireCreateRequest.do({
+                body: {
+                    project: projectId,
+                    questions: [],
+                    ...faramValues,
+                },
                 setFaramErrors: (faramErrors: FaramErrors) => {
                     this.setState({ faramErrors });
                 },
             });
-        } else if (value && isClone) {
+        } else if (isClone) {
             questionnaireCloneRequest.do({
                 questionnaireId: value.id,
                 body: {
@@ -249,12 +253,9 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                 },
             });
         } else {
-            questionnaireCreateRequest.do({
-                body: {
-                    project: projectId,
-                    questions: [],
-                    ...faramValues,
-                },
+            questionnairePatchRequest.do({
+                questionnaireId: value.id,
+                body: faramValues,
                 setFaramErrors: (faramErrors: FaramErrors) => {
                     this.setState({ faramErrors });
                 },
