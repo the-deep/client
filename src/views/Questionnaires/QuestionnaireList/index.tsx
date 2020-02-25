@@ -58,6 +58,8 @@ interface ComponentProps {
 interface State {
     questionnaires: MiniQuestionnaireElement[];
     questionnaireCount: number;
+    showCloneModal: boolean;
+    questionnaireIdForClone?: number;
 }
 
 interface Params {
@@ -203,6 +205,9 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         this.state = {
             questionnaires: [],
             questionnaireCount: 0,
+
+            showCloneModal: false,
+            questionnaireIdForClone: undefined,
         };
 
         this.props.requests.questionnairesGetRequest.setDefaultParams({
@@ -233,6 +238,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         onArchive: this.handleArchive,
         onUnarchive: this.handleUnarchive,
         onDelete: this.handleDelete,
+        onClone: this.handleClone,
         onEdit: this.handleEdit,
         onXLSFormExport: this.handleXLSFormExport,
         onKoboToolboxExport: this.handleKoboToolboxExport,
@@ -257,6 +263,21 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             questionnaireId,
         });
     }
+
+    private handleClone = (questionnaireId: number) => {
+        this.setState({
+            showCloneModal: true,
+            questionnaireIdForClone: questionnaireId,
+        });
+    }
+
+    private handleQuestionnaireCloneClose = () => {
+        this.setState({
+            showCloneModal: false,
+            questionnaireIdForClone: undefined,
+        });
+    }
+
 
     private handleEdit = (questionnaire: MiniQuestionnaireElement) => {
         const { questionnaires } = this.state;
@@ -371,11 +392,14 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         } = this.props;
 
         const {
+            showCloneModal,
             questionnaires,
             questionnaireCount,
+            questionnaireIdForClone,
         } = this.state;
 
         const fileInputDisabled = createPending || patchPending;
+        const cloneValue = questionnaires.find(q => q.id === questionnaireIdForClone);
 
         return (
             <div className={_cs(className, styles.questionnaireList)}>
@@ -441,6 +465,17 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                         onPageClick={onActivePageChange}
                     />
                 </footer>
+                {showCloneModal && (
+                    <QuestionnaireModal
+                        value={cloneValue}
+                        onRequestSuccess={
+                            this.handleQuestionnaireFormRequestSuccess
+                        }
+                        projectId={projectId}
+                        isClone
+                        closeModal={this.handleQuestionnaireCloneClose}
+                    />
+                )}
             </div>
         );
     }
