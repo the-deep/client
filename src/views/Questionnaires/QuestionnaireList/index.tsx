@@ -21,6 +21,7 @@ import {
     Requests,
     AddRequestProps,
     MultiResponse,
+    QuestionnaireQuestionElement,
 } from '#typings';
 
 import { generateXLSForm, readXLSForm } from '#entities/questionnaire';
@@ -63,6 +64,8 @@ interface Params {
     setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
     body?: object;
     questions?: BaseQuestionElementWithoutId[];
+
+    onExportReady?: (title: string, questions: QuestionnaireQuestionElement[]) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -162,7 +165,11 @@ const requestOptions: Requests<ComponentProps, Params> = {
     questionnaireGetRequest: {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
         method: methods.GET,
-        onSuccess: ({ response }) => {
+        onSuccess: ({ response, params }) => {
+            if (!params || !params.onExportReady) {
+                return;
+            }
+
             const questionnaire = response as QuestionnaireElement;
 
             // TODO: Order questions
@@ -172,21 +179,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
             } = questionnaire;
             const activeQuestions = questions.filter(question => !question.isArchived);
 
-            const workbook = generateXLSForm(
-                questionnaire.id,
-                title,
-                activeQuestions,
-            );
-
-            // TODO: add catch expression
-            workbook.xlsx.writeBuffer()
-                .then((data) => {
-                    const blob = new Blob(
-                        [data],
-                        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
-                    );
-                    saveAs(blob, `${title} XLSForm.xlsx`);
-                });
+            params.onExportReady(title, activeQuestions);
         },
     },
 };
@@ -221,7 +214,11 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         questionnaireKey: key,
         data: questionnaire,
         archived: this.props.archived,
-        disabled: this.props.requests.questionnaireArchiveRequest.pending,
+        disabled: (
+            this.props.requests.questionnaireArchiveRequest.pending
+            || this.props.requests.questionnaireDeleteRequest.pending
+            || this.props.requests.questionnaireGetRequest.pending
+        ),
         onArchive: this.handleArchive,
         onUnarchive: this.handleUnarchive,
         onDelete: this.handleDelete,
@@ -286,7 +283,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             const buffer = reader.result as ArrayBuffer;
 
             const wb = new Excel.Workbook();
-            wb.xlsx.load(buffer).then((workbook) => {
+            wb.xlsx.load(buffer).then((workbook: Excel.Workbook) => {
                 const { error, title, questions } = readXLSForm(workbook);
 
                 if (error) {
@@ -315,12 +312,30 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
     private handleXLSFormExport = (questionnaireId: number) => {
         this.props.requests.questionnaireGetRequest.do({
             questionnaireId,
+            onExportReady: (title: string, questions: QuestionnaireQuestionElement[]) => {
+                const workbook = generateXLSForm(
+                    questionnaireId,
+                    title,
+                    questions,
+                );
+
+                workbook.xlsx.writeBuffer()
+                    .then((data: BlobPart) => {
+                        const blob = new Blob(
+                            [data],
+                            { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+                        );
+                        saveAs(blob, `${title} XLSForm.xlsx`);
+                    })
+                    .catch((ex: unknown) => {
+                        console.error(ex);
+                    });
+            },
         });
     }
 
     private handleKoboToolboxExport = (questionnaireId: number) => {
-        // TODO: TODO
-        console.warn(questionnaireId);
+        console.warn('Export to kobo', questionnaireId);
     }
 
     public render() {

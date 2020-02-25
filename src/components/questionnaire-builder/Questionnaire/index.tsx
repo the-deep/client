@@ -204,11 +204,13 @@ class Questionnaire extends React.PureComponent<Props> {
                             />
                             <DropdownButton
                                 // FIXME: use strings
+                                disabled={disabled}
                                 title="Export to XLSForm"
                                 onClick={this.handleXLSFormExport}
                             />
                             <DropdownButton
                                 // FIXME: use strings
+                                disabled={disabled}
                                 title="Export to KoBo"
                                 onClick={this.handleKoboToolboxExport}
                             />

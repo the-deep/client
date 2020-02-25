@@ -47,6 +47,7 @@ const defaultProps = {
     showLegend: true,
 };
 
+// FIXME: don't use this
 const noAuthBody = { $noAuth: true };
 
 const requestOptions = {
