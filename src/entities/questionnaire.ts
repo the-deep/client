@@ -9,6 +9,13 @@ import {
     QuestionType,
 } from '#typings';
 
+function escapeReplacementToken(title: string | undefined) {
+    if (!title) {
+        return title;
+    }
+    return title.replace(/\${([^{}]+)}/g, '#{$1}');
+}
+
 export interface TreeItem {
     key: string;
     parentKey?: string;
@@ -193,11 +200,12 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
         activeQuestions.map((question) => {
             const questionKey = `question_${question.id}`;
             const questionChoiceKey = `${questionKey}_choices`;
+            // NOTE: we need to escape question.title
             return {
                 // NOTE: Choice types requires choice name in type "type_name choice_key"
                 type: isChoicedQuestion(question) ? `${question.type} ${questionChoiceKey}` : question.type,
                 name: questionKey,
-                label: question.title,
+                label: escapeReplacementToken(question.title),
                 required: question.isRequired ? 'yes' : '',
             };
         }),
@@ -272,7 +280,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
         choices.getRow(1).values as string[],
     ) as ChoicesColumn;
     const questionChoices: Obj<{ key: string; value: string }[]> = {};
-    choices.eachRow((row, rowIndex) => {
+    choices.eachRow((row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
         }
@@ -325,7 +333,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
         survey.getRow(1).values as string[],
     ) as SurveyColumn;
     const questions: BaseQuestionElementWithoutId[] = [];
-    survey.eachRow((row, rowIndex) => {
+    survey.eachRow((row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
         }
