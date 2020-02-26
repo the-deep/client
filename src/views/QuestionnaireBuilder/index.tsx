@@ -6,6 +6,7 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import Button from '#rsu/../v2/Action/Button';
@@ -15,7 +16,7 @@ import VerticalTabs from '#rscv/VerticalTabs';
 
 import Page from '#rscv/Page';
 
-import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
+// import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
 import {
     QuestionnaireElement,
     QuestionnaireQuestionElement,
@@ -49,10 +50,13 @@ import { pathNames } from '#constants';
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
 import QuestionList from '#qbc/QuestionList';
+import QuestionnairePreviewModal from '#qbc/QuestionnairePreviewModal';
 import AddFromFramework from './AddFromFramework';
 import Diagnostics from './Diagnostics';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 type TabElement = 'active' | 'archived';
 
@@ -246,6 +250,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionnaire: undefined,
             framework: undefined,
             treeFilter: [],
+            addFromFramework: false,
         };
 
         this.views = {
@@ -725,6 +730,17 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <h2 className={styles.heading}>
                                 {title}
                             </h2>
+                            <ModalButton
+                                modal={
+                                    <QuestionnairePreviewModal
+                                        questions={questions}
+                                        title={title}
+                                        questionnaireId={questionnaireId}
+                                    />
+                                }
+                            >
+                                Preview
+                            </ModalButton>
                         </>
                     )}
                     sidebarClassName={styles.sidebar}

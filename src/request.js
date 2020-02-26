@@ -15,6 +15,21 @@ import notify from '#notify';
 
 export { methods, RequestHandler } from '@togglecorp/react-rest-request';
 
+const getFormData = (jsonData) => {
+    const formData = new FormData();
+    Object.keys(jsonData || {}).forEach(
+        (key) => {
+            const value = jsonData[key] || {};
+            if (value.prop && value.prop.constructor === Array) {
+                value.forEach(v => formData.append(key, v));
+            } else {
+                formData.append(key, value);
+            }
+        },
+    );
+    return formData;
+};
+
 export function getVersionedUrl(endpoint, url) {
     const oldVersionString = '/v1';
     const versionString = '/v2';
@@ -49,15 +64,26 @@ const coordinatorOptions = {
         const {
             body,
             method,
+            extras = {},
         } = data;
+
+        const newBody = extras.hasFile
+            ? getFormData(body)
+            : JSON.stringify(body);
+
+        const newHeaders = extras.hasFile
+            ? {
+                Accept: 'application/json',
+            }
+            : {
+                Accept: 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
+            };
 
         const params = {
             method: method || methods.GET,
-            body: JSON.stringify(body),
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json; charset=utf-8',
-            },
+            body: newBody,
+            headers: newHeaders,
         };
 
         // NOTE: This is a hack to bypass auth for S3 requests
@@ -96,12 +122,12 @@ const coordinatorOptions = {
         const {
             url,
             method,
-            extras,
+            extras = {},
         } = request;
 
         // TODO: add null sanitization here
 
-        if (!extras || extras.schemaName === undefined) {
+        if (extras.schemaName === undefined) {
             // NOTE: usually there is no response body for DELETE
             if (method !== methods.DELETE) {
                 console.error(`Schema is not defined for ${url} ${method}`);

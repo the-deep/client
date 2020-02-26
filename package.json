@@ -152,6 +152,7 @@
         "d3-transition": "^1.2.0",
         "d3-voronoi": "^1.1.4",
         "d3-zoom": "^1.7.3",
+        "enketo-core": "https://github.com/the-deep/enketo-core.git#4cb8558ffbc4b44f1258f0280fd68a7d149505eb",
         "exceljs": "~3.6.0",
         "express": "^4.17.1",
         "file-saver": "^2.0.2",
