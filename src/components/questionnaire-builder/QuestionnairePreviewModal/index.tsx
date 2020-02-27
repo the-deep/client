@@ -14,6 +14,9 @@ import {
     RequestCoordinator,
     RequestClient,
     methods,
+
+    notifyOnFailure,
+    notifyOnFatal,
 } from '#request';
 
 import {
@@ -57,6 +60,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 params.onFormInit(xformResponse);
             }
         },
+        onFailure: notifyOnFailure('Enketo preview'),
+        onFatal: notifyOnFatal('Enketo preview'),
     },
 };
 

@@ -55,6 +55,15 @@ export const notifyOnFailure = title => ({
     });
 };
 
+export const notifyOnFatal = title => () => {
+    notify.send({
+        title,
+        type: notify.type.ERROR,
+        message: 'Some error occurred!',
+        duration: notify.duration.MEDIUM,
+    });
+};
+
 const mapStateToProps = state => ({
     myToken: tokenSelector(state),
 });

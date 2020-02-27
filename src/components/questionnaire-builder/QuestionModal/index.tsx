@@ -25,6 +25,8 @@ import {
     methods,
     getResponse,
     isAnyRequestPending,
+    notifyOnFailure,
+    notifyOnFatal,
 } from '#request';
 
 import {
@@ -209,6 +211,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
         url: '/questionnaires/options/',
         method: methods.GET,
         onMount: true,
+        onFailure: notifyOnFailure('Questionnaire Options'),
+        onFatal: notifyOnFatal('Questionnaire Options'),
     },
 };
 

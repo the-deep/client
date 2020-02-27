@@ -30,6 +30,8 @@ import {
     RequestCoordinator,
     RequestClient,
     methods,
+    notifyOnFailure,
+    notifyOnFatal,
 } from '#request';
 import _ts from '#ts';
 
@@ -89,6 +91,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
             const questionnaireMeta = response as QuestionnaireMeta;
             params.setQuestionnaireMeta(questionnaireMeta);
         },
+        onFailure: notifyOnFailure('Questionnaire Metadata'),
+        onFatal: notifyOnFatal('Questionnaire Metadata'),
     },
 };
 
