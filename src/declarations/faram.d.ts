@@ -1,13 +1,15 @@
 declare module '@togglecorp/faram' {
     import * as React from 'react';
 
+    interface Schema {
+        fields: {
+            [key: string]: unknown[] | Schema;
+        };
+    }
+
     interface Props {
         className?: string;
-        schema: {
-            fields: {
-                [key: string]: any[];
-            };
-        };
+        schema: Schema;
         value: any;
         error: any;
         onChange: (faramValues: any, faramErrors: any) => void;

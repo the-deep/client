@@ -13,7 +13,13 @@ import {
     Requests,
 } from '#typings';
 
-import QuestionModal, { FaramValues, FaramErrors } from '#qbc/QuestionModal';
+import QuestionModal, {
+    FaramValues,
+    FaramErrors,
+    transformIn,
+    transformOut,
+    errorTransformIn,
+} from '#qbc/QuestionModal';
 
 interface Error {
     faramErrors: FaramErrors;
@@ -68,7 +74,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
             if (!params || !params.setFaramErrors) {
                 return;
             }
-            params.setFaramErrors((error as Error).faramErrors);
+            params.setFaramErrors(errorTransformIn((error as Error).faramErrors));
         },
         onFatal: ({ params }) => {
             if (!params || !params.setFaramErrors) {
@@ -84,7 +90,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
         super(props);
         const { value } = this.props;
         this.state = {
-            faramValues: value || {},
+            faramValues: transformIn(value),
             faramErrors: {},
         };
     }
@@ -107,7 +113,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
             questionnaireId,
         } = this.props;
 
-        const body = faramValues as QuestionnaireQuestionElement;
+        const body = transformOut(faramValues) as QuestionnaireQuestionElement;
 
         if (value && value.id) {
             questionSaveRequest.do({
