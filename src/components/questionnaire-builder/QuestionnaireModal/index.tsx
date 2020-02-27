@@ -79,6 +79,7 @@ interface Params {
 interface State {
     faramValues: FaramValues;
     faramErrors: FaramErrors;
+    pristine: boolean;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
@@ -171,7 +172,12 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
         this.state = {
             faramValues: props.value ? props.value : {},
             faramErrors: {},
+            pristine: true,
         };
+    }
+
+    private handleFaramValidationFailure = (faramErrors: FaramErrors) => {
+        this.setState({ faramErrors });
     }
 
     private handleFaramValidationSuccess = (faramValues: FaramValues) => {
@@ -204,6 +210,9 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                 },
             });
         }
+        this.setState({
+            pristine: true,
+        });
     }
 
     private handleFaramChange = (
@@ -213,6 +222,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
         this.setState({
             faramValues,
             faramErrors,
+            pristine: false,
         });
     };
 
@@ -233,6 +243,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
         const {
             faramValues,
             faramErrors,
+            pristine,
         } = this.state;
 
         const pending = pendingFromProps || isAnyRequestPending(requests);
@@ -255,6 +266,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                     className={_cs(className, styles.addQuestionnaireForm)}
                     onChange={this.handleFaramChange}
                     onValidationSuccess={this.handleFaramValidationSuccess}
+                    onValidationFailure={this.handleFaramValidationFailure}
                     value={faramValues}
                     error={faramErrors}
                     disabled={pending}
@@ -312,6 +324,8 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
+                            disabled={pristine}
+                            pending={pending}
                         >
                             {/* FIXME: use strings */}
                             Save

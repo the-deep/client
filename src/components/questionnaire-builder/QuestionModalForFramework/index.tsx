@@ -12,12 +12,20 @@ import {
     MiniFrameworkElement,
 } from '#typings';
 
-import QuestionModal, { FaramValues, FaramErrors } from '#qbc/QuestionModal';
+import QuestionModal, {
+    FaramValues,
+    FaramErrors,
+    transformIn,
+    transformOut,
+    errorTransformIn,
+} from '#qbc/QuestionModal';
 
 import styles from './styles.scss';
 
 interface Error {
-    faramErrors: FaramErrors;
+    faramErrors: {
+        [key: string]: string | undefined;
+    };
 }
 
 interface State {
@@ -67,7 +75,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
             if (!params || !params.setFaramErrors) {
                 return;
             }
-            params.setFaramErrors((error as Error).faramErrors);
+            params.setFaramErrors(errorTransformIn((error as Error).faramErrors));
         },
         onFatal: ({ params }) => {
             if (!params || !params.setFaramErrors) {
@@ -83,7 +91,7 @@ class QuestionModalForFramework extends React.PureComponent<Props, State> {
         super(props);
         const { value } = this.props;
         this.state = {
-            faramValues: value || {},
+            faramValues: transformIn(value),
             faramErrors: {},
         };
     }
@@ -98,6 +106,7 @@ class QuestionModalForFramework extends React.PureComponent<Props, State> {
     private handleFaramErrorChange = (faramErrors: FaramErrors) => {
         this.setState({ faramErrors });
     }
+
     private handleFaramValidationSuccess = (faramValues: FaramValues) => {
         const {
             framework: { id: frameworkId },
@@ -105,7 +114,7 @@ class QuestionModalForFramework extends React.PureComponent<Props, State> {
             value,
         } = this.props;
 
-        const body = faramValues as FrameworkQuestionElement;
+        const body = transformOut(faramValues) as FrameworkQuestionElement;
 
         if (value && value.id) {
             questionSaveRequest.do({

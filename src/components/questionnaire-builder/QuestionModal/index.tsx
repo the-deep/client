@@ -1,6 +1,6 @@
 import React from 'react';
 import memoize from 'memoize-one';
-import Faram, { requiredCondition } from '@togglecorp/faram';
+import Faram, { requiredCondition, FaramGroup } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -17,6 +17,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ScrollTabs from '#rscv/ScrollTabs';
 
+import TabTitle from '#components/general/TabTitle';
 import { getMatrix2dStructures } from '#utils/framework';
 
 import {
@@ -39,24 +40,149 @@ import FrameworkAttributeInput from './FrameworkAttributeInput';
 import ResponseInput from './ResponseInput';
 import styles from './styles.scss';
 
-type QuestionKeys = 'title'
+type DetailKeys = 'title'
     | 'type'
     | 'enumeratorInstruction'
     | 'respondentInstruction'
     | 'crisisType'
+    | 'responseOptions';
+
+type FrameworkKeys = 'frameworkAttribute';
+
+type MetadataKeys = 'crisisType'
     | 'enumeratorSkill'
     | 'dataCollectionTechnique'
     | 'importance'
-    | 'responseOptions'
-    | 'frameworkAttribute'
     | 'requiredDuration';
 
-type QuestionFormElement = Partial<Pick<BaseQuestionElement, QuestionKeys>>;
+interface QuestionFormElement {
+    detail: Partial<Pick<BaseQuestionElement, DetailKeys>>;
+    analysisFramework: Partial<Pick<BaseQuestionElement, FrameworkKeys>>;
+    metadata: Partial<Pick<BaseQuestionElement, MetadataKeys>>;
+}
+
+export function transformIn(value: BaseQuestionElement | undefined): QuestionFormElement {
+    if (!value) {
+        return {
+            detail: {},
+            analysisFramework: {},
+            metadata: {},
+        };
+    }
+
+    const {
+        title,
+        type,
+        enumeratorInstruction,
+        respondentInstruction,
+        responseOptions,
+        frameworkAttribute,
+        crisisType,
+        enumeratorSkill,
+        dataCollectionTechnique,
+        importance,
+        requiredDuration,
+    } = value;
+
+    return {
+        detail: {
+            title,
+            type,
+            enumeratorInstruction,
+            respondentInstruction,
+            responseOptions,
+        },
+        analysisFramework: {
+            frameworkAttribute,
+        },
+        metadata: {
+            crisisType,
+            enumeratorSkill,
+            dataCollectionTechnique,
+            importance,
+            requiredDuration,
+        },
+    };
+}
+
+export function transformOut(value: QuestionFormElement) {
+    const {
+        detail: {
+            title,
+            type,
+            enumeratorInstruction,
+            respondentInstruction,
+            responseOptions,
+        },
+        analysisFramework: {
+            frameworkAttribute,
+        },
+        metadata: {
+            crisisType,
+            enumeratorSkill,
+            dataCollectionTechnique,
+            importance,
+            requiredDuration,
+        },
+    } = value;
+
+    return {
+        title,
+        type,
+        enumeratorInstruction,
+        respondentInstruction,
+        responseOptions,
+        frameworkAttribute,
+        crisisType,
+        enumeratorSkill,
+        dataCollectionTechnique,
+        importance,
+        requiredDuration,
+    };
+}
+
+export function errorTransformIn(value: FaramErrors) {
+    const {
+        $internal,
+        title,
+        type,
+        enumeratorInstruction,
+        respondentInstruction,
+        responseOptions,
+        frameworkAttribute,
+        crisisType,
+        enumeratorSkill,
+        dataCollectionTechnique,
+        importance,
+        requiredDuration,
+    } = value;
+
+    return {
+        $internal,
+        detail: {
+            title,
+            type,
+            enumeratorInstruction,
+            respondentInstruction,
+            responseOptions,
+        },
+        analysisFramework: {
+            frameworkAttribute,
+        },
+        metadata: {
+            crisisType,
+            enumeratorSkill,
+            dataCollectionTechnique,
+            importance,
+            requiredDuration,
+        },
+    };
+}
 
 export type FaramValues = QuestionFormElement;
 
 export interface FaramErrors {
-    [key: string]: string | undefined | string [];
+    [key: string]: string | undefined | string [] | FaramErrors;
 }
 
 interface ComponentProps {
@@ -94,15 +220,15 @@ const defaultLabelSelector = (d: KeyValueElement) => d.value;
 
 interface Schema {
     fields: {
-        [key: string]: unknown[];
+        [key: string]: unknown[] | Schema;
     };
 }
 
-type TabElement = 'basic' | 'frameworkDetails' | 'metadata';
+type TabElement = 'detail' | 'analysisFramework' | 'metadata';
 
 const tabs: {[key in TabElement]: string} = {
-    basic: 'Basic',
-    frameworkDetails: 'Framework Details',
+    detail: 'Basic',
+    analysisFramework: 'Framework Details',
     metadata: 'Metadata',
 };
 
@@ -118,26 +244,38 @@ class QuestionModal extends React.PureComponent<Props, State> {
 
         const schema: Schema = {
             fields: {
-                title: [requiredCondition],
-                type: [requiredCondition],
-                enumeratorInstruction: [],
-                respondentInstruction: [],
-                crisisType: [],
-                enumeratorSkill: [requiredCondition],
-                dataCollectionTechnique: [requiredCondition],
-                importance: [requiredCondition],
-                requiredDuration: [],
-                // FIXME: this should be dynamic, only available if type is 'select'
-                responseOptions: [],
+                detail: {
+                    fields: {
+                        title: [requiredCondition],
+                        type: [requiredCondition],
+                        enumeratorInstruction: [],
+                        respondentInstruction: [],
+                        responseOptions: [],
+                    },
+                },
+                metadata: {
+                    fields: {
+                        crisisType: [],
+                        enumeratorSkill: [requiredCondition],
+                        dataCollectionTechnique: [requiredCondition],
+                        importance: [requiredCondition],
+                        requiredDuration: [],
+                        // FIXME: this should be dynamic, only available if type is 'select'
+                    },
+                },
             },
         };
         if (framework) {
-            schema.fields.frameworkAttribute = [];
+            schema.fields.analysisFramework = {
+                fields: {
+                    frameworkAttribute: [],
+                },
+            };
         }
         this.schema = schema;
 
         this.state = {
-            activeTab: 'basic',
+            activeTab: 'detail',
         };
     }
 
@@ -148,6 +286,11 @@ class QuestionModal extends React.PureComponent<Props, State> {
     private handleTabClick = (activeTab: TabElement) => {
         this.setState({ activeTab });
     }
+
+    private tabRendererParams = (key: TabElement, title: string) => ({
+        title,
+        faramElementName: key,
+    })
 
     render() {
         const { activeTab } = this.state;
@@ -213,100 +356,115 @@ class QuestionModal extends React.PureComponent<Props, State> {
                             itemClassName={styles.tab}
                             blankClassName={styles.blankTab}
                             onClick={this.handleTabClick}
+                            renderer={TabTitle}
+                            rendererParams={this.tabRendererParams}
+                            // modifier={this.renderTab}
                         />
                         { pending && <LoadingAnimation /> }
                         <NonFieldErrors faramElement />
-                        {activeTab === 'basic' && (
+                        {activeTab === 'detail' && (
                             <section className={styles.basic}>
                                 <div className={styles.content}>
-                                    <TextInput
-                                        faramElementName="title"
-                                        className={styles.input}
-                                        label="Title"
-                                    />
-                                    <SelectInput
-                                        options={questionTypeOptionList}
-                                        faramElementName="type"
-                                        className={styles.input}
-                                        label="Type"
-                                        keySelector={defaultKeySelector}
-                                        labelSelector={defaultLabelSelector}
-                                    />
-                                    <ResponseInput
-                                        type={value && value.type}
-                                        faramElementName="responseOptions"
-                                        className={styles.input}
-                                        label="Response options"
-                                    />
-                                    <TextInput
-                                        faramElementName="enumeratorInstruction"
-                                        className={styles.input}
-                                        label="Enumerator instructions"
-                                    />
-                                    <TextInput
-                                        faramElementName="respondentInstruction"
-                                        className={styles.input}
-                                        label="Respondent instructions"
-                                    />
+                                    <FaramGroup
+                                        faramElementName="detail"
+                                    >
+                                        <TextInput
+                                            faramElementName="title"
+                                            className={styles.input}
+                                            label="Title"
+                                        />
+                                        <SelectInput
+                                            options={questionTypeOptionList}
+                                            faramElementName="type"
+                                            className={styles.input}
+                                            label="Type"
+                                            keySelector={defaultKeySelector}
+                                            labelSelector={defaultLabelSelector}
+                                        />
+                                        <ResponseInput
+                                            type={value && value.detail.type}
+                                            faramElementName="responseOptions"
+                                            className={styles.input}
+                                            label="Response options"
+                                        />
+                                        <TextInput
+                                            faramElementName="enumeratorInstruction"
+                                            className={styles.input}
+                                            label="Enumerator instructions"
+                                        />
+                                        <TextInput
+                                            faramElementName="respondentInstruction"
+                                            className={styles.input}
+                                            label="Respondent instructions"
+                                        />
+                                    </FaramGroup>
                                 </div>
                             </section>
                         )}
-                        {activeTab === 'frameworkDetails' && (
+                        {activeTab === 'analysisFramework' && (
                             <section className={styles.frameworkDetails}>
                                 <div className={styles.content}>
-                                    <FrameworkAttributeInput
-                                        className={styles.frameworkAttributeInput}
-                                        faramElementName="frameworkAttribute"
-                                        disabled={pending || !framework}
-                                        sectorList={sectorList}
-                                        subsectorList={subsectorList}
-                                        dimensionList={dimensionList}
-                                        subdimensionList={subdimensionList}
-                                    />
+                                    <FaramGroup
+                                        faramElementName="analysisFramework"
+                                    >
+                                        <FrameworkAttributeInput
+                                            className={styles.frameworkAttributeInput}
+                                            faramElementName="frameworkAttribute"
+                                            disabled={pending || !framework}
+                                            sectorList={sectorList}
+                                            subsectorList={subsectorList}
+                                            dimensionList={dimensionList}
+                                            subdimensionList={subdimensionList}
+                                        />
+                                    </FaramGroup>
                                 </div>
                             </section>
                         )}
                         {activeTab === 'metadata' && (
                             <section className={styles.metadata}>
                                 <div className={styles.content}>
-                                    <SelectInput
-                                        faramElementName="crisisType"
-                                        options={crisisTypeOptionList}
-                                        className={styles.input}
-                                        label="Crisis type"
-                                        keySelector={crisisTypeKeySelector}
-                                        labelSelector={crisisTypeLabelSelector}
-                                    />
-                                    <SelectInput
-                                        faramElementName="enumeratorSkill"
-                                        options={enumeratorSkillOptionList}
-                                        className={styles.input}
-                                        label="Enumerator skill"
-                                        keySelector={defaultKeySelector}
-                                        labelSelector={defaultLabelSelector}
-                                    />
-                                    <SelectInput
-                                        faramElementName="dataCollectionTechnique"
-                                        options={dataCollectionTechniqueOptionList}
-                                        className={styles.input}
-                                        label="Data collection technique"
-                                        keySelector={defaultKeySelector}
-                                        labelSelector={defaultLabelSelector}
-                                    />
-                                    <NumberInput
-                                        faramElementName="requiredDuration"
-                                        className={styles.input}
-                                        separator=" "
-                                        label="Required duration (Minutes)"
-                                    />
-                                    <SegmentInput
-                                        faramElementName="importance"
-                                        className={styles.input}
-                                        options={questionImportanceOptionList}
-                                        label="Question importance"
-                                        keySelector={defaultKeySelector}
-                                        labelSelector={defaultLabelSelector}
-                                    />
+                                    <FaramGroup
+                                        faramElementName="metadata"
+                                    >
+                                        <SelectInput
+                                            faramElementName="crisisType"
+                                            options={crisisTypeOptionList}
+                                            className={styles.input}
+                                            label="Crisis type"
+                                            keySelector={crisisTypeKeySelector}
+                                            labelSelector={crisisTypeLabelSelector}
+                                        />
+                                        <SelectInput
+                                            faramElementName="enumeratorSkill"
+                                            options={enumeratorSkillOptionList}
+                                            className={styles.input}
+                                            label="Enumerator skill"
+                                            keySelector={defaultKeySelector}
+                                            labelSelector={defaultLabelSelector}
+                                        />
+                                        <SelectInput
+                                            faramElementName="dataCollectionTechnique"
+                                            options={dataCollectionTechniqueOptionList}
+                                            className={styles.input}
+                                            label="Data collection technique"
+                                            keySelector={defaultKeySelector}
+                                            labelSelector={defaultLabelSelector}
+                                        />
+                                        <NumberInput
+                                            faramElementName="requiredDuration"
+                                            className={styles.input}
+                                            separator=" "
+                                            label="Required duration (Minutes)"
+                                        />
+                                        <SegmentInput
+                                            faramElementName="importance"
+                                            className={styles.input}
+                                            options={questionImportanceOptionList}
+                                            label="Question importance"
+                                            keySelector={defaultKeySelector}
+                                            labelSelector={defaultLabelSelector}
+                                        />
+                                    </FaramGroup>
                                 </div>
                             </section>
                         )}
