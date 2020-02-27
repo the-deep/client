@@ -33,7 +33,9 @@ interface QuestionListProps {
     onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
+    onAddButtonClick?: (newOrder: number) => void;
     onClone?: (key: BaseQuestionElement['id']) => void;
+    onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
@@ -65,6 +67,8 @@ const QuestionList = (props: QuestionListProps) => {
         onArchive, // this.handleArchiveQuestion,
         onUnarchive, // this.handleUnarchiveQuestion,
         onClone,
+        onCopyFromDrop,
+        onAddButtonClick,
         onBulkDelete,
         onBulkArchive,
         onBulkUnArchive,
@@ -101,6 +105,8 @@ const QuestionList = (props: QuestionListProps) => {
             data: question,
             onEditButtonClick: onEdit,
             onClone,
+            onCopyFromDrop,
+            onAddButtonClick,
             onDelete,
             onArchive,
             onUnarchive,
@@ -113,7 +119,8 @@ const QuestionList = (props: QuestionListProps) => {
             className: styles.question,
         }),
         [
-            framework, onEdit, onDelete, onClone, onArchive, onUnarchive,
+            framework, onEdit, onDelete, onCopyFromDrop,
+            onClone, onArchive, onUnarchive, onAddButtonClick,
             selectedQuestions, handleQuestionSelectChange,
             expandedQuestions, handleQuestionExpandChange,
         ],

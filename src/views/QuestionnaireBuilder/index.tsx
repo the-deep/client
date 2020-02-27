@@ -76,6 +76,7 @@ interface State {
     showQuestionFormModal: boolean;
     addFromFramework: boolean;
     questionToEdit?: QuestionnaireQuestionElement;
+    newQuestionOrder?: number;
     questionnaire?: QuestionnaireElement;
     // FIXME: use this everywhere
     framework?: MiniFrameworkElement;
@@ -277,6 +278,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.state = {
             showQuestionFormModal: false,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
             questionnaire: undefined,
             framework: undefined,
             treeFilter: [],
@@ -303,9 +305,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         className: styles.questionList,
                         onAdd: this.handleAddQuestionButtonClick,
                         onEdit: this.handleEditQuestionButtonClick,
+                        onAddButtonClick: this.handleAddNewQuestionButtonClick,
                         onOrderChange: this.handleOrderChange,
                         onDelete: this.handleDeleteQuestion,
                         onClone: this.handleCloneQuestion,
+                        onCopyFromDrop: this.handleCopyFromDrop,
                         onArchive: this.handleArchiveQuestion,
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
@@ -428,6 +432,31 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleCopyFromDrop = (questionId: BaseQuestionElement['id'], newOrder: number) => {
+        const {
+            questionnaire,
+        } = this.state;
+
+        if (!questionnaire) {
+            return;
+        }
+
+        const {
+            id: questionnaireId,
+        } = questionnaire;
+
+        const copyBody = {
+            frameworkQuestionId: questionId,
+            questionnaireId,
+            newOrder,
+        };
+
+        this.props.requests.copyToQuestionnaireRequest.do({
+            onCopySuccess: this.handleCopySuccess,
+            copyBody,
+        });
+    }
+
     private handleCopySuccess = (question: QuestionnaireQuestionElement) => {
         const { questionnaire } = this.state;
         if (!questionnaire) {
@@ -435,7 +464,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         }
 
         const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
-            safeQuestionnaire.questions.push(question);
+            safeQuestionnaire.questions.splice(question.order - 1, 0, question);
         });
 
         this.setState({ questionnaire: newQuestionnaire });
@@ -477,6 +506,20 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({
             showQuestionFormModal: true,
             questionToEdit,
+        });
+    }
+
+    private handleAddNewQuestionButtonClick = (newQuestionOrder: number) => {
+        const { questionnaire } = this.state;
+
+        if (!questionnaire) {
+            return;
+        }
+
+        this.setState({
+            showQuestionFormModal: true,
+            questionToEdit: undefined,
+            newQuestionOrder,
         });
     }
 
@@ -576,11 +619,17 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
             // eslint-disable-next-line no-param-reassign
-            safeQuestionnaire.questions = questions;
+            safeQuestionnaire.questions = questions.map((q, index) => ({
+                ...q,
+                order: index + 1,
+            }));
         });
 
         this.setState({
             questionnaire: newQuestionnaire,
+        }, () => {
+            // TODO: Send request here
+            // this.props.requests.orderChangeRequest.do();
         });
     }
 
@@ -729,6 +778,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         const {
             showQuestionFormModal,
             questionToEdit,
+            newQuestionOrder,
             questionnaire,
             framework,
             addFromFramework,
@@ -874,6 +924,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     <QuestionModalForQuestionnaire
                         value={questionToEdit}
                         questionnaire={questionnaire}
+                        newQuestionOrder={newQuestionOrder}
                         questionnaireId={questionnaireId}
                         onRequestSuccess={this.handleQuestionFormRequestSuccess}
                         closeModal={this.handleCloseQuestionFormModalButtonClick}

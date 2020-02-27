@@ -69,6 +69,7 @@ export type QuestionType = 'text'
 
 export interface BaseQuestionElement {
     id: number;
+    order: number;
 
     title: string;
     type: QuestionType;

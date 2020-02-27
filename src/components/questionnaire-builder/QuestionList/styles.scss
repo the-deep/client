@@ -48,11 +48,11 @@
 .question-container {
     position: relative;
     background-color: var(--color-foreground);
-    padding: var(--spacing-small);
+    padding: 0 var(--spacing-small);
     width: auto;
 
     .question {
-        margin: var(--spacing-medium) auto;
+        margin: 0 auto;
         background-color: var(--color-foreground);
         width: var(--width-question);
         max-width: var(--width-question);
@@ -60,7 +60,7 @@
 
     .drag-handle {
         position: absolute;
-        top: calc(var(--spacing-large) - 2px);
+        top: calc(var(--spacing-medium) - 4px);
         left: calc((100% - var(--width-question)) / 2 + 51px);
         transition: var(--duration-transition-medium) all ease-in-out;
         opacity: 0;

@@ -35,6 +35,7 @@ interface ComponentProps {
     questionnaireId: number;
     value?: QuestionnaireQuestionElement;
     framework?: MiniFrameworkElement;
+    newQuestionOrder?: number;
     questionnaire: QuestionnaireElement;
     onRequestSuccess: (q: QuestionnaireQuestionElement) => void;
     closeModal: () => void;
@@ -111,6 +112,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
             value,
             requests: { questionSaveRequest },
             questionnaireId,
+            newQuestionOrder,
         } = this.props;
 
         const body = transformOut(faramValues) as QuestionnaireQuestionElement;
@@ -123,6 +125,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
         } else {
             questionSaveRequest.do({
                 body: {
+                    order: newQuestionOrder,
                     ...body,
                     questionnaire: questionnaireId,
                 },

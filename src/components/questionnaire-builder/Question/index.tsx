@@ -1,10 +1,15 @@
 import React from 'react';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import Checkbox from '#rsu/../v2/Input/Checkbox';
+import DropZoneTwo from '#rsci/DropZoneTwo';
 import DropdownMenu from '#rsca/DropdownMenu';
 
 import {
@@ -71,7 +76,9 @@ interface Props {
     className?: string;
     onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
     onCopy?: (key: BaseQuestionElement['id']) => void;
+    onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
     onClone?: (key: BaseQuestionElement['id']) => void;
+    onAddButtonClick?: (newOrder: number) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
@@ -83,6 +90,10 @@ interface Props {
     copyDisabled?: boolean;
     onSelectChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
     onExpandChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
+}
+
+interface DropData {
+    questionId: BaseQuestionElement['id'];
 }
 
 class Question extends React.PureComponent<Props> {
@@ -100,6 +111,17 @@ class Question extends React.PureComponent<Props> {
 
         if (onEditButtonClick) {
             onEditButtonClick(data.id);
+        }
+    }
+
+    handleAddButtonClick = () => {
+        const {
+            data,
+            onAddButtonClick,
+        } = this.props;
+
+        if (onAddButtonClick) {
+            onAddButtonClick(data.order + 1);
         }
     }
 
@@ -134,6 +156,32 @@ class Question extends React.PureComponent<Props> {
         if (onUnarchive) {
             onUnarchive(data.id);
         }
+    }
+
+    handleQuestionDrop = (dropData: DropData) => {
+        const {
+            onCopyFromDrop,
+            data,
+        } = this.props;
+
+        if (onCopyFromDrop) {
+            onCopyFromDrop(
+                dropData.questionId,
+                data.order + 1,
+            );
+        }
+    }
+
+    handleDragStart = (e) => {
+        const {
+            data,
+        } = this.props;
+
+        const dropData = JSON.stringify({
+            questionId: data.id,
+        });
+        e.dataTransfer.setData('text/plain', dropData);
+        e.dataTransfer.dropEffect = 'copy';
     }
 
     handleCopy = () => {
@@ -219,7 +267,11 @@ class Question extends React.PureComponent<Props> {
         } = data;
 
         return (
-            <div className={_cs(className, styles.questionContainer)}>
+            <div
+                className={_cs(className, styles.questionContainer)}
+                draggable={isDefined(onCopy)}
+                onDragStart={this.handleDragStart}
+            >
                 {onSelectChange && (
                     <Checkbox
                         className={styles.checkbox}
@@ -376,6 +428,19 @@ class Question extends React.PureComponent<Props> {
                         </Button>
                     )}
                 </div>
+                {isNotDefined(onCopy) && (
+                    <div className={styles.dropZoneContainer}>
+                        <DropZoneTwo
+                            className={styles.dropZone}
+                            onDrop={this.handleQuestionDrop}
+                        />
+                        <Button
+                            className={styles.addButton}
+                            onClick={this.handleAddButtonClick}
+                            iconName="add"
+                        />
+                    </div>
+                )}
             </div>
         );
     }
