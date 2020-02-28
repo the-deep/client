@@ -1,5 +1,6 @@
 :root {
     --width-question: 676px;
+    --width-question-checkbox: 14px;
 }
 
 .question-list {
@@ -23,7 +24,12 @@
 
         .checkbox {
             margin-right: 36px;
+            width: var(--width-question-checkbox);
             font-size: var(--font-size-extra-large);
+
+            .check-icon {
+                margin-right: 0;
+            }
         }
 
         .heading {
@@ -42,13 +48,13 @@
 
     >.content {
         flex-grow: 1;
+        overflow-y: auto;
     }
 }
 
 .question-container {
     position: relative;
     background-color: var(--color-foreground);
-    padding: 0 var(--spacing-small);
     width: auto;
 
     .question {
@@ -60,8 +66,8 @@
 
     .drag-handle {
         position: absolute;
-        top: calc(var(--spacing-medium) - 4px);
-        left: calc((100% - var(--width-question)) / 2 + 51px);
+        top: 0;
+        left: calc((100% - var(--width-question)) / 2 + 36px + var(--width-question-checkbox));
         transition: var(--duration-transition-medium) all ease-in-out;
         opacity: 0;
         z-index: 1;

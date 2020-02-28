@@ -41,8 +41,13 @@ interface ComponentProps {
     closeModal: () => void;
 }
 
+interface OrderAction {
+    action: 'top' | 'bottom' | 'above' | 'below';
+    value?: number;
+}
+
 interface Params {
-    body?: QuestionnaireQuestionElement;
+    body?: QuestionnaireQuestionElement & { orderAction?: OrderAction };
     setFaramErrors?: (faramErrors: FaramErrors) => void;
 }
 
@@ -112,7 +117,6 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
             value,
             requests: { questionSaveRequest },
             questionnaireId,
-            newQuestionOrder,
         } = this.props;
 
         const body = transformOut(faramValues) as QuestionnaireQuestionElement;
@@ -125,7 +129,9 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
         } else {
             questionSaveRequest.do({
                 body: {
-                    order: newQuestionOrder,
+                    orderAction: {
+                        action: 'top',
+                    },
                     ...body,
                     questionnaire: questionnaireId,
                 },

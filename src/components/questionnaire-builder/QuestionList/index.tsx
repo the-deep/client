@@ -33,7 +33,7 @@ interface QuestionListProps {
     onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
-    onAddButtonClick?: (newOrder: number) => void;
+    onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
     onClone?: (key: BaseQuestionElement['id']) => void;
     onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
@@ -243,6 +243,7 @@ const QuestionList = (props: QuestionListProps) => {
                     className={styles.checkbox}
                     value={isAllSelected && filteredQuestions && filteredQuestions.length > 0}
                     indeterminate={isSomeSelected}
+                    checkIconClassName={styles.checkIcon}
                     onChange={handleSelectAllCheckboxClick}
                     disabled={showLoadingOverlay}
                 />

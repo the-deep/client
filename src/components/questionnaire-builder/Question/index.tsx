@@ -27,13 +27,11 @@ import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
 import DateAndTimeIcon from '#resources/img/questionnaire-icons/date-and-time.png';
 import ImageIcon from '#resources/img/questionnaire-icons/image.png';
 import LocationIcon from '#resources/img/questionnaire-icons/location.png';
-// import NoteIcon from '#resources/img/questionnaire-icons/note.png';
 import NumberIcon from '#resources/img/questionnaire-icons/numbers.png';
 import RangeIcon from '#resources/img/questionnaire-icons/range.png';
 import RankIcon from '#resources/img/questionnaire-icons/rank.png';
 import SelectIcon from '#resources/img/questionnaire-icons/select-one.png';
 import TextIcon from '#resources/img/questionnaire-icons/text.png';
-// import TriggerAcknowledgeIcon from '#resources/img/questionnaire-icons/trigger-acknowledge.png';
 import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
@@ -78,7 +76,7 @@ interface Props {
     onCopy?: (key: BaseQuestionElement['id']) => void;
     onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
     onClone?: (key: BaseQuestionElement['id']) => void;
-    onAddButtonClick?: (newOrder: number) => void;
+    onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
@@ -121,7 +119,7 @@ class Question extends React.PureComponent<Props> {
         } = this.props;
 
         if (onAddButtonClick) {
-            onAddButtonClick(data.order + 1);
+            onAddButtonClick(data.id);
         }
     }
 
@@ -167,7 +165,7 @@ class Question extends React.PureComponent<Props> {
         if (onCopyFromDrop) {
             onCopyFromDrop(
                 dropData.questionId,
-                data.order + 1,
+                data.id,
             );
         }
     }
@@ -272,161 +270,169 @@ class Question extends React.PureComponent<Props> {
                 draggable={isDefined(onCopy)}
                 onDragStart={this.handleDragStart}
             >
-                {onSelectChange && (
-                    <Checkbox
-                        className={styles.checkbox}
-                        value={selected}
-                        onChange={this.handleCheckboxClick}
-                    />
-                )}
-                <div className={styles.question}>
-                    <div className={styles.brief}>
-                        <div className={styles.iconContainer}>
-                            <img
-                                className={styles.icon}
-                                src={(type ? iconMap[type] : undefined)}
-                                alt={type}
-                            />
-                        </div>
-                        <div className={styles.detailsContainer}>
-                            {onExpandChange && (
-                                <Button
-                                    className={styles.expandButton}
-                                    onClick={this.handleExpandClick}
-                                    iconName={expanded ? 'chevronDown' : 'chevronRight'}
-                                    transparent
+                <div className={styles.topContainer}>
+                    {onSelectChange && (
+                        <Checkbox
+                            className={styles.checkbox}
+                            checkIconClassName={styles.checkIcon}
+                            value={selected}
+                            onChange={this.handleCheckboxClick}
+                        />
+                    )}
+                    <div className={styles.question}>
+                        <div className={styles.brief}>
+                            <div className={styles.iconContainer}>
+                                <img
+                                    className={styles.icon}
+                                    src={(type ? iconMap[type] : undefined)}
+                                    alt={type}
                                 />
-                            )}
-                            <div className={styles.detailsRight} >
-                                <div className={styles.top}>
-                                    <div className={styles.left}>
-                                        <h3 className={styles.heading}>
-                                            { title }
-                                        </h3>
-                                        <div className={styles.basicInfo}>
-                                            <MetaOutput
-                                                label="Crisis type"
-                                                value={crisisTypeDetail && crisisTypeDetail.title}
-                                            />
-                                            <MetaOutput
-                                                label="Data collection technique"
-                                                value={dataCollectionTechniqueDisplay}
-                                            />
-                                            <MetaOutput
-                                                label="Enumerator skill"
-                                                value={enumeratorSkillDisplay}
-                                            />
-                                            <MetaOutput
-                                                label="Required duration"
-                                                value={requiredDuration && `${requiredDuration} min`}
-                                            />
-                                            <MetaOutput
-                                                label="Importance"
-                                                value={importanceDisplay && `Importance: ${importanceDisplay}`}
-                                            />
-                                        </div>
-                                    </div>
-                                    {!readOnly && (
-                                        <div className={styles.buttonContainer}>
-                                            {(isArchived && onUnarchive) && (
-                                                <Button
-                                                    onClick={this.handleUnarchiveButtonClick}
-                                                    disabled={disabled}
-                                                >
-                                                    Unarchive
-                                                </Button>
-                                            )}
-                                            {onEditButtonClick && (
-                                                <WarningButton
-                                                    onClick={this.handleEditButtonClick}
-                                                    disabled={disabled}
-                                                    transparent
-                                                    iconName="edit"
-                                                    title="Edit"
+                            </div>
+                            <div className={styles.detailsContainer}>
+                                {onExpandChange && (
+                                    <Button
+                                        className={styles.expandButton}
+                                        onClick={this.handleExpandClick}
+                                        iconName={expanded ? 'chevronDown' : 'chevronRight'}
+                                        transparent
+                                    />
+                                )}
+                                <div className={styles.detailsRight} >
+                                    <div className={styles.top}>
+                                        <div className={styles.left}>
+                                            <h3 className={styles.heading}>
+                                                { title }
+                                            </h3>
+                                            <div className={styles.basicInfo}>
+                                                <MetaOutput
+                                                    label="Crisis type"
+                                                    value={crisisTypeDetail
+                                                    && crisisTypeDetail.title}
                                                 />
-                                            )}
-                                            {((!isArchived && onArchive) || onDelete) && (
-                                                <DropdownMenu
-                                                    dropdownIcon="menuDots"
-                                                    closeOnClick
-                                                >
-                                                    {(!isArchived && onArchive) && (
-                                                        <DropdownButton
-                                                            onClick={this.handleArchiveButtonClick}
-                                                            disabled={disabled}
-                                                            title="Send to Parking Lot"
-                                                        />
-                                                    )}
-                                                    {onDelete && (
-                                                        <DropdownButton
-                                                            onClick={this.handleDeleteButtonClick}
-                                                            disabled={disabled}
-                                                            title="Delete"
-                                                        />
-                                                    )}
-                                                    {onClone && (
-                                                        <DropdownButton
-                                                            onClick={this.handleClone}
-                                                            disabled={disabled}
-                                                            title="Clone"
-                                                        />
-                                                    )}
-                                                </DropdownMenu>
-                                            )}
+                                                <MetaOutput
+                                                    label="Data collection technique"
+                                                    value={dataCollectionTechniqueDisplay}
+                                                />
+                                                <MetaOutput
+                                                    label="Enumerator skill"
+                                                    value={enumeratorSkillDisplay}
+                                                />
+                                                <MetaOutput
+                                                    label="Required duration"
+                                                    value={requiredDuration && `${requiredDuration} min`}
+                                                />
+                                                <MetaOutput
+                                                    label="Importance"
+                                                    value={importanceDisplay && `Importance: ${importanceDisplay}`}
+                                                />
+                                            </div>
                                         </div>
-                                    )}
+                                        {!readOnly && (
+                                            <div className={styles.buttonContainer}>
+                                                {(isArchived && onUnarchive) && (
+                                                    <Button
+                                                        onClick={this.handleUnarchiveButtonClick}
+                                                        disabled={disabled}
+                                                    >
+                                                        Unarchive
+                                                    </Button>
+                                                )}
+                                                {onEditButtonClick && (
+                                                    <WarningButton
+                                                        onClick={this.handleEditButtonClick}
+                                                        disabled={disabled}
+                                                        transparent
+                                                        iconName="edit"
+                                                        title="Edit"
+                                                    />
+                                                )}
+                                                {((!isArchived && onArchive) || onDelete) && (
+                                                    <DropdownMenu
+                                                        dropdownIcon="menuDots"
+                                                        closeOnClick
+                                                    >
+                                                        {(!isArchived && onArchive) && (
+                                                            <DropdownButton
+                                                                onClick={
+                                                                    this.handleArchiveButtonClick
+                                                                }
+                                                                disabled={disabled}
+                                                                title="Send to Parking Lot"
+                                                            />
+                                                        )}
+                                                        {onDelete && (
+                                                            <DropdownButton
+                                                                onClick={
+                                                                    this.handleDeleteButtonClick
+                                                                }
+                                                                disabled={disabled}
+                                                                title="Delete"
+                                                            />
+                                                        )}
+                                                        {onClone && (
+                                                            <DropdownButton
+                                                                onClick={this.handleClone}
+                                                                disabled={disabled}
+                                                                title="Clone"
+                                                            />
+                                                        )}
+                                                    </DropdownMenu>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <FrameworkAttributeOutput
+                                        className={styles.frameworkAttribute}
+                                        data={data.frameworkAttribute}
+                                        {...this.getFrameworkOptions(framework)}
+                                    />
                                 </div>
-                                <FrameworkAttributeOutput
-                                    className={styles.frameworkAttribute}
-                                    data={data.frameworkAttribute}
-                                    {...this.getFrameworkOptions(framework)}
-                                />
                             </div>
                         </div>
-                    </div>
-                    {expanded && (
-                        <div className={styles.details}>
-                            {isChoicedQuestionType(type) && (
-                                <div className={styles.responseOptions}>
-                                    <div className={styles.heading}>
-                                        Response options
+                        {expanded && (
+                            <div className={styles.details}>
+                                {isChoicedQuestionType(type) && (
+                                    <div className={styles.responseOptions}>
+                                        <div className={styles.heading}>
+                                            Response options
+                                        </div>
+                                        <div className={styles.content}>
+                                            <ResponseOutput
+                                                type={data.type}
+                                                value={data.responseOptions}
+                                            />
+                                        </div>
                                     </div>
+                                )}
+                                <div className={styles.enumeratorInstruction}>
+                                    <h4 className={styles.heading}>
+                                        Enumerator instructions
+                                    </h4>
                                     <div className={styles.content}>
-                                        <ResponseOutput
-                                            type={data.type}
-                                            value={data.responseOptions}
-                                        />
+                                        { data.enumeratorInstruction || '-' }
                                     </div>
                                 </div>
-                            )}
-                            <div className={styles.enumeratorInstruction}>
-                                <h4 className={styles.heading}>
-                                    Enumerator instructions
-                                </h4>
-                                <div className={styles.content}>
-                                    { data.enumeratorInstruction || '-' }
+                                <div className={styles.respondentInstruction}>
+                                    <h4 className={styles.heading}>
+                                        Respondent instructions
+                                    </h4>
+                                    <div className={styles.content}>
+                                        { data.respondentInstruction || '-' }
+                                    </div>
                                 </div>
                             </div>
-                            <div className={styles.respondentInstruction}>
-                                <h4 className={styles.heading}>
-                                    Respondent instructions
-                                </h4>
-                                <div className={styles.content}>
-                                    { data.respondentInstruction || '-' }
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    {onCopy && (
-                        <Button
-                            className={styles.copyButton}
-                            onClick={this.handleCopy}
-                            iconName="copyOutline"
-                            disabled={copyDisabled}
-                        >
-                            Copy
-                        </Button>
-                    )}
+                        )}
+                        {onCopy && (
+                            <Button
+                                className={styles.copyButton}
+                                onClick={this.handleCopy}
+                                iconName="copyOutline"
+                                disabled={copyDisabled}
+                            >
+                                Copy
+                            </Button>
+                        )}
+                    </div>
                 </div>
                 {isNotDefined(onCopy) && (
                     <div className={styles.dropZoneContainer}>
