@@ -29,6 +29,8 @@ import { generateXLSForm, readXLSForm } from '#entities/questionnaire';
 import {
     RequestClient,
     methods,
+    notifyOnFailure,
+    notifyOnFatal,
 } from '#request';
 import _ts from '#ts';
 
@@ -92,7 +94,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
             const { results, count } = questionnaireResponse;
             params.setQuestionnaires(results, count);
         },
-        // FIXME: write onFailure, onFatal
+        onFailure: notifyOnFailure('Questionnaires'),
+        onFatal: notifyOnFatal('Questionnaires'),
     },
     questionnaireArchiveRequest: {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
@@ -110,7 +113,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props.requests.questionnairesGetRequest.do();
             props.onQuestionnaireMetaReload();
         },
-        // FIXME: write onFailure, onFatal
+        onFailure: notifyOnFailure('Questionnaire Archive'),
+        onFatal: notifyOnFatal('Questionnaire Archive'),
     },
     questionnaireDeleteRequest: {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
@@ -120,7 +124,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props.requests.questionnairesGetRequest.do();
             props.onQuestionnaireMetaReload();
         },
-        // FIXME: write onFailure, onFatal
+        onFailure: notifyOnFailure('Questionnaire Delete'),
+        onFatal: notifyOnFatal('Questionnaire Delete'),
     },
 
     // Used by XLSForm Import
@@ -148,6 +153,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 },
             });
         },
+        onFailure: notifyOnFailure('Questionnaire Create'),
+        onFatal: notifyOnFatal('Questionnaire Create'),
     },
     // Used by XLSForm Import
     questionnairePatchRequest: {
@@ -159,6 +166,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props.requests.questionnairesGetRequest.do();
             props.onQuestionnaireMetaReload();
         },
+        onFailure: notifyOnFailure('Questionnaire Edit'),
+        onFatal: notifyOnFatal('Questionnaire Edit'),
     },
 
     // Used by XLSForm Export
@@ -181,6 +190,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
 
             params.onExportReady(title, activeQuestions);
         },
+        onFailure: notifyOnFailure('Questionnaire'),
+        onFatal: notifyOnFatal('Questionnaire'),
     },
 };
 

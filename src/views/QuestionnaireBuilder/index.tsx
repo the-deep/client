@@ -36,6 +36,8 @@ import {
     methods,
     RequestCoordinator,
     RequestClient,
+    notifyOnFailure,
+    notifyOnFatal,
 } from '#request';
 
 import {
@@ -132,6 +134,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             const questionnaire = response as QuestionnaireElement;
             params.setQuestionnaire(questionnaire);
         },
+        onFailure: notifyOnFailure('Questionnaire'),
+        onFatal: notifyOnFatal('Questionnaire'),
     },
     frameworkGetRequest: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/analysis-framework/`,
@@ -148,6 +152,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             const framework = response as MiniFrameworkElement;
             params.setFramework(framework);
         },
+        onFailure: notifyOnFailure('Analysis Framework'),
+        onFatal: notifyOnFatal('Analysis Framework'),
     },
 
     copyToQuestionnaireRequest: {
@@ -162,6 +168,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             }
             params.onCopySuccess(response as QuestionnaireQuestionElement);
         },
+        onFailure: notifyOnFailure('Questionnaire Duplicate'),
+        onFatal: notifyOnFatal('Questionnaire Duplicate'),
     },
     questionDeleteRequest: {
         url: ({ props: { questionnaireId }, params }) => (
@@ -174,6 +182,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             }
             params.onDeleteSuccess(params.questionId);
         },
+        onFailure: notifyOnFailure('Question Delete'),
+        onFatal: notifyOnFatal('Question Delete'),
     },
     questionArchiveRequest: {
         url: ({ props: { questionnaireId }, params }) => (
@@ -203,6 +213,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             }
             params.onBulkDeleteSuccess(response as number[]);
         },
+        onFailure: notifyOnFailure('Questions Delete'),
+        onFatal: notifyOnFatal('Questions Delete'),
     },
     bulkQuestionArchiveRequest: {
         url: ({ props: { questionnaireId } }) => (
@@ -216,6 +228,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             }
             params.onBulkArchiveSuccess(response as number[], true);
         },
+        onFailure: notifyOnFailure('Questions Archive'),
+        onFatal: notifyOnFatal('Questions Archive'),
     },
     bulkQuestionUnArchiveRequest: {
         url: ({ props: { questionnaireId } }) => (
@@ -229,6 +243,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             }
             params.onBulkUnArchiveSuccess(response as number[], false);
         },
+        onFailure: notifyOnFailure('Questions Unarchive'),
+        onFatal: notifyOnFatal('Questions Unarchive'),
     },
 };
 
