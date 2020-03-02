@@ -129,3 +129,41 @@ export const sanitizeResponse = (data) => {
     }
     return data;
 };
+
+export const getArrayMoveDetails = (oldArray = [], newArray = [], keySelector = d => d) => {
+    let movedData;
+    let afterData;
+    let top = false;
+
+    oldArray.some((q, index) => {
+        if (keySelector(q) !== keySelector(newArray[index])) {
+            if (keySelector(q) === keySelector(newArray[index + 1])) {
+                movedData = keySelector(newArray[index]);
+                if (newArray[index - 1]) {
+                    afterData = keySelector(newArray[index - 1]);
+                } else {
+                    top = true;
+                }
+            } else {
+                const mvqIndex = newArray.findIndex(
+                    nq => keySelector(nq) === keySelector(q),
+                );
+                movedData = keySelector(q);
+                afterData = keySelector(newArray[mvqIndex - 1]);
+                if (newArray[mvqIndex - 1]) {
+                    afterData = keySelector(newArray[mvqIndex - 1]);
+                } else {
+                    top = true;
+                }
+            }
+            return true;
+        }
+        return false;
+    });
+
+    return ({
+        movedData,
+        afterData,
+        top,
+    });
+};

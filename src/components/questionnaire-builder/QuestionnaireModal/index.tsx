@@ -51,6 +51,7 @@ type QuestionnaireFormElement = Partial<Pick<QuestionnaireElement, FormKeys>>;
 
 interface ComponentProps {
     className?: string;
+    isClone?: boolean;
     projectId: ProjectElement['id'];
     value?: BaseQuestionElement;
     pending?: boolean;
@@ -59,6 +60,7 @@ interface ComponentProps {
 }
 
 type FaramValues = QuestionnaireFormElement;
+
 interface RequestBody extends FaramValues {
     project?: ProjectElement['id'];
     questions?: BaseQuestionElement[];
@@ -145,6 +147,38 @@ const requestOptions: Requests<ComponentProps, Params> = {
             params.setFaramErrors({ $internal: ['Some error ocurred!'] });
         },
     },
+    questionnaireCloneRequest: {
+        url: ({ params }) => {
+            if (!params || !params.questionnaireId) {
+                return '';
+            }
+
+            return `/questionnaires/${params.questionnaireId}/clone/`;
+        },
+        method: methods.POST,
+        body: ({ params: { body } = { body: undefined } }) => body,
+        onSuccess: ({
+            props,
+            response,
+        }) => {
+            props.onRequestSuccess(response);
+            if (props.closeModal) {
+                props.closeModal();
+            }
+        },
+        onFailure: ({ error, params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors((error as Error).faramErrors);
+        },
+        onFatal: ({ params }) => {
+            if (!params || !params.setFaramErrors) {
+                return;
+            }
+            params.setFaramErrors({ $internal: ['Some error ocurred!'] });
+        },
+    },
     questionnaireOptionsRequest: {
         url: '/questionnaires/options/',
         method: methods.GET,
@@ -190,25 +224,38 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
             requests: {
                 questionnaireCreateRequest,
                 questionnairePatchRequest,
+                questionnaireCloneRequest,
             },
             value,
+            isClone,
         } = this.props;
 
-        if (value) {
-            questionnairePatchRequest.do({
-                questionnaireId: value.id,
-                body: faramValues,
-                setFaramErrors: (faramErrors: FaramErrors) => {
-                    this.setState({ faramErrors });
-                },
-            });
-        } else {
+        if (!value) {
             questionnaireCreateRequest.do({
                 body: {
                     project: projectId,
                     questions: [],
                     ...faramValues,
                 },
+                setFaramErrors: (faramErrors: FaramErrors) => {
+                    this.setState({ faramErrors });
+                },
+            });
+        } else if (isClone) {
+            questionnaireCloneRequest.do({
+                questionnaireId: value.id,
+                body: {
+                    ...faramValues,
+                    crisisTypeId: faramValues.crisisType,
+                },
+                setFaramErrors: (faramErrors: FaramErrors) => {
+                    this.setState({ faramErrors });
+                },
+            });
+        } else {
+            questionnairePatchRequest.do({
+                questionnaireId: value.id,
+                body: faramValues,
                 setFaramErrors: (faramErrors: FaramErrors) => {
                     this.setState({ faramErrors });
                 },

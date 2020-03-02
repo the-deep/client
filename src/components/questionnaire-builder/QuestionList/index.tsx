@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
+    isDefined,
     listToMap,
 } from '@togglecorp/fujs';
 
@@ -33,6 +34,9 @@ interface QuestionListProps {
     onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
+    onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
+    onClone?: (key: BaseQuestionElement['id']) => void;
+    onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
     onDelete?: (key: BaseQuestionElement['id']) => void;
     onArchive?: (key: BaseQuestionElement['id']) => void;
     onUnarchive?: (key: BaseQuestionElement['id']) => void;
@@ -63,6 +67,9 @@ const QuestionList = (props: QuestionListProps) => {
         onDelete, // this.handleDeleteQuestion,
         onArchive, // this.handleArchiveQuestion,
         onUnarchive, // this.handleUnarchiveQuestion,
+        onClone,
+        onCopyFromDrop,
+        onAddButtonClick,
         onBulkDelete,
         onBulkArchive,
         onBulkUnArchive,
@@ -98,6 +105,9 @@ const QuestionList = (props: QuestionListProps) => {
         (key: BaseQuestionElement['id'], question: BaseQuestionElement) => ({
             data: question,
             onEditButtonClick: onEdit,
+            onClone,
+            onCopyFromDrop,
+            onAddButtonClick,
             onDelete,
             onArchive,
             onUnarchive,
@@ -108,9 +118,11 @@ const QuestionList = (props: QuestionListProps) => {
             expanded: !!expandedQuestions[key],
             onExpandChange: handleQuestionExpandChange,
             className: styles.question,
+            disabled: showLoadingOverlay,
         }),
         [
-            framework, onEdit, onDelete, onArchive, onUnarchive,
+            framework, onEdit, onDelete, onCopyFromDrop,
+            onClone, onArchive, onUnarchive, onAddButtonClick, showLoadingOverlay,
             selectedQuestions, handleQuestionSelectChange,
             expandedQuestions, handleQuestionExpandChange,
         ],
@@ -233,6 +245,7 @@ const QuestionList = (props: QuestionListProps) => {
                     className={styles.checkbox}
                     value={isAllSelected && filteredQuestions && filteredQuestions.length > 0}
                     indeterminate={isSomeSelected}
+                    checkIconClassName={styles.checkIcon}
                     onChange={handleSelectAllCheckboxClick}
                     disabled={showLoadingOverlay}
                 />
@@ -301,6 +314,7 @@ const QuestionList = (props: QuestionListProps) => {
                 dragHandleModifier={renderDragHandle}
                 itemClassName={styles.questionContainer}
                 disabled={!onOrderChange}
+                showDragHandle={isDefined(onOrderChange)}
             />
         </div>
     );

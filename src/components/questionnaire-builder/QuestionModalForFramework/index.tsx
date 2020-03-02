@@ -1,4 +1,5 @@
 import React from 'react';
+import { isDefined } from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -10,6 +11,7 @@ import {
     AddRequestProps,
     Requests,
     MiniFrameworkElement,
+    OrderAction,
 } from '#typings';
 
 import QuestionModal, {
@@ -35,6 +37,7 @@ interface State {
 
 interface ComponentProps {
     className?: string;
+    newQuestionOrder?: number;
     value?: FrameworkQuestionElement;
     framework: MiniFrameworkElement;
     onRequestSuccess: (q: FrameworkQuestionElement) => void;
@@ -42,7 +45,7 @@ interface ComponentProps {
 }
 
 interface Params {
-    body?: FrameworkQuestionElement;
+    body?: FrameworkQuestionElement & { orderAction?: OrderAction };
     setFaramErrors?: (faramErrors: FaramErrors) => void;
 }
 
@@ -112,6 +115,7 @@ class QuestionModalForFramework extends React.PureComponent<Props, State> {
             framework: { id: frameworkId },
             requests: { questionSaveRequest },
             value,
+            newQuestionOrder,
         } = this.props;
 
         const body = transformOut(faramValues) as FrameworkQuestionElement;
@@ -124,6 +128,10 @@ class QuestionModalForFramework extends React.PureComponent<Props, State> {
         } else {
             questionSaveRequest.do({
                 body: {
+                    orderAction: {
+                        action: isDefined(newQuestionOrder) ? 'below' : 'top',
+                        value: newQuestionOrder,
+                    },
                     ...body,
                     analysisFramework: frameworkId,
                 },

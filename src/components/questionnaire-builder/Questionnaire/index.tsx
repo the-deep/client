@@ -31,6 +31,7 @@ interface Props {
     onArchive: (id: number) => void;
     onUnarchive: (id: number) => void;
     onDelete: (id: number) => void;
+    onClone: (questionnaireKey: MiniQuestionnaireElement['id']) => void;
     onEdit: (questionnaire: MiniQuestionnaireElement) => void;
     onXLSFormExport: (id: number) => void;
     onKoboToolboxExport: (id: number) => void;
@@ -62,6 +63,15 @@ class Questionnaire extends React.PureComponent<Props> {
         } = this.props;
 
         onDelete(questionnaireKey);
+    }
+
+    private handleCloneClick = () => {
+        const {
+            onClone,
+            questionnaireKey,
+        } = this.props;
+
+        onClone(questionnaireKey);
     }
 
     private handleXLSFormExport = () => {
@@ -180,6 +190,7 @@ class Questionnaire extends React.PureComponent<Props> {
                         )}
                         <DropdownMenu
                             dropdownIcon="menuDots"
+                            closeOnClick
                         >
                             {!archived && (
                                 <DropdownButton
@@ -191,9 +202,10 @@ class Questionnaire extends React.PureComponent<Props> {
                             )}
                             {!archived && (
                                 <DropdownButton
-                                    disabled
+                                    onClick={this.handleCloneClick}
+                                    disabled={disabled}
                                     // FIXME: use strings
-                                    title="Copy"
+                                    title="Clone"
                                 />
                             )}
                             <DropdownButton

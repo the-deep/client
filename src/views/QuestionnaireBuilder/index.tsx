@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { produce } from 'immer';
 import {
     _cs,
+    compareNumber,
     reverseRoute,
 } from '@togglecorp/fujs';
 
@@ -30,6 +31,7 @@ import {
     Requests,
     AddRequestProps,
     BulkActionId,
+    OrderAction,
 } from '#typings';
 
 import {
@@ -47,6 +49,7 @@ import {
 } from '#redux';
 
 import BackLink from '#components/general/BackLink';
+import { getArrayMoveDetails } from '#utils/common';
 import { pathNames } from '#constants';
 
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
@@ -76,6 +79,7 @@ interface State {
     showQuestionFormModal: boolean;
     addFromFramework: boolean;
     questionToEdit?: QuestionnaireQuestionElement;
+    newQuestionOrder?: number;
     questionnaire?: QuestionnaireElement;
     // FIXME: use this everywhere
     framework?: MiniFrameworkElement;
@@ -110,6 +114,7 @@ interface Params {
 
     body?: BulkActionId[];
     copyBody?: CopyBody;
+    orderAction?: OrderAction;
     onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
     onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
     onBulkUnArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
@@ -117,6 +122,7 @@ interface Params {
     archive?: boolean;
     onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
     onCopySuccess?: (question: QuestionnaireQuestionElement) => void;
+    onCloneSuccess?: (question: QuestionnaireQuestionElement) => void;
 }
 
 const EmptyComponent = () => <div />;
@@ -155,7 +161,6 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         onFailure: notifyOnFailure('Analysis Framework'),
         onFatal: notifyOnFatal('Analysis Framework'),
     },
-
     copyToQuestionnaireRequest: {
         url: ({ props: { questionnaireId } }) => (
             `/questionnaires/${questionnaireId}/questions/af-question-copy/`
@@ -185,6 +190,33 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         onFailure: notifyOnFailure('Question Delete'),
         onFatal: notifyOnFatal('Question Delete'),
     },
+    orderChangeRequest: {
+        url: ({ props: { questionnaireId }, params }) => (
+            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/order/`
+        ),
+        method: methods.POST,
+        body: ({ params }) => params && params.orderAction,
+    },
+    questionCloneRequest: {
+        url: ({ props: { questionnaireId }, params }) => (
+            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/clone/`
+        ),
+        body: ({ params }) => ({
+            order_action: {
+                action: 'below',
+                value: params && params.questionId,
+            },
+        }),
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onCloneSuccess) {
+                return;
+            }
+            params.onCloneSuccess(response as QuestionnaireQuestionElement);
+        },
+        onFailure: notifyOnFailure('Question Clone'),
+        onFatal: notifyOnFatal('Question Clone'),
+    },
     questionArchiveRequest: {
         url: ({ props: { questionnaireId }, params }) => (
             `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
@@ -200,6 +232,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             const question = response as QuestionnaireQuestionElement;
             params.onArchiveSuccess(question);
         },
+        onFailure: notifyOnFailure('Question Archive'),
+        onFatal: notifyOnFatal('Question Archive'),
     },
     bulkQuestionDeleteRequest: {
         url: ({ props: { questionnaireId } }) => (
@@ -250,6 +284,8 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
 
 type Props = AddRequestProps<ComponentPropsWithAppState, Params>;
 
+const questionKeySelector = (d: QuestionnaireQuestionElement) => d.id;
+
 class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
@@ -263,6 +299,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.state = {
             showQuestionFormModal: false,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
             questionnaire: undefined,
             framework: undefined,
             treeFilter: [],
@@ -289,8 +326,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         className: styles.questionList,
                         onAdd: this.handleAddQuestionButtonClick,
                         onEdit: this.handleEditQuestionButtonClick,
+                        onAddButtonClick: this.handleAddNewQuestionButtonClick,
                         onOrderChange: this.handleOrderChange,
                         onDelete: this.handleDeleteQuestion,
+                        onClone: this.handleCloneQuestion,
+                        onCopyFromDrop: this.handleCopyFromDrop,
                         onArchive: this.handleArchiveQuestion,
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
@@ -347,14 +387,37 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             active: {
                 component: AddFromFramework,
                 wrapContainer: true,
-                rendererParams: () => ({
-                    treeFilter: this.state.treeFilter,
-                    framework: this.state.framework,
-                    onTreeInputChange: this.handleTreeInputChange,
-                    onPaneClose: this.handleAddFromFrameworkClose,
-                    onCopy: this.handleCopyClick,
-                    copyDisabled: false,
-                }),
+                rendererParams: () => {
+                    const {
+                        requests: {
+                            questionDeleteRequest,
+                            questionArchiveRequest,
+                            copyToQuestionnaireRequest,
+                            bulkQuestionDeleteRequest,
+                            bulkQuestionArchiveRequest,
+                            bulkQuestionUnArchiveRequest,
+                        },
+                    } = this.props;
+
+                    const {
+                        treeFilter,
+                        framework,
+                    } = this.state;
+
+                    return ({
+                        treeFilter,
+                        framework,
+                        onTreeInputChange: this.handleTreeInputChange,
+                        onPaneClose: this.handleAddFromFrameworkClose,
+                        onCopy: this.handleCopyClick,
+                        copyDisabled: questionDeleteRequest.pending
+                            || questionArchiveRequest.pending
+                            || copyToQuestionnaireRequest.pending
+                            || bulkQuestionDeleteRequest.pending
+                            || bulkQuestionArchiveRequest.pending
+                            || bulkQuestionUnArchiveRequest.pending,
+                    });
+                },
             },
             archived: {
                 component: EmptyComponent,
@@ -363,7 +426,14 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         questionnaireGetRequest.setDefaultParams({
             setQuestionnaire: (questionnaire: QuestionnaireElement) => {
-                this.setState({ questionnaire });
+                this.setState({
+                    questionnaire: {
+                        ...questionnaire,
+                        questions: [...questionnaire.questions].sort(
+                            (a, b) => compareNumber(a.order, b.order),
+                        ),
+                    },
+                });
             },
         });
         frameworkGetRequest.setDefaultParams({
@@ -384,27 +454,47 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     }
 
     private handleCopyClick = (questionId: BaseQuestionElement['id']) => {
-        const {
-            questionnaire,
-        } = this.state;
+        const { questionnaire } = this.state;
 
         if (!questionnaire) {
             return;
         }
 
-        const {
-            id: questionnaireId,
-            questions,
-        } = questionnaire;
-
-        const newOrder = questions
-            ? questions.length + 1
-            : 1;
+        const { id: questionnaireId } = questionnaire;
 
         const copyBody = {
             frameworkQuestionId: questionId,
             questionnaireId,
-            newOrder,
+            order_action: {
+                action: 'top',
+            },
+        };
+
+        this.props.requests.copyToQuestionnaireRequest.do({
+            onCopySuccess: this.handleCopySuccess,
+            copyBody,
+        });
+    }
+
+    private handleCopyFromDrop = (
+        questionId: BaseQuestionElement['id'],
+        afterQuestionId: number,
+    ) => {
+        const { questionnaire } = this.state;
+
+        if (!questionnaire) {
+            return;
+        }
+
+        const { id: questionnaireId } = questionnaire;
+
+        const copyBody = {
+            frameworkQuestionId: questionId,
+            questionnaireId,
+            order_action: {
+                action: 'below',
+                value: afterQuestionId,
+            },
         };
 
         this.props.requests.copyToQuestionnaireRequest.do({
@@ -420,7 +510,20 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         }
 
         const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
-            safeQuestionnaire.questions.push(question);
+            safeQuestionnaire.questions.splice(question.order, 0, question);
+        });
+
+        this.setState({ questionnaire: newQuestionnaire });
+    }
+
+    private handleCloneSuccess = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+        if (!questionnaire) {
+            return;
+        }
+
+        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
+            safeQuestionnaire.questions.splice(question.order, 0, question);
         });
 
         this.setState({ questionnaire: newQuestionnaire });
@@ -452,10 +555,31 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleAddNewQuestionButtonClick = (newQuestionOrder: number) => {
+        const { questionnaire } = this.state;
+
+        if (!questionnaire) {
+            return;
+        }
+
+        this.setState({
+            showQuestionFormModal: true,
+            questionToEdit: undefined,
+            newQuestionOrder,
+        });
+    }
+
     private handleDeleteQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
         this.props.requests.questionDeleteRequest.do({
             questionId,
             onDeleteSuccess: this.handleQuestionDeleteRequestSuccess,
+        });
+    }
+
+    private handleCloneQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
+        this.props.requests.questionCloneRequest.do({
+            questionId,
+            onCloneSuccess: this.handleCloneSuccess,
         });
     }
 
@@ -515,7 +639,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             const { questions } = safeQuestionnaire;
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex === -1) {
-                safeQuestionnaire.questions.push(question);
+                safeQuestionnaire.questions.splice(question.order, 0, question);
             } else {
                 // eslint-disable-next-line no-param-reassign
                 safeQuestionnaire.questions[selectedIndex] = question;
@@ -544,8 +668,24 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             safeQuestionnaire.questions = questions;
         });
 
+        const { questions: oldQuestions } = questionnaire;
+        const { questions: newQuestions } = newQuestionnaire;
+
+        const arrayMoveData = getArrayMoveDetails(oldQuestions, newQuestions, questionKeySelector);
+
+        const movedQuestion = arrayMoveData.movedData;
+        const orderAction = {
+            action: (arrayMoveData.top ? 'top' : 'below') as OrderAction['action'],
+            value: arrayMoveData.afterData,
+        };
+
         this.setState({
             questionnaire: newQuestionnaire,
+        }, () => {
+            this.props.requests.orderChangeRequest.do({
+                questionId: movedQuestion,
+                orderAction,
+            });
         });
     }
 
@@ -694,6 +834,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         const {
             showQuestionFormModal,
             questionToEdit,
+            newQuestionOrder,
             questionnaire,
             framework,
             addFromFramework,
@@ -839,6 +980,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     <QuestionModalForQuestionnaire
                         value={questionToEdit}
                         questionnaire={questionnaire}
+                        newQuestionOrder={newQuestionOrder}
                         questionnaireId={questionnaireId}
                         onRequestSuccess={this.handleQuestionFormRequestSuccess}
                         closeModal={this.handleCloseQuestionFormModalButtonClick}

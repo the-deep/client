@@ -2,6 +2,7 @@ import {
     camelToNormalCase,
     compareTime,
     getDateWithTimezone,
+    getArrayMoveDetails,
 } from './common';
 
 test('convert camelcase to normal', () => {
@@ -20,4 +21,56 @@ test('compare time', () => {
 
 test('get date with timezone', () => {
     expect(getDateWithTimezone('2019-05-13')).toEqual('2019-05-13+0545');
+});
+
+const oldArray = [
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+];
+
+const newArray1 = [
+    'a',
+    'c',
+    'd',
+    'b',
+    'e',
+];
+
+const newArray2 = [
+    'a',
+    'd',
+    'b',
+    'c',
+    'e',
+];
+
+const newArray3 = [
+    'd',
+    'a',
+    'b',
+    'c',
+    'e',
+];
+
+const keySelector = d => d;
+
+test('get array move details', () => {
+    expect(getArrayMoveDetails(oldArray, newArray1, keySelector)).toEqual({
+        movedData: 'b',
+        afterData: 'd',
+        top: false,
+    });
+    expect(getArrayMoveDetails(oldArray, newArray2, keySelector)).toEqual({
+        movedData: 'd',
+        afterData: 'a',
+        top: false,
+    });
+    expect(getArrayMoveDetails(oldArray, newArray3, keySelector)).toEqual({
+        movedData: 'd',
+        afterData: undefined,
+        top: true,
+    });
 });

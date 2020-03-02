@@ -69,6 +69,7 @@ export type QuestionType = 'text'
 
 export interface BaseQuestionElement {
     id: number;
+    order: number;
 
     title: string;
     type: QuestionType;
@@ -145,6 +146,12 @@ export interface QuestionnaireElement extends DbEntity {
     questions: QuestionnaireQuestionElement[];
     // projectFrameworkDetail: FrameworkElement;
 }
+
+export interface OrderAction {
+    action: 'top' | 'bottom' | 'above' | 'below';
+    value?: number;
+}
+
 
 // FRAMEWORK
 export type MiniFrameworkElement = Pick<FrameworkElement, 'id' | 'widgets' | 'questions' | 'title'>
