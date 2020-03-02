@@ -14,11 +14,14 @@ import Message from '#rscv/Message';
 import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 import TreeInput from '#rsu/../v2/Input/TreeInput';
+import { getArrayMoveDetails } from '#utils/common';
 
 import {
     methods,
     RequestCoordinator,
     RequestClient,
+    notifyOnFailure,
+    notifyOnFatal,
 } from '#request';
 import { pathNames } from '#constants';
 import {
@@ -31,6 +34,7 @@ import {
     AppState,
     AppProps,
     BulkActionId,
+    OrderAction,
 } from '#typings';
 import { afIdFromRouteSelector } from '#redux';
 
@@ -72,25 +76,28 @@ interface Params {
     onDeleteSuccess?: (questionId: FrameworkQuestionElement['id']) => void;
 
     body?: BulkActionId[];
+    orderAction?: OrderAction;
     onBulkDeleteSuccess?: (questionIds: FrameworkQuestionElement['id'][]) => void;
     onBulkArchiveSuccess?: (questionIds: FrameworkQuestionElement['id'][], archiveStatus: boolean) => void;
     onBulkUnArchiveSuccess?: (questionIds: FrameworkQuestionElement['id'][], archiveStatus: boolean) => void;
 
     archive?: boolean;
     onArchiveSuccess?: (question: FrameworkQuestionElement) => void;
+    onCloneSuccess?: (question: FrameworkQuestionElement) => void;
 }
 
 interface State {
     showQuestionModal: boolean;
     questionToEdit: FrameworkQuestionElement | undefined;
     treeFilter: string[];
+    newQuestionOrder?: number;
     framework?: MiniFrameworkElement;
 }
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
 type Props = AddRequestProps<ComponentPropsWithAppState, Params>;
 
-const mapStateToProps = (state: AppState, props: AppProps) => ({
+const mapStateToProps = (state: AppState) => ({
     frameworkId: afIdFromRouteSelector(state),
 });
 
@@ -140,6 +147,33 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             params.onArchiveSuccess(question);
         },
     },
+    questionCloneRequest: {
+        url: ({ props: { frameworkId }, params }) => (
+            `/analysis-frameworks/${frameworkId}/questions/${params && params.questionId}/clone/`
+        ),
+        body: ({ params }) => ({
+            order_action: {
+                action: 'below',
+                value: params && params.questionId,
+            },
+        }),
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onCloneSuccess) {
+                return;
+            }
+            params.onCloneSuccess(response as FrameworkQuestionElement);
+        },
+        onFailure: notifyOnFailure('Question Clone'),
+        onFatal: notifyOnFatal('Question Clone'),
+    },
+    orderChangeRequest: {
+        url: ({ props: { frameworkId }, params }) => (
+            `/questionnaires/${frameworkId}/questions/${params && params.questionId}/order/`
+        ),
+        method: methods.POST,
+        body: ({ params }) => params && params.body,
+    },
     bulkQuestionDeleteRequest: {
         url: ({ props: { frameworkId } }) => (
             `/analysis-frameworks/${frameworkId}/questions/bulk-delete/`
@@ -181,7 +215,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     },
 };
 
-// const questionKeySelector = (d: FrameworkQuestionElement) => d.id;
+const questionKeySelector = (d: FrameworkQuestionElement) => d.id;
 
 class FrameworkQuestions extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
@@ -222,6 +256,9 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         className: styles.questionList,
                         onAdd: this.handleAddQuestionButtonClick,
                         onEdit: this.handleEditQuestionButtonClick,
+                        onAddButtonClick: this.handleAddNewQuestionButtonClick,
+                        onOrderChange: this.handleOrderChange,
+                        onClone: this.handleCloneQuestion,
                         onDelete: this.handleDeleteQuestion,
                         onArchive: this.handleArchiveQuestion,
                         onBulkDelete: this.handleBulkDelete,
@@ -303,6 +340,72 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
 
         this.setState({
             framework: newFramework,
+        });
+    }
+
+    private handleOrderChange = (questions: FrameworkQuestionElement[]) => {
+        const { framework } = this.state;
+        if (!framework) {
+            return;
+        }
+
+        const newFramework = produce(framework, (safeFramework) => {
+            // eslint-disable-next-line no-param-reassign
+            safeFramework.questions = questions;
+        });
+
+        const { questions: oldQuestions } = framework;
+        const { questions: newQuestions } = newFramework;
+
+        const arrayMoveData = getArrayMoveDetails(oldQuestions, newQuestions, questionKeySelector);
+
+        const movedQuestion = arrayMoveData.movedData;
+        const orderAction = {
+            action: (arrayMoveData.top ? 'top' : 'below') as OrderAction['action'],
+            value: arrayMoveData.afterData,
+        };
+
+        this.setState({
+            framework: newFramework,
+        }, () => {
+            this.props.requests.orderChangeRequest.do({
+                questionId: movedQuestion,
+                orderAction,
+            });
+        });
+    }
+
+    private handleCloneQuestion = (questionId: FrameworkQuestionElement['id']) => {
+        this.props.requests.questionCloneRequest.do({
+            questionId,
+            onCloneSuccess: this.handleCloneSuccess,
+        });
+    }
+
+    private handleCloneSuccess = (question: FrameworkQuestionElement) => {
+        const { framework } = this.state;
+        if (!framework) {
+            return;
+        }
+
+        const newFramework = produce(framework, (safeFramework) => {
+            safeFramework.questions.splice(question.order, 0, question);
+        });
+
+        this.setState({ framework: newFramework });
+    }
+
+    private handleAddNewQuestionButtonClick = (newQuestionOrder: number) => {
+        const { framework } = this.state;
+
+        if (!framework) {
+            return;
+        }
+
+        this.setState({
+            showQuestionModal: true,
+            questionToEdit: undefined,
+            newQuestionOrder,
         });
     }
 
@@ -455,7 +558,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             const { questions } = safeFramework;
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex === -1) {
-                safeFramework.questions.push(question);
+                safeFramework.questions.splice(question.order, 0, question);
             } else {
                 // eslint-disable-next-line no-param-reassign
                 safeFramework.questions[selectedIndex] = question;
@@ -515,6 +618,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             questionToEdit,
             framework,
             treeFilter,
+            newQuestionOrder,
         } = this.state;
 
         if (frameworkGetPending) {
@@ -611,6 +715,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                     <QuestionModalForFramework
                         value={questionToEdit}
                         framework={framework}
+                        newQuestionOrder={newQuestionOrder}
                         onRequestSuccess={this.handleQuestionFormRequestSuccess}
                         closeModal={this.handleAddQuestionModalCloseButtonClick}
                     />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { isDefined } from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -11,6 +12,7 @@ import {
     QuestionnaireQuestionElement,
     AddRequestProps,
     Requests,
+    OrderAction,
 } from '#typings';
 
 import QuestionModal, {
@@ -39,11 +41,6 @@ interface ComponentProps {
     questionnaire: QuestionnaireElement;
     onRequestSuccess: (q: QuestionnaireQuestionElement) => void;
     closeModal: () => void;
-}
-
-interface OrderAction {
-    action: 'top' | 'bottom' | 'above' | 'below';
-    value?: number;
 }
 
 interface Params {
@@ -117,6 +114,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
             value,
             requests: { questionSaveRequest },
             questionnaireId,
+            newQuestionOrder,
         } = this.props;
 
         const body = transformOut(faramValues) as QuestionnaireQuestionElement;
@@ -130,7 +128,8 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
             questionSaveRequest.do({
                 body: {
                     orderAction: {
-                        action: 'top',
+                        action: isDefined(newQuestionOrder) ? 'below' : 'top',
+                        value: newQuestionOrder,
                     },
                     ...body,
                     questionnaire: questionnaireId,
@@ -172,7 +171,6 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
         );
     }
 }
-
 
 export default RequestClient(requestOptions)(
     QuestionModalForQuestionnaire,

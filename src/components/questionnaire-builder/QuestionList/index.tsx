@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
+    isDefined,
     listToMap,
 } from '@togglecorp/fujs';
 
@@ -117,10 +118,11 @@ const QuestionList = (props: QuestionListProps) => {
             expanded: !!expandedQuestions[key],
             onExpandChange: handleQuestionExpandChange,
             className: styles.question,
+            disabled: showLoadingOverlay,
         }),
         [
             framework, onEdit, onDelete, onCopyFromDrop,
-            onClone, onArchive, onUnarchive, onAddButtonClick,
+            onClone, onArchive, onUnarchive, onAddButtonClick, showLoadingOverlay,
             selectedQuestions, handleQuestionSelectChange,
             expandedQuestions, handleQuestionExpandChange,
         ],
@@ -312,6 +314,7 @@ const QuestionList = (props: QuestionListProps) => {
                 dragHandleModifier={renderDragHandle}
                 itemClassName={styles.questionContainer}
                 disabled={!onOrderChange}
+                showDragHandle={isDefined(onOrderChange)}
             />
         </div>
     );

@@ -427,7 +427,7 @@ class Question extends React.PureComponent<Props> {
                                 className={styles.copyButton}
                                 onClick={this.handleCopy}
                                 iconName="copyOutline"
-                                disabled={copyDisabled}
+                                disabled={disabled || copyDisabled}
                             >
                                 Copy
                             </Button>
@@ -444,6 +444,7 @@ class Question extends React.PureComponent<Props> {
                             className={styles.addButton}
                             onClick={this.handleAddButtonClick}
                             iconName="add"
+                            disabled={disabled}
                         />
                     </div>
                 )}

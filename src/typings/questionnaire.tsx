@@ -147,6 +147,12 @@ export interface QuestionnaireElement extends DbEntity {
     // projectFrameworkDetail: FrameworkElement;
 }
 
+export interface OrderAction {
+    action: 'top' | 'bottom' | 'above' | 'below';
+    value?: number;
+}
+
+
 // FRAMEWORK
 export type MiniFrameworkElement = Pick<FrameworkElement, 'id' | 'widgets' | 'questions' | 'title'>
 

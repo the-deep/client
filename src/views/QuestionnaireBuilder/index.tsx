@@ -31,6 +31,7 @@ import {
     Requests,
     AddRequestProps,
     BulkActionId,
+    OrderAction,
 } from '#typings';
 
 import {
@@ -113,6 +114,7 @@ interface Params {
 
     body?: BulkActionId[];
     copyBody?: CopyBody;
+    orderAction?: OrderAction;
     onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
     onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
     onBulkUnArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
@@ -193,10 +195,7 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/order/`
         ),
         method: methods.POST,
-        body: ({ params }) => params && params.body,
-        onSuccess: ({ params }) => {
-            console.warn('order success');
-        },
+        body: ({ params }) => params && params.orderAction,
     },
     questionCloneRequest: {
         url: ({ props: { questionnaireId }, params }) => (
@@ -388,14 +387,37 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             active: {
                 component: AddFromFramework,
                 wrapContainer: true,
-                rendererParams: () => ({
-                    treeFilter: this.state.treeFilter,
-                    framework: this.state.framework,
-                    onTreeInputChange: this.handleTreeInputChange,
-                    onPaneClose: this.handleAddFromFrameworkClose,
-                    onCopy: this.handleCopyClick,
-                    copyDisabled: false,
-                }),
+                rendererParams: () => {
+                    const {
+                        requests: {
+                            questionDeleteRequest,
+                            questionArchiveRequest,
+                            copyToQuestionnaireRequest,
+                            bulkQuestionDeleteRequest,
+                            bulkQuestionArchiveRequest,
+                            bulkQuestionUnArchiveRequest,
+                        },
+                    } = this.props;
+
+                    const {
+                        treeFilter,
+                        framework,
+                    } = this.state;
+
+                    return ({
+                        treeFilter,
+                        framework,
+                        onTreeInputChange: this.handleTreeInputChange,
+                        onPaneClose: this.handleAddFromFrameworkClose,
+                        onCopy: this.handleCopyClick,
+                        copyDisabled: questionDeleteRequest.pending
+                            || questionArchiveRequest.pending
+                            || copyToQuestionnaireRequest.pending
+                            || bulkQuestionDeleteRequest.pending
+                            || bulkQuestionArchiveRequest.pending
+                            || bulkQuestionUnArchiveRequest.pending,
+                    });
+                },
             },
             archived: {
                 component: EmptyComponent,
@@ -501,7 +523,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         }
 
         const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
-            safeQuestionnaire.questions.push(question);
+            safeQuestionnaire.questions.splice(question.order, 0, question);
         });
 
         this.setState({ questionnaire: newQuestionnaire });
@@ -653,7 +675,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         const movedQuestion = arrayMoveData.movedData;
         const orderAction = {
-            action: arrayMoveData.top ? 'top' : 'below',
+            action: (arrayMoveData.top ? 'top' : 'below') as OrderAction['action'],
             value: arrayMoveData.afterData,
         };
 
@@ -662,7 +684,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         }, () => {
             this.props.requests.orderChangeRequest.do({
                 questionId: movedQuestion,
-                body: orderAction,
+                orderAction,
             });
         });
     }
