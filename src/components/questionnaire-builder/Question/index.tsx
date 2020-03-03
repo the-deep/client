@@ -251,6 +251,8 @@ class Question extends React.PureComponent<Props> {
             onEditButtonClick,
             onDelete,
             onClone,
+            onCopyFromDrop,
+            onAddButtonClick,
         } = this.props;
 
         const {
@@ -436,16 +438,20 @@ class Question extends React.PureComponent<Props> {
                 </div>
                 {isNotDefined(onCopy) && (
                     <div className={styles.dropZoneContainer}>
-                        <DropZoneTwo
-                            className={styles.dropZone}
-                            onDrop={this.handleQuestionDrop}
-                        />
-                        <Button
-                            className={styles.addButton}
-                            onClick={this.handleAddButtonClick}
-                            iconName="add"
-                            disabled={disabled}
-                        />
+                        {isDefined(onCopyFromDrop) && (
+                            <DropZoneTwo
+                                className={styles.dropZone}
+                                onDrop={this.handleQuestionDrop}
+                            />
+                        )}
+                        {isDefined(onAddButtonClick) && (
+                            <Button
+                                className={styles.addButton}
+                                onClick={this.handleAddButtonClick}
+                                iconName="add"
+                                disabled={disabled}
+                            />
+                        )}
                     </div>
                 )}
             </div>

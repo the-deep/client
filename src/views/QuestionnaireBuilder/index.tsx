@@ -321,6 +321,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         },
                     } = this.props;
 
+                    const {
+                        framework,
+                        questionnaire,
+                    } = this.state;
+
                     return ({
                         title: 'Active Questions',
                         className: styles.questionList,
@@ -334,9 +339,9 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         onArchive: this.handleArchiveQuestion,
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
-                        framework: this.state.framework,
-                        questions: this.state.questionnaire
-                            ? this.state.questionnaire.questions
+                        framework,
+                        questions: questionnaire
+                            ? questionnaire.questions
                             : undefined,
                         showLoadingOverlay: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
