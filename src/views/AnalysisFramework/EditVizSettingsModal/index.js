@@ -35,10 +35,14 @@ const propTypes = {
     className: PropTypes.string,
 
     closeModal: PropTypes.func,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    widgets: PropTypes.array,
 };
 const defaultProps = {
-    closeModal: () => {},
     className: '',
+    closeModal: undefined,
+    widgets: undefined,
 };
 
 const keySelector = d => d.id;
@@ -180,7 +184,10 @@ export default class EditVizSettingsModal extends React.PureComponent {
         } = this.props;
 
         setAfViewStatsConfig({ analysisFrameworkId, statsConfig: transformedValues });
-        closeModal();
+
+        if (closeModal) {
+            closeModal();
+        }
     };
 
     groupWidgets = memoize((widgets = []) => {
@@ -268,7 +275,7 @@ export default class EditVizSettingsModal extends React.PureComponent {
                             className={styles.input}
                             faramElementName="affectedGroupsWidget"
                             label={_ts('framework.editVizSettings', 'affectedGroupsWidgetLabel')}
-                            options={groupedWidgets.multiselectWidget}
+                            options={groupedWidgets.organigramWidget}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                         />
