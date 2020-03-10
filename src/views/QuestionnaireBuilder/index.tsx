@@ -895,7 +895,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <ModalButton
                                 modal={
                                     <QuestionnairePreviewModal
-                                        questions={questions}
                                         title={title}
                                         questionnaireId={questionnaireId}
                                     />

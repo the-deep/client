@@ -20,9 +20,9 @@ import {
 } from '#request';
 
 import {
+    QuestionnaireElement,
     AddRequestProps,
     Requests,
-    QuestionnaireQuestionElement,
 } from '#typings';
 
 import { generateXLSForm } from '#entities/questionnaire';
@@ -30,7 +30,6 @@ import { generateXLSForm } from '#entities/questionnaire';
 import styles from './styles.scss';
 
 interface ComponentProps {
-    questions: QuestionnaireQuestionElement[];
     questionnaireId: number;
     title: string;
     closeModal?: () => void;
@@ -42,11 +41,27 @@ interface RequestBody {
 interface Params {
     body?: RequestBody;
     onFormInit?: (xform: XForm) => void;
+    onQuestionnaireGet?: (questionnaire: QuestionnaireElement) => void;
 }
 
 type Props = AddRequestProps<ComponentProps, Params>;
 
 const requestOptions: Requests<ComponentProps, Params> = {
+    questionnaireGetRequest: {
+        url: ({ props: { questionnaireId } }) => `/questionnaires/${questionnaireId}/`,
+        onMount: true,
+        method: methods.GET,
+        onPropsChanged: ['questionnaireId'],
+        onSuccess: ({ params, response }) => {
+            if (!params || !params.onQuestionnaireGet) {
+                return;
+            }
+            const questionnaire = response as QuestionnaireElement;
+            params.onQuestionnaireGet(questionnaire);
+        },
+        onFailure: notifyOnFailure('Questionnaire'),
+        onFatal: notifyOnFatal('Questionnaire'),
+    },
     xformExport: {
         url: '/xlsform-to-xform/',
         method: methods.POST,
@@ -71,12 +86,29 @@ interface XForm {
 }
 
 class QuestionnairePreviewModal extends React.PureComponent<Props> {
-    public componentDidMount() {
+    public constructor(props: Props) {
+        super(props);
+
+        const {
+            requests: {
+                questionnaireGetRequest,
+            },
+        } = this.props;
+
+        questionnaireGetRequest.setDefaultParams({
+            onQuestionnaireGet: this.onQuestionnaireGet,
+        });
+    }
+
+    private onQuestionnaireGet = (questionnaire: QuestionnaireElement) => {
         const {
             questionnaireId,
             title,
-            questions,
         } = this.props;
+
+        const {
+            questions,
+        } = questionnaire;
 
         const selectedQuestions = questions.filter(question => !question.isArchived);
 

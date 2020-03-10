@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     _cs,
@@ -12,6 +12,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
 import QuestionnaireModal from '#qbc/QuestionnaireModal';
 import DropdownButton from '#components/general/DropdownButton';
+import QuestionnairePreviewModal from '#qbc/QuestionnairePreviewModal';
 
 import { pathNames } from '#constants';
 import { MiniQuestionnaireElement } from '#typings';
@@ -37,233 +38,257 @@ interface Props {
     onKoboToolboxExport: (id: number) => void;
 }
 
-class Questionnaire extends React.PureComponent<Props> {
-    private handleArchive = () => {
-        const {
-            onArchive,
-            questionnaireKey,
-        } = this.props;
+const Questionnaire = (props: Props) => {
+    const {
+        className,
+        archived,
+        disabled,
+        data,
+        onEdit,
+        onArchive,
+        onUnarchive,
+        onDelete,
+        onClone,
+        onXLSFormExport,
+        onKoboToolboxExport,
+        questionnaireKey,
+    } = props;
 
-        onArchive(questionnaireKey);
-    }
+    const {
+        id,
+        title,
+        createdAt,
+        project,
+        crisisTypeDetail,
+        requiredDuration,
+        enumeratorSkillDisplay,
+        dataCollectionTechniqueDisplay,
+        activeQuestionsCount,
+    } = data;
 
-    private handleUnarchive = () => {
-        const {
-            onUnarchive,
-            questionnaireKey,
-        } = this.props;
+    const [showPreviewModal, setPreviewModal] = useState<boolean>(false);
 
-        onUnarchive(questionnaireKey);
-    }
+    const handleArchive = useCallback(
+        () => {
+            onArchive(questionnaireKey);
+        },
+        [onArchive, questionnaireKey],
+    );
 
-    private handleDelete = () => {
-        const {
-            onDelete,
-            questionnaireKey,
-        } = this.props;
+    const handleUnarchive = useCallback(
+        () => {
+            onUnarchive(questionnaireKey);
+        },
+        [onUnarchive, questionnaireKey],
+    );
 
-        onDelete(questionnaireKey);
-    }
+    const handleDelete = useCallback(
+        () => {
+            onDelete(questionnaireKey);
+        },
+        [onDelete, questionnaireKey],
+    );
 
-    private handleCloneClick = () => {
-        const {
-            onClone,
-            questionnaireKey,
-        } = this.props;
+    const handleCloneClick = useCallback(
+        () => {
+            onClone(questionnaireKey);
+        },
+        [onClone, questionnaireKey],
+    );
 
-        onClone(questionnaireKey);
-    }
+    const handleXLSFormExport = useCallback(
+        () => {
+            onXLSFormExport(questionnaireKey);
+        },
+        [onXLSFormExport, questionnaireKey],
+    );
 
-    private handleXLSFormExport = () => {
-        const {
-            onXLSFormExport,
-            questionnaireKey,
-        } = this.props;
+    const handleKoboToolboxExport = useCallback(
+        () => {
+            onKoboToolboxExport(questionnaireKey);
+        },
+        [onKoboToolboxExport, questionnaireKey],
+    );
 
-        onXLSFormExport(questionnaireKey);
-    }
+    const handlePreviewModalShow = useCallback(
+        () => {
+            setPreviewModal(true);
+        },
+        [setPreviewModal],
+    );
 
-    private handleKoboToolboxExport = () => {
-        const {
-            onKoboToolboxExport,
-            questionnaireKey,
-        } = this.props;
+    const handlePreviewModalClose = useCallback(
+        () => {
+            setPreviewModal(false);
+        },
+        [setPreviewModal],
+    );
 
-        onKoboToolboxExport(questionnaireKey);
-    }
-
-    public render() {
-        const {
-            className,
-            archived,
-            disabled,
-            data,
-            onEdit,
-        } = this.props;
-
-        const {
-            id,
-            title,
-            createdAt,
-            project,
-            crisisTypeDetail,
-            requiredDuration,
-            enumeratorSkillDisplay,
-            dataCollectionTechniqueDisplay,
-            activeQuestionsCount,
-        } = data;
-
-        return (
-            <div className={_cs(styles.questionnaire, className)}>
-                <header className={styles.header}>
-                    <div className={styles.left}>
-                        <h3 className={styles.heading}>
-                            { title }
-                        </h3>
-                        <div className={styles.info}>
-                            <div className={styles.questions}>
-                                <div className={styles.value}>
-                                    {activeQuestionsCount}
-                                </div>
-                                <div className={styles.label}>
-                                    {/* FIXME: use strings */}
-                                    questions
-                                </div>
+    return (
+        <div className={_cs(styles.questionnaire, className)}>
+            <header className={styles.header}>
+                <div className={styles.left}>
+                    <h3 className={styles.heading}>
+                        { title }
+                    </h3>
+                    <div className={styles.info}>
+                        <div className={styles.questions}>
+                            <div className={styles.value}>
+                                {activeQuestionsCount}
                             </div>
-                            <div>—</div>
-                            <div className={styles.created}>
-                                <div className={styles.label}>
-                                    {/* FIXME: use strings */}
-                                    created
-                                </div>
-                                <div className={styles.value}>
-                                    <FormattedDate
-                                        value={createdAt}
-                                        mode="dd-MM-yyyy"
-                                    />
-                                </div>
+                            <div className={styles.label}>
+                                {/* FIXME: use strings */}
+                                questions
+                            </div>
+                        </div>
+                        <div>—</div>
+                        <div className={styles.created}>
+                            <div className={styles.label}>
+                                {/* FIXME: use strings */}
+                                created
+                            </div>
+                            <div className={styles.value}>
+                                <FormattedDate
+                                    value={createdAt}
+                                    mode="dd-MM-yyyy"
+                                />
                             </div>
                         </div>
                     </div>
-                    <div className={styles.right}>
-                        {!archived && (
-                            <>
-                                <Link
-                                    className={styles.editQuestionnaireLink}
-                                    to={reverseRoute(
-                                        pathNames.questionnaireBuilder,
-                                        {
-                                            questionnaireId: id,
-                                            projectId: project,
-                                        },
-                                    )}
-                                    disabled={disabled}
-                                >
-                                    {/* FIXME: use strings */}
-                                    Edit Questions
-                                </Link>
-                                <ModalButton
-                                    transparent
-                                    disabled={disabled}
-                                    modal={(
-                                        <QuestionnaireModal
-                                            value={data}
-                                            projectId={project}
-                                            onRequestSuccess={onEdit}
-                                        />
-                                    )}
-                                >
-                                    {/* FIXME: use strings */}
-                                    Edit details
-                                </ModalButton>
-                            </>
-                        )}
-                        {archived && (
-                            <AccentButton
-                                transparent
-                                onClick={this.handleUnarchive}
+                </div>
+                <div className={styles.right}>
+                    {!archived && (
+                        <>
+                            <Link
+                                className={styles.editQuestionnaireLink}
+                                to={reverseRoute(
+                                    pathNames.questionnaireBuilder,
+                                    {
+                                        questionnaireId: id,
+                                        projectId: project,
+                                    },
+                                )}
                                 disabled={disabled}
                             >
                                 {/* FIXME: use strings */}
-                                Unarchive
-                            </AccentButton>
-                        )}
-                        <DropdownMenu
-                            dropdownIcon="menuDots"
-                            closeOnClick
+                                Edit Questions
+                            </Link>
+                            <ModalButton
+                                transparent
+                                disabled={disabled}
+                                modal={(
+                                    <QuestionnaireModal
+                                        value={data}
+                                        projectId={project}
+                                        onRequestSuccess={onEdit}
+                                    />
+                                )}
+                            >
+                                {/* FIXME: use strings */}
+                                Edit details
+                            </ModalButton>
+                        </>
+                    )}
+                    {archived && (
+                        <AccentButton
+                            transparent
+                            onClick={handleUnarchive}
+                            disabled={disabled}
                         >
-                            {!archived && (
-                                <DropdownButton
-                                    disabled={disabled}
-                                    // FIXME: use strings
-                                    title="Archive"
-                                    onClick={this.handleArchive}
-                                />
-                            )}
-                            {!archived && (
-                                <DropdownButton
-                                    onClick={this.handleCloneClick}
-                                    disabled={disabled}
-                                    // FIXME: use strings
-                                    title="Clone"
-                                />
-                            )}
+                            {/* FIXME: use strings */}
+                            Unarchive
+                        </AccentButton>
+                    )}
+                    <DropdownMenu
+                        dropdownIcon="menuDots"
+                        closeOnClick
+                    >
+                        {!archived && (
+                            <DropdownButton
+                                onClick={handlePreviewModalShow}
+                                disabled={disabled}
+                                // FIXME: use strings
+                                title="Preview"
+                            />
+                        )}
+                        {!archived && (
                             <DropdownButton
                                 disabled={disabled}
                                 // FIXME: use strings
-                                title="Delete"
-                                onClick={this.handleDelete}
+                                title="Archive"
+                                onClick={handleArchive}
                             />
+                        )}
+                        {!archived && (
                             <DropdownButton
-                                // FIXME: use strings
+                                onClick={handleCloneClick}
                                 disabled={disabled}
-                                title="Export to XLSForm"
-                                onClick={this.handleXLSFormExport}
-                            />
-                            <DropdownButton
                                 // FIXME: use strings
-                                disabled={disabled}
-                                title="Export to KoBo"
-                                onClick={this.handleKoboToolboxExport}
+                                title="Clone"
                             />
-                            <DropdownButton
-                                disabled
-                                // FIXME: use strings
-                                title="Export to ODK"
-                            />
-                            <DropdownButton
-                                disabled
-                                // FIXME: use strings
-                                title="Export data collection plan"
-                            />
-                        </DropdownMenu>
-                    </div>
-                </header>
-                <div className={styles.content}>
-                    <MetaOutput
-                        // FIXME: use strings
-                        label="Crisis type"
-                        value={crisisTypeDetail ? crisisTypeDetail.title : undefined}
-                    />
-                    <MetaOutput
-                        // FIXME: use strings
-                        label="Data collection technique"
-                        value={dataCollectionTechniqueDisplay}
-                    />
-                    <MetaOutput
-                        // FIXME: use strings
-                        label="Enumerator skill"
-                        value={enumeratorSkillDisplay}
-                    />
-                    <MetaOutput
-                        // FIXME: use strings
-                        label="Required duration"
-                        value={`${requiredDuration} min`}
-                    />
+                        )}
+                        <DropdownButton
+                            disabled={disabled}
+                            // FIXME: use strings
+                            title="Delete"
+                            onClick={handleDelete}
+                        />
+                        <DropdownButton
+                            // FIXME: use strings
+                            disabled={disabled}
+                            title="Export to XLSForm"
+                            onClick={handleXLSFormExport}
+                        />
+                        <DropdownButton
+                            // FIXME: use strings
+                            disabled={disabled}
+                            title="Export to KoBo"
+                            onClick={handleKoboToolboxExport}
+                        />
+                        <DropdownButton
+                            disabled
+                            // FIXME: use strings
+                            title="Export to ODK"
+                        />
+                        <DropdownButton
+                            disabled
+                            // FIXME: use strings
+                            title="Export data collection plan"
+                        />
+                    </DropdownMenu>
                 </div>
+            </header>
+            <div className={styles.content}>
+                <MetaOutput
+                    // FIXME: use strings
+                    label="Crisis type"
+                    value={crisisTypeDetail ? crisisTypeDetail.title : undefined}
+                />
+                <MetaOutput
+                    // FIXME: use strings
+                    label="Data collection technique"
+                    value={dataCollectionTechniqueDisplay}
+                />
+                <MetaOutput
+                    // FIXME: use strings
+                    label="Enumerator skill"
+                    value={enumeratorSkillDisplay}
+                />
+                <MetaOutput
+                    // FIXME: use strings
+                    label="Required duration"
+                    value={`${requiredDuration} min`}
+                />
             </div>
-        );
-    }
-}
+            {showPreviewModal && (
+                <QuestionnairePreviewModal
+                    title={title}
+                    questionnaireId={questionnaireKey}
+                    closeModal={handlePreviewModalClose}
+                />
+            )}
+        </div>
+    );
+};
 
 export default Questionnaire;
