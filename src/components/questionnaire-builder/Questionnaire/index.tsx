@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     _cs,
     reverseRoute,
 } from '@togglecorp/fujs';
 
+import Cloak from '#components/general/Cloak';
 import DropdownMenu from '#rsca/DropdownMenu';
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
@@ -38,6 +39,8 @@ interface Props {
     onKoboToolboxExport: (id: number) => void;
 }
 
+const isReadOnly = ({ setupPermissions }) => !setupPermissions.modify;
+
 const Questionnaire = (props: Props) => {
     const {
         className,
@@ -66,7 +69,7 @@ const Questionnaire = (props: Props) => {
         activeQuestionsCount,
     } = data;
 
-    const [showPreviewModal, setPreviewModal] = useState<boolean>(false);
+    const [showPreviewModal, setPreviewModal] = useState<>(false);
 
     const handleArchive = useCallback(
         () => {
@@ -157,81 +160,88 @@ const Questionnaire = (props: Props) => {
                     </div>
                 </div>
                 <div className={styles.right}>
-                    {!archived && (
-                        <>
-                            <Link
-                                className={styles.editQuestionnaireLink}
-                                to={reverseRoute(
-                                    pathNames.questionnaireBuilder,
-                                    {
-                                        questionnaireId: id,
-                                        projectId: project,
-                                    },
-                                )}
-                                disabled={disabled}
-                            >
-                                {/* FIXME: use strings */}
-                                Edit Questions
-                            </Link>
-                            <ModalButton
+                    <Cloak
+                        hide={isReadOnly}
+                        render={!archived ? (
+                            <>
+                                <Link
+                                    className={styles.editQuestionnaireLink}
+                                    to={reverseRoute(
+                                        pathNames.questionnaireBuilder,
+                                        {
+                                            questionnaireId: id,
+                                            projectId: project,
+                                        },
+                                    )}
+                                    disabled={disabled}
+                                >
+                                    {/* FIXME: use strings */}
+                                    Edit Questions
+                                </Link>
+                                <ModalButton
+                                    transparent
+                                    disabled={disabled}
+                                    modal={(
+                                        <QuestionnaireModal
+                                            value={data}
+                                            projectId={project}
+                                            onRequestSuccess={onEdit}
+                                        />
+                                    )}
+                                >
+                                    {/* FIXME: use strings */}
+                                    Edit details
+                                </ModalButton>
+                            </>
+                        ) : (
+                            <AccentButton
                                 transparent
+                                onClick={handleUnarchive}
                                 disabled={disabled}
-                                modal={(
-                                    <QuestionnaireModal
-                                        value={data}
-                                        projectId={project}
-                                        onRequestSuccess={onEdit}
-                                    />
-                                )}
                             >
                                 {/* FIXME: use strings */}
-                                Edit details
-                            </ModalButton>
-                        </>
-                    )}
-                    {archived && (
-                        <AccentButton
-                            transparent
-                            onClick={handleUnarchive}
-                            disabled={disabled}
-                        >
-                            {/* FIXME: use strings */}
-                            Unarchive
-                        </AccentButton>
-                    )}
+                                Unarchive
+                            </AccentButton>
+                        )}
+                    />
                     <DropdownMenu
                         dropdownIcon="menuDots"
                         closeOnClick
                     >
-                        {!archived && (
-                            <DropdownButton
-                                onClick={handlePreviewModalShow}
-                                disabled={disabled}
-                                // FIXME: use strings
-                                title="Preview"
-                            />
-                        )}
-                        {!archived && (
-                            <DropdownButton
-                                disabled={disabled}
-                                // FIXME: use strings
-                                title="Archive"
-                                onClick={handleArchive}
-                            />
-                        )}
-                        {!archived && (
-                            <DropdownButton
-                                onClick={handleCloneClick}
-                                disabled={disabled}
-                                // FIXME: use strings
-                                title="Clone"
-                            />
-                        )}
+                        <Cloak
+                            hide={isReadOnly}
+                            render={(
+                                <>
+                                    {!archived && (
+                                        <>
+                                            <DropdownButton
+                                                disabled={disabled}
+                                                // FIXME: use strings
+                                                title="Archive"
+                                                onClick={handleArchive}
+                                            />
+                                            <DropdownButton
+                                                onClick={handleCloneClick}
+                                                disabled={disabled}
+                                                // FIXME: use strings
+                                                title="Clone"
+                                            />
+                                        </>
+                                    )}
+                                    <DropdownButton
+                                        disabled={disabled}
+                                        // FIXME: use strings
+                                        title="Delete"
+                                        onClick={handleDelete}
+                                    />
+                                </>
+                            )}
+                        />
                         <DropdownButton
+                            onClick={handlePreviewModalShow}
                             disabled={disabled}
                             // FIXME: use strings
-                            title="Delete"
-                            onClick={handleDelete}
+                            title="Preview"
                         />
                         <DropdownButton
                             // FIXME: use strings

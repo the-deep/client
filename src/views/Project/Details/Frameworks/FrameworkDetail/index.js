@@ -254,16 +254,17 @@ export default class FrameworkDetail extends React.PureComponent {
                                     { _ts('project.framework', 'editWidgetsButtonTitle') }
                                 </ButtonLikeLink>
                             }
-                            {/* FIXME: show only if user has permission */}
-                            <ButtonLikeLink
-                                className={styles.editQuestionsLink}
-                                to={reverseRoute(
-                                    pathNames.frameworkQuestions,
-                                    { analysisFrameworkId },
-                                )}
-                            >
-                                Edit questions
-                            </ButtonLikeLink>
+                            {canEditFramework && (
+                                <ButtonLikeLink
+                                    className={styles.editQuestionsLink}
+                                    to={reverseRoute(
+                                        pathNames.frameworkQuestions,
+                                        { analysisFrameworkId },
+                                    )}
+                                >
+                                    Edit questions
+                                </ButtonLikeLink>
+                            )}
                             {(canUse && !readOnly) &&
                                 <UseFrameworkButton
                                     className={styles.button}

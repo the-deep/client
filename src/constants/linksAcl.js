@@ -40,6 +40,7 @@ export const allLinks = {
                 'leadsViz',
                 'clusterViz',
                 'entries',
+                'projectQuestionnaires',
                 'arys',
                 'export',
                 'userExports',
