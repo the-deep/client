@@ -9,6 +9,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
+import notify from '#notify';
 
 import {
     RequestCoordinator,
@@ -167,7 +168,21 @@ class QuestionnairePreviewModal extends React.PureComponent<Props> {
 
         this.form.validate()
             .then((valid: unknown) => {
-                console.warn(valid);
+                if (valid) {
+                    notify.send({
+                        title: 'Enketo Form',
+                        type: notify.type.SUCCESS,
+                        message: 'The form is valid.',
+                        duration: notify.duration.MEDIUM,
+                    });
+                } else {
+                    notify.send({
+                        title: 'Enketo Form',
+                        type: notify.type.ERROR,
+                        message: 'The form is invalid.',
+                        duration: notify.duration.MEDIUM,
+                    });
+                }
             });
     }
 
