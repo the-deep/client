@@ -33,6 +33,7 @@ import {
     notifyOnFailure,
     notifyOnFatal,
 } from '#request';
+import notify from '#notify';
 import _ts from '#ts';
 
 import Questionnaire from '#qbc/Questionnaire';
@@ -323,6 +324,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             console.warn('No file was selected');
             return;
         }
+
         const firstFile = files[0];
 
         const reader = new FileReader();
@@ -337,6 +339,12 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                 if (error) {
                     // TODO: show error
                     console.error(error);
+                    notify.send({
+                        title: 'XLS Import',
+                        type: notify.type.ERROR,
+                        message: 'Some error occurred.',
+                        duration: notify.duration.MEDIUM,
+                    });
                     return;
                 }
 
@@ -383,6 +391,12 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                     })
                     .catch((ex: unknown) => {
                         console.error(ex);
+                        notify.send({
+                            title: 'XLS Export',
+                            type: notify.type.ERROR,
+                            message: 'Some error occurred.',
+                            duration: notify.duration.MEDIUM,
+                        });
                     });
             },
         });

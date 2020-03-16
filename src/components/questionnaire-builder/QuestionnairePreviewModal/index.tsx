@@ -151,6 +151,12 @@ class QuestionnairePreviewModal extends React.PureComponent<Props> {
             })
             .catch((ex: unknown) => {
                 console.error(ex);
+                notify.send({
+                    title: 'Enketo preview',
+                    type: notify.type.ERROR,
+                    message: 'Could not create xform representation.',
+                    duration: notify.duration.MEDIUM,
+                });
             });
     }
 
@@ -170,14 +176,14 @@ class QuestionnairePreviewModal extends React.PureComponent<Props> {
             .then((valid: unknown) => {
                 if (valid) {
                     notify.send({
-                        title: 'Enketo Form',
+                        title: 'Enketo preview',
                         type: notify.type.SUCCESS,
                         message: 'The form is valid.',
                         duration: notify.duration.MEDIUM,
                     });
                 } else {
                     notify.send({
-                        title: 'Enketo Form',
+                        title: 'Enketo preview',
                         type: notify.type.ERROR,
                         message: 'The form is invalid.',
                         duration: notify.duration.MEDIUM,
