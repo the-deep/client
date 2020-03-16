@@ -4,6 +4,7 @@ import { saveAs } from 'file-saver';
 import { _cs } from '@togglecorp/fujs';
 import { produce } from 'immer';
 
+import Cloak from '#components/general/Cloak';
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import modalize from '#rscg/Modalize';
@@ -32,6 +33,7 @@ import {
     notifyOnFailure,
     notifyOnFatal,
 } from '#request';
+import notify from '#notify';
 import _ts from '#ts';
 
 import Questionnaire from '#qbc/Questionnaire';
@@ -200,6 +202,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
 const questionnaireKeySelector = (q: MiniQuestionnaireElement) => q.id;
 
 class QuestionnaireList extends React.PureComponent<Props, State> {
+    private static isReadOnly = ({ setupPermissions }) => !setupPermissions.modify;
+
     public constructor(props: Props) {
         super(props);
         this.state = {
@@ -246,7 +250,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
 
     private getCloneValue = (
         questionnaires: MiniQuestionnaireElement[],
-        questionnaireIdForClone: number,
+        questionnaireIdForClone?: number,
     ) => (
         questionnaires.find(q => q.id === questionnaireIdForClone)
     )
@@ -304,8 +308,15 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
 
     private handleQuestionnaireFormRequestSuccess = () => {
         // NOTE: re-trigger questionnaire request
-        this.props.requests.questionnairesGetRequest.do();
-        this.props.onQuestionnaireMetaReload();
+        const {
+            requests: {
+                questionnairesGetRequest,
+            },
+            onQuestionnaireMetaReload,
+        } = this.props;
+
+        questionnairesGetRequest.do();
+        onQuestionnaireMetaReload();
     }
 
     private handleImportXLSForm = (files: File[]) => {
@@ -313,6 +324,7 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
             console.warn('No file was selected');
             return;
         }
+
         const firstFile = files[0];
 
         const reader = new FileReader();
@@ -327,6 +339,12 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                 if (error) {
                     // TODO: show error
                     console.error(error);
+                    notify.send({
+                        title: 'XLS Import',
+                        type: notify.type.ERROR,
+                        message: 'Some error occurred.',
+                        duration: notify.duration.MEDIUM,
+                    });
                     return;
                 }
 
@@ -348,7 +366,13 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
     }
 
     private handleXLSFormExport = (questionnaireId: number) => {
-        this.props.requests.questionnaireGetRequest.do({
+        const {
+            requests: {
+                questionnaireGetRequest,
+            },
+        } = this.props;
+
+        questionnaireGetRequest.do({
             questionnaireId,
             onExportReady: (title: string, questions: QuestionnaireQuestionElement[]) => {
                 const workbook = generateXLSForm(
@@ -367,6 +391,12 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                     })
                     .catch((ex: unknown) => {
                         console.error(ex);
+                        notify.send({
+                            title: 'XLS Export',
+                            type: notify.type.ERROR,
+                            message: 'Some error occurred.',
+                            duration: notify.duration.MEDIUM,
+                        });
                     });
             },
         });
@@ -414,44 +444,49 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                         { title }
                     </h2>
                     {!archived && (
-                        <div className={styles.actions}>
-                            <FileInput
-                                className={styles.fileInput}
-                                onChange={this.handleImportXLSForm}
-                                showStatus={false}
-                                value=""
-                                accept=".xlsx"
-                                disabled={fileInputDisabled}
-                            >
-                                <div className={_cs(
-                                    fileInputDisabled && styles.disabled,
-                                    styles.fileInputButton,
-                                )}
-                                >
-                                    <Icon
-                                        className={styles.icon}
-                                        name="upload"
-                                    />
-                                    <div className={styles.text}>
-                                        {_ts('project.questionnaire.list', 'importQuestionnaireFromXLSFormButtonLabel')}
-                                    </div>
-                                </div>
-                            </FileInput>
-                            <ModalButton
-                                disabled={createPending || patchPending}
-                                className={styles.button}
-                                modal={
-                                    <QuestionnaireModal
-                                        onRequestSuccess={
-                                            this.handleQuestionnaireFormRequestSuccess
+                        <Cloak
+                            hide={QuestionnaireList.isReadOnly}
+                            render={(
+                                <div className={styles.actions}>
+                                    <FileInput
+                                        className={styles.fileInput}
+                                        onChange={this.handleImportXLSForm}
+                                        showStatus={false}
+                                        value=""
+                                        accept=".xlsx"
+                                        disabled={fileInputDisabled}
+                                    >
+                                        <div className={_cs(
+                                            fileInputDisabled && styles.disabled,
+                                            styles.fileInputButton,
+                                        )}
+                                        >
+                                            <Icon
+                                                className={styles.icon}
+                                                name="upload"
+                                            />
+                                            <div className={styles.text}>
+                                                {_ts('project.questionnaire.list', 'importQuestionnaireFromXLSFormButtonLabel')}
+                                            </div>
+                                        </div>
+                                    </FileInput>
+                                    <ModalButton
+                                        disabled={createPending || patchPending}
+                                        className={styles.button}
+                                        modal={
+                                            <QuestionnaireModal
+                                                onRequestSuccess={
+                                                    this.handleQuestionnaireFormRequestSuccess
+                                                }
+                                                projectId={projectId}
+                                            />
                                         }
-                                        projectId={projectId}
-                                    />
-                                }
-                            >
-                                {_ts('project.questionnaire.list', 'addQuestionnaireButtonLabel')}
-                            </ModalButton>
-                        </div>
+                                    >
+                                        {_ts('project.questionnaire.list', 'addQuestionnaireButtonLabel')}
+                                    </ModalButton>
+                                </div>
+                            )}
+                        />
                     )}
                 </header>
                 <ListView
