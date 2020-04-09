@@ -128,7 +128,8 @@ export function getFilteredQuestions(
 }
 
 const metadataTypes = [
-    'start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial', 'phonenumber',
+    'start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial',
+    'phonenumber', 'username', 'email', 'audit',
 ];
 
 const groupTags = [
@@ -200,6 +201,15 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
         activeQuestions.map((question) => {
             const questionKey = `question_${question.id}`;
             const questionChoiceKey = `${questionKey}_choices`;
+
+            const hints = [];
+            if (question.enumeratorInstruction) {
+                hints.push(`Enumerator Instruction: ${question.enumeratorInstruction}`);
+            }
+            if (question.respondentInstruction) {
+                hints.push(`Respondent Insturction: ${question.respondentInstruction}`);
+            }
+
             // NOTE: we need to escape question.title
             return {
                 // NOTE: Choice types requires choice name in type "type_name choice_key"
@@ -207,6 +217,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 name: questionKey,
                 label: escapeReplacementToken(question.title),
                 required: question.isRequired ? 'yes' : '',
+                hint: hints.join('; '),
             };
         }),
     );
