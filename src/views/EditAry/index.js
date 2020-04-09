@@ -334,13 +334,19 @@ export default class EditAry extends React.PureComponent {
             requests: {
                 arySaveRequest,
             },
+            editAryServerId,
+            activeLeadId,
+            activeLeadGroupId,
+            projectId,
         } = this.props;
+
         arySaveRequest.do({
             value: {
                 ...value,
-                id: this.props.editAryServerId,
-                lead: this.props.activeLeadId,
-                leadGroup: this.props.activeLeadGroupId,
+                project: projectId,
+                id: editAryServerId,
+                lead: activeLeadId,
+                leadGroup: activeLeadGroupId,
             },
         });
     };
