@@ -1109,7 +1109,8 @@
         "-16166235": "Add Questionnaire",
         "-88114396": "Questionnaire Status",
         "-25976066": "Framework Questions",
-        "-37971354": "XLSForm Import"
+        "-37971354": "XLSForm Import",
+        "-46134674": "There are no connectors associated with this project. Click below to add some!"
     },
     "links": {
         "browserExtension": {
@@ -1901,7 +1902,8 @@
             "applyFilterLabel": 427,
             "noFiltersMessage": 1139,
             "authorTitle": -31511044,
-            "sourceTitle": 5
+            "sourceTitle": 5,
+            "noConnectorsAddFromButtonLabel": -46134674
         },
         "addLeads.tabular": {
             "title": -2259039,

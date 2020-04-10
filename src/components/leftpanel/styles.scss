@@ -12,16 +12,6 @@
         height: var(--height-leftpanel-tabs);
     }
 
-    .tabular-modal {
-        width: auto;
-        overflow: auto;
-
-        .tabular-book {
-            width: 96vw;
-            height: 92vh;
-        }
-    }
-
     .multiview-container {
         display: none;
         flex-direction: column;
@@ -48,3 +38,15 @@
     width: var(--font-size-large);
     height: var(--font-size-large);
 }
+
+.tabular-modal {
+    width: 96vw;
+    height: 92vh;
+    overflow: auto;
+
+    .tabular-book {
+        width: 100%;
+        height: 100%;
+    }
+}
+
