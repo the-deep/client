@@ -44,7 +44,7 @@ const propTypes = {
     filters: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     activePage: PropTypes.number.isRequired,
     leadsCount: PropTypes.number,
-    countPerPage: PropTypes.number,
+    itemsPerPage: PropTypes.number,
     selectedLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     filtersData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
@@ -52,6 +52,7 @@ const propTypes = {
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
     setConnectorActivePage: PropTypes.func.isRequired,
+    setConnectorItemsPerPage: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
     onFiltersApply: PropTypes.func.isRequired,
     className: PropTypes.string,
@@ -69,7 +70,7 @@ const defaultProps = {
     filtersData: {},
     filters: [],
     leadsCount: 0,
-    countPerPage: DEFAULT_MAX_LEADS_PER_REQUEST,
+    itemsPerPage: DEFAULT_MAX_LEADS_PER_REQUEST,
 };
 
 const requestOptions = {
@@ -82,28 +83,29 @@ const requestOptions = {
                 projectId,
                 filtersData,
                 activePage,
-                countPerPage = DEFAULT_MAX_LEADS_PER_REQUEST,
+                itemsPerPage = DEFAULT_MAX_LEADS_PER_REQUEST,
             },
         }) => ({
             project: projectId,
-            offset: (activePage - 1) * countPerPage,
-            limit: countPerPage,
+            offset: (activePage - 1) * itemsPerPage,
+            limit: itemsPerPage,
             ...filtersData,
         }),
         onPropsChanged: [
             'activePage',
+            'itemsPerPage',
             'filtersData',
         ],
         onSuccess: ({
             response: {
                 results = emptyList,
                 count,
-                countPerPage,
             } = {},
             props: {
                 connectorId,
                 selectedLeads = [],
                 setConnectorLeads,
+                itemsPerPage = DEFAULT_MAX_LEADS_PER_REQUEST,
             },
         }) => {
             const selectedLeadsMap = listToMap(
@@ -129,7 +131,7 @@ const requestOptions = {
                 leads: uniqueLeads,
                 totalCount: count,
                 connectorId,
-                countPerPage,
+                itemsPerPage,
             });
         },
         onFailure: ({ errors: { response } }) => {
@@ -325,6 +327,17 @@ export default class ConnectorContent extends React.PureComponent {
         setConnectorActivePage({ connectorId, activePage });
     }
 
+    handleItemPerPageChange = (itemsPerPage) => {
+        const {
+            connectorId,
+            setConnectorItemsPerPage,
+        } = this.props;
+
+        if (setConnectorItemsPerPage) {
+            setConnectorItemsPerPage({ connectorId, itemsPerPage });
+        }
+    }
+
     handleFiltersChange = (newValue) => {
         this.setState({ localFiltersData: newValue });
     }
@@ -389,7 +402,7 @@ export default class ConnectorContent extends React.PureComponent {
             },
             className,
             leadsCount,
-            countPerPage,
+            itemsPerPage,
             activePage,
             selectedLeads,
         } = this.props;
@@ -418,9 +431,9 @@ export default class ConnectorContent extends React.PureComponent {
                     <Pager
                         activePage={activePage}
                         itemsCount={leadsCount}
-                        maxItemsPerPage={countPerPage}
+                        maxItemsPerPage={itemsPerPage}
                         onPageClick={this.handlePageClick}
-                        showItemsPerPageChange={false}
+                        onItemsPerPageChange={this.handleItemPerPageChange}
                     />
                 </footer>
             </div>
