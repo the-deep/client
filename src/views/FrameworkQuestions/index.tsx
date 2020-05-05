@@ -266,6 +266,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         framework,
                         questions: filteredQuestions,
                         filtered: treeFilter.length > 0,
+                        questionClassName: styles.question,
 
                         showLoadingOverlay: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
@@ -306,6 +307,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         questions: filteredQuestions,
+                        questionClassName: styles.question,
                         filtered: treeFilter.length > 0,
                         archived: true,
                     });

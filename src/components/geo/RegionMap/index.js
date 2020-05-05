@@ -127,7 +127,7 @@ const propTypes = {
     selections: PropTypes.arrayOf(PropTypes.string),
     onSelectionsChange: PropTypes.func,
     polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    editMode: PropTypes.boolean,
+    editMode: PropTypes.bool,
     polygonsEnabled: PropTypes.bool,
 
     onEditStart: PropTypes.func,

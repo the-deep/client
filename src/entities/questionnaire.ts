@@ -1,5 +1,5 @@
 import Excel from 'exceljs/dist/exceljs.js';
-import { listToMap, Obj, isDefined } from '@togglecorp/fujs';
+import { listToMap, Obj, sum, isDefined } from '@togglecorp/fujs';
 
 import {
     FrameworkQuestionElement,
@@ -20,11 +20,14 @@ export interface TreeItem {
     key: string;
     parentKey?: string;
     title: string;
+    totalCount?: number;
 }
 
 export const treeItemKeySelector = (item: TreeItem) => item.key;
 export const treeItemParentKeySelector = (item: TreeItem) => item.parentKey;
-export const treeItemLabelSelector = (item: TreeItem) => item.title;
+export const treeItemLabelSelector = (item: TreeItem) => (
+    isDefined(item.totalCount) && item.totalCount > 0 ? `${item.title} (${item.totalCount})` : item.title
+);
 
 export function getFrameworkMatrices(
     framework: MiniFrameworkElement | undefined,
@@ -38,32 +41,23 @@ export function getFrameworkMatrices(
         widget => widget.widgetId === 'matrix2dWidget',
     ) as Matrix2dWidgetElement[];
 
-    const matrices: TreeItem[] = matrix2dWidgets
-        .map(widget => [
-            {
-                key: widget.key,
-                title: widget.title || 'Untitled matrix',
-                parentKey: undefined,
-            },
-            {
-                key: `row-${widget.key}`,
-                title: 'Row',
-                parentKey: widget.key,
-            },
-            {
-                key: `column-${widget.key}`,
-                title: 'Column',
-                parentKey: widget.key,
-            },
-        ])
-        .flat();
-
     const dimensions: TreeItem[] = matrix2dWidgets
         .map(widget => (
             widget.properties.data.dimensions.map(dimension => ({
                 key: dimension.id,
                 title: dimension.title || 'Untitled row',
                 parentKey: `row-${widget.key}`,
+                totalCount: questions && questions.filter((question) => {
+                    const { frameworkAttribute } = question;
+                    if (!frameworkAttribute) {
+                        return false;
+                    }
+
+                    return (
+                        (frameworkAttribute.type === 'subdimension' && frameworkAttribute.parentValue === dimension.id)
+                        || (frameworkAttribute.type === 'dimension' && frameworkAttribute.value === dimension.id)
+                    );
+                }).length,
             }))
         ))
         .flat();
@@ -75,6 +69,14 @@ export function getFrameworkMatrices(
                     key: subdimension.id,
                     title: subdimension.title || 'Untitled sub row',
                     parentKey: dimension.id,
+                    totalCount: questions && questions.filter((question) => {
+                        const { frameworkAttribute } = question;
+                        if (!frameworkAttribute) {
+                            return false;
+                        }
+
+                        return frameworkAttribute.type === 'subdimension' && frameworkAttribute.value === dimension.id;
+                    }).length,
                 }))
             )).flat()
         ))
@@ -86,20 +88,66 @@ export function getFrameworkMatrices(
                 key: sector.id,
                 title: sector.title || 'Untitled column',
                 parentKey: `column-${widget.key}`,
+                totalCount: questions && questions.filter((question) => {
+                    const { frameworkAttribute } = question;
+                    if (!frameworkAttribute) {
+                        return false;
+                    }
+
+                    return (
+                        (frameworkAttribute.type === 'subsector' && frameworkAttribute.parentValue === sector.id)
+                        || (frameworkAttribute.type === 'sector' && frameworkAttribute.value === sector.id)
+                    );
+                }).length,
             }))
         ))
         .flat();
 
     const subsectors: TreeItem[] = matrix2dWidgets
         .map(widget => (
-            widget.properties.data.sectors.map(dimension => (
-                dimension.subsectors.map(subdimension => ({
-                    key: subdimension.id,
-                    title: subdimension.title || 'Untitled sub column',
-                    parentKey: dimension.id,
+            widget.properties.data.sectors.map(sector => (
+                sector.subsectors.map(subsector => ({
+                    key: subsector.id,
+                    title: subsector.title || 'Untitled sub column',
+                    parentKey: sector.id,
+                    totalCount: questions && questions.filter((question) => {
+                        const { frameworkAttribute } = question;
+                        if (!frameworkAttribute) {
+                            return false;
+                        }
+
+                        return frameworkAttribute.type === 'subsector' && frameworkAttribute.value === sector.id;
+                    }).length,
                 }))
             )).flat()
         ))
+        .flat();
+
+    const rowCount = sum(dimensions.map(item => item.totalCount).filter(isDefined));
+    const columnCount = sum(sectors.map(item => item.totalCount).filter(isDefined));
+    const totalCount = rowCount + columnCount;
+
+    const matrices: TreeItem[] = matrix2dWidgets
+        .map(widget => [
+            {
+                key: widget.key,
+                title: widget.title || 'Untitled matrix',
+                parentKey: undefined,
+                totalCount,
+            },
+            {
+                key: `row-${widget.key}`,
+                title: 'Row',
+                parentKey: widget.key,
+                totalCount: rowCount,
+            },
+            {
+                key: `column-${widget.key}`,
+                title: 'Column',
+                parentKey: widget.key,
+                totalCount: columnCount,
+            },
+        ])
         .flat();
 
     return [
