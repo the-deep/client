@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FaramOutputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
-import NormalNumeral from '#rscv/Numeral';
+import Numeral from '#rscv/Numeral';
 
 import styles from './styles.scss';
-
-const Numeral = FaramOutputElement(NormalNumeral);
 
 const propTypes = {
     className: PropTypes.string,
@@ -21,20 +19,13 @@ export default class NumberListWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const {
-            className: classNameFromProps,
-        } = this.props;
+        const { className } = this.props;
 
         const separatorText = ' ';
         const invalidText = '';
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.numberOutput}
-        `;
-
         return (
-            <div className={className} >
+            <div className={_cs(styles.numberOutput, className)} >
                 <Numeral
                     faramElementName="value"
                     separator={separatorText}

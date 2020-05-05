@@ -84,7 +84,7 @@ module.exports = (env) => {
                     ],
                 },
                 {
-                    test: /\.scss$/,
+                    test: /\.s?css$/,
                     include: appSrc,
                     exclude: nodeModulesSrc,
                     use: [

@@ -30,6 +30,7 @@ interface QuestionListProps {
     title: string;
     className?: string;
     questions?: BaseQuestionElement[];
+    questionClassName?: string;
     showLoadingOverlay?: boolean;
     onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
     onAdd?: () => void;
@@ -76,6 +77,7 @@ const QuestionList = (props: QuestionListProps) => {
         onOrderChange,
         archived,
         filtered,
+        questionClassName,
     } = props;
 
     const [selectedQuestions, setSelectedQuestions] = useState<Selection>({});
@@ -117,13 +119,13 @@ const QuestionList = (props: QuestionListProps) => {
             onSelectChange: handleQuestionSelectChange,
             expanded: !!expandedQuestions[key],
             onExpandChange: handleQuestionExpandChange,
-            className: styles.question,
+            className: _cs(styles.question, questionClassName),
             disabled: showLoadingOverlay,
         }),
         [
             framework, onEdit, onDelete, onCopyFromDrop,
             onClone, onArchive, onUnarchive, onAddButtonClick, showLoadingOverlay,
-            selectedQuestions, handleQuestionSelectChange,
+            selectedQuestions, handleQuestionSelectChange, questionClassName,
             expandedQuestions, handleQuestionExpandChange,
         ],
     );
