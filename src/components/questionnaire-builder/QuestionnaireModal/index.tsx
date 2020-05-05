@@ -7,7 +7,9 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import NumberInput from '#rsci/NumberInput';
+import MinuteSecondInput from '#components/input/MinuteSecondInput';
 import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
@@ -24,6 +26,7 @@ import {
     notifyOnFailure,
     notifyOnFatal,
 } from '#request';
+import notify from '#notify';
 
 import {
     QuestionnaireElement,
@@ -44,7 +47,7 @@ import styles from './styles.scss';
 type FormKeys = 'title'
     | 'crisisType'
     | 'enumeratorSkill'
-    | 'dataCollectionTechnique'
+    | 'dataCollectionTechniques'
     | 'requiredDuration';
 
 type QuestionnaireFormElement = Partial<Pick<QuestionnaireElement, FormKeys>>;
@@ -98,6 +101,12 @@ const requestOptions: Requests<ComponentProps, Params> = {
             response,
         }) => {
             props.onRequestSuccess(response);
+            notify.send({
+                type: notify.type.SUCCESS,
+                title: 'Questionnaire',
+                message: `Questionnaire ${response ? response.title : ''} was successfully created.`,
+                duration: notify.duration.MEDIUM,
+            });
             if (props.closeModal) {
                 props.closeModal();
             }
@@ -130,6 +139,12 @@ const requestOptions: Requests<ComponentProps, Params> = {
             response,
         }) => {
             props.onRequestSuccess(response);
+            notify.send({
+                type: notify.type.SUCCESS,
+                title: 'Questionnaire',
+                message: 'Questionnaire was sccessfully updated.',
+                duration: notify.duration.MEDIUM,
+            });
             if (props.closeModal) {
                 props.closeModal();
             }
@@ -162,6 +177,12 @@ const requestOptions: Requests<ComponentProps, Params> = {
             response,
         }) => {
             props.onRequestSuccess(response);
+            notify.send({
+                type: notify.type.SUCCESS,
+                title: 'Questionnaire',
+                message: `Questionnaire ${response ? response.title : ''} was successfully created.`,
+                duration: notify.duration.MEDIUM,
+            });
             if (props.closeModal) {
                 props.closeModal();
             }
@@ -194,7 +215,7 @@ const questionnaireMetaSchema = {
         title: [requiredCondition],
         crisisType: [],
         enumeratorSkill: [requiredCondition],
-        dataCollectionTechnique: [requiredCondition],
+        dataCollectionTechniques: [requiredCondition],
         requiredDuration: [requiredCondition],
     },
 };
@@ -270,6 +291,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
         faramValues: FaramValues,
         faramErrors: FaramErrors,
     ) => {
+        console.warn(faramValues);
         this.setState({
             faramValues,
             faramErrors,
@@ -349,21 +371,19 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                             keySelector={defaultKeySelector}
                             labelSelector={defaultLabelSelector}
                         />
-                        <SelectInput
+                        <MultiSelectInput
                             options={dataCollectionTechniqueOptionList}
-                            faramElementName="dataCollectionTechnique"
+                            faramElementName="dataCollectionTechniques"
                             className={styles.input}
                             // FIXME: use strings
                             label="Data collection technique"
                             keySelector={defaultKeySelector}
                             labelSelector={defaultLabelSelector}
                         />
-                        <NumberInput
+                        <MinuteSecondInput
                             faramElementName="requiredDuration"
                             className={styles.input}
-                            separator=" "
                             // FIXME: use strings
-                            label="Required duration (Minutes)"
                         />
                     </ModalBody>
                     <ModalFooter>

@@ -117,7 +117,7 @@ export interface MiniQuestionnaireElement extends DbEntity {
 
     enumeratorSkill?: string;
     enumeratorSkillDisplay?: string;
-    dataCollectionTechnique?: string;
+    dataCollectionTechniques?: string;
     dataCollectionTechniqueDisplay?: string;
     crisisType?: number;
     crisisTypeDetail?: IdTitle;
@@ -135,7 +135,7 @@ export interface QuestionnaireElement extends DbEntity {
 
     enumeratorSkill?: string;
     enumeratorSkillDisplay?: string;
-    dataCollectionTechnique?: string;
+    dataCollectionTechniques?: string;
     dataCollectionTechniqueDisplay?: string;
     crisisType?: number;
     crisisTypeDetail?: IdTitle;

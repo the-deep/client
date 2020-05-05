@@ -165,9 +165,15 @@ const requestOptions: Requests<ComponentProps, Params> = {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
         method: methods.PATCH,
         body: ({ params }) => params && params.body,
-        onSuccess: ({ props }) => {
+        onSuccess: ({ props, response }) => {
             // NOTE: re-trigger questionnaire request
             props.requests.questionnairesGetRequest.do();
+            notify.send({
+                type: notify.type.SUCCESS,
+                title: 'Questionnaire',
+                message: `Questionnaire ${response ? response.title : ''} was successfully created.`,
+                duration: notify.duration.MEDIUM,
+            });
             props.onQuestionnaireMetaReload();
         },
         onFailure: notifyOnFailure('Questionnaire Edit'),

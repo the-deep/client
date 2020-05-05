@@ -17,7 +17,6 @@ import VerticalTabs from '#rscv/VerticalTabs';
 
 import Page from '#rscv/Page';
 
-// import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
 import {
     QuestionnaireElement,
     QuestionnaireQuestionElement,
@@ -954,28 +953,19 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             )}
                             leftContainerClassName={styles.left}
                             rightContainerClassName={styles.right}
-                            rightChild={
+                            rightChild={(
                                 <MultiViewContainer
                                     views={this.views}
                                     useHash
                                 />
-                            }
-                            leftChild={
-                                <>
-                                    <MultiViewContainer
-                                        containerClassName={styles.addPane}
-                                        views={this.addViews}
-                                        useHash
-                                    />
-                                    {/*
-                                        <img
-                                            className={styles.ifrcLogo}
-                                            src={IfrcLogo}
-                                            alt="IFRC Logo"
-                                        />
-                                    */}
-                                </>
-                            }
+                            )}
+                            leftChild={(
+                                <MultiViewContainer
+                                    containerClassName={styles.addPane}
+                                    views={this.addViews}
+                                    useHash
+                                />
+                            )}
                             disabled={!addFromFramework}
                         />
                     )}

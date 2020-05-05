@@ -336,7 +336,7 @@ class Question extends React.PureComponent<Props> {
                                                         onClick={this.handleUnarchiveButtonClick}
                                                         disabled={disabled}
                                                     >
-                                                        Unarchive
+                                                        Unpark Question
                                                     </Button>
                                                 )}
                                                 {onEditButtonClick && (
