@@ -1,11 +1,28 @@
 .minute-second-input {
-    .date-input {
-        flex-grow: 1;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    .input-container {
+        display: flex;
+        align-items: center;
+
+        .input {
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            width: 48px;
+            text-align: right;
+
+            &.minute {
+                margin-right: var(--spacing-small);
+
+                &:after {
+                    content: ':';
+                }
+            }
+        }
 
         &.invalid {
-            background-color: yellow;
+            .input {
+                border-bottom-color: var(--color-warning);
+            }
         }
+
     }
 
     &:focus-within {

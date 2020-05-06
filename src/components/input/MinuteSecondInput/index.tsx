@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, useRef, useState } from 'react';
 import {
     _cs,
     isTruthyString,
-    padStart,
     isDefined,
 } from '@togglecorp/fujs';
 
@@ -77,29 +76,25 @@ const Input = (props: Props) => {
         secondValue = String(paddedSecond(valueMiti));
     }
 
-    const finalMinSec = useMemo(
+    const {
+        value: finalMinSec,
+        valid: finalMinSecIsValid,
+    } = useMemo(
         () => {
             if (tempMinSec) {
                 const second = isTruthyString(tempMinSec.s) ? +tempMinSec.s : 0;
                 const minute = isTruthyString(tempMinSec.m) ? +tempMinSec.m : 0;
                 if (second >= 60) {
-                    return undefined;
+                    return { valid: false, value: undefined };
                 }
-                return (60 * (minute)) + (second);
+                return {
+                    valid: true,
+                    value: (60 * (minute)) + (second),
+                };
             }
-            return undefined;
+            return { valid: true, value: valueMiti };
         },
-        [tempMinSec],
-    );
-
-    const finalMinSecIsValid = useMemo(
-        () => {
-            if (!tempMinSec) {
-                return true;
-            }
-            return isDefined(finalMinSec);
-        },
-        [tempMinSec, finalMinSec],
+        [tempMinSec, valueMiti],
     );
 
     const handleFocus = useCallback(
@@ -118,7 +113,7 @@ const Input = (props: Props) => {
             const handleChange = () => {
                 // console.warn('Focus out of div');
 
-                if (finalMinSecIsValid) {
+                if (finalMinSecIsValid && valueMiti !== finalMinSec) {
                     onChange(finalMinSec);
                 }
                 setTempMinSec(undefined);
@@ -132,7 +127,7 @@ const Input = (props: Props) => {
                 0,
             );
         },
-        [onChange, finalMinSec, finalMinSecIsValid],
+        [onChange, finalMinSec, finalMinSecIsValid, valueMiti],
     );
 
     const handleMinuteChange = useCallback(
@@ -190,15 +185,14 @@ const Input = (props: Props) => {
             )}
             <div
                 className={_cs(
-                    styles.dateInput,
-                    className,
+                    styles.inputContainer,
                     !finalMinSecIsValid && styles.invalid,
                 )}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
             >
                 <DigitalInput
-                    className={styles.input}
+                    className={_cs(styles.input, styles.minute)}
                     value={minuteValue}
                     min={0}
                     onChange={handleMinuteChange}
@@ -207,6 +201,7 @@ const Input = (props: Props) => {
                     readOnly={readOnly}
                     padLength={4}
                 />
+                m
                 <DigitalInput
                     className={styles.input}
                     value={secondValue}
@@ -218,6 +213,7 @@ const Input = (props: Props) => {
                     readOnly={readOnly}
                     padLength={2}
                 />
+                s
             </div>
             {showHintAndError && (
                 <HintAndError
