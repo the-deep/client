@@ -161,7 +161,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                                 leads,
                                 count,
                                 activePage,
-                                countPerPage,
+                                itemsPerPage,
                             } = {},
                         } = {},
                         filtersData,
@@ -187,12 +187,13 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             projectId={projectId}
                             connectorLeads={leads}
                             leadsCount={count}
-                            countPerPage={countPerPage}
+                            itemsPerPage={itemsPerPage}
                             activePage={activePage || 1}
                             onFiltersApply={this.handleFiltersApply}
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
                             setConnectorActivePage={this.setConnectorActivePage}
+                            setConnectorItemsPerPage={this.setConnectorItemsPerPage}
                             selectedLeads={selectedLeads[selectedConnector]}
                             setConnectorLeadSelection={this.setConnectorLeadSelection}
                             onSelectAllClick={this.handleSelectAllLead}
@@ -228,14 +229,14 @@ export default class ConnectorSelectModal extends React.PureComponent {
         leads,
         connectorId,
         totalCount,
-        countPerPage,
+        itemsPerPage,
     }) => {
         const settings = {
             connectorsLeads: { $auto: {
                 [connectorId]: { $auto: {
                     leads: { $set: leads },
                     count: { $set: totalCount },
-                    countPerPage: { $set: countPerPage },
+                    itemsPerPage: { $set: itemsPerPage },
                 } },
             } },
         };
@@ -247,6 +248,17 @@ export default class ConnectorSelectModal extends React.PureComponent {
             connectorsLeads: { $auto: {
                 [connectorId]: { $auto: {
                     activePage: { $set: activePage },
+                } },
+            } },
+        };
+        this.setState(update(this.state, settings));
+    }
+
+    setConnectorItemsPerPage = ({ connectorId, itemsPerPage }) => {
+        const settings = {
+            connectorsLeads: { $auto: {
+                [connectorId]: { $auto: {
+                    itemsPerPage: { $set: itemsPerPage },
                 } },
             } },
         };
