@@ -1,5 +1,11 @@
 import Excel from 'exceljs/dist/exceljs.js';
-import { listToMap, Obj, sum, isDefined } from '@togglecorp/fujs';
+import {
+    listToMap,
+    Obj,
+    sum,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import {
     FrameworkQuestionElement,
@@ -293,6 +299,27 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     });
 
     return workbook;
+}
+
+export function generateDurationLabel(duration?: number) {
+    if (isNotDefined(duration) || duration === 0) {
+        return 'N/A';
+    }
+    const durationSec = duration % 60;
+    const durationMin = (duration - durationSec) / 60;
+
+    const durationMinuteLabel = `${durationMin} min`;
+    const durationSecondLabel = `${durationSec} sec`;
+
+    if (durationSec === 0) {
+        return durationMinuteLabel;
+    }
+
+    if (durationMin === 0) {
+        return durationSecondLabel;
+    }
+
+    return `${durationMinuteLabel} ${durationSecondLabel}`;
 }
 
 export function readXLSForm(workbook: Excel.Workbook) {

@@ -14,6 +14,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import QuestionnaireModal from '#qbc/QuestionnaireModal';
 import DropdownButton from '#components/general/DropdownButton';
 import QuestionnairePreviewModal from '#qbc/QuestionnairePreviewModal';
+import { generateDurationLabel } from '#entities/questionnaire';
 
 import { pathNames } from '#constants';
 import { MiniQuestionnaireElement } from '#typings';
@@ -68,13 +69,6 @@ const Questionnaire = (props: Props) => {
         dataCollectionTechniqueDisplay,
         activeQuestionsCount,
     } = data;
-
-    const requiredDurationSec = requiredDuration ? requiredDuration % 60 : 0;
-    const requiredDurationMin = requiredDuration
-        ? ((requiredDuration - requiredDurationSec) / 60) : 0;
-
-    const durationMinuteLabel = requiredDurationMin ? `${requiredDurationMin} min` : '';
-    const durationSecondLabel = `${requiredDurationSec} sec`;
 
     const [showPreviewModal, setPreviewModal] = useState(false);
 
@@ -294,7 +288,7 @@ const Questionnaire = (props: Props) => {
                 <MetaOutput
                     // FIXME: use strings
                     label="Required duration"
-                    value={`${durationMinuteLabel} ${durationSecondLabel}`}
+                    value={generateDurationLabel(requiredDuration)}
                 />
             </div>
             {showPreviewModal && (

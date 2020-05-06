@@ -17,7 +17,10 @@ import {
     MiniFrameworkElement,
     QuestionType,
 } from '#typings';
-import { isChoicedQuestionType } from '#entities/questionnaire';
+import {
+    isChoicedQuestionType,
+    generateDurationLabel,
+} from '#entities/questionnaire';
 
 import { getMatrix2dStructures } from '#utils/framework';
 import DropdownButton from '#components/general/DropdownButton';
@@ -266,13 +269,6 @@ class Question extends React.PureComponent<Props> {
             isArchived,
         } = data;
 
-        const requiredDurationSec = requiredDuration ? requiredDuration % 60 : 0;
-        const requiredDurationMin = requiredDuration
-            ? ((requiredDuration - requiredDurationSec) / 60) : 0;
-
-        const durationMinuteLabel = requiredDurationMin ? `${requiredDurationMin} min` : '';
-        const durationSecondLabel = `${requiredDurationSec} sec`;
-
         return (
             <div
                 className={_cs(className, styles.questionContainer)}
@@ -328,7 +324,7 @@ class Question extends React.PureComponent<Props> {
                                                 />
                                                 <MetaOutput
                                                     label="Required duration"
-                                                    value={`${durationMinuteLabel} ${durationSecondLabel}`}
+                                                    value={generateDurationLabel(requiredDuration)}
                                                 />
                                                 <MetaOutput
                                                     label="Importance"

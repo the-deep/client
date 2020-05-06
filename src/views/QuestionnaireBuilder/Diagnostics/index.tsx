@@ -14,6 +14,7 @@ import {
     IdTitle,
     QuestionnaireQuestionElement,
 } from '#typings';
+import { generateDurationLabel } from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
@@ -83,11 +84,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                         />
                         <MetaOutput
                             label="Required duration"
-                            value={
-                                requiredDuration
-                                    ? `${requiredDuration} min`
-                                    : undefined
-                            }
+                            value={generateDurationLabel(requiredDuration)}
                         />
                     </div>
                 </header>
