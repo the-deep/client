@@ -1,12 +1,16 @@
 import React from 'react';
 import memoize from 'memoize-one';
-import Faram, { requiredCondition, FaramGroup } from '@togglecorp/faram';
+import Faram, {
+    requiredCondition,
+    FaramGroup,
+    FaramInputElement,
+} from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import NumberInput from '#rsci/NumberInput';
+import RawMinuteSecondInput from '#components/input/MinuteSecondInput';
 import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
@@ -41,6 +45,8 @@ import {
 import FrameworkAttributeInput from './FrameworkAttributeInput';
 import ResponseInput from './ResponseInput';
 import styles from './styles.scss';
+
+const MinuteSecondInput = FaramInputElement(RawMinuteSecondInput);
 
 type DetailKeys = 'title'
     | 'type'
@@ -361,6 +367,7 @@ class QuestionModal extends React.PureComponent<Props, State> {
                             blankClassName={styles.blankTab}
                             onClick={this.handleTabClick}
                             renderer={TabTitle}
+                            rendererClassName={styles.tabTitle}
                             rendererParams={this.tabRendererParams}
                             // modifier={this.renderTab}
                         />
@@ -454,11 +461,11 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                             keySelector={defaultKeySelector}
                                             labelSelector={defaultLabelSelector}
                                         />
-                                        <NumberInput
+                                        <MinuteSecondInput
                                             faramElementName="requiredDuration"
-                                            className={styles.input}
-                                            separator=" "
-                                            label="Required duration (Minutes)"
+                                            className={_cs(styles.input, styles.durationInput)}
+                                            label="Required duration"
+                                            // FIXME: use strings
                                         />
                                         <SegmentInput
                                             faramElementName="importance"

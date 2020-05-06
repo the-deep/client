@@ -9,6 +9,14 @@
                 text-align: center;
             }
 
+            .tab-title {
+                display: flex;
+
+                >* {
+                    flex-basis: 100%;
+                }
+            }
+
             .blank-tab {
                 display: none;
             }

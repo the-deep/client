@@ -266,6 +266,13 @@ class Question extends React.PureComponent<Props> {
             isArchived,
         } = data;
 
+        const requiredDurationSec = requiredDuration ? requiredDuration % 60 : 0;
+        const requiredDurationMin = requiredDuration
+            ? ((requiredDuration - requiredDurationSec) / 60) : 0;
+
+        const durationMinuteLabel = requiredDurationMin ? `${requiredDurationMin} min` : '';
+        const durationSecondLabel = `${requiredDurationSec} sec`;
+
         return (
             <div
                 className={_cs(className, styles.questionContainer)}
@@ -321,7 +328,7 @@ class Question extends React.PureComponent<Props> {
                                                 />
                                                 <MetaOutput
                                                     label="Required duration"
-                                                    value={requiredDuration && `${requiredDuration} min`}
+                                                    value={`${durationMinuteLabel} ${durationSecondLabel}`}
                                                 />
                                                 <MetaOutput
                                                     label="Importance"

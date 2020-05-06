@@ -1,28 +1,36 @@
 .minute-second-input {
+    width: auto;
+
     .input-container {
         display: flex;
         align-items: center;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .input {
-            border-bottom: var(--width-separator-thin) solid var(--color-separator);
-            width: 48px;
+            margin-right: var(--spacing-extra-small);
+            width: 24px;
             text-align: right;
 
             &.minute {
-                margin-right: var(--spacing-small);
+                width: 36px;
+            }
 
-                &:after {
-                    content: ':';
-                }
+        }
+        :global {
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type=number] {
+                -moz-appearance: textfield;
             }
         }
 
         &.invalid {
-            .input {
-                border-bottom-color: var(--color-warning);
-            }
+            border-bottom-color: var(--color-warning);
         }
-
     }
 
     &:focus-within {

@@ -6,7 +6,6 @@ import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import NumberInput from '#rsci/NumberInput';
 import RawMinuteSecondInput from '#components/input/MinuteSecondInput';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
@@ -346,7 +345,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                     error={faramErrors}
                     disabled={pending}
                 >
-                    <ModalBody>
+                    <ModalBody className={styles.modalBody}>
                         { pending && <LoadingAnimation /> }
                         <NonFieldErrors faramElement />
                         <TextInput
@@ -384,7 +383,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                         />
                         <MinuteSecondInput
                             faramElementName="requiredDuration"
-                            className={styles.input}
+                            className={_cs(styles.input, styles.durationInput)}
                             label="Required duration"
                             // FIXME: use strings
                         />
