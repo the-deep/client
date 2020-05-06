@@ -1,5 +1,20 @@
 .minute-second-input {
-    .input-container {
-        display: flex;
+    .date-input {
+        flex-grow: 1;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+
+        &.invalid {
+            background-color: yellow;
+        }
+    }
+
+    &:focus-within {
+        .date-input {
+            border-bottom-color: var(--color-accent);
+        }
+
+        .label {
+            color: var(--color-accent);
+        }
     }
 }

@@ -1,13 +1,13 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import Faram, { requiredCondition } from '@togglecorp/faram';
+import Faram, { requiredCondition, FaramInputElement } from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import NumberInput from '#rsci/NumberInput';
-import MinuteSecondInput from '#components/input/MinuteSecondInput';
+import RawMinuteSecondInput from '#components/input/MinuteSecondInput';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import TextInput from '#rsci/TextInput';
@@ -43,6 +43,8 @@ import {
 } from '#constants/dummy';
 
 import styles from './styles.scss';
+
+const MinuteSecondInput = FaramInputElement(RawMinuteSecondInput);
 
 type FormKeys = 'title'
     | 'crisisType'
@@ -383,6 +385,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                         <MinuteSecondInput
                             faramElementName="requiredDuration"
                             className={styles.input}
+                            label="Required duration"
                             // FIXME: use strings
                         />
                     </ModalBody>
