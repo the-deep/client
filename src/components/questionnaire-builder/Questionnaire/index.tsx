@@ -69,7 +69,14 @@ const Questionnaire = (props: Props) => {
         activeQuestionsCount,
     } = data;
 
-    const [showPreviewModal, setPreviewModal] = useState<>(false);
+    const requiredDurationSec = requiredDuration ? requiredDuration % 60 : 0;
+    const requiredDurationMin = requiredDuration
+        ? ((requiredDuration - requiredDurationSec) / 60) : 0;
+
+    const durationMinuteLabel = requiredDurationMin ? `${requiredDurationMin} min` : '';
+    const durationSecondLabel = `${requiredDurationSec} sec`;
+
+    const [showPreviewModal, setPreviewModal] = useState(false);
 
     const handleArchive = useCallback(
         () => {
@@ -287,7 +294,7 @@ const Questionnaire = (props: Props) => {
                 <MetaOutput
                     // FIXME: use strings
                     label="Required duration"
-                    value={`${requiredDuration} min`}
+                    value={`${durationMinuteLabel} ${durationSecondLabel}`}
                 />
             </div>
             {showPreviewModal && (

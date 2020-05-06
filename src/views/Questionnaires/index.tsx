@@ -10,7 +10,6 @@ import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 
 import BackLink from '#components/general/BackLink';
-import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
 import { pathNames } from '#constants';
 import {
     projectIdFromRouteSelector,
@@ -80,7 +79,7 @@ type Props = AddRequestProps<ComponentProps, Params>;
 
 const requestOptions: Requests<ComponentProps, Params> = {
     questionnaireMetaRequest: {
-        url: ({ props }) => `/projects/${props.projectId}/questionnaire-meta`,
+        url: ({ props }) => `/projects/${props.projectId}/questionnaire-meta/`,
         onPropsChanged: ['projectId'],
         method: methods.GET,
         onMount: true,
@@ -238,17 +237,10 @@ class Questionnaires extends React.PureComponent<Props, State> {
                         </>
                     )}
                     mainContent={(
-                        <>
-                            <MultiViewContainer
-                                views={this.views}
-                                useHash
-                            />
-                            <img
-                                className={styles.ifrcLogo}
-                                src={IfrcLogo}
-                                alt="IFRC Logo"
-                            />
-                        </>
+                        <MultiViewContainer
+                            views={this.views}
+                            useHash
+                        />
                     )}
                 />
             </>

@@ -48,7 +48,6 @@ import {
 } from '#entities/questionnaire';
 
 import BackLink from '#components/general/BackLink';
-import IfrcLogo from '#resources/img/questionnaire-icons/ifrc.png';
 
 import QuestionList from '#qbc/QuestionList';
 import QuestionModalForFramework from '#qbc/QuestionModalForFramework';
@@ -700,17 +699,10 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                     )}
                     mainContentClassName={styles.main}
                     mainContent={(
-                        <>
-                            <MultiViewContainer
-                                views={this.views}
-                                useHash
-                            />
-                            <img
-                                className={styles.ifrcLogo}
-                                src={IfrcLogo}
-                                alt="IFRC Logo"
-                            />
-                        </>
+                        <MultiViewContainer
+                            views={this.views}
+                            useHash
+                        />
                     )}
                 />
                 {showQuestionModal && (
