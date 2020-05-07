@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
     isTruthyString,
@@ -7,6 +7,7 @@ import {
 import Button from '#rsu/../v2/Action/Button';
 import ListView from '#rsu/../v2/View/ListView';
 import TreeInput from '#rsu/../v2/Input/TreeInput';
+import TextInput from '#rsci/TextInput';
 
 import {
     FrameworkQuestionElement,
@@ -40,7 +41,6 @@ interface Props {
     onPaneClose: () => void;
     onCopy: (questionId: BaseQuestionElement['id']) => void;
     copyDisabled: boolean;
-    searchValue: string;
 }
 
 function AddFromFramework(props: Props) {
@@ -50,10 +50,11 @@ function AddFromFramework(props: Props) {
         treeFilter,
         onTreeInputChange,
         onPaneClose,
-        searchValue,
         copyDisabled,
         onCopy,
     } = props;
+
+    const [searchValue, setSearchValue] = useState('');
 
     const getFrameworkQuestionRendererParams = useCallback((
         key: FrameworkQuestionElement['id'],
@@ -141,6 +142,14 @@ function AddFromFramework(props: Props) {
             </header>
             <div className={styles.content}>
                 <div className={styles.selectionContainer}>
+                    <TextInput
+                        value={searchValue}
+                        className={styles.searchInput}
+                        onChange={setSearchValue}
+                        placeholder="Type to search"
+                        label="Search"
+                        showHintAndError={false}
+                    />
                     <h4> Matrices </h4>
                     <TreeInput
                         className={styles.matrixFilter}

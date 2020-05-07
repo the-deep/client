@@ -1,11 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
-    isDefined,
     listToMap,
     caseInsensitiveSubmatch,
     isTruthyString,
-    isFalsyString,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -51,6 +49,7 @@ interface QuestionListProps {
     onBulkArchive?: (questionIds: BulkActionId[]) => void;
     onBulkUnArchive?: (questionIds: BulkActionId[]) => void;
     framework?: MiniFrameworkElement;
+    headerRightComponent?: React.ReactNode;
     archived: boolean;
     filtered?: boolean;
     searchValue?: string;
@@ -86,6 +85,7 @@ const QuestionList = (props: QuestionListProps) => {
         filtered,
         questionClassName,
         searchValue,
+        headerRightComponent,
     } = props;
 
     const [selectedQuestions, setSelectedQuestions] = useState<Selection>({});
@@ -307,6 +307,7 @@ const QuestionList = (props: QuestionListProps) => {
                     {title}
                 </h2>
                 <div className={styles.actions}>
+                    {headerRightComponent}
                     <Button
                         className={styles.button}
                         onClick={handleExpandAllButtonClick}

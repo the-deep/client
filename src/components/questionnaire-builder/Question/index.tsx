@@ -463,11 +463,13 @@ class Question extends React.PureComponent<Props> {
                 </div>
                 {isNotDefined(onCopy) && (
                     <div className={styles.dropZoneContainer}>
-                        {isDefined(onCopyFromDrop) && (
+                        {isDefined(onCopyFromDrop) ? (
                             <DropZoneTwo
                                 className={styles.dropZone}
                                 onDrop={this.handleQuestionDrop}
                             />
+                        ) : (
+                            <div className={styles.dropZone} />
                         )}
                         {isDefined(onAddButtonClick) && (
                             <Button

@@ -133,12 +133,12 @@
     }
 
     .drop-zone-container {
-        display: flex;
         position: relative;
         flex-basis: 100%;
+        flex-shrink: 0;
+        height: calc(40px + var(--spacing-medium));
 
         .drop-zone {
-            flex-basis: 100%;
             margin-left: 52px;
             padding: var(--spacing-medium);
             height: 40px;

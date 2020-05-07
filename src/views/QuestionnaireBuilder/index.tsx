@@ -354,6 +354,16 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: false,
                         searchValue,
+                        headerRightComponent: (
+                            <TextInput
+                                value={searchValue}
+                                className={styles.searchInput}
+                                onChange={this.handleSearchValueChange}
+                                placeholder="Type to search"
+                                label="Search"
+                                showHintAndError={false}
+                            />
+                        ),
                     });
                 },
             },
@@ -389,6 +399,16 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: true,
+                        headerRightComponent: (
+                            <TextInput
+                                value={searchValue}
+                                className={styles.searchInput}
+                                onChange={this.handleSearchValueChange}
+                                placeholder="Type to search"
+                                label="Search"
+                                showHintAndError={false}
+                            />
+                        ),
                         searchValue,
                     });
                 },
@@ -414,13 +434,11 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     const {
                         treeFilter,
                         framework,
-                        searchValue,
                     } = this.state;
 
                     return ({
                         treeFilter,
                         framework,
-                        searchValue,
                         onTreeInputChange: this.handleTreeInputChange,
                         onPaneClose: this.handleAddFromFrameworkClose,
                         onCopy: this.handleCopyClick,
@@ -906,14 +924,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <h2 className={styles.heading}>
                                 {title}
                             </h2>
-                            <TextInput
-                                className={styles.filter}
-                                label="Search"
-                                placeholder="Type to search"
-                                value={searchValue}
-                                onChange={this.handleSearchValueChange}
-                                showHintAndError={false}
-                            />
                             <ModalButton
                                 modal={
                                     <QuestionnairePreviewModal

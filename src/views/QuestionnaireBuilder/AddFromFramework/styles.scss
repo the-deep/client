@@ -28,6 +28,11 @@
             width: 240px;
             overflow-y: auto;
 
+            .search-input {
+                flex-shrink: 0;
+                margin-bottom: var(--spacing-medium);
+            }
+
             .matrix-filter {
                 overflow-y: auto;
             }
