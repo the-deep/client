@@ -40,7 +40,6 @@ import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
 import MetaOutput from '../MetaOutput';
-import FrameworkAttributeOutput from './FrameworkAttributeOutput';
 import ResponseOutput from './ResponseOutput';
 
 import styles from './styles.scss';
@@ -271,6 +270,7 @@ class Question extends React.PureComponent<Props> {
             importanceDisplay,
             requiredDuration,
             isArchived,
+            attributeTitle,
         } = data;
 
         return (
@@ -398,10 +398,11 @@ class Question extends React.PureComponent<Props> {
                                             </div>
                                         )}
                                     </div>
-                                    <FrameworkAttributeOutput
+                                    <MetaOutput
+                                        label="Crisis type"
+                                        searchValue={searchValue}
+                                        value={attributeTitle}
                                         className={styles.frameworkAttribute}
-                                        data={data.frameworkAttribute}
-                                        {...this.getFrameworkOptions(framework)}
                                     />
                                 </div>
                             </div>

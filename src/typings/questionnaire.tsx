@@ -91,6 +91,7 @@ export interface BaseQuestionElement {
     requiredDuration?: number;
 
     frameworkAttribute?: QuestionElementFrameworkAttribute;
+    attributeTitle?: string;
 
     isArchived?: boolean;
     isRequired?: boolean;

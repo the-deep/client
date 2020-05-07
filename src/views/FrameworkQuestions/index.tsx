@@ -256,7 +256,6 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                     const filteredQuestions = this.getFilteredQuestions(
                         framework ? framework.questions : undefined,
                         treeFilter,
-                        searchValue,
                     );
 
                     return ({
@@ -307,7 +306,6 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                     const filteredQuestions = this.getFilteredQuestions(
                         framework ? framework.questions : undefined,
                         treeFilter,
-                        searchValue,
                     );
 
                     return ({

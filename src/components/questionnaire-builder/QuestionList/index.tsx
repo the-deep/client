@@ -19,6 +19,9 @@ import {
     BulkActionId,
 } from '#typings';
 
+import { getMatrix2dStructures } from '#utils/framework';
+import { getQuestionAttributeTitle } from '#entities/questionnaire';
+
 import styles from './styles.scss';
 
 const questionKeySelector = (q: BaseQuestionElement) => q.id;
@@ -134,16 +137,45 @@ const QuestionList = (props: QuestionListProps) => {
         ],
     );
 
+    const frameworkOptions = useMemo(() => (
+        getMatrix2dStructures(framework)
+    ), [framework]);
+
+    const flatQuestions = useMemo(() => {
+        if (!questions) {
+            return [];
+        }
+        const {
+            sectorList,
+            subsectorList,
+            dimensionList,
+            subdimensionList,
+        } = frameworkOptions;
+
+        return questions.map(question => ({
+            ...question,
+            attributeTitle: question.frameworkAttribute && getQuestionAttributeTitle(
+                question.frameworkAttribute.type,
+                question.frameworkAttribute.value,
+                sectorList,
+                subsectorList,
+                dimensionList,
+                subdimensionList,
+            ),
+        }));
+    }, [frameworkOptions, questions]);
+
     const filteredQuestions = useMemo(
         () => {
-            if (!questions) {
+            if (!flatQuestions) {
                 return [];
             }
-            return questions.filter((question) => {
+            return flatQuestions.filter((question) => {
                 const searchFilter = caseInsensitiveSubmatch(question.title, searchValue)
                 || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
                 || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
                 || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
+                || caseInsensitiveSubmatch(question.attributeTitle, searchValue)
                 || caseInsensitiveSubmatch(
                     question.crisisTypeDetail && question.crisisTypeDetail.title,
                     searchValue,
@@ -153,7 +185,7 @@ const QuestionList = (props: QuestionListProps) => {
                 return !!question.isArchived === archived && searchFilter;
             });
         },
-        [archived, questions, searchValue],
+        [archived, flatQuestions, searchValue],
     );
 
     const percolateQuestions = useMemo(

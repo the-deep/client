@@ -15,6 +15,7 @@ import {
     MiniFrameworkElement,
     BaseQuestionElement,
     QuestionType,
+    QuestionElementFrameworkAttribute,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -172,7 +173,6 @@ export function getFilteredQuestions(
     values: string[],
     searchValue = '',
 ) {
-    console.warn('here', questions);
     if (!questions || (values.length <= 0 && isFalsyString(searchValue))) {
         return questions;
     }
@@ -182,6 +182,7 @@ export function getFilteredQuestions(
             || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
             || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
             || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
+            || caseInsensitiveSubmatch(question.attributeTitle, searchValue)
             || caseInsensitiveSubmatch(
                 question.crisisTypeDetail && question.crisisTypeDetail.title,
                 searchValue,
@@ -492,3 +493,30 @@ export function readXLSForm(workbook: Excel.Workbook) {
 
     return { title: formTitle, questions };
 }
+
+interface ItemWithTitle {
+    id: string | number;
+    title?: string;
+}
+
+export const getQuestionAttributeTitle = (
+    type: QuestionElementFrameworkAttribute['type'],
+    value: QuestionElementFrameworkAttribute['value'],
+    sectorList: ItemWithTitle[],
+    subsectorList: ItemWithTitle[],
+    dimensionList: ItemWithTitle[],
+    subdimensionList: ItemWithTitle[],
+) => {
+    const dataSource = {
+        sector: sectorList,
+        subsector: subsectorList,
+        dimension: dimensionList,
+        subdimension: subdimensionList,
+    };
+
+    const attribute = dataSource[type].find(d => d.id === value);
+    if (attribute) {
+        return attribute.title;
+    }
+    return '';
+};

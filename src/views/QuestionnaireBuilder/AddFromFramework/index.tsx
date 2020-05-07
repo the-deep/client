@@ -1,5 +1,4 @@
-import React from 'react';
-import memoize from 'memoize-one';
+import React, { useCallback, useMemo } from 'react';
 import {
     _cs,
     isTruthyString,
@@ -19,11 +18,13 @@ import {
 import {
     getFrameworkMatrices,
     getFilteredQuestions,
+    getQuestionAttributeTitle,
 
     treeItemKeySelector,
     treeItemLabelSelector,
     treeItemParentKeySelector,
 } from '#entities/questionnaire';
+import { getMatrix2dStructures } from '#utils/framework';
 
 import Question from '#qbc/Question';
 
@@ -42,96 +43,130 @@ interface Props {
     searchValue: string;
 }
 
-class AddFromFramework extends React.PureComponent<Props> {
-    private getFrameworkMatrices = memoize(getFrameworkMatrices)
+function AddFromFramework(props: Props) {
+    const {
+        framework,
+        className,
+        treeFilter,
+        onTreeInputChange,
+        onPaneClose,
+        searchValue,
+        copyDisabled,
+        onCopy,
+    } = props;
 
-    private getFilteredQuestions = memoize(getFilteredQuestions)
-
-    private getFrameworkQuestionRendererParams = (
+    const getFrameworkQuestionRendererParams = useCallback((
         key: FrameworkQuestionElement['id'],
         question: FrameworkQuestionElement,
-    ) => {
-        const {
-            framework,
-            copyDisabled,
-            onCopy,
-            searchValue,
-        } = this.props;
+    ) => ({
+        data: question,
+        framework: framework as MiniFrameworkElement,
+        className: styles.frameworkQuestion,
+        onCopy,
+        copyDisabled,
+        expanded: false,
+        readOnly: true,
+        searchValue,
+    }), [framework, onCopy, copyDisabled, searchValue]);
 
-        return {
-            data: question,
-            framework: framework as MiniFrameworkElement,
-            className: styles.frameworkQuestion,
-            onCopy,
-            copyDisabled,
-            expanded: false,
-            readOnly: true,
-            searchValue,
-        };
-    }
-
-    render() {
-        const {
-            framework,
-            className,
-            treeFilter,
-            onTreeInputChange,
-            onPaneClose,
-            searchValue,
-        } = this.props;
-
+    const {
+        frameworkMatrices,
+        frameworkOptions,
+    } = useMemo(() => {
         if (!framework) {
-            return null;
+            return {
+                frameworkMatrices: undefined,
+                frameworkOptions: undefined,
+            };
+        }
+        return {
+            frameworkMatrices: getFrameworkMatrices(framework, framework.questions),
+            frameworkOptions: getMatrix2dStructures(framework),
+        };
+    }, [framework]);
+
+    const flatQuestions = useMemo(() => {
+        if (!framework || !framework.questions) {
+            return [];
         }
 
-        return (
-            <div className={_cs(styles.addFromFramework, className)}>
-                <header className={styles.header}>
-                    <h2 className={styles.heading}>
-                        Add from Framework
-                    </h2>
-                    <Button
-                        iconName="close"
-                        onClick={onPaneClose}
-                    >
-                        Close
-                    </Button>
-                </header>
-                <div className={styles.content}>
-                    <div className={styles.selectionContainer}>
-                        <h4> Matrices </h4>
-                        <TreeInput
-                            className={styles.matrixFilter}
-                            keySelector={treeItemKeySelector}
-                            parentKeySelector={treeItemParentKeySelector}
-                            labelSelector={treeItemLabelSelector}
-                            onChange={onTreeInputChange}
-                            value={treeFilter}
-                            options={this.getFrameworkMatrices(framework, framework.questions)}
-                            defaultCollapseLevel={2}
-                        />
-                    </div>
-                    <div className={styles.questionsContainer}>
-                        <h4> Questions </h4>
-                        <ListView
-                            className={styles.frameworkQuestionList}
-                            rendererParams={this.getFrameworkQuestionRendererParams}
-                            renderer={Question}
-                            data={
-                                this.getFilteredQuestions(
-                                    framework.questions,
-                                    treeFilter,
-                                    searchValue,
-                                )
-                            }
-                            keySelector={questionKeySelector}
-                            filtered={treeFilter.length > 0 || isTruthyString(searchValue)}
-                        />
-                    </div>
+        if (!frameworkOptions) {
+            return framework.questions;
+        }
+
+        const {
+            sectorList,
+            subsectorList,
+            dimensionList,
+            subdimensionList,
+        } = frameworkOptions;
+
+        return framework.questions.map(question => ({
+            ...question,
+            attributeTitle: question.frameworkAttribute && getQuestionAttributeTitle(
+                question.frameworkAttribute.type,
+                question.frameworkAttribute.value,
+                sectorList,
+                subsectorList,
+                dimensionList,
+                subdimensionList,
+            ),
+        }));
+    }, [frameworkOptions, framework]);
+
+    const filteredQuestions = useMemo(() => (
+        getFilteredQuestions(
+            flatQuestions,
+            treeFilter,
+            searchValue,
+        )
+    ), [flatQuestions, treeFilter, searchValue]);
+
+    if (!framework) {
+        return null;
+    }
+
+    return (
+        <div className={_cs(styles.addFromFramework, className)}>
+            <header className={styles.header}>
+                <h2 className={styles.heading}>
+                    Add from Framework
+                </h2>
+                <Button
+                    iconName="close"
+                    onClick={onPaneClose}
+                >
+                    Close
+                </Button>
+            </header>
+            <div className={styles.content}>
+                <div className={styles.selectionContainer}>
+                    <h4> Matrices </h4>
+                    <TreeInput
+                        className={styles.matrixFilter}
+                        keySelector={treeItemKeySelector}
+                        parentKeySelector={treeItemParentKeySelector}
+                        labelSelector={treeItemLabelSelector}
+                        onChange={onTreeInputChange}
+                        value={treeFilter}
+                        options={frameworkMatrices}
+                        defaultCollapseLevel={2}
+                    />
+                </div>
+                <div className={styles.questionsContainer}>
+                    <h4> Questions </h4>
+                    <ListView
+                        className={styles.frameworkQuestionList}
+                        rendererParams={getFrameworkQuestionRendererParams}
+                        renderer={Question}
+                        data={filteredQuestions}
+                        keySelector={questionKeySelector}
+                        filtered={treeFilter.length > 0 || isTruthyString(searchValue)}
+                    />
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default AddFromFramework;
