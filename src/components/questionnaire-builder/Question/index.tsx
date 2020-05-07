@@ -24,6 +24,7 @@ import {
 
 import { getMatrix2dStructures } from '#utils/framework';
 import DropdownButton from '#components/general/DropdownButton';
+import HighlightableText from '#components/viewer/HighlightableTextOutput';
 
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
 import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
@@ -91,6 +92,7 @@ interface Props {
     copyDisabled?: boolean;
     onSelectChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
     onExpandChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
+    searchValue: string;
 }
 
 interface DropData {
@@ -256,6 +258,8 @@ class Question extends React.PureComponent<Props> {
             onClone,
             onCopyFromDrop,
             onAddButtonClick,
+
+            searchValue,
         } = this.props;
 
         const {
@@ -306,28 +310,36 @@ class Question extends React.PureComponent<Props> {
                                     <div className={styles.top}>
                                         <div className={styles.left}>
                                             <h3 className={styles.heading}>
-                                                { title }
+                                                <HighlightableText
+                                                    highlightText={searchValue}
+                                                    text={title}
+                                                />
                                             </h3>
                                             <div className={styles.basicInfo}>
                                                 <MetaOutput
                                                     label="Crisis type"
+                                                    searchValue={searchValue}
                                                     value={crisisTypeDetail
                                                     && crisisTypeDetail.title}
                                                 />
                                                 <MetaOutput
                                                     label="Data collection technique"
+                                                    searchValue={searchValue}
                                                     value={dataCollectionTechniqueDisplay}
                                                 />
                                                 <MetaOutput
                                                     label="Enumerator skill"
+                                                    searchValue={searchValue}
                                                     value={enumeratorSkillDisplay}
                                                 />
                                                 <MetaOutput
                                                     label="Required duration"
+                                                    searchValue={searchValue}
                                                     value={generateDurationLabel(requiredDuration)}
                                                 />
                                                 <MetaOutput
                                                     label="Importance"
+                                                    searchValue={searchValue}
                                                     value={importanceDisplay && `Importance: ${importanceDisplay}`}
                                                 />
                                             </div>
@@ -414,7 +426,12 @@ class Question extends React.PureComponent<Props> {
                                         Enumerator instructions
                                     </h4>
                                     <div className={styles.content}>
-                                        { data.enumeratorInstruction || '-' }
+                                        {data.enumeratorInstruction ? (
+                                            <HighlightableText
+                                                highlightText={searchValue}
+                                                text={data.enumeratorInstruction}
+                                            />
+                                        ) : '-'}
                                     </div>
                                 </div>
                                 <div className={styles.respondentInstruction}>
@@ -422,7 +439,12 @@ class Question extends React.PureComponent<Props> {
                                         Respondent instructions
                                     </h4>
                                     <div className={styles.content}>
-                                        { data.respondentInstruction || '-' }
+                                        {data.respondentInstruction ? (
+                                            <HighlightableText
+                                                highlightText={searchValue}
+                                                text={data.respondentInstruction}
+                                            />
+                                        ) : '-'}
                                     </div>
                                 </div>
                             </div>

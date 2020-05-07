@@ -11,6 +11,7 @@ import {
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import TextInput from '#rsci/TextInput';
 import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 import TreeInput from '#rsu/../v2/Input/TreeInput';
@@ -91,6 +92,7 @@ interface State {
     treeFilter: string[];
     newQuestionOrder?: number;
     framework?: MiniFrameworkElement;
+    searchValue: string;
 }
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
@@ -224,6 +226,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             showQuestionModal: false,
             questionToEdit: undefined,
             treeFilter: [],
+            searchValue: '',
         };
         this.props.requests.frameworkGetRequest.setDefaultParams({
             setFramework: (framework: MiniFrameworkElement) => {
@@ -244,10 +247,16 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                             bulkQuestionUnArchiveRequest,
                         },
                     } = this.props;
-                    const { framework, treeFilter } = this.state;
+                    const {
+                        framework,
+                        treeFilter,
+                        searchValue,
+                    } = this.state;
+
                     const filteredQuestions = this.getFilteredQuestions(
                         framework ? framework.questions : undefined,
                         treeFilter,
+                        searchValue,
                     );
 
                     return ({
@@ -263,6 +272,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
                         framework,
+                        searchValue,
                         questions: filteredQuestions,
                         filtered: treeFilter.length > 0,
                         questionClassName: styles.question,
@@ -288,10 +298,16 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                             bulkQuestionUnArchiveRequest,
                         },
                     } = this.props;
-                    const { framework, treeFilter } = this.state;
+                    const {
+                        framework,
+                        treeFilter,
+                        searchValue,
+                    } = this.state;
+
                     const filteredQuestions = this.getFilteredQuestions(
                         framework ? framework.questions : undefined,
                         treeFilter,
+                        searchValue,
                     );
 
                     return ({
@@ -299,6 +315,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         className: styles.questionList,
                         onUnarchive: this.handleUnarchiveQuestion,
                         onBulkUnArchive: this.handleBulkUnArchive,
+                        searchValue,
                         framework,
                         showLoadingOverlay: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
@@ -573,6 +590,10 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         });
     }
 
+    private handleSearchValueChange = (searchValue: string) => {
+        this.setState({ searchValue });
+    }
+
     private handleTreeInputChange = (value: string[]) => {
         this.setState({ treeFilter: value });
     }
@@ -620,6 +641,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             framework,
             treeFilter,
             newQuestionOrder,
+            searchValue,
         } = this.state;
 
         if (frameworkGetPending) {
@@ -680,8 +702,16 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                                     modifier={this.tabsModifier}
                                 />
                             </div>
-                            <div className={styles.matrixFilter}>
+                            <div className={styles.filter}>
                                 <h3> Filter </h3>
+                                <TextInput
+                                    value={searchValue}
+                                    className={styles.searchInput}
+                                    onChange={this.handleSearchValueChange}
+                                    placeholder="Type to search"
+                                    label="Search"
+                                    showHintAndError={false}
+                                />
                                 <h4> Matrices </h4>
                                 <TreeInput
                                     keySelector={treeItemKeySelector}

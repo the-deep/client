@@ -1,6 +1,9 @@
 import React from 'react';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isTruthyString,
+} from '@togglecorp/fujs';
 
 import Button from '#rsu/../v2/Action/Button';
 import ListView from '#rsu/../v2/View/ListView';
@@ -36,6 +39,7 @@ interface Props {
     onPaneClose: () => void;
     onCopy: (questionId: BaseQuestionElement['id']) => void;
     copyDisabled: boolean;
+    searchValue: string;
 }
 
 class AddFromFramework extends React.PureComponent<Props> {
@@ -51,6 +55,7 @@ class AddFromFramework extends React.PureComponent<Props> {
             framework,
             copyDisabled,
             onCopy,
+            searchValue,
         } = this.props;
 
         return {
@@ -61,6 +66,7 @@ class AddFromFramework extends React.PureComponent<Props> {
             copyDisabled,
             expanded: false,
             readOnly: true,
+            searchValue,
         };
     }
 
@@ -71,6 +77,7 @@ class AddFromFramework extends React.PureComponent<Props> {
             treeFilter,
             onTreeInputChange,
             onPaneClose,
+            searchValue,
         } = this.props;
 
         if (!framework) {
@@ -114,10 +121,11 @@ class AddFromFramework extends React.PureComponent<Props> {
                                 this.getFilteredQuestions(
                                     framework.questions,
                                     treeFilter,
+                                    searchValue,
                                 )
                             }
                             keySelector={questionKeySelector}
-                            filtered={treeFilter.length > 0}
+                            filtered={treeFilter.length > 0 || isTruthyString(searchValue)}
                         />
                     </div>
                 </div>

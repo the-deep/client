@@ -1,6 +1,8 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import HighlightableText from '#components/viewer/HighlightableTextOutput';
+
 import styles from './styles.scss';
 
 interface MetaOutputProps {
@@ -8,6 +10,7 @@ interface MetaOutputProps {
     titleClassName?: string;
     label: string;
     value?: string | number;
+    searchValue?: string;
 }
 
 const MetaOutput = ({
@@ -15,6 +18,7 @@ const MetaOutput = ({
     label,
     value,
     titleClassName,
+    searchValue,
 }: MetaOutputProps) => {
     if (!value) {
         return null;
@@ -26,7 +30,10 @@ const MetaOutput = ({
             title={label}
         >
             <div className={_cs(styles.name, titleClassName)} >
-                { value }
+                <HighlightableText
+                    highlightText={searchValue}
+                    text={value}
+                />
             </div>
         </div>
     );

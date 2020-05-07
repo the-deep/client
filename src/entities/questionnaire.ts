@@ -5,6 +5,8 @@ import {
     sum,
     isDefined,
     isNotDefined,
+    caseInsensitiveSubmatch,
+    isFalsyString,
 } from '@togglecorp/fujs';
 
 import {
@@ -168,16 +170,35 @@ export function getFrameworkMatrices(
 export function getFilteredQuestions(
     questions: FrameworkQuestionElement[] | undefined,
     values: string[],
+    searchValue = '',
 ) {
-    if (!questions || values.length <= 0) {
+    console.warn('here', questions);
+    if (!questions || (values.length <= 0 && isFalsyString(searchValue))) {
         return questions;
     }
 
-    const filteredQuestions = questions.filter(question => (
-        question.frameworkAttribute
-        && question.frameworkAttribute.value
-        && values.includes(question.frameworkAttribute.value)
-    ));
+    const filteredQuestions = questions.filter((question) => {
+        const searchFilter = caseInsensitiveSubmatch(question.title, searchValue)
+            || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
+            || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
+            || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
+            || caseInsensitiveSubmatch(
+                question.crisisTypeDetail && question.crisisTypeDetail.title,
+                searchValue,
+            )
+            || caseInsensitiveSubmatch(question.enumeratorInstruction, searchValue);
+
+        if (values.length <= 0) {
+            return searchFilter;
+        }
+
+        return (
+            (question.frameworkAttribute
+            && question.frameworkAttribute.value
+            && values.includes(question.frameworkAttribute.value))
+            && searchFilter
+        );
+    });
     return filteredQuestions;
 }
 

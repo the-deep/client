@@ -3,6 +3,7 @@ import {
     _cs,
     isDefined,
     listToMap,
+    caseInsensitiveSubmatch,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -47,6 +48,7 @@ interface QuestionListProps {
     framework?: MiniFrameworkElement;
     archived: boolean;
     filtered?: boolean;
+    searchValue?: string;
 }
 
 const renderDragHandle = () => (
@@ -78,6 +80,7 @@ const QuestionList = (props: QuestionListProps) => {
         archived,
         filtered,
         questionClassName,
+        searchValue,
     } = props;
 
     const [selectedQuestions, setSelectedQuestions] = useState<Selection>({});
@@ -121,12 +124,13 @@ const QuestionList = (props: QuestionListProps) => {
             onExpandChange: handleQuestionExpandChange,
             className: _cs(styles.question, questionClassName),
             disabled: showLoadingOverlay,
+            searchValue,
         }),
         [
             framework, onEdit, onDelete, onCopyFromDrop,
             onClone, onArchive, onUnarchive, onAddButtonClick, showLoadingOverlay,
             selectedQuestions, handleQuestionSelectChange, questionClassName,
-            expandedQuestions, handleQuestionExpandChange,
+            expandedQuestions, handleQuestionExpandChange, searchValue,
         ],
     );
 
@@ -135,9 +139,21 @@ const QuestionList = (props: QuestionListProps) => {
             if (!questions) {
                 return [];
             }
-            return questions.filter(question => !!question.isArchived === archived);
+            return questions.filter((question) => {
+                const searchFilter = caseInsensitiveSubmatch(question.title, searchValue)
+                || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
+                || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
+                || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
+                || caseInsensitiveSubmatch(
+                    question.crisisTypeDetail && question.crisisTypeDetail.title,
+                    searchValue,
+                )
+                || caseInsensitiveSubmatch(question.enumeratorInstruction, searchValue);
+
+                return !!question.isArchived === archived && searchFilter;
+            });
         },
-        [archived, questions],
+        [archived, questions, searchValue],
     );
 
     const percolateQuestions = useMemo(

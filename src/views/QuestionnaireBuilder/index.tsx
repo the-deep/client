@@ -10,6 +10,7 @@ import {
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import TextInput from '#rsci/TextInput';
 import Button from '#rsu/../v2/Action/Button';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ResizableH from '#rscv/Resizable/ResizableH';
@@ -83,6 +84,7 @@ interface State {
     // FIXME: use this everywhere
     framework?: MiniFrameworkElement;
     treeFilter: string[];
+    searchValue: string;
 }
 
 interface PropsFromAppState {
@@ -303,6 +305,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             framework: undefined,
             treeFilter: [],
             addFromFramework: false,
+            searchValue: '',
         };
 
         this.views = {
@@ -323,6 +326,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     const {
                         framework,
                         questionnaire,
+                        searchValue,
                     } = this.state;
 
                     return ({
@@ -349,6 +353,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: false,
+                        searchValue,
                     });
                 },
             },
@@ -366,6 +371,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         },
                     } = this.props;
 
+                    const { searchValue } = this.state;
+
                     return ({
                         title: 'Parking Lot Questions',
                         className: styles.questionList,
@@ -382,6 +389,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: true,
+                        searchValue,
                     });
                 },
             },
@@ -406,11 +414,13 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     const {
                         treeFilter,
                         framework,
+                        searchValue,
                     } = this.state;
 
                     return ({
                         treeFilter,
                         framework,
+                        searchValue,
                         onTreeInputChange: this.handleTreeInputChange,
                         onPaneClose: this.handleAddFromFrameworkClose,
                         onCopy: this.handleCopyClick,
@@ -814,6 +824,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({ addFromFramework: false });
     }
 
+    private handleSearchValueChange = (searchValue: string) => {
+        this.setState({ searchValue });
+    }
+
     public render() {
         const {
             className,
@@ -842,6 +856,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionnaire,
             framework,
             addFromFramework,
+            searchValue,
         } = this.state;
 
         if (questionnaireGetPending || frameworkGetPending) {
@@ -891,6 +906,14 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             <h2 className={styles.heading}>
                                 {title}
                             </h2>
+                            <TextInput
+                                className={styles.filter}
+                                label="Search"
+                                placeholder="Type to search"
+                                value={searchValue}
+                                onChange={this.handleSearchValueChange}
+                                showHintAndError={false}
+                            />
                             <ModalButton
                                 modal={
                                     <QuestionnairePreviewModal
