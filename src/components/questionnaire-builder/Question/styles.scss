@@ -65,36 +65,15 @@
                         .left {
                             flex-grow: 1;
 
+                            .title {
+                                text-transform: unset;
+                            }
+
                             .basic-info {
                                 display: flex;
                                 flex-wrap: wrap;
                                 padding: var(--spacing-small) 0;
                                 color: var(--color-text-label);
-
-                                .crisis-type {
-                                    padding: var(--spacing-extra-small) var(--spacing-medium);
-                                }
-
-                                .enumerator-skill {
-                                    padding: var(--spacing-extra-small) var(--spacing-medium);
-                                }
-
-                                .data-collection-technique {
-                                    padding: var(--spacing-extra-small) var(--spacing-medium);
-                                }
-
-                                .importance {
-                                    display: flex;
-                                    padding: 0 calc(var(--spacing-medium) - var(--spacing-extra-small));
-
-                                    .label {
-                                        padding: var(--spacing-extra-small) var(--spacing-extra-small);
-                                    }
-
-                                    .value {
-                                        padding: var(--spacing-extra-small);
-                                    }
-                                }
                             }
                         }
 
@@ -120,7 +99,6 @@
 
             .heading {
                 padding: var(--spacing-extra-small) 0;
-                text-transform: unset;
             }
 
             .content {

@@ -241,7 +241,6 @@ class Question extends React.PureComponent<Props> {
             selected,
             className,
             data,
-            framework,
             readOnly,
             disabled,
             expanded,
@@ -309,7 +308,7 @@ class Question extends React.PureComponent<Props> {
                                 <div className={styles.detailsRight} >
                                     <div className={styles.top}>
                                         <div className={styles.left}>
-                                            <h3 className={styles.heading}>
+                                            <h3 className={styles.title}>
                                                 <HighlightableText
                                                     highlightText={searchValue}
                                                     text={title}

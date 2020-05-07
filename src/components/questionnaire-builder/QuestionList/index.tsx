@@ -4,6 +4,8 @@ import {
     isDefined,
     listToMap,
     caseInsensitiveSubmatch,
+    isTruthyString,
+    isFalsyString,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -288,6 +290,8 @@ const QuestionList = (props: QuestionListProps) => {
     const isSomeSelected = filteredQuestions
         && filteredQuestions.some(q => selectedQuestions[q.id]);
 
+    const disableSort = !onOrderChange || isTruthyString(searchValue);
+
     return (
         <div className={_cs(styles.questionList, className)}>
             <header className={styles.header}>
@@ -363,8 +367,8 @@ const QuestionList = (props: QuestionListProps) => {
                 onChange={handleOrderChange}
                 dragHandleModifier={renderDragHandle}
                 itemClassName={styles.questionContainer}
-                disabled={!onOrderChange}
-                showDragHandle={isDefined(onOrderChange)}
+                disabled={disableSort}
+                showDragHandle={!disableSort}
             />
         </div>
     );
