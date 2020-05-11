@@ -63,10 +63,10 @@ const Questionnaire = (props: Props) => {
         title,
         createdAt,
         project,
-        crisisTypeDetail,
+        crisisTypesDetail,
         requiredDuration,
         enumeratorSkillDisplay,
-        dataCollectionTechniqueDisplay,
+        dataCollectionTechniquesDisplay,
         activeQuestionsCount,
     } = data;
 
@@ -273,12 +273,12 @@ const Questionnaire = (props: Props) => {
                 <MetaOutput
                     // FIXME: use strings
                     label="Crisis type"
-                    value={crisisTypeDetail ? crisisTypeDetail.title : undefined}
+                    value={crisisTypesDetail ? crisisTypesDetail.map(d => d.title).join(', ') : undefined}
                 />
                 <MetaOutput
                     // FIXME: use strings
                     label="Data collection technique"
-                    value={dataCollectionTechniqueDisplay}
+                    value={dataCollectionTechniquesDisplay && dataCollectionTechniquesDisplay.join(', ')}
                 />
                 <MetaOutput
                     // FIXME: use strings

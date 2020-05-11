@@ -901,8 +901,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             id: questionnaireId,
             title,
             questions,
-            crisisTypeDetail,
-            dataCollectionTechniqueDisplay,
+            crisisTypesDetail,
+            dataCollectionTechniquesDisplay,
             enumeratorSkillDisplay,
             requiredDuration,
         } = questionnaire;
@@ -942,8 +942,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         <>
                             <Diagnostics
                                 frameworkTitle={framework ? framework.title : '-'}
-                                crisisTypeDetail={crisisTypeDetail}
-                                dataCollectionTechniqueDisplay={dataCollectionTechniqueDisplay}
+                                crisisTypesDetail={crisisTypesDetail}
+                                dataCollectionTechniquesDisplay={dataCollectionTechniquesDisplay}
                                 enumeratorSkillDisplay={enumeratorSkillDisplay}
                                 questions={questions}
                                 requiredDuration={requiredDuration}

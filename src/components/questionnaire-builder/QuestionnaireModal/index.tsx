@@ -46,7 +46,7 @@ import styles from './styles.scss';
 const MinuteSecondInput = FaramInputElement(RawMinuteSecondInput);
 
 type FormKeys = 'title'
-    | 'crisisType'
+    | 'crisisTypes'
     | 'enumeratorSkill'
     | 'dataCollectionTechniques'
     | 'requiredDuration';
@@ -68,6 +68,7 @@ type FaramValues = QuestionnaireFormElement;
 interface RequestBody extends FaramValues {
     project?: ProjectElement['id'];
     questions?: BaseQuestionElement[];
+    crisisTypesId?: number[];
 }
 
 type FaramErrors = {
@@ -101,11 +102,12 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props,
             response,
         }) => {
-            props.onRequestSuccess(response);
+            const questionnaire = response as QuestionnaireElement;
+            props.onRequestSuccess(questionnaire);
             notify.send({
                 type: notify.type.SUCCESS,
                 title: 'Questionnaire',
-                message: `Questionnaire ${response ? response.title : ''} was successfully created.`,
+                message: `Questionnaire ${questionnaire ? questionnaire.title : ''} was successfully created.`,
                 duration: notify.duration.MEDIUM,
             });
             if (props.closeModal) {
@@ -177,11 +179,12 @@ const requestOptions: Requests<ComponentProps, Params> = {
             props,
             response,
         }) => {
-            props.onRequestSuccess(response);
+            const questionnaire = response as QuestionnaireElement;
+            props.onRequestSuccess(questionnaire);
             notify.send({
                 type: notify.type.SUCCESS,
                 title: 'Questionnaire',
-                message: `Questionnaire ${response ? response.title : ''} was successfully created.`,
+                message: `Questionnaire ${questionnaire ? questionnaire.title : ''} was successfully created.`,
                 duration: notify.duration.MEDIUM,
             });
             if (props.closeModal) {
@@ -214,7 +217,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
 const questionnaireMetaSchema = {
     fields: {
         title: [requiredCondition],
-        crisisType: [],
+        crisisTypes: [],
         enumeratorSkill: [requiredCondition],
         dataCollectionTechniques: [requiredCondition],
         requiredDuration: [requiredCondition],
@@ -268,7 +271,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                 questionnaireId: value.id,
                 body: {
                     ...faramValues,
-                    crisisTypeId: faramValues.crisisType,
+                    crisisTypesId: faramValues.crisisTypes,
                 },
                 setFaramErrors: (faramErrors: FaramErrors) => {
                     this.setState({ faramErrors });
@@ -323,7 +326,7 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
         const pending = pendingFromProps || isAnyRequestPending(requests);
 
         return (
-            <Modal className={styles.editQuestionnaireModal}>
+            <Modal>
                 <ModalHeader
                     // FIXME: use strings
                     title="Questionnaire details"
@@ -354,9 +357,9 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
                             // FIXME: use strings
                             label="Title"
                         />
-                        <SelectInput
+                        <MultiSelectInput
                             options={crisisTypeOptionList}
-                            faramElementName="crisisType"
+                            faramElementName="crisisTypes"
                             className={styles.input}
                             // FIXME: use strings
                             label="Crisis type"

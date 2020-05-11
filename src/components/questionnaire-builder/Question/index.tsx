@@ -338,7 +338,6 @@ class Question extends React.PureComponent<Props> {
                                                 />
                                                 <MetaOutput
                                                     label="Importance"
-                                                    searchValue={searchValue}
                                                     value={importanceDisplay && `Importance: ${importanceDisplay}`}
                                                 />
                                             </div>
