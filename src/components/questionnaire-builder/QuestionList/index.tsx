@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
     listToMap,
-    caseInsensitiveSubmatch,
     isTruthyString,
 } from '@togglecorp/fujs';
 
@@ -13,14 +12,13 @@ import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 
 import {
-    QuestionnaireQuestionElement,
     MiniFrameworkElement,
     BaseQuestionElement,
     BulkActionId,
 } from '#typings';
 
 import { getMatrix2dStructures } from '#utils/framework';
-import { getQuestionAttributeTitle } from '#entities/questionnaire';
+import { getQuestionAttributeTitle, getFilteredQuestions } from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
@@ -36,7 +34,7 @@ interface QuestionListProps {
     questions?: BaseQuestionElement[];
     questionClassName?: string;
     showLoadingOverlay?: boolean;
-    onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
+    onOrderChange?: (questions: BaseQuestionElement[]) => void;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
     onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
@@ -168,28 +166,16 @@ const QuestionList = (props: QuestionListProps) => {
     }, [frameworkOptions, questions]);
 
     const filteredQuestions = useMemo(
-        () => {
-            if (!flatQuestions) {
-                return [];
-            }
-            return flatQuestions.filter((question) => {
-                const searchFilter = caseInsensitiveSubmatch(question.title, searchValue)
-                || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
-                || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
-                || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
-                || caseInsensitiveSubmatch(question.attributeTitle, searchValue)
-                || caseInsensitiveSubmatch(
-                    question.crisisTypeDetail && question.crisisTypeDetail.title,
-                    searchValue,
-                )
-                || caseInsensitiveSubmatch(question.enumeratorInstruction, searchValue);
-
-                return !!question.isArchived === archived && searchFilter;
-            });
-        },
+        () => getFilteredQuestions(
+            flatQuestions,
+            undefined,
+            searchValue,
+            archived,
+        ),
         [archived, flatQuestions, searchValue],
     );
 
+    // FIXME: only used in onChange, should move it there
     const percolateQuestions = useMemo(
         () => {
             if (!questions) {
@@ -273,7 +259,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const handleOrderChange = useCallback(
-        (orderedQuestions: QuestionnaireQuestionElement[]) => {
+        (orderedQuestions: BaseQuestionElement[]) => {
             if (onOrderChange) {
                 onOrderChange([
                     ...orderedQuestions,

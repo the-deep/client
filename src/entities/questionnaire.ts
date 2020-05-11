@@ -16,6 +16,7 @@ import {
     BaseQuestionElement,
     QuestionType,
     QuestionElementFrameworkAttribute,
+    QuestionnaireQuestionElement,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -169,36 +170,43 @@ export function getFrameworkMatrices(
 }
 
 export function getFilteredQuestions(
-    questions: FrameworkQuestionElement[] | undefined,
-    values: string[],
-    searchValue = '',
+    questions: BaseQuestionElement[] | undefined,
+    frameworkAttributes?: string[],
+    searchValue?: string,
+    archived?: boolean,
 ) {
-    if (!questions || (values.length <= 0 && isFalsyString(searchValue))) {
+    const allFiltersEmpty = frameworkAttributes && frameworkAttributes.length <= 0
+        && isFalsyString(searchValue)
+        && archived === undefined;
+
+    if (!questions || allFiltersEmpty) {
         return questions;
     }
 
     const filteredQuestions = questions.filter((question) => {
-        const searchFilter = caseInsensitiveSubmatch(question.title, searchValue)
+        const searchFilter = isFalsyString(searchValue)
+            || caseInsensitiveSubmatch(question.title, searchValue)
             || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
             || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
             || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
+            || caseInsensitiveSubmatch(question.enumeratorInstruction, searchValue)
             || caseInsensitiveSubmatch(question.attributeTitle, searchValue)
-            || caseInsensitiveSubmatch(
-                question.crisisTypeDetail && question.crisisTypeDetail.title,
+            || (question.crisisTypeDetail && caseInsensitiveSubmatch(
+                question.crisisTypeDetail.title,
                 searchValue,
-            )
-            || caseInsensitiveSubmatch(question.enumeratorInstruction, searchValue);
+            ));
 
-        if (values.length <= 0) {
-            return searchFilter;
-        }
+        const frameworkAttributeFilter = (!frameworkAttributes || frameworkAttributes.length <= 0)
+            || (
+                question.frameworkAttribute
+                && question.frameworkAttribute.value
+                && frameworkAttributes.includes(question.frameworkAttribute.value)
+            );
 
-        return (
-            (question.frameworkAttribute
-            && question.frameworkAttribute.value
-            && values.includes(question.frameworkAttribute.value))
-            && searchFilter
-        );
+        const archiveFilter = archived === undefined
+            || archived === !!question.isArchived;
+
+        return searchFilter && frameworkAttributeFilter && archiveFilter;
     });
     return filteredQuestions;
 }
@@ -324,24 +332,21 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
 }
 
 export function generateDurationLabel(duration?: number) {
-    if (isNotDefined(duration) || duration === 0) {
+    if (isNotDefined(duration)) {
         return 'N/A';
     }
     const durationSec = duration % 60;
-    const durationMin = (duration - durationSec) / 60;
-
-    const durationMinuteLabel = `${durationMin} min`;
-    const durationSecondLabel = `${durationSec} sec`;
-
-    if (durationSec === 0) {
-        return durationMinuteLabel;
-    }
+    const durationMin = Math.floor(duration / 60);
 
     if (durationMin === 0) {
-        return durationSecondLabel;
+        return `${durationSec} sec`;
     }
 
-    return `${durationMinuteLabel} ${durationSecondLabel}`;
+    if (durationSec === 0) {
+        return `${durationMin} min`;
+    }
+
+    return `${durationMin} min ${durationSec} sec`;
 }
 
 export function readXLSForm(workbook: Excel.Workbook) {
