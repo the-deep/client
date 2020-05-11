@@ -6,7 +6,6 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import Overview from './Overview';
 import List from './List';
-// import QuestionList from './QuestionList';
 
 import styles from './styles.scss';
 
@@ -48,13 +47,6 @@ export default class ProjectAfDetail extends React.PureComponent {
                 component: List,
                 rendererParams,
             },
-
-            /*
-            questions: {
-                component: QuestionList,
-                rendererParams,
-            },
-            */
         };
     }
 

@@ -11,7 +11,7 @@ import {
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
 import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 import TreeInput from '#rsu/../v2/Input/TreeInput';
@@ -273,7 +273,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         framework,
                         searchValue,
                         questions: filteredQuestions,
-                        filtered: treeFilter.length > 0,
+                        isFiltered: treeFilter.length > 0 || !!searchValue,
                         questionClassName: styles.question,
 
                         showLoadingOverlay: questionDeleteRequest.pending
@@ -322,7 +322,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                             || bulkQuestionUnArchiveRequest.pending,
                         questions: filteredQuestions,
                         questionClassName: styles.question,
-                        filtered: treeFilter.length > 0,
+                        isFiltered: treeFilter.length > 0,
                         archived: true,
                     });
                 },
@@ -689,9 +689,9 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         <>
                             <div className={styles.questionStatus}>
                                 <header className={styles.header}>
-                                    <h4 className={styles.heading}>
+                                    <h3 className={styles.heading}>
                                         Question Status
-                                    </h4>
+                                    </h3>
                                 </header>
                                 <VerticalTabs
                                     tabs={tabs}
@@ -702,16 +702,16 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                             </div>
                             <div className={styles.filter}>
                                 <h3> Filter </h3>
-                                <TextInput
+                                <SearchInput
                                     value={searchValue}
                                     className={styles.searchInput}
                                     onChange={this.handleSearchValueChange}
-                                    placeholder="Type to search"
-                                    label="Search"
+                                    placeholder="Search questions"
+                                    showLabel={false}
                                     showHintAndError={false}
                                 />
-                                <h4> Matrices </h4>
                                 <TreeInput
+                                    label="Matrices"
                                     keySelector={treeItemKeySelector}
                                     parentKeySelector={treeItemParentKeySelector}
                                     labelSelector={treeItemLabelSelector}

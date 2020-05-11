@@ -49,7 +49,7 @@ interface QuestionListProps {
     framework?: MiniFrameworkElement;
     headerRightComponent?: React.ReactNode;
     archived: boolean;
-    filtered?: boolean;
+    isFiltered?: boolean;
     searchValue?: string;
 }
 
@@ -80,7 +80,7 @@ const QuestionList = (props: QuestionListProps) => {
         onBulkUnArchive,
         onOrderChange,
         archived,
-        filtered,
+        isFiltered,
         questionClassName,
         searchValue,
         headerRightComponent,
@@ -350,7 +350,7 @@ const QuestionList = (props: QuestionListProps) => {
                 data={filteredQuestions}
                 keySelector={questionKeySelector}
                 pending={showLoadingOverlay}
-                filtered={filtered}
+                isFiltered={isFiltered}
                 onChange={handleOrderChange}
                 dragHandleModifier={renderDragHandle}
                 itemClassName={styles.questionContainer}

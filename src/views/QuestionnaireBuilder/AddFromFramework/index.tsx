@@ -7,7 +7,7 @@ import {
 import Button from '#rsu/../v2/Action/Button';
 import ListView from '#rsu/../v2/View/ListView';
 import TreeInput from '#rsu/../v2/Input/TreeInput';
-import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
 
 import {
     FrameworkQuestionElement,
@@ -131,27 +131,27 @@ function AddFromFramework(props: Props) {
         <div className={_cs(styles.addFromFramework, className)}>
             <header className={styles.header}>
                 <h2 className={styles.heading}>
-                    Add from Framework
+                    Questions from Framework
                 </h2>
                 <Button
                     iconName="close"
                     onClick={onPaneClose}
-                >
-                    Close
-                </Button>
+                    transparent
+                    title="Close"
+                />
             </header>
             <div className={styles.content}>
                 <div className={styles.selectionContainer}>
-                    <TextInput
+                    <SearchInput
                         value={searchValue}
                         className={styles.searchInput}
                         onChange={setSearchValue}
-                        placeholder="Type to search"
-                        label="Search"
+                        placeholder="Search questions"
+                        showLabel={false}
                         showHintAndError={false}
                     />
-                    <h4> Matrices </h4>
                     <TreeInput
+                        label="Matrices"
                         className={styles.matrixFilter}
                         keySelector={treeItemKeySelector}
                         parentKeySelector={treeItemParentKeySelector}
@@ -162,17 +162,14 @@ function AddFromFramework(props: Props) {
                         defaultCollapseLevel={2}
                     />
                 </div>
-                <div className={styles.questionsContainer}>
-                    <h4> Questions </h4>
-                    <ListView
-                        className={styles.frameworkQuestionList}
-                        rendererParams={getFrameworkQuestionRendererParams}
-                        renderer={Question}
-                        data={filteredQuestions}
-                        keySelector={questionKeySelector}
-                        filtered={treeFilter.length > 0 || isTruthyString(searchValue)}
-                    />
-                </div>
+                <ListView
+                    className={styles.frameworkQuestionList}
+                    rendererParams={getFrameworkQuestionRendererParams}
+                    renderer={Question}
+                    data={filteredQuestions}
+                    keySelector={questionKeySelector}
+                    filtered={treeFilter.length > 0 || isTruthyString(searchValue)}
+                />
             </div>
         </div>
     );

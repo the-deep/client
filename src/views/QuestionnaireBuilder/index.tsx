@@ -10,7 +10,7 @@ import {
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
 import Button from '#rsu/../v2/Action/Button';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ResizableH from '#rscv/Resizable/ResizableH';
@@ -343,6 +343,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
                         framework,
+                        isFiltered: !!searchValue,
                         questions: questionnaire
                             ? questionnaire.questions
                             : undefined,
@@ -355,12 +356,12 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         archived: false,
                         searchValue,
                         headerRightComponent: (
-                            <TextInput
+                            <SearchInput
                                 value={searchValue}
                                 className={styles.searchInput}
                                 onChange={this.handleSearchValueChange}
-                                placeholder="Type to search"
-                                label="Search"
+                                placeholder="Search questions"
+                                showLabel={false}
                                 showHintAndError={false}
                             />
                         ),
@@ -389,6 +390,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         onUnarchive: this.handleUnarchiveQuestion,
                         onBulkUnArchive: this.handleBulkUnArchive,
                         framework: this.state.framework,
+                        isFiltered: !!searchValue,
                         questions: this.state.questionnaire
                             ? this.state.questionnaire.questions
                             : undefined,
@@ -400,12 +402,12 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: true,
                         headerRightComponent: (
-                            <TextInput
+                            <SearchInput
                                 value={searchValue}
                                 className={styles.searchInput}
                                 onChange={this.handleSearchValueChange}
-                                placeholder="Type to search"
-                                label="Search"
+                                placeholder="Search questions"
+                                showLabel={false}
                                 showHintAndError={false}
                             />
                         ),
@@ -874,7 +876,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             questionnaire,
             framework,
             addFromFramework,
-            searchValue,
         } = this.state;
 
         if (questionnaireGetPending || frameworkGetPending) {
