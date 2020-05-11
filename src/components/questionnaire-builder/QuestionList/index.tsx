@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
-    isDefined,
     listToMap,
+    isTruthyString,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -12,11 +12,13 @@ import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 
 import {
-    QuestionnaireQuestionElement,
     MiniFrameworkElement,
     BaseQuestionElement,
     BulkActionId,
 } from '#typings';
+
+import { getMatrix2dStructures } from '#utils/framework';
+import { getQuestionAttributeTitle, getFilteredQuestions } from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
@@ -32,7 +34,7 @@ interface QuestionListProps {
     questions?: BaseQuestionElement[];
     questionClassName?: string;
     showLoadingOverlay?: boolean;
-    onOrderChange?: (questions: QuestionnaireQuestionElement[]) => void;
+    onOrderChange?: (questions: BaseQuestionElement[]) => void;
     onAdd?: () => void;
     onEdit?: (key: BaseQuestionElement['id']) => void;
     onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
@@ -45,8 +47,10 @@ interface QuestionListProps {
     onBulkArchive?: (questionIds: BulkActionId[]) => void;
     onBulkUnArchive?: (questionIds: BulkActionId[]) => void;
     framework?: MiniFrameworkElement;
+    headerRightComponent?: React.ReactNode;
     archived: boolean;
-    filtered?: boolean;
+    isFiltered?: boolean;
+    searchValue?: string;
 }
 
 const renderDragHandle = () => (
@@ -76,8 +80,10 @@ const QuestionList = (props: QuestionListProps) => {
         onBulkUnArchive,
         onOrderChange,
         archived,
-        filtered,
+        isFiltered,
         questionClassName,
+        searchValue,
+        headerRightComponent,
     } = props;
 
     const [selectedQuestions, setSelectedQuestions] = useState<Selection>({});
@@ -121,25 +127,55 @@ const QuestionList = (props: QuestionListProps) => {
             onExpandChange: handleQuestionExpandChange,
             className: _cs(styles.question, questionClassName),
             disabled: showLoadingOverlay,
+            searchValue,
         }),
         [
             framework, onEdit, onDelete, onCopyFromDrop,
             onClone, onArchive, onUnarchive, onAddButtonClick, showLoadingOverlay,
             selectedQuestions, handleQuestionSelectChange, questionClassName,
-            expandedQuestions, handleQuestionExpandChange,
+            expandedQuestions, handleQuestionExpandChange, searchValue,
         ],
     );
 
+    const frameworkOptions = useMemo(() => (
+        getMatrix2dStructures(framework)
+    ), [framework]);
+
+    const flatQuestions = useMemo(() => {
+        if (!questions) {
+            return [];
+        }
+        const {
+            sectorList,
+            subsectorList,
+            dimensionList,
+            subdimensionList,
+        } = frameworkOptions;
+
+        return questions.map(question => ({
+            ...question,
+            attributeTitle: question.frameworkAttribute && getQuestionAttributeTitle(
+                question.frameworkAttribute.type,
+                question.frameworkAttribute.value,
+                sectorList,
+                subsectorList,
+                dimensionList,
+                subdimensionList,
+            ),
+        }));
+    }, [frameworkOptions, questions]);
+
     const filteredQuestions = useMemo(
-        () => {
-            if (!questions) {
-                return [];
-            }
-            return questions.filter(question => !!question.isArchived === archived);
-        },
-        [archived, questions],
+        () => getFilteredQuestions(
+            flatQuestions,
+            undefined,
+            searchValue,
+            archived,
+        ),
+        [archived, flatQuestions, searchValue],
     );
 
+    // FIXME: only used in onChange, should move it there
     const percolateQuestions = useMemo(
         () => {
             if (!questions) {
@@ -223,7 +259,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const handleOrderChange = useCallback(
-        (orderedQuestions: QuestionnaireQuestionElement[]) => {
+        (orderedQuestions: BaseQuestionElement[]) => {
             if (onOrderChange) {
                 onOrderChange([
                     ...orderedQuestions,
@@ -240,6 +276,8 @@ const QuestionList = (props: QuestionListProps) => {
     const isSomeSelected = filteredQuestions
         && filteredQuestions.some(q => selectedQuestions[q.id]);
 
+    const disableSort = !onOrderChange || isTruthyString(searchValue);
+
     return (
         <div className={_cs(styles.questionList, className)}>
             <header className={styles.header}>
@@ -255,6 +293,7 @@ const QuestionList = (props: QuestionListProps) => {
                     {title}
                 </h2>
                 <div className={styles.actions}>
+                    {headerRightComponent}
                     <Button
                         className={styles.button}
                         onClick={handleExpandAllButtonClick}
@@ -311,12 +350,12 @@ const QuestionList = (props: QuestionListProps) => {
                 data={filteredQuestions}
                 keySelector={questionKeySelector}
                 pending={showLoadingOverlay}
-                filtered={filtered}
+                isFiltered={isFiltered}
                 onChange={handleOrderChange}
                 dragHandleModifier={renderDragHandle}
                 itemClassName={styles.questionContainer}
-                disabled={!onOrderChange}
-                showDragHandle={isDefined(onOrderChange)}
+                disabled={disableSort}
+                showDragHandle={!disableSort}
             />
         </div>
     );

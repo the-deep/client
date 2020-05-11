@@ -91,6 +91,7 @@ export interface BaseQuestionElement {
     requiredDuration?: number;
 
     frameworkAttribute?: QuestionElementFrameworkAttribute;
+    attributeTitle?: string;
 
     isArchived?: boolean;
     isRequired?: boolean;
@@ -118,9 +119,9 @@ export interface MiniQuestionnaireElement extends DbEntity {
     enumeratorSkill?: string;
     enumeratorSkillDisplay?: string;
     dataCollectionTechniques?: string;
-    dataCollectionTechniqueDisplay?: string;
-    crisisType?: number;
-    crisisTypeDetail?: IdTitle;
+    dataCollectionTechniquesDisplay?: string[];
+    crisisTypes?: number[];
+    crisisTypesDetail?: IdTitle[];
 
     requiredDuration: number;
 
@@ -136,9 +137,9 @@ export interface QuestionnaireElement extends DbEntity {
     enumeratorSkill?: string;
     enumeratorSkillDisplay?: string;
     dataCollectionTechniques?: string;
-    dataCollectionTechniqueDisplay?: string;
-    crisisType?: number;
-    crisisTypeDetail?: IdTitle;
+    dataCollectionTechniquesDisplay?: string[];
+    crisisTypes?: number[];
+    crisisTypesDetail?: IdTitle;
 
     requiredDuration: number;
 

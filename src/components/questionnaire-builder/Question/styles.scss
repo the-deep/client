@@ -65,36 +65,15 @@
                         .left {
                             flex-grow: 1;
 
+                            .title {
+                                text-transform: unset;
+                            }
+
                             .basic-info {
                                 display: flex;
                                 flex-wrap: wrap;
                                 padding: var(--spacing-small) 0;
                                 color: var(--color-text-label);
-
-                                .crisis-type {
-                                    padding: var(--spacing-extra-small) var(--spacing-medium);
-                                }
-
-                                .enumerator-skill {
-                                    padding: var(--spacing-extra-small) var(--spacing-medium);
-                                }
-
-                                .data-collection-technique {
-                                    padding: var(--spacing-extra-small) var(--spacing-medium);
-                                }
-
-                                .importance {
-                                    display: flex;
-                                    padding: 0 calc(var(--spacing-medium) - var(--spacing-extra-small));
-
-                                    .label {
-                                        padding: var(--spacing-extra-small) var(--spacing-extra-small);
-                                    }
-
-                                    .value {
-                                        padding: var(--spacing-extra-small);
-                                    }
-                                }
                             }
                         }
 
@@ -154,12 +133,12 @@
     }
 
     .drop-zone-container {
-        display: flex;
         position: relative;
         flex-basis: 100%;
+        flex-shrink: 0;
+        height: calc(40px + var(--spacing-medium));
 
         .drop-zone {
-            flex-basis: 100%;
             margin-left: 52px;
             padding: var(--spacing-medium);
             height: 40px;

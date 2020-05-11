@@ -14,6 +14,7 @@ import {
     IdTitle,
     QuestionnaireQuestionElement,
 } from '#typings';
+import { generateDurationLabel } from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
@@ -26,8 +27,8 @@ interface Props {
     title?: string;
     enumeratorSkillDisplay?: string;
     dataCollectionTechnique?: string;
-    dataCollectionTechniqueDisplay?: string;
-    crisisTypeDetail?: IdTitle;
+    dataCollectionTechniquesDisplay?: string[];
+    crisisTypesDetail?: IdTitle[];
     showLoadingOverlay: boolean;
     requiredDuration: number;
     questions: QuestionnaireQuestionElement[];
@@ -40,8 +41,8 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
             questions,
             showLoadingOverlay,
             title,
-            crisisTypeDetail,
-            dataCollectionTechniqueDisplay,
+            crisisTypesDetail,
+            dataCollectionTechniquesDisplay,
             enumeratorSkillDisplay,
             requiredDuration,
             frameworkTitle,
@@ -68,14 +69,16 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                         <MetaOutput
                             label="Crisis type"
                             value={
-                                crisisTypeDetail
-                                    ? crisisTypeDetail.title
+                                crisisTypesDetail
+                                    ? crisisTypesDetail.map(c => c.title).join(', ')
                                     : undefined
                             }
                         />
                         <MetaOutput
                             label="Data collection technique"
-                            value={dataCollectionTechniqueDisplay}
+                            value={dataCollectionTechniquesDisplay
+                                ? dataCollectionTechniquesDisplay.join(', ')
+                                : undefined}
                         />
                         <MetaOutput
                             label="Enumerator skill"
@@ -83,11 +86,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                         />
                         <MetaOutput
                             label="Required duration"
-                            value={
-                                requiredDuration
-                                    ? `${requiredDuration} min`
-                                    : undefined
-                            }
+                            value={generateDurationLabel(requiredDuration)}
                         />
                     </div>
                 </header>

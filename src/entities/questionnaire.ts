@@ -1,5 +1,13 @@
 import Excel from 'exceljs/dist/exceljs.js';
-import { listToMap, Obj, sum, isDefined } from '@togglecorp/fujs';
+import {
+    listToMap,
+    Obj,
+    sum,
+    isDefined,
+    isNotDefined,
+    caseInsensitiveSubmatch,
+    isFalsyString,
+} from '@togglecorp/fujs';
 
 import {
     FrameworkQuestionElement,
@@ -7,6 +15,8 @@ import {
     MiniFrameworkElement,
     BaseQuestionElement,
     QuestionType,
+    QuestionElementFrameworkAttribute,
+    QuestionnaireQuestionElement,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -160,18 +170,44 @@ export function getFrameworkMatrices(
 }
 
 export function getFilteredQuestions(
-    questions: FrameworkQuestionElement[] | undefined,
-    values: string[],
+    questions: BaseQuestionElement[] | undefined,
+    frameworkAttributes?: string[],
+    searchValue?: string,
+    archived?: boolean,
 ) {
-    if (!questions || values.length <= 0) {
+    const allFiltersEmpty = frameworkAttributes && frameworkAttributes.length <= 0
+        && isFalsyString(searchValue)
+        && archived === undefined;
+
+    if (!questions || allFiltersEmpty) {
         return questions;
     }
 
-    const filteredQuestions = questions.filter(question => (
-        question.frameworkAttribute
-        && question.frameworkAttribute.value
-        && values.includes(question.frameworkAttribute.value)
-    ));
+    const filteredQuestions = questions.filter((question) => {
+        const searchFilter = isFalsyString(searchValue)
+            || caseInsensitiveSubmatch(question.title, searchValue)
+            || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
+            || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
+            || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
+            || caseInsensitiveSubmatch(question.enumeratorInstruction, searchValue)
+            || caseInsensitiveSubmatch(question.attributeTitle, searchValue)
+            || (question.crisisTypeDetail && caseInsensitiveSubmatch(
+                question.crisisTypeDetail.title,
+                searchValue,
+            ));
+
+        const frameworkAttributeFilter = (!frameworkAttributes || frameworkAttributes.length <= 0)
+            || (
+                question.frameworkAttribute
+                && question.frameworkAttribute.value
+                && frameworkAttributes.includes(question.frameworkAttribute.value)
+            );
+
+        const archiveFilter = archived === undefined
+            || archived === !!question.isArchived;
+
+        return searchFilter && frameworkAttributeFilter && archiveFilter;
+    });
     return filteredQuestions;
 }
 
@@ -293,6 +329,24 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     });
 
     return workbook;
+}
+
+export function generateDurationLabel(duration?: number) {
+    if (isNotDefined(duration)) {
+        return 'N/A';
+    }
+    const durationSec = duration % 60;
+    const durationMin = Math.floor(duration / 60);
+
+    if (durationMin === 0) {
+        return `${durationSec} sec`;
+    }
+
+    if (durationSec === 0) {
+        return `${durationMin} min`;
+    }
+
+    return `${durationMin} min ${durationSec} sec`;
 }
 
 export function readXLSForm(workbook: Excel.Workbook) {
@@ -444,3 +498,30 @@ export function readXLSForm(workbook: Excel.Workbook) {
 
     return { title: formTitle, questions };
 }
+
+interface ItemWithTitle {
+    id: string | number;
+    title?: string;
+}
+
+export const getQuestionAttributeTitle = (
+    type: QuestionElementFrameworkAttribute['type'],
+    value: QuestionElementFrameworkAttribute['value'],
+    sectorList: ItemWithTitle[],
+    subsectorList: ItemWithTitle[],
+    dimensionList: ItemWithTitle[],
+    subdimensionList: ItemWithTitle[],
+) => {
+    const dataSource = {
+        sector: sectorList,
+        subsector: subsectorList,
+        dimension: dimensionList,
+        subdimension: subdimensionList,
+    };
+
+    const attribute = dataSource[type].find(d => d.id === value);
+    if (attribute) {
+        return attribute.title;
+    }
+    return '';
+};

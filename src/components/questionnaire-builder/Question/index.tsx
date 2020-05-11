@@ -17,10 +17,14 @@ import {
     MiniFrameworkElement,
     QuestionType,
 } from '#typings';
-import { isChoicedQuestionType } from '#entities/questionnaire';
+import {
+    isChoicedQuestionType,
+    generateDurationLabel,
+} from '#entities/questionnaire';
 
 import { getMatrix2dStructures } from '#utils/framework';
 import DropdownButton from '#components/general/DropdownButton';
+import HighlightableText from '#components/viewer/HighlightableTextOutput';
 
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
 import BarcodeIcon from '#resources/img/questionnaire-icons/barcode.png';
@@ -36,7 +40,6 @@ import FileUploadIcon from '#resources/img/questionnaire-icons/upload.png';
 import VideoIcon from '#resources/img/questionnaire-icons/video.png';
 
 import MetaOutput from '../MetaOutput';
-import FrameworkAttributeOutput from './FrameworkAttributeOutput';
 import ResponseOutput from './ResponseOutput';
 
 import styles from './styles.scss';
@@ -88,6 +91,7 @@ interface Props {
     copyDisabled?: boolean;
     onSelectChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
     onExpandChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
+    searchValue: string;
 }
 
 interface DropData {
@@ -237,7 +241,6 @@ class Question extends React.PureComponent<Props> {
             selected,
             className,
             data,
-            framework,
             readOnly,
             disabled,
             expanded,
@@ -253,6 +256,8 @@ class Question extends React.PureComponent<Props> {
             onClone,
             onCopyFromDrop,
             onAddButtonClick,
+
+            searchValue,
         } = this.props;
 
         const {
@@ -264,14 +269,8 @@ class Question extends React.PureComponent<Props> {
             importanceDisplay,
             requiredDuration,
             isArchived,
+            attributeTitle,
         } = data;
-
-        const requiredDurationSec = requiredDuration ? requiredDuration % 60 : 0;
-        const requiredDurationMin = requiredDuration
-            ? ((requiredDuration - requiredDurationSec) / 60) : 0;
-
-        const durationMinuteLabel = requiredDurationMin ? `${requiredDurationMin} min` : '';
-        const durationSecondLabel = `${requiredDurationSec} sec`;
 
         return (
             <div
@@ -309,26 +308,33 @@ class Question extends React.PureComponent<Props> {
                                 <div className={styles.detailsRight} >
                                     <div className={styles.top}>
                                         <div className={styles.left}>
-                                            <h3 className={styles.heading}>
-                                                { title }
+                                            <h3 className={styles.title}>
+                                                <HighlightableText
+                                                    highlightText={searchValue}
+                                                    text={title}
+                                                />
                                             </h3>
                                             <div className={styles.basicInfo}>
                                                 <MetaOutput
                                                     label="Crisis type"
+                                                    searchValue={searchValue}
                                                     value={crisisTypeDetail
                                                     && crisisTypeDetail.title}
                                                 />
                                                 <MetaOutput
                                                     label="Data collection technique"
+                                                    searchValue={searchValue}
                                                     value={dataCollectionTechniqueDisplay}
                                                 />
                                                 <MetaOutput
                                                     label="Enumerator skill"
+                                                    searchValue={searchValue}
                                                     value={enumeratorSkillDisplay}
                                                 />
                                                 <MetaOutput
                                                     label="Required duration"
-                                                    value={`${durationMinuteLabel} ${durationSecondLabel}`}
+                                                    searchValue={searchValue}
+                                                    value={generateDurationLabel(requiredDuration)}
                                                 />
                                                 <MetaOutput
                                                     label="Importance"
@@ -390,10 +396,11 @@ class Question extends React.PureComponent<Props> {
                                             </div>
                                         )}
                                     </div>
-                                    <FrameworkAttributeOutput
+                                    <MetaOutput
+                                        label="Crisis type"
+                                        searchValue={searchValue}
+                                        value={attributeTitle}
                                         className={styles.frameworkAttribute}
-                                        data={data.frameworkAttribute}
-                                        {...this.getFrameworkOptions(framework)}
                                     />
                                 </div>
                             </div>
@@ -418,7 +425,12 @@ class Question extends React.PureComponent<Props> {
                                         Enumerator instructions
                                     </h4>
                                     <div className={styles.content}>
-                                        { data.enumeratorInstruction || '-' }
+                                        {data.enumeratorInstruction ? (
+                                            <HighlightableText
+                                                highlightText={searchValue}
+                                                text={data.enumeratorInstruction}
+                                            />
+                                        ) : '-'}
                                     </div>
                                 </div>
                                 <div className={styles.respondentInstruction}>
@@ -426,7 +438,12 @@ class Question extends React.PureComponent<Props> {
                                         Respondent instructions
                                     </h4>
                                     <div className={styles.content}>
-                                        { data.respondentInstruction || '-' }
+                                        {data.respondentInstruction ? (
+                                            <HighlightableText
+                                                highlightText={searchValue}
+                                                text={data.respondentInstruction}
+                                            />
+                                        ) : '-'}
                                     </div>
                                 </div>
                             </div>
@@ -445,11 +462,13 @@ class Question extends React.PureComponent<Props> {
                 </div>
                 {isNotDefined(onCopy) && (
                     <div className={styles.dropZoneContainer}>
-                        {isDefined(onCopyFromDrop) && (
+                        {isDefined(onCopyFromDrop) ? (
                             <DropZoneTwo
                                 className={styles.dropZone}
                                 onDrop={this.handleQuestionDrop}
                             />
+                        ) : (
+                            <div className={styles.dropZone} />
                         )}
                         {isDefined(onAddButtonClick) && (
                             <Button

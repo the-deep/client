@@ -10,6 +10,7 @@ import {
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import SearchInput from '#rsci/SearchInput';
 import Button from '#rsu/../v2/Action/Button';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ResizableH from '#rscv/Resizable/ResizableH';
@@ -83,6 +84,7 @@ interface State {
     // FIXME: use this everywhere
     framework?: MiniFrameworkElement;
     treeFilter: string[];
+    searchValue: string;
 }
 
 interface PropsFromAppState {
@@ -303,6 +305,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             framework: undefined,
             treeFilter: [],
             addFromFramework: false,
+            searchValue: '',
         };
 
         this.views = {
@@ -323,6 +326,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                     const {
                         framework,
                         questionnaire,
+                        searchValue,
                     } = this.state;
 
                     return ({
@@ -339,6 +343,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         onBulkDelete: this.handleBulkDelete,
                         onBulkArchive: this.handleBulkArchive,
                         framework,
+                        isFiltered: !!searchValue,
                         questions: questionnaire
                             ? questionnaire.questions
                             : undefined,
@@ -349,6 +354,17 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: false,
+                        searchValue,
+                        headerRightComponent: (
+                            <SearchInput
+                                value={searchValue}
+                                className={styles.searchInput}
+                                onChange={this.handleSearchValueChange}
+                                placeholder="Search questions"
+                                showLabel={false}
+                                showHintAndError={false}
+                            />
+                        ),
                     });
                 },
             },
@@ -366,12 +382,15 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         },
                     } = this.props;
 
+                    const { searchValue } = this.state;
+
                     return ({
                         title: 'Parking Lot Questions',
                         className: styles.questionList,
                         onUnarchive: this.handleUnarchiveQuestion,
                         onBulkUnArchive: this.handleBulkUnArchive,
                         framework: this.state.framework,
+                        isFiltered: !!searchValue,
                         questions: this.state.questionnaire
                             ? this.state.questionnaire.questions
                             : undefined,
@@ -382,6 +401,17 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
                         archived: true,
+                        headerRightComponent: (
+                            <SearchInput
+                                value={searchValue}
+                                className={styles.searchInput}
+                                onChange={this.handleSearchValueChange}
+                                placeholder="Search questions"
+                                showLabel={false}
+                                showHintAndError={false}
+                            />
+                        ),
+                        searchValue,
                     });
                 },
             },
@@ -814,6 +844,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({ addFromFramework: false });
     }
 
+    private handleSearchValueChange = (searchValue: string) => {
+        this.setState({ searchValue });
+    }
+
     public render() {
         const {
             className,
@@ -867,8 +901,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             id: questionnaireId,
             title,
             questions,
-            crisisTypeDetail,
-            dataCollectionTechniqueDisplay,
+            crisisTypesDetail,
+            dataCollectionTechniquesDisplay,
             enumeratorSkillDisplay,
             requiredDuration,
         } = questionnaire;
@@ -908,8 +942,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         <>
                             <Diagnostics
                                 frameworkTitle={framework ? framework.title : '-'}
-                                crisisTypeDetail={crisisTypeDetail}
-                                dataCollectionTechniqueDisplay={dataCollectionTechniqueDisplay}
+                                crisisTypesDetail={crisisTypesDetail}
+                                dataCollectionTechniquesDisplay={dataCollectionTechniquesDisplay}
                                 enumeratorSkillDisplay={enumeratorSkillDisplay}
                                 questions={questions}
                                 requiredDuration={requiredDuration}

@@ -46,10 +46,6 @@
                 overflow: auto;
             }
         }
-
-        .question {
-            margin-bottom: var(--spacing-medium);
-        }
     }
 
     .sidebar {
@@ -82,11 +78,15 @@
             }
         }
 
-        .matrix-filter {
+        .filter {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
             padding: var(--spacing-small) var(--spacing-medium);
+
+            .search-input {
+                margin: var(--spacing-medium) 0;
+            }
         }
     }
 }

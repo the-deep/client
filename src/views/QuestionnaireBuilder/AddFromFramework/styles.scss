@@ -8,7 +8,7 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        padding: var(--spacing-small) var(--spacing-medium);
+        padding: var(--spacing-large) var(--spacing-medium);
 
         .heading {
             flex-grow: 1;
@@ -28,19 +28,23 @@
             width: 240px;
             overflow-y: auto;
 
+            .search-input {
+                flex-shrink: 0;
+                margin-bottom: var(--spacing-medium);
+            }
+
             .matrix-filter {
                 overflow-y: auto;
             }
         }
 
-        .questions-container {
+        .framework-question-list {
+            flex-grow: 1;
             padding: 0 var(--spacing-medium);
             overflow: auto;
 
-            .framework-question-list {
-                .framework-question {
-                    margin-bottom: var(--spacing-small);
-                }
+            .framework-question {
+                margin-bottom: var(--spacing-small);
             }
         }
     }
