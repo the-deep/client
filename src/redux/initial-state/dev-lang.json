@@ -1065,7 +1065,7 @@
         "-95724442": "Select Geo Areas",
         "-47942303": "Edit {type}",
         "-50180114": "Reload",
-        "-97219656": "Edit points/polygons",
+        "-97219656": "Unlock polygons",
         "-8007367": "Start Planned Assessment Export",
         "-76059043": "Failed to load assessments visualization data. ",
         "-79392542": "Delete entry label",
@@ -1110,7 +1110,8 @@
         "-88114396": "Questionnaire Status",
         "-25976066": "Framework Questions",
         "-37971354": "XLSForm Import",
-        "-46134674": "There are no connectors associated with this project. Click below to add some!"
+        "-46134674": "There are no connectors associated with this project. Click below to add some!",
+        "-89304144": "Lock polygons"
     },
     "links": {
         "browserExtension": {
@@ -1891,7 +1892,6 @@
         },
         "addLeads.connectorsSelect": {
             "selectedNumberText": 5550,
-            "noConnectorsLabel": 1115,
             "leadAlreadyAdded": 1136,
             "modalCancelLabel": 61,
             "modalSelectLabel": 643,
@@ -2449,10 +2449,9 @@
             "serverErrorText": 500,
             "connectionFailureText": 501,
             "mapNotAvailable": 1214,
-            "polygonCancelButtonLabel": 61,
-            "polygonSaveButtonLabel": 25,
             "reloadButtonLabel": -50180114,
-            "polygonEditButtonLabel": -97219656
+            "polygonEditButtonLabel": -97219656,
+            "polygonExitButtonLabel": -89304144
         },
         "components.simplifiedFilePreview": {
             "serverErrorText": 500,

@@ -64,7 +64,7 @@ export default class GeoModal extends React.PureComponent {
     static regionLabelSelector = d => d.title;
 
     // Selector for polygon
-    static polygonKeySelector = p => p.localId;
+    static polygonKeySelector = p => p.geoJson.id;
     static polygonGroupKeySelector = p => p.type;
 
     // Selector for geo options
@@ -281,7 +281,7 @@ export default class GeoModal extends React.PureComponent {
 
     handleModalSave = (polygon) => {
         const { polygons } = this.state;
-        const index = polygons.findIndex(p => p.localId === polygon.localId);
+        const index = polygons.findIndex(p => p.geoJson.id === polygon.geoJson.id);
         if (index === -1) {
             console.error('Could not find index for polygon', polygon);
             return;
@@ -463,8 +463,6 @@ export default class GeoModal extends React.PureComponent {
                         mappedSelections={mappedSelectionsForSelectedRegion}
                         polygons={polygonsForSelectedRegion}
                         adminLevelTitles={adminLevelTitles}
-
-                        polygonDisabled={editMode}
 
                         onSelectionsChange={this.handleSelectionsChangeForRegion}
                         onPolygonsChange={this.handlePolygonsChangeForRegion}

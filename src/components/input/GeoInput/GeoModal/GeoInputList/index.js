@@ -28,11 +28,13 @@ const GeoInputList = (props) => {
         onPolygonEditClick,
     } = props;
 
+    console.warn(polygons);
+
     const handlePolygonEdit = useCallback(
-        (localId) => {
-            const polygon = polygons.find(p => p.localId === localId);
+        (id) => {
+            const polygon = polygons.find(p => p.geoJson.id === id);
             if (!polygon) {
-                console.error('Could not find index for polygon localId', localId);
+                console.error('Could not find index for polygon id', id);
                 return;
             }
             onPolygonEditClick(polygon);
@@ -41,8 +43,8 @@ const GeoInputList = (props) => {
     );
 
     const handlePolygonRemove = useCallback(
-        (localId) => {
-            const newPolygons = polygons.filter(p => p.localId !== localId);
+        (id) => {
+            const newPolygons = polygons.filter(p => p.geoJson.id !== id);
             onPolygonsChange(newPolygons);
         },
         [onPolygonsChange, polygons],
@@ -58,7 +60,7 @@ const GeoInputList = (props) => {
 
     // Selector for polygon
     const polygonKeySelector = useCallback(
-        p => p.localId,
+        p => p.geoJson.id,
         [],
     );
     const polygonGroupKeySelector = useCallback(

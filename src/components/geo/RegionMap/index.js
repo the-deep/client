@@ -2,12 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import memoize from 'memoize-one';
-import { _cs, isDefined, isNotDefined } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import boundError from '#rscg/BoundError';
 import { FgRestBuilder } from '#rsu/rest';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import DangerButton from '#rsca/Button/DangerButton';
 import Button from '#rsca/Button';
 import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -33,17 +32,39 @@ import {
 } from '#rest';
 import _ts from '#ts';
 
+import drawStyles from './drawStyles';
 import styles from './styles.scss';
 
 const ErrorDecorator = boundError(ComponentError);
+
+const defaultGeoJson = {
+    type: 'FeatureCollection',
+    features: [],
+};
 
 const mapOptions = {
     zoom: 2,
     center: [50, 10],
 };
 
+const drawOptions = {
+    displayControlsDefault: false,
+    controls: {
+        point: true,
+        polygon: true,
+        trash: true,
+    },
+    userProperties: true,
+    styles: drawStyles,
+};
+
 const sourceOptions = {
     type: 'geojson',
+};
+
+const polygonSourceOptions = {
+    type: 'geojson',
+    promoteId: 'code',
 };
 
 const fillLayerOptions = {
@@ -62,22 +83,13 @@ const fillLayerOptions = {
     },
 };
 
-const tooltipOptions = {
-    closeOnClick: false,
-    closeButton: false,
-    offset: 12,
-};
-
 const geoJsonFillOptions = {
     id: 'not-required',
     type: 'fill',
     paint: {
         'fill-color': ['get', 'color'],
-        'fill-opacity': ['case',
-            ['boolean', ['feature-state', 'hovered'], false],
-            0.7,
-            0.3,
-        ],
+        'fill-outline-color': ['get', 'color'],
+        'fill-opacity': 0.1,
     },
     filter: ['==', '$type', 'Polygon'],
 };
@@ -86,9 +98,8 @@ const geoJsonLineOptions = {
     id: 'not-required-okay',
     type: 'line',
     paint: {
-        'line-width': 1,
+        'line-width': 2,
         'line-color': ['get', 'color'],
-        'line-opacity': 0.8,
     },
     filter: ['==', '$type', 'Polygon'],
 };
@@ -98,17 +109,17 @@ const geoJsonCircleOptions = {
     type: 'circle',
     paint: {
         'circle-color': ['get', 'color'],
-        'circle-opacity': ['case',
-            ['boolean', ['feature-state', 'hovered'], false],
-            0.7,
-            0.3,
-        ],
-        'circle-radius': 5,
-        'circle-stroke-width': 1,
-        'circle-stroke-color': ['get', 'color'],
-        'circle-stroke-opacity': 0.8,
+        'circle-radius': 3,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#ffffff',
     },
     filter: ['==', '$type', 'Point'],
+};
+
+const tooltipOptions = {
+    closeOnClick: false,
+    closeButton: false,
+    offset: 12,
 };
 
 const propTypes = {
@@ -619,13 +630,14 @@ class RegionMap extends React.PureComponent {
     }
 
     handlePolygonClick = (feature) => {
+        console.warn(feature);
         const { onPolygonClick, polygons } = this.props;
         if (!onPolygonClick) {
             return true;
         }
 
         const polygon = polygons.find(
-            p => p.geoJson.id === feature.id,
+            p => p.geoJson.properties.code === feature.id,
         );
         if (polygon) {
             onPolygonClick(polygon);
@@ -687,7 +699,8 @@ class RegionMap extends React.PureComponent {
 
         const {
             geoJsons: {
-                [selectedAdminLevelId]: myGeoJson,
+                // NOTE: myGeoJson should never be undefined
+                [selectedAdminLevelId]: myGeoJson = defaultGeoJson,
             },
             geoJsonBounds: {
                 [selectedAdminLevelId]: myGeoJsonBounds,
@@ -773,6 +786,7 @@ class RegionMap extends React.PureComponent {
                         )}
                         {polygonsEnabled && editMode && (
                             <MapShapeEditor
+                                drawOptions={drawOptions}
                                 onCreate={this.handlePolygonCreate}
                                 onDelete={this.handlePolygonDelete}
                                 onUpdate={this.handlePolygonUpdate}
@@ -781,29 +795,27 @@ class RegionMap extends React.PureComponent {
                                 geoJsons={this.getGeoJsonsFromPolygons(polygons)}
                             />
                         )}
-                        {myGeoJson && (
-                            <MapSource
-                                sourceKey="region"
-                                sourceOptions={sourceOptions}
-                                geoJson={myGeoJson}
-                            >
-                                <MapLayer
-                                    layerKey="fill"
-                                    onClick={editMode ? undefined : this.handleAreaClick}
-                                    onMouseEnter={editMode ? undefined : this.handleMouseEnter}
-                                    onMouseLeave={editMode ? undefined : this.handleMouseLeave}
-                                    layerOptions={fillLayerOptions}
-                                />
-                                <MapLayer
-                                    layerKey="line"
-                                    layerOptions={lineLayerOptions}
-                                />
-                                <MapState
-                                    attributes={attributes}
-                                    attributeKey="selected"
-                                />
-                            </MapSource>
-                        )}
+                        <MapSource
+                            sourceKey="region"
+                            sourceOptions={sourceOptions}
+                            geoJson={myGeoJson}
+                        >
+                            <MapLayer
+                                layerKey="fill"
+                                onClick={editMode ? undefined : this.handleAreaClick}
+                                onMouseEnter={editMode ? undefined : this.handleMouseEnter}
+                                onMouseLeave={editMode ? undefined : this.handleMouseLeave}
+                                layerOptions={fillLayerOptions}
+                            />
+                            <MapLayer
+                                layerKey="line"
+                                layerOptions={lineLayerOptions}
+                            />
+                            <MapState
+                                attributes={attributes}
+                                attributeKey="selected"
+                            />
+                        </MapSource>
                         {!editMode && hoverInfo && (
                             <MapTooltip
                                 coordinates={hoverInfo.lngLat}
@@ -815,10 +827,10 @@ class RegionMap extends React.PureComponent {
                                 </div>
                             </MapTooltip>
                         )}
-                        {!editMode && polygonCollection && myGeoJson && (
+                        {!editMode && polygonCollection && (
                             <MapSource
                                 sourceKey="polygons"
-                                sourceOptions={sourceOptions}
+                                sourceOptions={polygonSourceOptions}
                                 geoJson={polygonCollection}
                             >
                                 <MapLayer
