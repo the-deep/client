@@ -37,16 +37,6 @@ import styles from './styles.scss';
 
 const ErrorDecorator = boundError(ComponentError);
 
-const getIdFromFeature = feature => (
-    feature.id
-);
-
-const getIdFromPolygon = polygon => (
-    getIdFromFeature(polygon.geoJson)
-);
-
-// TODO: disable shape edit
-
 const mapOptions = {
     zoom: 2,
     center: [50, 10],
@@ -130,9 +120,9 @@ const propTypes = {
     editMode: PropTypes.bool,
     polygonsEnabled: PropTypes.bool,
 
-    onEditStart: PropTypes.func,
-    onEditCancel: PropTypes.func,
-    onEditComplete: PropTypes.func,
+    onPolygonEditStart: PropTypes.func,
+    onPolygonEditEnd: PropTypes.func,
+    onPolygonsChange: PropTypes.func,
     onPolygonClick: PropTypes.func,
 };
 
@@ -145,9 +135,9 @@ const defaultProps = {
     editMode: false,
     polygonsEnabled: false,
 
-    onEditStart: undefined,
-    onEditCancel: undefined,
-    onEditComplete: undefined,
+    onPolygonEditStart: undefined,
+    onPolygonEditEnd: undefined,
+    onPolygonsChange: undefined,
     onPolygonClick: undefined,
 };
 
@@ -185,14 +175,11 @@ class RegionMap extends React.PureComponent {
 
             hoverInfo: undefined,
 
-            polygons: undefined,
+            // polygons: undefined,
         };
 
         this.geoJsonRequests = undefined; // TODO: use coordinator
         this.hasTriggeredOnce = undefined; // TODO: can be replaced
-
-        // TODO: support circle along with fill  for selections
-        // TODO: support element id from server
     }
 
     componentDidMount() {
@@ -203,26 +190,13 @@ class RegionMap extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         const {
             regionId: oldRegionId,
-            editMode: oldEditMode,
         } = this.props;
         const {
             regionId: newRegionId,
-            polygons: newPolygons,
-            editMode: newEditMode,
         } = nextProps;
 
         if (oldRegionId !== newRegionId) {
             this.create(newRegionId);
-        }
-        // NOTE: Assumptions made
-        // 1. editMode is initially always false
-        // 2. Changing regionId will reset editMode to false
-        if (newEditMode !== oldEditMode) {
-            if (newEditMode) {
-                this.setState({ polygons: newPolygons });
-            } else {
-                this.setState({ polygons: undefined });
-            }
         }
     }
 
@@ -267,13 +241,7 @@ class RegionMap extends React.PureComponent {
         polygons
             ? ({
                 type: 'FeatureCollection',
-                features: polygons.map(p => ({
-                    ...p.geoJson,
-                    // NOTE: id used by mapboxgl draw is not a number
-                    // NOTE: Also, there was a problem with numeric
-                    // id with polygon on update and delete
-                    id: p.localId,
-                })),
+                features: polygons.map(p => p.geoJson),
             })
             : undefined
     ))
@@ -293,7 +261,7 @@ class RegionMap extends React.PureComponent {
 
             hoverInfo: undefined,
 
-            polygons: undefined,
+            // polygons: undefined,
         });
 
         this.geoJsonRequests = [];
@@ -587,56 +555,57 @@ class RegionMap extends React.PureComponent {
     }
 
     handlePolygonCreate = (features) => {
-        const { regionId } = this.props;
-        const { polygons } = this.state;
+        const { regionId, onPolygonsChange, polygons } = this.props;
 
-        const createdPolygons = features.map((feature) => {
-            const newFeature = feature;
-            return {
-                region: regionId,
-                geoJson: newFeature,
-                type: newFeature.geometry.type,
-            };
-        });
+        const maxValue = Math.max(0, ...polygons.map(item => item.geoJson.properties.code));
+
+        const createdPolygons = features.map((feature, index) => ({
+            region: regionId,
+            type: feature.geometry.type,
+            geoJson: {
+                ...feature,
+                properties: {
+                    ...feature.properties,
+                    code: maxValue + index + 1,
+                    title: `${feature.geometry.type} ${maxValue + index + 1}`,
+                },
+            },
+        }));
         const newPolygons = [
             ...polygons,
             ...createdPolygons,
         ];
 
-        this.setState({ polygons: newPolygons });
+        onPolygonsChange(newPolygons);
     }
 
     handlePolygonDelete = (features) => {
-        const { polygons } = this.state;
+        const { polygons, onPolygonsChange } = this.props;
 
         const newPolygons = [...polygons];
         features.forEach((feature) => {
-            const idFromFeature = getIdFromFeature(feature);
-            const index = polygons.findIndex(
-                polygon => getIdFromPolygon(polygon) === idFromFeature,
-            );
+            const index = polygons.findIndex(polygon => polygon.geoJson.id === feature.id);
+
             if (index === -1) {
-                console.error(`Couldn't find polygon with id ${idFromFeature}`, feature);
+                console.error(`Couldn't find polygon with id ${feature.id}`, feature);
                 return;
             }
 
             newPolygons.splice(index, 1);
         });
 
-        this.setState({ polygons: newPolygons });
+        onPolygonsChange(newPolygons);
     }
 
     handlePolygonUpdate = (features) => {
-        const { polygons } = this.state;
+        const { polygons, onPolygonsChange } = this.props;
 
         const newPolygons = [...polygons];
         features.forEach((feature) => {
-            const idFromFeature = getIdFromFeature(feature);
-            const index = polygons.findIndex(
-                polygon => getIdFromPolygon(polygon) === idFromFeature,
-            );
+            const index = polygons.findIndex(polygon => polygon.geoJson.id === feature.id);
+
             if (index === -1) {
-                console.error(`Couldn't find polygon with id ${idFromFeature}`, feature);
+                console.error(`Couldn't find polygon with id ${feature.id}`, feature);
                 return;
             }
 
@@ -645,38 +614,8 @@ class RegionMap extends React.PureComponent {
                 geoJson: feature,
             };
         });
-        this.setState({ polygons: newPolygons });
-    }
 
-    handleCompleteEditMode = () => {
-        const { onEditComplete } = this.props;
-        if (!onEditComplete) {
-            return;
-        }
-        const { polygons } = this.state;
-
-        const polygonsWithLocalId = polygons.filter(
-            polygon => isDefined(polygon.localId),
-        );
-        const polygonsWithoutLocalId = polygons.filter(
-            polygon => isNotDefined(polygon.localId),
-        );
-        const maxId = Math.max(-1, ...polygonsWithLocalId.map(polygon => polygon.localId));
-        const mappedPolygons = polygonsWithoutLocalId.map((polygon, i) => {
-            const newPolygon = produce(polygon, (safePolygon) => {
-                const localId = maxId + i + 1;
-                // eslint-disable-next-line
-                safePolygon.localId = localId;
-                // eslint-disable-next-line
-                safePolygon.geoJson.properties.title = `${safePolygon.type} ${localId}`;
-            });
-            return newPolygon;
-        });
-
-        onEditComplete([
-            ...polygonsWithLocalId,
-            ...mappedPolygons,
-        ]);
+        onPolygonsChange(newPolygons);
     }
 
     handlePolygonClick = (feature) => {
@@ -686,13 +625,11 @@ class RegionMap extends React.PureComponent {
         }
 
         const polygon = polygons.find(
-            p => p.localId === feature.id,
+            p => p.geoJson.id === feature.id,
         );
-        if (!polygon) {
-            return true;
+        if (polygon) {
+            onPolygonClick(polygon);
         }
-
-        onPolygonClick(polygon);
         return true;
     }
 
@@ -701,8 +638,8 @@ class RegionMap extends React.PureComponent {
             className: classNameFromProps,
             selections,
             editMode,
-            onEditStart,
-            onEditCancel,
+            onPolygonEditStart,
+            onPolygonEditEnd,
             polygons,
             polygonsEnabled,
         } = this.props;
@@ -712,7 +649,7 @@ class RegionMap extends React.PureComponent {
             error,
             adminLevels = [],
             selectedAdminLevelId,
-            polygons: polygonsFromState,
+            // polygons: polygonsFromState,
         } = this.state;
 
         const className = _cs(
@@ -790,23 +727,16 @@ class RegionMap extends React.PureComponent {
                                     <>
                                         <PrimaryButton
                                             className={styles.button}
-                                            onClick={this.handleCompleteEditMode}
+                                            onClick={onPolygonEditEnd}
                                             disabled={myAdminLevelPending}
                                         >
-                                            {_ts('components.regionMap', 'polygonSaveButtonLabel')}
+                                            {_ts('components.regionMap', 'polygonExitButtonLabel')}
                                         </PrimaryButton>
-                                        <DangerButton
-                                            className={styles.button}
-                                            onClick={onEditCancel}
-                                            disabled={myAdminLevelPending}
-                                        >
-                                            {_ts('components.regionMap', 'polygonCancelButtonLabel')}
-                                        </DangerButton>
                                     </>
                                 ) : (
                                     <Button
                                         className={styles.button}
-                                        onClick={onEditStart}
+                                        onClick={onPolygonEditStart}
                                         disabled={myAdminLevelPending}
                                     >
                                         {_ts('components.regionMap', 'polygonEditButtonLabel')}
@@ -848,7 +778,7 @@ class RegionMap extends React.PureComponent {
                                 onUpdate={this.handlePolygonUpdate}
                                 onModeChange={this.handleModeChange}
 
-                                geoJsons={this.getGeoJsonsFromPolygons(polygonsFromState)}
+                                geoJsons={this.getGeoJsonsFromPolygons(polygons)}
                             />
                         )}
                         {myGeoJson && (

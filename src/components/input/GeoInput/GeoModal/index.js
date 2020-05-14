@@ -266,12 +266,7 @@ export default class GeoModal extends React.PureComponent {
         this.setState({ editMode: true });
     }
 
-    handleEditCancel = () => {
-        this.setState({ editMode: false });
-    }
-
-    handleEditComplete = (newPolygons) => {
-        this.handlePolygonsChangeForRegion(newPolygons);
+    handleEditEnd = () => {
         this.setState({ editMode: false });
     }
 
@@ -438,21 +433,19 @@ export default class GeoModal extends React.PureComponent {
                                 styles.map,
                                 modalLeftComponent && styles.hasLeft,
                             )}
+                            editMode={editMode}
+
                             regionId={selectedRegion}
 
                             selections={selectionsForSelectedRegion}
-                            polygons={polygonsForSelectedRegion}
-
                             onSelectionsChange={this.handleSelectionsChangeForRegion}
-                            onPolygonsChange={this.handlePolygonsChangeForRegion}
 
-                            onPolygonClick={this.handlePolygonClick}
-                            onEditStart={this.handleEditStart}
-                            onEditCancel={this.handleEditCancel}
-                            onEditComplete={this.handleEditComplete}
-
-                            editMode={editMode}
+                            polygons={polygonsForSelectedRegion}
                             polygonsEnabled={polygonsEnabled}
+                            onPolygonsChange={this.handlePolygonsChangeForRegion}
+                            onPolygonClick={this.handlePolygonClick}
+                            onPolygonEditStart={this.handleEditStart}
+                            onPolygonEditEnd={this.handleEditEnd}
                         />
                         {showPolygonEditModal && selectedPolygonInfo && (
                             <PolygonPropertiesModal

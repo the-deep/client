@@ -167,7 +167,7 @@
         "jwt-decode": "^2.2.0",
         "localforage": "^1.7.3",
         "localforage-observable": "^1.4.0",
-        "mapbox-gl": "^1.6.0",
+        "mapbox-gl": "^1.10.0",
         "memoize-one": "^5.1.1",
         "prop-types": "^15.7.2",
         "raven-js": "^3.27.2",
