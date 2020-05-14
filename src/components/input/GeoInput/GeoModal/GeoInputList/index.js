@@ -9,7 +9,6 @@ import ListView from '#rscv/List/ListView';
 
 import styles from './styles.scss';
 
-// TODO: should handle multiple regions later
 const GeoInputList = (props) => {
     const {
         header,
@@ -27,8 +26,6 @@ const GeoInputList = (props) => {
 
         onPolygonEditClick,
     } = props;
-
-    console.warn(polygons);
 
     const handlePolygonEdit = useCallback(
         (id) => {

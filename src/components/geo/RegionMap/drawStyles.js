@@ -1,7 +1,13 @@
-const blue = ['get', 'user_color'];
 const orange = '#008975';
 const white = '#fff';
 const darkGray = '#404040';
+const blue = [
+    'case',
+    ['has', 'user_color'],
+    ['get', 'user_color'],
+    darkGray,
+];
+
 
 export default [
     {

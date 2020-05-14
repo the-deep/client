@@ -87,8 +87,12 @@ const geoJsonFillOptions = {
     id: 'not-required',
     type: 'fill',
     paint: {
-        'fill-color': ['get', 'color'],
-        'fill-outline-color': ['get', 'color'],
+        'fill-color': [
+            'case',
+            ['has', 'color'],
+            ['get', 'color'],
+            '#404040',
+        ],
         'fill-opacity': 0.1,
     },
     filter: ['==', '$type', 'Polygon'],
@@ -630,7 +634,6 @@ class RegionMap extends React.PureComponent {
     }
 
     handlePolygonClick = (feature) => {
-        console.warn(feature);
         const { onPolygonClick, polygons } = this.props;
         if (!onPolygonClick) {
             return true;
