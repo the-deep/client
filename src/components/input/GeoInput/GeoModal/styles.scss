@@ -24,8 +24,10 @@
             display: flex;
             flex-basis: 24%;
             flex-direction: column;
+            flex-shrink: 0;
             border-right: var(--width-separator-thin) solid var(--color-separator);
             min-width: var(--width-left-container-min);
+            overflow-y: auto;
         }
 
         .map-wrapper {
@@ -34,9 +36,11 @@
             flex-grow: 1;
             border-right: var(--width-separator-thin) solid var(--color-separator);
             border-left: var(--width-separator-thin) solid var(--color-separator);
+            overflow-y: auto;
 
             .select-inputs {
                 display: flex;
+                flex-shrink: 0;
                 justify-content: space-between;
                 border-bottom: var(--width-separator-thin) solid var(--color-separator);
                 padding: var(--spacing-small) var(--spacing-medium);
@@ -52,12 +56,13 @@
 
             .map {
                 flex-grow: 1;
+                overflow-y: auto;
             }
         }
 
         .right {
             flex-basis: 20%;
-            flex-grow: 1;
+            flex-shrink: 0;
             min-width: var(--width-right-container-min);
             max-width: var(--width-right-container-max);
             overflow-y: auto;
