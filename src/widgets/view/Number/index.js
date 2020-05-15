@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FaramOutputElement } from '@togglecorp/faram';
 
-import NormalNumeral from '#rscv/Numeral';
+import Numeral from '#rscv/Numeral';
 
 import styles from './styles.scss';
-
-const Numeral = FaramOutputElement(NormalNumeral);
 
 const propTypes = {
     className: PropTypes.string,

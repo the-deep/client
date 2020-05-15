@@ -63,7 +63,7 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
         // TODO: handle static filters
         // TODO: Fix date filter for date widgets
         // if (filterKey === 'search' || filterKey === 'created_by') {
-        if (widgetId === 'dateWidget') {
+        if (widgetId === 'dateWidget' || widgetId === 'dateRangeWidget') {
             const { startDate, endDate } = filterOptions;
             result.push([
                 `${filterKey}__gt`,
