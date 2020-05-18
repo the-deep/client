@@ -1,22 +1,31 @@
-.response-input {
-    padding: var(--spacing-medium) 0;
+.response-item {
+    display: flex;
+    flex-direction: column;
 
-    .option-list {
-        .response-option {
-            .content {
-                display: flex;
-                align-items: center;
+    .header {
+        display: flex;
+        align-items: center;
 
-                .text-input {
-                    flex-grow: 1;
-                    margin: var(--spacing-small);
-                }
-
-                .delete-button {
-                    flex-shrink: 0;
-                    margin: var(--spacing-small);
-                }
-            }
+        .heading {
+            padding-bottom: var(--spacing-extra-small);
+            color: var(--color-text-label);
         }
+    }
+
+    .inputs-container {
+        display: flex;
+        align-items: center;
+
+        .text-input {
+            margin-right: var(--spacing-small);
+        }
+
+        .delete-button {
+            flex-shrink: 0;
+        }
+    }
+
+    &:hover {
+        background-color: var(--color-background-hover);
     }
 }
