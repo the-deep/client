@@ -1,7 +1,12 @@
 .question-form {
+    width: 720px;
+
     .modal-body {
+        display: flex;
+        flex-direction: column;
         padding: 0;
-        height: 480px;
+        height: 640px;
+        overflow-y: auto;
 
         .tabs {
             .tab {
@@ -24,32 +29,48 @@
     }
 
     .basic {
-        padding: 0 var(--spacing-medium);
-
-        .header {
-            padding: var(--spacing-small) 0;
-        }
+        overflow-y: auto;
 
         .content {
-            >* {
-                margin: var(--spacing-small);
+            .title-container,
+            .response-options,
+            .input,
+            {
+                margin: var(--spacing-small) var(--spacing-large);
             }
 
-            .more-titles {
-                .button-container {
-                    display: flex;
-                    justify-content: flex-end;
+
+            .padded-input {
+                padding: var(--spacing-small) var(--spacing-large);
+            }
+
+            .response-options {
+                display: flex;
+                align-items: center;
+
+                .item-heading {
+                    flex-grow: 1;
+                }
+            }
+
+            .title-container {
+                display: flex;
+                align-items: center;
+                margin-top: var(--spacing-large);
+
+                .title-input {
+                    flex-grow: 1;
+                }
+
+                .title-add-button {
+                    flex-shrink: 0;
                 }
             }
         }
     }
 
     .framework-details {
-        padding: 0 var(--spacing-medium);
-
-        .header {
-            padding: var(--spacing-small) 0;
-        }
+        padding: var(--spacing-medium);
 
         .framework-attribute-input {
             display: flex;
@@ -58,11 +79,7 @@
     }
 
     .metadata {
-        padding: 0 var(--spacing-medium);
-
-        .header {
-            padding: var(--spacing-small) 0;
-        }
+        padding: var(--spacing-medium);
 
         .content {
             display: flex;

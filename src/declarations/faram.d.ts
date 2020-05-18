@@ -7,7 +7,7 @@ declare module '@togglecorp/faram' {
         };
         validation?: (value: any) => string[];
     }
-    interface ArraySchema {
+    export interface ArraySchema {
         validation?: (value: any) => string[];
         member: ObjectSchema;
         keySelector: (value: any) => string | number;

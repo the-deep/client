@@ -16,4 +16,8 @@
     .button {
         flex-shrink: 0;
     }
+
+    &:hover {
+        background-color: var(--color-background-hover);
+    }
 }
