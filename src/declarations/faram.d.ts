@@ -1,11 +1,19 @@
 declare module '@togglecorp/faram' {
     import * as React from 'react';
 
-    export interface Schema {
+    interface ObjectSchema {
         fields: {
-            [key: string]: unknown[] | Schema;
+            [key: string]: unknown[] | ArraySchema | ObjectSchema;
         };
+        validation?: (value: any) => string[];
     }
+    interface ArraySchema {
+        validation?: (value: any) => string[];
+        member: ObjectSchema;
+        keySelector: (value: any) => string | number;
+    }
+
+    export type Schema = ObjectSchema;
 
     interface FaramProps {
         className?: string;

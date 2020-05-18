@@ -16,6 +16,7 @@ import {
     BaseQuestionElement,
     QuestionType,
     QuestionElementFrameworkAttribute,
+    Language,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -503,6 +504,27 @@ interface ItemWithTitle {
     title?: string;
 }
 
+export const languageOptions: Language[] = [
+    {
+        key: 'en',
+        label: 'English',
+    },
+    {
+        key: 'arb',
+        label: 'Arabic',
+    },
+    {
+        key: 'fr',
+        label: 'French',
+    },
+    {
+        key: 'es',
+        label: 'Spanish',
+    },
+];
+
+export const languageOptionsMap = listToMap(languageOptions, d => d.key, d => d.label);
+
 export const getQuestionAttributeTitle = (
     type: QuestionElementFrameworkAttribute['type'],
     value: QuestionElementFrameworkAttribute['value'],
@@ -519,8 +541,5 @@ export const getQuestionAttributeTitle = (
     };
 
     const attribute = dataSource[type].find(d => d.id === value);
-    if (attribute) {
-        return attribute.title;
-    }
-    return '';
+    return attribute ? attribute.title : '';
 };

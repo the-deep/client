@@ -3,9 +3,17 @@ import memoize from 'memoize-one';
 import Faram, {
     requiredCondition,
     FaramGroup,
+    FaramList,
     FaramInputElement,
+    Schema,
 } from '@togglecorp/faram';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    randomString,
+    getDuplicates,
+    listToMap,
+    mapToList,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -15,6 +23,7 @@ import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -41,11 +50,16 @@ import {
     AddRequestProps,
     Requests,
     QuestionnaireOptions,
+    LanguageTitle,
 } from '#typings';
 
 import FrameworkAttributeInput from './FrameworkAttributeInput';
+import MoreTitleRow from './MoreTitleRow';
 import ResponseInput from './ResponseInput';
+
 import styles from './styles.scss';
+
+const EmptyComponent = () => null;
 
 const MinuteSecondInput = FaramInputElement(RawMinuteSecondInput);
 
@@ -65,10 +79,12 @@ type MetadataKeys = 'crisisType'
     | 'requiredDuration';
 
 interface QuestionFormElement {
-    detail: Partial<Pick<BaseQuestionElement, DetailKeys>>;
+    detail: Partial<Pick<BaseQuestionElement, DetailKeys>> & { moreTitles?: LanguageTitle[] };
     analysisFramework: Partial<Pick<BaseQuestionElement, FrameworkKeys>>;
     metadata: Partial<Pick<BaseQuestionElement, MetadataKeys>>;
 }
+
+const languageKeySelector = (elem: LanguageTitle) => elem.uniqueKey;
 
 export function transformIn(value: Omit<BaseQuestionElement, 'id'> | undefined): QuestionFormElement {
     if (!value) {
@@ -81,6 +97,7 @@ export function transformIn(value: Omit<BaseQuestionElement, 'id'> | undefined):
 
     const {
         title,
+        moreTitles,
         type,
         enumeratorInstruction,
         respondentInstruction,
@@ -93,9 +110,20 @@ export function transformIn(value: Omit<BaseQuestionElement, 'id'> | undefined):
         requiredDuration,
     } = value;
 
+    const moreTitlesList = mapToList(moreTitles, (d: string, k: string | number) => {
+        const key = k as string;
+
+        return ({
+            key,
+            uniqueKey: randomString(16),
+            title: d,
+        });
+    });
+
     return {
         detail: {
             title,
+            moreTitles: moreTitlesList,
             type,
             enumeratorInstruction,
             respondentInstruction,
@@ -118,6 +146,7 @@ export function transformOut(value: QuestionFormElement) {
     const {
         detail: {
             title,
+            moreTitles,
             type,
             enumeratorInstruction,
             respondentInstruction,
@@ -135,9 +164,16 @@ export function transformOut(value: QuestionFormElement) {
         },
     } = value;
 
+    const moreTitlesMap = listToMap(
+        moreTitles,
+        (d: LanguageTitle) => d.key,
+        (d: LanguageTitle) => d.title,
+    );
+
     return {
         title,
         type,
+        moreTitles: moreTitlesMap,
         enumeratorInstruction,
         respondentInstruction,
         responseOptions,
@@ -154,6 +190,7 @@ export function errorTransformIn(value: FaramErrors) {
     const {
         $internal,
         title,
+        moreTitles,
         type,
         enumeratorInstruction,
         respondentInstruction,
@@ -170,6 +207,7 @@ export function errorTransformIn(value: FaramErrors) {
         $internal,
         detail: {
             title,
+            moreTitles,
             type,
             enumeratorInstruction,
             respondentInstruction,
@@ -229,12 +267,6 @@ const crisisTypeLabelSelector = (d: BasicElement) => d.title;
 const defaultKeySelector = (d: KeyValueElement) => d.key;
 const defaultLabelSelector = (d: KeyValueElement) => d.value;
 
-interface Schema {
-    fields: {
-        [key: string]: unknown[] | Schema;
-    };
-}
-
 type TabElement = 'detail' | 'analysisFramework' | 'metadata';
 
 const tabs: {[key in TabElement]: string} = {
@@ -258,6 +290,23 @@ class QuestionModal extends React.PureComponent<Props, State> {
                 detail: {
                     fields: {
                         title: [requiredCondition],
+                        moreTitles: {
+                            validation: (moreTitles: LanguageTitle[]) => {
+                                const errors = [];
+                                const duplicates = getDuplicates(moreTitles, o => o.key);
+                                if (duplicates.length > 0) {
+                                    errors.push(`Duplicate items are not allowed: ${duplicates.join(', ')}`);
+                                }
+                                return errors;
+                            },
+                            keySelector: languageKeySelector,
+                            member: {
+                                fields: {
+                                    title: [requiredCondition],
+                                    key: [requiredCondition],
+                                },
+                            },
+                        },
                         type: [requiredCondition],
                         enumeratorInstruction: [],
                         respondentInstruction: [],
@@ -302,6 +351,22 @@ class QuestionModal extends React.PureComponent<Props, State> {
         title,
         faramElementName: key,
     })
+
+    private languageOptionAddClick = (options: LanguageTitle[] = []) => (
+        [
+            ...options,
+            {
+                key: undefined,
+                uniqueKey: randomString(16),
+                label: '',
+            },
+        ]
+    )
+
+    private moreTitlesRendererParams = (key: LanguageTitle['uniqueKey'], data: LanguageTitle, index: number) => ({
+        dataIndex: index,
+    });
+
 
     render() {
         const { activeTab } = this.state;
@@ -389,31 +454,57 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                     >
                                         <TextInput
                                             faramElementName="title"
-                                            className={styles.input}
                                             label="Title"
                                         />
+                                        <FaramList
+                                            keySelector={languageKeySelector}
+                                            faramElementName="moreTitles"
+                                        >
+                                            <div className={styles.moreTitles}>
+                                                {(
+                                                    value
+                                                    && value.detail.moreTitles
+                                                    && value.detail.moreTitles.length > 0
+                                                ) && (
+                                                    <NonFieldErrors faramElement />
+                                                )}
+                                                <ListView
+                                                    faramElement
+                                                    emptyComponent={EmptyComponent}
+                                                    renderer={MoreTitleRow}
+                                                    rendererParams={this.moreTitlesRendererParams}
+                                                />
+                                                <div className={styles.buttonContainer}>
+                                                    <Button
+                                                        faramElementName="add-btn"
+                                                        faramAction={this.languageOptionAddClick}
+                                                        iconName="add"
+                                                        transparent
+                                                    >
+                                                        Add Another Label
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </FaramList>
                                         <SelectInput
                                             options={questionTypeOptionList}
                                             faramElementName="type"
-                                            className={styles.input}
                                             label="Type"
                                             keySelector={defaultKeySelector}
                                             labelSelector={defaultLabelSelector}
                                         />
                                         <ResponseInput
+                                            moreTitles={value && value.detail.moreTitles}
                                             type={value && value.detail.type}
                                             faramElementName="responseOptions"
-                                            className={styles.input}
                                             label="Response options"
                                         />
                                         <TextInput
                                             faramElementName="enumeratorInstruction"
-                                            className={styles.input}
                                             label="Enumerator instructions"
                                         />
                                         <TextInput
                                             faramElementName="respondentInstruction"
-                                            className={styles.input}
                                             label="Respondent instructions"
                                         />
                                     </FaramGroup>
@@ -448,7 +539,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                         <SelectInput
                                             faramElementName="crisisType"
                                             options={crisisTypeOptionList}
-                                            className={styles.input}
                                             label="Crisis type"
                                             keySelector={crisisTypeKeySelector}
                                             labelSelector={crisisTypeLabelSelector}
@@ -456,7 +546,6 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                         <SelectInput
                                             faramElementName="enumeratorSkill"
                                             options={enumeratorSkillOptionList}
-                                            className={styles.input}
                                             label="Enumerator skill"
                                             keySelector={defaultKeySelector}
                                             labelSelector={defaultLabelSelector}
@@ -464,20 +553,17 @@ class QuestionModal extends React.PureComponent<Props, State> {
                                         <SelectInput
                                             faramElementName="dataCollectionTechnique"
                                             options={dataCollectionTechniqueOptionList}
-                                            className={styles.input}
                                             label="Data collection technique"
                                             keySelector={defaultKeySelector}
                                             labelSelector={defaultLabelSelector}
                                         />
                                         <MinuteSecondInput
                                             faramElementName="requiredDuration"
-                                            className={_cs(styles.input, styles.durationInput)}
                                             label="Required duration"
                                             // FIXME: use strings
                                         />
                                         <SegmentInput
                                             faramElementName="importance"
-                                            className={styles.input}
                                             options={questionImportanceOptionList}
                                             label="Question importance"
                                             keySelector={defaultKeySelector}

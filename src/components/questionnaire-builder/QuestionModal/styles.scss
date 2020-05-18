@@ -34,6 +34,13 @@
             >* {
                 margin: var(--spacing-small);
             }
+
+            .more-titles {
+                .button-container {
+                    display: flex;
+                    justify-content: flex-end;
+                }
+            }
         }
     }
 
