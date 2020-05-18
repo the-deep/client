@@ -2,28 +2,21 @@
     padding: var(--spacing-medium) 0;
 
     .option-list {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 calc(-2 * var(--spacing-small));
+        .response-option {
+            .content {
+                display: flex;
+                align-items: center;
 
-        .option {
-            flex-basis: 50%;
+                .text-input {
+                    flex-grow: 1;
+                    margin: var(--spacing-small);
+                }
+
+                .delete-button {
+                    flex-shrink: 0;
+                    margin: var(--spacing-small);
+                }
+            }
         }
-    }
-}
-
-.response-option {
-    display: flex;
-    align-items: baseline;
-    padding: 0 var(--spacing-small);
-
-    .text-input {
-        flex-grow: 1;
-        margin: var(--spacing-small);
-    }
-
-    .delete-button {
-        flex-shrink: 0;
-        margin: var(--spacing-small);
     }
 }

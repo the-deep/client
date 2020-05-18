@@ -16,6 +16,7 @@ import {
     BaseQuestionElement,
     QuestionType,
     QuestionElementFrameworkAttribute,
+    Language,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -502,6 +503,27 @@ interface ItemWithTitle {
     id: string | number;
     title?: string;
 }
+
+export const languageOptions: Language[] = [
+    {
+        key: 'en',
+        label: 'English',
+    },
+    {
+        key: 'arb',
+        label: 'Arabic',
+    },
+    {
+        key: 'fr',
+        label: 'French',
+    },
+    {
+        key: 'es',
+        label: 'Spanish',
+    },
+];
+
+export const languageOptionsMap = listToMap(languageOptions, d => d.key, d => d.label);
 
 export const getQuestionAttributeTitle = (
     type: QuestionElementFrameworkAttribute['type'],
