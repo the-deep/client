@@ -272,14 +272,16 @@ export default class GeoInput extends React.PureComponent {
                     <GeoModal
                         title={label}
                         regions={regions}
+                        modalLeftComponent={modalLeftComponent}
                         geoOptionsByRegion={geoOptionsByRegion}
                         geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+
                         // NOTE: this value is only set on mount
                         selections={selections}
                         polygons={polygons}
+
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
-                        modalLeftComponent={modalLeftComponent}
                         polygonsEnabled={shouldEnablePolygon}
                     />
                 )}

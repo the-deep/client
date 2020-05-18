@@ -4,6 +4,9 @@ import memoize from 'memoize-one';
 import {
     listToMap,
     unique,
+    listToGroupList,
+    isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -16,6 +19,11 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
+
+import {
+    RequestClient,
+    methods,
+} from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -25,6 +33,51 @@ import PolygonPropertiesModal from './PolygonPropertiesModal';
 import GeoInputList from './GeoInputList';
 
 import styles from './styles.scss';
+
+function groupList(
+    list,
+    keySelector,
+    modifier,
+) {
+    if (isNotDefined(list)) {
+        return [];
+    }
+    const mapping = list.reduce(
+        (acc, elem, i) => {
+            const key = keySelector(elem);
+            const value = modifier
+                ? modifier(elem, key, i, acc)
+                : elem;
+            if (acc[key]) {
+                acc[key].values.push(value);
+            } else {
+                acc[key] = {
+                    key,
+                    values: [value],
+                };
+            }
+            return acc;
+        },
+        {},
+    );
+    return Object.values(mapping);
+}
+
+
+const requestOptions = {
+    intersectRequest: {
+        url: ({ params }) => `/regions/${params.regionId}/intersects/`,
+        body: ({ params }) => params.featureCollection,
+        method: methods.POST,
+        onSuccess: ({
+            response,
+            params,
+        }) => {
+            params.updatePolygons(response);
+        },
+    },
+};
+
 
 const MAX_DISPLAY_OPTIONS = 100;
 
@@ -39,6 +92,7 @@ const propTypes = {
     onCancel: PropTypes.func,
     modalLeftComponent: PropTypes.node,
     polygonsEnabled: PropTypes.bool,
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -55,6 +109,7 @@ const defaultProps = {
 
 
 @FaramInputElement
+@RequestClient(requestOptions)
 export default class GeoModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -242,7 +297,68 @@ export default class GeoModal extends React.PureComponent {
     }
 
     handlePolygonsChangeForRegion = (polygonsForSelectedRegion) => {
-        const { polygons, selectedRegion } = this.state;
+        const {
+            polygons,
+            selectedRegion,
+        } = this.state;
+
+        const {
+            requests: {
+                intersectRequest,
+            },
+        } = this.props;
+
+        const filteredPolygons = polygonsForSelectedRegion
+            .filter(item => item.type === 'Polygon')
+            .map(item => item.geoJson);
+
+        if (filteredPolygons && filteredPolygons.length > 0) {
+            // NOTE: get good diff-ing algorithm here
+
+            intersectRequest.do({
+                regionId: selectedRegion,
+                featureCollection: {
+                    type: 'FeatureCollection',
+                    features: filteredPolygons,
+                },
+                updatePolygons: (responsePolygons) => {
+                    this.setState(
+                        (state) => {
+                            const { polygons: statePolygons } = state;
+                            // FIXME: use immer
+                            const newStatePolygons = statePolygons.map((statePolygon) => {
+                                const responsePolygon = responsePolygons.find(
+                                    polygon => polygon.id === statePolygon.geoJson.id,
+                                );
+                                if (
+                                    !responsePolygon
+                                    || responsePolygon.regionId !== statePolygon.region
+                                ) {
+                                    return statePolygon;
+                                }
+                                return {
+                                    ...statePolygon,
+                                    geoJson: {
+                                        ...statePolygon.geoJson,
+                                        properties: {
+                                            ...statePolygon.geoJson.properties,
+                                            geoareas: responsePolygon.geoareas,
+                                        },
+                                    },
+                                };
+                            });
+                            return {
+                                ...state,
+                                polygons: newStatePolygons,
+                            };
+                        },
+                        () => {
+                            console.warn(this.state.polygons);
+                        },
+                    );
+                },
+            });
+        }
 
         const polygonsExceptForSelectedRegion = polygons
             .filter(polygon => polygon.region !== selectedRegion);
@@ -322,6 +438,13 @@ export default class GeoModal extends React.PureComponent {
             geoOptionsByRegion,
             geoOptionsById,
             polygonsEnabled,
+            requests: {
+                intersectRequest: {
+                    pending,
+                    // response,
+                    responseError,
+                },
+            },
         } = this.props;
 
         const {
@@ -336,6 +459,11 @@ export default class GeoModal extends React.PureComponent {
             editMode,
         } = this.state;
 
+        const polygonsForSelectedRegion = this.getPolygonsForSelectedRegion(
+            selectedRegion,
+            polygons,
+        );
+
         const adminLevelTitles = this.getAdminLevelTitles(
             geoOptionsByRegion,
             selectedRegion,
@@ -347,32 +475,57 @@ export default class GeoModal extends React.PureComponent {
             selectedAdminLevel,
         );
 
-        const optionsForSelectedAdminLevelsMap = listToMap(
-            optionsForSelectedAdminLevels,
-            item => item.key,
-            item => item,
-        );
-
         const selectionsForSelectedRegion = this.getSelectionsForSelectedRegion(
             geoOptionsById,
             selectedRegion,
             selections,
         );
 
+        // FIXME: move this inside getSelectionsForSelectedAdminLevels
+        const optionsForSelectedAdminLevelsMap = listToMap(
+            optionsForSelectedAdminLevels,
+            item => item.key,
+            item => item,
+        );
+
+        // NOTE: for value
         const selectionsForSelectedAdminLevels = this.getSelectionsForSelectedAdminLevels(
             optionsForSelectedAdminLevelsMap,
             selectionsForSelectedRegion,
         );
 
+        // NOTE: for viewing
         const mappedSelectionsForSelectedRegion = this.getMappedSelectionsForSelectedRegion(
             geoOptionsById,
             selectionsForSelectedRegion,
         );
 
-        const polygonsForSelectedRegion = this.getPolygonsForSelectedRegion(
-            selectedRegion,
-            polygons,
+        /*
+        const selectionsMapping = listToMap(
+            selections,
+            selection => selection,
+            () => true,
         );
+        const autoSelectionsForSelectedRegion = polygons
+            .filter(polygon => isDefined(polygon.geoJson.properties.geoareas))
+            .map(
+                polygon => polygon.geoJson.properties.geoareas.map(
+                    geoarea => ({
+                        id: geoarea,
+                        geoJson: polygon.geoJson,
+                    }),
+                ),
+            )
+            .flat()
+            .filter(item => selectionsMapping[item.id]);
+
+        const autoSelectionsGrouped = groupList(
+            autoSelectionsForSelectedRegion,
+            e => e.id,
+            e => e.geoJson,
+        );
+        console.warn(autoSelectionsGrouped);
+        */
 
         return (
             <Modal
@@ -400,6 +553,7 @@ export default class GeoModal extends React.PureComponent {
                                 value={selectedRegion}
                                 hideClearButton
                                 showHintAndError={false}
+                                disabled={pending || !!responseError}
                             />
                             <div className={styles.leftInputs} >
                                 <MultiSelectInput
@@ -474,7 +628,10 @@ export default class GeoModal extends React.PureComponent {
                     <Button onClick={this.handleCancelClick} >
                         {_ts('components.geo.geoModal', 'cancelButtonLabel')}
                     </Button>
-                    <PrimaryButton onClick={this.handleApplyClick} >
+                    <PrimaryButton
+                        onClick={this.handleApplyClick}
+                        disabled={pending || !!responseError}
+                    >
                         {_ts('components.geo.geoModal', 'applyButtonLabel')}
                     </PrimaryButton>
                 </ModalFooter>
