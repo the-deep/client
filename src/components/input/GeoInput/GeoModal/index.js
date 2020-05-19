@@ -1,12 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-import memoize from 'memoize-one';
+import React, { useState, useMemo, useCallback } from 'react';
+import produce from 'immer';
 import {
     listToMap,
     unique,
-    listToGroupList,
-    isDefined,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -33,36 +30,6 @@ import PolygonPropertiesModal from './PolygonPropertiesModal';
 import GeoInputList from './GeoInputList';
 
 import styles from './styles.scss';
-
-function groupList(
-    list,
-    keySelector,
-    modifier,
-) {
-    if (isNotDefined(list)) {
-        return [];
-    }
-    const mapping = list.reduce(
-        (acc, elem, i) => {
-            const key = keySelector(elem);
-            const value = modifier
-                ? modifier(elem, key, i, acc)
-                : elem;
-            if (acc[key]) {
-                acc[key].values.push(value);
-            } else {
-                acc[key] = {
-                    key,
-                    values: [value],
-                };
-            }
-            return acc;
-        },
-        {},
-    );
-    return Object.values(mapping);
-}
-
 
 const requestOptions = {
     intersectRequest: {
@@ -107,535 +74,427 @@ const defaultProps = {
     polygonsEnabled: false,
 };
 
+// Selector for regions
+const regionKeySelector = d => d.id;
+const regionLabelSelector = d => d.title;
 
-@FaramInputElement
-@RequestClient(requestOptions)
-export default class GeoModal extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+// Selector for polygon
+const polygonKeySelector = p => p.geoJson.id;
 
-    // Selector for regions
-    static regionKeySelector = d => d.id;
-    static regionLabelSelector = d => d.title;
+// Selector for geo options
+const geoOptionKeySelector = option => option.key;
+const geoOptionLabelSelector = option => option.title;
+const geoOptionLongLabelSelector = option => option.label;
 
-    // Selector for polygon
-    static polygonKeySelector = p => p.geoJson.id;
-    static polygonGroupKeySelector = p => p.type;
-
-    // Selector for geo options
-    static geoOptionKeySelector = option => option.key;
-    static geoOptionLabelSelector = option => option.title;
-    static geoOptionLongLabelSelector = option => option.label;
-
-    static groupKeySelector = option => option.adminLevel;
-
-    constructor(props) {
-        super(props);
-
-        const {
-            regions,
-            selections,
-            polygons,
-        } = props;
-
-        // NOTE: Set default selectedRegion to the first region
-        const selectedRegion = regions.length > 0
-            ? regions[0].id
-            : undefined;
-
-        this.state = {
-            selections,
-            polygons,
-            selectedRegion,
-            selectedAdminLevel: [],
-
-            selectedPolygonInfo: undefined,
-            showPolygonEditModal: false,
-
-            editMode: false,
-        };
-    }
-
-    // NOTE: Iterate over geoOptions for selectedRegion and get unique admin levels
-    getAdminLevelTitles = memoize((geoOptionsByRegion, selectedRegion) => {
-        const geoOptions = geoOptionsByRegion[selectedRegion];
-        if (!geoOptions) {
-            return [];
-        }
-
-        const adminLevelTitles = unique(
-            geoOptions,
-            geoOption => geoOption.adminLevel,
-        ).map(geoOption => ({
-            key: geoOption.adminLevel,
-            title: geoOption.adminLevelTitle,
-        }));
-        return adminLevelTitles;
-    })
-
-    // NOTE: get geoOptions for current region and currently selected admin levels
-    getOptionsForSelectedAdminLevels = memoize((
+function GeoModal(props) {
+    const {
+        title = _ts('components.geo.geoModal', 'title'),
+        modalLeftComponent,
         geoOptionsByRegion,
-        selectedRegion,
-        selectedAdminLevel,
-    ) => {
-        const geoOptions = geoOptionsByRegion[selectedRegion];
-        if (!geoOptions) {
-            return [];
-        }
-        if (selectedAdminLevel.length <= 0) {
-            return geoOptions;
-        }
-
-        const adminLevelMapping = listToMap(
-            selectedAdminLevel,
-            al => al,
-            () => true,
-        );
-
-        return geoOptions.filter(
-            geoOption => adminLevelMapping[geoOption.adminLevel],
-        );
-    })
-
-    getSelectionsForSelectedRegion = memoize((
         geoOptionsById,
-        selectedRegion,
-        selections,
-    ) => (
-        selections.filter(v => (geoOptionsById[v] && geoOptionsById[v].region === selectedRegion))
-    ))
+        polygonsEnabled,
+        requests: {
+            intersectRequest,
+        },
 
-    getPolygonsForSelectedRegion = memoize((selectedRegion, polygons) => (
-        polygons.filter(polygon => polygon.region === selectedRegion)
-    ))
+        onCancel,
+        onApply,
 
-    getSelectionsForSelectedAdminLevels = memoize((
-        optionsForSelectedAdminLevelsMap,
-        selectionsForSelectedRegion,
-    ) => (
-        selectionsForSelectedRegion.filter(v => !!optionsForSelectedAdminLevelsMap[v])
-    ))
+        selections: selectionsFromProps,
+        polygons: polygonsFromProps,
+        regions,
+    } = props;
 
-    // NOTE: get list of options that are selected
-    getMappedSelectionsForSelectedRegion = memoize((
-        geoOptionsById,
-        selectionsForSelectedRegion,
-    ) => (
-        selectionsForSelectedRegion.map(v => geoOptionsById[v])
-    ))
+    const {
+        pending,
+        // response,
+        responseError,
+    } = intersectRequest;
 
-    // TOP BAR
+    const [selectedRegion, setSelectedRegion] = useState(() => (
+        regions.length > 0 ? regions[0].id : undefined
+    ));
+    const [selections, setSelections] = useState(selectionsFromProps);
+    const [polygons, setPolygons] = useState(polygonsFromProps);
 
-    handleRegionChange = (selectedRegion) => {
-        this.setState({
-            selectedRegion,
-            selectedAdminLevel: [],
-            editMode: false,
-        });
-    }
+    const [selectedAdminLevel, setSelectedAdminLevel] = useState([]); // FIXME: change name
+    const [selectedPolygonInfo, setSelectedPolygonInfo] = useState(undefined);
+    const [showPolygonEditModal, setShowPolygonEditModal] = useState(false);
+    const [editMode, setEditMode] = useState(false);
 
-    handleAdminLevelChange = (selectedAdminLevel) => {
-        this.setState({ selectedAdminLevel });
-    }
+    const adminLevelTitles = useMemo(
+        () => {
+            if (!selectedRegion) {
+                return [];
+            }
+            const geoOptions = geoOptionsByRegion[selectedRegion];
+            if (!geoOptions) {
+                return [];
+            }
 
-    handleSelectionsChangeForAdminLevels = (selectionsForSelectedAdminLevels) => {
-        const {
-            geoOptionsById,
-            geoOptionsByRegion,
-        } = this.props;
+            // NOTE: Iterate over geoOptions for selectedRegion and get unique
+            // admin levels
+            return unique(
+                geoOptions,
+                geoOption => geoOption.adminLevel,
+            ).map(geoOption => ({
+                key: geoOption.adminLevel,
+                title: geoOption.adminLevelTitle,
+            }));
+        },
+        [geoOptionsByRegion, selectedRegion],
+    );
 
-        const {
-            selections,
-            selectedRegion,
-            selectedAdminLevel,
-        } = this.state;
+    const geoOptionsForSelectedRegion = geoOptionsByRegion[selectedRegion];
 
-        const selectionsForSelectedRegion = this.getSelectionsForSelectedRegion(
-            geoOptionsById,
-            selectedRegion,
-            selections,
-        );
+    const selectionsForSelectedRegion = useMemo(
+        () => {
+            const filteredSelections = selections.filter(v => (
+                geoOptionsById[v] && geoOptionsById[v].region === selectedRegion
+            ));
+            return filteredSelections;
+        },
+        [geoOptionsById, selectedRegion, selections],
+    );
 
-        const optionsForSelectedAdminLevels = this.getOptionsForSelectedAdminLevels(
-            geoOptionsByRegion,
-            selectedRegion,
-            selectedAdminLevel,
-        );
+    const polygonsForSelectedRegion = useMemo(
+        () => {
+            const filteredPolygons = polygons.filter(
+                polygon => polygon.region === selectedRegion,
+            );
+            return filteredPolygons;
+        },
+        [selectedRegion, polygons],
+    );
 
-        const optionsForSelectedAdminLevelsMap = listToMap(
-            optionsForSelectedAdminLevels,
-            item => item.key,
-            item => item,
-        );
+    const geoOptionsForSelectedAdminLevels = useMemo(
+        () => {
+            if (!geoOptionsForSelectedRegion) {
+                return [];
+            }
+            if (!selectedAdminLevel || selectedAdminLevel.length <= 0) {
+                return geoOptionsForSelectedRegion;
+            }
 
-        const selectionsExceptForSelectedAdminLevels = selectionsForSelectedRegion.filter(
-            v => !optionsForSelectedAdminLevelsMap[v],
-        );
+            // NOTE: get geoOptions for current region and currently selected
+            // admin levels
+            const adminLevelMapping = listToMap(
+                selectedAdminLevel,
+                al => al,
+                () => true,
+            );
 
-        this.handleSelectionsChangeForRegion([
-            ...selectionsForSelectedAdminLevels,
-            ...selectionsExceptForSelectedAdminLevels,
-        ]);
-    }
+            return geoOptionsForSelectedRegion.filter(
+                geoOption => adminLevelMapping[geoOption.adminLevel],
+            );
+        },
+        [geoOptionsForSelectedRegion, selectedAdminLevel],
+    );
 
-    // MAP
+    const selectionsForSelectedAdminLevels = useMemo(
+        () => {
+            const geoOptionsForSelectedAdminLevelsMap = listToMap(
+                geoOptionsForSelectedAdminLevels,
+                item => item.key,
+                item => item,
+            );
 
-    handleSelectionsChangeForRegion = (selectionsForSelectedRegion) => {
-        const { selections, selectedRegion } = this.state;
-        const { geoOptionsById } = this.props;
+            const filteredSelections = selectionsForSelectedRegion.filter(
+                v => !!geoOptionsForSelectedAdminLevelsMap[v],
+            );
+            return filteredSelections;
+        },
+        [geoOptionsForSelectedAdminLevels, selectionsForSelectedRegion],
+    );
 
-        const selectionsExceptForSelectedRegion = selections
-            .filter(v => (!geoOptionsById[v] || geoOptionsById[v].region !== selectedRegion));
+    // top bar
 
-        this.setState({
-            selections: [
-                ...selectionsExceptForSelectedRegion,
-                ...selectionsForSelectedRegion,
-            ],
-        });
-    }
+    const handleRegionChange = useCallback(
+        (region) => {
+            setSelectedRegion(region);
+            setSelectedAdminLevel([]);
+            setEditMode(false);
+        },
+        [],
+    );
 
-    handlePolygonsChangeForRegion = (polygonsForSelectedRegion) => {
-        const {
-            polygons,
-            selectedRegion,
-        } = this.state;
+    // map
 
-        const {
-            requests: {
-                intersectRequest,
-            },
-        } = this.props;
+    const handlePolygonEditStart = useCallback(
+        () => {
+            setEditMode(true);
+        },
+        [],
+    );
 
-        const filteredPolygons = polygonsForSelectedRegion
-            .filter(item => item.type === 'Polygon')
-            .map(item => item.geoJson);
+    const handlePolygonEditEnd = useCallback(
+        () => {
+            setEditMode(false);
+        },
+        [],
+    );
 
-        if (filteredPolygons && filteredPolygons.length > 0) {
+    // misc
+
+    const handlePolygonPropertiesUpdate = useCallback(
+        (polygonsProperties) => {
+            setPolygons(statePolygons => statePolygons.map((statePolygon) => {
+                const polygonProperties = polygonsProperties.find(
+                    p => p.id === polygonKeySelector(statePolygon),
+                );
+                if (
+                    !polygonProperties
+                    || polygonProperties.regionId !== statePolygon.region
+                ) {
+                    return statePolygon;
+                }
+
+                return produce(statePolygon, (safePolygon) => {
+                    // eslint-disable-next-line no-param-reassign
+                    safePolygon.geoJson.properties.geoareas = polygonProperties.geoareas;
+                });
+            }));
+        },
+        [],
+    );
+
+    const handlePolygonsChangeForRegion = useCallback(
+        (newPolygonsForSelectedRegion) => {
             // NOTE: get good diff-ing algorithm here
+            const filteredPolygons = newPolygonsForSelectedRegion
+                .filter(item => item.type === 'Polygon')
+                .map(item => item.geoJson);
+            if (filteredPolygons && filteredPolygons.length > 0) {
+                intersectRequest.do({
+                    regionId: selectedRegion,
+                    featureCollection: {
+                        type: 'FeatureCollection',
+                        features: filteredPolygons,
+                    },
+                    updatePolygons: handlePolygonPropertiesUpdate,
+                });
+            }
 
-            intersectRequest.do({
-                regionId: selectedRegion,
-                featureCollection: {
-                    type: 'FeatureCollection',
-                    features: filteredPolygons,
-                },
-                updatePolygons: (responsePolygons) => {
-                    this.setState(
-                        (state) => {
-                            const { polygons: statePolygons } = state;
-                            // FIXME: use immer
-                            const newStatePolygons = statePolygons.map((statePolygon) => {
-                                const responsePolygon = responsePolygons.find(
-                                    polygon => polygon.id === statePolygon.geoJson.id,
-                                );
-                                if (
-                                    !responsePolygon
-                                    || responsePolygon.regionId !== statePolygon.region
-                                ) {
-                                    return statePolygon;
-                                }
-                                return {
-                                    ...statePolygon,
-                                    geoJson: {
-                                        ...statePolygon.geoJson,
-                                        properties: {
-                                            ...statePolygon.geoJson.properties,
-                                            geoareas: responsePolygon.geoareas,
-                                        },
-                                    },
-                                };
-                            });
-                            return {
-                                ...state,
-                                polygons: newStatePolygons,
-                            };
-                        },
-                        () => {
-                            console.warn(this.state.polygons);
-                        },
-                    );
-                },
-            });
-        }
+            const polygonsExceptForSelectedRegion = polygons
+                .filter(polygon => polygon.region !== selectedRegion);
 
-        const polygonsExceptForSelectedRegion = polygons
-            .filter(polygon => polygon.region !== selectedRegion);
-
-        this.setState({
-            polygons: [
+            setPolygons([
                 ...polygonsExceptForSelectedRegion,
-                ...polygonsForSelectedRegion,
-            ],
-        });
-    }
+                ...newPolygonsForSelectedRegion,
+            ]);
+        },
+        [polygons, selectedRegion, handlePolygonPropertiesUpdate, intersectRequest],
+    );
 
-    handlePolygonClick = (polygon) => {
-        this.setState({
-            selectedPolygonInfo: polygon,
-            showPolygonEditModal: true,
-        });
-    }
+    const handleSelectionsChangeForRegion = useCallback(
+        (newSelectionsForSelectedRegion) => {
+            const selectionsExceptForSelectedRegion = selections
+                .filter(v => (!geoOptionsById[v] || geoOptionsById[v].region !== selectedRegion));
 
-    handleEditStart = () => {
-        this.setState({ editMode: true });
-    }
+            setSelections([
+                ...selectionsExceptForSelectedRegion,
+                ...newSelectionsForSelectedRegion,
+            ]);
+        },
+        [geoOptionsById, selectedRegion, selections],
+    );
 
-    handleEditEnd = () => {
-        this.setState({ editMode: false });
-    }
+    const handleSelectionsChangeForAdminLevels = useCallback(
+        (newSelectionsForSelectedAdminLevels) => {
+            const geoOptionsForSelectedAdminLevelsMap = listToMap(
+                geoOptionsForSelectedAdminLevels,
+                item => item.key,
+                item => item,
+            );
+            const selectionsExceptForSelectedAdminLevels = selectionsForSelectedRegion.filter(
+                v => !geoOptionsForSelectedAdminLevelsMap[v],
+            );
 
-    // MODAL
-
-    handleModalCancel = () => {
-        this.setState({
-            selectedPolygonInfo: undefined,
-            showPolygonEditModal: false,
-        });
-    }
-
-    handleModalSave = (polygon) => {
-        const { polygons } = this.state;
-        const index = polygons.findIndex(p => p.geoJson.id === polygon.geoJson.id);
-        if (index === -1) {
-            console.error('Could not find index for polygon', polygon);
-            return;
-        }
-
-        const newPolygons = [...polygons];
-        newPolygons[index] = polygon;
-
-        this.setState({
-            selectedPolygonInfo: undefined,
-            showPolygonEditModal: false,
-            polygons: newPolygons,
-        });
-    }
-
-    // FOOTER
-
-    handleCancelClick = () => {
-        const { onCancel } = this.props;
-        if (onCancel) {
-            onCancel();
-        }
-    }
-
-    handleApplyClick = () => {
-        const { onApply } = this.props;
-        const { selections, polygons } = this.state;
-        if (onApply) {
-            onApply(selections, polygons);
-        }
-    }
-
-    render() {
-        const {
-            regions,
-            title = _ts('components.geo.geoModal', 'title'),
-            modalLeftComponent,
-            geoOptionsByRegion,
-            geoOptionsById,
-            polygonsEnabled,
-            requests: {
-                intersectRequest: {
-                    pending,
-                    // response,
-                    responseError,
-                },
-            },
-        } = this.props;
-
-        const {
-            selectedRegion,
-            selectedAdminLevel,
-            selections,
-            polygons,
-
-            selectedPolygonInfo,
-            showPolygonEditModal,
-
-            editMode,
-        } = this.state;
-
-        const polygonsForSelectedRegion = this.getPolygonsForSelectedRegion(
-            selectedRegion,
-            polygons,
-        );
-
-        const adminLevelTitles = this.getAdminLevelTitles(
-            geoOptionsByRegion,
-            selectedRegion,
-        );
-
-        const optionsForSelectedAdminLevels = this.getOptionsForSelectedAdminLevels(
-            geoOptionsByRegion,
-            selectedRegion,
-            selectedAdminLevel,
-        );
-
-        const selectionsForSelectedRegion = this.getSelectionsForSelectedRegion(
-            geoOptionsById,
-            selectedRegion,
-            selections,
-        );
-
-        // FIXME: move this inside getSelectionsForSelectedAdminLevels
-        const optionsForSelectedAdminLevelsMap = listToMap(
-            optionsForSelectedAdminLevels,
-            item => item.key,
-            item => item,
-        );
-
-        // NOTE: for value
-        const selectionsForSelectedAdminLevels = this.getSelectionsForSelectedAdminLevels(
-            optionsForSelectedAdminLevelsMap,
+            handleSelectionsChangeForRegion([
+                ...selectionsExceptForSelectedAdminLevels,
+                ...newSelectionsForSelectedAdminLevels,
+            ]);
+        },
+        [
+            geoOptionsForSelectedAdminLevels, handleSelectionsChangeForRegion,
             selectionsForSelectedRegion,
-        );
+        ],
+    );
 
-        // NOTE: for viewing
-        const mappedSelectionsForSelectedRegion = this.getMappedSelectionsForSelectedRegion(
-            geoOptionsById,
-            selectionsForSelectedRegion,
-        );
+    // polygon properties modal
 
-        /*
-        const selectionsMapping = listToMap(
-            selections,
-            selection => selection,
-            () => true,
-        );
-        const autoSelectionsForSelectedRegion = polygons
-            .filter(polygon => isDefined(polygon.geoJson.properties.geoareas))
-            .map(
-                polygon => polygon.geoJson.properties.geoareas.map(
-                    geoarea => ({
-                        id: geoarea,
-                        geoJson: polygon.geoJson,
-                    }),
-                ),
-            )
-            .flat()
-            .filter(item => selectionsMapping[item.id]);
+    const handlePolygonClick = useCallback(
+        (polygon) => {
+            setSelectedPolygonInfo(polygon);
+            setShowPolygonEditModal(true);
+        },
+        [],
+    );
 
-        const autoSelectionsGrouped = groupList(
-            autoSelectionsForSelectedRegion,
-            e => e.id,
-            e => e.geoJson,
-        );
-        console.warn(autoSelectionsGrouped);
-        */
+    const handlePolygonModalCancel = useCallback(
+        () => {
+            setSelectedPolygonInfo(undefined);
+            setShowPolygonEditModal(false);
+        },
+        [],
+    );
 
-        return (
-            <Modal
-                className={_cs(
-                    styles.geoModal,
-                    modalLeftComponent && styles.hasLeft,
-                )}
-            >
-                <ModalHeader title={title} />
-                <ModalBody className={styles.body}>
-                    {modalLeftComponent && (
-                        <div className={styles.left}>
-                            {modalLeftComponent}
-                        </div>
-                    )}
-                    <div className={styles.mapWrapper}>
-                        <div className={styles.selectInputs}>
-                            <SelectInput
-                                label={_ts('components.geo.geoModal', 'regionLabel')}
-                                options={regions}
-                                className={styles.selectInput}
-                                keySelector={GeoModal.regionKeySelector}
-                                labelSelector={GeoModal.regionLabelSelector}
-                                onChange={this.handleRegionChange}
-                                value={selectedRegion}
-                                hideClearButton
-                                showHintAndError={false}
-                                disabled={pending || !!responseError}
-                            />
-                            <div className={styles.leftInputs} >
-                                <MultiSelectInput
-                                    label={_ts('components.geo.geoModal', 'adminLevelLabel')}
-                                    className={styles.selectInput}
-                                    options={adminLevelTitles}
-                                    labelSelector={GeoModal.geoOptionLabelSelector}
-                                    keySelector={GeoModal.geoOptionKeySelector}
-                                    onChange={this.handleAdminLevelChange}
-                                    value={selectedAdminLevel}
-                                    showHintAndError={false}
-                                />
+    const handlePolygonModalSave = useCallback(
+        (polygon) => {
+            const index = polygons.findIndex(
+                p => polygonKeySelector(p) === polygonKeySelector(polygon),
+            );
+            if (index === -1) {
+                console.error('Could not find index for polygon', polygon);
+                return;
+            }
 
-                                <SearchMultiSelectInput
-                                    label={_ts('components.geo.geoModal', 'geoAreasLabel')}
-                                    className={styles.selectInput}
-                                    options={optionsForSelectedAdminLevels}
-                                    labelSelector={GeoModal.geoOptionLongLabelSelector}
-                                    keySelector={GeoModal.geoOptionKeySelector}
-                                    onChange={this.handleSelectionsChangeForAdminLevels}
-                                    value={selectionsForSelectedAdminLevels}
-                                    showHintAndError={false}
-                                    placeholder={_ts('components.geo.geoModal', 'geoAreasPlaceholder')}
-                                    maxDisplayOptions={MAX_DISPLAY_OPTIONS}
-                                    // hideSelectAllButton
-                                />
-                            </div>
-                        </div>
-                        <RegionMap
-                            className={_cs(
-                                styles.map,
-                                modalLeftComponent && styles.hasLeft,
-                            )}
-                            editMode={editMode}
+            const newPolygons = [...polygons];
+            newPolygons[index] = polygon;
 
-                            regionId={selectedRegion}
+            setSelectedPolygonInfo(undefined);
+            setShowPolygonEditModal(false);
+            setPolygons(newPolygons);
+        },
+        [polygons],
+    );
 
-                            selections={selectionsForSelectedRegion}
-                            onSelectionsChange={this.handleSelectionsChangeForRegion}
+    // modal
 
-                            polygons={polygonsForSelectedRegion}
-                            polygonsEnabled={polygonsEnabled}
-                            onPolygonsChange={this.handlePolygonsChangeForRegion}
-                            onPolygonClick={this.handlePolygonClick}
-                            onPolygonEditStart={this.handleEditStart}
-                            onPolygonEditEnd={this.handleEditEnd}
-                        />
-                        {showPolygonEditModal && selectedPolygonInfo && (
-                            <PolygonPropertiesModal
-                                value={selectedPolygonInfo}
-                                onSave={this.handleModalSave}
-                                onClose={this.handleModalCancel}
-                            />
-                        )}
+    const handleCancelClick = useCallback(
+        () => {
+            if (onCancel) {
+                onCancel();
+            }
+        },
+        [onCancel],
+    );
+
+    const handleApplyClick = useCallback(
+        () => {
+            if (onApply) {
+                onApply(selections, polygons);
+            }
+        },
+        [onApply, polygons, selections],
+    );
+
+    return (
+        <Modal
+            className={_cs(
+                styles.geoModal,
+                modalLeftComponent && styles.hasLeft,
+            )}
+        >
+            <ModalHeader title={title} />
+            <ModalBody className={styles.body}>
+                {modalLeftComponent && (
+                    <div className={styles.left}>
+                        {modalLeftComponent}
                     </div>
-                    <GeoInputList
-                        className={styles.right}
-                        header={_ts('components.geo.geoModal', 'listHeading')}
+                )}
+                <div className={styles.mapWrapper}>
+                    <div className={styles.selectInputs}>
+                        <SelectInput
+                            label={_ts('components.geo.geoModal', 'regionLabel')}
+                            options={regions}
+                            className={styles.selectInput}
+                            keySelector={regionKeySelector}
+                            labelSelector={regionLabelSelector}
+                            onChange={handleRegionChange}
+                            value={selectedRegion}
+                            hideClearButton
+                            showHintAndError={false}
+                            disabled={pending || !!responseError}
+                        />
+                        <div className={styles.leftInputs} >
+                            <MultiSelectInput
+                                label={_ts('components.geo.geoModal', 'adminLevelLabel')}
+                                className={styles.selectInput}
+                                options={adminLevelTitles}
+                                labelSelector={geoOptionLabelSelector}
+                                keySelector={geoOptionKeySelector}
+                                onChange={setSelectedAdminLevel}
+                                value={selectedAdminLevel}
+                                showHintAndError={false}
+                            />
+
+                            <SearchMultiSelectInput
+                                label={_ts('components.geo.geoModal', 'geoAreasLabel')}
+                                className={styles.selectInput}
+                                options={geoOptionsForSelectedAdminLevels}
+                                labelSelector={geoOptionLongLabelSelector}
+                                keySelector={geoOptionKeySelector}
+                                onChange={handleSelectionsChangeForAdminLevels}
+                                value={selectionsForSelectedAdminLevels}
+                                showHintAndError={false}
+                                placeholder={_ts('components.geo.geoModal', 'geoAreasPlaceholder')}
+                                maxDisplayOptions={MAX_DISPLAY_OPTIONS}
+                                // hideSelectAllButton
+                            />
+                        </div>
+                    </div>
+                    <RegionMap
+                        className={_cs(
+                            styles.map,
+                            modalLeftComponent && styles.hasLeft,
+                        )}
+                        editMode={editMode}
+
+                        regionId={selectedRegion}
 
                         selections={selectionsForSelectedRegion}
-                        mappedSelections={mappedSelectionsForSelectedRegion}
+                        onSelectionsChange={handleSelectionsChangeForRegion}
+
                         polygons={polygonsForSelectedRegion}
-                        adminLevelTitles={adminLevelTitles}
-
-                        onSelectionsChange={this.handleSelectionsChangeForRegion}
-                        onPolygonsChange={this.handlePolygonsChangeForRegion}
-
-                        onPolygonEditClick={this.handlePolygonClick}
+                        polygonsEnabled={polygonsEnabled}
+                        onPolygonsChange={handlePolygonsChangeForRegion}
+                        onPolygonClick={handlePolygonClick}
+                        onPolygonEditStart={handlePolygonEditStart}
+                        onPolygonEditEnd={handlePolygonEditEnd}
                     />
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={this.handleCancelClick} >
-                        {_ts('components.geo.geoModal', 'cancelButtonLabel')}
-                    </Button>
-                    <PrimaryButton
-                        onClick={this.handleApplyClick}
-                        disabled={pending || !!responseError}
-                    >
-                        {_ts('components.geo.geoModal', 'applyButtonLabel')}
-                    </PrimaryButton>
-                </ModalFooter>
-            </Modal>
-        );
-    }
+                    {showPolygonEditModal && selectedPolygonInfo && (
+                        <PolygonPropertiesModal
+                            value={selectedPolygonInfo}
+                            onSave={handlePolygonModalSave}
+                            onClose={handlePolygonModalCancel}
+                        />
+                    )}
+                </div>
+                <GeoInputList
+                    className={styles.right}
+                    header={_ts('components.geo.geoModal', 'listHeading')}
+
+                    selections={selectionsForSelectedRegion}
+                    geoOptionsById={geoOptionsById}
+                    polygons={polygonsForSelectedRegion}
+                    adminLevelTitles={adminLevelTitles}
+
+                    onSelectionsChange={handleSelectionsChangeForRegion}
+                    onPolygonsChange={handlePolygonsChangeForRegion}
+
+                    onPolygonEditClick={handlePolygonClick}
+                />
+            </ModalBody>
+            <ModalFooter>
+                <Button onClick={handleCancelClick} >
+                    {_ts('components.geo.geoModal', 'cancelButtonLabel')}
+                </Button>
+                <PrimaryButton
+                    onClick={handleApplyClick}
+                    disabled={pending || !!responseError}
+                >
+                    {_ts('components.geo.geoModal', 'applyButtonLabel')}
+                </PrimaryButton>
+            </ModalFooter>
+        </Modal>
+    );
 }
+GeoModal.propTypes = propTypes;
+GeoModal.defaultProps = defaultProps;
+
+export default FaramInputElement(
+    RequestClient(requestOptions)(
+        GeoModal,
+    ),
+);

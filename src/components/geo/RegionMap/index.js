@@ -790,6 +790,7 @@ class RegionMap extends React.PureComponent {
                         {polygonsEnabled && editMode && (
                             <MapShapeEditor
                                 drawOptions={drawOptions}
+                                drawPosition="top-right"
                                 onCreate={this.handlePolygonCreate}
                                 onDelete={this.handlePolygonDelete}
                                 onUpdate={this.handlePolygonUpdate}

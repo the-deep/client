@@ -1,13 +1,62 @@
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
-
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined, listToMap, isDefined } from '@togglecorp/fujs';
 
 import DismissableListItem from '#rsca/DismissableListItem';
 import ListView from '#rscv/List/ListView';
 
-
 import styles from './styles.scss';
+
+function groupList(
+    list,
+    keySelector,
+    modifier,
+) {
+    if (isNotDefined(list)) {
+        return [];
+    }
+    const mapping = list.reduce(
+        (acc, elem, i) => {
+            const key = keySelector(elem);
+            const value = modifier
+                ? modifier(elem, key, i, acc)
+                : elem;
+            if (acc[key]) {
+                acc[key].values.push(value);
+            } else {
+                acc[key] = {
+                    key,
+                    values: [value],
+                };
+            }
+            return acc;
+        },
+        {},
+    );
+    return Object.values(mapping);
+}
+
+const propTypes = {
+    header: PropTypes.string,
+    className: PropTypes.string,
+    selections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    geoOptionsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    adminLevelTitles: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    polygonDisabled: PropTypes.bool,
+    onSelectionsChange: PropTypes.func.isRequired,
+    onPolygonsChange: PropTypes.func.isRequired,
+    onPolygonEditClick: PropTypes.func.isRequired,
+};
+const defaultProps = {
+    header: undefined,
+    className: undefined,
+    selections: [],
+    polygons: [],
+    geoOptionsById: {},
+    adminLevelTitles: [],
+    polygonDisabled: false,
+};
 
 const GeoInputList = (props) => {
     const {
@@ -15,9 +64,10 @@ const GeoInputList = (props) => {
         className,
 
         selections,
-        mappedSelections,
         polygons,
+
         adminLevelTitles,
+        geoOptionsById,
 
         polygonDisabled,
 
@@ -67,22 +117,25 @@ const GeoInputList = (props) => {
 
     // Selector for geo options
     const geoOptionKeySelector = useCallback(
-        option => option.key,
+        selection => selection.id,
         [],
     );
     const groupKeySelector = useCallback(
-        option => option.adminLevel,
-        [],
+        selection => geoOptionsById[selection.id].adminLevel,
+        [geoOptionsById],
     );
 
     const listRendererParams = useCallback(
-        (key, geoOption) => ({
+        (key, value) => ({
             className: styles.item,
             itemKey: key,
             onDismiss: handleSelectionRemove,
-            value: geoOption.title,
+            value: value.polygons && (value.polygons.length > 0)
+                ? `${geoOptionsById[key].title} (${value.polygons.length})`
+                : geoOptionsById[key].title,
+            disabled: !!value.polygons,
         }),
-        [handleSelectionRemove],
+        [handleSelectionRemove, geoOptionsById],
     );
 
     const groupRendererParams = useCallback(
@@ -118,6 +171,41 @@ const GeoInputList = (props) => {
         [handlePolygonEdit, handlePolygonRemove, polygonDisabled],
     );
 
+
+    const selectionsMapping = new Set(selections);
+    const autoSelectionsForSelectedRegion = polygons
+        .filter(polygon => isDefined(polygon.geoJson.properties.geoareas))
+        .map(
+            polygon => polygon.geoJson.properties.geoareas.map(
+                geoarea => ({
+                    id: String(geoarea),
+                    geoJson: polygon.geoJson,
+                }),
+            ),
+        )
+        .flat()
+        .filter(item => !selectionsMapping.has(item.id));
+
+    const autoSelectionsGrouped = groupList(
+        autoSelectionsForSelectedRegion,
+        e => e.id,
+        e => e.geoJson,
+    ).map(item => ({
+        id: item.key,
+        polygons: item.values,
+    }));
+
+    const selectionsWrapped = selections.map(
+        item => ({ id: item }),
+    );
+
+    const newSelections = [
+        ...selectionsWrapped,
+        ...autoSelectionsGrouped,
+    ];
+
+    console.warn(newSelections);
+
     return (
         <div className={_cs(className, styles.geoInputList)}>
             {header && (
@@ -126,7 +214,7 @@ const GeoInputList = (props) => {
                 </h3>
             )}
             <ListView
-                data={mappedSelections}
+                data={newSelections}
                 emptyComponent={null}
                 keySelector={geoOptionKeySelector}
                 renderer={DismissableListItem}
@@ -146,26 +234,7 @@ const GeoInputList = (props) => {
         </div>
     );
 };
-GeoInputList.propTypes = {
-    header: PropTypes.string,
-    className: PropTypes.string,
-    selections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    mappedSelections: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    adminLevelTitles: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    polygonDisabled: PropTypes.bool,
-    onSelectionsChange: PropTypes.func.isRequired,
-    onPolygonsChange: PropTypes.func.isRequired,
-    onPolygonEditClick: PropTypes.func.isRequired,
-};
-GeoInputList.defaultProps = {
-    header: undefined,
-    className: undefined,
-    selections: [],
-    mappedSelections: [],
-    polygons: [],
-    adminLevelTitles: [],
-    polygonDisabled: false,
-};
+GeoInputList.propTypes = propTypes;
+GeoInputList.defaultProps = defaultProps;
 
 export default GeoInputList;
