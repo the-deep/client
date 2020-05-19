@@ -24,6 +24,8 @@ import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
+import Message from '#rscv/Message';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -62,6 +64,11 @@ import ResponseOptionItem from './ResponseInput';
 import styles from './styles.scss';
 
 const MinuteSecondInput = FaramInputElement(RawMinuteSecondInput);
+const EmptyComponentForResponseOptions = () => (
+    <Message>
+        There are no response options
+    </Message>
+);
 
 type DetailKeys = 'title'
     | 'type'
@@ -454,7 +461,7 @@ function QuestionModal(props: Props) {
         data: LanguageTitle,
         index: number,
     ) => ({
-        className: styles.paddedInput,
+        className: _cs(styles.paddedInput, styles.leftPadded),
         dataIndex: index,
     }), []);
 
@@ -562,10 +569,11 @@ function QuestionModal(props: Props) {
                                             faramElementName="responseOptions"
                                         >
                                             <header className={styles.responseOptions}>
-                                                <h3 className={styles.itemHeading}>
+                                                <h4 className={styles.itemHeading}>
                                                     Response Options
-                                                </h3>
+                                                </h4>
                                                 <Button
+                                                    className={styles.addResponseOption}
                                                     faramElementName="add-btn"
                                                     faramAction={responseOptionAddClick}
                                                     iconName="add"
@@ -578,9 +586,10 @@ function QuestionModal(props: Props) {
                                                 faramElement
                                                 persistent={false}
                                             />
-                                            <List
+                                            <ListView
                                                 faramElement
                                                 renderer={ResponseOptionItem}
+                                                emptyComponent={EmptyComponentForResponseOptions}
                                                 rendererParams={responseOptionRendererParams}
                                             />
                                         </FaramList>

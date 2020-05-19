@@ -30,7 +30,7 @@ const LanguageResponseOption = ({ languageKey }: LanguageResponseOptionProps) =>
     <TextInput
         className={styles.textInput}
         faramElementName={languageKey}
-        label={languageOptionsMap[languageKey]}
+        label={`Title: ${languageOptionsMap[languageKey]}`}
     />
 );
 
@@ -73,34 +73,30 @@ function ResponseItem(props: Props) {
 
     return (
         <div className={_cs(styles.responseItem, className)}>
-            <header className={styles.header}>
-                <h4 className={styles.heading}>
-                    {`Option ${dataIndex + 1}`}
-                </h4>
-            </header>
-            <div className={styles.inputsContainer}>
-                <FaramGroup faramElementName={String(dataIndex)}>
-                    <FaramGroup faramElementName="value">
-                        <TextInput
-                            className={styles.textInput}
-                            faramElementName="defaultLabel"
-                            label="Default"
-                        />
-                        <List
-                            data={languageKeys}
-                            keySelector={languageKeySelector}
-                            renderer={LanguageResponseOption}
-                            rendererParams={languageOptionRendererParams}
-                        />
-                    </FaramGroup>
+            <h4 className={styles.heading}>
+                {`${dataIndex + 1}.`}
+            </h4>
+            <FaramGroup faramElementName={String(dataIndex)}>
+                <FaramGroup faramElementName="value">
+                    <TextInput
+                        className={styles.textInput}
+                        faramElementName="defaultLabel"
+                        label="Default title"
+                    />
+                    <List
+                        data={languageKeys}
+                        keySelector={languageKeySelector}
+                        renderer={LanguageResponseOption}
+                        rendererParams={languageOptionRendererParams}
+                    />
                 </FaramGroup>
-                <DangerButton
-                    className={styles.deleteButton}
-                    iconName="delete"
-                    faramAction={deleteClick}
-                    faramElementName={dataIndex}
-                />
-            </div>
+            </FaramGroup>
+            <DangerButton
+                className={styles.deleteButton}
+                iconName="delete"
+                faramAction={deleteClick}
+                faramElementName={dataIndex}
+            />
         </div>
     );
 }

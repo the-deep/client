@@ -184,8 +184,12 @@ export function getFilteredQuestions<T extends BaseQuestionElement>(
     }
 
     const filteredQuestions = questions.filter((question) => {
+        const jointMoreTitles = question.moreTitles
+            ? Object.values(question.moreTitles).join(' ') : '';
+
         const searchFilter = isFalsyString(searchValue)
             || caseInsensitiveSubmatch(question.title, searchValue)
+            || caseInsensitiveSubmatch(jointMoreTitles, searchValue)
             || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
             || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
             || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
