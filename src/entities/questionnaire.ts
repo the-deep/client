@@ -187,9 +187,16 @@ export function getFilteredQuestions<T extends BaseQuestionElement>(
         const jointMoreTitles = question.moreTitles
             ? Object.values(question.moreTitles).join(' ') : '';
 
+        const responseOptions = question.responseOptions || [];
+        const jointResponseOptions = responseOptions.map(ro => (
+            Object.values(ro.value).join(' ')
+        )).join(' ');
+
         const searchFilter = isFalsyString(searchValue)
             || caseInsensitiveSubmatch(question.title, searchValue)
             || caseInsensitiveSubmatch(jointMoreTitles, searchValue)
+            || caseInsensitiveSubmatch(jointResponseOptions, searchValue)
+            || caseInsensitiveSubmatch(question.name, searchValue)
             || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
             || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
             || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)

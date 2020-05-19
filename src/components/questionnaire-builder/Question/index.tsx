@@ -1,5 +1,4 @@
 import React, { useMemo, useCallback } from 'react';
-import memoize from 'memoize-one';
 import {
     _cs,
     isDefined,
@@ -207,6 +206,7 @@ function Question<T extends BaseQuestionElement>(props: Props<T>) {
     const {
         type,
         title,
+        name,
         moreTitles,
         crisisTypeDetail,
         enumeratorSkillDisplay,
@@ -375,6 +375,19 @@ function Question<T extends BaseQuestionElement>(props: Props<T>) {
                     </div>
                     {expanded && (
                         <div className={styles.details}>
+                            <div className={styles.enumeratorInstruction}>
+                                <h4 className={styles.heading}>
+                                    Name
+                                </h4>
+                                <div className={styles.content}>
+                                    {name ? (
+                                        <HighlightableText
+                                            highlightText={searchValue}
+                                            text={name}
+                                        />
+                                    ) : '-'}
+                                </div>
+                            </div>
                             {(moreTitlesList.length > 0) && (
                                 <div className={styles.moreTitles}>
                                     <h4 className={styles.heading}>
@@ -398,6 +411,7 @@ function Question<T extends BaseQuestionElement>(props: Props<T>) {
                                         <ResponseOutput
                                             type={data.type}
                                             options={data.responseOptions}
+                                            searchValue={searchValue}
                                         />
                                     </div>
                                 </div>

@@ -656,6 +656,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             value: arrayMoveData.afterData,
         };
 
+        if (!movedQuestion) {
+            return;
+        }
+
         this.setState({
             questionnaire: newQuestionnaire,
         }, () => {
