@@ -32,14 +32,18 @@ import {
     AddRequestProps,
     BulkActionId,
     OrderAction,
+
+    NullableField,
 } from '#typings';
 
+import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
 import {
     methods,
     RequestCoordinator,
     RequestClient,
-    notifyOnFailure,
-    notifyOnFatal,
 } from '#request';
 
 import {
@@ -54,7 +58,7 @@ import { pathNames } from '#constants';
 
 import QuestionModalForQuestionnaire from '#qbc/QuestionModalForQuestionnaire';
 
-import QuestionList from '#qbc/QuestionList';
+import QuestionList, { QuestionListProps } from '#qbc/QuestionList';
 import QuestionnairePreviewModal from '#qbc/QuestionnairePreviewModal';
 import AddFromFramework from './AddFromFramework';
 import Diagnostics from './Diagnostics';
@@ -78,7 +82,8 @@ interface ComponentProps {
 interface State {
     showQuestionFormModal: boolean;
     addFromFramework: boolean;
-    questionToEdit?: QuestionnaireQuestionElement;
+    questionToEdit?: NullableField<QuestionnaireQuestionElement, 'id' | 'order'>;
+    // NOTE: this is the id after which to insert new item
     newQuestionOrder?: number;
     questionnaire?: QuestionnaireElement;
     // FIXME: use this everywhere
@@ -100,12 +105,6 @@ const mapStateToProps = (state: AppState) => ({
 
 type ComponentPropsWithAppState = PropsFromAppState & ComponentProps;
 
-type CopyBody = {
-    questionnaireId?: number;
-    frameworkQuestionId?: number;
-    newOrder?: number;
-}
-
 interface Params {
     setQuestionnaire?: (questionnaire: QuestionnaireElement) => void;
     setFramework?: (framework: MiniFrameworkElement) => void;
@@ -114,7 +113,6 @@ interface Params {
     onDeleteSuccess?: (questionId: QuestionnaireQuestionElement['id']) => void;
 
     body?: BulkActionId[];
-    copyBody?: CopyBody;
     orderAction?: OrderAction;
     onBulkDeleteSuccess?: (questionIds: QuestionnaireQuestionElement['id'][]) => void;
     onBulkArchiveSuccess?: (questionIds: QuestionnaireQuestionElement['id'][], archiveStatus: boolean) => void;
@@ -122,8 +120,6 @@ interface Params {
 
     archive?: boolean;
     onArchiveSuccess?: (question: QuestionnaireQuestionElement) => void;
-    onCopySuccess?: (question: QuestionnaireQuestionElement) => void;
-    onCloneSuccess?: (question: QuestionnaireQuestionElement) => void;
 }
 
 const EmptyComponent = () => <div />;
@@ -162,21 +158,6 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         onFailure: notifyOnFailure('Analysis Framework'),
         onFatal: notifyOnFatal('Analysis Framework'),
     },
-    copyToQuestionnaireRequest: {
-        url: ({ props: { questionnaireId } }) => (
-            `/questionnaires/${questionnaireId}/questions/af-question-copy/`
-        ),
-        body: ({ params }) => params && params.copyBody,
-        method: methods.POST,
-        onSuccess: ({ params, response }) => {
-            if (!params || !params.onCopySuccess) {
-                return;
-            }
-            params.onCopySuccess(response as QuestionnaireQuestionElement);
-        },
-        onFailure: notifyOnFailure('Questionnaire Duplicate'),
-        onFatal: notifyOnFatal('Questionnaire Duplicate'),
-    },
     questionDeleteRequest: {
         url: ({ props: { questionnaireId }, params }) => (
             `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/`
@@ -197,26 +178,6 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         ),
         method: methods.POST,
         body: ({ params }) => params && params.orderAction,
-    },
-    questionCloneRequest: {
-        url: ({ props: { questionnaireId }, params }) => (
-            `/questionnaires/${questionnaireId}/questions/${params && params.questionId}/clone/`
-        ),
-        body: ({ params }) => ({
-            order_action: {
-                action: 'below',
-                value: params && params.questionId,
-            },
-        }),
-        method: methods.POST,
-        onSuccess: ({ params, response }) => {
-            if (!params || !params.onCloneSuccess) {
-                return;
-            }
-            params.onCloneSuccess(response as QuestionnaireQuestionElement);
-        },
-        onFailure: notifyOnFailure('Question Clone'),
-        onFatal: notifyOnFatal('Question Clone'),
     },
     questionArchiveRequest: {
         url: ({ props: { questionnaireId }, params }) => (
@@ -316,7 +277,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         requests: {
                             questionDeleteRequest,
                             questionArchiveRequest,
-                            copyToQuestionnaireRequest,
                             bulkQuestionDeleteRequest,
                             bulkQuestionArchiveRequest,
                             bulkQuestionUnArchiveRequest,
@@ -349,7 +309,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             : undefined,
                         showLoadingOverlay: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
-                            || copyToQuestionnaireRequest.pending
                             || bulkQuestionDeleteRequest.pending
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
@@ -375,7 +334,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         requests: {
                             questionDeleteRequest,
                             questionArchiveRequest,
-                            copyToQuestionnaireRequest,
                             bulkQuestionDeleteRequest,
                             bulkQuestionArchiveRequest,
                             bulkQuestionUnArchiveRequest,
@@ -396,7 +354,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                             : undefined,
                         showLoadingOverlay: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
-                            || copyToQuestionnaireRequest.pending
                             || bulkQuestionDeleteRequest.pending
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
@@ -426,7 +383,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         requests: {
                             questionDeleteRequest,
                             questionArchiveRequest,
-                            copyToQuestionnaireRequest,
                             bulkQuestionDeleteRequest,
                             bulkQuestionArchiveRequest,
                             bulkQuestionUnArchiveRequest,
@@ -446,7 +402,6 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                         onCopy: this.handleCopyClick,
                         copyDisabled: questionDeleteRequest.pending
                             || questionArchiveRequest.pending
-                            || copyToQuestionnaireRequest.pending
                             || bulkQuestionDeleteRequest.pending
                             || bulkQuestionArchiveRequest.pending
                             || bulkQuestionUnArchiveRequest.pending,
@@ -478,8 +433,8 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
     }
 
     private views: {
-        active: ViewComponent<React.ComponentProps<typeof QuestionList>>;
-        archived: ViewComponent<React.ComponentProps<typeof QuestionList>>;
+        active: ViewComponent<QuestionListProps<QuestionnaireQuestionElement>>;
+        archived: ViewComponent<QuestionListProps<QuestionnaireQuestionElement>>;
     }
 
     private addViews: {
@@ -487,7 +442,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         archived: ViewComponent<React.ComponentProps<typeof EmptyComponent>>;
     }
 
-    private handleCopyClick = (questionId: BaseQuestionElement['id']) => {
+    private handleCopyClick = (question: BaseQuestionElement) => {
         const { questionnaire } = this.state;
 
         if (!questionnaire) {
@@ -496,22 +451,20 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         const { id: questionnaireId } = questionnaire;
 
-        const copyBody = {
-            frameworkQuestionId: questionId,
-            questionnaireId,
-            order_action: {
-                action: 'top',
+        this.setState({
+            showQuestionFormModal: true,
+            questionToEdit: {
+                ...question,
+                questionnaire: questionnaireId,
+                id: undefined,
+                order: undefined,
             },
-        };
-
-        this.props.requests.copyToQuestionnaireRequest.do({
-            onCopySuccess: this.handleCopySuccess,
-            copyBody,
+            newQuestionOrder: undefined,
         });
     }
 
     private handleCopyFromDrop = (
-        questionId: BaseQuestionElement['id'],
+        question: QuestionnaireQuestionElement,
         afterQuestionId: number,
     ) => {
         const { questionnaire } = this.state;
@@ -522,51 +475,23 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         const { id: questionnaireId } = questionnaire;
 
-        const copyBody = {
-            frameworkQuestionId: questionId,
-            questionnaireId,
-            order_action: {
-                action: 'below',
-                value: afterQuestionId,
+        this.setState({
+            showQuestionFormModal: true,
+            questionToEdit: {
+                ...question,
+                questionnaire: questionnaireId,
+                id: undefined,
+                order: undefined,
             },
-        };
-
-        this.props.requests.copyToQuestionnaireRequest.do({
-            onCopySuccess: this.handleCopySuccess,
-            copyBody,
+            newQuestionOrder: afterQuestionId,
         });
-    }
-
-    private handleCopySuccess = (question: QuestionnaireQuestionElement) => {
-        const { questionnaire } = this.state;
-        if (!questionnaire) {
-            return;
-        }
-
-        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
-            safeQuestionnaire.questions.splice(question.order, 0, question);
-        });
-
-        this.setState({ questionnaire: newQuestionnaire });
-    }
-
-    private handleCloneSuccess = (question: QuestionnaireQuestionElement) => {
-        const { questionnaire } = this.state;
-        if (!questionnaire) {
-            return;
-        }
-
-        const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
-            safeQuestionnaire.questions.splice(question.order, 0, question);
-        });
-
-        this.setState({ questionnaire: newQuestionnaire });
     }
 
     private handleAddQuestionButtonClick = () => {
         this.setState({
             showQuestionFormModal: true,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
         });
     }
 
@@ -586,6 +511,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({
             showQuestionFormModal: true,
             questionToEdit,
+            newQuestionOrder: undefined,
         });
     }
 
@@ -610,10 +536,24 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleCloneQuestion = (questionId: QuestionnaireQuestionElement['id']) => {
-        this.props.requests.questionCloneRequest.do({
-            questionId,
-            onCloneSuccess: this.handleCloneSuccess,
+    private handleCloneQuestion = (question: QuestionnaireQuestionElement) => {
+        const { questionnaire } = this.state;
+
+        if (!questionnaire) {
+            return;
+        }
+
+        const { id: questionnaireId } = questionnaire;
+
+        this.setState({
+            showQuestionFormModal: true,
+            questionToEdit: {
+                ...question,
+                questionnaire: questionnaireId,
+                id: undefined,
+                order: undefined,
+            },
+            newQuestionOrder: undefined,
         });
     }
 
@@ -658,6 +598,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         this.setState({
             showQuestionFormModal: false,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
         });
     }
 
@@ -667,13 +608,13 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             return;
         }
 
-        const { id: questionId } = question;
+        const { id: questionId, order } = question;
 
         const newQuestionnaire = produce(questionnaire, (safeQuestionnaire) => {
             const { questions } = safeQuestionnaire;
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex === -1) {
-                safeQuestionnaire.questions.splice(question.order, 0, question);
+                safeQuestionnaire.questions.splice(order, 0, question);
             } else {
                 // eslint-disable-next-line no-param-reassign
                 safeQuestionnaire.questions[selectedIndex] = question;
@@ -682,8 +623,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
 
         this.setState({
             questionnaire: newQuestionnaire,
+
             showQuestionFormModal: false,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
         });
     }
 

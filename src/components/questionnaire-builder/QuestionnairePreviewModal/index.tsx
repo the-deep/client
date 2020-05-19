@@ -12,12 +12,13 @@ import ModalHeader from '#rscv/Modal/Header';
 import notify from '#notify';
 
 import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
+import {
     RequestCoordinator,
     RequestClient,
     methods,
-
-    notifyOnFailure,
-    notifyOnFatal,
 } from '#request';
 
 import {

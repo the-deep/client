@@ -139,7 +139,7 @@ export interface QuestionnaireElement extends DbEntity {
     dataCollectionTechniques?: string;
     dataCollectionTechniquesDisplay?: string[];
     crisisTypes?: number[];
-    crisisTypesDetail?: IdTitle;
+    crisisTypesDetail?: IdTitle[];
 
     requiredDuration: number;
 
@@ -157,3 +157,11 @@ export interface OrderAction {
 // FRAMEWORK
 export type MiniFrameworkElement = Pick<FrameworkElement, 'id' | 'widgets' | 'questions' | 'title'>
 
+
+export interface QuestionnaireOptions {
+    enumeratorSkillOptions?: unknown[];
+    dataCollectionTechniqueOptions?: unknown[];
+    crisisTypeOptions?: unknown[];
+    questionTypeOptions?: unknown[];
+    questionImportanceOptions?: unknown[];
+}

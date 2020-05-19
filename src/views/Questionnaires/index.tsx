@@ -26,11 +26,13 @@ import {
 } from '#typings';
 
 import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
+import {
     RequestCoordinator,
     RequestClient,
     methods,
-    notifyOnFailure,
-    notifyOnFatal,
 } from '#request';
 import _ts from '#ts';
 

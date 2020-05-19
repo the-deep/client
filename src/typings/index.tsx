@@ -48,7 +48,19 @@ export interface ViewComponent<T> {
     lazyMount?: boolean;
 }
 
+export interface Permissions {
+    setupPermissions: {
+        create?: boolean;
+        delete?: boolean;
+        view?: boolean;
+        modify?: boolean;
+    };
+}
+
 export * from './framework';
 export * from './questionnaire';
 export * from './project';
 
+export type NullableField<T, K extends keyof T> = {
+    [key in K]+?: T[key];
+} & Omit<T, K>

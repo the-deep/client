@@ -47,6 +47,7 @@ export interface FrameworkElement {
     widgets: WidgetElement<unknown>[];
     questions: FrameworkQuestionElement[];
     title: string;
+    exportables?: unknown[];
 }
 
 // Matrix 2d

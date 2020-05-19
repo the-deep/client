@@ -8,9 +8,11 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
+import {
     RequestClient,
     methods,
-    notifyOnFailure,
 } from '#request';
 import {
     removeProjectUserGroupAction,

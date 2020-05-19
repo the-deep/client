@@ -23,7 +23,7 @@ interface Dimension {
 interface Props {
     className?: string;
     widgetKey?: string;
-    keySelector: (d: object) => {};
+    keySelector: (d: object) => string | number;
     titleSelector: (d: object) => {};
     dataModifier: (d: object) => {};
     onDimensionEditButtonClick: (k: string) => {};

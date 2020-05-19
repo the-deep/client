@@ -10,9 +10,11 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { getNewActiveProjectId } from '#entities/project';
 
 import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
+import {
     RequestClient,
     methods,
-    notifyOnFailure,
 } from '#request';
 import {
     removeProjectMembershipAction,

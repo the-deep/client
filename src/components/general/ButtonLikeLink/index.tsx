@@ -9,6 +9,7 @@ type ButtonType = 'default' | 'primary' | 'accent' | 'danger' | 'warning'
 interface Props {
     className?: string;
     type: ButtonType;
+    to: string;
 }
 
 const styleTypeMap: {

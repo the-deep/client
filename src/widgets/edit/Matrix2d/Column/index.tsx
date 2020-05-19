@@ -24,7 +24,7 @@ interface Props {
     className?: string;
     widgetKey?: string;
     // FIXME: the typings are wrong
-    keySelector: (d: object) => {};
+    keySelector: (d: object) => number | string;
     titleSelector: (d: object) => {};
     dataModifier: (d: object) => {};
     onSectorEditButtonClick: (k: string) => {};

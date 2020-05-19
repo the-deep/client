@@ -1,13 +1,13 @@
 declare module '@togglecorp/faram' {
     import * as React from 'react';
 
-    interface Schema {
+    export interface Schema {
         fields: {
             [key: string]: unknown[] | Schema;
         };
     }
 
-    interface Props {
+    interface FaramProps {
         className?: string;
         schema: Schema;
         value: any;
@@ -18,9 +18,44 @@ declare module '@togglecorp/faram' {
         disabled?: boolean;
     }
 
-    export default class Faram extends React.PureComponent<Props> {
+    export default class Faram extends React.PureComponent<FaramProps> {
     }
 
+    export function FaramList(props: {
+        faramElementName: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        keySelector: (item: any) => string | number;
+        children: React.ReactNode | null;
+    });
+
+    export function FaramGroup(props: {
+        faramElementName: string;
+        children: React.ReactNode | null;
+    });
+
+
+    interface ValidOp {
+        ok: boolean;
+        mesage?: string;
+    }
+
+    export const exclusiveInBetweenCondition: (min: number, max: number) => (value: any) => ValidOp;
+    export const inclusiveInBetweenCondition: (min: number, max: number) => (value: any) => ValidOp;
+    export const lessThanCondition: (n: number) => (value: any) => ValidOp;
+    export const greaterThanCondition: (n: number) => (value: any) => ValidOp;
+    export const lessThanOrEqualToCondition: (n: number) => (value: any) => ValidOp;
+    export const greaterThanOrEqualToCondition: (n: number) => (value: any) => ValidOp;
+    export const lengthLessThanCondition: (n: number) => (value: any) => ValidOp;
+    export const lengthGreaterThanCondition: (n: number) => (value: any) => ValidOp;
+    export const lengthEqualToCondition: (n: number) => (value: any) => ValidOp;
+    export const requiredCondition: (value: any) => ValidOp;
+    export const numberCondition: (value: any) => ValidOp;
+    export const integerCondition: (value: any) => ValidOp;
+    export const emailCondition: (value: any) => ValidOp;
+    export const urlCondition: (value: any) => ValidOp;
+    export const lenientUrlCondition: (value: any) => ValidOp;
+    export const dateCondition: (value: any) => ValidOp;
+    export const timeCondition: (value: any) => ValidOp;
 
     /*
     // NOTE: you need to explicitly pass faramElementName with this typing

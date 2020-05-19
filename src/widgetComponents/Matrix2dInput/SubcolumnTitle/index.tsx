@@ -5,14 +5,17 @@ import { _cs } from '@togglecorp/fujs';
 import styles from './styles.scss';
 
 type OrientationKey = 'leftToRight' | 'bottomToTop';
+/*
 interface Orientation {
     key: OrientationKey;
     label: string;
 }
+*/
 
+/*
 interface StyleType {
     fontSize?: string;
-    wiritingMode?: string;
+    // wiritingMode?: string;
     width?: number | string;
     height?: number | string;
     transform?: string;
@@ -21,6 +24,7 @@ interface StyleType {
     justifyContent?: string;
     writingMode?: string;
 }
+*/
 
 interface Props {
     fontSize?: string | undefined;
@@ -28,7 +32,7 @@ interface Props {
     title?: string | undefined;
     tooltip?: string | undefined;
     className?: string | undefined;
-    orientation?: Orientation;
+    orientation?: OrientationKey;
     sectorKey?: string | undefined;
     onClick?: (x: string | undefined) => {};
 }
@@ -39,7 +43,7 @@ interface State {
 export default class SubsectorTitle extends React.PureComponent<Props, State> {
     private getCellStyle = memoize((
         fontSize: string | undefined,
-        orientation: OrientationKey,
+        orientation: OrientationKey | undefined,
         width: string | undefined,
     ) => {
         const thStyle: React.CSSProperties = {};

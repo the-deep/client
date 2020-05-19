@@ -12,6 +12,7 @@ import {
     Requests,
     MiniFrameworkElement,
     OrderAction,
+    NullableField,
 } from '#typings';
 
 import QuestionModal, {
@@ -23,6 +24,8 @@ import QuestionModal, {
 } from '#qbc/QuestionModal';
 
 import styles from './styles.scss';
+
+type FrameworkQuestionData = NullableField<FrameworkQuestionElement, 'id' | 'order'>;
 
 interface Error {
     faramErrors: {
@@ -38,14 +41,14 @@ interface State {
 interface ComponentProps {
     className?: string;
     newQuestionOrder?: number;
-    value?: FrameworkQuestionElement;
+    value?: FrameworkQuestionData;
     framework: MiniFrameworkElement;
     onRequestSuccess: (q: FrameworkQuestionElement) => void;
     closeModal: () => void;
 }
 
 interface Params {
-    body?: FrameworkQuestionElement & { orderAction?: OrderAction };
+    body?: FrameworkQuestionData & { orderAction?: OrderAction };
     setFaramErrors?: (faramErrors: FaramErrors) => void;
 }
 
@@ -118,7 +121,7 @@ class QuestionModalForFramework extends React.PureComponent<Props, State> {
             newQuestionOrder,
         } = this.props;
 
-        const body = transformOut(faramValues) as FrameworkQuestionElement;
+        const body = transformOut(faramValues) as FrameworkQuestionData;
 
         if (value && value.id) {
             questionSaveRequest.do({

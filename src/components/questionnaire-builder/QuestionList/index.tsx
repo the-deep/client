@@ -24,25 +24,32 @@ import styles from './styles.scss';
 
 const questionKeySelector = (q: BaseQuestionElement) => q.id;
 
+const renderDragHandle = () => (
+    <Icon
+        className={styles.dragHandle}
+        name="hamburger"
+    />
+);
+
 interface Selection {
     [key: number]: boolean;
 }
 
-interface QuestionListProps {
+export interface QuestionListProps<T extends BaseQuestionElement>{
     title: string;
     className?: string;
-    questions?: BaseQuestionElement[];
+    questions?: T[];
     questionClassName?: string;
     showLoadingOverlay?: boolean;
-    onOrderChange?: (questions: BaseQuestionElement[]) => void;
+    onOrderChange?: (questions: T[]) => void;
     onAdd?: () => void;
-    onEdit?: (key: BaseQuestionElement['id']) => void;
-    onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
-    onClone?: (key: BaseQuestionElement['id']) => void;
-    onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
-    onDelete?: (key: BaseQuestionElement['id']) => void;
-    onArchive?: (key: BaseQuestionElement['id']) => void;
-    onUnarchive?: (key: BaseQuestionElement['id']) => void;
+    onEdit?: (key: T['id']) => void;
+    onAddButtonClick?: (key: T['id']) => void;
+    onClone?: (question: T) => void;
+    onCopyFromDrop?: (data: T, dropKey: T['id']) => void;
+    onDelete?: (key: T['id']) => void;
+    onArchive?: (key: T['id']) => void;
+    onUnarchive?: (key: T['id']) => void;
     onBulkDelete?: (questionIds: BulkActionId[]) => void;
     onBulkArchive?: (questionIds: BulkActionId[]) => void;
     onBulkUnArchive?: (questionIds: BulkActionId[]) => void;
@@ -53,14 +60,7 @@ interface QuestionListProps {
     searchValue?: string;
 }
 
-const renderDragHandle = () => (
-    <Icon
-        className={styles.dragHandle}
-        name="hamburger"
-    />
-);
-
-const QuestionList = (props: QuestionListProps) => {
+function QuestionList<T extends BaseQuestionElement>(props: QuestionListProps<T>) {
     const {
         className,
         title,
@@ -90,7 +90,7 @@ const QuestionList = (props: QuestionListProps) => {
     const [expandedQuestions, setExpandedQuestions] = useState<Selection>({});
 
     const handleQuestionSelectChange = useCallback(
-        (key: BaseQuestionElement['id'], value: boolean) => {
+        (key: T['id'], value: boolean) => {
             setSelectedQuestions(selection => ({
                 ...selection,
                 [key]: value,
@@ -100,7 +100,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const handleQuestionExpandChange = useCallback(
-        (key: BaseQuestionElement['id'], value: boolean) => {
+        (key: T['id'], value: boolean) => {
             setExpandedQuestions(selection => ({
                 ...selection,
                 [key]: value,
@@ -110,7 +110,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const getQuestionRendererParams = useCallback(
-        (key: BaseQuestionElement['id'], question: BaseQuestionElement) => ({
+        (key: T['id'], question: T) => ({
             data: question,
             onEditButtonClick: onEdit,
             onClone,
@@ -259,7 +259,7 @@ const QuestionList = (props: QuestionListProps) => {
     );
 
     const handleOrderChange = useCallback(
-        (orderedQuestions: BaseQuestionElement[]) => {
+        (orderedQuestions: T[]) => {
             if (onOrderChange) {
                 onOrderChange([
                     ...orderedQuestions,
@@ -359,6 +359,6 @@ const QuestionList = (props: QuestionListProps) => {
             />
         </div>
     );
-};
+}
 
 export default QuestionList;
