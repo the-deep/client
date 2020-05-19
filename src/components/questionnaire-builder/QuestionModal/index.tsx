@@ -71,6 +71,7 @@ const EmptyComponentForResponseOptions = () => (
 );
 
 type DetailKeys = 'title'
+    | 'name'
     | 'type'
     | 'enumeratorInstruction'
     | 'respondentInstruction'
@@ -106,6 +107,7 @@ export function transformIn(value: BaseQuestionElement | undefined): QuestionFor
         title,
         moreTitles,
         type,
+        name,
         enumeratorInstruction,
         respondentInstruction,
         responseOptions,
@@ -131,6 +133,7 @@ export function transformIn(value: BaseQuestionElement | undefined): QuestionFor
         detail: {
             title,
             moreTitles: moreTitlesList,
+            name,
             type,
             enumeratorInstruction,
             respondentInstruction,
@@ -153,6 +156,7 @@ export function transformOut(value: QuestionFormElement) {
     const {
         detail: {
             title,
+            name,
             moreTitles,
             type,
             enumeratorInstruction,
@@ -180,6 +184,7 @@ export function transformOut(value: QuestionFormElement) {
     return {
         title,
         type,
+        name,
         moreTitles: moreTitlesMap,
         enumeratorInstruction,
         respondentInstruction,
@@ -199,6 +204,7 @@ export function errorTransformIn(value: FaramErrors) {
         title,
         moreTitles,
         type,
+        name,
         enumeratorInstruction,
         respondentInstruction,
         responseOptions,
@@ -214,6 +220,7 @@ export function errorTransformIn(value: FaramErrors) {
         $internal,
         detail: {
             title,
+            name,
             moreTitles,
             type,
             enumeratorInstruction,
@@ -254,6 +261,7 @@ function createSchema(
             detail: {
                 fields: {
                     title: [requiredCondition],
+                    name: [requiredCondition],
                     moreTitles: {
                         validation: (moreTitles: LanguageTitle[]) => {
                             const errors = [];
@@ -555,6 +563,11 @@ function QuestionModal(props: Props) {
                                             rendererParams={moreTitlesRendererParams}
                                         />
                                     </FaramList>
+                                    <TextInput
+                                        className={styles.input}
+                                        faramElementName="name"
+                                        label="Name"
+                                    />
                                     <SelectInput
                                         options={questionTypeOptionList}
                                         className={styles.input}

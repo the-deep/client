@@ -20,6 +20,7 @@ import styles from './styles.scss';
 
 interface ResponseOptionsProps {
     className?: string;
+    searchValue?: string;
     optionValue: QuestionResponseOptionElement['value'];
     dataIndex: number;
 }
@@ -28,6 +29,7 @@ const languageKeySelector = (l: LanguageTitle) => l.key;
 
 const ResponseOption = ({
     className,
+    searchValue,
     optionValue,
     dataIndex,
 }: ResponseOptionsProps) => {
@@ -49,7 +51,8 @@ const ResponseOption = ({
     const languageOptionRendererParams = useCallback((key, data) => ({
         value: data.title,
         label: languageOptionsMap[key],
-    }), []);
+        searchValue,
+    }), [searchValue]);
 
     return (
         <div className={_cs(styles.responseOption, className)}>
@@ -59,6 +62,7 @@ const ResponseOption = ({
             <TextOutput
                 label="Default Title"
                 value={defaultLabel}
+                searchValue={searchValue}
             />
             <List
                 data={languageKeys}
@@ -72,6 +76,7 @@ const ResponseOption = ({
 
 interface Props {
     className?: string;
+    searchValue?: string;
     options?: QuestionResponseOptionElement[];
     itemClassName?: string;
     type: string;
@@ -85,6 +90,7 @@ function ResponseOutput(props: Props) {
         options,
         type,
         itemClassName,
+        searchValue,
     } = props;
 
     const getResponseOptionRendererParams = useCallback((
@@ -95,7 +101,8 @@ function ResponseOutput(props: Props) {
         className: itemClassName,
         optionValue: option.value,
         dataIndex,
-    }), [itemClassName]);
+        searchValue,
+    }), [itemClassName, searchValue]);
 
     if (!type || !isChoicedQuestionType(type)) {
         return null;

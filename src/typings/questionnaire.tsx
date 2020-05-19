@@ -81,6 +81,7 @@ export interface BaseQuestionElement {
     order: number;
 
     title: string;
+    name: string;
     moreTitles: MoreTitles;
     type: QuestionType;
     // label: string;

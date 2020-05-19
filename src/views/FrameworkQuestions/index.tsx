@@ -374,6 +374,10 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             value: arrayMoveData.afterData,
         };
 
+        if (!movedQuestion) {
+            return;
+        }
+
         this.setState({
             framework: newFramework,
         }, () => {
