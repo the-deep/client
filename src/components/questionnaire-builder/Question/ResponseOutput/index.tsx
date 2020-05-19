@@ -1,69 +1,119 @@
-import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useMemo } from 'react';
+import {
+    _cs,
+    mapToList,
+} from '@togglecorp/fujs';
 
 import ListView from '#rsu/../v2/View/ListView';
-import { KeyValueElement } from '#typings';
-import { isChoicedQuestionType } from '#entities/questionnaire';
+import List from '#rscv/List';
+import TextOutput from '#components/general/TextOutput';
+import {
+    QuestionResponseOptionElement,
+    LanguageTitle,
+} from '#typings';
+import {
+    isChoicedQuestionType,
+    languageOptionsMap,
+} from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
 interface ResponseOptionsProps {
     className?: string;
-    value: KeyValueElement;
+    optionValue: QuestionResponseOptionElement['value'];
+    dataIndex: number;
 }
+
+const languageKeySelector = (l: LanguageTitle) => l.key;
 
 const ResponseOption = ({
     className,
-    value,
-}: ResponseOptionsProps) => (
-    <div className={_cs(styles.responseOption, className)}>
-        { value.value }
-    </div>
-);
+    optionValue,
+    dataIndex,
+}: ResponseOptionsProps) => {
+    const {
+        defaultLabel,
+        ...otherLanguages
+    } = optionValue;
+
+    const languageKeys = useMemo(() => (
+        mapToList(
+            otherLanguages,
+            (d, k) => ({
+                key: k,
+                title: d,
+            }),
+        )
+    ), [otherLanguages]);
+
+    const languageOptionRendererParams = useCallback((key, data) => ({
+        value: data.title,
+        label: languageOptionsMap[key],
+    }), []);
+
+    return (
+        <div className={_cs(styles.responseOption, className)}>
+            <h5 className={styles.heading}>
+                {`Option ${dataIndex + 1}`}
+            </h5>
+            <TextOutput
+                label="Default Title"
+                value={defaultLabel}
+            />
+            <List
+                data={languageKeys}
+                keySelector={languageKeySelector}
+                renderer={TextOutput}
+                rendererParams={languageOptionRendererParams}
+            />
+        </div>
+    );
+};
 
 interface Props {
     className?: string;
-    value: KeyValueElement[];
+    options?: QuestionResponseOptionElement[];
     itemClassName?: string;
     type: string;
 }
 
-const responseOptionKeySelector = (d: KeyValueElement) => d.key;
+const responseOptionKeySelector = (d: QuestionResponseOptionElement) => d.key;
 
-class ResponseOutput extends React.PureComponent<Props> {
-    public static defaultProps = {
-        value: [],
-    }
+function ResponseOutput(props: Props) {
+    const {
+        className,
+        options,
+        type,
+        itemClassName,
+    } = props;
 
-    getResponseOptionRendererParams = (
-        key: KeyValueElement['key'],
-        value: KeyValueElement,
+    const getResponseOptionRendererParams = useCallback((
+        key: QuestionResponseOptionElement['key'],
+        option: QuestionResponseOptionElement,
+        dataIndex: number,
     ) => ({
-        className: this.props.itemClassName,
-        value,
-    })
+        className: itemClassName,
+        optionValue: option.value,
+        dataIndex,
+    }), [itemClassName]);
 
-    public render() {
-        const {
-            className,
-            value,
-            type,
-        } = this.props;
-
-        if (!type || !isChoicedQuestionType(type)) {
-            return null;
-        }
-
-        return (
-            <ListView
-                data={value}
-                className={_cs(styles.responseOutput, className)}
-                keySelector={responseOptionKeySelector}
-                renderer={ResponseOption}
-                rendererParams={this.getResponseOptionRendererParams}
-            />
-        );
+    if (!type || !isChoicedQuestionType(type)) {
+        return null;
     }
+
+    return (
+        <ListView
+            data={options}
+            className={_cs(styles.responseOutput, className)}
+            keySelector={responseOptionKeySelector}
+            renderer={ResponseOption}
+            rendererParams={getResponseOptionRendererParams}
+        />
+    );
 }
+
+ResponseOutput.defaultProps = {
+    value: [],
+};
 
 export default ResponseOutput;

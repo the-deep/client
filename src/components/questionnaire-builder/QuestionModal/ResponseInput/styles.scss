@@ -1,28 +1,19 @@
 .response-item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
 
-    .header {
-        display: flex;
-        align-items: center;
-
-        .heading {
-            padding-bottom: var(--spacing-extra-small);
-            color: var(--color-text-label);
-        }
+    .heading {
+        margin-right: var(--spacing-small);
+        padding-bottom: var(--spacing-extra-small);
+        color: var(--color-text-label);
     }
 
-    .inputs-container {
-        display: flex;
-        align-items: center;
+    .text-input {
+        margin-right: var(--spacing-small);
+    }
 
-        .text-input {
-            margin-right: var(--spacing-small);
-        }
-
-        .delete-button {
-            flex-shrink: 0;
-        }
+    .delete-button {
+        flex-shrink: 0;
     }
 
     &:hover {

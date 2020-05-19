@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import memoize from 'memoize-one';
 import {
     _cs,
     isDefined,
+    randomString,
+    mapToList,
     isNotDefined,
 } from '@togglecorp/fujs';
 
@@ -10,20 +12,23 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import Checkbox from '#rsu/../v2/Input/Checkbox';
 import DropZoneTwo from '#rsci/DropZoneTwo';
+import ListView from '#rscv/List/ListView';
 import DropdownMenu from '#rsca/DropdownMenu';
 
 import {
     BaseQuestionElement,
     MiniFrameworkElement,
+    LanguageTitle,
     QuestionType,
 } from '#typings';
 import {
     isChoicedQuestionType,
     generateDurationLabel,
+    languageOptionsMap,
 } from '#entities/questionnaire';
 
-import { getMatrix2dStructures } from '#utils/framework';
 import DropdownButton from '#components/general/DropdownButton';
+import TextOutput from '#components/general/TextOutput';
 import HighlightableText from '#components/viewer/HighlightableTextOutput';
 
 import AudioIcon from '#resources/img/questionnaire-icons/audio.png';
@@ -98,391 +103,371 @@ interface DropData<T> {
     question: T;
 }
 
-class Question<T extends BaseQuestionElement> extends React.PureComponent<Props<T>> {
-    public static defaultProps = {
-        expanded: false,
-    };
+const moreTitleKeySelector = (d: LanguageTitle) => d.uniqueKey;
 
-    private getFrameworkOptions = memoize(getMatrix2dStructures)
+function Question<T extends BaseQuestionElement>(props: Props<T>) {
+    const {
+        onEditButtonClick,
+        onAddButtonClick,
+        data,
+        onDelete,
+        onArchive,
+        onUnarchive,
+        onCopyFromDrop,
+        onCopy,
+        onClone,
+        selected,
+        onSelectChange,
+        expanded,
+        onExpandChange,
+        className,
+        readOnly,
+        disabled,
+        copyDisabled,
+        searchValue,
+    } = props;
 
-    handleEditButtonClick = () => {
-        const {
-            onEditButtonClick,
-            data,
-        } = this.props;
-
+    const handleEditButtonClick = useCallback(() => {
         if (onEditButtonClick) {
             onEditButtonClick(data.id);
         }
-    }
+    }, [onEditButtonClick, data]);
 
-    handleAddButtonClick = () => {
-        const {
-            data,
-            onAddButtonClick,
-        } = this.props;
-
+    const handleAddButtonClick = useCallback(() => {
         if (onAddButtonClick) {
             onAddButtonClick(data.id);
         }
-    }
+    }, [onAddButtonClick, data]);
 
-    handleDeleteButtonClick = () => {
-        const {
-            onDelete,
-            data,
-        } = this.props;
-
+    const handleDeleteButtonClick = useCallback(() => {
         if (onDelete) {
             onDelete(data.id);
         }
-    }
+    }, [onDelete, data]);
 
-    handleArchiveButtonClick = () => {
-        const {
-            onArchive,
-            data,
-        } = this.props;
-
+    const handleArchiveButtonClick = useCallback(() => {
         if (onArchive) {
             onArchive(data.id);
         }
-    }
+    }, [data, onArchive]);
 
-    handleUnarchiveButtonClick = () => {
-        const {
-            onUnarchive,
-            data,
-        } = this.props;
-
+    const handleUnarchiveButtonClick = useCallback(() => {
         if (onUnarchive) {
             onUnarchive(data.id);
         }
-    }
+    }, [data, onUnarchive]);
 
-    handleQuestionDrop = (dropData: DropData<T>) => {
-        const {
-            onCopyFromDrop,
-            data,
-        } = this.props;
-
+    const handleQuestionDrop = useCallback((dropData: DropData<T>) => {
         if (onCopyFromDrop) {
             onCopyFromDrop(
                 dropData.question,
                 data.id,
             );
         }
-    }
+    }, [onCopyFromDrop, data]);
 
-    handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-        const {
-            data,
-        } = this.props;
-
+    const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         const dropData = JSON.stringify({
             question: data,
         });
         e.dataTransfer.setData('text/plain', dropData);
         e.dataTransfer.dropEffect = 'copy';
-    }
+    }, [data]);
 
-    handleCopy = () => {
-        const {
-            onCopy,
-            data,
-        } = this.props;
-
+    const handleCopy = useCallback(() => {
         if (onCopy) {
             onCopy(data);
         }
-    }
+    }, [onCopy, data]);
 
-    handleClone = () => {
-        const {
-            onClone,
-            data,
-        } = this.props;
-
+    const handleClone = useCallback(() => {
         if (onClone) {
             onClone(data);
         }
-    }
+    }, [onClone, data]);
 
-    handleCheckboxClick = () => {
+    const handleCheckboxClick = useCallback(() => {
         const {
-            data: {
-                id: questionId,
-            },
-            selected,
-            onSelectChange,
-        } = this.props;
+            id: questionId,
+        } = data;
 
         if (onSelectChange) {
             onSelectChange(questionId, !selected);
         }
-    }
+    }, [data, onSelectChange, selected]);
 
-    handleExpandClick = () => {
-        const {
-            data: {
-                id: questionId,
-            },
-            expanded,
-            onExpandChange,
-        } = this.props;
+    const handleExpandClick = useCallback(() => {
+        const { id: questionId } = data;
 
         if (onExpandChange) {
             onExpandChange(questionId, !expanded);
         }
-    }
+    }, [onExpandChange, expanded, data]);
 
-    public render() {
-        const {
-            selected,
-            className,
-            data,
-            readOnly,
-            disabled,
-            expanded,
-            onSelectChange,
-            onExpandChange,
-            copyDisabled,
-            onCopy,
+    const {
+        type,
+        title,
+        moreTitles,
+        crisisTypeDetail,
+        enumeratorSkillDisplay,
+        dataCollectionTechniqueDisplay,
+        importanceDisplay,
+        requiredDuration,
+        isArchived,
+        attributeTitle,
+    } = data;
 
-            onArchive,
-            onUnarchive,
-            onEditButtonClick,
-            onDelete,
-            onClone,
-            onCopyFromDrop,
-            onAddButtonClick,
+    const moreTitlesList: LanguageTitle[] = useMemo(() => {
+        if (isNotDefined(moreTitles)) {
+            return [];
+        }
+        return mapToList(
+            moreTitles,
+            (d: string, k) => {
+                const key = k as string;
+                return ({
+                    uniqueKey: randomString(16),
+                    title: d,
+                    key,
+                });
+            },
+        );
+    }, [moreTitles]);
 
-            searchValue,
-        } = this.props;
+    const moreTitlesRendererParams = useCallback((
+        key: LanguageTitle['uniqueKey'],
+        titleInfo: LanguageTitle,
+    ) => ({
+        className: styles.textOutput,
+        label: languageOptionsMap[titleInfo.key],
+        value: titleInfo.title,
+        searchValue,
+    }), [searchValue]);
 
-        const {
-            type,
-            title,
-            crisisTypeDetail,
-            enumeratorSkillDisplay,
-            dataCollectionTechniqueDisplay,
-            importanceDisplay,
-            requiredDuration,
-            isArchived,
-            attributeTitle,
-        } = data;
-
-        return (
-            <div
-                className={_cs(className, styles.questionContainer)}
-                draggable={isDefined(onCopy)}
-                onDragStart={this.handleDragStart}
-            >
-                <div className={styles.topContainer}>
-                    {onSelectChange && (
-                        <Checkbox
-                            className={styles.checkbox}
-                            checkIconClassName={styles.checkIcon}
-                            value={selected}
-                            onChange={this.handleCheckboxClick}
-                        />
-                    )}
-                    <div className={styles.question}>
-                        <div className={styles.brief}>
-                            <div className={styles.iconContainer}>
-                                <img
-                                    className={styles.icon}
-                                    src={(type ? iconMap[type] : undefined)}
-                                    alt={type}
+    return (
+        <div
+            className={_cs(className, styles.questionContainer)}
+            draggable={isDefined(onCopy)}
+            onDragStart={handleDragStart}
+        >
+            <div className={styles.topContainer}>
+                {onSelectChange && (
+                    <Checkbox
+                        className={styles.checkbox}
+                        checkIconClassName={styles.checkIcon}
+                        value={selected}
+                        onChange={handleCheckboxClick}
+                    />
+                )}
+                <div className={styles.question}>
+                    <div className={styles.brief}>
+                        <div className={styles.iconContainer}>
+                            <img
+                                className={styles.icon}
+                                src={(type ? iconMap[type] : undefined)}
+                                alt={type}
+                            />
+                        </div>
+                        <div className={styles.detailsContainer}>
+                            {onExpandChange && (
+                                <Button
+                                    className={styles.expandButton}
+                                    onClick={handleExpandClick}
+                                    iconName={expanded ? 'chevronDown' : 'chevronRight'}
+                                    transparent
+                                />
+                            )}
+                            <div className={styles.detailsRight} >
+                                <div className={styles.top}>
+                                    <div className={styles.left}>
+                                        <h3 className={styles.title}>
+                                            <HighlightableText
+                                                highlightText={searchValue}
+                                                text={title}
+                                            />
+                                        </h3>
+                                        <div className={styles.basicInfo}>
+                                            <MetaOutput
+                                                label="Crisis type"
+                                                searchValue={searchValue}
+                                                value={crisisTypeDetail
+                                                && crisisTypeDetail.title}
+                                            />
+                                            <MetaOutput
+                                                label="Data collection technique"
+                                                searchValue={searchValue}
+                                                value={dataCollectionTechniqueDisplay}
+                                            />
+                                            <MetaOutput
+                                                label="Enumerator skill"
+                                                searchValue={searchValue}
+                                                value={enumeratorSkillDisplay}
+                                            />
+                                            <MetaOutput
+                                                label="Required duration"
+                                                searchValue={searchValue}
+                                                value={generateDurationLabel(requiredDuration)}
+                                            />
+                                            <MetaOutput
+                                                label="Importance"
+                                                value={importanceDisplay && `Importance: ${importanceDisplay}`}
+                                            />
+                                        </div>
+                                    </div>
+                                    {!readOnly && (
+                                        <div className={styles.buttonContainer}>
+                                            {(isArchived && onUnarchive) && (
+                                                <Button
+                                                    onClick={handleUnarchiveButtonClick}
+                                                    disabled={disabled}
+                                                >
+                                                    Unpark Question
+                                                </Button>
+                                            )}
+                                            {onEditButtonClick && (
+                                                <WarningButton
+                                                    onClick={handleEditButtonClick}
+                                                    disabled={disabled}
+                                                    transparent
+                                                    iconName="edit"
+                                                    title="Edit"
+                                                />
+                                            )}
+                                            {((!isArchived && onArchive) || onDelete) && (
+                                                <DropdownMenu
+                                                    dropdownIcon="menuDots"
+                                                    closeOnClick
+                                                >
+                                                    {(!isArchived && onArchive) && (
+                                                        <DropdownButton
+                                                            onClick={handleArchiveButtonClick}
+                                                            disabled={disabled}
+                                                            title="Send to Parking Lot"
+                                                        />
+                                                    )}
+                                                    {onDelete && (
+                                                        <DropdownButton
+                                                            onClick={handleDeleteButtonClick}
+                                                            disabled={disabled}
+                                                            title="Delete"
+                                                        />
+                                                    )}
+                                                    {onClone && (
+                                                        <DropdownButton
+                                                            onClick={handleClone}
+                                                            disabled={disabled}
+                                                            title="Clone"
+                                                        />
+                                                    )}
+                                                </DropdownMenu>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <MetaOutput
+                                    label="Crisis type"
+                                    searchValue={searchValue}
+                                    value={attributeTitle}
+                                    className={styles.frameworkAttribute}
                                 />
                             </div>
-                            <div className={styles.detailsContainer}>
-                                {onExpandChange && (
-                                    <Button
-                                        className={styles.expandButton}
-                                        onClick={this.handleExpandClick}
-                                        iconName={expanded ? 'chevronDown' : 'chevronRight'}
-                                        transparent
+                        </div>
+                    </div>
+                    {expanded && (
+                        <div className={styles.details}>
+                            {(moreTitlesList.length > 0) && (
+                                <div className={styles.moreTitles}>
+                                    <h4 className={styles.heading}>
+                                        More Titles
+                                    </h4>
+                                    <ListView
+                                        className={styles.content}
+                                        data={moreTitlesList}
+                                        renderer={TextOutput}
+                                        keySelector={moreTitleKeySelector}
+                                        rendererParams={moreTitlesRendererParams}
                                     />
-                                )}
-                                <div className={styles.detailsRight} >
-                                    <div className={styles.top}>
-                                        <div className={styles.left}>
-                                            <h3 className={styles.title}>
-                                                <HighlightableText
-                                                    highlightText={searchValue}
-                                                    text={title}
-                                                />
-                                            </h3>
-                                            <div className={styles.basicInfo}>
-                                                <MetaOutput
-                                                    label="Crisis type"
-                                                    searchValue={searchValue}
-                                                    value={crisisTypeDetail
-                                                    && crisisTypeDetail.title}
-                                                />
-                                                <MetaOutput
-                                                    label="Data collection technique"
-                                                    searchValue={searchValue}
-                                                    value={dataCollectionTechniqueDisplay}
-                                                />
-                                                <MetaOutput
-                                                    label="Enumerator skill"
-                                                    searchValue={searchValue}
-                                                    value={enumeratorSkillDisplay}
-                                                />
-                                                <MetaOutput
-                                                    label="Required duration"
-                                                    searchValue={searchValue}
-                                                    value={generateDurationLabel(requiredDuration)}
-                                                />
-                                                <MetaOutput
-                                                    label="Importance"
-                                                    value={importanceDisplay && `Importance: ${importanceDisplay}`}
-                                                />
-                                            </div>
-                                        </div>
-                                        {!readOnly && (
-                                            <div className={styles.buttonContainer}>
-                                                {(isArchived && onUnarchive) && (
-                                                    <Button
-                                                        onClick={this.handleUnarchiveButtonClick}
-                                                        disabled={disabled}
-                                                    >
-                                                        Unpark Question
-                                                    </Button>
-                                                )}
-                                                {onEditButtonClick && (
-                                                    <WarningButton
-                                                        onClick={this.handleEditButtonClick}
-                                                        disabled={disabled}
-                                                        transparent
-                                                        iconName="edit"
-                                                        title="Edit"
-                                                    />
-                                                )}
-                                                {((!isArchived && onArchive) || onDelete) && (
-                                                    <DropdownMenu
-                                                        dropdownIcon="menuDots"
-                                                        closeOnClick
-                                                    >
-                                                        {(!isArchived && onArchive) && (
-                                                            <DropdownButton
-                                                                onClick={
-                                                                    this.handleArchiveButtonClick
-                                                                }
-                                                                disabled={disabled}
-                                                                title="Send to Parking Lot"
-                                                            />
-                                                        )}
-                                                        {onDelete && (
-                                                            <DropdownButton
-                                                                onClick={
-                                                                    this.handleDeleteButtonClick
-                                                                }
-                                                                disabled={disabled}
-                                                                title="Delete"
-                                                            />
-                                                        )}
-                                                        {onClone && (
-                                                            <DropdownButton
-                                                                onClick={this.handleClone}
-                                                                disabled={disabled}
-                                                                title="Clone"
-                                                            />
-                                                        )}
-                                                    </DropdownMenu>
-                                                )}
-                                            </div>
-                                        )}
+                                </div>
+                            )}
+                            {isChoicedQuestionType(type) && (
+                                <div className={styles.responseOptions}>
+                                    <h4 className={styles.heading}>
+                                        Response options
+                                    </h4>
+                                    <div className={styles.content}>
+                                        <ResponseOutput
+                                            type={data.type}
+                                            options={data.responseOptions}
+                                        />
                                     </div>
-                                    <MetaOutput
-                                        label="Crisis type"
-                                        searchValue={searchValue}
-                                        value={attributeTitle}
-                                        className={styles.frameworkAttribute}
-                                    />
+                                </div>
+                            )}
+                            <div className={styles.enumeratorInstruction}>
+                                <h4 className={styles.heading}>
+                                    Enumerator instructions
+                                </h4>
+                                <div className={styles.content}>
+                                    {data.enumeratorInstruction ? (
+                                        <HighlightableText
+                                            highlightText={searchValue}
+                                            text={data.enumeratorInstruction}
+                                        />
+                                    ) : '-'}
+                                </div>
+                            </div>
+                            <div className={styles.respondentInstruction}>
+                                <h4 className={styles.heading}>
+                                    Respondent instructions
+                                </h4>
+                                <div className={styles.content}>
+                                    {data.respondentInstruction ? (
+                                        <HighlightableText
+                                            highlightText={searchValue}
+                                            text={data.respondentInstruction}
+                                        />
+                                    ) : '-'}
                                 </div>
                             </div>
                         </div>
-                        {expanded && (
-                            <div className={styles.details}>
-                                {isChoicedQuestionType(type) && (
-                                    <div className={styles.responseOptions}>
-                                        <div className={styles.heading}>
-                                            Response options
-                                        </div>
-                                        <div className={styles.content}>
-                                            <ResponseOutput
-                                                type={data.type}
-                                                value={data.responseOptions}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                                <div className={styles.enumeratorInstruction}>
-                                    <h4 className={styles.heading}>
-                                        Enumerator instructions
-                                    </h4>
-                                    <div className={styles.content}>
-                                        {data.enumeratorInstruction ? (
-                                            <HighlightableText
-                                                highlightText={searchValue}
-                                                text={data.enumeratorInstruction}
-                                            />
-                                        ) : '-'}
-                                    </div>
-                                </div>
-                                <div className={styles.respondentInstruction}>
-                                    <h4 className={styles.heading}>
-                                        Respondent instructions
-                                    </h4>
-                                    <div className={styles.content}>
-                                        {data.respondentInstruction ? (
-                                            <HighlightableText
-                                                highlightText={searchValue}
-                                                text={data.respondentInstruction}
-                                            />
-                                        ) : '-'}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        {onCopy && (
-                            <Button
-                                className={styles.copyButton}
-                                onClick={this.handleCopy}
-                                iconName="copyOutline"
-                                disabled={disabled || copyDisabled}
-                            >
-                                Copy
-                            </Button>
-                        )}
-                    </div>
+                    )}
+                    {onCopy && (
+                        <Button
+                            className={styles.copyButton}
+                            onClick={handleCopy}
+                            iconName="copyOutline"
+                            disabled={disabled || copyDisabled}
+                        >
+                            Copy
+                        </Button>
+                    )}
                 </div>
-                {isNotDefined(onCopy) && (
-                    <div className={styles.dropZoneContainer}>
-                        {isDefined(onCopyFromDrop) ? (
-                            <DropZoneTwo
-                                className={styles.dropZone}
-                                onDrop={this.handleQuestionDrop}
-                            />
-                        ) : (
-                            <div className={styles.dropZone} />
-                        )}
-                        {isDefined(onAddButtonClick) && (
-                            <Button
-                                className={styles.addButton}
-                                onClick={this.handleAddButtonClick}
-                                iconName="add"
-                                disabled={disabled}
-                            />
-                        )}
-                    </div>
-                )}
             </div>
-        );
-    }
+            {isNotDefined(onCopy) && (
+                <div className={styles.dropZoneContainer}>
+                    {isDefined(onCopyFromDrop) ? (
+                        <DropZoneTwo
+                            className={styles.dropZone}
+                            onDrop={handleQuestionDrop}
+                        />
+                    ) : (
+                        <div className={styles.dropZone} />
+                    )}
+                    {isDefined(onAddButtonClick) && (
+                        <Button
+                            className={styles.addButton}
+                            onClick={handleAddButtonClick}
+                            iconName="add"
+                            disabled={disabled}
+                        />
+                    )}
+                </div>
+            )}
+        </div>
+    );
 }
+
+Question.defaultProps = {
+    expanded: false,
+};
 
 export default Question;

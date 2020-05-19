@@ -24,11 +24,16 @@ export interface IdTitle {
 }
 
 // QUESTION
+//
+
+interface ResponseOptionValue {
+    defaultLabel: string;
+    [key: string]: string;
+}
 
 export interface QuestionResponseOptionElement {
     key: string;
-    value: string;
-    [key: string]: string;
+    value: ResponseOptionValue;
 }
 
 export interface QuestionElementFrameworkAttribute {
@@ -82,7 +87,7 @@ export interface BaseQuestionElement {
     enumeratorInstruction?: string;
     respondentInstruction?: string;
 
-    responseOptions?: KeyValue[];
+    responseOptions?: QuestionResponseOptionElement[];
 
     enumeratorSkill?: string;
     enumeratorSkillDisplay?: string;

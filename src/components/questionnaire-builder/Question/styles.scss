@@ -105,6 +105,16 @@
                 padding: var(--spacing-extra-small) 0;
             }
 
+            .more-titles {
+                padding: calc(var(--spacing-medium) - var(--spacing-extra-small)) 0;
+
+                .content {
+                    .text-output {
+                        align-items: flex-start;
+                    }
+                }
+            }
+
             .response-options {
                 padding: calc(var(--spacing-medium) - var(--spacing-extra-small)) 0;
             }
