@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
     _cs,
+    listToMap,
     isTruthyString,
 } from '@togglecorp/fujs';
 
@@ -8,6 +9,9 @@ import Button from '#rsu/../v2/Action/Button';
 import ListView from '#rsu/../v2/View/ListView';
 import TreeInput from '#rsu/../v2/Input/TreeInput';
 import SearchInput from '#rsci/SearchInput';
+import Label from '#rsci/Label';
+import DropdownMenu from '#rsca/DropdownMenu';
+import Badge from '#components/viewer/Badge';
 
 import {
     FrameworkQuestionElement,
@@ -30,7 +34,14 @@ import Question from '#qbc/Question';
 
 import styles from './styles.scss';
 
-const questionKeySelector = (q: FrameworkQuestionElement) => q.id;
+const EmptyComponent = () => null;
+
+const questionKeySelector = (q: BaseQuestionElement) => q.id;
+const treeFilterValueKeySelector = (q: { key: string }) => q.key;
+
+interface MatricesMap {
+    [key: string]: string;
+}
 
 interface Props {
     className?: string;
@@ -73,15 +84,20 @@ function AddFromFramework(props: Props) {
     const {
         frameworkMatrices,
         frameworkOptions,
+        frameworkMatricesMap,
     } = useMemo(() => {
         if (!framework) {
             return {
                 frameworkMatrices: undefined,
                 frameworkOptions: undefined,
+                frameworkMatricesMap: undefined,
             };
         }
+        const matrices = getFrameworkMatrices(framework, framework.questions);
+        const matricesMap: MatricesMap = listToMap(matrices, d => d.key, d => d.title);
         return {
-            frameworkMatrices: getFrameworkMatrices(framework, framework.questions),
+            frameworkMatrices: matrices,
+            frameworkMatricesMap: matricesMap,
             frameworkOptions: getMatrix2dStructures(framework),
         };
     }, [framework]);
@@ -123,6 +139,24 @@ function AddFromFramework(props: Props) {
         )
     ), [flatQuestions, treeFilter, searchValue]);
 
+    const treeFilterValues = useMemo(() => {
+        if (!frameworkMatricesMap) {
+            return [];
+        }
+
+        return (
+            treeFilter.map(v => ({
+                key: v,
+                value: frameworkMatricesMap[v],
+            }))
+        );
+    }, [frameworkMatricesMap, treeFilter]);
+
+    const getBadgesRendererParams = (key: string, data: { key: string; value: string }) => ({
+        className: styles.badge,
+        title: data.value,
+    });
+
     if (!framework) {
         return null;
     }
@@ -142,24 +176,45 @@ function AddFromFramework(props: Props) {
             </header>
             <div className={styles.content}>
                 <div className={styles.selectionContainer}>
-                    <SearchInput
-                        value={searchValue}
-                        className={styles.searchInput}
-                        onChange={setSearchValue}
-                        placeholder="Search questions"
-                        showLabel={false}
-                        showHintAndError={false}
-                    />
-                    <TreeInput
-                        label="Matrices"
-                        className={styles.matrixFilter}
-                        keySelector={treeItemKeySelector}
-                        parentKeySelector={treeItemParentKeySelector}
-                        labelSelector={treeItemLabelSelector}
-                        onChange={onTreeInputChange}
-                        value={treeFilter}
-                        options={frameworkMatrices}
-                        defaultCollapseLevel={2}
+                    <div className={styles.filters}>
+                        <SearchInput
+                            value={searchValue}
+                            className={styles.searchInput}
+                            onChange={setSearchValue}
+                            placeholder="Search questions"
+                            showLabel={false}
+                            showHintAndError={false}
+                        />
+                        <DropdownMenu
+                            className={styles.matricesSelection}
+                            title="Matrix Filters"
+                        >
+                            <TreeInput
+                                className={styles.matrixFilter}
+                                keySelector={treeItemKeySelector}
+                                parentKeySelector={treeItemParentKeySelector}
+                                labelSelector={treeItemLabelSelector}
+                                onChange={onTreeInputChange}
+                                value={treeFilter}
+                                options={frameworkMatrices}
+                                defaultCollapseLevel={2}
+                                showLabel={false}
+                                showHintAndError={false}
+                            />
+                        </DropdownMenu>
+                    </div>
+                    {treeFilterValues.length > 0 && (
+                        <h5 className={styles.appliedFiltersLabel}>
+                            Matrix filters applied:
+                        </h5>
+                    )}
+                    <ListView
+                        className={styles.appliedFilters}
+                        rendererParams={getBadgesRendererParams}
+                        renderer={Badge}
+                        data={treeFilterValues}
+                        keySelector={treeFilterValueKeySelector}
+                        emptyComponent={EmptyComponent}
                     />
                 </div>
                 <ListView

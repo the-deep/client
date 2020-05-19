@@ -280,69 +280,71 @@ function QuestionList<T extends BaseQuestionElement>(props: QuestionListProps<T>
 
     return (
         <div className={_cs(styles.questionList, className)}>
-            <header className={styles.header}>
-                <Checkbox
-                    className={styles.checkbox}
-                    value={isAllSelected && filteredQuestions && filteredQuestions.length > 0}
-                    indeterminate={isSomeSelected}
-                    checkIconClassName={styles.checkIcon}
-                    onChange={handleSelectAllCheckboxClick}
-                    disabled={showLoadingOverlay}
-                />
-                <h2 className={styles.heading}>
-                    {title}
-                </h2>
-                <div className={styles.actions}>
-                    {headerRightComponent}
-                    <Button
-                        className={styles.button}
-                        onClick={handleExpandAllButtonClick}
-                        iconName={isAllExpanded ? 'contractContent' : 'expandContent'}
+            <div className={styles.headerContainer}>
+                <header className={styles.header}>
+                    <Checkbox
+                        className={styles.checkbox}
+                        value={isAllSelected && filteredQuestions && filteredQuestions.length > 0}
+                        indeterminate={isSomeSelected}
+                        checkIconClassName={styles.checkIcon}
+                        onChange={handleSelectAllCheckboxClick}
                         disabled={showLoadingOverlay}
                     />
-                    { (!isSomeSelected && onAdd) &&
+                    <h2 className={styles.heading}>
+                        {title}
+                    </h2>
+                    <div className={styles.actions}>
+                        {headerRightComponent}
                         <Button
-                            iconName="add"
                             className={styles.button}
-                            onClick={onAdd}
+                            onClick={handleExpandAllButtonClick}
+                            iconName={isAllExpanded ? 'contractContent' : 'expandContent'}
                             disabled={showLoadingOverlay}
-                        >
-                            {/* FIXME: use strings */}
-                            Add
-                        </Button>
-                    }
-                    { (isSomeSelected && onBulkArchive) && (
-                        <Button
-                            iconName="archive"
-                            onClick={handleBulkArchive}
-                            className={styles.button}
-                            disabled={showLoadingOverlay}
-                        >
-                            Send to Parking Lot
-                        </Button>
-                    )}
-                    { (isSomeSelected && onBulkDelete) && (
-                        <Button
-                            iconName="delete"
-                            onClick={handleBulkDelete}
-                            className={styles.button}
-                            disabled={showLoadingOverlay}
-                        >
-                            Delete
-                        </Button>
-                    )}
-                    { (isSomeSelected && onBulkUnArchive) && (
-                        <Button
-                            onClick={handleBulkUnArchive}
-                            iconName="unarchive"
-                            className={styles.button}
-                            disabled={showLoadingOverlay}
-                        >
-                            Recover from Parking Lot
-                        </Button>
-                    )}
-                </div>
-            </header>
+                        />
+                        { (!isSomeSelected && onAdd) &&
+                            <Button
+                                iconName="add"
+                                className={styles.button}
+                                onClick={onAdd}
+                                disabled={showLoadingOverlay}
+                            >
+                                {/* FIXME: use strings */}
+                                Add
+                            </Button>
+                        }
+                        { (isSomeSelected && onBulkArchive) && (
+                            <Button
+                                iconName="archive"
+                                onClick={handleBulkArchive}
+                                className={styles.button}
+                                disabled={showLoadingOverlay}
+                            >
+                                Send to Parking Lot
+                            </Button>
+                        )}
+                        { (isSomeSelected && onBulkDelete) && (
+                            <Button
+                                iconName="delete"
+                                onClick={handleBulkDelete}
+                                className={styles.button}
+                                disabled={showLoadingOverlay}
+                            >
+                                Delete
+                            </Button>
+                        )}
+                        { (isSomeSelected && onBulkUnArchive) && (
+                            <Button
+                                onClick={handleBulkUnArchive}
+                                iconName="unarchive"
+                                className={styles.button}
+                                disabled={showLoadingOverlay}
+                            >
+                                Recover from Parking Lot
+                            </Button>
+                        )}
+                    </div>
+                </header>
+            </div>
             <SortableListView
                 className={styles.content}
                 rendererParams={getQuestionRendererParams}

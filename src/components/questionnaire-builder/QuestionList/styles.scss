@@ -8,49 +8,53 @@
     flex-direction: column;
     overflow: auto;
 
-    >.header {
-        display: flex;
-        position: sticky;
-        position: relative;
-        top: 0;
-        align-items: center;
+    .header-container {
         flex-shrink: 0;
-        z-index: 1;
-        margin: 0 auto;
-        background-color: var(--color-foreground);
-        padding: var(--spacing-large) 0 var(--spacing-medium);
-        width: var(--width-question);
-        max-width: var(--width-question);
+        overflow-y: scroll;
 
-        .checkbox {
-            margin-right: 36px;
-            width: var(--width-question-checkbox);
-            font-size: var(--font-size-extra-large);
-
-            .check-icon {
-                margin-right: 0;
-            }
-        }
-
-        .heading {
-            flex-grow: 1;
-            padding: var(--spacing-medium) 0;
-        }
-
-        >.actions {
+        .header {
             display: flex;
+            position: sticky;
+            position: relative;
+            top: 0;
             align-items: center;
-            flex-shrink: 0;
+            z-index: 1;
+            margin: 0 auto;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-large) 0 var(--spacing-medium);
+            width: var(--width-question);
+            max-width: var(--width-question);
 
-            .button {
-                margin-left: var(--spacing-small);
+            .checkbox {
+                margin-right: 36px;
+                width: var(--width-question-checkbox);
+                font-size: var(--font-size-extra-large);
+
+                .check-icon {
+                    margin-right: 0;
+                }
+            }
+
+            .heading {
+                flex-grow: 1;
+                padding: var(--spacing-medium) 0;
+            }
+
+            >.actions {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+
+                .button {
+                    margin-left: var(--spacing-small);
+                }
             }
         }
     }
 
     >.content {
         flex-grow: 1;
-        overflow-y: auto;
+        overflow-y: scroll;
     }
 }
 
