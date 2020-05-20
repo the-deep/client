@@ -161,6 +161,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 },
             });
         },
+        // FIXME: handle error if available
         onFailure: notifyOnFailure('Questionnaire Create'),
         onFatal: notifyOnFatal('Questionnaire Create'),
     },

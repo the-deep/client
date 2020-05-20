@@ -77,6 +77,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 params.onFormInit(xformResponse);
             }
         },
+        // FIXME: handle error if available
         onFailure: notifyOnFailure('Enketo preview'),
         onFatal: notifyOnFatal('Enketo preview'),
     },
