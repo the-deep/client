@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
-import { _cs, isNotDefined, listToMap, isDefined } from '@togglecorp/fujs';
+import React, { useCallback, useMemo } from 'react';
+import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
 
 import DismissableListItem from '#rsca/DismissableListItem';
 import ListView from '#rscv/List/ListView';
@@ -34,6 +34,36 @@ function groupList(
         {},
     );
     return Object.values(mapping);
+}
+
+function createCombinedSelections(selections, polygons) {
+    const newSelections = selections.map(
+        item => ({ id: item }),
+    );
+
+    const selectionsMapping = new Set(selections);
+    const geoAreaPolygonTuples = polygons
+        .filter(polygon => isDefined(polygon.geoJson.properties.geoareas))
+        .map(polygon => polygon.geoJson.properties.geoareas.map(geoarea => ({
+            id: String(geoarea),
+            geoJson: polygon.geoJson,
+        })))
+        .flat()
+        .filter(item => !selectionsMapping.has(item.id));
+
+    const newSelectionsFromPolygons = groupList(
+        geoAreaPolygonTuples,
+        e => e.id,
+        e => e.geoJson,
+    ).map(item => ({
+        id: item.key,
+        polygons: item.values,
+    }));
+
+    return [
+        ...newSelections,
+        ...newSelectionsFromPolygons,
+    ];
 }
 
 const propTypes = {
@@ -171,40 +201,10 @@ const GeoInputList = (props) => {
         [handlePolygonEdit, handlePolygonRemove, polygonDisabled],
     );
 
-
-    const selectionsMapping = new Set(selections);
-    const autoSelectionsForSelectedRegion = polygons
-        .filter(polygon => isDefined(polygon.geoJson.properties.geoareas))
-        .map(
-            polygon => polygon.geoJson.properties.geoareas.map(
-                geoarea => ({
-                    id: String(geoarea),
-                    geoJson: polygon.geoJson,
-                }),
-            ),
-        )
-        .flat()
-        .filter(item => !selectionsMapping.has(item.id));
-
-    const autoSelectionsGrouped = groupList(
-        autoSelectionsForSelectedRegion,
-        e => e.id,
-        e => e.geoJson,
-    ).map(item => ({
-        id: item.key,
-        polygons: item.values,
-    }));
-
-    const selectionsWrapped = selections.map(
-        item => ({ id: item }),
+    const newSelections = useMemo(
+        () => createCombinedSelections(selections, polygons),
+        [selections, polygons],
     );
-
-    const newSelections = [
-        ...selectionsWrapped,
-        ...autoSelectionsGrouped,
-    ];
-
-    console.warn(newSelections);
 
     return (
         <div className={_cs(className, styles.geoInputList)}>
