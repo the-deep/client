@@ -1,185 +1,104 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { FaramGroup } from '@togglecorp/faram';
 import {
     _cs,
-    randomString,
+    isDefined,
+    unique,
+    isNotDefined,
 } from '@togglecorp/fujs';
-import { FaramInputElement } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import Label from '#rsci/Label';
 import TextInput from '#rsci/TextInput';
-import ListView from '#rsu/../v2/View/ListView';
-import Button from '#rsca/Button';
+import List from '#rscv/List';
 
-import { QuestionResponseOptionElement } from '#typings';
-import { isChoicedQuestionType } from '#entities/questionnaire';
+import {
+    QuestionResponseOptionElement,
+    LanguageTitle,
+} from '#typings';
+import {
+    isChoicedQuestionType,
+    languageOptionsMap,
+} from '#entities/questionnaire';
 
 import styles from './styles.scss';
 
-interface QuestionResponseOptionsProps {
-    className?: string;
-    optionKey: QuestionResponseOptionElement['key'];
-    value: QuestionResponseOptionElement['value'];
-    onChange: (
-        optionKey: QuestionResponseOptionElement['key'],
-        newValue: QuestionResponseOptionElement['value'],
-    ) => void;
-    onDelete: (
-        optionKey: QuestionResponseOptionElement['key'],
-    ) => void;
+interface LanguageResponseOptionProps {
+    languageKey: LanguageTitle['key'];
 }
 
-const QuestionResponseOption = ({
-    onDelete,
-    onChange,
-    optionKey,
-    value,
-    className,
-    ...otherProps
-}: QuestionResponseOptionsProps) => {
-    const handleChange = useCallback(
-        (newValue: string) => {
-            onChange(optionKey, newValue);
-        },
-        [onChange, optionKey],
-    );
+const LanguageResponseOption = ({ languageKey }: LanguageResponseOptionProps) => (
+    <TextInput
+        className={styles.textInput}
+        faramElementName={languageKey}
+        label={`Title: ${languageOptionsMap[languageKey]}`}
+    />
+);
 
-    const handleDelete = useCallback(
-        () => {
-            onDelete(optionKey);
-        },
-        [onDelete, optionKey],
-    );
+const languageKeySelector = (l: LanguageTitle['key']) => l;
 
+interface Props {
+    className?: string;
+    dataIndex: number;
+    type?: string;
+    moreTitles?: LanguageTitle[];
+}
+
+const deleteClick = (rows: QuestionResponseOptionElement[], index: number) => (
+    rows.filter((row, ind) => ind !== index)
+);
+
+function ResponseItem(props: Props) {
+    const {
+        className,
+        type,
+        dataIndex,
+        moreTitles,
+    } = props;
+
+    const languageKeys = useMemo(() => {
+        if (isNotDefined(moreTitles)) {
+            return [];
+        }
+        const uniqueItems = unique(moreTitles.filter(m => isDefined(m.key)), d => d.key);
+        return (uniqueItems || []).map(m => m.key);
+    }, [moreTitles]);
+
+    const languageOptionRendererParams = useCallback((key: LanguageTitle['key']) => ({
+        languageKey: key,
+    }), []);
+
+    if (!type || !isChoicedQuestionType(type)) {
+        return null;
+    }
 
     return (
-        <div className={_cs(className, styles.responseOption)}>
-            <TextInput
-                className={styles.textInput}
-                value={value}
-                onChange={handleChange}
-                {...otherProps}
-            />
+        <div className={_cs(styles.responseItem, className)}>
+            <h4 className={styles.heading}>
+                {`${dataIndex + 1}.`}
+            </h4>
+            <FaramGroup faramElementName={String(dataIndex)}>
+                <FaramGroup faramElementName="value">
+                    <TextInput
+                        className={styles.textInput}
+                        faramElementName="defaultLabel"
+                        label="Default title"
+                    />
+                    <List
+                        data={languageKeys}
+                        keySelector={languageKeySelector}
+                        renderer={LanguageResponseOption}
+                        rendererParams={languageOptionRendererParams}
+                    />
+                </FaramGroup>
+            </FaramGroup>
             <DangerButton
                 className={styles.deleteButton}
                 iconName="delete"
-                onClick={handleDelete}
+                faramAction={deleteClick}
+                faramElementName={dataIndex}
             />
         </div>
     );
-};
-
-
-interface Props {
-    label?: string;
-    className?: string;
-    type?: string;
-    value: QuestionResponseOptionElement[];
-    onChange: (newValue: QuestionResponseOptionElement[]) => void;
 }
 
-const questionResponseKeySelector = (d: QuestionResponseOptionElement) => d.key;
-
-class ResponseInput extends React.PureComponent<Props> {
-    private getOptionRendererParams = (
-        key: QuestionResponseOptionElement['key'],
-        value: QuestionResponseOptionElement,
-    ) => ({
-        showLabel: false,
-        showHintAndError: false,
-        optionKey: key,
-        value: value.value,
-        onChange: this.handleOptionInputChange,
-        onDelete: this.handleDeleteButtonClick,
-        className: styles.option,
-    })
-
-    private handleDeleteButtonClick = (optionKey: QuestionResponseOptionElement['key']) => {
-        const {
-            value = [],
-            onChange,
-        } = this.props;
-
-        const newOptionValue = [...value];
-        const optionIndex = newOptionValue.findIndex(d => d.key === optionKey);
-        if (optionIndex !== -1) {
-            newOptionValue.splice(optionIndex, 1);
-            onChange(newOptionValue);
-        }
-    };
-
-    private handleOptionInputChange = (
-        optionKey: QuestionResponseOptionElement['key'],
-        newValue: QuestionResponseOptionElement['value'],
-    ) => {
-        const {
-            value = [],
-            onChange,
-        } = this.props;
-
-        const newOptionValue = [...value];
-        const optionIndex = newOptionValue.findIndex(d => d.key === optionKey);
-
-        if (optionIndex !== -1) {
-            const newOption = { ...newOptionValue[optionIndex] };
-            newOption.value = newValue;
-            newOptionValue.splice(optionIndex, 1, newOption);
-
-            onChange(newOptionValue);
-        }
-    }
-
-
-    private handleAddOptionButtonClick = () => {
-        const {
-            value = [],
-            onChange,
-        } = this.props;
-        const newValue = [...value];
-
-        newValue.push({
-            key: `question-option-${randomString()}`,
-            value: '',
-        });
-
-        onChange(newValue);
-    }
-
-    public render() {
-        const {
-            type,
-            label,
-            className,
-            value,
-        } = this.props;
-
-        if (!type || !isChoicedQuestionType(type)) {
-            return null;
-        }
-
-        return (
-            <div className={_cs(styles.responseInput, className)}>
-                <Label
-                    text={label}
-                />
-                <ListView
-                    className={styles.optionList}
-                    data={value}
-                    keySelector={questionResponseKeySelector}
-                    renderer={QuestionResponseOption}
-                    rendererParams={this.getOptionRendererParams}
-                />
-                <Button
-                    onClick={this.handleAddOptionButtonClick}
-                    iconName="add"
-                >
-                    {/* FIXME: use strings */}
-                    Add option
-                </Button>
-            </div>
-        );
-    }
-}
-
-
-export default FaramInputElement(ResponseInput);
+export default ResponseItem;

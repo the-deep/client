@@ -6,6 +6,7 @@ import {
 import React from 'react';
 
 import Numeral from '#rscv/Numeral';
+import HighlightableText from '#components/viewer/HighlightableTextOutput';
 
 import styles from './styles.scss';
 
@@ -20,6 +21,7 @@ const propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object]),
     isNumericValue: PropTypes.bool,
     alwaysVisible: PropTypes.bool,
+    searchValue: PropTypes.string,
 };
 
 const defaultProps = {
@@ -31,6 +33,7 @@ const defaultProps = {
     type: 'normal',
     isNumericValue: false,
     alwaysVisible: false,
+    searchValue: undefined,
 };
 
 export default class TextOutput extends React.PureComponent {
@@ -48,6 +51,7 @@ export default class TextOutput extends React.PureComponent {
             isNumericValue,
             valueClassName,
             alwaysVisible,
+            searchValue,
             ...otherProps
         } = this.props;
 
@@ -64,7 +68,14 @@ export default class TextOutput extends React.PureComponent {
             />
         ) : (
             <div className={_cs(styles.value, valueClassName)}>
-                { value }
+                {searchValue ? (
+                    <HighlightableText
+                        highlightText={searchValue}
+                        text={value}
+                    />
+                ) : (
+                    value
+                )}
             </div>
         );
 

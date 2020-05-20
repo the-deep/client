@@ -349,12 +349,11 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                 const { error, title, questions } = readXLSForm(workbook);
 
                 if (error) {
-                    // TODO: show error
                     console.error(error);
                     notify.send({
                         title: 'XLS Import',
                         type: notify.type.ERROR,
-                        message: 'Some error occurred.',
+                        message: error,
                         duration: notify.duration.MEDIUM,
                     });
                     return;

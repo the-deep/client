@@ -109,7 +109,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                             <TextOutput
                                 className={styles.lineItem}
                                 label="Time Required"
-                                value={`${totalTimeRequired} min`}
+                                value={generateDurationLabel(requiredDuration)}
                                 type="stretched"
                             />
                         </div>
@@ -120,7 +120,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
                             <TextOutput
                                 className={styles.lineItem}
                                 label="Theoretic Time"
-                                value={`${requiredDuration} min`}
+                                value={generateDurationLabel(requiredDuration)}
                                 type="stretched"
                             />
                             <div className={styles.lineItem}>

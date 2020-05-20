@@ -17,6 +17,7 @@
 
     .content {
         display: flex;
+        flex-direction: column;
         flex-grow: 1;
         overflow-y: auto;
 
@@ -24,17 +25,45 @@
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
-            padding-left: var(--spacing-medium);
-            width: 240px;
-            overflow-y: auto;
+            padding: var(--spacing-medium);
 
-            .search-input {
+            .filters {
+                display: flex;
                 flex-shrink: 0;
-                margin-bottom: var(--spacing-medium);
+                padding-bottom: var(--spacing-small-alt);
+                overflow-y: auto;
+
+                .search-input {
+                    flex-shrink: 0;
+                    margin-right: var(--spacing-small);
+                }
+
+                .matrices-selection {
+                    display: flex;
+                    border: var(--width-separator-thin) solid var(--color-separator);
+                    max-width: 240px;
+
+                    :global {
+                        .title {
+                            text-transform: initial;
+                        }
+                    }
+                }
             }
 
-            .matrix-filter {
-                overflow-y: auto;
+            .applied-filters-label {
+                color: var(--color-text-label);
+            }
+
+            .applied-filters {
+                display: flex;
+                align-items: flex-start;
+                flex-wrap: wrap;
+
+                .badge {
+                    margin-right: var(--spacing-extra-small);
+                    margin-bottom: var(--spacing-extra-small);
+                }
             }
         }
 
@@ -48,4 +77,10 @@
             }
         }
     }
+}
+
+.matrix-filter {
+    padding: var(--spacing-medium);
+    max-height: 60vh;
+    overflow-y: auto;
 }

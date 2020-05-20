@@ -1,18 +1,19 @@
-.response-item {
+.more-title-row {
     display: flex;
     align-items: center;
 
-    .heading {
+    .select-input {
+        flex-shrink: 0;
         margin-right: var(--spacing-small);
-        padding-bottom: var(--spacing-extra-small);
-        color: var(--color-text-label);
+        width: 144px;
     }
 
     .text-input {
+        flex-grow: 1;
         margin-right: var(--spacing-small);
     }
 
-    .delete-button {
+    .button {
         flex-shrink: 0;
     }
 

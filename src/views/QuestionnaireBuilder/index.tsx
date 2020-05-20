@@ -651,6 +651,10 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
         const arrayMoveData = getArrayMoveDetails(oldQuestions, newQuestions, questionKeySelector);
 
         const movedQuestion = arrayMoveData.movedData;
+        if (!movedQuestion) {
+            return;
+        }
+
         const orderAction = {
             action: (arrayMoveData.top ? 'top' : 'below') as OrderAction['action'],
             value: arrayMoveData.afterData,

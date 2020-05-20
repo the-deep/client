@@ -24,10 +24,16 @@ export interface IdTitle {
 }
 
 // QUESTION
+//
+
+interface ResponseOptionValue {
+    defaultLabel: string;
+    [key: string]: string;
+}
 
 export interface QuestionResponseOptionElement {
     key: string;
-    value: string;
+    value: ResponseOptionValue;
 }
 
 export interface QuestionElementFrameworkAttribute {
@@ -66,18 +72,23 @@ export type QuestionType = 'text'
     | 'hidden';
 */
 
+interface MoreTitles {
+    [key: string]: string;
+}
 
 export interface BaseQuestionElement {
     id: number;
     order: number;
 
     title: string;
+    name: string;
+    moreTitles: MoreTitles;
     type: QuestionType;
     // label: string;
     enumeratorInstruction?: string;
     respondentInstruction?: string;
 
-    responseOptions?: KeyValue[];
+    responseOptions?: QuestionResponseOptionElement[];
 
     enumeratorSkill?: string;
     enumeratorSkillDisplay?: string;
@@ -153,6 +164,16 @@ export interface OrderAction {
     value?: number;
 }
 
+export interface Language {
+    key: string;
+    label: string;
+}
+
+export interface LanguageTitle {
+    key: string;
+    uniqueKey: string;
+    title: string;
+}
 
 // FRAMEWORK
 export type MiniFrameworkElement = Pick<FrameworkElement, 'id' | 'widgets' | 'questions' | 'title'>

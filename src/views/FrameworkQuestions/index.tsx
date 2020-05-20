@@ -4,6 +4,7 @@ import { produce } from 'immer';
 import memoize from 'memoize-one';
 import {
     _cs,
+    compareNumber,
     reverseRoute,
 } from '@togglecorp/fujs';
 
@@ -148,10 +149,10 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
     },
     orderChangeRequest: {
         url: ({ props: { frameworkId }, params }) => (
-            `/questionnaires/${frameworkId}/questions/${params && params.questionId}/order/`
+            `/analysis-frameworks/${frameworkId}/questions/${params && params.questionId}/order/`
         ),
         method: methods.POST,
-        body: ({ params }) => params && params.body,
+        body: ({ params }) => params && params.orderAction,
     },
     bulkQuestionDeleteRequest: {
         url: ({ props: { frameworkId } }) => (
@@ -208,7 +209,14 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         };
         this.props.requests.frameworkGetRequest.setDefaultParams({
             setFramework: (framework: MiniFrameworkElement) => {
-                this.setState({ framework });
+                this.setState({
+                    framework: {
+                        ...framework,
+                        questions: [...framework.questions].sort(
+                            (a, b) => compareNumber(a.order, b.order),
+                        ),
+                    },
+                });
             },
         });
 
@@ -361,6 +369,10 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         const arrayMoveData = getArrayMoveDetails(oldQuestions, newQuestions, questionKeySelector);
 
         const movedQuestion = arrayMoveData.movedData;
+
+        if (!movedQuestion) {
+            return;
+        }
         const orderAction = {
             action: (arrayMoveData.top ? 'top' : 'below') as OrderAction['action'],
             value: arrayMoveData.afterData,

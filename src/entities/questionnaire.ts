@@ -16,7 +16,13 @@ import {
     BaseQuestionElement,
     QuestionType,
     QuestionElementFrameworkAttribute,
+    Language,
+    QuestionResponseOptionElement,
 } from '#typings';
+
+interface Row {
+    values: string[];
+}
 
 function escapeReplacementToken(title: string | undefined) {
     if (!title) {
@@ -183,8 +189,19 @@ export function getFilteredQuestions<T extends BaseQuestionElement>(
     }
 
     const filteredQuestions = questions.filter((question) => {
+        const jointMoreTitles = question.moreTitles
+            ? Object.values(question.moreTitles).join('\n') : '';
+
+        const responseOptions = question.responseOptions || [];
+        const jointResponseOptions = responseOptions.map(ro => (
+            Object.values(ro.value).join('\n')
+        )).join('\n');
+
         const searchFilter = isFalsyString(searchValue)
             || caseInsensitiveSubmatch(question.title, searchValue)
+            || caseInsensitiveSubmatch(jointMoreTitles, searchValue)
+            || caseInsensitiveSubmatch(jointResponseOptions, searchValue)
+            || caseInsensitiveSubmatch(question.name, searchValue)
             || caseInsensitiveSubmatch(question.dataCollectionTechniqueDisplay, searchValue)
             || caseInsensitiveSubmatch(question.enumeratorSkillDisplay, searchValue)
             || caseInsensitiveSubmatch(question.respondentInstruction, searchValue)
@@ -209,6 +226,31 @@ export function getFilteredQuestions<T extends BaseQuestionElement>(
     });
     return filteredQuestions;
 }
+
+export const languageOptions: Language[] = [
+    {
+        key: 'en',
+        label: 'English',
+    },
+    {
+        key: 'arb',
+        label: 'Arabic',
+    },
+    {
+        key: 'fr',
+        label: 'French',
+    },
+    {
+        key: 'es',
+        label: 'Spanish',
+    },
+];
+
+export const languageOptionsMap = listToMap(
+    languageOptions,
+    d => d.key,
+    d => d.label,
+);
 
 const metadataTypes = [
     'start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial',
@@ -259,20 +301,24 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     // Bold all column values
     survey.getRow(1).font = { bold: true };
     survey.columns = getColumns([
-        'type', 'name', 'label', 'hint', 'default', 'read_only',
-        'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
-        'parameters', 'body::accuracyThreshold', 'relevant',
+        'type', 'name', 'label',
+        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`),
+        'hint', 'default', 'read_only',
+        'required', 'required_message', 'constraint', 'constraint_message',
+        'calculation', 'appearance', 'parameters', 'body::accuracyThreshold',
+        'relevant',
     ]);
 
     choices.getRow(1).font = { bold: true };
     choices.columns = getColumns([
         'list name', 'name', 'label',
+        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`),
     ]);
 
     settings.getRow(1).font = { bold: true };
     settings.columns = getColumns([
-        'form_title', 'form_id',
-        'public_key', 'submission_url', 'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
+        'form_title', 'form_id', 'public_key', 'submission_url',
+        'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
     ]);
 
     // Schema: Adding default meta
@@ -282,7 +328,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     // Schema: Add survey questions
     survey.addRows(
         activeQuestions.map((question) => {
-            const questionKey = `question_${question.id}`;
+            const questionKey = question.name;
             const questionChoiceKey = `${questionKey}_choices`;
 
             const hints = [];
@@ -293,6 +339,12 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 hints.push(`Respondent Insturction: ${question.respondentInstruction}`);
             }
 
+            const labelsInOtherLanguages = listToMap(
+                languageOptions,
+                langOpt => `label::${langOpt.label} (${langOpt.key})`,
+                langOpt => question.moreTitles[langOpt.key],
+            );
+
             // NOTE: we need to escape question.title
             return {
                 // NOTE: Choice types requires choice name in type "type_name choice_key"
@@ -301,6 +353,8 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 label: escapeReplacementToken(question.title),
                 required: question.isRequired ? 'yes' : '',
                 hint: hints.join('; '),
+                // Label in other languages
+                ...labelsInOtherLanguages,
             };
         }),
     );
@@ -315,7 +369,13 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 return options.map(option => ({
                     'list name': questionChoiceKey,
                     name: option.key,
-                    label: option.value,
+                    label: option.value.defaultLabel,
+                    // Label in other languages
+                    ...listToMap(
+                        languageOptions,
+                        langOpt => `label::${langOpt.label} (${langOpt.key})`,
+                        langOpt => option.value[langOpt.key],
+                    ),
                 }));
             })
             .flat(),
@@ -356,17 +416,17 @@ export function readXLSForm(workbook: Excel.Workbook) {
 
     interface SurveyColumn {
         type?: number;
-        name?: number;
+        name: number;
         label?: number;
-        'label::English'?: number;
         required?: number;
+        [key: string]: number | undefined;
     }
 
     interface ChoicesColumn {
         'list name'?: number;
         name?: number;
         label?: number;
-        'label::English'?: number;
+        [key: string]: number | undefined;
     }
 
     interface SettingsColumn {
@@ -389,33 +449,48 @@ export function readXLSForm(workbook: Excel.Workbook) {
         return { error: 'No choices tab' };
     }
     const choiceIndices = getColumnsIndex(
-        choices.getRow(1).values as string[],
+        (choices.getRow(1) as Row).values,
     ) as ChoicesColumn;
-    const questionChoices: Obj<{ key: string; value: string }[]> = {};
-    choices.eachRow((row, rowIndex: number) => {
+    const questionChoices: Obj<QuestionResponseOptionElement[]> = {};
+
+    choices.eachRow((row: Row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
         }
 
-        const values = row.values as string[];
+        const { values } = row;
 
         const listNameIndex = choiceIndices['list name'];
         const nameIndex = choiceIndices.name;
         const labelIndex = choiceIndices.label;
-        const labelEngIndex = choiceIndices['label::English'];
 
         const key = isDefined(listNameIndex) ? values[listNameIndex] : undefined;
         const name = isDefined(nameIndex) ? values[nameIndex] : undefined;
-        const label = (isDefined(labelIndex) ? values[labelIndex] : undefined)
-        || (isDefined(labelEngIndex) ? values[labelEngIndex] : undefined);
+        const label = (isDefined(labelIndex) ? values[labelIndex] : undefined);
 
         if (!key || !name) {
             return;
         }
 
-        const choice = {
+        const languageOptionsForValue = listToMap(
+            languageOptions,
+            langOpt => langOpt.key,
+            (langOpt) => {
+                const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
+
+                if (isNotDefined(index)) {
+                    return '';
+                }
+                return values[index];
+            },
+        );
+
+        const choice: QuestionResponseOptionElement = {
             key: name,
-            value: label || 'Untitled Choice',
+            value: {
+                ...languageOptionsForValue,
+                defaultLabel: label || 'Untitled Choice',
+            },
         };
 
         if (!questionChoices[key]) {
@@ -430,11 +505,11 @@ export function readXLSForm(workbook: Excel.Workbook) {
         return { error: 'No settings tab' };
     }
     const settingsIndices = getColumnsIndex(
-        settings.getRow(1).values as string[],
+        (settings.getRow(1) as Row).values,
     ) as SettingsColumn;
     const formTitleIndex = settingsIndices.form_title;
     const formTitle = formTitleIndex
-        ? (settings.getRow(2).values as string[])[formTitleIndex]
+        ? ((settings.getRow(2) as Row).values)[formTitleIndex]
         : undefined;
 
     const survey = workbook.getWorksheet('survey');
@@ -442,19 +517,19 @@ export function readXLSForm(workbook: Excel.Workbook) {
         return { error: 'No survey tab' };
     }
     const surveyIndices = getColumnsIndex(
-        survey.getRow(1).values as string[],
+        (survey.getRow(1) as Row).values,
     ) as SurveyColumn;
     const questions: BaseQuestionElementWithoutId[] = [];
-    survey.eachRow((row, rowIndex: number) => {
+    survey.eachRow((row: Row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
         }
 
-        const values = row.values as string[];
+        const { values } = row;
 
         const typeIndex = surveyIndices.type;
         const labelIndex = surveyIndices.label;
-        const labelEngIndex = surveyIndices['label::English'];
+        const nameIndex = surveyIndices.name;
         const requiredIndex = surveyIndices.required;
 
         const type = isDefined(typeIndex)
@@ -483,11 +558,24 @@ export function readXLSForm(workbook: Excel.Workbook) {
             return;
         }
 
+        const moreTitles = listToMap(
+            languageOptions,
+            langOpt => langOpt.key,
+            (langOpt) => {
+                const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
+
+                if (isNotDefined(index)) {
+                    return '';
+                }
+                return values[index];
+            },
+        );
+
         const question: BaseQuestionElementWithoutId = {
             type: questionType as QuestionType,
-            title: (isDefined(labelIndex) ? values[labelIndex] : undefined)
-                || (isDefined(labelEngIndex) ? values[labelEngIndex] : undefined)
-                || 'Untitled Question',
+            name: values[nameIndex],
+            title: (isDefined(labelIndex) ? values[labelIndex] : undefined) || 'Untitled Question',
+            moreTitles,
             isRequired: (isDefined(requiredIndex) ? values[requiredIndex] : undefined) === 'yes',
             responseOptions: choiceKey ? questionChoices[choiceKey] || [] : undefined,
         };
@@ -519,8 +607,5 @@ export const getQuestionAttributeTitle = (
     };
 
     const attribute = dataSource[type].find(d => d.id === value);
-    if (attribute) {
-        return attribute.title;
-    }
-    return '';
+    return attribute ? attribute.title : '';
 };
