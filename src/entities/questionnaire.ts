@@ -222,6 +222,27 @@ export function getFilteredQuestions<T extends BaseQuestionElement>(
     return filteredQuestions;
 }
 
+export const languageOptions: Language[] = [
+    {
+        key: 'en',
+        label: 'English',
+    },
+    {
+        key: 'arb',
+        label: 'Arabic',
+    },
+    {
+        key: 'fr',
+        label: 'French',
+    },
+    {
+        key: 'es',
+        label: 'Spanish',
+    },
+];
+
+export const languageOptionsMap = listToMap(languageOptions, d => d.key, d => d.label);
+
 const metadataTypes = [
     'start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial',
     'phonenumber', 'username', 'email', 'audit',
@@ -271,7 +292,9 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     // Bold all column values
     survey.getRow(1).font = { bold: true };
     survey.columns = getColumns([
-        'type', 'name', 'label', 'hint', 'default', 'read_only',
+        'type', 'name', 'label',
+        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`) as string[],
+        'hint', 'default', 'read_only',
         'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
         'parameters', 'body::accuracyThreshold', 'relevant',
     ]);
@@ -279,6 +302,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     choices.getRow(1).font = { bold: true };
     choices.columns = getColumns([
         'list name', 'name', 'label',
+        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`) as string[],
     ]);
 
     settings.getRow(1).font = { bold: true };
@@ -294,7 +318,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     // Schema: Add survey questions
     survey.addRows(
         activeQuestions.map((question) => {
-            const questionKey = `question_${question.id}`;
+            const questionKey = question.name;
             const questionChoiceKey = `${questionKey}_choices`;
 
             const hints = [];
@@ -313,6 +337,14 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 label: escapeReplacementToken(question.title),
                 required: question.isRequired ? 'yes' : '',
                 hint: hints.join('; '),
+                // Label in other languages
+                ...languageOptions.reduce(
+                    (acc, langOpt) => ({
+                        ...acc,
+                        [`label::${langOpt.label} (${langOpt.key})`]: question.moreTitles[langOpt.key],
+                    }),
+                    {},
+                ),
             };
         }),
     );
@@ -327,7 +359,15 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 return options.map(option => ({
                     'list name': questionChoiceKey,
                     name: option.key,
-                    label: option.value,
+                    label: option.value.defaultLabel,
+                    // Label in other languages
+                    ...languageOptions.reduce(
+                        (acc, langOpt) => ({
+                            ...acc,
+                            [`label::${langOpt.label} (${langOpt.key})`]: option.value[langOpt.key],
+                        }),
+                        {},
+                    ),
                 }));
             })
             .flat(),
@@ -367,18 +407,22 @@ export function readXLSForm(workbook: Excel.Workbook) {
     type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id' | 'order'>;
 
     interface SurveyColumn {
-        type?: number;
-        name?: number;
-        label?: number;
-        'label::English'?: number;
-        required?: number;
+        // TODO: Remove below comment
+        // type?: number;
+        // name: number;
+        // label?: number;
+        // 'label::English'?: number;
+        // required?: number;
+        [key: string]: number;
     }
 
     interface ChoicesColumn {
-        'list name'?: number;
-        name?: number;
-        label?: number;
-        'label::English'?: number;
+        // TODO: Remove below comment
+        // 'list name'?: number;
+        // name?: number;
+        // label?: number;
+        // 'label::English'?: number;
+        [key: string]: number;
     }
 
     interface SettingsColumn {
@@ -403,7 +447,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
     const choiceIndices = getColumnsIndex(
         choices.getRow(1).values as string[],
     ) as ChoicesColumn;
-    const questionChoices: Obj<{ key: string; value: string }[]> = {};
+    const questionChoices: Obj<{ key: string; value: {[key: string]: string} }[]> = {};
     choices.eachRow((row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
@@ -414,12 +458,10 @@ export function readXLSForm(workbook: Excel.Workbook) {
         const listNameIndex = choiceIndices['list name'];
         const nameIndex = choiceIndices.name;
         const labelIndex = choiceIndices.label;
-        const labelEngIndex = choiceIndices['label::English'];
 
         const key = isDefined(listNameIndex) ? values[listNameIndex] : undefined;
         const name = isDefined(nameIndex) ? values[nameIndex] : undefined;
-        const label = (isDefined(labelIndex) ? values[labelIndex] : undefined)
-        || (isDefined(labelEngIndex) ? values[labelEngIndex] : undefined);
+        const label = (isDefined(labelIndex) ? values[labelIndex] : undefined);
 
         if (!key || !name) {
             return;
@@ -427,7 +469,19 @@ export function readXLSForm(workbook: Excel.Workbook) {
 
         const choice = {
             key: name,
-            value: label || 'Untitled Choice',
+            value: {
+                ...languageOptions.reduce(
+                    (acc, langOpt) => {
+                        const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
+                        return {
+                            ...acc,
+                            [langOpt.key]: isDefined(index) ? values[index] : undefined,
+                        };
+                    },
+                    {},
+                ),
+                defaultLabel: label || 'Untitled Choice',
+            },
         };
 
         if (!questionChoices[key]) {
@@ -466,7 +520,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
 
         const typeIndex = surveyIndices.type;
         const labelIndex = surveyIndices.label;
-        const labelEngIndex = surveyIndices['label::English'];
+        const nameIndex = surveyIndices.name;
         const requiredIndex = surveyIndices.required;
 
         const type = isDefined(typeIndex)
@@ -497,9 +551,20 @@ export function readXLSForm(workbook: Excel.Workbook) {
 
         const question: BaseQuestionElementWithoutId = {
             type: questionType as QuestionType,
-            title: (isDefined(labelIndex) ? values[labelIndex] : undefined)
-                || (isDefined(labelEngIndex) ? values[labelEngIndex] : undefined)
-                || 'Untitled Question',
+            name: values[nameIndex],
+            title: (isDefined(labelIndex) ? values[labelIndex] : undefined) || 'Untitled Question',
+            moreTitles: {
+                ...languageOptions.reduce(
+                    (acc, langOpt) => {
+                        const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
+                        return {
+                            ...acc,
+                            [langOpt.key]: isDefined(index) ? values[index] : undefined,
+                        };
+                    },
+                    {},
+                ),
+            },
             isRequired: (isDefined(requiredIndex) ? values[requiredIndex] : undefined) === 'yes',
             responseOptions: choiceKey ? questionChoices[choiceKey] || [] : undefined,
         };
@@ -514,27 +579,6 @@ interface ItemWithTitle {
     id: string | number;
     title?: string;
 }
-
-export const languageOptions: Language[] = [
-    {
-        key: 'en',
-        label: 'English',
-    },
-    {
-        key: 'arb',
-        label: 'Arabic',
-    },
-    {
-        key: 'fr',
-        label: 'French',
-    },
-    {
-        key: 'es',
-        label: 'Spanish',
-    },
-];
-
-export const languageOptionsMap = listToMap(languageOptions, d => d.key, d => d.label);
 
 export const getQuestionAttributeTitle = (
     type: QuestionElementFrameworkAttribute['type'],
