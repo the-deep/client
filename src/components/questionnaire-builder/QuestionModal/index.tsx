@@ -97,7 +97,7 @@ interface QuestionFormElement {
 const languageKeySelector = (elem: LanguageTitle) => elem.uniqueKey;
 const responseOptionKeySelector = (elem: QuestionResponseOptionElement) => elem.key;
 
-export function transformIn(value: Omit<BaseQuestionElement, 'id'> | undefined): QuestionFormElement {
+export function transformIn(value: Omit<BaseQuestionElement, 'id' | 'order'> | undefined): QuestionFormElement {
     if (!value) {
         return {
             detail: {},

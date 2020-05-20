@@ -17,6 +17,7 @@ import {
     QuestionType,
     QuestionElementFrameworkAttribute,
     Language,
+    QuestionResponseOptionElement,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -445,7 +446,8 @@ export function readXLSForm(workbook: Excel.Workbook) {
     const choiceIndices = getColumnsIndex(
         choices.getRow(1).values as string[],
     ) as ChoicesColumn;
-    const questionChoices: Obj<{ key: string; value: {[key: string]: string} }[]> = {};
+    const questionChoices: Obj<QuestionResponseOptionElement[]> = {};
+
     choices.eachRow((row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
@@ -478,7 +480,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
             },
         );
 
-        const choice = {
+        const choice: QuestionResponseOptionElement = {
             key: name,
             value: {
                 ...languageOptionsForValue,
