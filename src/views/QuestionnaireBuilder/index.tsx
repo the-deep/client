@@ -614,7 +614,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
             const { questions } = safeQuestionnaire;
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex === -1) {
-                safeQuestionnaire.questions.splice(order, 0, question);
+                safeQuestionnaire.questions.splice(order - 1, 0, question);
             } else {
                 // eslint-disable-next-line no-param-reassign
                 safeQuestionnaire.questions[selectedIndex] = question;
