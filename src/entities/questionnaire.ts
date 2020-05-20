@@ -335,7 +335,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 hints.push(`Enumerator Instruction: ${question.enumeratorInstruction}`);
             }
             if (question.respondentInstruction) {
-                hints.push(`Respondent Insturction: ${question.respondentInstruction}`);
+                hints.push(`Respondent Instruction: ${question.respondentInstruction}`);
             }
 
             const labelsInOtherLanguages = listToMap(
@@ -439,7 +439,6 @@ export function readXLSForm(workbook: Excel.Workbook) {
         )
     ));
 
-    // NOTE: getRow(n).values always returns an array
     // NOTE: exceljs doesn't support getcell by header name for readonly
 
     const choices = workbook.getWorksheet('choices');
