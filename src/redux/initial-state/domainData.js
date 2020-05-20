@@ -114,14 +114,6 @@ const initialDomainDataState = {
     },
 
     // index is project id
-    projectsOptions: {
-        /*
-        1: {
-        },
-        */
-    },
-
-    // index is project id
     geoOptions: {
         /*
         1: [
