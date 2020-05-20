@@ -20,6 +20,10 @@ import {
     QuestionResponseOptionElement,
 } from '#typings';
 
+interface Row {
+    values: string[];
+}
+
 function escapeReplacementToken(title: string | undefined) {
     if (!title) {
         return title;
@@ -242,7 +246,11 @@ export const languageOptions: Language[] = [
     },
 ];
 
-export const languageOptionsMap = listToMap(languageOptions, d => d.key, d => d.label);
+export const languageOptionsMap = listToMap(
+    languageOptions,
+    d => d.key,
+    d => d.label,
+);
 
 const metadataTypes = [
     'start', 'end', 'today', 'deviceid', 'subscriberid', 'simserial',
@@ -296,8 +304,9 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
         'type', 'name', 'label',
         ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`),
         'hint', 'default', 'read_only',
-        'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
-        'parameters', 'body::accuracyThreshold', 'relevant',
+        'required', 'required_message', 'constraint', 'constraint_message',
+        'calculation', 'appearance', 'parameters', 'body::accuracyThreshold',
+        'relevant',
     ]);
 
     choices.getRow(1).font = { bold: true };
@@ -308,8 +317,8 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
 
     settings.getRow(1).font = { bold: true };
     settings.columns = getColumns([
-        'form_title', 'form_id',
-        'public_key', 'submission_url', 'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
+        'form_title', 'form_id', 'public_key', 'submission_url',
+        'default_language', 'style', 'version', 'allow_choice_duplicates', // extra
     ]);
 
     // Schema: Adding default meta
@@ -406,22 +415,18 @@ export function readXLSForm(workbook: Excel.Workbook) {
     type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id' | 'order'>;
 
     interface SurveyColumn {
-        // TODO: Remove below comment
-        // type?: number;
-        // name: number;
-        // label?: number;
-        // 'label::English'?: number;
-        // required?: number;
-        [key: string]: number;
+        type?: number;
+        name: number;
+        label?: number;
+        required?: number;
+        [key: string]: number | undefined;
     }
 
     interface ChoicesColumn {
-        // TODO: Remove below comment
-        // 'list name'?: number;
-        // name?: number;
-        // label?: number;
-        // 'label::English'?: number;
-        [key: string]: number;
+        'list name'?: number;
+        name?: number;
+        label?: number;
+        [key: string]: number | undefined;
     }
 
     interface SettingsColumn {
@@ -444,16 +449,16 @@ export function readXLSForm(workbook: Excel.Workbook) {
         return { error: 'No choices tab' };
     }
     const choiceIndices = getColumnsIndex(
-        choices.getRow(1).values as string[],
+        (choices.getRow(1) as Row).values,
     ) as ChoicesColumn;
     const questionChoices: Obj<QuestionResponseOptionElement[]> = {};
 
-    choices.eachRow((row, rowIndex: number) => {
+    choices.eachRow((row: Row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
         }
 
-        const values = row.values as string[];
+        const { values } = row;
 
         const listNameIndex = choiceIndices['list name'];
         const nameIndex = choiceIndices.name;
@@ -500,11 +505,11 @@ export function readXLSForm(workbook: Excel.Workbook) {
         return { error: 'No settings tab' };
     }
     const settingsIndices = getColumnsIndex(
-        settings.getRow(1).values as string[],
+        (settings.getRow(1) as Row).values,
     ) as SettingsColumn;
     const formTitleIndex = settingsIndices.form_title;
     const formTitle = formTitleIndex
-        ? (settings.getRow(2).values as string[])[formTitleIndex]
+        ? ((settings.getRow(2) as Row).values)[formTitleIndex]
         : undefined;
 
     const survey = workbook.getWorksheet('survey');
@@ -512,15 +517,15 @@ export function readXLSForm(workbook: Excel.Workbook) {
         return { error: 'No survey tab' };
     }
     const surveyIndices = getColumnsIndex(
-        survey.getRow(1).values as string[],
+        (survey.getRow(1) as Row).values,
     ) as SurveyColumn;
     const questions: BaseQuestionElementWithoutId[] = [];
-    survey.eachRow((row, rowIndex: number) => {
+    survey.eachRow((row: Row, rowIndex: number) => {
         if (rowIndex === 1) {
             return;
         }
 
-        const values = row.values as string[];
+        const { values } = row;
 
         const typeIndex = surveyIndices.type;
         const labelIndex = surveyIndices.label;
