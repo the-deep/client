@@ -328,8 +328,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     // Schema: Add survey questions
     survey.addRows(
         activeQuestions.map((question) => {
-            const questionKey = question.name;
-            const questionChoiceKey = `${questionKey}_choices`;
+            const questionChoiceKey = `${question.name}_choices`;
 
             const hints = [];
             if (question.enumeratorInstruction) {
@@ -349,7 +348,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
             return {
                 // NOTE: Choice types requires choice name in type "type_name choice_key"
                 type: isChoicedQuestion(question) ? `${question.type} ${questionChoiceKey}` : question.type,
-                name: questionKey,
+                name: question.name,
                 label: escapeReplacementToken(question.title),
                 required: question.isRequired ? 'yes' : '',
                 hint: hints.join('; '),
@@ -363,8 +362,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
         activeQuestions
             .filter(isChoicedQuestion)
             .map((question) => {
-                const questionKey = `question_${question.id}`;
-                const questionChoiceKey = `${questionKey}_choices`;
+                const questionChoiceKey = `${question.name}_choices`;
                 const options = question.responseOptions || [];
                 return options.map(option => ({
                     'list name': questionChoiceKey,

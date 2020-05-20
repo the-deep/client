@@ -70,6 +70,7 @@ interface State {
 
 interface Params {
     archived?: boolean;
+    donotReloadList?: boolean;
     questionnaireId?: number;
     setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
     body?: object;
@@ -127,10 +128,12 @@ const requestOptions: Requests<ComponentProps, Params> = {
     questionnaireDeleteRequest: {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
         method: methods.DELETE,
-        onSuccess: ({ props }) => {
-            // NOTE: re-trigger questionnaire request
-            props.requests.questionnairesGetRequest.do();
-            props.onQuestionnaireMetaReload();
+        onSuccess: ({ props, params: { donotReloadList } }) => {
+            if (!donotReloadList) {
+                // NOTE: re-trigger questionnaire request
+                props.requests.questionnairesGetRequest.do();
+                props.onQuestionnaireMetaReload();
+            }
         },
         onFailure: notifyOnFailure('Questionnaire Delete'),
         onFatal: notifyOnFatal('Questionnaire Delete'),
@@ -182,7 +185,27 @@ const requestOptions: Requests<ComponentProps, Params> = {
             });
             props.onQuestionnaireMetaReload();
         },
-        onFailure: notifyOnFailure('Questionnaire Edit'),
+        onFailure: ({ props, params, error }) => {
+            const typedError = error as { messageForNotification: string } | undefined;
+            const messageArray = ['Failed to upload XLS Form.'];
+            if (typedError) {
+                messageArray.push(typedError.messageForNotification);
+            }
+
+            notify.send({
+                title: 'Questionnaire',
+                type: notify.type.ERROR,
+                message: messageArray.join(' '),
+                duration: notify.duration.SLOW,
+            });
+
+            if (params && params.questionnaireId) {
+                props.requests.questionnaireDeleteRequest.do({
+                    questionnaireId: params.questionnaireId,
+                    donotReloadList: true,
+                });
+            }
+        },
         onFatal: notifyOnFatal('Questionnaire Edit'),
     },
 
@@ -257,7 +280,6 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
         onClone: this.handleClone,
         onEdit: this.handleEdit,
         onXLSFormExport: this.handleXLSFormExport,
-        onKoboToolboxExport: this.handleKoboToolboxExport,
     })
 
     private getCloneValue = (
@@ -411,10 +433,6 @@ class QuestionnaireList extends React.PureComponent<Props, State> {
                     });
             },
         });
-    }
-
-    private handleKoboToolboxExport = (questionnaireId: number) => {
-        console.warn('Export to kobo', questionnaireId);
     }
 
     public render() {

@@ -310,6 +310,13 @@ function createSchema(
     if (hasResponseOptions) {
         const responseSchema: ArraySchema = {
             keySelector: responseOptionKeySelector,
+            validation: (responseOptions: QuestionResponseOptionElement[]) => {
+                const errors = [];
+                if (responseOptions.length < 1) {
+                    errors.push('There should be at least one response option.');
+                }
+                return errors;
+            },
             member: {
                 fields: {
                     key: [requiredCondition],

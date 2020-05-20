@@ -37,7 +37,6 @@ interface Props {
     onClone: (questionnaireKey: MiniQuestionnaireElement['id']) => void;
     onEdit: (questionnaire: MiniQuestionnaireElement) => void;
     onXLSFormExport: (id: number) => void;
-    onKoboToolboxExport: (id: number) => void;
 }
 
 const isReadOnly = ({ setupPermissions }: Permissions) => !setupPermissions.modify;
@@ -54,7 +53,6 @@ const Questionnaire = (props: Props) => {
         onDelete,
         onClone,
         onXLSFormExport,
-        onKoboToolboxExport,
         questionnaireKey,
     } = props;
 
@@ -105,13 +103,6 @@ const Questionnaire = (props: Props) => {
             onXLSFormExport(questionnaireKey);
         },
         [onXLSFormExport, questionnaireKey],
-    );
-
-    const handleKoboToolboxExport = useCallback(
-        () => {
-            onKoboToolboxExport(questionnaireKey);
-        },
-        [onKoboToolboxExport, questionnaireKey],
     );
 
     const handlePreviewModalShow = useCallback(
@@ -250,6 +241,7 @@ const Questionnaire = (props: Props) => {
                             title="Export to XLSForm"
                             onClick={handleXLSFormExport}
                         />
+                        {/*
                         <DropdownButton
                             // FIXME: use strings
                             disabled={disabled}
@@ -266,6 +258,7 @@ const Questionnaire = (props: Props) => {
                             // FIXME: use strings
                             title="Export data collection plan"
                         />
+                        */}
                     </DropdownMenu>
                 </div>
             </header>
