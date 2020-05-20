@@ -23,15 +23,19 @@ import {
     AddRequestProps,
     MultiResponse,
     QuestionnaireQuestionElement,
+
+    Permissions,
 } from '#typings';
 
 import { generateXLSForm, readXLSForm } from '#entities/questionnaire';
 
 import {
-    RequestClient,
-    methods,
     notifyOnFailure,
     notifyOnFatal,
+} from '#utils/requestNotify';
+import {
+    RequestClient,
+    methods,
 } from '#request';
 import notify from '#notify';
 import _ts from '#ts';
@@ -39,7 +43,7 @@ import _ts from '#ts';
 import Questionnaire from '#qbc/Questionnaire';
 import styles from './styles.scss';
 
-type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id'>;
+type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id' | 'order'>;
 
 const ModalButton = modalize(PrimaryButton);
 
@@ -157,6 +161,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 },
             });
         },
+        // FIXME: handle error if available
         onFailure: notifyOnFailure('Questionnaire Create'),
         onFatal: notifyOnFatal('Questionnaire Create'),
     },
@@ -168,10 +173,11 @@ const requestOptions: Requests<ComponentProps, Params> = {
         onSuccess: ({ props, response }) => {
             // NOTE: re-trigger questionnaire request
             props.requests.questionnairesGetRequest.do();
+            const { title } = response as QuestionnaireElement;
             notify.send({
                 type: notify.type.SUCCESS,
                 title: 'Questionnaire',
-                message: `Questionnaire ${response ? response.title : ''} was successfully created.`,
+                message: `Questionnaire ${title} was successfully created.`,
                 duration: notify.duration.MEDIUM,
             });
             props.onQuestionnaireMetaReload();
@@ -208,7 +214,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
 const questionnaireKeySelector = (q: MiniQuestionnaireElement) => q.id;
 
 class QuestionnaireList extends React.PureComponent<Props, State> {
-    private static isReadOnly = ({ setupPermissions }) => !setupPermissions.modify;
+    private static isReadOnly = ({ setupPermissions }: Permissions) => !setupPermissions.modify;
 
     public constructor(props: Props) {
         super(props);

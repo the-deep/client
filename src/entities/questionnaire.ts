@@ -16,7 +16,6 @@ import {
     BaseQuestionElement,
     QuestionType,
     QuestionElementFrameworkAttribute,
-    QuestionnaireQuestionElement,
 } from '#typings';
 
 function escapeReplacementToken(title: string | undefined) {
@@ -169,8 +168,8 @@ export function getFrameworkMatrices(
     ];
 }
 
-export function getFilteredQuestions(
-    questions: BaseQuestionElement[] | undefined,
+export function getFilteredQuestions<T extends BaseQuestionElement>(
+    questions: T[] | undefined,
     frameworkAttributes?: string[],
     searchValue?: string,
     archived?: boolean,
@@ -353,7 +352,7 @@ export function readXLSForm(workbook: Excel.Workbook) {
     // NOTE: getRow(n).values always returns an array
     // NOTE: exceljs doesn't support getcell by header name for readonly
 
-    type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id'>;
+    type BaseQuestionElementWithoutId = Omit<BaseQuestionElement, 'id' | 'order'>;
 
     interface SurveyColumn {
         type?: number;

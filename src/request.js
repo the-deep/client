@@ -11,9 +11,24 @@ import { wsEndpoint } from '#config/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
-import notify from '#notify';
 
 export { methods, RequestHandler } from '@togglecorp/react-rest-request';
+
+export function getVersionedUrl(endpoint, url) {
+    const oldVersionString = '/v1';
+    const versionString = '/v2';
+    if (!url.startsWith(versionString)) {
+        return `${endpoint}${url}`;
+    }
+    const startIndex = 0;
+    const endIndex = endpoint.search(oldVersionString);
+    const newEndpoint = endpoint.slice(startIndex, endIndex);
+    return `${newEndpoint}${url}`;
+}
+
+const mapStateToProps = state => ({
+    myToken: tokenSelector(state),
+});
 
 const getFormData = (jsonData) => {
     const formData = new FormData();
@@ -29,44 +44,6 @@ const getFormData = (jsonData) => {
     );
     return formData;
 };
-
-export function getVersionedUrl(endpoint, url) {
-    const oldVersionString = '/v1';
-    const versionString = '/v2';
-    if (!url.startsWith(versionString)) {
-        return `${endpoint}${url}`;
-    }
-    const startIndex = 0;
-    const endIndex = endpoint.search(oldVersionString);
-    const newEndpoint = endpoint.slice(startIndex, endIndex);
-    return `${newEndpoint}${url}`;
-}
-
-export const notifyOnFailure = title => ({
-    error: {
-        messageForNotification,
-    } = {},
-}) => {
-    notify.send({
-        title,
-        type: notify.type.ERROR,
-        message: messageForNotification,
-        duration: notify.duration.MEDIUM,
-    });
-};
-
-export const notifyOnFatal = title => () => {
-    notify.send({
-        title,
-        type: notify.type.ERROR,
-        message: 'Some error occurred!',
-        duration: notify.duration.MEDIUM,
-    });
-};
-
-const mapStateToProps = state => ({
-    myToken: tokenSelector(state),
-});
 
 const coordinatorOptions = {
     transformParams: (data, props) => {
@@ -175,39 +152,3 @@ export const RequestCoordinator = compose(
 );
 
 export const RequestClient = createRequestClient;
-
-export const getResponse = (requests, key, defaultValue = {}) => {
-    const { response = defaultValue } = (requests || {})[key];
-    return response;
-};
-
-export const getResults = (requests, key, defaultValue = []) => {
-    const {
-        response: {
-            results = defaultValue,
-        } = {},
-    } = (requests || {})[key];
-
-    return results;
-};
-
-export const getPending = (requests, key) => {
-    const {
-        pending,
-    } = (requests || {})[key];
-
-    return pending;
-};
-
-export const isAnyRequestPending = (requests) => {
-    if (!requests) {
-        return undefined;
-    }
-
-    const requestKeys = Object.keys(requests);
-    const pending = requestKeys.some(
-        requestKey => requests[requestKey].pending,
-    );
-
-    return pending;
-};

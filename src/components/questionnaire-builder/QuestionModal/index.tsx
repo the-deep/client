@@ -27,11 +27,11 @@ import { getMatrix2dStructures } from '#utils/framework';
 import {
     RequestClient,
     methods,
-    getResponse,
-    isAnyRequestPending,
+} from '#request';
+import {
     notifyOnFailure,
     notifyOnFatal,
-} from '#request';
+} from '#utils/requestNotify';
 
 import {
     KeyValueElement,
@@ -40,6 +40,7 @@ import {
     BaseQuestionElement,
     AddRequestProps,
     Requests,
+    QuestionnaireOptions,
 } from '#typings';
 
 import FrameworkAttributeInput from './FrameworkAttributeInput';
@@ -69,7 +70,7 @@ interface QuestionFormElement {
     metadata: Partial<Pick<BaseQuestionElement, MetadataKeys>>;
 }
 
-export function transformIn(value: BaseQuestionElement | undefined): QuestionFormElement {
+export function transformIn(value: Omit<BaseQuestionElement, 'id'> | undefined): QuestionFormElement {
     if (!value) {
         return {
             detail: {},
@@ -319,7 +320,14 @@ class QuestionModal extends React.PureComponent<Props, State> {
             onSuccess,
         } = this.props;
 
-        const pending = isAnyRequestPending(requests) || pendingFromProps;
+        const {
+            questionnaireOptionsRequest: {
+                response = {},
+                pending: responsePending,
+            },
+        } = requests;
+
+        const pending = responsePending || pendingFromProps;
 
         const {
             enumeratorSkillOptions: enumeratorSkillOptionList,
@@ -327,7 +335,7 @@ class QuestionModal extends React.PureComponent<Props, State> {
             crisisTypeOptions: crisisTypeOptionList,
             questionTypeOptions: questionTypeOptionList,
             questionImportanceOptions: questionImportanceOptionList,
-        } = getResponse(requests, 'questionnaireOptionsRequest');
+        } = response as QuestionnaireOptions;
 
         const {
             sectorList,

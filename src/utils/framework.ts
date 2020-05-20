@@ -12,12 +12,31 @@ import {
 export const SECTOR_FIRST = 'sectorFirst';
 export const DIMENSION_FIRST = 'dimensionFirst';
 
+interface Matrix2dData {
+    sectors: {
+        id: number | string;
+        title: string;
+    }[];
+    dimensions: {
+        id: number | string;
+        title: string;
+        subdimensions: {
+            id: number | string;
+            title: string;
+        }[];
+    }[];
+}
+
+interface IdTitle {
+    id: number | string;
+    title: string;
+}
 
 // NOTE: This function generates dimension first level
-export const transformMatrix2dLevels = ({
-    sectors: widgetSec,
+const transformMatrix2dLevels = ({
     dimensions: widgetDim,
-} = {}) => {
+    sectors: widgetSec,
+}: Matrix2dData) => {
     const dimensionFirstLevels = widgetDim.map((d) => {
         const subDims = d.subdimensions;
 
@@ -43,13 +62,29 @@ export const transformMatrix2dLevels = ({
     return dimensionFirstLevels;
 };
 
-export const mapReportLevelsToNodes = levels => levels.map(level => ({
-    key: level.id,
-    title: level.title,
-    selected: true,
-    draggable: true,
-    nodes: level.sublevels && mapReportLevelsToNodes(level.sublevels),
-}));
+interface Level {
+    id: string | number;
+    title: string;
+    sublevels?: Level[];
+}
+
+interface LevelOutput {
+    key: Level['id'];
+    title: Level['title'];
+    selected: boolean;
+    draggable: boolean;
+    nodes?: LevelOutput[];
+}
+
+export function mapReportLevelsToNodes(levels: Level[]): LevelOutput[] {
+    return levels.map(level => ({
+        key: level.id,
+        title: level.title,
+        selected: true,
+        draggable: true,
+        nodes: level.sublevels && mapReportLevelsToNodes(level.sublevels),
+    }));
+}
 
 export const createReportStructure = (
     analysisFramework: FrameworkElement,
@@ -65,7 +100,16 @@ export const createReportStructure = (
     }
 
     const nodes = [];
-    exportables.forEach((exportable) => {
+    exportables.forEach((exportableUntyped) => {
+        const exportable = exportableUntyped as {
+            id: number;
+            widgetKey: string;
+            data?: {
+                report?: {
+                    levels?: Level[];
+                };
+            };
+        };
         const levels = exportable.data && exportable.data.report &&
             exportable.data.report.levels;
         const widget = widgets.find(w => w.key === exportable.widgetKey);
@@ -78,7 +122,8 @@ export const createReportStructure = (
             if (!widget.properties) {
                 return;
             }
-            const newLevels = transformMatrix2dLevels(widget.properties.data);
+            const matrix2dProperties = widget.properties.data as Matrix2dData;
+            const newLevels = transformMatrix2dLevels(matrix2dProperties);
             nodes.push({
                 title: widget.title,
                 key: String(exportable.id),

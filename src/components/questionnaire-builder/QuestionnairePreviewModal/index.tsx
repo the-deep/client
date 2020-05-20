@@ -12,12 +12,13 @@ import ModalHeader from '#rscv/Modal/Header';
 import notify from '#notify';
 
 import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
+import {
     RequestCoordinator,
     RequestClient,
     methods,
-
-    notifyOnFailure,
-    notifyOnFatal,
 } from '#request';
 
 import {
@@ -76,6 +77,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
                 params.onFormInit(xformResponse);
             }
         },
+        // FIXME: handle error if available
         onFailure: notifyOnFailure('Enketo preview'),
         onFatal: notifyOnFatal('Enketo preview'),
     },

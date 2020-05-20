@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { produce } from 'immer';
 import memoize from 'memoize-one';
-
 import {
     _cs,
     reverseRoute,
@@ -21,8 +20,6 @@ import {
     methods,
     RequestCoordinator,
     RequestClient,
-    notifyOnFailure,
-    notifyOnFatal,
 } from '#request';
 import { pathNames } from '#constants';
 import {
@@ -33,9 +30,9 @@ import {
     Requests,
     AddRequestProps,
     AppState,
-    AppProps,
     BulkActionId,
     OrderAction,
+    NullableField,
 } from '#typings';
 import { afIdFromRouteSelector } from '#redux';
 
@@ -50,7 +47,7 @@ import {
 
 import BackLink from '#components/general/BackLink';
 
-import QuestionList from '#qbc/QuestionList';
+import QuestionList, { QuestionListProps } from '#qbc/QuestionList';
 import QuestionModalForFramework from '#qbc/QuestionModalForFramework';
 
 import styles from './styles.scss';
@@ -88,8 +85,9 @@ interface Params {
 
 interface State {
     showQuestionModal: boolean;
-    questionToEdit: FrameworkQuestionElement | undefined;
+    questionToEdit: NullableField<FrameworkQuestionElement, 'id' | 'order'> | undefined;
     treeFilter: string[];
+    // NOTE: this is the id after which to insert new item
     newQuestionOrder?: number;
     framework?: MiniFrameworkElement;
     searchValue: string;
@@ -147,26 +145,6 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
             const question = response as FrameworkQuestionElement;
             params.onArchiveSuccess(question);
         },
-    },
-    questionCloneRequest: {
-        url: ({ props: { frameworkId }, params }) => (
-            `/analysis-frameworks/${frameworkId}/questions/${params && params.questionId}/clone/`
-        ),
-        body: ({ params }) => ({
-            order_action: {
-                action: 'below',
-                value: params && params.questionId,
-            },
-        }),
-        method: methods.POST,
-        onSuccess: ({ params, response }) => {
-            if (!params || !params.onCloneSuccess) {
-                return;
-            }
-            params.onCloneSuccess(response as FrameworkQuestionElement);
-        },
-        onFailure: notifyOnFailure('Question Clone'),
-        onFatal: notifyOnFatal('Question Clone'),
     },
     orderChangeRequest: {
         url: ({ props: { frameworkId }, params }) => (
@@ -332,11 +310,18 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
 
     private getFrameworkMatrices = memoize(getFrameworkMatrices)
 
-    private getFilteredQuestions = memoize(getFilteredQuestions)
+    private getFilteredQuestions = memoize((
+        questions: FrameworkQuestionElement[] | undefined,
+        frameworkAttributes?: string[],
+        // searchValue?: string,
+        // archived?: boolean
+    ) => (
+        getFilteredQuestions(questions, frameworkAttributes)
+    ))
 
     private views: {
-        active: ViewComponent<React.ComponentProps<typeof QuestionList>>;
-        archived: ViewComponent<React.ComponentProps<typeof QuestionList>>;
+        active: ViewComponent<QuestionListProps<FrameworkQuestionElement>>;
+        archived: ViewComponent<QuestionListProps<FrameworkQuestionElement>>;
     }
 
     private handleQuestionDeleteRequestSuccess = (questionId: FrameworkQuestionElement['id']) => {
@@ -391,10 +376,15 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleCloneQuestion = (questionId: FrameworkQuestionElement['id']) => {
-        this.props.requests.questionCloneRequest.do({
-            questionId,
-            onCloneSuccess: this.handleCloneSuccess,
+    private handleCloneQuestion = (question: FrameworkQuestionElement) => {
+        this.setState({
+            showQuestionModal: true,
+            questionToEdit: {
+                ...question,
+                id: undefined,
+                order: undefined,
+            },
+            newQuestionOrder: undefined,
         });
     }
 
@@ -545,6 +535,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         this.setState({
             showQuestionModal: true,
             questionToEdit: question,
+            newQuestionOrder: undefined,
         });
     }
 
@@ -552,6 +543,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         this.setState({
             showQuestionModal: true,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
         });
     }
 
@@ -559,6 +551,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         this.setState({
             showQuestionModal: false,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
         });
     }
 
@@ -568,13 +561,13 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             return;
         }
 
-        const { id: questionId } = question;
+        const { id: questionId, order } = question;
 
         const newFramework = produce(framework, (safeFramework) => {
             const { questions } = safeFramework;
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex === -1) {
-                safeFramework.questions.splice(question.order, 0, question);
+                safeFramework.questions.splice(order, 0, question);
             } else {
                 // eslint-disable-next-line no-param-reassign
                 safeFramework.questions[selectedIndex] = question;
@@ -585,6 +578,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             framework: newFramework,
             showQuestionModal: false,
             questionToEdit: undefined,
+            newQuestionOrder: undefined,
         });
     }
 

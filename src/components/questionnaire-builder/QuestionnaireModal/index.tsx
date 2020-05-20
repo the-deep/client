@@ -17,13 +17,13 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 
 import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
+import {
     RequestCoordinator,
     RequestClient,
     methods,
-    getResponse,
-    isAnyRequestPending,
-    notifyOnFailure,
-    notifyOnFatal,
 } from '#request';
 import notify from '#notify';
 
@@ -34,6 +34,7 @@ import {
     Requests,
     BaseQuestionElement,
     BasicElement,
+    QuestionnaireOptions,
 } from '#typings';
 
 import {
@@ -306,16 +307,30 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
     public render() {
         const {
             className,
-            requests,
             pending: pendingFromProps,
             closeModal,
+            requests: {
+                questionnaireOptionsRequest: {
+                    response = {},
+                    pending: questionnaireOptionsPending,
+                },
+                questionnaireCreateRequest: {
+                    pending: questionnaireCreatePending,
+                },
+                questionnairePatchRequest: {
+                    pending: questionnairePatchPending,
+                },
+                questionnaireCloneRequest: {
+                    pending: questionnaireClonePending,
+                },
+            },
         } = this.props;
 
         const {
             enumeratorSkillOptions: enumeratorSkillOptionList,
             dataCollectionTechniqueOptions: dataCollectionTechniqueOptionList,
             crisisTypeOptions: crisisTypeOptionList,
-        } = getResponse(requests, 'questionnaireOptionsRequest');
+        } = response as QuestionnaireOptions;
 
         const {
             faramValues,
@@ -323,7 +338,14 @@ class AddQuestionnaireModal extends React.PureComponent<Props, State> {
             pristine,
         } = this.state;
 
-        const pending = pendingFromProps || isAnyRequestPending(requests);
+        const pendingResponse = (
+            questionnaireOptionsPending
+            || questionnaireCreatePending
+            || questionnairePatchPending
+            || questionnaireClonePending
+        );
+
+        const pending = pendingResponse || pendingFromProps;
 
         return (
             <Modal>

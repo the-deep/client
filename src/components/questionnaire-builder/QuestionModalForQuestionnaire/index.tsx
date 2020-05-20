@@ -13,6 +13,7 @@ import {
     AddRequestProps,
     Requests,
     OrderAction,
+    NullableField,
 } from '#typings';
 
 import QuestionModal, {
@@ -22,6 +23,8 @@ import QuestionModal, {
     transformOut,
     errorTransformIn,
 } from '#qbc/QuestionModal';
+
+type QuestionnaireQuestionData = NullableField<QuestionnaireQuestionElement, 'id' | 'order'>;
 
 interface Error {
     faramErrors: FaramErrors;
@@ -35,7 +38,7 @@ interface State {
 interface ComponentProps {
     className?: string;
     questionnaireId: number;
-    value?: QuestionnaireQuestionElement;
+    value?: QuestionnaireQuestionData;
     framework?: MiniFrameworkElement;
     newQuestionOrder?: number;
     questionnaire: QuestionnaireElement;
@@ -44,7 +47,7 @@ interface ComponentProps {
 }
 
 interface Params {
-    body?: QuestionnaireQuestionElement & { orderAction?: OrderAction };
+    body?: QuestionnaireQuestionData & { orderAction?: OrderAction };
     setFaramErrors?: (faramErrors: FaramErrors) => void;
 }
 
@@ -117,7 +120,7 @@ class QuestionModalForQuestionnaire extends React.PureComponent<Props, State> {
             newQuestionOrder,
         } = this.props;
 
-        const body = transformOut(faramValues) as QuestionnaireQuestionElement;
+        const body = transformOut(faramValues) as QuestionnaireQuestionData;
 
         if (value && value.id) {
             questionSaveRequest.do({

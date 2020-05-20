@@ -9,9 +9,11 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import UserAddItem from '#components/general/UserAddItem';
 
 import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
+import {
     RequestClient,
     methods,
-    notifyOnFailure,
 } from '#request';
 import {
     addProjectMembershipAction,

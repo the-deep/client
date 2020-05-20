@@ -12,7 +12,6 @@ import SearchInput from '#rsci/SearchInput';
 import {
     FrameworkQuestionElement,
     BaseQuestionElement,
-
     MiniFrameworkElement,
 } from '#typings';
 
@@ -31,7 +30,7 @@ import Question from '#qbc/Question';
 
 import styles from './styles.scss';
 
-const questionKeySelector = (q: BaseQuestionElement) => q.id;
+const questionKeySelector = (q: FrameworkQuestionElement) => q.id;
 
 interface Props {
     className?: string;
@@ -39,7 +38,8 @@ interface Props {
     treeFilter: string[];
     onTreeInputChange: (value: string[]) => void;
     onPaneClose: () => void;
-    onCopy: (questionId: BaseQuestionElement['id']) => void;
+    // FIXME: idk why FrameworkQuestionElement doesn't work here
+    onCopy: (question: BaseQuestionElement) => void;
     copyDisabled: boolean;
 }
 
@@ -61,7 +61,7 @@ function AddFromFramework(props: Props) {
         question: FrameworkQuestionElement,
     ) => ({
         data: question,
-        framework: framework as MiniFrameworkElement,
+        framework,
         className: styles.frameworkQuestion,
         onCopy,
         copyDisabled,

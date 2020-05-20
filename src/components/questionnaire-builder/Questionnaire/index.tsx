@@ -17,7 +17,7 @@ import QuestionnairePreviewModal from '#qbc/QuestionnairePreviewModal';
 import { generateDurationLabel } from '#entities/questionnaire';
 
 import { pathNames } from '#constants';
-import { MiniQuestionnaireElement } from '#typings';
+import { MiniQuestionnaireElement, Permissions } from '#typings';
 
 import MetaOutput from '../MetaOutput';
 
@@ -40,7 +40,7 @@ interface Props {
     onKoboToolboxExport: (id: number) => void;
 }
 
-const isReadOnly = ({ setupPermissions }) => !setupPermissions.modify;
+const isReadOnly = ({ setupPermissions }: Permissions) => !setupPermissions.modify;
 
 const Questionnaire = (props: Props) => {
     const {
@@ -174,7 +174,7 @@ const Questionnaire = (props: Props) => {
                                             projectId: project,
                                         },
                                     )}
-                                    disabled={disabled}
+                                    // disabled={disabled}
                                 >
                                     {/* FIXME: use strings */}
                                     Edit Questions

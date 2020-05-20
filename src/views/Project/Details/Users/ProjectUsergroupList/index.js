@@ -9,9 +9,11 @@ import {
 import { FaramListElement } from '@togglecorp/faram';
 
 import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
+import {
     RequestClient,
     methods,
-    notifyOnFailure,
 } from '#request';
 import _ts from '#ts';
 import LoadingAnimation from '#rscv/LoadingAnimation';

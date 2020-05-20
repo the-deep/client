@@ -9,9 +9,11 @@ import {
 } from '@togglecorp/fujs';
 
 import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
+import {
     RequestClient,
     methods,
-    notifyOnFailure,
 } from '#request';
 import _ts from '#ts';
 

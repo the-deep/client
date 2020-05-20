@@ -72,33 +72,33 @@ const iconMap: {
     // hidden: TextIcon,
 };
 
-interface Props {
-    data: BaseQuestionElement;
+interface Props<T extends BaseQuestionElement> {
+    data: T;
     className?: string;
-    onEditButtonClick?: (key: BaseQuestionElement['id']) => void;
-    onCopy?: (key: BaseQuestionElement['id']) => void;
-    onCopyFromDrop?: (key: BaseQuestionElement['id'], order: number) => void;
-    onClone?: (key: BaseQuestionElement['id']) => void;
-    onAddButtonClick?: (key: BaseQuestionElement['id']) => void;
-    onDelete?: (key: BaseQuestionElement['id']) => void;
-    onArchive?: (key: BaseQuestionElement['id']) => void;
-    onUnarchive?: (key: BaseQuestionElement['id']) => void;
+    onEditButtonClick?: (key: T['id']) => void;
+    onCopy?: (data: T) => void;
+    onCopyFromDrop?: (data: T, dropKey: T['id']) => void;
+    onClone?: (data: T) => void;
+    onAddButtonClick?: (key: T['id']) => void;
+    onDelete?: (key: T['id']) => void;
+    onArchive?: (key: T['id']) => void;
+    onUnarchive?: (key: T['id']) => void;
     framework?: MiniFrameworkElement;
     expanded?: boolean;
     readOnly?: boolean;
     disabled?: boolean;
     selected?: boolean;
     copyDisabled?: boolean;
-    onSelectChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
-    onExpandChange?: (key: BaseQuestionElement['id'], value: boolean) => void;
+    onSelectChange?: (key: T['id'], value: boolean) => void;
+    onExpandChange?: (key: T['id'], value: boolean) => void;
     searchValue: string;
 }
 
-interface DropData {
-    questionId: BaseQuestionElement['id'];
+interface DropData<T> {
+    question: T;
 }
 
-class Question extends React.PureComponent<Props> {
+class Question<T extends BaseQuestionElement> extends React.PureComponent<Props<T>> {
     public static defaultProps = {
         expanded: false,
     };
@@ -160,7 +160,7 @@ class Question extends React.PureComponent<Props> {
         }
     }
 
-    handleQuestionDrop = (dropData: DropData) => {
+    handleQuestionDrop = (dropData: DropData<T>) => {
         const {
             onCopyFromDrop,
             data,
@@ -168,19 +168,19 @@ class Question extends React.PureComponent<Props> {
 
         if (onCopyFromDrop) {
             onCopyFromDrop(
-                dropData.questionId,
+                dropData.question,
                 data.id,
             );
         }
     }
 
-    handleDragStart = (e) => {
+    handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
         const {
             data,
         } = this.props;
 
         const dropData = JSON.stringify({
-            questionId: data.id,
+            question: data,
         });
         e.dataTransfer.setData('text/plain', dropData);
         e.dataTransfer.dropEffect = 'copy';
@@ -193,7 +193,7 @@ class Question extends React.PureComponent<Props> {
         } = this.props;
 
         if (onCopy) {
-            onCopy(data.id);
+            onCopy(data);
         }
     }
 
@@ -204,7 +204,7 @@ class Question extends React.PureComponent<Props> {
         } = this.props;
 
         if (onClone) {
-            onClone(data.id);
+            onClone(data);
         }
     }
 
