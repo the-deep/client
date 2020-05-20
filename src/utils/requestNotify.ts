@@ -9,7 +9,7 @@ export const notifyOnFailure = (title: string) => (response: { error: object }) 
         title,
         type: notify.type.ERROR,
         message: typedError && typedError.messageForNotification,
-        duration: notify.duration.MEDIUM,
+        duration: notify.duration.SLOW,
     });
 };
 
