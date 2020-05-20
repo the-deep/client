@@ -9,7 +9,13 @@ import {
     compareString,
     compareNumber,
 } from '@togglecorp/fujs';
+import notify from '#notify';
 
+import {
+    RequestClient,
+    methods,
+    notifyOnFailure,
+} from '#request';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -18,13 +24,9 @@ import TabularSelectInput from '#rsci/TabularSelectInput';
 
 import {
     projectDetailsSelector,
-    projectOptionsSelector,
-
     setProjectAction,
 } from '#redux';
 import _ts from '#ts';
-
-import ProjectPatchRequest from './requests/ProjectPatchRequest';
 
 import styles from './styles.scss';
 
@@ -32,10 +34,14 @@ const propTypes = {
     className: PropTypes.string,
     onModalClose: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    projectOptions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number,
+    // eslint-disable-next-line react/no-unused-prop-types
     setProject: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     onRegionsAdd: PropTypes.func,
+    // eslint-disable-next-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -46,16 +52,96 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     projectDetails: projectDetailsSelector(state, props),
-    projectOptions: projectOptionsSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setProject: params => dispatch(setProjectAction(params)),
 });
 
+const requestOptions = {
+    projectOptionsGet: {
+        url: '/project-options/',
+        method: methods.GET,
+        onMount: true,
+        query: ({ props: { projectId } }) => ({
+            project: projectId,
+            fields: ['regions', 'status', 'involvement'],
+        }),
+        onPropsChanged: ['projectId'],
+        onFailure: notifyOnFailure(_ts('project', 'projectOptions')),
+        onFatal: () => {
+            notify.send({
+                title: _ts('project', 'projectOptions'),
+                type: notify.type.ERROR,
+                message: _ts('project', 'projectOptionsGetFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'projectOptionsGetResponse',
+        },
+    },
+    projectPatchRequest: {
+        url: ({ props: { projectId } }) => `/projects/${projectId}/`,
+        method: methods.PATCH,
+        body: ({ params: { body } }) => body,
+        onSuccess: ({
+            response,
+            props: {
+                setProject,
+                onRegionsAdd,
+                onModalClose,
+            },
+            params: { addedRegions },
+        }) => {
+            if (setProject) {
+                setProject({ project: response });
+            }
+            if (onRegionsAdd) {
+                onRegionsAdd(addedRegions);
+            }
+            notify.send({
+                title: _ts('project', 'countryCreate'),
+                type: notify.type.SUCCESS,
+                message: _ts('project', 'countryCreateSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+            if (onModalClose) {
+                onModalClose();
+            }
+        },
+        onFailure: ({
+            faramErrors,
+            params: { setFaramErrors },
+        }) => {
+            notify.send({
+                title: _ts('project', 'countryCreate'),
+                type: notify.type.ERROR,
+                message: _ts('project', 'countryCreateFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+            if (setFaramErrors) {
+                setFaramErrors(faramErrors);
+            }
+        },
+        onFatal: ({ params: { setFaramErrors } }) => {
+            notify.send({
+                title: _ts('project', 'countryCreate'),
+                type: notify.type.ERROR,
+                message: _ts('project', 'countryCreateFatal'),
+                duration: notify.duration.MEDIUM,
+            });
+            if (setFaramErrors) {
+                setFaramErrors({ $internal: [_ts('project', 'projectSaveFailure')] });
+            }
+        },
+    },
+};
+
 const emptyList = [];
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requestOptions)
 export default class AddExistingRegion extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -68,8 +154,11 @@ export default class AddExistingRegion extends React.PureComponent {
 
         const {
             projectDetails,
-            projectOptions,
+            requests: {
+                projectPatchRequest,
+            },
         } = props;
+        projectPatchRequest.setDefaultParams({ setFaramErrors: this.handleValidationFailure });
 
         const faramValues = {
             regions: [],
@@ -78,10 +167,7 @@ export default class AddExistingRegion extends React.PureComponent {
         this.state = {
             faramErrors: {},
             faramValues,
-
-            pending: false,
             pristine: false,
-            regionOptions: projectOptions.regions || emptyList,
             regionsBlackList: (projectDetails.regions || []).map(region => region.id),
         };
 
@@ -107,17 +193,6 @@ export default class AddExistingRegion extends React.PureComponent {
                 regions: [requiredCondition],
             },
         };
-
-        this.projectPatchRequest = new ProjectPatchRequest({
-            setState: v => this.setState(v),
-            setProject: this.props.setProject,
-            onModalClose: this.props.onModalClose,
-            onRegionsAdd: this.props.onRegionsAdd,
-        });
-    }
-
-    componentWillUnmount() {
-        this.projectPatchRequest.stop();
     }
 
     // faram RELATED
@@ -135,8 +210,8 @@ export default class AddExistingRegion extends React.PureComponent {
 
     handleValidationSuccess = (values) => {
         const {
-            projectId,
             projectDetails,
+            requests: { projectPatchRequest },
         } = this.props;
 
         const regionsFromValues = values.regions.map(region => ({ id: region.key }));
@@ -148,12 +223,10 @@ export default class AddExistingRegion extends React.PureComponent {
             ...values,
             regions,
         };
-
-        this.projectPatchRequest.init(
-            newProjectDetails,
-            projectId,
-            regionsKeys,
-        ).start();
+        projectPatchRequest.do({
+            body: newProjectDetails,
+            addedRegions: regionsKeys,
+        });
     };
 
     render() {
@@ -161,13 +234,26 @@ export default class AddExistingRegion extends React.PureComponent {
             faramErrors,
             faramValues,
 
-            pending,
             pristine,
-            regionOptions,
             regionsBlackList,
         } = this.state;
 
-        const { className } = this.props;
+        const {
+            className,
+            requests: {
+                projectPatchRequest: {
+                    pending: projectPatchPending,
+                },
+                projectOptionsGet: {
+                    response,
+                    pending: projectOptionsPending,
+                },
+            },
+        } = this.props;
+
+        const regionOptions = (response && response.regions) || emptyList;
+
+        const pending = projectOptionsPending || projectPatchPending;
 
         return (
             <Faram

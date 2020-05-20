@@ -18,7 +18,6 @@ import {
     regionsSelector,
     geoOptionsSelector,
     regionsForAllProjectsSelector,
-    projectsOptionsSelector,
     analysisFrameworksSelector,
     adminLevelsSelector,
     groupsSelector,
@@ -193,13 +192,6 @@ export const regionsForProjectSelector = createSelector(
     regionsForAllProjectsSelector,
     projectIdFromRoute,
     (regions, activeProject) => regions[activeProject] || emptyObject,
-);
-
-// projectIdFromRoute
-export const projectOptionsSelector = createSelector(
-    projectsOptionsSelector,
-    projectIdFromRoute,
-    (projectsOptions, activeProject) => projectsOptions[activeProject] || emptyObject,
 );
 
 // projectIdFromRoute

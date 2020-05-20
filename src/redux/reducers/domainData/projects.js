@@ -15,7 +15,6 @@ import {
 
 export const SET_USER_PROJECTS = 'domainData/SET_USER_PROJECTS';
 export const SET_USER_PROJECT = 'domainData/SET_USER_PROJECT';
-export const SET_USER_PROJECT_OPTIONS = 'domainData/SET_USER_PROJECT_OPTIONS';
 export const SET_PROJECT_ROLES = 'domainData/SET_PROJECT_ROLES';
 
 // ACTION-CREATOR
@@ -36,12 +35,6 @@ export const setProjectAction = ({ project, userId }) => ({
 export const setProjectRolesAction = ({ projectRoles }) => ({
     type: SET_PROJECT_ROLES,
     projectRoles,
-});
-
-export const setProjectOptionsAction = ({ projectId, options }) => ({
-    type: SET_USER_PROJECT_OPTIONS,
-    projectId,
-    options,
 });
 
 // REDUCER
@@ -85,37 +78,6 @@ const setUserProject = (state, action) => {
             [project.id]: {
                 $set: project,
             },
-        },
-    };
-    return update(state, settings);
-};
-
-const setUserProjectOptions = (state, action) => {
-    const {
-        projectId,
-        options: {
-            regions: regionsOptions = [],
-            userGroups: userGroupsOptions = [],
-        },
-    } = action;
-
-    const regions = [...regionsOptions].sort(
-        (a, b) => compareString(a.value, b.value),
-    );
-    const userGroups = [...userGroupsOptions].sort(
-        (a, b) => compareString(a.value, b.value),
-    );
-
-    const newOptions = {
-        userGroups,
-        regions,
-    };
-
-    const settings = {
-        projectsOptions: {
-            [projectId]: { $auto: {
-                $set: newOptions,
-            } },
         },
     };
     return update(state, settings);
@@ -196,7 +158,6 @@ const reducers = {
     [SET_USER_PROJECT]: setUserProject,
 
     [SET_PROJECT_ROLES]: setProjectRoles,
-    [SET_USER_PROJECT_OPTIONS]: setUserProjectOptions,
 
     // From Silo
     [PP__SET_PROJECT_DETAILS]: setUserProjectTitle,
