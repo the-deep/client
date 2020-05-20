@@ -98,6 +98,10 @@
                 flex-basis: calc(50% - 2 * var(--spacing-small));
                 margin: var(--spacing-small);
             }
+
+            .input {
+                flex-basis: 100%;
+            }
         }
     }
 }

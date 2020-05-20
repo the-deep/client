@@ -75,14 +75,14 @@ const EmptyComponentForResponseOptions = () => (
 type DetailKeys = 'title'
     | 'name'
     | 'type'
-    | 'enumeratorInstruction'
-    | 'respondentInstruction'
     | 'crisisType'
     | 'responseOptions';
 
 type FrameworkKeys = 'frameworkAttribute';
 
 type MetadataKeys = 'crisisType'
+    | 'enumeratorInstruction'
+    | 'respondentInstruction'
     | 'enumeratorSkill'
     | 'dataCollectionTechnique'
     | 'importance'
@@ -138,8 +138,6 @@ export function transformIn(value: Omit<BaseQuestionElement, 'id' | 'order'> | u
             moreTitles: moreTitlesList,
             name,
             type,
-            enumeratorInstruction,
-            respondentInstruction,
             responseOptions,
         },
         analysisFramework: {
@@ -151,6 +149,8 @@ export function transformIn(value: Omit<BaseQuestionElement, 'id' | 'order'> | u
             dataCollectionTechnique,
             importance,
             requiredDuration,
+            enumeratorInstruction,
+            respondentInstruction,
         },
     };
 }
@@ -162,8 +162,6 @@ export function transformOut(value: QuestionFormElement) {
             name,
             moreTitles,
             type,
-            enumeratorInstruction,
-            respondentInstruction,
             responseOptions,
         },
         analysisFramework: {
@@ -175,6 +173,8 @@ export function transformOut(value: QuestionFormElement) {
             dataCollectionTechnique,
             importance,
             requiredDuration,
+            enumeratorInstruction,
+            respondentInstruction,
         },
     } = value;
 
@@ -226,8 +226,6 @@ export function errorTransformIn(value: FaramErrors) {
             name,
             moreTitles,
             type,
-            enumeratorInstruction,
-            respondentInstruction,
             responseOptions,
         },
         analysisFramework: {
@@ -237,6 +235,8 @@ export function errorTransformIn(value: FaramErrors) {
             crisisType,
             enumeratorSkill,
             dataCollectionTechnique,
+            enumeratorInstruction,
+            respondentInstruction,
             importance,
             requiredDuration,
         },
@@ -283,8 +283,6 @@ function createSchema(
                         },
                     },
                     type: [requiredCondition],
-                    enumeratorInstruction: [],
-                    respondentInstruction: [],
                 },
             },
             metadata: {
@@ -294,6 +292,8 @@ function createSchema(
                     dataCollectionTechnique: [requiredCondition],
                     importance: [requiredCondition],
                     requiredDuration: [],
+                    enumeratorInstruction: [],
+                    respondentInstruction: [],
                     // FIXME: this should be dynamic, only available if type is 'select'
                 },
             },
@@ -605,16 +605,6 @@ function QuestionModal(props: Props) {
                                             />
                                         </FaramList>
                                     )}
-                                    <TextInput
-                                        className={styles.input}
-                                        faramElementName="enumeratorInstruction"
-                                        label="Enumerator instructions"
-                                    />
-                                    <TextInput
-                                        className={styles.input}
-                                        faramElementName="respondentInstruction"
-                                        label="Respondent instructions"
-                                    />
                                 </FaramGroup>
                             </div>
                         </section>
@@ -641,9 +631,7 @@ function QuestionModal(props: Props) {
                     {activeTab === 'metadata' && (
                         <section className={styles.metadata}>
                             <div className={styles.content}>
-                                <FaramGroup
-                                    faramElementName="metadata"
-                                >
+                                <FaramGroup faramElementName="metadata">
                                     <SelectInput
                                         faramElementName="crisisType"
                                         options={crisisTypeOptionList}
@@ -676,6 +664,16 @@ function QuestionModal(props: Props) {
                                         label="Question importance"
                                         keySelector={defaultKeySelector}
                                         labelSelector={defaultLabelSelector}
+                                    />
+                                    <TextInput
+                                        className={styles.input}
+                                        faramElementName="enumeratorInstruction"
+                                        label="Enumerator instructions"
+                                    />
+                                    <TextInput
+                                        className={styles.input}
+                                        faramElementName="respondentInstruction"
+                                        label="Respondent instructions"
                                     />
                                 </FaramGroup>
                             </div>
