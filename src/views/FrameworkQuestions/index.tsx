@@ -400,19 +400,6 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleCloneSuccess = (question: FrameworkQuestionElement) => {
-        const { framework } = this.state;
-        if (!framework) {
-            return;
-        }
-
-        const newFramework = produce(framework, (safeFramework) => {
-            safeFramework.questions.splice(question.order, 0, question);
-        });
-
-        this.setState({ framework: newFramework });
-    }
-
     private handleAddNewQuestionButtonClick = (newQuestionOrder: number) => {
         const { framework } = this.state;
 
@@ -579,7 +566,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
             const { questions } = safeFramework;
             const selectedIndex = questions.findIndex(e => e.id === questionId);
             if (selectedIndex === -1) {
-                safeFramework.questions.splice(order, 0, question);
+                safeFramework.questions.splice(order - 1, 0, question);
             } else {
                 // eslint-disable-next-line no-param-reassign
                 safeFramework.questions[selectedIndex] = question;
