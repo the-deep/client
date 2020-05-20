@@ -51,10 +51,6 @@ export const regionsForAllProjectsSelector = ({ domainData }) => (
     domainData.regionsForProject || emptyObject
 );
 
-export const projectsOptionsSelector = ({ domainData }) => (
-    domainData.projectsOptions || emptyObject
-);
-
 export const analysisFrameworksSelector = ({ domainData }) => (
     domainData.analysisFrameworks || emptyObject
 );

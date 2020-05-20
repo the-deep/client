@@ -1101,7 +1101,18 @@
         "-4332303": "Select an option (optional)",
         "-66927638": "Entry metadata",
         "-99420745": "Show entry groups",
-        "-96285781": "Structure"
+        "-96285781": "Structure",
+        "-39116082": "Questions",
+        "-91998400": "Questionnaires",
+        "-7536745": "Questionnaire Builder",
+        "-72874810": "Active questionnaires",
+        "-30617552": "Archived",
+        "-10356474": "Archived Questionnaires",
+        "-16166235": "Add Questionnaire",
+        "-88114396": "Questionnaire Status",
+        "-25976066": "Framework Questions",
+        "-37971354": "XLSForm Import",
+        "-46134674": "There are no connectors associated with this project. Click below to add some!"
     },
     "links": {
         "browserExtension": {
@@ -1893,7 +1904,8 @@
             "applyFilterLabel": 427,
             "noFiltersMessage": 1139,
             "authorTitle": -31511044,
-            "sourceTitle": 5
+            "sourceTitle": 5,
+            "noConnectorsAddFromButtonLabel": -46134674
         },
         "addLeads.tabular": {
             "title": -2259039,

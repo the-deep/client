@@ -448,7 +448,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
         if (connectorsList.length <= 0) {
             return (
                 <Message className={styles.empty}>
-                    { _ts('addLeads.connectorsSelect', 'noConnectorsLabel') }
+                    { _ts('addLeads.connectorsSelect', 'noConnectorsAddFromButtonLabel') }
                     <Link
                         className={styles.settingsLink}
                         target="_blank"

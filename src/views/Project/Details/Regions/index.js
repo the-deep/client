@@ -16,24 +16,17 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 
-import {
-    projectDetailsSelector,
-
-    setProjectOptionsAction,
-} from '#redux';
+import { projectDetailsSelector } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
 import AddRegion from '#components/other/AddRegion';
 
 import AddExistingRegion from './AddExistingRegion';
 import ProjectRegionDetail from './ProjectRegionDetail';
-import ProjectOptionsGet from '../../requests/ProjectOptionsGet';
 import styles from './styles.scss';
 
 const propTypes = {
-    projectId: PropTypes.number.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    setProjectOptions: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
     className: PropTypes.string,
 };
@@ -47,14 +40,10 @@ const mapStateToProps = (state, props) => ({
     projectDetails: projectDetailsSelector(state, props),
 });
 
-const mapDispatchToProps = dispatch => ({
-    setProjectOptions: params => dispatch(setProjectOptionsAction(params)),
-});
-
 const emptyList = [];
 const emptyObject = {};
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps)
 export default class ProjectRegions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -81,31 +70,14 @@ export default class ProjectRegions extends React.PureComponent {
         this.state = {
             displayRegionList: projectDetails.regions || emptyList,
             selectedRegion,
-            pendingProjectOptions: true,
             selectedAddRegionOption: 'old',
             searchInputValue: '',
             showAddRegionModal: false,
         };
-
-        this.projectOptionsGet = new ProjectOptionsGet({
-            setState: params => this.setState(params),
-            setProjectOptions: this.props.setProjectOptions,
-        });
-    }
-
-    componentWillMount() {
-        const { projectId } = this.props;
-
-        this.projectOptionsGet.init(projectId);
-        this.projectOptionsGet.start();
     }
 
     componentWillReceiveProps(nextProps) {
-        const {
-            projectDetails,
-            projectId: newProjectId,
-        } = nextProps;
-        const { projectId: oldProjectId } = this.props;
+        const { projectDetails } = nextProps;
 
         const {
             searchInputValue,
@@ -127,15 +99,6 @@ export default class ProjectRegions extends React.PureComponent {
                 selectedRegion: newSelectedRegion,
             });
         }
-
-        if (newProjectId !== oldProjectId) {
-            this.projectOptionsGet.init(newProjectId);
-            this.projectOptionsGet.start();
-        }
-    }
-
-    componentWillUnmount() {
-        this.projectOptionsGet.stop();
     }
 
     getModalClassName = () => {
@@ -299,7 +262,6 @@ export default class ProjectRegions extends React.PureComponent {
         const {
             displayRegionList,
             searchInputValue,
-            pendingProjectOptions,
         } = this.state;
         const {
             readOnly,
@@ -323,7 +285,7 @@ export default class ProjectRegions extends React.PureComponent {
                         iconName="add"
                         className={styles.addRegionButton}
                         onClick={this.handleAddRegionButtonClick}
-                        disabled={readOnly || pendingProjectOptions}
+                        disabled={readOnly}
                     >
                         {addRegionButtonLabel}
                     </AccentButton>

@@ -44,6 +44,7 @@ const headers = [
     {
         key: 'number_of_users',
         title: _ts('discoverProjects.table', 'numberOfUsersTitle'),
+        defaultSortOrder: 'dsc',
         order: 8,
         sortable: true,
     },
