@@ -119,12 +119,12 @@ export function transformIn(value: BaseQuestionElement | undefined): QuestionFor
         requiredDuration,
     } = value;
 
-    const moreTitlesList = mapToList(moreTitles, (d: string, k: string | number) => {
-        const key = k as string;
+    const moreTitlesList = mapToList(moreTitles, (d, k) => {
+        const key = String(k);
 
         return ({
             key,
-            uniqueKey: randomString(16),
+            uniqueKey: randomString(),
             title: d,
         });
     });
@@ -177,8 +177,8 @@ export function transformOut(value: QuestionFormElement) {
 
     const moreTitlesMap = listToMap(
         moreTitles,
-        (d: LanguageTitle) => d.key,
-        (d: LanguageTitle) => d.title,
+        d => d.key,
+        d => d.title,
     );
 
     return {
@@ -242,7 +242,7 @@ export function errorTransformIn(value: FaramErrors) {
 
 function createSchema(
     framework?: MiniFrameworkElement,
-    showResponseOptions = false,
+    hasResponseOptions = false,
     moreTitlesFromValue: LanguageTitle[] = [],
 ) {
     const uniqueItems = unique(
@@ -252,7 +252,7 @@ function createSchema(
     const languageKeys = (uniqueItems || []).map(m => m.key);
     const languageMap = listToMap(
         languageKeys,
-        (d: string) => d,
+        d => d,
         () => [],
     );
 
@@ -304,7 +304,7 @@ function createSchema(
             },
         };
     }
-    if (showResponseOptions) {
+    if (hasResponseOptions) {
         schema.fields.detail.fields.responseOptions = {
             keySelector: responseOptionKeySelector,
             member: {
@@ -328,7 +328,7 @@ const languageOptionAddClick = (options: LanguageTitle[] = []) => (
         ...options,
         {
             key: undefined,
-            uniqueKey: randomString(16),
+            uniqueKey: randomString(),
             label: '',
         },
     ]
@@ -446,7 +446,7 @@ function QuestionModal(props: Props) {
         subdimensionList,
     } = useMemo(() => getMatrix2dStructures(framework), [framework]);
 
-    const showResponseOptions = value
+    const hasResponseOptions = value
         && value.detail
         && value.detail.type
         && isChoicedQuestionType(value.detail.type);
@@ -455,9 +455,9 @@ function QuestionModal(props: Props) {
 
     const schema = useMemo(() => createSchema(
         framework,
-        showResponseOptions,
+        hasResponseOptions,
         moreTitles,
-    ), [framework, moreTitles, showResponseOptions]);
+    ), [framework, moreTitles, hasResponseOptions]);
 
     const tabRendererParams = useCallback((key: TabElement, title: string) => ({
         title,
@@ -545,7 +545,7 @@ function QuestionModal(props: Props) {
                                                 iconName="add"
                                                 transparent
                                             >
-                                                Add Another Title
+                                                Add Title
                                             </Button>
                                         </FaramList>
                                     </div>
@@ -576,7 +576,7 @@ function QuestionModal(props: Props) {
                                         keySelector={defaultKeySelector}
                                         labelSelector={defaultLabelSelector}
                                     />
-                                    {showResponseOptions && (
+                                    {hasResponseOptions && (
                                         <FaramList
                                             keySelector={responseOptionKeySelector}
                                             faramElementName="responseOptions"

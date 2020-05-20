@@ -185,12 +185,12 @@ export function getFilteredQuestions<T extends BaseQuestionElement>(
 
     const filteredQuestions = questions.filter((question) => {
         const jointMoreTitles = question.moreTitles
-            ? Object.values(question.moreTitles).join(' ') : '';
+            ? Object.values(question.moreTitles).join('\n') : '';
 
         const responseOptions = question.responseOptions || [];
         const jointResponseOptions = responseOptions.map(ro => (
-            Object.values(ro.value).join(' ')
-        )).join(' ');
+            Object.values(ro.value).join('\n')
+        )).join('\n');
 
         const searchFilter = isFalsyString(searchValue)
             || caseInsensitiveSubmatch(question.title, searchValue)
@@ -293,7 +293,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     survey.getRow(1).font = { bold: true };
     survey.columns = getColumns([
         'type', 'name', 'label',
-        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`) as string[],
+        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`),
         'hint', 'default', 'read_only',
         'required', 'required_message', 'constraint', 'constraint_message', 'calculation', 'appearance',
         'parameters', 'body::accuracyThreshold', 'relevant',
@@ -302,7 +302,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
     choices.getRow(1).font = { bold: true };
     choices.columns = getColumns([
         'list name', 'name', 'label',
-        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`) as string[],
+        ...languageOptions.map(langOpt => `label::${langOpt.label} (${langOpt.key})`),
     ]);
 
     settings.getRow(1).font = { bold: true };
@@ -329,6 +329,12 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 hints.push(`Respondent Insturction: ${question.respondentInstruction}`);
             }
 
+            const labelsInOtherLanguages = listToMap(
+                languageOptions,
+                langOpt => `label::${langOpt.label} (${langOpt.key})`,
+                langOpt => question.moreTitles[langOpt.key],
+            );
+
             // NOTE: we need to escape question.title
             return {
                 // NOTE: Choice types requires choice name in type "type_name choice_key"
@@ -338,13 +344,7 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                 required: question.isRequired ? 'yes' : '',
                 hint: hints.join('; '),
                 // Label in other languages
-                ...languageOptions.reduce(
-                    (acc, langOpt) => ({
-                        ...acc,
-                        [`label::${langOpt.label} (${langOpt.key})`]: question.moreTitles[langOpt.key],
-                    }),
-                    {},
-                ),
+                ...labelsInOtherLanguages,
             };
         }),
     );
@@ -361,12 +361,10 @@ export function generateXLSForm(id: number, title: string, questions: BaseQuesti
                     name: option.key,
                     label: option.value.defaultLabel,
                     // Label in other languages
-                    ...languageOptions.reduce(
-                        (acc, langOpt) => ({
-                            ...acc,
-                            [`label::${langOpt.label} (${langOpt.key})`]: option.value[langOpt.key],
-                        }),
-                        {},
+                    ...listToMap(
+                        languageOptions,
+                        langOpt => `label::${langOpt.label} (${langOpt.key})`,
+                        langOpt => option.value[langOpt.key],
                     ),
                 }));
             })
@@ -467,19 +465,23 @@ export function readXLSForm(workbook: Excel.Workbook) {
             return;
         }
 
+        const languageOptionsForValue = listToMap(
+            languageOptions,
+            langOpt => langOpt.key,
+            (langOpt) => {
+                const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
+
+                if (isNotDefined(index)) {
+                    return '';
+                }
+                return values[index];
+            },
+        );
+
         const choice = {
             key: name,
             value: {
-                ...languageOptions.reduce(
-                    (acc, langOpt) => {
-                        const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
-                        return {
-                            ...acc,
-                            [langOpt.key]: isDefined(index) ? values[index] : undefined,
-                        };
-                    },
-                    {},
-                ),
+                ...languageOptionsForValue,
                 defaultLabel: label || 'Untitled Choice',
             },
         };
@@ -549,22 +551,24 @@ export function readXLSForm(workbook: Excel.Workbook) {
             return;
         }
 
+        const moreTitles = listToMap(
+            languageOptions,
+            langOpt => langOpt.key,
+            (langOpt) => {
+                const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
+
+                if (isNotDefined(index)) {
+                    return '';
+                }
+                return values[index];
+            },
+        );
+
         const question: BaseQuestionElementWithoutId = {
             type: questionType as QuestionType,
             name: values[nameIndex],
             title: (isDefined(labelIndex) ? values[labelIndex] : undefined) || 'Untitled Question',
-            moreTitles: {
-                ...languageOptions.reduce(
-                    (acc, langOpt) => {
-                        const index = choiceIndices[`label::${langOpt.label} (${langOpt.key})`];
-                        return {
-                            ...acc,
-                            [langOpt.key]: isDefined(index) ? values[index] : undefined,
-                        };
-                    },
-                    {},
-                ),
-            },
+            moreTitles,
             isRequired: (isDefined(requiredIndex) ? values[requiredIndex] : undefined) === 'yes',
             responseOptions: choiceKey ? questionChoices[choiceKey] || [] : undefined,
         };

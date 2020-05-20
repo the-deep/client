@@ -224,10 +224,10 @@ function Question<T extends BaseQuestionElement>(props: Props<T>) {
         }
         return mapToList(
             moreTitles,
-            (d: string, k) => {
-                const key = k as string;
+            (d, k) => {
+                const key = String(k);
                 return ({
-                    uniqueKey: randomString(16),
+                    uniqueKey: randomString(),
                     title: d,
                     key,
                 });

@@ -152,10 +152,13 @@ function AddFromFramework(props: Props) {
         );
     }, [frameworkMatricesMap, treeFilter]);
 
-    const getBadgesRendererParams = (key: string, data: { key: string; value: string }) => ({
+    const getBadgesRendererParams = useCallback((
+        key: string,
+        data: { key: string; value: string },
+    ) => ({
         className: styles.badge,
         title: data.value,
-    });
+    }), []);
 
     if (!framework) {
         return null;
