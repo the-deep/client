@@ -6,6 +6,7 @@
 
     .input-container {
         display: flex;
+        align-items: center;
         flex-shrink: 0;
         padding: 0 var(--spacing-small);
 
@@ -22,12 +23,5 @@
     .checklist {
         flex-grow: 1;
         overflow-y: auto;
-
-        .list {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
     }
 }

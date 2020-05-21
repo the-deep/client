@@ -13,9 +13,11 @@
         display: flex;
         flex-basis: 60%;
         flex-shrink: 0;
+        overflow-y: auto;
 
         .region-map {
             flex-grow: 1;
+            overflow-y: auto;
         }
 
         .region-detail-form {

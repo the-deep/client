@@ -50,10 +50,12 @@
             flex-basis: 60%;
             flex-grow: 0;
             flex-shrink: 0;
+            overflow-y: auto;
 
             .region-map {
                 flex-grow: 1;
                 height: auto;
+                overflow-y: auto;
             }
 
             .region-detail-form {

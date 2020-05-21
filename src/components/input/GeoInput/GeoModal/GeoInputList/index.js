@@ -2,10 +2,42 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useMemo } from 'react';
 import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
 
+import { DefaultIcon } from '#rscv/ListItem';
 import DismissableListItem from '#rsca/DismissableListItem';
 import ListView from '#rscv/List/ListView';
 
 import styles from './styles.scss';
+
+function ExtendedDismissableListItem(props) {
+    const {
+        value,
+        polygons,
+        className,
+        ...otherProps
+    } = props;
+    return (
+        <DismissableListItem
+            {...otherProps}
+            className={_cs(className, styles.extendedDismissableListItem)}
+            labelClassName={styles.label}
+            value={(
+                <>
+                    <div className={styles.text}>
+                        {value}
+                    </div>
+                    {!!polygons && polygons.length > 0 && polygons.map(polygon => (
+                        <DefaultIcon
+                            key={polygon.id}
+                            className={styles.polygon}
+                            color={polygon.properties.color}
+                            title={polygon.properties.title}
+                        />
+                    ))}
+                </>
+            )}
+        />
+    );
+}
 
 function groupList(
     list,
@@ -74,6 +106,7 @@ const propTypes = {
     geoOptionsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     adminLevelTitles: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     polygonDisabled: PropTypes.bool,
+    polygonHidden: PropTypes.bool,
     onSelectionsChange: PropTypes.func.isRequired,
     onPolygonsChange: PropTypes.func.isRequired,
     onPolygonEditClick: PropTypes.func.isRequired,
@@ -86,6 +119,7 @@ const defaultProps = {
     geoOptionsById: {},
     adminLevelTitles: [],
     polygonDisabled: false,
+    polygonHidden: false,
 };
 
 const GeoInputList = (props) => {
@@ -100,6 +134,7 @@ const GeoInputList = (props) => {
         geoOptionsById,
 
         polygonDisabled,
+        polygonHidden,
 
         onSelectionsChange,
         onPolygonsChange,
@@ -151,7 +186,10 @@ const GeoInputList = (props) => {
         [],
     );
     const groupKeySelector = useCallback(
-        selection => geoOptionsById[selection.id].adminLevel,
+        (selection) => {
+            const { adminLevel, region } = geoOptionsById[selection.id];
+            return `${region}-${adminLevel}`;
+        },
         [geoOptionsById],
     );
 
@@ -160,22 +198,26 @@ const GeoInputList = (props) => {
             className: styles.item,
             itemKey: key,
             onDismiss: handleSelectionRemove,
-            value: value.polygons && (value.polygons.length > 0)
-                ? `${geoOptionsById[key].title} (${value.polygons.length})`
-                : geoOptionsById[key].title,
             disabled: !!value.polygons,
+
+            value: geoOptionsById[key].title,
+            polygons: value.polygons,
         }),
         [handleSelectionRemove, geoOptionsById],
     );
 
     const groupRendererParams = useCallback(
         (groupKey) => {
+            const [regionKey, adminLevelKey] = groupKey.split('-');
+            // FIXME: this can be made efficient
             const adminLevel = adminLevelTitles.find(
-                a => String(a.key) === String(groupKey),
+                a => String(a.regionKey) === regionKey && String(a.key) === adminLevelKey,
             );
 
             return {
-                children: adminLevel ? adminLevel.title : '',
+                children: adminLevel
+                    ? `${adminLevel.regionTitle} / ${adminLevel.title}`
+                    : '',
             };
         },
         [adminLevelTitles],
@@ -217,20 +259,22 @@ const GeoInputList = (props) => {
                 data={newSelections}
                 emptyComponent={null}
                 keySelector={geoOptionKeySelector}
-                renderer={DismissableListItem}
+                renderer={ExtendedDismissableListItem}
                 rendererParams={listRendererParams}
                 groupKeySelector={groupKeySelector}
                 groupRendererParams={groupRendererParams}
             />
-            <ListView
-                data={polygons}
-                emptyComponent={null}
-                keySelector={polygonKeySelector}
-                renderer={DismissableListItem}
-                rendererParams={polygonListRendererParams}
-                groupKeySelector={polygonGroupKeySelector}
-                groupRendererParams={polygonGroupRendererParams}
-            />
+            {!polygonHidden && (
+                <ListView
+                    data={polygons}
+                    emptyComponent={null}
+                    keySelector={polygonKeySelector}
+                    renderer={DismissableListItem}
+                    rendererParams={polygonListRendererParams}
+                    groupKeySelector={polygonGroupKeySelector}
+                    groupRendererParams={polygonGroupRendererParams}
+                />
+            )}
         </div>
     );
 };

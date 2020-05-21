@@ -3,7 +3,6 @@ import React, { useState, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import {
     listToMap,
-    unique,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -60,6 +59,7 @@ const propTypes = {
     modalLeftComponent: PropTypes.node,
     polygonsEnabled: PropTypes.bool,
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    adminLevelTitles: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -68,6 +68,7 @@ const defaultProps = {
     geoOptionsById: {},
     selections: [],
     polygons: [],
+    adminLevelTitles: [],
     onApply: undefined,
     onCancel: undefined,
     modalLeftComponent: undefined,
@@ -103,6 +104,8 @@ function GeoModal(props) {
         selections: selectionsFromProps,
         polygons: polygonsFromProps,
         regions,
+
+        adminLevelTitles,
     } = props;
 
     const {
@@ -121,29 +124,6 @@ function GeoModal(props) {
     const [selectedPolygonInfo, setSelectedPolygonInfo] = useState(undefined);
     const [showPolygonEditModal, setShowPolygonEditModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
-
-    const adminLevelTitles = useMemo(
-        () => {
-            if (!selectedRegion) {
-                return [];
-            }
-            const geoOptions = geoOptionsByRegion[selectedRegion];
-            if (!geoOptions) {
-                return [];
-            }
-
-            // NOTE: Iterate over geoOptions for selectedRegion and get unique
-            // admin levels
-            return unique(
-                geoOptions,
-                geoOption => geoOption.adminLevel,
-            ).map(geoOption => ({
-                key: geoOption.adminLevel,
-                title: geoOption.adminLevelTitle,
-            }));
-        },
-        [geoOptionsByRegion, selectedRegion],
-    );
 
     const geoOptionsForSelectedRegion = geoOptionsByRegion[selectedRegion];
 

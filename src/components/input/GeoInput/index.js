@@ -8,6 +8,7 @@ import {
     mapToList,
     isDefined,
     isObject,
+    unique,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -18,6 +19,7 @@ import featuresMapping from '#constants/features';
 
 import { activeUserSelector } from '#redux';
 
+import GeoInputList from './GeoModal/GeoInputList';
 import GeoModal from './GeoModal';
 import styles from './styles.scss';
 
@@ -58,7 +60,6 @@ const propTypes = {
     polygonsEnabled: PropTypes.bool,
 
     modalLeftComponent: PropTypes.node,
-    emptyComponent: PropTypes.func,
     icons: PropTypes.node,
 };
 
@@ -76,7 +77,6 @@ const defaultProps = {
     value: [],
     regions: [],
     modalLeftComponent: undefined,
-    emptyComponent: undefined,
     placeholder: undefined,
     hint: '',
     error: '',
@@ -118,6 +118,20 @@ export default class GeoInput extends React.PureComponent {
             geoOption => geoOption,
         );
         return geoOptionsMapping;
+    })
+
+    getAllAdminLevelTitles = memoize((geoOptions) => {
+        const adminLevelTitles = unique(
+            geoOptions,
+            geoOption => `${geoOption.region}-${geoOption.adminLevel}`,
+        ).map(geoOption => ({
+            key: geoOption.adminLevel,
+            title: geoOption.adminLevelTitle,
+
+            regionKey: geoOption.region,
+            regionTitle: geoOption.regionTitle,
+        }));
+        return adminLevelTitles;
     })
 
     getSelections = memoize(value => (
@@ -200,7 +214,6 @@ export default class GeoInput extends React.PureComponent {
             placeholder,
 
             hideList,
-            emptyComponent,
 
             polygonsEnabled,
             activeUser: {
@@ -267,17 +280,17 @@ export default class GeoInput extends React.PureComponent {
                     {icons}
                 </div>
                 {!hideList && (
-                    <SimpleListInput
+                    <GeoInputList
                         className={styles.checklist}
-                        listClassName={styles.list}
-                        value={selections}
-                        onChange={this.handleSelectionsChange}
-                        options={options}
-                        labelSelector={this.labelSelector}
-                        keySelector={keySelector}
-                        showLabel={false}
-                        showHintAndError={false}
-                        emptyComponent={emptyComponent}
+                        selections={selections}
+                        geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+                        polygons={polygons}
+                        adminLevelTitles={this.getAllAdminLevelTitles(options)}
+                        polygonHidden
+                        polygonDisabled
+                        onSelectionsChange={this.handleSelectionsChange}
+                        // onPolygonsChange={handlePolygonsChangeForRegion}
+                        // onPolygonEditClick={handlePolygonClick}
                     />
                 )}
                 {showModal && (
@@ -287,6 +300,7 @@ export default class GeoInput extends React.PureComponent {
                         modalLeftComponent={modalLeftComponent}
                         geoOptionsByRegion={geoOptionsByRegion}
                         geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+                        adminLevelTitles={this.getAllAdminLevelTitles(options)}
 
                         // NOTE: this value is only set on mount
                         selections={selections}
