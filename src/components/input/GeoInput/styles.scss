@@ -4,12 +4,30 @@
     height: 100%;
     overflow-y: hidden;
 
-    .action {
-        padding: var(--spacing-extra-small) var(--spacing-small);
+    .input-container {
+        display: flex;
+        flex-shrink: 0;
+        padding: 0 var(--spacing-small);
+
+        .select-input {
+            flex-grow: 1;
+        }
+
+        .action {
+            flex-shrink: 0;
+            padding: var(--spacing-extra-small) var(--spacing-small);
+        }
     }
 
-    .select-input {
+    .checklist {
         flex-grow: 1;
         overflow-y: auto;
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
     }
 }
