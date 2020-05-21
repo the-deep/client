@@ -44,7 +44,7 @@ export default class OrganigramEditWidget extends React.PureComponent {
         const {
             data: orgData,
         } = data;
-        return { data: orgData };
+        return orgData;
     };
 
     static getTitleFromFaramValues = data => data.title;
@@ -54,6 +54,7 @@ export default class OrganigramEditWidget extends React.PureComponent {
 
         const {
             title,
+
             data,
         } = props;
 
@@ -80,6 +81,7 @@ export default class OrganigramEditWidget extends React.PureComponent {
             widgetKey,
             onChange,
         } = this.props;
+
         onChange(
             widgetKey,
             OrganigramEditWidget.getDataFromFaramValues(faramValues),
