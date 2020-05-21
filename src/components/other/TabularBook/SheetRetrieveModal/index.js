@@ -3,7 +3,7 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import ListSelection from '#rsci/ListSelection';
+import ChecklistInput from '#rsci/ChecklistInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import {
     calcFloatPositionInMainWindow,
@@ -95,7 +95,7 @@ export default class SheetRetrieveModal extends React.PureComponent {
                 focusTrap
                 showHaze
             >
-                <ListSelection
+                <ChecklistInput
                     listClassName={styles.retrieveList}
                     label={_ts('tabular.sheetRetrieveModal', 'sheetsLabel')} // Sheets to retrieve
                     disabled={disabled}

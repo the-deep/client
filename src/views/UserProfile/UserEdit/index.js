@@ -19,7 +19,7 @@ import HiddenInput from '#rsci/HiddenInput';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { NormalListSelection } from '#rsci/ListSelection';
+import { NormalChecklistInput } from '#rsci/ChecklistInput';
 import Complement from '#rscg/Complement';
 
 import {
@@ -34,7 +34,7 @@ import UserImageUploadRequest from '../requests/UserImageUploadRequest';
 
 import styles from './styles.scss';
 
-const ListSelection = Complement(NormalListSelection);
+const ChecklistInput = Complement(NormalChecklistInput);
 
 const propTypes = {
     userId: PropTypes.oneOfType([
@@ -239,7 +239,7 @@ export default class UserEdit extends React.PureComponent {
                     label={_ts('userProfile', 'languageLabel')}
                     placeholder={_ts('userProfile', 'languagePlaceholder')}
                 />
-                <ListSelection
+                <ChecklistInput
                     listClassName={styles.listSelection}
                     faramElementName="emailOptOuts"
                     keySelector={UserEdit.emailOptOutsKeySelector}

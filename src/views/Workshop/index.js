@@ -19,11 +19,9 @@ import DateInput from '#rsci/DateInput';
 import TimeInput from '#rsci/TimeInput';
 import NumberInput from '#rsci/NumberInput';
 import HiddenInput from '#rsci/HiddenInput';
-import ListInput from '#rsci/ListInput';
-import ListSelection from '#rsci/ListSelection';
+import ChecklistInput from '#rsci/ChecklistInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SelectInput from '#rsci/SelectInput';
-import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
 import RadioInput from '#rsci/RadioInput';
 import ScaleInput from '#rsci/ScaleInput';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
@@ -40,7 +38,6 @@ import styles from './styles.scss';
 3. HierarchicalMultiSelectInput is most probably not used anywhere
 4. Hierarchical SelectInput is most probably not used anywhere
 5. TODO: Add tree selection here
-7. Remove ListInput
  */
 
 const Container = ({ page, onNext, onPrev }) => {
@@ -279,12 +276,7 @@ export default class Workshop extends React.PureComponent {
                             <HiddenInput
                                 faramElementName="hiddenValue"
                             />
-                            <ListInput
-                                labelSelector={Workshop.labelSelector}
-                                keySelector={Workshop.keySelector}
-                                faramElementName="places"
-                            />
-                            <ListSelection
+                            <ChecklistInput
                                 label="Good Places"
                                 labelSelector={Workshop.labelSelector}
                                 keySelector={Workshop.keySelector}
@@ -301,18 +293,6 @@ export default class Workshop extends React.PureComponent {
                                 labelSelector={Workshop.labelSelector}
                                 keySelector={Workshop.keySelector}
                                 faramElementName="worstPlace"
-                                options={[
-                                    { key: 'pokhara', label: 'The Pokhara' },
-                                    { key: 'kathmandu', label: 'Dustmandu' },
-                                    { key: 'chitwan', label: 'Chitwan' },
-                                    { key: 'illam', label: 'Illam' },
-                                ]}
-                            />
-                            <MultiSelectInputWithList
-                                label="Worse place"
-                                labelSelector={Workshop.labelSelector}
-                                keySelector={Workshop.keySelector}
-                                faramElementName="worsePlaces"
                                 options={[
                                     { key: 'pokhara', label: 'The Pokhara' },
                                     { key: 'kathmandu', label: 'Dustmandu' },

@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import SimpleListInput from '#rsci/SimpleListInput';
 import styles from './styles.scss';
 // import _ts from '#ts';
 
@@ -33,15 +34,28 @@ export default class MultiSelectWidget extends React.PureComponent {
         const options = getOptions(widget);
 
         return (
-            <MultiSelectInputWithList
-                className={styles.multiSelectWidget}
-                faramElementName="value"
-                options={options}
-                labelSelector={MultiSelectWidget.labelSelector}
-                keySelector={MultiSelectWidget.keySelector}
-                showLabel={false}
-                emptyComponent={null}
-            />
+            <div className={styles.input}>
+                <MultiSelectInput
+                    className={styles.multiSelect}
+                    faramElementName="value"
+                    options={options}
+                    labelSelector={MultiSelectWidget.labelSelector}
+                    keySelector={MultiSelectWidget.keySelector}
+                    showLabel={false}
+                    // emptyComponent={null}
+                />
+                <SimpleListInput
+                    className={styles.checklist}
+                    listClassName={styles.list}
+                    faramElementName="value"
+                    options={options}
+                    labelSelector={MultiSelectWidget.labelSelector}
+                    keySelector={MultiSelectWidget.keySelector}
+                    showLabel={false}
+                    showHintAndError={false}
+                    emptyComponent={null}
+                />
+            </div>
         );
     }
 }
