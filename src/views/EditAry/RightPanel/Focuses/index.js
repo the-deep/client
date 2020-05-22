@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 import { FaramGroup } from '@togglecorp/faram';
 
-import ListSelection from '#rsci/ListSelection';
+import ChecklistInput from '#rsci/ChecklistInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import _ts from '#ts';
@@ -85,7 +85,7 @@ export default class Focuses extends React.PureComponent {
                             headingClassName={styles.heading}
                             className={styles.header}
                         />
-                        <ListSelection
+                        <ChecklistInput
                             showLabel={false}
                             className={styles.content}
                             faramElementName="focuses"
@@ -100,7 +100,7 @@ export default class Focuses extends React.PureComponent {
                             title={sectorsTitle}
                             className={styles.header}
                         />
-                        <ListSelection
+                        <ChecklistInput
                             showLabel={false}
                             faramElementName="sectors"
                             options={sectors}

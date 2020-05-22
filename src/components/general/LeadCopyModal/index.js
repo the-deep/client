@@ -7,7 +7,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import ListSelection from '#rsci/ListSelection';
+import ChecklistInput from '#rsci/ChecklistInput';
 import SearchInput from '#rsci/SearchInput';
 
 import DangerButton from '#rsca/Button/DangerButton';
@@ -205,7 +205,7 @@ export default class LeadCopyModal extends React.PureComponent {
                             {heading}
                         </h4>
                     </header>
-                    <ListSelection
+                    <ChecklistInput
                         className={styles.projects}
                         listClassName={styles.projectsList}
                         value={selectedProjects}

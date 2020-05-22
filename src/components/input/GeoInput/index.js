@@ -8,21 +8,24 @@ import {
     mapToList,
     isDefined,
     isObject,
+    unique,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import AccentButton from '#rsca/Button/AccentButton';
-import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
-import HintAndError from '#rsci/HintAndError';
-import Label from '#rsci/Label';
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
+import SimpleListInput from '#rsci/SimpleListInput';
 import featuresMapping from '#constants/features';
 
 import { activeUserSelector } from '#redux';
 
+import GeoInputList from './GeoModal/GeoInputList';
 import GeoModal from './GeoModal';
 import styles from './styles.scss';
 
 const MAX_DISPLAY_OPTIONS = 100;
+
+const keySelector = v => v.key;
 
 const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
@@ -57,7 +60,7 @@ const propTypes = {
     polygonsEnabled: PropTypes.bool,
 
     modalLeftComponent: PropTypes.node,
-    emptyComponent: PropTypes.func,
+    icons: PropTypes.node,
 };
 
 const defaultProps = {
@@ -74,13 +77,13 @@ const defaultProps = {
     value: [],
     regions: [],
     modalLeftComponent: undefined,
-    emptyComponent: undefined,
     placeholder: undefined,
     hint: '',
     error: '',
     showHintAndError: true,
     persistentHintAndError: true,
     polygonsEnabled: false,
+    icons: undefined,
 };
 
 @FaramInputElement
@@ -117,6 +120,20 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsMapping;
     })
 
+    getAllAdminLevelTitles = memoize((geoOptions) => {
+        const adminLevelTitles = unique(
+            geoOptions,
+            geoOption => `${geoOption.region}-${geoOption.adminLevel}`,
+        ).map(geoOption => ({
+            key: geoOption.adminLevel,
+            title: geoOption.adminLevelTitle,
+
+            regionKey: geoOption.region,
+            regionTitle: geoOption.regionTitle,
+        }));
+        return adminLevelTitles;
+    })
+
     getSelections = memoize(value => (
         value.filter(v => !isObject(v))
     ))
@@ -127,8 +144,6 @@ export default class GeoInput extends React.PureComponent {
 
     // SELECTOR
 
-    keySelector = v => v.key;
-
     labelSelector = (v) => {
         const {
             geoOptionsByRegion,
@@ -137,7 +152,7 @@ export default class GeoInput extends React.PureComponent {
 
         const allGeoOptionsMap = this.getAllGeoOptionsMap(geoOptionsByRegion);
 
-        const key = this.keySelector(v);
+        const key = keySelector(v);
 
         const option = allGeoOptionsMap[key];
 
@@ -195,14 +210,16 @@ export default class GeoInput extends React.PureComponent {
             value,
             disabled,
             readOnly,
-            hideList,
             hideInput,
             placeholder,
-            emptyComponent,
+
+            hideList,
+
             polygonsEnabled,
             activeUser: {
                 accessibleFeatures = [],
             },
+            icons,
         } = this.props;
 
         const { showModal } = this.state;
@@ -217,69 +234,80 @@ export default class GeoInput extends React.PureComponent {
         const polygons = this.getPolygons(value);
         const options = this.getAllGeoOptions(geoOptionsByRegion);
 
+        // NOTE: why not move this to GeoModal
         const polygonSupportIndex = accessibleFeatures
             .findIndex(f => f.key === featuresMapping.polygonSupportGeo);
+
         const isPolygonFeatureEnabled = polygonSupportIndex !== -1;
+
         const shouldEnablePolygon = isPolygonFeatureEnabled && polygonsEnabled;
 
         return (
             <div className={className}>
-                {showLabel &&
-                    <Label
-                        show={showLabel}
-                        text={label}
-                    />
-                }
-                <MultiSelectInputWithList
-                    value={selections}
-                    showLabel={false}
-                    onChange={this.handleSelectionsChange}
-                    className={styles.selectInput}
-                    options={options}
-                    labelSelector={this.labelSelector}
-                    keySelector={this.keySelector}
-                    showHintAndError={false}
-                    hideSelectAllButton
-                    disabled={disabled}
-                    readOnly={readOnly}
+                <div className={styles.inputContainer}>
+                    {!hideInput && (
+                        <SearchMultiSelectInput
+                            className={styles.selectInput}
+                            value={selections}
+                            onChange={this.handleSelectionsChange}
+                            options={options}
+                            labelSelector={this.labelSelector}
+                            keySelector={keySelector}
 
-                    hideList={hideList}
-                    hideInput={hideInput}
-                    maxDisplayOptions={MAX_DISPLAY_OPTIONS}
-                    placeholder={placeholder}
+                            placeholder={placeholder}
+                            hideSelectAllButton
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            maxDisplayOptions={MAX_DISPLAY_OPTIONS}
 
-                    emptyComponent={emptyComponent}
-                    topRightChild={(
-                        // FIXME: use modal button
-                        <AccentButton
-                            className={styles.action}
-                            iconName="globe"
-                            onClick={this.handleModalShow}
-                            disabled={disabled || readOnly}
-                            transparent
-                        >
-                            {hideInput && label}
-                        </AccentButton>
+                            error={error}
+                            hint={hint}
+                            label={label}
+                            persistentHintAndError={persistentHintAndError}
+                            showHintAndError={showHintAndError}
+                            showLabel={showLabel}
+                        />
                     )}
-                />
-                <HintAndError
-                    show={showHintAndError}
-                    hint={hint}
-                    error={error}
-                    persistent={persistentHintAndError}
-                />
+                    <AccentButton
+                        className={styles.action}
+                        iconName="globe"
+                        onClick={this.handleModalShow}
+                        disabled={disabled || readOnly}
+                        transparent
+                    >
+                        {hideInput && label}
+                    </AccentButton>
+                    {icons}
+                </div>
+                {!hideList && (
+                    <GeoInputList
+                        className={styles.checklist}
+                        selections={selections}
+                        geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+                        polygons={polygons}
+                        adminLevelTitles={this.getAllAdminLevelTitles(options)}
+                        polygonHidden
+                        polygonDisabled
+                        onSelectionsChange={this.handleSelectionsChange}
+                        // onPolygonsChange={handlePolygonsChangeForRegion}
+                        // onPolygonEditClick={handlePolygonClick}
+                    />
+                )}
                 {showModal && (
                     <GeoModal
                         title={label}
                         regions={regions}
+                        modalLeftComponent={modalLeftComponent}
                         geoOptionsByRegion={geoOptionsByRegion}
                         geoOptionsById={this.getAllGeoOptionsMap(geoOptionsByRegion)}
+                        adminLevelTitles={this.getAllAdminLevelTitles(options)}
+
                         // NOTE: this value is only set on mount
                         selections={selections}
                         polygons={polygons}
+
                         onApply={this.handleModalApply}
                         onCancel={this.handleModalCancel}
-                        modalLeftComponent={modalLeftComponent}
                         polygonsEnabled={shouldEnablePolygon}
                     />
                 )}

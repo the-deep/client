@@ -1,3 +1,18 @@
+.extended-dismissable-list-item {
+    .label {
+        display: flex;
+        align-items: baseline;
+
+        .text {
+            flex-grow: 1;
+        }
+
+        .polygon {
+            flex-shrink: 0;
+        }
+    }
+}
+
 .geo-input-list {
     display: flex;
     flex-direction: column;

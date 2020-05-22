@@ -1,67 +1,23 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramInputElement } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import OrgChart from '#rscz/OrgChart';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import Modal from '#rscv/Modal';
-import MultiSelectInputWithList from '#rsci/MultiSelectInputWithList';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import SimpleListInput from '#rsci/SimpleListInput';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
-import Label from '#rsci/Label';
-import HintAndError from '#rsci/HintAndError';
 
 import _ts from '#ts';
 import _cs from '#cs';
 
 import styles from './styles.scss';
-
-const propTypes = {
-    className: PropTypes.string,
-    title: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.object),
-    onChange: PropTypes.func,
-    value: PropTypes.arrayOf(PropTypes.string),
-    idSelector: PropTypes.func,
-    labelSelector: PropTypes.func,
-    childSelector: PropTypes.func,
-    disabled: PropTypes.bool,
-    readOnly: PropTypes.bool,
-    label: PropTypes.string,
-    showLabel: PropTypes.bool,
-    hideList: PropTypes.bool,
-    modalLeftComponent: PropTypes.node,
-    emptyComponent: PropTypes.func,
-    error: PropTypes.string,
-    hint: PropTypes.string,
-    showHintAndError: PropTypes.bool,
-    persistentHintAndError: PropTypes.bool,
-};
-
-const defaultProps = {
-    label: '',
-    showLabel: true,
-    className: '',
-    title: _ts('components.organigram', 'defaultTitle'),
-    onChange: undefined,
-    hideList: false,
-    value: [],
-    disabled: false,
-    readOnly: false,
-    idSelector: organ => organ.id,
-    labelSelector: organ => organ.title,
-    childSelector: organ => organ.children,
-    data: [],
-    modalLeftComponent: undefined,
-    emptyComponent: undefined,
-    hint: '',
-    error: '',
-    showHintAndError: true,
-    persistentHintAndError: true,
-};
 
 const emptyObject = {};
 
@@ -94,27 +50,51 @@ const getOptionsForSelect = (params) => {
     ], []);
 };
 
-const handleDataForOrganigram = (props) => {
-    const {
-        idSelector,
-        labelSelector,
-        childSelector,
-        data,
-    } = props;
-
-    let options = [];
-
-    if (data) {
-        options = getOptionsForSelect({
-            idSelector,
-            labelSelector,
-            childSelector,
-            data,
-        });
-    }
-    return ({ options, mountSelectInput: !!data });
+const propTypes = {
+    className: PropTypes.string,
+    title: PropTypes.string,
+    data: PropTypes.arrayOf(PropTypes.object),
+    onChange: PropTypes.func,
+    value: PropTypes.arrayOf(PropTypes.string),
+    idSelector: PropTypes.func,
+    labelSelector: PropTypes.func,
+    childSelector: PropTypes.func,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    label: PropTypes.string,
+    showLabel: PropTypes.bool,
+    hideList: PropTypes.bool,
+    modalLeftComponent: PropTypes.node,
+    emptyComponent: PropTypes.func,
+    error: PropTypes.string,
+    hint: PropTypes.string,
+    showHintAndError: PropTypes.bool,
+    persistentHintAndError: PropTypes.bool,
+    icons: PropTypes.node,
 };
 
+const defaultProps = {
+    label: '',
+    showLabel: true,
+    className: '',
+    title: _ts('components.organigram', 'defaultTitle'),
+    onChange: undefined,
+    hideList: false,
+    value: [],
+    disabled: false,
+    readOnly: false,
+    idSelector: organ => organ.id,
+    labelSelector: organ => organ.title,
+    childSelector: organ => organ.children,
+    data: [],
+    modalLeftComponent: undefined,
+    emptyComponent: undefined,
+    hint: '',
+    error: '',
+    showHintAndError: true,
+    persistentHintAndError: true,
+    icons: undefined,
+};
 
 @FaramInputElement
 export default class OrganigramInput extends React.PureComponent {
@@ -130,52 +110,64 @@ export default class OrganigramInput extends React.PureComponent {
             value: props.value,
             showOrgChartModal: false,
         };
-
-        const optionsInfo = handleDataForOrganigram(props);
-        this.mountSelectInput = optionsInfo.mountSelectInput;
-        this.options = optionsInfo.options;
     }
 
     componentWillReceiveProps(nextProps) {
         const {
             value: newValue,
-            data: newData,
+            // data: newData,
         } = nextProps;
 
         const {
             value: oldValue,
-            data: oldData,
+            // data: oldData,
         } = this.props;
 
         if (newValue !== oldValue) {
             this.setState({ value: newValue });
         }
-        if (newData !== oldData) {
-            const optionsInfo = handleDataForOrganigram(nextProps);
-            this.mountSelectInput = optionsInfo.mountSelectInput;
-            this.options = optionsInfo.options;
-        }
     }
+
+    getOptions = memoize((data, idSelector, labelSelector, childSelector) => {
+        if (!data) {
+            return undefined;
+        }
+        return getOptionsForSelect({
+            idSelector,
+            labelSelector,
+            childSelector,
+            data,
+        });
+    });
+
 
     handleCancelClick = () => {
         const { value } = this.props;
-        this.setState({ showOrgChartModal: false, value });
+
+        this.setState({
+            showOrgChartModal: false,
+            value,
+        });
     }
 
     handleApplyClick = () => {
         const { value } = this.state;
         const { onChange } = this.props;
 
-        this.setState({ showOrgChartModal: false }, () => {
-            if (onChange) {
-                onChange(value);
-            }
-        });
+        this.setState(
+            { showOrgChartModal: false },
+            () => {
+                if (onChange) {
+                    onChange(value);
+                }
+            },
+        );
     }
 
     handleSelectChange = (newValues) => {
-        if (this.props.onChange) {
-            this.props.onChange(newValues);
+        const { onChange } = this.props;
+        if (onChange) {
+            onChange(newValues);
         }
     }
 
@@ -187,119 +179,34 @@ export default class OrganigramInput extends React.PureComponent {
         this.setState({ showOrgChartModal: true });
     }
 
-    renderOrgChartModal = () => {
-        const { showOrgChartModal, value } = this.state;
+    render() {
         const {
-            title,
+            showOrgChartModal,
+            value,
+        } = this.state;
+
+        const {
+            childSelector,
+            className: classNameFromProps,
             data,
             idSelector,
             labelSelector,
-            childSelector,
             modalLeftComponent,
-        } = this.props;
-
-        if (!showOrgChartModal) {
-            return null;
-        }
-
-        // FIXME: Use strings
-        return (
-            <Modal className={styles.orgchartModal}>
-                <ModalHeader title={title} />
-                <ModalBody className={styles.body}>
-                    {/*
-                        All organigrams in widgets have singular head
-                    */}
-                    {modalLeftComponent &&
-                        <div className={styles.left}>
-                            {modalLeftComponent}
-                        </div>
-                    }
-                    <OrgChart
-                        className={styles.orgchart}
-                        data={data[0] || emptyObject}
-                        labelSelector={labelSelector}
-                        idSelector={idSelector}
-                        childSelector={childSelector}
-                        onSelection={this.handleSelection}
-                        value={value}
-                    />
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={this.handleCancelClick} >
-                        {/* FIXME: use strings */}
-                        Cancel
-                    </Button>
-                    <PrimaryButton onClick={this.handleApplyClick} >
-                        {/* FIXME: use strings */}
-                        Apply
-                    </PrimaryButton>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-
-    renderSelection = () => {
-        const {
-            value,
-            hideList,
+            title,
             disabled,
             readOnly,
-            emptyComponent,
-        } = this.props;
+            hideList,
 
-        if (!this.mountSelectInput) {
-            return null;
-        }
-
-        return (
-            <MultiSelectInputWithList
-                value={value}
-                showLabel={false}
-                onChange={this.handleSelectChange}
-                className={styles.selectInput}
-                options={this.options}
-                labelSelector={OrganigramInput.selectLabelSelector}
-                keySelector={OrganigramInput.selectIdSelector}
-                showHintAndError={false}
-                hideSelectAllButton
-                disabled={disabled}
-                readOnly={readOnly}
-
-                hideList={hideList}
-                hideInput={false}
-                maxDisplayOptions={undefined}
-                // placeholder={placeholder}
-
-                emptyComponent={emptyComponent}
-                topRightChild={(
-                    <AccentButton
-                        className={styles.action}
-                        iconName="chart"
-                        onClick={this.handleShowModal}
-                        transparent
-                        disabled={disabled || readOnly}
-                        // FIXME: use strings
-                        title="Open organigram"
-                    />
-                )}
-            />
-        );
-    }
-
-    render() {
-        const {
-            label,
-            showLabel,
-            hint,
             error,
-            showHintAndError,
+            hint,
+            label,
             persistentHintAndError,
-            className: classNameFromProps,
-        } = this.props;
+            showHintAndError,
+            showLabel,
+            emptyComponent,
 
-        const OrgChartModal = this.renderOrgChartModal;
-        const Selection = this.renderSelection;
+            icons,
+        } = this.props;
 
         const className = _cs(
             classNameFromProps,
@@ -309,20 +216,84 @@ export default class OrganigramInput extends React.PureComponent {
 
         return (
             <div className={className}>
-                {showLabel &&
-                    <Label
-                        show={showLabel}
-                        text={label}
+                <div className={styles.inputContainer}>
+                    <MultiSelectInput
+                        className={styles.selectInput}
+                        value={value}
+                        onChange={this.handleSelectChange}
+                        options={this.getOptions(data, idSelector, labelSelector, childSelector)}
+                        labelSelector={OrganigramInput.selectLabelSelector}
+                        keySelector={OrganigramInput.selectIdSelector}
+                        hideSelectAllButton
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        error={error}
+                        hint={hint}
+                        label={label}
+                        persistentHintAndError={persistentHintAndError}
+                        showHintAndError={showHintAndError}
+                        showLabel={showLabel}
                     />
-                }
-                <Selection />
-                <OrgChartModal />
-                <HintAndError
-                    show={showHintAndError}
-                    hint={hint}
-                    error={error}
-                    persistent={persistentHintAndError}
-                />
+                    <AccentButton
+                        className={styles.action}
+                        iconName="chart"
+                        onClick={this.handleShowModal}
+                        transparent
+                        disabled={disabled || readOnly}
+                        smallVerticalPadding
+                        // FIXME: use strings
+                        title="Open organigram"
+                    />
+                    {icons}
+                </div>
+                {data && !hideList && (
+                    <SimpleListInput
+                        className={styles.checklist}
+                        listClassName={styles.list}
+                        value={value}
+                        onChange={this.handleSelectChange}
+                        options={this.getOptions(data, idSelector, labelSelector, childSelector)}
+                        labelSelector={OrganigramInput.selectLabelSelector}
+                        keySelector={OrganigramInput.selectIdSelector}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        showLabel={false}
+                        showHintAndError={false}
+                        emptyComponent={emptyComponent}
+                    />
+                )}
+                {showOrgChartModal && (
+                    <Modal className={styles.orgchartModal}>
+                        <ModalHeader title={title} />
+                        <ModalBody className={styles.body}>
+                            {/* All organigrams in widgets have singular head */}
+                            {modalLeftComponent &&
+                                <div className={styles.left}>
+                                    {modalLeftComponent}
+                                </div>
+                            }
+                            <OrgChart
+                                className={styles.orgchart}
+                                data={data[0] || emptyObject}
+                                labelSelector={labelSelector}
+                                idSelector={idSelector}
+                                childSelector={childSelector}
+                                onSelection={this.handleSelection}
+                                value={value}
+                            />
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button onClick={this.handleCancelClick} >
+                                {/* FIXME: use strings */}
+                                Cancel
+                            </Button>
+                            <PrimaryButton onClick={this.handleApplyClick} >
+                                {/* FIXME: use strings */}
+                                Apply
+                            </PrimaryButton>
+                        </ModalFooter>
+                    </Modal>
+                )}
             </div>
         );
     }

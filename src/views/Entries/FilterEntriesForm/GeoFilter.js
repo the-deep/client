@@ -82,36 +82,36 @@ export default class GeoFilter extends React.PureComponent {
             label,
             disabled,
             geoOptions,
-            onChange,
             regions,
         } = this.props;
 
         return (
-            <div className={styles.geoFilter}>
-                <GeoInput
-                    value={areas}
-                    className={styles.geoInput}
-                    geoOptionsByRegion={geoOptions}
-                    onChange={this.handleGeoChange}
-                    regions={regions}
-                    placeholder={_ts('entries', 'geoPlaceholder')}
-                    showHeader={false}
-                    label={label}
-                    disabled={disabled}
-                    hideList
-                    showHintAndError={false}
-                />
-                <RotatingInput
-                    value={includeSubRegions}
-                    className={_cs(disabled && styles.disabled, styles.rotatingInput)}
-                    options={options}
-                    onChange={this.handleRotatingInputChange}
-                    rendererSelector={rendererSelector}
-                    keySelector={keySelector}
-                    showHintAndError={false}
-                    disabled={disabled}
-                />
-            </div>
+            <GeoInput
+                className={styles.geoFilter}
+                value={areas}
+                geoOptionsByRegion={geoOptions}
+                onChange={this.handleGeoChange}
+                regions={regions}
+                placeholder={_ts('entries', 'geoPlaceholder')}
+                showHeader={false}
+                label={label}
+                disabled={disabled}
+                hideList
+                showHintAndError={false}
+                icons={(
+                    <RotatingInput
+                        className={_cs(disabled && styles.disabled, styles.rotatingInput)}
+                        value={includeSubRegions}
+                        options={options}
+                        onChange={this.handleRotatingInputChange}
+                        rendererSelector={rendererSelector}
+                        keySelector={keySelector}
+                        showHintAndError={false}
+                        showLabel={false}
+                        disabled={disabled}
+                    />
+                )}
+            />
         );
     }
 }

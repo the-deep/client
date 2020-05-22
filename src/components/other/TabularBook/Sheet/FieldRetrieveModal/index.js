@@ -3,7 +3,7 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import ListSelection from '#rsci/ListSelection';
+import ChecklistInput from '#rsci/ChecklistInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import {
     calcFloatPositionInMainWindow,
@@ -96,7 +96,7 @@ export default class FieldRetrieveModal extends React.PureComponent {
                 focusTrap
                 showHaze
             >
-                <ListSelection
+                <ChecklistInput
                     listClassName={styles.list}
                     label={_ts('tabular.fieldRetrieveModal', 'fieldsLabel')} // Fields to retrieve
                     disabled={disabled}

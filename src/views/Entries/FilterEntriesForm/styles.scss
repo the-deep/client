@@ -14,16 +14,13 @@
     }
 
     .geo-filter {
-        display: flex;
-        align-items: flex-end;
         margin: var(--spacing-small);
-
-        .geo-input {
-            width: var(--width-filter-input);
-        }
+        // width: var(--width-filter-input);
+        height: auto;
 
         .rotating-input {
-            width: auto;
+            flex-shrink: 0;
+            // padding: var(--spacing-extra-small) var(--spacing-small);
 
             &:not(.disabled) {
                 .sub-region-selected {
@@ -33,11 +30,6 @@
                 .sub-region-not-selected {
                     color: var(--color-text-label);
                 }
-            }
-
-            >button {
-                padding: 4px var(--spacing-small);
-                line-height: 1;
             }
         }
     }

@@ -1,14 +1,15 @@
-
 .region-map {
     display: flex;
     position: relative;
     flex-direction: column;
+    overflow-y: auto;
 
     .map-container {
         display: flex;
         position: relative;
         flex-direction: column;
         flex-grow: 1;
+        overflow-y: auto;
 
         .geo-json-map {
             flex-grow: 1;
