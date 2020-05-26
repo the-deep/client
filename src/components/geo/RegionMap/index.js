@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import memoize from 'memoize-one';
+import colors from 'colorbrewer';
 import { _cs } from '@togglecorp/fujs';
 
 import boundError from '#rscg/BoundError';
@@ -581,6 +582,7 @@ class RegionMap extends React.PureComponent {
                 ...feature,
                 properties: {
                     ...feature.properties,
+                    color: colors.Paired[12][Math.floor(Math.random() * 12)],
                     code: maxValue + index + 1,
                     title: `${feature.geometry.type} ${maxValue + index + 1}`,
                 },

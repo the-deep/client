@@ -14,7 +14,6 @@ import { FaramInputElement } from '@togglecorp/faram';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
-import SimpleListInput from '#rsci/SimpleListInput';
 import featuresMapping from '#constants/features';
 
 import { activeUserSelector } from '#redux';

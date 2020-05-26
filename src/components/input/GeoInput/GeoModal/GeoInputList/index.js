@@ -107,19 +107,24 @@ const propTypes = {
     adminLevelTitles: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     polygonDisabled: PropTypes.bool,
     polygonHidden: PropTypes.bool,
-    onSelectionsChange: PropTypes.func.isRequired,
-    onPolygonsChange: PropTypes.func.isRequired,
-    onPolygonEditClick: PropTypes.func.isRequired,
+    onSelectionsChange: PropTypes.func,
+    onPolygonsChange: PropTypes.func,
+    onPolygonEditClick: PropTypes.func,
+    readOnly: PropTypes.bool,
 };
 const defaultProps = {
     header: undefined,
     className: undefined,
+    onSelectionsChange: undefined,
+    onPolygonsChange: undefined,
+    onPolygonEditClick: undefined,
     selections: [],
     polygons: [],
     geoOptionsById: {},
     adminLevelTitles: [],
     polygonDisabled: false,
     polygonHidden: false,
+    readOnly: false,
 };
 
 const GeoInputList = (props) => {
@@ -140,6 +145,8 @@ const GeoInputList = (props) => {
         onPolygonsChange,
 
         onPolygonEditClick,
+
+        readOnly,
     } = props;
 
     const handlePolygonEdit = useCallback(
@@ -149,7 +156,9 @@ const GeoInputList = (props) => {
                 console.error('Could not find index for polygon id', id);
                 return;
             }
-            onPolygonEditClick(polygon);
+            if (onPolygonEditClick) {
+                onPolygonEditClick(polygon);
+            }
         },
         [polygons, onPolygonEditClick],
     );
@@ -157,7 +166,9 @@ const GeoInputList = (props) => {
     const handlePolygonRemove = useCallback(
         (id) => {
             const newPolygons = polygons.filter(p => p.geoJson.id !== id);
-            onPolygonsChange(newPolygons);
+            if (onPolygonsChange) {
+                onPolygonsChange(newPolygons);
+            }
         },
         [onPolygonsChange, polygons],
     );
@@ -165,7 +176,9 @@ const GeoInputList = (props) => {
     const handleSelectionRemove = useCallback(
         (itemKey) => {
             const newSelections = selections.filter(v => v !== itemKey);
-            onSelectionsChange(newSelections);
+            if (onSelectionsChange) {
+                onSelectionsChange(newSelections);
+            }
         },
         [onSelectionsChange, selections],
     );
@@ -198,12 +211,13 @@ const GeoInputList = (props) => {
             className: styles.item,
             itemKey: key,
             onDismiss: handleSelectionRemove,
-            disabled: !!value.polygons,
+            disabled: !!value.polygons || isNotDefined(onSelectionsChange),
+            readOnly,
 
             value: geoOptionsById[key].title,
             polygons: value.polygons,
         }),
-        [handleSelectionRemove, geoOptionsById],
+        [handleSelectionRemove, geoOptionsById, onSelectionsChange, readOnly],
     );
 
     const groupRendererParams = useCallback(
@@ -235,12 +249,13 @@ const GeoInputList = (props) => {
             className: styles.item,
             itemKey: key,
             onDismiss: handlePolygonRemove,
-            disabled: polygonDisabled,
+            disabled: polygonDisabled || isNotDefined(onPolygonsChange),
+            readOnly,
             onEdit: handlePolygonEdit,
             value: polygon.geoJson.properties.title,
             color: polygon.geoJson.properties.color,
         }),
-        [handlePolygonEdit, handlePolygonRemove, polygonDisabled],
+        [handlePolygonEdit, handlePolygonRemove, polygonDisabled, onPolygonsChange, readOnly],
     );
 
     const newSelections = useMemo(
@@ -255,15 +270,6 @@ const GeoInputList = (props) => {
                     {header}
                 </h3>
             )}
-            <ListView
-                data={newSelections}
-                emptyComponent={null}
-                keySelector={geoOptionKeySelector}
-                renderer={ExtendedDismissableListItem}
-                rendererParams={listRendererParams}
-                groupKeySelector={groupKeySelector}
-                groupRendererParams={groupRendererParams}
-            />
             {!polygonHidden && (
                 <ListView
                     data={polygons}
@@ -275,6 +281,15 @@ const GeoInputList = (props) => {
                     groupRendererParams={polygonGroupRendererParams}
                 />
             )}
+            <ListView
+                data={newSelections}
+                emptyComponent={null}
+                keySelector={geoOptionKeySelector}
+                renderer={ExtendedDismissableListItem}
+                rendererParams={listRendererParams}
+                groupKeySelector={groupKeySelector}
+                groupRendererParams={groupRendererParams}
+            />
         </div>
     );
 };
