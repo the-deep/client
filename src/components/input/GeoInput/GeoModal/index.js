@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import {
+    _cs,
     listToMap,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
@@ -21,7 +22,6 @@ import {
     methods,
 } from '#request';
 import _ts from '#ts';
-import _cs from '#cs';
 
 import RegionMap from '#components/geo/RegionMap';
 

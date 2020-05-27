@@ -286,6 +286,7 @@ export default class GeoInput extends React.PureComponent {
                         polygons={polygons}
                         adminLevelTitles={this.getAllAdminLevelTitles(options)}
                         polygonHidden
+                        sortHidden
                         polygonDisabled
                         onSelectionsChange={this.handleSelectionsChange}
                         // onPolygonsChange={handlePolygonsChangeForRegion}

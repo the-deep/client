@@ -23,6 +23,16 @@
         text-transform: initial;
     }
 
+    .sort-inputs {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .sort-input {
+            padding: var(--spacing-extra-small) var(--spacing-small);
+        }
+    }
+
     .item {
         padding: var(--spacing-extra-small) var(--spacing-small);
     }

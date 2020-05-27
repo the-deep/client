@@ -69,6 +69,7 @@ function GeoListOutput(props) {
             polygons={polygons}
             adminLevelTitles={allAdminLevelTitles}
             polygonHidden
+            sortHidden
             polygonDisabled
             readOnly
         />

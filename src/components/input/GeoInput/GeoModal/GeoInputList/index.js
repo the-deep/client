@@ -1,10 +1,18 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useMemo } from 'react';
-import { _cs, isNotDefined, isDefined } from '@togglecorp/fujs';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+    _cs,
+    isNotDefined,
+    isDefined,
+    compareString,
+    compareNumber,
+} from '@togglecorp/fujs';
 
 import { DefaultIcon } from '#rscv/ListItem';
 import DismissableListItem from '#rsca/DismissableListItem';
 import ListView from '#rscv/List/ListView';
+import SegmentInput from '#rsci/SegmentInput';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -15,6 +23,7 @@ function ExtendedDismissableListItem(props) {
         className,
         ...otherProps
     } = props;
+
     return (
         <DismissableListItem
             {...otherProps}
@@ -38,6 +47,17 @@ function ExtendedDismissableListItem(props) {
         />
     );
 }
+
+ExtendedDismissableListItem.propTypes = {
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.node, PropTypes.number]).isRequired,
+    className: PropTypes.string,
+    polygons: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+};
+
+ExtendedDismissableListItem.defaultProps = {
+    polygons: undefined,
+    className: undefined,
+};
 
 function groupList(
     list,
@@ -111,6 +131,7 @@ const propTypes = {
     onPolygonsChange: PropTypes.func,
     onPolygonEditClick: PropTypes.func,
     readOnly: PropTypes.bool,
+    sortHidden: PropTypes.bool,
 };
 const defaultProps = {
     header: undefined,
@@ -124,8 +145,34 @@ const defaultProps = {
     adminLevelTitles: [],
     polygonDisabled: false,
     polygonHidden: false,
+    sortHidden: false,
     readOnly: false,
 };
+
+const sortOrderOptions = [
+    {
+        key: 'asc',
+        label: _ts('components.geo.geoModal', 'ascendingLabel'),
+    },
+    {
+        key: 'dsc',
+        label: _ts('components.geo.geoModal', 'descendingLabel'),
+    },
+];
+
+const sortTypeOptions = [
+    {
+        key: 'alphabetical',
+        label: _ts('components.geo.geoModal', 'alphabeticalLabel'),
+    },
+    {
+        key: 'overlaps',
+        label: _ts('components.geo.geoModal', 'overlapsLabel'),
+    },
+];
+
+const sortTypeKeySelector = d => d.key;
+const sortTypeLabelSelector = d => d.label;
 
 const GeoInputList = (props) => {
     const {
@@ -146,8 +193,12 @@ const GeoInputList = (props) => {
 
         onPolygonEditClick,
 
+        sortHidden,
         readOnly,
     } = props;
+
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [sortType, setSortType] = useState('alphabetical');
 
     const handlePolygonEdit = useCallback(
         (id) => {
@@ -259,8 +310,31 @@ const GeoInputList = (props) => {
     );
 
     const newSelections = useMemo(
-        () => createCombinedSelections(selections, polygons),
-        [selections, polygons],
+        () => {
+            const tempSelections = createCombinedSelections(selections, polygons);
+            const sortOrderValue = sortOrder === 'asc' ? 1 : -1;
+
+            if (sortType === 'alphabetical') {
+                return tempSelections.sort((a, b) => compareString(
+                    geoOptionsById[a.id] ? geoOptionsById[a.id].title : '',
+                    geoOptionsById[b.id] ? geoOptionsById[b.id].title : '',
+                    sortOrderValue,
+                ));
+            } else if (sortType === 'overlaps') {
+                return tempSelections.sort((a, b) => (
+                    compareNumber(
+                        a.polygons ? a.polygons.length : -1,
+                        b.polygons ? b.polygons.length : -1,
+                        sortOrderValue,
+                    ) || compareString(
+                        geoOptionsById[a.id] ? geoOptionsById[a.id].title : '',
+                        geoOptionsById[b.id] ? geoOptionsById[b.id].title : '',
+                    )
+                ));
+            }
+            return tempSelections;
+        },
+        [selections, polygons, sortType, sortOrder, geoOptionsById],
     );
 
     return (
@@ -269,6 +343,28 @@ const GeoInputList = (props) => {
                 <h3 className={styles.heading}>
                     {header}
                 </h3>
+            )}
+            {!sortHidden && (
+                <div className={styles.sortInputs}>
+                    <SegmentInput
+                        className={styles.sortInput}
+                        label={_ts('components.geo.geoModal', 'sortInputLabel')}
+                        value={sortType}
+                        onChange={setSortType}
+                        options={sortTypeOptions}
+                        keySelector={sortTypeKeySelector}
+                        labelSelector={sortTypeLabelSelector}
+                    />
+                    <SegmentInput
+                        className={styles.sortInput}
+                        label={_ts('components.geo.geoModal', 'sortOrderLabel')}
+                        value={sortOrder}
+                        onChange={setSortOrder}
+                        options={sortOrderOptions}
+                        keySelector={sortTypeKeySelector}
+                        labelSelector={sortTypeLabelSelector}
+                    />
+                </div>
             )}
             {!polygonHidden && (
                 <ListView

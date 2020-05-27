@@ -7,7 +7,6 @@ import { _cs } from '@togglecorp/fujs';
 
 import boundError from '#rscg/BoundError';
 import { FgRestBuilder } from '#rsu/rest';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Button from '#rsca/Button';
 import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -67,6 +66,9 @@ const polygonSourceOptions = {
     type: 'geojson',
     promoteId: 'code',
 };
+
+// Paired returns quantitative colors from colorbrewer
+const getRandomColor = () => colors.Paired[12][Math.floor(Math.random() * 12)];
 
 const fillLayerOptions = {
     type: 'fill',
@@ -582,7 +584,7 @@ class RegionMap extends React.PureComponent {
                 ...feature,
                 properties: {
                     ...feature.properties,
-                    color: colors.Paired[12][Math.floor(Math.random() * 12)],
+                    color: getRandomColor(),
                     code: maxValue + index + 1,
                     title: `${feature.geometry.type} ${maxValue + index + 1}`,
                 },
@@ -739,30 +741,28 @@ class RegionMap extends React.PureComponent {
 
                             {_ts('components.regionMap', 'reloadButtonLabel')}
                         </Button>
-                        { polygonsEnabled && (
-                            <>
-                                {editMode ? (
-                                    <>
-                                        <PrimaryButton
-                                            className={styles.button}
-                                            onClick={onPolygonEditEnd}
-                                            disabled={myAdminLevelPending}
-                                        >
-                                            {_ts('components.regionMap', 'polygonExitButtonLabel')}
-                                        </PrimaryButton>
-                                    </>
-                                ) : (
-                                    <Button
-                                        className={styles.button}
-                                        onClick={onPolygonEditStart}
-                                        disabled={myAdminLevelPending}
-                                    >
-                                        {_ts('components.regionMap', 'polygonEditButtonLabel')}
-                                    </Button>
-                                )}
-                            </>
-                        )}
                     </div>
+                    { polygonsEnabled && (
+                        <>
+                            {editMode ? (
+                                <Button
+                                    className={styles.lockButton}
+                                    onClick={onPolygonEditEnd}
+                                    disabled={myAdminLevelPending}
+                                    iconName="locked"
+                                    title={_ts('components.regionMap', 'polygonExitButtonLabel')}
+                                />
+                            ) : (
+                                <Button
+                                    className={styles.lockButton}
+                                    onClick={onPolygonEditStart}
+                                    disabled={myAdminLevelPending}
+                                    iconName="unlocked"
+                                    title={_ts('components.regionMap', 'polygonEditButtonLabel')}
+                                />
+                            )}
+                        </>
+                    )}
                     <SegmentInput
                         className={styles.bottomContainer}
                         name="admin-levels"
@@ -780,16 +780,14 @@ class RegionMap extends React.PureComponent {
                         scaleControlShown={false}
                         navControlShown={false}
                     >
-                        <MapContainer
-                            className={styles.geoJsonMap}
-                        />
+                        <MapContainer className={styles.geoJsonMap} />
                         {bounds && (
                             <MapBounds
                                 bounds={bounds}
                                 padding={10}
                             />
                         )}
-                        {polygonsEnabled && editMode && (
+                        {polygonsEnabled && (
                             <MapShapeEditor
                                 drawOptions={drawOptions}
                                 drawPosition="top-right"
@@ -797,6 +795,7 @@ class RegionMap extends React.PureComponent {
                                 onDelete={this.handlePolygonDelete}
                                 onUpdate={this.handlePolygonUpdate}
                                 onModeChange={this.handleModeChange}
+                                disabled={!editMode}
 
                                 geoJsons={this.getGeoJsonsFromPolygons(polygons)}
                             />
