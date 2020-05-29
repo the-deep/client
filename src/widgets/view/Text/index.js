@@ -22,37 +22,23 @@ NormalText.defaultProps = {
 
 const Text = FaramOutputElement(NormalText);
 
+function TextListWidget({ className }) {
+    return (
+        <div className={_cs(className, styles.textOutput)} >
+            <div className={styles.text}>
+                <Text faramElementName="value" />
+            </div>
+        </div>
+    );
+}
 
-const propTypes = {
+TextListWidget.propTypes = {
     className: PropTypes.string,
 };
 
-const defaultProps = {
+TextListWidget.defaultProps = {
     className: undefined,
 };
 
-export default class TextListWidget extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
 
-    render() {
-        const {
-            className: classNameFromProps,
-        } = this.props;
-
-        const className = _cs(
-            classNameFromProps,
-            styles.textOutput,
-        );
-
-        return (
-            <div className={className} >
-                <p className={styles.text}>
-                    <Text
-                        faramElementName="value"
-                    />
-                </p>
-            </div>
-        );
-    }
-}
+export default TextListWidget;

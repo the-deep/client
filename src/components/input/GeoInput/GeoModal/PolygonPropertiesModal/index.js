@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import Faram, { requiredCondition } from '@togglecorp/faram';
+import colors from 'colorbrewer';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -120,7 +121,9 @@ export default class PolygonEditModal extends React.PureComponent {
                         <ColorInput
                             className={styles.colorInput}
                             faramElementName="color"
+                            colors={colors.Paired[12]}
                             label={_ts('components.geo.geoModal.polygonModal', 'colorInputLabel')}
+                            type="githubPicker"
                         />
                     </ModalBody>
                     <ModalFooter>

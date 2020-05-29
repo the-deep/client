@@ -1111,7 +1111,12 @@
         "-25976066": "Framework Questions",
         "-37971354": "XLSForm Import",
         "-46134674": "There are no connectors associated with this project. Click below to add some!",
-        "-89304144": "Lock polygons"
+        "-89304144": "Lock polygons",
+        "-71038298": "Overlaps",
+        "-32034327": "Alphabetical",
+        "-48567189": "Ordered by",
+        "-82896655": "Asc",
+        "-88031153": "Dsc"
     },
     "links": {
         "browserExtension": {
@@ -2015,7 +2020,6 @@
             "fourHundredThree": -44264923,
             "projectDenied": -44264923,
             "plannedArys": -41526057,
-            "projectQuestionnare": -91998400,
             "questionnaireBuilder": -7536745,
             "projectQuestionnaires": -91998400,
             "frameworkQuestions": -25976066
@@ -2862,7 +2866,13 @@
             "regionLabel": -67487923,
             "geoAreasPlaceholder": -65943043,
             "listHeading": -63009300,
-            "title": -95724442
+            "title": -95724442,
+            "sortInputLabel": 13000,
+            "ascendingLabel": -82896655,
+            "descendingLabel": -88031153,
+            "alphabeticalLabel": -32034327,
+            "overlapsLabel": -71038298,
+            "sortOrderLabel": -48567189
         },
         "project.regions": {
             "saveButtonLabel": 25,
