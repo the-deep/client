@@ -125,6 +125,10 @@ function GeoModal(props) {
     const [showPolygonEditModal, setShowPolygonEditModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
 
+    const selectedAdminLevelTitles = useMemo(() => (
+        adminLevelTitles.filter(adminLevel => adminLevel.regionKey === selectedRegion)
+    ), [adminLevelTitles, selectedRegion]);
+
     const geoOptionsForSelectedRegion = geoOptionsByRegion[selectedRegion];
 
     const selectionsForSelectedRegion = useMemo(
@@ -391,7 +395,7 @@ function GeoModal(props) {
                             <MultiSelectInput
                                 label={_ts('components.geo.geoModal', 'adminLevelLabel')}
                                 className={styles.selectInput}
-                                options={adminLevelTitles}
+                                options={selectedAdminLevelTitles}
                                 labelSelector={geoOptionLabelSelector}
                                 keySelector={geoOptionKeySelector}
                                 onChange={setSelectedAdminLevel}
@@ -448,6 +452,7 @@ function GeoModal(props) {
                     selections={selectionsForSelectedRegion}
                     geoOptionsById={geoOptionsById}
                     polygons={polygonsForSelectedRegion}
+                    polygonsEnabled={polygonsEnabled}
                     adminLevelTitles={adminLevelTitles}
 
                     onSelectionsChange={handleSelectionsChangeForRegion}

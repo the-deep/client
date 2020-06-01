@@ -126,7 +126,10 @@ const propTypes = {
     geoOptionsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     adminLevelTitles: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     polygonDisabled: PropTypes.bool,
+    // NOTE: To hide polygons in list outside GeoModal
     polygonHidden: PropTypes.bool,
+    // NOTE: Whether or not polygon edit feature is provided to user
+    polygonsEnabled: PropTypes.bool,
     onSelectionsChange: PropTypes.func,
     onPolygonsChange: PropTypes.func,
     onPolygonEditClick: PropTypes.func,
@@ -145,6 +148,7 @@ const defaultProps = {
     adminLevelTitles: [],
     polygonDisabled: false,
     polygonHidden: false,
+    polygonsEnabled: false,
     sortHidden: false,
     readOnly: false,
 };
@@ -187,6 +191,7 @@ const GeoInputList = (props) => {
 
         polygonDisabled,
         polygonHidden,
+        polygonsEnabled,
 
         onSelectionsChange,
         onPolygonsChange,
@@ -346,15 +351,17 @@ const GeoInputList = (props) => {
             )}
             {!sortHidden && (
                 <div className={styles.sortInputs}>
-                    <SegmentInput
-                        className={styles.sortInput}
-                        label={_ts('components.geo.geoModal', 'sortInputLabel')}
-                        value={sortType}
-                        onChange={setSortType}
-                        options={sortTypeOptions}
-                        keySelector={sortTypeKeySelector}
-                        labelSelector={sortTypeLabelSelector}
-                    />
+                    {polygonsEnabled && (
+                        <SegmentInput
+                            className={styles.sortInput}
+                            label={_ts('components.geo.geoModal', 'sortInputLabel')}
+                            value={sortType}
+                            onChange={setSortType}
+                            options={sortTypeOptions}
+                            keySelector={sortTypeKeySelector}
+                            labelSelector={sortTypeLabelSelector}
+                        />
+                    )}
                     <SegmentInput
                         className={styles.sortInput}
                         label={_ts('components.geo.geoModal', 'sortOrderLabel')}
