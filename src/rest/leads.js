@@ -67,8 +67,6 @@ export const createUrlForLeadExtractionTrigger = leadId => (
     `${wsEndpoint}/lead-extraction-trigger/${leadId}/`
 );
 
-export const urlForWebInfo = getVersionedUrl(wsEndpoint, '/v2/web-info-extract/');
-
 export const createParamsForWebInfo = ({ url }) => ({
     method: POST,
     headers: commonHeaderForPost,

@@ -204,15 +204,17 @@ function mergeLists(foo, bar) {
 
 const requestOptions = {
     webInfoRequest: {
-        url: '/v2/web-info-extract/',
+        url: '/web-info-extract/',
         body: ({ params: { url } }) => ({ url }),
         method: methods.POST,
         onSuccess: ({ params, response }) => {
-            params.handleWebInfoFill(response);
+            console.warn('here', response);
+            // params.handleWebInfoFill(response);
         },
-        // extras: {
-        //     schemaName: 'webInfo',
-        // },
+        extras: {
+            type: 'serverless',
+            // schemaName: 'webInfo',
+        },
     },
 
     leadOptionsRequest: {
