@@ -205,15 +205,49 @@ function mergeLists(foo, bar) {
 const requestOptions = {
     webInfoRequest: {
         url: '/web-info-extract/',
-        body: ({ params: { url } }) => ({ url }),
-        method: methods.POST,
-        onSuccess: ({ params, response }) => {
-            console.warn('here', response);
-            // params.handleWebInfoFill(response);
+        query: ({ params: { url } }) => ({ url }),
+        method: methods.GET,
+        onSuccess: ({ params, props: { requests }, response }) => {
+            if (requests.webInfoDataRequest) {
+                requests.webInfoDataRequest.do({
+                    url: params.url,
+                    title: response.title,
+                    date: response.date,
+                    website: response.website,
+                    country: response.country,
+                    source: response.source,
+                    author: response.author,
+                });
+            }
         },
         extras: {
             type: 'serverless',
             // schemaName: 'webInfo',
+        },
+    },
+
+    webInfoDataRequest: {
+        url: '/v2/web-info-data/',
+        body: ({ params: {
+            source,
+            author,
+            country,
+            url,
+        } }) => ({
+            sourceRaw: source,
+            authorRaw: author,
+            country,
+            url,
+        }),
+        method: methods.POST,
+        onSuccess: ({ params, response }) => {
+            params.handleWebInfoFill({
+                date: params.date,
+                website: params.website,
+                title: params.title,
+                url: params.url,
+                ...response,
+            });
         },
     },
 
@@ -297,12 +331,12 @@ class LeadDetail extends React.PureComponent {
         const {
             requests: {
                 leadOptionsRequest,
+                webInfoDataRequest,
             },
         } = this.props;
 
-        leadOptionsRequest.setDefaultParams({
-            handleExtraInfoFill: this.handleExtraInfoFill,
-        });
+        leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
+        webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
     }
 
     setSearchedOrganizations = (searchedOrganizations) => {
@@ -338,14 +372,9 @@ class LeadDetail extends React.PureComponent {
         const { url } = values;
 
         const {
-            requests: {
-                webInfoRequest,
-            },
+            requests: { webInfoRequest },
         } = this.props;
-        webInfoRequest.do({
-            url,
-            handleWebInfoFill: this.handleWebInfoFill,
-        });
+        webInfoRequest.do({ url });
     }
 
     handleApplyAllClick = (attrName) => {
@@ -566,8 +595,9 @@ class LeadDetail extends React.PureComponent {
             bulkActionDisabled,
 
             requests: {
-                webInfoRequest: {
-                    pending: webInfoRequestPending,
+                webInfoRequest: { pending: webInfoRequestPending },
+                webInfoDataRequest: {
+                    pending: webInfoDataRequestPending,
                     response: {
                         sourceRaw,
                         source,
@@ -617,6 +647,7 @@ class LeadDetail extends React.PureComponent {
             isLeadFormLoading(leadState)
             || leadOptionsPending
             || webInfoRequestPending
+            || webInfoDataRequestPending
         );
         const formDisabled = (
             isLeadFormDisabled(leadState)
@@ -626,6 +657,7 @@ class LeadDetail extends React.PureComponent {
             isLeadFormDisabled(leadState)
             || !isUrlValid(url)
             || webInfoRequestPending
+            || webInfoDataRequestPending
         );
         const projectIsSelected = isTruthy(projectId);
 
