@@ -6,6 +6,7 @@
     .add-lead-form {
         display: flex;
         position: relative;
+        align-items: flex-start;
         flex-wrap: wrap;
         justify-content: space-between;
         padding: 0 var(--spacing-large);
@@ -31,6 +32,23 @@
             flex-basis: calc(100% / 3 - var(--spacing-medium));
             padding: var(--spacing-medium) 0;
         }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+
+            .suggestion-badge {
+                display: block;
+                flex-basis: calc(50% - var(--spacing-extra-small));
+                margin-right: var(--spacing-extra-small);
+                overflow: hidden;
+                text-align: left;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
 
         .source,
         .author {

@@ -35,6 +35,7 @@ import {
 
 import Cloak from '#components/general/Cloak';
 import ExtraFunctionsOnHover from '#components/general/ExtraFunctionOnHover';
+import BadgeInput from '#components/input/BadgeInput';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
@@ -79,6 +80,22 @@ const ModalButton = Modalize(Button);
 const capitalize = string => (
     string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 );
+
+function isUrlValid(url) {
+    return (requiredCondition(url).ok && urlCondition(url).ok);
+}
+
+const getTitleFromUrl = (url) => {
+    if (!isUrlValid(url)) {
+        return undefined;
+    }
+    let title = url.match(/\/([^/?]+)(?:\?.*)?$/)[1];
+    title = title.replace(/(\.\w{1,5})+$/, '');
+    title = title.replace(/_/g, ' ');
+    title = title.replace(/-/g, ' ');
+
+    return title;
+};
 
 const propTypes = {
     className: PropTypes.string,
@@ -191,10 +208,6 @@ function fillWebInfo(values, webInfo) {
         }
     });
     return newValues;
-}
-
-function isUrlValid(url) {
-    return (requiredCondition(url).ok && urlCondition(url).ok);
 }
 
 function mergeLists(foo, bar) {
@@ -325,22 +338,26 @@ class LeadDetail extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            showAddLeadGroupModal: false,
-            // NOTE: If false, it will capitalize the first letter of first word only
-            formatTitleAsTitleCase: true,
-
-            searchedOrganizations: [],
-            // Organizations filled by web-info-extract and lead-options
-            organizations: [],
-        };
-
         const {
             requests: {
                 leadOptionsRequest,
                 webInfoDataRequest,
             },
+            lead,
         } = this.props;
+        const currentFaramValues = leadFaramValuesSelector(lead);
+
+        this.state = {
+            showAddLeadGroupModal: false,
+            // NOTE: If false, it will capitalize the first letter of first word only
+            formatTitleAsTitleCase: true,
+            suggestedTitleFromUrl: getTitleFromUrl(currentFaramValues.url),
+            suggestedTitleFromExtraction: undefined,
+
+            searchedOrganizations: [],
+            // Organizations filled by web-info-extract and lead-options
+            organizations: [],
+        };
 
         leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
         webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
@@ -418,6 +435,10 @@ class LeadDetail extends React.PureComponent {
 
         // Clear lead-group if project has changed
         const oldFaramValues = leadFaramValuesSelector(lead);
+        if (oldFaramValues.url !== faramValues.url) {
+            this.setState({ suggestedTitleFromUrl: getTitleFromUrl(faramValues.url) });
+        }
+
         if (
             !faramValues.project
             || (oldFaramValues.project && oldFaramValues.project !== faramValues.project)
@@ -501,6 +522,8 @@ class LeadDetail extends React.PureComponent {
                 organizations: mergeLists(state.organizations, newOrgs),
             }));
         }
+
+        this.setState({ suggestedTitleFromExtraction: webInfo.title });
 
         const values = leadFaramValuesSelector(lead);
         const newValues = fillWebInfo(values, webInfo);
@@ -655,6 +678,8 @@ class LeadDetail extends React.PureComponent {
             showAddLeadGroupModal,
             searchedOrganizations,
             organizations,
+            suggestedTitleFromUrl,
+            suggestedTitleFromExtraction,
         } = this.state;
 
         const values = leadFaramValuesSelector(lead);
@@ -665,6 +690,7 @@ class LeadDetail extends React.PureComponent {
         const {
             project: projectId,
             url,
+            title,
 
             sourceRaw: oldSourceTitle,
             authorRaw: oldAuthorTitle,
@@ -837,11 +863,26 @@ class LeadDetail extends React.PureComponent {
                         }
                     >
                         <TextInput
-                            className={styles.title}
                             faramElementName="title"
                             label={_ts('addLeads', 'titleLabel')}
                             placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
                         />
+                        <div className={styles.suggestions}>
+                            {(title !== suggestedTitleFromUrl) && (
+                                <BadgeInput
+                                    className={styles.suggestionBadge}
+                                    faramElementName="title"
+                                    title={suggestedTitleFromUrl}
+                                />
+                            )}
+                            {(title !== suggestedTitleFromExtraction) && (
+                                <BadgeInput
+                                    className={styles.suggestionBadge}
+                                    faramElementName="title"
+                                    title={suggestedTitleFromExtraction}
+                                />
+                            )}
+                        </div>
                     </ExtraFunctionsOnHover>
 
                     <ApplyAll

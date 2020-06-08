@@ -16,13 +16,22 @@ export const wsEndpoint = !process.env.REACT_APP_API_END
     ? 'http://localhost:8000/api/v1'
     : `${reactAppApiHttps}://${process.env.REACT_APP_API_END}/api/v1`;
 
-export const serverlessEndpoint = !process.env.REACT_APP_SERVERLESS_DOMAIN
-    ? 'https://mlqcx46v40.execute-api.us-east-1.amazonaws.com/local'
-    : process.env.REACT_APP_SERVERLESS_DOMAIN;
-
 export const adminEndpoint = !process.env.REACT_APP_ADMIN_END
     ? 'http://localhost:8000/admin/'
     : `${reactAppApiHttps}://${process.env.REACT_APP_ADMIN_END}/admin/`;
+
+export const serverlessEndpoint = (() => {
+    switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
+        case 'nightly':
+            return 'https://deepl-nightly.thedeep.io';
+        case 'alpha':
+            return 'https://y8417xe9c3.execute-api.us-east-1.amazonaws.com/dev';
+        case 'beta':
+            return 'https://deepl.togglecorp.com';
+        default:
+            return process.env.REACT_APP_SERVERLESS_DOMAIN || 'https://npxb673ch3.execute-api.us-east-1.amazonaws.com/local';
+    }
+})();
 
 export const deeplEndPoint = (() => {
     switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
