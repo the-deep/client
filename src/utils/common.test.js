@@ -2,7 +2,11 @@ import {
     camelToNormalCase,
     compareTime,
     getDateWithTimezone,
+    trimFileExtension,
     getArrayMoveDetails,
+    getTitleFromUrl,
+    isUrlValid,
+    capitalizeOnlyFirstLetter,
 } from './common';
 
 test('convert camelcase to normal', () => {
@@ -21,6 +25,36 @@ test('compare time', () => {
 
 test('get date with timezone', () => {
     expect(getDateWithTimezone('2019-05-13')).toEqual('2019-05-13+0545');
+});
+
+test('trim file extension', () => {
+    expect(trimFileExtension('test_123_22.pdf')).toEqual('test_123_22');
+    expect(trimFileExtension('test_123_22.docx')).toEqual('test_123_22');
+    expect(trimFileExtension('test_123_22.geo.json')).toEqual('test_123_22');
+    expect(trimFileExtension('abc def')).toEqual('abc def');
+});
+
+test('is url valid', () => {
+    expect(isUrlValid('https://reliefweb.int/report/democratic-republic-congo/un-emergency-funding-released-support-ebola-response-democratic'))
+        .toEqual(true);
+    expect(isUrlValid('/report/democratic-republic-congo/un-emergency-funding-released-support-ebola-response-democratic'))
+        .toEqual(false);
+});
+
+test('get title from url', () => {
+    expect(getTitleFromUrl('https://reliefweb.int/report/democratic-republic-congo/un-emergency-funding-released-support-ebola-response-democratic'))
+        .toEqual('un emergency funding released support ebola response democratic');
+    expect(getTitleFromUrl('https://reliefweb.int/sites/reliefweb.int/files/resources/DTM_Update-TarhunaSirt_2020-06-07.pdf'))
+        .toEqual('DTM Update TarhunaSirt 2020 06 07');
+    expect(getTitleFromUrl('/sites/reliefweb.int/files/resources/DTM_Update-TarhunaSirt_2020-06-07.pdf'))
+        .toEqual(undefined);
+});
+
+test('capitalize only first letter', () => {
+    expect(capitalizeOnlyFirstLetter('un response democratic'))
+        .toEqual('Un response democratic');
+    expect(capitalizeOnlyFirstLetter('un RESPONSE democratic'))
+        .toEqual('Un response democratic');
 });
 
 const oldArray = [

@@ -1,9 +1,15 @@
 import {
     padStart,
     isDefined,
+    isNotDefined,
     isObject,
     isList,
+    isFalsyString,
 } from '@togglecorp/fujs';
+import {
+    requiredCondition,
+    urlCondition,
+} from '@togglecorp/faram';
 
 export const mapObjectToObject = (obj, fn) => {
     const newObj = {};
@@ -167,3 +173,35 @@ export const getArrayMoveDetails = (oldArray = [], newArray = [], keySelector = 
         top,
     });
 };
+
+export function isUrlValid(url) {
+    return (requiredCondition(url).ok && urlCondition(url).ok);
+}
+
+export function trimFileExtension(title) {
+    return title.replace(/(\.\w{1,5})+$/, '');
+}
+
+export function getTitleFromUrl(url) {
+    if (!isUrlValid(url)) {
+        return undefined;
+    }
+    const match = url.match(/\/([^/?]+)(?:\?.*)?$/);
+    if (isNotDefined(match)) {
+        return undefined;
+    }
+
+    let title = match[1];
+    title = trimFileExtension(title);
+    title = title.replace(/_|-/g, ' ');
+
+    return title;
+}
+
+export function capitalizeOnlyFirstLetter(string) {
+    if (isFalsyString(string)) {
+        return string;
+    }
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+

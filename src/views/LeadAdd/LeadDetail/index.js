@@ -10,8 +10,6 @@ import {
 import Faram, {
     FaramInputElement,
     accumulateDifferentialErrors,
-    requiredCondition,
-    urlCondition,
 } from '@togglecorp/faram';
 import titleCase from 'title';
 import produce from 'immer';
@@ -42,6 +40,12 @@ import { organizationTitleSelector } from '#entities/organization';
 import Message from '#rscv/Message';
 
 import _ts from '#ts';
+import {
+    isUrlValid,
+    getTitleFromUrl,
+    capitalizeOnlyFirstLetter,
+    trimFileExtension,
+} from '#utils/common';
 
 import {
     ATTACHMENT_TYPES,
@@ -76,26 +80,6 @@ const AuthorEmptyComponent = () => (
 
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
 const ModalButton = Modalize(Button);
-
-const capitalize = string => (
-    string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
-);
-
-function isUrlValid(url) {
-    return (requiredCondition(url).ok && urlCondition(url).ok);
-}
-
-const getTitleFromUrl = (url) => {
-    if (!isUrlValid(url)) {
-        return undefined;
-    }
-    let title = url.match(/\/([^/?]+)(?:\?.*)?$/)[1];
-    title = title.replace(/(\.\w{1,5})+$/, '');
-    title = title.replace(/_/g, ' ');
-    title = title.replace(/-/g, ' ');
-
-    return title;
-};
 
 const propTypes = {
     className: PropTypes.string,
@@ -265,6 +249,15 @@ const requestOptions = {
                 title: params.title,
                 url: params.url,
                 ...response,
+            });
+        },
+        onFailure: ({ params }) => {
+            // NOTE: Even on failure fill data from webInfoExtract
+            params.handleWebInfoFill({
+                date: params.date,
+                website: params.website,
+                title: params.title,
+                url: params.url,
             });
         },
     },
@@ -494,11 +487,6 @@ class LeadDetail extends React.PureComponent {
         }
 
         /*
-        const {
-            lead,
-            activeUserId,
-        } = this.props;
-
         const values = leadFaramValuesSelector(lead);
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
         this.handleLeadValueChange(newValues);
@@ -573,18 +561,11 @@ class LeadDetail extends React.PureComponent {
                 return;
             }
 
-            if (formatTitleAsTitleCase) {
-                // eslint-disable-next-line no-param-reassign
-                safeValues.title = titleCase(title);
-                // Removes extension from file
-                // eslint-disable-next-line no-param-reassign
-                safeValues.title = safeValues.title.replace(/(\.\w{1,5})+$/, '');
-            } else {
-                // eslint-disable-next-line no-param-reassign
-                safeValues.title = safeValues.title.replace(/(\.\w{1,5})+$/, '');
-                // eslint-disable-next-line no-param-reassign
-                safeValues.title = capitalize(safeValues.title);
-            }
+            // eslint-disable-next-line no-param-reassign
+            safeValues.title = formatTitleAsTitleCase
+                ? titleCase(title) : capitalizeOnlyFirstLetter(title);
+            // eslint-disable-next-line no-param-reassign
+            safeValues.title = trimFileExtension(safeValues.title);
         });
 
         this.setState({ formatTitleAsTitleCase: !formatTitleAsTitleCase });

@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import {
     _cs,
     isNotDefined,
+    isDefined,
 } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
@@ -23,7 +24,7 @@ function BadgeInput(props: Props) {
     } = props;
 
     const handleButtonClick = useCallback(() => {
-        if (title && onChange) {
+        if (isDefined(title) && isDefined(onChange)) {
             onChange(title);
         }
     }, [title, onChange]);
