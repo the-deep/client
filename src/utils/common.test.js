@@ -33,6 +33,7 @@ test('trim file extension', () => {
     expect(trimFileExtension('test_123_22.docx')).toEqual('test_123_22');
     expect(trimFileExtension('test_123_22.geo.json')).toEqual('test_123_22');
     expect(trimFileExtension('abc def')).toEqual('abc def');
+    expect(trimFileExtension('abcdef.geojson')).toEqual('abcdef.geojson');
 });
 
 test('format title for file', () => {
@@ -65,6 +66,10 @@ test('capitalize only first letter', () => {
         .toEqual('Un response democratic');
     expect(capitalizeOnlyFirstLetter('un RESPONSE democratic'))
         .toEqual('Un response democratic');
+    expect(capitalizeOnlyFirstLetter('[response] democratic'))
+        .toEqual('[Response] democratic');
+    expect(capitalizeOnlyFirstLetter('12 people Missing'))
+        .toEqual('12 People missing');
 });
 
 const oldArray = [

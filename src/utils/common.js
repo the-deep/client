@@ -179,7 +179,7 @@ export function isUrlValid(url) {
 }
 
 export function trimFileExtension(title) {
-    // Note: Removes extensions if . is followed by 1-5 lettered words
+    // Note: Removes string if . is followed by 1-5 lettered words
     return title.replace(/(\.\w{1,5})+$/, '');
 }
 
@@ -193,7 +193,7 @@ export function formatTitle(filename) {
     title = title.replace(/[-_]{2,}/g, ' - ')
         // Note: Replaces all _ with space
         .replace(/_+/g, ' ')
-        // Note: Keep - between two nubmer
+        // Note: Replace all '-' except between two numbers
         .replace(/([^0-9\s])-([^\s])/g, (_, a, b) => `${a} ${b}`)
         .replace(/([^\s])-([^0-9\s])/g, (_, a, b) => `${a} ${b}`);
 
@@ -205,7 +205,7 @@ export function getTitleFromUrl(url) {
         return undefined;
     }
     const decodedUrl = decodeURI(url);
-    // Note: Gets last string after '/'
+    // Note: Gets string after last '/' and before '?" if '?' exists
     const match = decodedUrl.match(/\/([^/?]+)(?:\?.*)?$/);
     if (isNotDefined(match)) {
         return undefined;
@@ -214,10 +214,12 @@ export function getTitleFromUrl(url) {
     return formatTitle(match[1]);
 }
 
+// Note: Replaces the first a-z character to uppercase and rest to lowercase
 export function capitalizeOnlyFirstLetter(string) {
     if (isFalsyString(string)) {
         return string;
     }
-    // Note: Replaces the first a-z character to uppercase and rest to lowercase
-    return string.toLowerCase().replace(/([a-zA-Z])/, val => val.toUpperCase());
+    return string
+        .toLowerCase()
+        .replace(/[a-z]/, val => val.toUpperCase());
 }
