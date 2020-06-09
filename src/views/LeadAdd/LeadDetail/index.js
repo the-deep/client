@@ -30,6 +30,10 @@ import {
     RequestCoordinator,
     methods,
 } from '#request';
+import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
 
 import Cloak from '#components/general/Cloak';
 import ExtraFunctionsOnHover from '#components/general/ExtraFunctionOnHover';
@@ -222,6 +226,8 @@ const requestOptions = {
                 });
             }
         },
+        onFailure: notifyOnFailure(_ts('addLeads', 'extractLead')),
+        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
         extras: {
             type: 'serverless',
             // schemaName: 'webInfo',
@@ -260,6 +266,7 @@ const requestOptions = {
                 url: params.url,
             });
         },
+        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
     },
 
     leadOptionsRequest: {
