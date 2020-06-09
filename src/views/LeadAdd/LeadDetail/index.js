@@ -2,22 +2,20 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
     _cs,
-    formatDateToString,
     isDefined,
     isFalsyString,
     isTruthy,
-    listToMap,
     unique,
 } from '@togglecorp/fujs';
 import Faram, {
     FaramInputElement,
     accumulateDifferentialErrors,
-    requiredCondition,
-    urlCondition,
 } from '@togglecorp/faram';
+import titleCase from 'title';
 import produce from 'immer';
 
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 import Modalize from '#rscg/Modalize';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -32,14 +30,26 @@ import {
     RequestCoordinator,
     methods,
 } from '#request';
+import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
 
 import Cloak from '#components/general/Cloak';
+import ExtraFunctionsOnHover from '#components/general/ExtraFunctionOnHover';
+import BadgeInput from '#components/input/BadgeInput';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
 import Message from '#rscv/Message';
 
 import _ts from '#ts';
+import {
+    isUrlValid,
+    getTitleFromUrl,
+    capitalizeOnlyFirstLetter,
+    trimFileExtension,
+} from '#utils/common';
 
 import {
     ATTACHMENT_TYPES,
@@ -188,10 +198,6 @@ function fillWebInfo(values, webInfo) {
     return newValues;
 }
 
-function isUrlValid(url) {
-    return (requiredCondition(url).ok && urlCondition(url).ok);
-}
-
 function mergeLists(foo, bar) {
     return unique(
         [
@@ -204,15 +210,63 @@ function mergeLists(foo, bar) {
 
 const requestOptions = {
     webInfoRequest: {
-        url: '/v2/web-info-extract/',
-        body: ({ params: { url } }) => ({ url }),
+        url: '/web-info-extract/',
+        query: ({ params: { url } }) => ({ url }),
+        method: methods.GET,
+        onSuccess: ({ params, props: { requests }, response }) => {
+            if (requests.webInfoDataRequest) {
+                requests.webInfoDataRequest.do({
+                    url: params.url,
+                    title: response.title,
+                    date: response.date,
+                    website: response.website,
+                    country: response.country,
+                    source: response.source,
+                    author: response.author,
+                });
+            }
+        },
+        onFailure: notifyOnFailure(_ts('addLeads', 'extractLead')),
+        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
+        extras: {
+            type: 'serverless',
+            // schemaName: 'webInfo',
+        },
+    },
+
+    webInfoDataRequest: {
+        url: '/v2/web-info-data/',
+        body: ({ params: {
+            source,
+            author,
+            country,
+            url,
+        } }) => ({
+            sourceRaw: source,
+            authorRaw: author,
+            country,
+            url,
+        }),
         method: methods.POST,
         onSuccess: ({ params, response }) => {
-            params.handleWebInfoFill(response);
+            params.handleWebInfoFill({
+                date: params.date,
+                website: params.website,
+                title: params.title,
+                url: params.url,
+                ...response,
+            });
         },
-        // extras: {
-        //     schemaName: 'webInfo',
-        // },
+        onFailure: ({ params }) => {
+            // NOTE: Even on failure fill data from webInfoExtract
+            params.handleWebInfoFill({
+                date: params.date,
+                website: params.website,
+                title: params.title,
+                url: params.url,
+            });
+        },
+        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
     },
 
     leadOptionsRequest: {
@@ -284,23 +338,29 @@ class LeadDetail extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const {
+            requests: {
+                leadOptionsRequest,
+                webInfoDataRequest,
+            },
+            lead,
+        } = this.props;
+        const currentFaramValues = leadFaramValuesSelector(lead);
+
         this.state = {
             showAddLeadGroupModal: false,
+            // NOTE: If false, it will capitalize the first letter of first word only
+            formatTitleAsTitleCase: true,
+            suggestedTitleFromUrl: getTitleFromUrl(currentFaramValues.url),
+            suggestedTitleFromExtraction: undefined,
 
             searchedOrganizations: [],
             // Organizations filled by web-info-extract and lead-options
             organizations: [],
         };
 
-        const {
-            requests: {
-                leadOptionsRequest,
-            },
-        } = this.props;
-
-        leadOptionsRequest.setDefaultParams({
-            handleExtraInfoFill: this.handleExtraInfoFill,
-        });
+        leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
+        webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
     }
 
     setSearchedOrganizations = (searchedOrganizations) => {
@@ -336,14 +396,9 @@ class LeadDetail extends React.PureComponent {
         const { url } = values;
 
         const {
-            requests: {
-                webInfoRequest,
-            },
+            requests: { webInfoRequest },
         } = this.props;
-        webInfoRequest.do({
-            url,
-            handleWebInfoFill: this.handleWebInfoFill,
-        });
+        webInfoRequest.do({ url });
     }
 
     handleApplyAllClick = (attrName) => {
@@ -380,6 +435,10 @@ class LeadDetail extends React.PureComponent {
 
         // Clear lead-group if project has changed
         const oldFaramValues = leadFaramValuesSelector(lead);
+        if (oldFaramValues.url !== faramValues.url) {
+            this.setState({ suggestedTitleFromUrl: getTitleFromUrl(faramValues.url) });
+        }
+
         if (
             !faramValues.project
             || (oldFaramValues.project && oldFaramValues.project !== faramValues.project)
@@ -426,11 +485,6 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleExtraInfoFill = (leadOptions) => {
-        const {
-            lead,
-            activeUserId,
-        } = this.props;
-
         const { organizations } = leadOptions;
 
         if (organizations.length > 0) {
@@ -463,6 +517,8 @@ class LeadDetail extends React.PureComponent {
                 organizations: mergeLists(state.organizations, newOrgs),
             }));
         }
+
+        this.setState({ suggestedTitleFromExtraction: webInfo.title });
 
         const values = leadFaramValuesSelector(lead);
         const newValues = fillWebInfo(values, webInfo);
@@ -497,6 +553,29 @@ class LeadDetail extends React.PureComponent {
             ...values,
             author: organization.id,
         };
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleAutoFormatTitleButton = () => {
+        const { lead } = this.props;
+        const { formatTitleAsTitleCase } = this.state;
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = produce(values, (safeValues) => {
+            const { title } = values;
+
+            if (isFalsyString(title)) {
+                return;
+            }
+
+            // eslint-disable-next-line no-param-reassign
+            safeValues.title = formatTitleAsTitleCase
+                ? titleCase(title) : capitalizeOnlyFirstLetter(title);
+            // eslint-disable-next-line no-param-reassign
+            safeValues.title = trimFileExtension(safeValues.title);
+        });
+
+        this.setState({ formatTitleAsTitleCase: !formatTitleAsTitleCase });
         this.handleLeadValueChange(newValues);
     }
 
@@ -564,8 +643,9 @@ class LeadDetail extends React.PureComponent {
             bulkActionDisabled,
 
             requests: {
-                webInfoRequest: {
-                    pending: webInfoRequestPending,
+                webInfoRequest: { pending: webInfoRequestPending },
+                webInfoDataRequest: {
+                    pending: webInfoDataRequestPending,
                     response: {
                         sourceRaw,
                         source,
@@ -586,6 +666,8 @@ class LeadDetail extends React.PureComponent {
             showAddLeadGroupModal,
             searchedOrganizations,
             organizations,
+            suggestedTitleFromUrl,
+            suggestedTitleFromExtraction,
         } = this.state;
 
         const values = leadFaramValuesSelector(lead);
@@ -596,6 +678,7 @@ class LeadDetail extends React.PureComponent {
         const {
             project: projectId,
             url,
+            title,
 
             sourceRaw: oldSourceTitle,
             authorRaw: oldAuthorTitle,
@@ -615,6 +698,7 @@ class LeadDetail extends React.PureComponent {
             isLeadFormLoading(leadState)
             || leadOptionsPending
             || webInfoRequestPending
+            || webInfoDataRequestPending
         );
         const formDisabled = (
             isLeadFormDisabled(leadState)
@@ -624,6 +708,7 @@ class LeadDetail extends React.PureComponent {
             isLeadFormDisabled(leadState)
             || !isUrlValid(url)
             || webInfoRequestPending
+            || webInfoDataRequestPending
         );
         const projectIsSelected = isTruthy(projectId);
 
@@ -675,13 +760,20 @@ class LeadDetail extends React.PureComponent {
                                     autoFocus
                                 />
                             </ExtractThis>
-                            <TextInput
-                                faramElementName="website"
-                                key="website"
-                                label={_ts('addLeads', 'websiteLabel')}
-                                placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                            <ApplyAll
                                 className={styles.website}
-                            />
+                                disabled={isApplyAllDisabled}
+                                identifierName="website"
+                                onApplyAllClick={this.handleApplyAllClick}
+                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                            >
+                                <TextInput
+                                    faramElementName="website"
+                                    key="website"
+                                    label={_ts('addLeads', 'websiteLabel')}
+                                    placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                                />
+                            </ApplyAll>
                         </React.Fragment>
                     ) }
                     { type === LEAD_TYPE.text && (
@@ -746,12 +838,53 @@ class LeadDetail extends React.PureComponent {
                             projectId={projectId}
                         />
                     ) }
-                    <TextInput
+                    <ExtraFunctionsOnHover
                         className={styles.title}
-                        faramElementName="title"
-                        label={_ts('addLeads', 'titleLabel')}
-                        placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
-                    />
+                        buttons={
+                            <AccentButton
+                                className={styles.smallButton}
+                                title={_ts('addLeads', 'formatButtonTitle')}
+                                onClick={this.handleAutoFormatTitleButton}
+                            >
+                                {_ts('addLeads', 'autoFormatTitleLabel')}
+                            </AccentButton>
+                        }
+                    >
+                        <TextInput
+                            faramElementName="title"
+                            label={_ts('addLeads', 'titleLabel')}
+                            placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
+                        />
+                        {(
+                            (
+                                suggestedTitleFromUrl
+                                && (title !== suggestedTitleFromUrl)
+                            ) || (
+                                suggestedTitleFromExtraction
+                                && (title !== suggestedTitleFromExtraction)
+                            )
+                        ) && (
+                            <h5 className={styles.suggestionLabel}>
+                                {_ts('addLeads', 'suggestionsLabel')}
+                            </h5>
+                        )}
+                        <div className={styles.suggestions}>
+                            {(title !== suggestedTitleFromUrl) && (
+                                <BadgeInput
+                                    className={styles.suggestionBadge}
+                                    faramElementName="title"
+                                    title={suggestedTitleFromUrl}
+                                />
+                            )}
+                            {(title !== suggestedTitleFromExtraction) && (
+                                <BadgeInput
+                                    className={styles.suggestionBadge}
+                                    faramElementName="title"
+                                    title={suggestedTitleFromExtraction}
+                                />
+                            )}
+                        </div>
+                    </ExtraFunctionsOnHover>
 
                     <ApplyAll
                         className={styles.source}
@@ -777,7 +910,6 @@ class LeadDetail extends React.PureComponent {
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                         />
                         <ModalButton
-                            className={styles.largeButton}
                             title={_ts('addLeads', 'addPublisherTitle')}
                             iconName="addPerson"
                             transparent
@@ -826,7 +958,6 @@ class LeadDetail extends React.PureComponent {
                             placeholder={_ts('addLeads', 'authorPlaceholder')}
                         />
                         <ModalButton
-                            className={styles.largeButton}
                             title={_ts('addLeads', 'addAuthorTitle')}
                             iconName="addPerson"
                             transparent

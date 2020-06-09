@@ -6,9 +6,17 @@
     .add-lead-form {
         display: flex;
         position: relative;
+        align-items: flex-start;
         flex-wrap: wrap;
         justify-content: space-between;
         padding: 0 var(--spacing-large);
+
+        .small-button {
+            margin-right: var(--spacing-extra-small);
+            padding: var(--spacing-extra-small);
+            text-transform: capitalize;
+            font-size: var(--font-size-extra-small);
+        }
 
         .header {
             display: flex;
@@ -25,6 +33,28 @@
             padding: var(--spacing-medium) 0;
         }
 
+        .suggestion-label {
+            color: var(--color-text-label);
+            font-size: var(--font-size-small);
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+
+            .suggestion-badge {
+                display: block;
+                flex-basis: calc(50% - var(--spacing-extra-small));
+                margin-right: var(--spacing-extra-small);
+                overflow: hidden;
+                text-align: left;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+
         .source,
         .author {
             display: flex;
@@ -33,11 +63,6 @@
             .input {
                 flex-grow: 1;
             }
-        }
-
-        .small-button {
-            margin-right: var(--spacing-extra-small);
-            padding: var(--spacing-extra-small);
         }
 
         .confidentiality,

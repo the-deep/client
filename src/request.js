@@ -7,7 +7,10 @@ import {
 } from '@togglecorp/react-rest-request';
 
 import { sanitizeResponse } from '#utils/common';
-import { wsEndpoint } from '#config/rest';
+import {
+    wsEndpoint,
+    serverlessEndpoint,
+} from '#config/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
@@ -97,7 +100,15 @@ const coordinatorOptions = {
         return otherProps;
     },
 
-    transformUrl: (url) => {
+    transformUrl: (url, request) => {
+        const {
+            extras = {},
+        } = request;
+
+        if (extras.type === 'serverless') {
+            return `${serverlessEndpoint}${url}`;
+        }
+
         if (/^https?:\/\//i.test(url)) {
             return url;
         }

@@ -1,9 +1,15 @@
 import {
     padStart,
     isDefined,
+    isNotDefined,
     isObject,
     isList,
+    isFalsyString,
 } from '@togglecorp/fujs';
+import {
+    requiredCondition,
+    urlCondition,
+} from '@togglecorp/faram';
 
 export const mapObjectToObject = (obj, fn) => {
     const newObj = {};
@@ -167,3 +173,53 @@ export const getArrayMoveDetails = (oldArray = [], newArray = [], keySelector = 
         top,
     });
 };
+
+export function isUrlValid(url) {
+    return (requiredCondition(url).ok && urlCondition(url).ok);
+}
+
+export function trimFileExtension(title) {
+    // Note: Removes string if . is followed by 1-5 lettered words
+    return title.replace(/(\.\w{1,5})+$/, '');
+}
+
+export function formatTitle(filename) {
+    if (isFalsyString(filename)) {
+        return undefined;
+    }
+
+    let title = trimFileExtension(filename);
+    // Note: Replaces multiple consecutive - & _ with single -
+    title = title.replace(/[-_]{2,}/g, ' - ')
+        // Note: Replaces all _ with space
+        .replace(/_+/g, ' ')
+        // Note: Replace all '-' except between two numbers
+        .replace(/([^0-9\s])-([^\s])/g, (_, a, b) => `${a} ${b}`)
+        .replace(/([^\s])-([^0-9\s])/g, (_, a, b) => `${a} ${b}`);
+
+    return title;
+}
+
+export function getTitleFromUrl(url) {
+    if (!isUrlValid(url)) {
+        return undefined;
+    }
+    const decodedUrl = decodeURI(url);
+    // Note: Gets string after last '/' and before '?" if '?' exists
+    const match = decodedUrl.match(/\/([^/?]+)(?:\?.*)?$/);
+    if (isNotDefined(match)) {
+        return undefined;
+    }
+
+    return formatTitle(match[1]);
+}
+
+// Note: Replaces the first a-z character to uppercase and rest to lowercase
+export function capitalizeOnlyFirstLetter(string) {
+    if (isFalsyString(string)) {
+        return string;
+    }
+    return string
+        .toLowerCase()
+        .replace(/[a-z]/, val => val.toUpperCase());
+}

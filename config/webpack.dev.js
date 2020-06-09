@@ -79,6 +79,7 @@ module.exports = (env) => {
                             loader: 'eslint-loader',
                             options: {
                                 configFile: eslintFile,
+                                cache: true,
                             },
                         },
                     ],
