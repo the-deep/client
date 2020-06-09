@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 import {
     _cs,
     isDefined,
@@ -273,10 +274,15 @@ export default class Comment extends React.PureComponent {
         const {
             onCurrentEditChange,
             setGlobalPristine,
+            text,
+            assigneeDetail,
         } = this.props;
 
         this.setState({
-            faramValues: {},
+            faramValues: {
+                text,
+                assignee: assigneeDetail.id,
+            },
             faramErrors: {},
             pristine: true,
         });
@@ -364,9 +370,10 @@ export default class Comment extends React.PureComponent {
                     />
                 ) : (
                     <React.Fragment>
-                        <div className={styles.commentText}>
-                            {text}
-                        </div>
+                        <ReactMarkdown
+                            className={styles.commentText}
+                            source={text}
+                        />
                         {(isParent && assigneeName) && (
                             <div className={styles.assignee}>
                                 {_ts('entryComments', 'assignedTo', { name: assigneeName })}

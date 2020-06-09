@@ -31,7 +31,7 @@ const styleProperties = {
         entryCommentMaxHeightCommentHistory: '60vh',
         entryCommentDropdownWidth: '96px',
         entryCommentModalMaxHeight: '80vh',
-        entryCommentModalWidth: '360px',
+        entryCommentModalWidth: '480px',
 
         entryGroupModalMaxHeight: '60vh',
         entryGroupModalMaxWidth: '60vw',
