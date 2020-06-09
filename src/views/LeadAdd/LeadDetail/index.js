@@ -221,8 +221,8 @@ const requestOptions = {
                     date: response.date,
                     website: response.website,
                     country: response.country,
-                    source: response.source,
-                    author: response.author,
+                    source: response.sourceRaw,
+                    author: response.authorRaw,
                 });
             }
         },
