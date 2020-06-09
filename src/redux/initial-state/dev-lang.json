@@ -1119,7 +1119,8 @@
         "-88031153": "Dsc",
         "-50025578": "format",
         "-24896884": "Remove extension",
-        "-9263627": "Extension"
+        "-9263627": "Extension",
+        "-75552913": "Suggestions:"
     },
     "links": {
         "browserExtension": {
@@ -1851,7 +1852,8 @@
             "autoFormatTitleLabel": -50025578,
             "formatButtonTitle": -50025578,
             "removeExtensionLabel": -9263627,
-            "removeExtensionTitle": -24896884
+            "removeExtensionTitle": -24896884,
+            "suggestionsLabel": -75552913
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { formatDateToString } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import modalize from '#rscg/Modalize';
@@ -18,6 +17,8 @@ import {
 
 import notify from '#notify';
 import _ts from '#ts';
+
+import { formatTitle } from '#utils/common';
 
 import {
     LEAD_TYPE,
@@ -136,7 +137,7 @@ export default class LeadButtons extends React.PureComponent {
         const leads = files.map((file) => {
             const lead = {
                 faramValues: {
-                    title: file.name,
+                    title: formatTitle(file.name),
                     sourceType: LEAD_TYPE.file,
                 },
                 file,

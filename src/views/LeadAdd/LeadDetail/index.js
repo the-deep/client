@@ -855,6 +855,19 @@ class LeadDetail extends React.PureComponent {
                             label={_ts('addLeads', 'titleLabel')}
                             placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
                         />
+                        {(
+                            (
+                                suggestedTitleFromUrl
+                                && (title !== suggestedTitleFromUrl)
+                            ) || (
+                                suggestedTitleFromExtraction
+                                && (title !== suggestedTitleFromExtraction)
+                            )
+                        ) && (
+                            <h5 className={styles.suggestionLabel}>
+                                {_ts('addLeads', 'suggestionsLabel')}
+                            </h5>
+                        )}
                         <div className={styles.suggestions}>
                             {(title !== suggestedTitleFromUrl) && (
                                 <BadgeInput

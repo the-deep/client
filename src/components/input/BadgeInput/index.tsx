@@ -33,9 +33,12 @@ function BadgeInput(props: Props) {
         return null;
     }
 
+    const tooltip = `Click to apply: ${title}`;
+
     return (
         <Button
             className={_cs(className, styles.badgeInput)}
+            title={tooltip}
             onClick={handleButtonClick}
         >
             {title}

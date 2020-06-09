@@ -7,6 +7,7 @@ import {
     getTitleFromUrl,
     isUrlValid,
     capitalizeOnlyFirstLetter,
+    formatTitle,
 } from './common';
 
 test('convert camelcase to normal', () => {
@@ -34,6 +35,15 @@ test('trim file extension', () => {
     expect(trimFileExtension('abc def')).toEqual('abc def');
 });
 
+test('format title for file', () => {
+    expect(formatTitle('test_123_22.pdf')).toEqual('test 123 22');
+    expect(formatTitle('test-123_22.docx')).toEqual('test 123 22');
+    expect(formatTitle('test_123-22.geo.json')).toEqual('test 123-22');
+    expect(formatTitle('abc def')).toEqual('abc def');
+    expect(formatTitle('[Patrick-Meier]-2012-10-12-Digital_2012-10-12_humanitarians-_-how-big-da(z-lib.org).pdf'))
+        .toEqual('[Patrick Meier] 2012-10-12 Digital 2012-10-12 humanitarians - how big da(z lib.org)');
+});
+
 test('is url valid', () => {
     expect(isUrlValid('https://reliefweb.int/report/democratic-republic-congo/un-emergency-funding-released-support-ebola-response-democratic'))
         .toEqual(true);
@@ -45,7 +55,7 @@ test('get title from url', () => {
     expect(getTitleFromUrl('https://reliefweb.int/report/democratic-republic-congo/un-emergency-funding-released-support-ebola-response-democratic'))
         .toEqual('un emergency funding released support ebola response democratic');
     expect(getTitleFromUrl('https://reliefweb.int/sites/reliefweb.int/files/resources/DTM_Update-TarhunaSirt_2020-06-07.pdf'))
-        .toEqual('DTM Update TarhunaSirt 2020 06 07');
+        .toEqual('DTM Update TarhunaSirt 2020-06-07');
     expect(getTitleFromUrl('/sites/reliefweb.int/files/resources/DTM_Update-TarhunaSirt_2020-06-07.pdf'))
         .toEqual(undefined);
 });

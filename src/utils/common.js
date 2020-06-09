@@ -179,29 +179,45 @@ export function isUrlValid(url) {
 }
 
 export function trimFileExtension(title) {
+    // Note: Removes extensions if . is followed by 1-5 lettered words
     return title.replace(/(\.\w{1,5})+$/, '');
+}
+
+export function formatTitle(filename) {
+    if (isFalsyString(filename)) {
+        return undefined;
+    }
+
+    let title = trimFileExtension(filename);
+    // Note: Replaces multiple consecutive - & _ with single -
+    title = title.replace(/[-_]{2,}/g, ' - ')
+        // Note: Replaces all _ with space
+        .replace(/_+/g, ' ')
+        // Note: Keep - between two nubmer
+        .replace(/([^0-9\s])-([^\s])/g, (_, a, b) => `${a} ${b}`)
+        .replace(/([^\s])-([^0-9\s])/g, (_, a, b) => `${a} ${b}`);
+
+    return title;
 }
 
 export function getTitleFromUrl(url) {
     if (!isUrlValid(url)) {
         return undefined;
     }
-    const match = url.match(/\/([^/?]+)(?:\?.*)?$/);
+    const decodedUrl = decodeURI(url);
+    // Note: Gets last string after '/'
+    const match = decodedUrl.match(/\/([^/?]+)(?:\?.*)?$/);
     if (isNotDefined(match)) {
         return undefined;
     }
 
-    let title = match[1];
-    title = trimFileExtension(title);
-    title = title.replace(/_|-/g, ' ');
-
-    return title;
+    return formatTitle(match[1]);
 }
 
 export function capitalizeOnlyFirstLetter(string) {
     if (isFalsyString(string)) {
         return string;
     }
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    // Note: Replaces the first a-z character to uppercase and rest to lowercase
+    return string.toLowerCase().replace(/([a-zA-Z])/, val => val.toUpperCase());
 }
-
