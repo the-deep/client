@@ -62,5 +62,3 @@ ApplyAll.defaultProps = {
 };
 
 export default ApplyAll;
-
-export { default as ExtractThis } from './ExtractThis';

@@ -64,7 +64,7 @@ import {
 } from '../utils';
 
 import AddLeadGroup from './AddLeadGroup';
-import ApplyAll, { ExtractThis } from './ApplyAll';
+import ApplyAll from './ApplyAll';
 import EmmStats from './EmmStats';
 
 import schema from './faramSchema';
@@ -728,6 +728,10 @@ class LeadDetail extends React.PureComponent {
             authorHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedAuthorTitle });
         }
 
+        const suggestions = unique([suggestedTitleFromUrl, suggestedTitleFromExtraction])
+            .filter(isDefined)
+            .filter(suggestion => suggestion !== title);
+
         return (
             <div
                 // TODO: STYLING the faram doesn't take full height and loading-animation is offset
@@ -747,11 +751,19 @@ class LeadDetail extends React.PureComponent {
                     </header>
                     { type === LEAD_TYPE.website && (
                         <React.Fragment>
-                            <ExtractThis
-                                key="url"
+                            <ExtraFunctionsOnHover
                                 className={styles.url}
-                                disabled={formDisabled || extractionDisabled}
-                                onClick={this.handleExtractClick}
+                                buttons={(
+                                    <AccentButton
+                                        transparent
+                                        className={styles.extractButton}
+                                        title={_ts('addLeads', 'extractLead')}
+                                        disabled={formDisabled || extractionDisabled}
+                                        onClick={this.handleExtractClick}
+                                        tabIndex="-1"
+                                        iconName="eye"
+                                    />
+                                )}
                             >
                                 <TextInput
                                     faramElementName="url"
@@ -759,7 +771,7 @@ class LeadDetail extends React.PureComponent {
                                     placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                                     autoFocus
                                 />
-                            </ExtractThis>
+                            </ExtraFunctionsOnHover>
                             <ApplyAll
                                 className={styles.website}
                                 disabled={isApplyAllDisabled}
@@ -846,7 +858,8 @@ class LeadDetail extends React.PureComponent {
                                 title={_ts('addLeads', 'formatButtonTitle')}
                                 onClick={this.handleAutoFormatTitleButton}
                             >
-                                {_ts('addLeads', 'autoFormatTitleLabel')}
+                                {/* Treat this as icon */}
+                                Aa
                             </AccentButton>
                         }
                     >
@@ -855,35 +868,23 @@ class LeadDetail extends React.PureComponent {
                             label={_ts('addLeads', 'titleLabel')}
                             placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
                         />
-                        {(
-                            (
-                                suggestedTitleFromUrl
-                                && (title !== suggestedTitleFromUrl)
-                            ) || (
-                                suggestedTitleFromExtraction
-                                && (title !== suggestedTitleFromExtraction)
-                            )
-                        ) && (
-                            <h5 className={styles.suggestionLabel}>
-                                {_ts('addLeads', 'suggestionsLabel')}
-                            </h5>
+                        {suggestions.length > 0 && (
+                            <>
+                                <h5 className={styles.suggestionLabel}>
+                                    {_ts('addLeads', 'suggestionsLabel')}
+                                </h5>
+                                <div className={styles.suggestions}>
+                                    {suggestions.map(suggestion => (
+                                        <BadgeInput
+                                            key={suggestion}
+                                            className={styles.suggestionBadge}
+                                            faramElementName="title"
+                                            title={suggestion}
+                                        />
+                                    ))}
+                                </div>
+                            </>
                         )}
-                        <div className={styles.suggestions}>
-                            {(title !== suggestedTitleFromUrl) && (
-                                <BadgeInput
-                                    className={styles.suggestionBadge}
-                                    faramElementName="title"
-                                    title={suggestedTitleFromUrl}
-                                />
-                            )}
-                            {(title !== suggestedTitleFromExtraction) && (
-                                <BadgeInput
-                                    className={styles.suggestionBadge}
-                                    faramElementName="title"
-                                    title={suggestedTitleFromExtraction}
-                                />
-                            )}
-                        </div>
                     </ExtraFunctionsOnHover>
 
                     <ApplyAll
