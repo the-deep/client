@@ -11,6 +11,7 @@ import memoize from 'memoize-one';
 import Icon from '#rscg/Icon';
 import Modal from '#rscv/Modal';
 import modalize from '#rscg/Modalize';
+import Confirm from '#rscv/Modal/Confirm';
 import AccentButton from '#rsca/Button/AccentButton';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -143,6 +144,7 @@ export default class LeftPane extends React.PureComponent {
         this.state = {
             images: [],
             currentTab: undefined,
+            showAssistedTabMessage: false,
 
             showGraphs: false,
         };
@@ -186,8 +188,8 @@ export default class LeftPane extends React.PureComponent {
                 tabs = {
                     ...tabs,
                     'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
                     'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
                 };
                 break;
             case LEAD_PANE_TYPE.word:
@@ -197,9 +199,9 @@ export default class LeftPane extends React.PureComponent {
                 tabs = {
                     ...tabs,
                     'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
                     'original-preview': _ts('editEntry.overview.leftpane', 'originalTabLabel'),
                     'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
                 };
                 break;
             default:
@@ -403,7 +405,15 @@ export default class LeftPane extends React.PureComponent {
     }
 
     handleTabClick = (key) => {
-        this.setState({ currentTab: key });
+        if (key === 'assisted-tagging') {
+            this.setState({ showAssistedTabMessage: true });
+        } else {
+            this.setState({ currentTab: key });
+        }
+    }
+
+    handleAssistedTabMessageClose = () => {
+        this.setState({ showAssistedTabMessage: false });
     }
 
     renderTabularModal = ({ closeModal }) => {
@@ -444,6 +454,7 @@ export default class LeftPane extends React.PureComponent {
             images,
             currentTab,
             showGraphs,
+            showAssistedTabMessage,
         } = this.state;
 
         const tabs = this.getTabs(lead, images, entryPermissions, isPrivate, categoryEditor);
@@ -498,6 +509,33 @@ export default class LeftPane extends React.PureComponent {
                     active={tabKey}
                     views={this.views}
                 />
+                <Confirm
+                    title={_ts('editEntry.overview.leftpane', 'assistedTabDisabledPopupTitle')}
+                    show={showAssistedTabMessage}
+                    hideCancel
+                    onClose={this.handleAssistedTabMessageClose}
+                    closeOnEscape
+                    closeOnOutsideClick
+                >
+                    {
+                        _ts(
+                            'editEntry.overview.leftpane',
+                            'assistedTabDisabledPopupMessage',
+                            {
+                                email: (
+                                    <a
+                                        href="mailto:admin@thedeep.io"
+                                        className={styles.externalLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        admin@thedeep.io
+                                    </a>
+                                ),
+                            },
+                        )
+                    }
+                </Confirm>
             </div>
         );
     }
