@@ -9,6 +9,7 @@ const styleProperties = {
         colorNavbarMenuItemHover: defaultColors.colorAccent,
         colorBackgroundPrimaryHint: '#ecf3fa',
         colorHighlight: '#ffff8d',
+        colorLink: '#187bcd',
         colorTextSuccess: '#43a047',
         colorTextOnHightlight: defaultColors.colorTextOnLight,
         colorShadowLight: 'rgba(0, 0, 0, .1)',
