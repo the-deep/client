@@ -1118,7 +1118,12 @@
         "-82896655": "Asc",
         "-88031153": "Dsc",
         "-50025578": "format",
-        "-75552913": "Suggestions:"
+        "-75552913": "Suggestions:",
+        "-24896884": "Remove extension",
+        "-9263627": "Extension",
+        "-75552913": "Suggestions:",
+        "-20820968": "Assisted tagging features are currently disabled as we are performing infrastructure upgrades. If you have any questions please contact {email}.",
+        "-46976486": "Currently unavailable"
     },
     "links": {
         "browserExtension": {
@@ -2551,7 +2556,9 @@
             "tabularTabLabel": 142,
             "quantitativeTabLabel": 142,
             "imagesTabLabel": 519,
-            "entriesTabLabel": 15
+            "entriesTabLabel": 15,
+            "assistedTabDisabledPopupMessage": -20820968,
+            "assistedTabDisabledPopupTitle": -46976486
         },
         "editEntry.overview.leftpane.entryList": {
             "altLabel": 512,
