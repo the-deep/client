@@ -1112,7 +1112,20 @@
         "-88114396": "Questionnaire Status",
         "-25976066": "Framework Questions",
         "-37971354": "XLSForm Import",
-        "-46134674": "There are no connectors associated with this project. Click below to add some!"
+        "-46134674": "There are no connectors associated with this project. Click below to add some!",
+        "-89304144": "Lock polygons",
+        "-71038298": "Overlaps",
+        "-32034327": "Alphabetical",
+        "-48567189": "Ordered by",
+        "-82896655": "Asc",
+        "-88031153": "Dsc",
+        "-50025578": "format",
+        "-75552913": "Suggestions:",
+        "-24896884": "Remove extension",
+        "-9263627": "Extension",
+        "-75552913": "Suggestions:",
+        "-20820968": "Assisted tagging features are currently disabled as we are performing infrastructure upgrades. If you have any questions please contact {email}.",
+        "-46976486": "Currently unavailable"
     },
     "links": {
         "browserExtension": {
@@ -2541,7 +2554,9 @@
             "tabularTabLabel": 142,
             "quantitativeTabLabel": 142,
             "imagesTabLabel": 519,
-            "entriesTabLabel": 15
+            "entriesTabLabel": 15,
+            "assistedTabDisabledPopupMessage": -20820968,
+            "assistedTabDisabledPopupTitle": -46976486
         },
         "editEntry.overview.leftpane.entryList": {
             "altLabel": 512,
