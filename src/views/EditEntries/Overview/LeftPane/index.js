@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import { isDefined } from '@togglecorp/fujs';
 
 import {
     editEntriesLeadSelector,
@@ -84,10 +85,25 @@ export default class LeftPane extends React.PureComponent {
         },
     })
 
-    getTabs = memoize(tabs => ({
-        ...tabs,
-        'entries-listing': _ts('editEntry.overview.leftpane', 'entriesTabLabel'),
-    }))
+    getTabs = memoize((tabs) => {
+        let newTabs = ({
+            ...tabs,
+            'entries-listing': _ts('editEntry.overview.leftpane', 'entriesTabLabel'),
+        });
+        if (isDefined(newTabs['assisted-tagging'])) {
+            const {
+                'assisted-tagging': assistedTagging,
+                ...otherTabs
+            } = newTabs;
+
+            newTabs = ({
+                ...otherTabs,
+                'assisted-tagging': assistedTagging,
+            });
+        }
+
+        return newTabs;
+    });
 
     render() {
         const {
