@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { _cs } from '@togglecorp/fujs';
 
 import { projectIdFromRoute } from '#redux';
 import Message from '#rscv/Message';
@@ -90,13 +91,8 @@ export default class Users extends React.PureComponent {
             searchItems,
         } = this.state;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.users}
-        `;
-
         return (
-            <div className={className}>
+            <div className={_cs(styles.users, classNameFromProps)}>
                 <SearchList
                     onSearchInputChange={this.handleSearchInputChange}
                     onItemRemove={this.handleSearchItemRemove}

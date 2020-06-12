@@ -1121,9 +1121,9 @@
         "-75552913": "Suggestions:",
         "-24896884": "Remove extension",
         "-9263627": "Extension",
-        "-75552913": "Suggestions:",
         "-20820968": "Assisted tagging features are currently disabled as we are performing infrastructure upgrades. If you have any questions please contact {email}.",
-        "-46976486": "Currently unavailable"
+        "-46976486": "Currently unavailable",
+        "-68525317": "Added by"
     },
     "links": {
         "browserExtension": {
@@ -2116,7 +2116,8 @@
             "searchUsergroupTitle": 338,
             "noResultsFound": -10595927,
             "meTitle": -24177081,
-            "organizationTitle": 154
+            "organizationTitle": 154,
+            "addedByTitle": -68525317
         },
         "project": {
             "projectGetFailure": 2500,
