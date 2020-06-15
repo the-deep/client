@@ -11,6 +11,7 @@
         flex-shrink: 0;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-background-header);
+        padding-bottom: var(--spacing-medium);
 
         .top {
             display: flex;
@@ -67,12 +68,35 @@
 
         .description {
             flex-basis: 100%;
-            padding: 0 var(--spacing-medium) var(--spacing-medium) var(--spacing-medium);
+            padding: 0 var(--spacing-medium);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             color: var(--color-text-label);
             font-size: var(--font-size-large);
+        }
+
+        .label-values-pair {
+            display: flex;
+            align-items: center;
+            flex-basis: 100%;
+            padding:  0 var(--spacing-medium);
+
+            .label {
+                flex-shrink: 0;
+                color: var(--color-text-label);
+            }
+
+            .values {
+                display: flex;
+                flex-grow: 1;
+                flex-wrap: wrap;
+                margin-left: var(--spacing-extra-small);
+            }
+
+            .badge {
+                margin: var(--spacing-extra-small);
+            }
         }
     }
 
