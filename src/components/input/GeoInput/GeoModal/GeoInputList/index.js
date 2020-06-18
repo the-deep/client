@@ -13,7 +13,6 @@ import DismissableListItem from '#rsca/DismissableListItem';
 import ListView from '#rscv/List/ListView';
 import Button from '#rsca/Button';
 import Icon from '#rscg/Icon';
-import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -153,31 +152,6 @@ const defaultProps = {
     sortHidden: false,
     readOnly: false,
 };
-
-const sortOrderOptions = [
-    {
-        key: 'asc',
-        label: _ts('components.geo.geoModal', 'ascendingLabel'),
-    },
-    {
-        key: 'dsc',
-        label: _ts('components.geo.geoModal', 'descendingLabel'),
-    },
-];
-
-const sortTypeOptions = [
-    {
-        key: 'alphabetical',
-        label: _ts('components.geo.geoModal', 'alphabeticalLabel'),
-    },
-    {
-        key: 'overlaps',
-        label: _ts('components.geo.geoModal', 'overlapsLabel'),
-    },
-];
-
-const sortTypeKeySelector = d => d.key;
-const sortTypeLabelSelector = d => d.label;
 
 const GeoInputList = (props) => {
     const {
@@ -374,17 +348,19 @@ const GeoInputList = (props) => {
             )}
             {!sortHidden && (
                 <div className={styles.sortInputs}>
-                    <Button
-                        className={_cs(
-                            styles.sortInput,
-                            sortType === 'alphabetical' && styles.active,
-                        )}
-                        iconName={sortType === 'alphabetical' ? sortButtonIcon : 'sort'}
-                        onClick={handleAlphaSortClick}
-                    >
-                        Az
-                    </Button>
-                    {polygonsEnabled && (
+                    {selections.length > 0 && (
+                        <Button
+                            className={_cs(
+                                styles.sortInput,
+                                sortType === 'alphabetical' && styles.active,
+                            )}
+                            iconName={sortType === 'alphabetical' ? sortButtonIcon : 'sort'}
+                            onClick={handleAlphaSortClick}
+                        >
+                            Az
+                        </Button>
+                    )}
+                    {(polygonsEnabled && polygons.length > 0) && (
                         <Button
                             className={_cs(
                                 styles.sortInput,

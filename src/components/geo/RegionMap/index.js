@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import memoize from 'memoize-one';
-import colors from 'colorbrewer';
 import { _cs, getRandomFromList } from '@togglecorp/fujs';
 
 import boundError from '#rscg/BoundError';
@@ -67,8 +66,17 @@ const polygonSourceOptions = {
     promoteId: 'code',
 };
 
-// Paired returns quantitative colors from colorbrewer
-const getRandomColor = () => getRandomFromList(colors.Paired[12]);
+const colorsForPolygons = [
+    '#a6cee3',
+    '#1f78b4',
+    '#fb9a99',
+    '#e31a1c',
+    '#fdbf6f',
+    '#ff7f00',
+    '#b15928',
+];
+
+const getRandomColor = () => getRandomFromList(colorsForPolygons);
 
 const fillLayerOptions = {
     type: 'fill',

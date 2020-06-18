@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import Faram, { requiredCondition } from '@togglecorp/faram';
-import colors from 'colorbrewer';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -24,6 +23,16 @@ const schema = {
         color: [],
     },
 };
+
+const colorsForPolygons = [
+    '#a6cee3',
+    '#1f78b4',
+    '#fb9a99',
+    '#e31a1c',
+    '#fdbf6f',
+    '#ff7f00',
+    '#b15928',
+];
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -121,7 +130,7 @@ export default class PolygonEditModal extends React.PureComponent {
                         <ColorInput
                             className={styles.colorInput}
                             faramElementName="color"
-                            colors={colors.Paired[12]}
+                            colors={colorsForPolygons}
                             label={_ts('components.geo.geoModal.polygonModal', 'colorInputLabel')}
                             type="githubPicker"
                         />
