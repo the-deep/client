@@ -11,7 +11,8 @@ import {
 import { DefaultIcon } from '#rscv/ListItem';
 import DismissableListItem from '#rsca/DismissableListItem';
 import ListView from '#rscv/List/ListView';
-import SegmentInput from '#rsci/SegmentInput';
+import Button from '#rsca/Button';
+import Icon from '#rscg/Icon';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -342,6 +343,28 @@ const GeoInputList = (props) => {
         [selections, polygons, sortType, sortOrder, geoOptionsById],
     );
 
+    const handleAlphaSortClick = useCallback(() => {
+        if (sortOrder === 'dsc' || sortType === 'overlaps') {
+            setSortOrder('asc');
+        } else {
+            setSortOrder('dsc');
+        }
+        setSortType('alphabetical');
+    }, [setSortType, setSortOrder, sortOrder, sortType]);
+
+    const handleOverlapsSortClick = useCallback(() => {
+        if (sortOrder === 'dsc' || sortType === 'alphabetical') {
+            setSortOrder('asc');
+        } else {
+            setSortOrder('dsc');
+        }
+        setSortType('overlaps');
+    }, [setSortType, setSortOrder, sortOrder, sortType]);
+
+    const sortButtonIcon = useMemo(() => (
+        sortOrder === 'asc' ? 'sortAscending' : 'sortDescending'
+    ), [sortOrder]);
+
     return (
         <div className={_cs(className, styles.geoInputList)}>
             {header && (
@@ -351,26 +374,28 @@ const GeoInputList = (props) => {
             )}
             {!sortHidden && (
                 <div className={styles.sortInputs}>
+                    <Button
+                        className={_cs(
+                            styles.sortInput,
+                            sortType === 'alphabetical' && styles.active,
+                        )}
+                        iconName={sortType === 'alphabetical' ? sortButtonIcon : 'sort'}
+                        onClick={handleAlphaSortClick}
+                    >
+                        Az
+                    </Button>
                     {polygonsEnabled && (
-                        <SegmentInput
-                            className={styles.sortInput}
-                            label={_ts('components.geo.geoModal', 'sortInputLabel')}
-                            value={sortType}
-                            onChange={setSortType}
-                            options={sortTypeOptions}
-                            keySelector={sortTypeKeySelector}
-                            labelSelector={sortTypeLabelSelector}
-                        />
+                        <Button
+                            className={_cs(
+                                styles.sortInput,
+                                sortType === 'overlaps' && styles.active,
+                            )}
+                            iconName={sortType === 'overlaps' ? sortButtonIcon : 'sort'}
+                            onClick={handleOverlapsSortClick}
+                        >
+                            <Icon name="filter" />
+                        </Button>
                     )}
-                    <SegmentInput
-                        className={styles.sortInput}
-                        label={_ts('components.geo.geoModal', 'sortOrderLabel')}
-                        value={sortOrder}
-                        onChange={setSortOrder}
-                        options={sortOrderOptions}
-                        keySelector={sortTypeKeySelector}
-                        labelSelector={sortTypeLabelSelector}
-                    />
                 </div>
             )}
             {!polygonHidden && (
