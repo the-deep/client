@@ -4,6 +4,7 @@ import {
     _cs,
     isDefined,
     isFalsyString,
+    isNotDefined,
     isTruthy,
     unique,
 } from '@togglecorp/fujs';
@@ -209,12 +210,29 @@ function mergeLists(foo, bar) {
 }
 
 const requestOptions = {
+    fileUrlGetRequest: {
+        url: ({ params: { fileId } }) => `/files/${fileId}/`,
+        query: ({ params: { url } }) => ({ url }),
+        method: methods.GET,
+        onSuccess: ({ props: { requests }, response }) => {
+            if (requests.webInfoRequest) {
+                requests.webInfoRequest.do({
+                    url: response.file,
+                    isFile: true,
+                });
+            }
+        },
+        onFailure: notifyOnFailure(_ts('addLeads', 'extractLead')),
+        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
+    },
     webInfoRequest: {
         url: '/web-info-extract/',
         query: ({ params: { url } }) => ({ url }),
         method: methods.GET,
         onSuccess: ({ params, props: { requests }, response }) => {
-            if (requests.webInfoDataRequest) {
+            if (params && params.isFile && params.handleWebInfoFill) {
+                params.handleWebInfoFill({ title: params.title });
+            } else if (requests.webInfoDataRequest) {
                 requests.webInfoDataRequest.do({
                     url: params.url,
                     title: response.title,
@@ -342,6 +360,7 @@ class LeadDetail extends React.PureComponent {
             requests: {
                 leadOptionsRequest,
                 webInfoDataRequest,
+                webInfoRequest,
             },
             lead,
         } = this.props;
@@ -360,6 +379,7 @@ class LeadDetail extends React.PureComponent {
         };
 
         leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
+        webInfoRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
         webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
     }
 
@@ -399,6 +419,17 @@ class LeadDetail extends React.PureComponent {
             requests: { webInfoRequest },
         } = this.props;
         webInfoRequest.do({ url });
+    }
+
+    handleExtractClickForFiles = () => {
+        const { lead } = this.props;
+        const values = leadFaramValuesSelector(lead);
+        const { attachment } = values;
+
+        const {
+            requests: { fileUrlGetRequest },
+        } = this.props;
+        fileUrlGetRequest.do({ fileId: attachment.id });
     }
 
     handleApplyAllClick = (attrName) => {
@@ -689,6 +720,8 @@ class LeadDetail extends React.PureComponent {
 
             emmEntities,
             emmTriggers,
+
+            attachment,
         } = values;
 
         const suggestedSourceTitle = sourceSuggestion || sourceRaw;
@@ -707,6 +740,12 @@ class LeadDetail extends React.PureComponent {
         const extractionDisabled = (
             isLeadFormDisabled(leadState)
             || !isUrlValid(url)
+            || webInfoRequestPending
+            || webInfoDataRequestPending
+        );
+        const extractionForFileDisabled = (
+            isLeadFormDisabled(leadState)
+            || isNotDefined(attachment && attachment.id)
             || webInfoRequestPending
             || webInfoDataRequestPending
         );
@@ -853,14 +892,29 @@ class LeadDetail extends React.PureComponent {
                     <ExtraFunctionsOnHover
                         className={styles.title}
                         buttons={
-                            <AccentButton
-                                className={styles.smallButton}
-                                title={_ts('addLeads', 'formatButtonTitle')}
-                                onClick={this.handleAutoFormatTitleButton}
-                            >
-                                {/* Treat this as icon */}
-                                Aa
-                            </AccentButton>
+                            <>
+                                <AccentButton
+                                    className={styles.smallButton}
+                                    title={_ts('addLeads', 'formatButtonTitle')}
+                                    onClick={this.handleAutoFormatTitleButton}
+                                >
+                                    {/* Treat this as icon */}
+                                    Aa
+                                </AccentButton>
+                                { (type === LEAD_TYPE.file
+                                    || type === LEAD_TYPE.drive
+                                    || type === LEAD_TYPE.dropbox) && (
+                                    <AccentButton
+                                        transparent
+                                        className={styles.extractButton}
+                                        title={_ts('addLeads', 'extractLead')}
+                                        disabled={formDisabled || extractionForFileDisabled}
+                                        onClick={this.handleExtractClickForFiles}
+                                        tabIndex="-1"
+                                        iconName="eye"
+                                    />
+                                )}
+                            </>
                         }
                     >
                         <TextInput
