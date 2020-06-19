@@ -9,9 +9,7 @@
 
     .header {
         flex-shrink: 0;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-background-header);
-        padding-bottom: var(--spacing-medium);
 
         .top {
             display: flex;
@@ -43,19 +41,11 @@
                 align-items: center;
                 flex-shrink: 0;
 
-                .tabs {
-                    flex-shrink: 0;
-                }
-
                 .action-buttons {
                     flex-shrink: 0;
                     padding: var(--spacing-small) var(--spacing-medium);
 
                     .button {
-                        margin-left: var(--spacing-small);
-                    }
-
-                    .edit-framework-link {
                         margin-left: var(--spacing-small);
                     }
 
@@ -66,14 +56,24 @@
             }
         }
 
-        .description {
+        .description-container {
+            display: flex;
+            align-items: center;
             flex-basis: 100%;
             padding: 0 var(--spacing-medium);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            color: var(--color-text-label);
-            font-size: var(--font-size-large);
+
+            .description {
+                flex-grow: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: var(--color-text-label);
+                font-size: var(--font-size-large);
+            }
+
+            .edit-details-button {
+                flex-shrink: 0;
+            }
         }
 
         .label-values-pair {
@@ -96,6 +96,36 @@
 
             .badge {
                 margin: var(--spacing-extra-small);
+            }
+        }
+
+        .widget-preview-bar {
+            display: flex;
+            align-items: center;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: 0 var(--spacing-medium);
+
+            .widget-preview-heading {
+                flex-grow: 1;
+                color: var(--color-text);
+            }
+
+            .widget-right-container {
+                display: flex;
+                align-items: center;
+                align-self: stretch;
+                flex-shrink: 0;
+
+                .tabs {
+                    align-self: stretch;
+                    flex-shrink: 0;
+                    margin-right: var(--spacing-medium);
+                    background-color: transparent;
+                }
+
+                .edit-framework-link {
+                    margin: var(--spacing-small) 0;
+                }
             }
         }
     }

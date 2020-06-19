@@ -230,8 +230,10 @@ const requestOptions = {
         query: ({ params: { url } }) => ({ url }),
         method: methods.GET,
         onSuccess: ({ params, props: { requests }, response }) => {
-            if (params && params.isFile && params.handleWebInfoFill) {
-                params.handleWebInfoFill({ title: params.title });
+            if (params && params.isFile) {
+                if (params.handleWebInfoFill) {
+                    params.handleWebInfoFill({ title: params.title });
+                }
             } else if (requests.webInfoDataRequest) {
                 requests.webInfoDataRequest.do({
                     url: params.url,

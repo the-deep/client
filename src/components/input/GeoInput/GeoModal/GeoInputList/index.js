@@ -317,7 +317,7 @@ const GeoInputList = (props) => {
         [selections, polygons, sortType, sortOrder, geoOptionsById],
     );
 
-    const handleAlphaSortClick = useCallback(() => {
+    const handleAlphabeticalSortClick = useCallback(() => {
         if (sortOrder === 'dsc' || sortType === 'overlaps') {
             setSortOrder('asc');
         } else {
@@ -355,7 +355,7 @@ const GeoInputList = (props) => {
                                 sortType === 'alphabetical' && styles.active,
                             )}
                             iconName={sortType === 'alphabetical' ? sortButtonIcon : 'sort'}
-                            onClick={handleAlphaSortClick}
+                            onClick={handleAlphabeticalSortClick}
                         >
                             Az
                         </Button>

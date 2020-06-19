@@ -104,6 +104,7 @@ const acl = {
     // FIXME: have it's own permission model
     projectQuestionnaires: { hide: notQuestionnaireViewable },
     questionnaireBuilder: { hide: notQuestionnaireEditable },
+    frameworkQuestions: { hide: notQuestionnaireViewable },
 
     projectDenied: {},
     fourHundredThree: {},

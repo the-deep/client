@@ -15,7 +15,6 @@ export * from './export';
 export * from './external';
 export * from './file';
 export * from './languages';
-export * from './leadFilterOptions';
 export * from './leadGroups';
 export * from './leads';
 export * from './notifications';

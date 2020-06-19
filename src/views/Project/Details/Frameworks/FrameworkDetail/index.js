@@ -136,6 +136,7 @@ export default class FrameworkDetail extends React.PureComponent {
         super(props);
         this.state = {
             activeView: 'overview',
+            detailsVisibility: false,
             // activeView: 'questions',
             editFrameworkDetails: {
                 title: '',
@@ -159,6 +160,12 @@ export default class FrameworkDetail extends React.PureComponent {
 
     handleTabClick = (tabId) => {
         this.setState({ activeView: tabId });
+    }
+
+    handleDetailsViewClick = () => {
+        const { detailsVisibility } = this.state;
+
+        this.setState({ detailsVisibility: !detailsVisibility });
     }
 
     handleDetailsChange = (editFrameworkDetails, isPatch = false) => {
@@ -213,6 +220,7 @@ export default class FrameworkDetail extends React.PureComponent {
             editFrameworkDetails,
             pending,
             activeView,
+            detailsVisibility,
         } = this.state;
 
         const {
@@ -247,40 +255,14 @@ export default class FrameworkDetail extends React.PureComponent {
                         }
                     </div>
                     <div className={styles.rightContainer} >
-                        <ScrollTabs
-                            className={styles.tabs}
-                            tabs={this.tabs}
-                            onClick={this.handleTabClick}
-                            active={activeView}
-                        />
                         <div className={styles.actionButtons}>
-                            {canEditFramework &&
-                                <ModalButton
-                                    disabled={pending}
-                                    modal={
-                                        <EditFrameworkModal
-                                            frameworkId={analysisFrameworkId}
-                                            frameworkDetails={editFrameworkDetails}
-                                            isPrivate={isPrivate}
-                                            onFrameworkDetailsChange={this.handleDetailsChange}
-                                            canEditMemberships={canAddUser}
-                                        />
-                                    }
-                                >
-                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
-                                </ModalButton>
-                            }
-                            {canEditFramework &&
-                                <ButtonLikeLink
-                                    className={styles.editFrameworkLink}
-                                    to={reverseRoute(
-                                        pathNames.analysisFramework,
-                                        { analysisFrameworkId },
-                                    )}
-                                >
-                                    { _ts('project.framework', 'editWidgetsButtonTitle') }
-                                </ButtonLikeLink>
-                            }
+                            <Button
+                                transparent
+                                iconName={detailsVisibility ? 'chevronUp' : 'chevronDown'}
+                                onClick={this.handleDetailsViewClick}
+                            >
+                                {_ts('framework', 'viewDetailsButtonLabel')}
+                            </Button>
                             {canEditFramework && (
                                 <Cloak
                                     hide={hideQuestionnaire}
@@ -325,58 +307,105 @@ export default class FrameworkDetail extends React.PureComponent {
                         </div>
                     </div>
                 </div>
-                { frameworkDescription && (
-                    <div
-                        className={styles.description}
-                        title={frameworkDescription}
-                    >
-                        { frameworkDescription }
-                    </div>
-                )}
-                {usersWithAddPermission.length > 0 && (
-                    <div className={styles.labelValuesPair}>
-                        <h4 className={styles.label}>
-                            {_ts('framework', 'frameworkOwnersLabel')}:
-                        </h4>
-                        <ListView
-                            className={styles.values}
-                            data={usersWithAddPermission}
-                            keySelector={keySelector}
-                            rendererParams={userRendererParams}
-                            renderer={Badge}
-                        />
-                    </div>
-                )}
-                {visibleProjects.length > 0 && (
-                    <div className={styles.labelValuesPair}>
-                        <h4 className={styles.label}>
-                            {_ts('framework', 'projectsLabel')}:
-                        </h4>
-                        <div className={styles.values}>
-                            <List
-                                data={visibleProjects}
-                                keySelector={keySelector}
-                                rendererParams={projectRendererParams}
-                                renderer={Badge}
-                            />
-                            {allProjectsCount > visibleProjects.length && (
-                                <Badge
-                                    className={styles.badge}
-                                    title={_ts(
-                                        'framework',
-                                        'privateProjectUsesFrameworkTitle',
-                                        {
-                                            privateProjects: (
-                                                allProjectsCount - visibleProjects.length
-                                            ),
-                                        },
-                                    )}
-                                    tooltip={_ts('framework', 'privateProjectUsesFrameworkTooltip')}
-                                />
+                {detailsVisibility && (
+                    <>
+                        <div className={styles.descriptionContainer}>
+                            { frameworkDescription && (
+                                <div
+                                    className={styles.description}
+                                    title={frameworkDescription}
+                                >
+                                    { frameworkDescription }
+                                </div>
                             )}
+                            {canEditFramework &&
+                                <ModalButton
+                                    className={styles.editDetailsButton}
+                                    disabled={pending}
+                                    modal={
+                                        <EditFrameworkModal
+                                            frameworkId={analysisFrameworkId}
+                                            frameworkDetails={editFrameworkDetails}
+                                            isPrivate={isPrivate}
+                                            onFrameworkDetailsChange={this.handleDetailsChange}
+                                            canEditMemberships={canAddUser}
+                                        />
+                                    }
+                                >
+                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
+                                </ModalButton>
+                            }
                         </div>
-                    </div>
+                        {usersWithAddPermission.length > 0 && (
+                            <div className={styles.labelValuesPair}>
+                                <h4 className={styles.label}>
+                                    {_ts('framework', 'frameworkOwnersLabel')}:
+                                </h4>
+                                <ListView
+                                    className={styles.values}
+                                    data={usersWithAddPermission}
+                                    keySelector={keySelector}
+                                    rendererParams={userRendererParams}
+                                    renderer={Badge}
+                                />
+                            </div>
+                        )}
+                        {visibleProjects.length > 0 && (
+                            <div className={styles.labelValuesPair}>
+                                <h4 className={styles.label}>
+                                    {_ts('framework', 'projectsLabel')}:
+                                </h4>
+                                <div className={styles.values}>
+                                    <List
+                                        data={visibleProjects}
+                                        keySelector={keySelector}
+                                        rendererParams={projectRendererParams}
+                                        renderer={Badge}
+                                    />
+                                    {allProjectsCount > visibleProjects.length && (
+                                        <Badge
+                                            className={styles.badge}
+                                            title={_ts(
+                                                'framework',
+                                                'privateProjectUsesFrameworkTitle',
+                                                {
+                                                    privateProjects: (
+                                                        allProjectsCount - visibleProjects.length
+                                                    ),
+                                                },
+                                            )}
+                                            tooltip={_ts('framework', 'privateProjectUsesFrameworkTooltip')}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
+                <div className={styles.widgetPreviewBar}>
+                    <h3 className={styles.widgetPreviewHeading}>
+                        {_ts('framework', 'widgetsPreviewTitle')}
+                    </h3>
+                    <div className={styles.widgetRightContainer}>
+                        <ScrollTabs
+                            className={styles.tabs}
+                            tabs={this.tabs}
+                            onClick={this.handleTabClick}
+                            active={activeView}
+                        />
+                        {canEditFramework &&
+                            <ButtonLikeLink
+                                className={styles.editFrameworkLink}
+                                to={reverseRoute(
+                                    pathNames.analysisFramework,
+                                    { analysisFrameworkId },
+                                )}
+                            >
+                                { _ts('project.framework', 'editWidgetsButtonTitle') }
+                            </ButtonLikeLink>
+                        }
+                    </div>
+                </div>
             </header>
         );
     }

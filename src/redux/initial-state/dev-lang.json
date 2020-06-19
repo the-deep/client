@@ -1102,7 +1102,7 @@
         "-96285781": "Structure",
         "-39116082": "Questions",
         "-91998400": "Questionnaires",
-        "-7536745": "Questionnaire Builder",
+        "-7536745": "Survey Design Tool",
         "-72874810": "Active questionnaires",
         "-30617552": "Archived",
         "-10356474": "Archived Questionnaires",
@@ -1126,7 +1126,9 @@
         "-68525317": "Added by",
         "-55064380": "Owners",
         "-72546396": "{privateProjects} Private Projects",
-        "-59460837": "This framework is used by private projects you are not a part of."
+        "-59460837": "This framework is used by private projects you are not a part of.",
+        "-61550815": "Widgets Preview",
+        "-40186961": "View Details"
     },
     "links": {
         "browserExtension": {
@@ -1196,7 +1198,9 @@
             "frameworkOwnersLabel": -55064380,
             "privateProjectUsesFrameworkTitle": -72546396,
             "privateProjectUsesFrameworkTooltip": -59460837,
-            "projectsLabel": 173
+            "projectsLabel": 173,
+            "widgetsPreviewTitle": -61550815,
+            "viewDetailsButtonLabel": -40186961
         },
         "widgets.editor.date": {
             "informationDateCheckboxLabel": 777,
