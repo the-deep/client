@@ -43,6 +43,37 @@ const analysisFrameworkSchema = [];
     analysisFrameworkSchema.push({ name, schema });
 }
 {
+    const name = 'frameworkUser';
+    const schema = {
+        doc: {
+            name: 'Analysis Framework User',
+            description: 'Analysis framework user',
+        },
+        fields: {
+            displayPicture: { type: 'uint' },
+            displayName: { type: 'string', required: true },
+            email: { type: 'string', required: true },
+            id: { type: 'uint', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+{
+    const name = 'frameworkProject';
+    const schema = {
+        doc: {
+            name: 'Analysis Framework Project',
+            description: 'Analysis framework project',
+        },
+        fields: {
+            title: { type: 'string', required: true },
+            id: { type: 'uint', required: true },
+            isPrivate: { type: 'boolean', required: false },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+{
     const name = 'analysisFrameworkView';
     const schema = {
         doc: {
@@ -74,6 +105,9 @@ const analysisFrameworkSchema = [];
                 },
                 required: true,
             },
+            usersWithAddPermission: { type: 'array.frameworkUser', required: false },
+            projects: { type: 'array.frameworkProject', required: false },
+            projectsCount: { type: 'number', required: false },
             isPrivate: { type: 'boolean', required: true },
             entriesCount: { type: 'uint', required: true },
         },

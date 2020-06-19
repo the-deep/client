@@ -42,6 +42,7 @@ const iconNames = {
     error: 'ion-android-alert',
     expand: 'ion-arrow-expand',
     expandContent: 'ion-android-expand',
+    filter: 'ion-ios-color-filter-outline',
     contractContent: 'ion-android-contract',
     eye: 'ion-eye',
     eyeDisabled: 'ion-eye-disabled',

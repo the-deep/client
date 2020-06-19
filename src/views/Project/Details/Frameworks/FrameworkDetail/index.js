@@ -1,13 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    _cs,
+    reverseRoute,
+} from '@togglecorp/fujs';
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
+import Cloak from '#components/general/Cloak';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
+import List from '#rscv/List';
 import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
@@ -85,6 +91,9 @@ const requestOptions = {
                 'role',
                 'is_private',
                 'entries_count',
+                'users_with_add_permission',
+                'visible_projects',
+                'all_projects_count',
             ],
         },
         onPropsChanged: ['frameworkId'],
@@ -102,6 +111,21 @@ const requestOptions = {
     },
 };
 
+const keySelector = u => u.id;
+const userRendererParams = (_, u) => ({
+    className: styles.badge,
+    title: u.displayName,
+    tooltip: u.email,
+});
+
+const projectRendererParams = (_, p) => ({
+    className: styles.badge,
+    title: p.title,
+    icon: p.isPrivate ? 'locked' : undefined,
+});
+
+const hideQuestionnaire = ({ accessQuestionnaire }) => !accessQuestionnaire;
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class FrameworkDetail extends React.PureComponent {
@@ -112,6 +136,7 @@ export default class FrameworkDetail extends React.PureComponent {
         super(props);
         this.state = {
             activeView: 'overview',
+            detailsVisibility: false,
             // activeView: 'questions',
             editFrameworkDetails: {
                 title: '',
@@ -135,6 +160,12 @@ export default class FrameworkDetail extends React.PureComponent {
 
     handleTabClick = (tabId) => {
         this.setState({ activeView: tabId });
+    }
+
+    handleDetailsViewClick = () => {
+        const { detailsVisibility } = this.state;
+
+        this.setState({ detailsVisibility: !detailsVisibility });
     }
 
     handleDetailsChange = (editFrameworkDetails, isPatch = false) => {
@@ -169,6 +200,9 @@ export default class FrameworkDetail extends React.PureComponent {
                 canUseInOtherProjects,
             } = {},
             isPrivate,
+            usersWithAddPermission,
+            visibleProjects,
+            allProjectsCount,
         } = framework;
 
         const {
@@ -186,6 +220,7 @@ export default class FrameworkDetail extends React.PureComponent {
             editFrameworkDetails,
             pending,
             activeView,
+            detailsVisibility,
         } = this.state;
 
         const {
@@ -220,50 +255,29 @@ export default class FrameworkDetail extends React.PureComponent {
                         }
                     </div>
                     <div className={styles.rightContainer} >
-                        <ScrollTabs
-                            className={styles.tabs}
-                            tabs={this.tabs}
-                            onClick={this.handleTabClick}
-                            active={activeView}
-                        />
                         <div className={styles.actionButtons}>
-                            {canEditFramework &&
-                                <ModalButton
-                                    disabled={pending}
-                                    modal={
-                                        <EditFrameworkModal
-                                            frameworkId={analysisFrameworkId}
-                                            frameworkDetails={editFrameworkDetails}
-                                            isPrivate={isPrivate}
-                                            onFrameworkDetailsChange={this.handleDetailsChange}
-                                            canEditMemberships={canAddUser}
-                                        />
-                                    }
-                                >
-                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
-                                </ModalButton>
-                            }
-                            {canEditFramework &&
-                                <ButtonLikeLink
-                                    className={styles.editFrameworkLink}
-                                    to={reverseRoute(
-                                        pathNames.analysisFramework,
-                                        { analysisFrameworkId },
-                                    )}
-                                >
-                                    { _ts('project.framework', 'editWidgetsButtonTitle') }
-                                </ButtonLikeLink>
-                            }
+                            <Button
+                                transparent
+                                iconName={detailsVisibility ? 'chevronUp' : 'chevronDown'}
+                                onClick={this.handleDetailsViewClick}
+                            >
+                                {_ts('framework', 'viewDetailsButtonLabel')}
+                            </Button>
                             {canEditFramework && (
-                                <ButtonLikeLink
-                                    className={styles.editQuestionsLink}
-                                    to={reverseRoute(
-                                        pathNames.frameworkQuestions,
-                                        { analysisFrameworkId },
+                                <Cloak
+                                    hide={hideQuestionnaire}
+                                    render={(
+                                        <ButtonLikeLink
+                                            className={styles.editQuestionsLink}
+                                            to={reverseRoute(
+                                                pathNames.frameworkQuestions,
+                                                { analysisFrameworkId },
+                                            )}
+                                        >
+                                            Edit questions
+                                        </ButtonLikeLink>
                                     )}
-                                >
-                                    Edit questions
-                                </ButtonLikeLink>
+                                />
                             )}
                             {(canUse && !readOnly) &&
                                 <UseFrameworkButton
@@ -293,21 +307,112 @@ export default class FrameworkDetail extends React.PureComponent {
                         </div>
                     </div>
                 </div>
-                { frameworkDescription && (
-                    <div
-                        className={styles.description}
-                        title={frameworkDescription}
-                    >
-                        { frameworkDescription }
-                    </div>
+                {detailsVisibility && (
+                    <>
+                        <div className={styles.descriptionContainer}>
+                            { frameworkDescription && (
+                                <div
+                                    className={styles.description}
+                                    title={frameworkDescription}
+                                >
+                                    { frameworkDescription }
+                                </div>
+                            )}
+                            {canEditFramework &&
+                                <ModalButton
+                                    className={styles.editDetailsButton}
+                                    disabled={pending}
+                                    modal={
+                                        <EditFrameworkModal
+                                            frameworkId={analysisFrameworkId}
+                                            frameworkDetails={editFrameworkDetails}
+                                            isPrivate={isPrivate}
+                                            onFrameworkDetailsChange={this.handleDetailsChange}
+                                            canEditMemberships={canAddUser}
+                                        />
+                                    }
+                                >
+                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
+                                </ModalButton>
+                            }
+                        </div>
+                        {usersWithAddPermission.length > 0 && (
+                            <div className={styles.labelValuesPair}>
+                                <h4 className={styles.label}>
+                                    {_ts('framework', 'frameworkOwnersLabel')}:
+                                </h4>
+                                <ListView
+                                    className={styles.values}
+                                    data={usersWithAddPermission}
+                                    keySelector={keySelector}
+                                    rendererParams={userRendererParams}
+                                    renderer={Badge}
+                                />
+                            </div>
+                        )}
+                        {visibleProjects.length > 0 && (
+                            <div className={styles.labelValuesPair}>
+                                <h4 className={styles.label}>
+                                    {_ts('framework', 'projectsLabel')}:
+                                </h4>
+                                <div className={styles.values}>
+                                    <List
+                                        data={visibleProjects}
+                                        keySelector={keySelector}
+                                        rendererParams={projectRendererParams}
+                                        renderer={Badge}
+                                    />
+                                    {allProjectsCount > visibleProjects.length && (
+                                        <Badge
+                                            className={styles.badge}
+                                            title={_ts(
+                                                'framework',
+                                                'privateProjectUsesFrameworkTitle',
+                                                {
+                                                    privateProjects: (
+                                                        allProjectsCount - visibleProjects.length
+                                                    ),
+                                                },
+                                            )}
+                                            tooltip={_ts('framework', 'privateProjectUsesFrameworkTooltip')}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
+                <div className={styles.widgetPreviewBar}>
+                    <h3 className={styles.widgetPreviewHeading}>
+                        {_ts('framework', 'widgetsPreviewTitle')}
+                    </h3>
+                    <div className={styles.widgetRightContainer}>
+                        <ScrollTabs
+                            className={styles.tabs}
+                            tabs={this.tabs}
+                            onClick={this.handleTabClick}
+                            active={activeView}
+                        />
+                        {canEditFramework &&
+                            <ButtonLikeLink
+                                className={styles.editFrameworkLink}
+                                to={reverseRoute(
+                                    pathNames.analysisFramework,
+                                    { analysisFrameworkId },
+                                )}
+                            >
+                                { _ts('project.framework', 'editWidgetsButtonTitle') }
+                            </ButtonLikeLink>
+                        }
+                    </div>
+                </div>
             </header>
         );
     }
 
     render() {
         const {
-            className: classNameFromProps,
+            className,
             requests: {
                 frameworkGetRequest: {
                     pending: pendingFramework,
@@ -318,14 +423,7 @@ export default class FrameworkDetail extends React.PureComponent {
             frameworkList,
         } = this.props;
 
-        const {
-            activeView,
-        } = this.state;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.frameworkDetails}
-        `;
+        const { activeView } = this.state;
 
         if (!frameworkId && frameworkList.length === 0) {
             return (
@@ -374,7 +472,7 @@ export default class FrameworkDetail extends React.PureComponent {
         const Header = this.renderHeader;
 
         return (
-            <div className={className}>
+            <div className={_cs(className, styles.frameworkDetails)}>
                 <Header framework={framework} />
                 <Preview
                     activeView={activeView}

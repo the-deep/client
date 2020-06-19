@@ -4,6 +4,7 @@ import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 import { FaramListElement } from '@togglecorp/faram';
 import {
+    _cs,
     compareString,
     compareDate,
 } from '@togglecorp/fujs';
@@ -153,6 +154,13 @@ export default class ProjectUserList extends React.PureComponent {
                 ),
             },
             {
+                key: 'addedByName',
+                label: _ts('project.users', 'addedByTitle'),
+                order: 5,
+                sortable: true,
+                comparator: getComparator(compareString, 'addedByName'),
+            },
+            {
                 key: 'actions',
                 label: _ts('project.users', 'actionsTitle'),
                 order: 5,
@@ -208,17 +216,12 @@ export default class ProjectUserList extends React.PureComponent {
             emptyComponent: emptyComponentFromProps,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.projectUserList}
-        `;
-
         const { pending: pendingUserList } = userListRequest;
         const filteredMembers = this.filterMembers(memberships, searchInputValue);
         const emptyComponent = searchInputValue === '' ? emptyComponentFromProps : searchEmptyComponent;
 
         return (
-            <div className={className}>
+            <div className={_cs(classNameFromProps, styles.projectUserList)}>
                 <header className={styles.header}>
                     <h4 className={styles.heading}>
                         { _ts('project.users', 'usersTitle') }

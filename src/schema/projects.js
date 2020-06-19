@@ -48,6 +48,7 @@ const projectSchema = [];
         },
         fields: {
             addedBy: { type: 'uint' },
+            addedByName: { type: 'string' },
             id: { type: 'uint', required: true },
             joinedAt: { type: 'string' }, // date
             member: { type: 'uint', required: true },
