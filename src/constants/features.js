@@ -4,6 +4,7 @@ const featuresMapping = {
     zoomableImage: 'zoomable_image',
     privateProject: 'private_project',
     entryVizConfig: 'entry_visualization_configuration',
+    questionnaire: 'questionnaire',
 };
 
 export default featuresMapping;

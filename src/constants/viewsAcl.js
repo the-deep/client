@@ -43,6 +43,14 @@ const notAssessmentViewable = ({ isLoggedIn, hasAssessmentTemplate, assessmentPe
     !isLoggedIn || !hasAssessmentTemplate || !assessmentPermissions.view
 );
 
+const notQuestionnaireViewable = ({ isLoggedIn, accessQuestionnaire }) => (
+    !isLoggedIn || !accessQuestionnaire
+);
+
+const notQuestionnaireEditable = ({ isLoggedIn, accessQuestionnaire, setupPermissions }) => (
+    !isLoggedIn || !setupPermissions.modify || !accessQuestionnaire
+);
+
 const notExportCreatable = ({ isLoggedIn, hasAnalysisFramework, exportPermissions }) => (
     !isLoggedIn
     || !hasAnalysisFramework
@@ -94,8 +102,8 @@ const acl = {
     visualization: { hide: notDev },
 
     // FIXME: have it's own permission model
-    projectQuestionnaires: { hide: notProjectMember },
-    questionnaireBuilder: { hide: notProjectAdmin },
+    projectQuestionnaires: { hide: notQuestionnaireViewable },
+    questionnaireBuilder: { hide: notQuestionnaireEditable },
 
     projectDenied: {},
     fourHundredThree: {},

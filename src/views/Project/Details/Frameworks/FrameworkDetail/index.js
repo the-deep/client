@@ -8,6 +8,7 @@ import {
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
+import Cloak from '#components/general/Cloak';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -122,6 +123,8 @@ const projectRendererParams = (_, p) => ({
     title: p.title,
     icon: p.isPrivate ? 'locked' : undefined,
 });
+
+const hideQuestionnaire = ({ accessQuestionnaire }) => !accessQuestionnaire;
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
@@ -279,15 +282,20 @@ export default class FrameworkDetail extends React.PureComponent {
                                 </ButtonLikeLink>
                             }
                             {canEditFramework && (
-                                <ButtonLikeLink
-                                    className={styles.editQuestionsLink}
-                                    to={reverseRoute(
-                                        pathNames.frameworkQuestions,
-                                        { analysisFrameworkId },
+                                <Cloak
+                                    hide={hideQuestionnaire}
+                                    render={(
+                                        <ButtonLikeLink
+                                            className={styles.editQuestionsLink}
+                                            to={reverseRoute(
+                                                pathNames.frameworkQuestions,
+                                                { analysisFrameworkId },
+                                            )}
+                                        >
+                                            Edit questions
+                                        </ButtonLikeLink>
                                     )}
-                                >
-                                    Edit questions
-                                </ButtonLikeLink>
+                                />
                             )}
                             {(canUse && !readOnly) &&
                                 <UseFrameworkButton

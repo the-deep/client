@@ -63,6 +63,7 @@ const defaultProps = {
 const allAccessibleFeatures = {
     accessZoomableImage: featureList => featureList.includes(featuresMapping.zoomableImage),
     accessPrivateProject: featureList => featureList.includes(featuresMapping.privateProject),
+    accessQuestionnaire: featureList => featureList.includes(featuresMapping.questionnaire),
     accessEntryVisualizationConfiguration: featureList =>
         featureList.includes(featuresMapping.entryVizConfig),
 };
@@ -123,6 +124,7 @@ export default class Cloak extends React.Component {
             accessZoomableImage,
             accessPrivateProject,
             accessEntryVisualizationConfiguration,
+            accessQuestionnaire,
         } = this.getAccessibleFeatures(accessibleFeatures);
 
         const params = {
@@ -145,6 +147,7 @@ export default class Cloak extends React.Component {
 
             accessZoomableImage,
             accessPrivateProject,
+            accessQuestionnaire,
             accessEntryVisualizationConfiguration,
         };
 
