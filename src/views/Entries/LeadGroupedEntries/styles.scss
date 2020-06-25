@@ -48,8 +48,6 @@
                 }
 
                 .assignee-link {
-                    @extend %accent-color-link;
-                    padding: var(--spacing-small);
                     font-size: var(--font-size-medium);
                 }
             }

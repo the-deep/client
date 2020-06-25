@@ -1,0 +1,6 @@
+@import '~base-scss/utils';
+
+.link {
+    @extend %accent-color-link;
+    padding: var(--spacing-extra-small);
+}

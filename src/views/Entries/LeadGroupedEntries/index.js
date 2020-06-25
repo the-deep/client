@@ -13,6 +13,7 @@ import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';
+import EntityLink from '#components/viewer/EntityLink';
 import LeadPreview from '#views/Leads/LeadPreview';
 import {
     pathNames,
@@ -133,16 +134,14 @@ export default class LeadGroupedEntries extends React.PureComponent {
                                         title={_ts('entries', 'assigneeIconTitle')}
                                         name="user"
                                     />
-                                    <Link
-                                        key={assignee}
+                                    <EntityLink
                                         className={styles.assigneeLink}
-                                        to={reverseRoute(
+                                        link={reverseRoute(
                                             pathNames.userProfile,
                                             { userId: assignee },
                                         )}
-                                    >
-                                        {assigneeDetails.displayName}
-                                    </Link>
+                                        title={assigneeDetails.displayName}
+                                    />
                                 </>
                             )}
                         </div>

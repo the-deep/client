@@ -231,7 +231,7 @@ const GeoInputList = (props) => {
     );
     const groupKeySelector = useCallback(
         (selection) => {
-            const { adminLevel, region } = geoOptionsById[selection.id];
+            const { adminLevel, region } = geoOptionsById[selection.id] || {};
             return `${region}-${adminLevel}`;
         },
         [geoOptionsById],
@@ -245,7 +245,7 @@ const GeoInputList = (props) => {
             disabled: !!value.polygons || isNotDefined(onSelectionsChange),
             readOnly,
 
-            value: geoOptionsById[key].title,
+            value: geoOptionsById[key] ? geoOptionsById[key].title : undefined,
             polygons: value.polygons,
         }),
         [handleSelectionRemove, geoOptionsById, onSelectionsChange, readOnly],
