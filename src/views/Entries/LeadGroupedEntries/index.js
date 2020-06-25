@@ -83,6 +83,8 @@ export default class LeadGroupedEntries extends React.PureComponent {
             entries,
             url: leadUrlFromProps,
             attachment,
+            assignee,
+            assigneeDetails,
         } = lead;
 
         const route = reverseRoute(pathNames.editEntries, {
@@ -96,11 +98,11 @@ export default class LeadGroupedEntries extends React.PureComponent {
         return (
             <div className={_cs(classNameFromProps, styles.leadGroupedEntries)}>
                 <header className={_cs(headerClassNameFromProps, styles.header)}>
-                    <h3
-                        title={leadTitle}
-                        className={styles.heading}
-                    >
-                        <div className={styles.title}>
+                    <h3 className={styles.heading}>
+                        <div
+                            title={leadTitle}
+                            className={styles.title}
+                        >
                             {leadUrl ? (
                                 <ModalButton
                                     className={styles.leadTitleButton}
@@ -115,11 +117,35 @@ export default class LeadGroupedEntries extends React.PureComponent {
                                 leadTitle
                             )}
                         </div>
-                        <FormattedDate
-                            className={styles.date}
-                            date={leadCreatedAt}
-                            mode="dd-MM-yyyy"
-                        />
+                        <div className={styles.leadDetails}>
+                            <Icon
+                                title={_ts('entries', 'calendarIconTitle')}
+                                name="calendar"
+                            />
+                            <FormattedDate
+                                className={styles.date}
+                                date={leadCreatedAt}
+                                mode="dd-MM-yyyy"
+                            />
+                            {assignee && assignee[0] && (
+                                <>
+                                    <Icon
+                                        title={_ts('entries', 'assigneeIconTitle')}
+                                        name="user"
+                                    />
+                                    <Link
+                                        key={assignee}
+                                        className={styles.assigneeLink}
+                                        to={reverseRoute(
+                                            pathNames.userProfile,
+                                            { userId: assignee },
+                                        )}
+                                    >
+                                        {assigneeDetails.displayName}
+                                    </Link>
+                                </>
+                            )}
+                        </div>
                     </h3>
                     <div
                         title={_ts('entries', 'numberOfEntriesTooltip')}

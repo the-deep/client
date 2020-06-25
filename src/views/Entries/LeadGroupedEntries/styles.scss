@@ -12,13 +12,11 @@
         color: var(--color-text-on-background-header);
 
         .heading {
-            display: flex;
-            align-items: baseline;
             flex-grow: 1;
             overflow: hidden;
 
             .title {
-                padding: var(--spacing-small-alt) var(--spacing-small-alt) var(--spacing-small-alt) var(--spacing-medium);
+                padding: var(--spacing-small-alt) var(--spacing-small-alt) 0 var(--spacing-medium);
                 overflow: hidden;
                 text-transform: none;
                 text-overflow: ellipsis;
@@ -35,11 +33,25 @@
                 }
             }
 
-            .date {
-                flex-shrink: 0;
-                padding: var(--spacing-small);
-                color: var(--color-text-label);
-                font-size: var(--font-size-medium);
+            .lead-details {
+                display: flex;
+                align-items: center;
+                padding: 0 var(--spacing-small-alt);
+                color: var(--color-text);
+
+                .date {
+                    flex-shrink: 0;
+                    margin-right: var(--spacing-small);
+                    padding: var(--spacing-small);
+                    color: var(--color-text-label);
+                    font-size: var(--font-size-medium);
+                }
+
+                .assignee-link {
+                    @extend %accent-color-link;
+                    padding: var(--spacing-small);
+                    font-size: var(--font-size-medium);
+                }
             }
         }
 

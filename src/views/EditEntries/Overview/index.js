@@ -235,7 +235,6 @@ export default class Overview extends React.PureComponent {
         const {
             entry,
             leadId,
-            entries,
             lead,
             analysisFramework,
             statuses,
@@ -335,6 +334,7 @@ export default class Overview extends React.PureComponent {
                                                 onCommentsCountChange={
                                                     this.handleCommentsCountChange
                                                 }
+                                                defaultAssignee={entryAccessor.createdBy(entry)}
                                             />
                                         }
                                         iconName="chat"

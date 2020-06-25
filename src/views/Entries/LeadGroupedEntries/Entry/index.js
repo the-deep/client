@@ -189,6 +189,7 @@ export default class Entry extends React.PureComponent {
             widgets,
             entry: {
                 id: entryId,
+                createdBy,
                 attributes,
                 unresolvedCommentCount: commentCount,
                 projectLabels,
@@ -221,6 +222,7 @@ export default class Entry extends React.PureComponent {
                                 <EntryCommentModal
                                     entryServerId={entryId}
                                     onCommentsCountChange={this.handleCommentsCountChange}
+                                    defaultAssignee={createdBy}
                                 />
                             }
                             iconName="chat"

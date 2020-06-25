@@ -22,7 +22,7 @@ const defaultProps = {
     label: '',
     disabled: false,
     value: {
-        includeSubRegions: false,
+        includeSubRegions: true,
         areas: [],
     },
 };

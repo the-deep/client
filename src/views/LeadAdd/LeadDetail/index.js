@@ -909,7 +909,7 @@ class LeadDetail extends React.PureComponent {
                                     <AccentButton
                                         transparent
                                         className={styles.extractButton}
-                                        title={_ts('addLeads', 'extractLead')}
+                                        title={_ts('addLeads', 'extractLeadFromDocument')}
                                         disabled={formDisabled || extractionForFileDisabled}
                                         onClick={this.handleExtractClickForFiles}
                                         tabIndex="-1"

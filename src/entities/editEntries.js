@@ -46,6 +46,7 @@ export const entryAccessor = {
     tabularField: entry => getDataSafe(entry).tabularField,
     order: entry => getDataSafe(entry).order,
     serverId: entry => getDataSafe(entry).id,
+    createdBy: entry => getDataSafe(entry).createdBy,
 
     unresolvedCommentCount: entry => getServerDataSafe(entry).unresolvedCommentCount || 0,
     versionId: entry => getServerDataSafe(entry).versionId,
@@ -179,6 +180,7 @@ export const createEntry = ({
         'exportData',
         'filterData',
         'createdAt',
+        'createdBy',
     ];
     const pickedData = pick(data, keysToPick);
 
