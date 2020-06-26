@@ -738,7 +738,7 @@
         "-43376795": "Failed to fetch cluster data.",
         "-72859218": "Project options",
         "-45091634": "Failed to get project options.",
-        "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?",
+        "-44183195": "Warning: {count} number of entries will be affected if you've edited or removed widgets. Would you like to continue?",
         "-82545000": "Default",
         "-70199668": "No notifications to display",
         "-53914293": "Are you sure you want to remove the connector {connector}?",
