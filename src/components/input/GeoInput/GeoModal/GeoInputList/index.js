@@ -231,7 +231,10 @@ const GeoInputList = (props) => {
     );
     const groupKeySelector = useCallback(
         (selection) => {
-            const { adminLevel, region } = geoOptionsById[selection.id] || {};
+            if (!geoOptionsById[selection.id]) {
+                return undefined;
+            }
+            const { adminLevel, region } = geoOptionsById[selection.id];
             return `${region}-${adminLevel}`;
         },
         [geoOptionsById],
@@ -253,6 +256,12 @@ const GeoInputList = (props) => {
 
     const groupRendererParams = useCallback(
         (groupKey) => {
+            if (!groupKey) {
+                return {
+                    children: 'Ungrouped',
+                };
+            }
+
             const [regionKey, adminLevelKey] = groupKey.split('-');
             // FIXME: this can be made efficient
             const adminLevel = adminLevelTitles.find(
@@ -262,7 +271,7 @@ const GeoInputList = (props) => {
             return {
                 children: adminLevel
                     ? `${adminLevel.regionTitle} / ${adminLevel.title}`
-                    : '',
+                    : 'Ungrouped',
             };
         },
         [adminLevelTitles],
