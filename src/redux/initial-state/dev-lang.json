@@ -738,7 +738,7 @@
         "-43376795": "Failed to fetch cluster data.",
         "-72859218": "Project options",
         "-45091634": "Failed to get project options.",
-        "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?",
+        "-44183195": "Warning: {count} number of entries will be affected if you've edited or removed widgets. Would you like to continue?",
         "-82545000": "Default",
         "-70199668": "No notifications to display",
         "-53914293": "Are you sure you want to remove the connector {connector}?",
@@ -1128,7 +1128,8 @@
         "-72546396": "{privateProjects} Private Projects",
         "-59460837": "This framework is used by private projects you are not a part of.",
         "-61550815": "Widgets Preview",
-        "-40186961": "View Details"
+        "-40186961": "View Details",
+        "-91728706": "Extract lead information from attached document\t"
     },
     "links": {
         "browserExtension": {
@@ -1585,7 +1586,9 @@
             "entryGroupsFilterPlaceholder": 14,
             "entryLabelsFilterPlaceholder": 14,
             "entryLabelsFilterLabel": -80269151,
-            "entryGroupsHeaderTooltip": -47675119
+            "entryGroupsHeaderTooltip": -47675119,
+            "assigneeIconTitle": 6,
+            "calendarIconTitle": 163
         },
         "export": {
             "headerExport": 600,
@@ -1864,7 +1867,8 @@
             "searchInputEmptyText": -24511724,
             "authorPlaceholder": -4332303,
             "formatButtonTitle": -50025578,
-            "suggestionsLabel": -75552913
+            "suggestionsLabel": -75552913,
+            "extractLeadFromDocument": -91728706
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

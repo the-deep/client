@@ -234,7 +234,7 @@ const afViewUpdateWidget = (state, action) => {
                                 {
                                     properties: { $auto: {
                                         data: { $auto: {
-                                            $merge: widgetData,
+                                            $set: widgetData,
                                         } },
                                     } },
                                 },

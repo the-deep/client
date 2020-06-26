@@ -231,6 +231,9 @@ const GeoInputList = (props) => {
     );
     const groupKeySelector = useCallback(
         (selection) => {
+            if (!geoOptionsById[selection.id]) {
+                return undefined;
+            }
             const { adminLevel, region } = geoOptionsById[selection.id];
             return `${region}-${adminLevel}`;
         },
@@ -245,7 +248,7 @@ const GeoInputList = (props) => {
             disabled: !!value.polygons || isNotDefined(onSelectionsChange),
             readOnly,
 
-            value: geoOptionsById[key].title,
+            value: geoOptionsById[key] ? geoOptionsById[key].title : undefined,
             polygons: value.polygons,
         }),
         [handleSelectionRemove, geoOptionsById, onSelectionsChange, readOnly],
@@ -253,6 +256,12 @@ const GeoInputList = (props) => {
 
     const groupRendererParams = useCallback(
         (groupKey) => {
+            if (!groupKey) {
+                return {
+                    children: 'Ungrouped',
+                };
+            }
+
             const [regionKey, adminLevelKey] = groupKey.split('-');
             // FIXME: this can be made efficient
             const adminLevel = adminLevelTitles.find(
@@ -262,7 +271,7 @@ const GeoInputList = (props) => {
             return {
                 children: adminLevel
                     ? `${adminLevel.regionTitle} / ${adminLevel.title}`
-                    : '',
+                    : 'Ungrouped',
             };
         },
         [adminLevelTitles],

@@ -228,6 +228,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                             <EntryCommentModal
                                 entryServerId={entryServerId}
                                 onCommentsCountChange={this.handleCommentsCountChange}
+                                defaultAssignee={entryAccessor.createdBy(entry)}
                             />
                         }
                         iconName="chat"

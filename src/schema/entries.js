@@ -144,6 +144,21 @@ const entrySchema = [];
                                     createdAt: { type: 'string', required: true }, // date
                                     // createdBy: { type: 'uint' },
                                     id: { type: 'uint', required: true },
+                                    assignee: { type: 'array.uint' },
+                                    assigneeDetails: {
+                                        type: {
+                                            doc: {
+                                                name: 'assigneeDetails',
+                                                description: 'Assignee details of lead',
+                                            },
+                                            fields: {
+                                                id: { type: 'uint' },
+                                                displayName: { type: 'string' },
+                                                displayPicture: { type: 'uint' },
+                                                email: { type: 'string' },
+                                            },
+                                        },
+                                    },
                                     // source: { type: 'string' },
                                     title: { type: 'string' },
                                     url: { type: 'string' },

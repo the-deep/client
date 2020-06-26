@@ -13,6 +13,7 @@ import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';
+import EntityLink from '#components/viewer/EntityLink';
 import LeadPreview from '#views/Leads/LeadPreview';
 import {
     pathNames,
@@ -83,6 +84,8 @@ export default class LeadGroupedEntries extends React.PureComponent {
             entries,
             url: leadUrlFromProps,
             attachment,
+            assignee,
+            assigneeDetails,
         } = lead;
 
         const route = reverseRoute(pathNames.editEntries, {
@@ -96,11 +99,11 @@ export default class LeadGroupedEntries extends React.PureComponent {
         return (
             <div className={_cs(classNameFromProps, styles.leadGroupedEntries)}>
                 <header className={_cs(headerClassNameFromProps, styles.header)}>
-                    <h3
-                        title={leadTitle}
-                        className={styles.heading}
-                    >
-                        <div className={styles.title}>
+                    <h3 className={styles.heading}>
+                        <div
+                            title={leadTitle}
+                            className={styles.title}
+                        >
                             {leadUrl ? (
                                 <ModalButton
                                     className={styles.leadTitleButton}
@@ -115,11 +118,33 @@ export default class LeadGroupedEntries extends React.PureComponent {
                                 leadTitle
                             )}
                         </div>
-                        <FormattedDate
-                            className={styles.date}
-                            date={leadCreatedAt}
-                            mode="dd-MM-yyyy"
-                        />
+                        <div className={styles.leadDetails}>
+                            <Icon
+                                title={_ts('entries', 'calendarIconTitle')}
+                                name="calendar"
+                            />
+                            <FormattedDate
+                                className={styles.date}
+                                date={leadCreatedAt}
+                                mode="dd-MM-yyyy"
+                            />
+                            {assignee && assignee[0] && (
+                                <>
+                                    <Icon
+                                        title={_ts('entries', 'assigneeIconTitle')}
+                                        name="user"
+                                    />
+                                    <EntityLink
+                                        className={styles.assigneeLink}
+                                        link={reverseRoute(
+                                            pathNames.userProfile,
+                                            { userId: assignee },
+                                        )}
+                                        title={assigneeDetails.displayName}
+                                    />
+                                </>
+                            )}
+                        </div>
                     </h3>
                     <div
                         title={_ts('entries', 'numberOfEntriesTooltip')}

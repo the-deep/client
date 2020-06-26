@@ -18,6 +18,7 @@ import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
 import Badge from '#components/viewer/Badge';
+import EntityLink from '#components/viewer/EntityLink';
 
 import {
     RequestClient,
@@ -113,9 +114,9 @@ const requestOptions = {
 
 const keySelector = u => u.id;
 const userRendererParams = (_, u) => ({
-    className: styles.badge,
+    className: styles.link,
     title: u.displayName,
-    tooltip: u.email,
+    link: reverseRoute(pathNames.userProfile, { userId: u.id }),
 });
 
 const projectRendererParams = (_, p) => ({
@@ -342,11 +343,11 @@ export default class FrameworkDetail extends React.PureComponent {
                                     {_ts('framework', 'frameworkOwnersLabel')}:
                                 </h4>
                                 <ListView
-                                    className={styles.values}
+                                    className={styles.userValues}
                                     data={usersWithAddPermission}
                                     keySelector={keySelector}
                                     rendererParams={userRendererParams}
-                                    renderer={Badge}
+                                    renderer={EntityLink}
                                 />
                             </div>
                         )}

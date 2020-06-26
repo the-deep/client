@@ -94,6 +94,21 @@
                 margin-left: var(--spacing-extra-small);
             }
 
+            .user-values {
+                display: flex;
+                flex-grow: 1;
+                flex-wrap: wrap;
+                margin-left: var(--spacing-extra-small);
+
+                .link {
+                    &:not(:last-child) {
+                        &:after {
+                            content: ',';
+                        }
+                    }
+                }
+            }
+
             .badge {
                 margin: var(--spacing-extra-small);
             }
