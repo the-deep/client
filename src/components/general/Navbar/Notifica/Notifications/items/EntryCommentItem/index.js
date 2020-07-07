@@ -102,6 +102,12 @@ export default class EntryCommentItem extends React.PureComponent {
                 'entryCommentReplyAdd',
                 stringParams,
             );
+        } else if (notificationType === 'entry_comment_assignee_change') {
+            notificationText = _ts(
+                'entryComments.notifications',
+                'entryCommentAdd',
+                stringParams,
+            );
         } else if (notificationType === 'entry_comment_resolved') {
             notificationText = _ts(
                 'entryComments.notifications',

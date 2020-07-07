@@ -43,7 +43,7 @@ const propTypes = {
     projectId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
     entryServerId: PropTypes.number,
     onCommentsCountChange: PropTypes.func.isRequired,
-    defaultAssignee: PropTypes.number,
+    defaultAssignees: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -52,7 +52,7 @@ const defaultProps = {
     projectId: undefined,
     entryServerId: undefined,
     closeModal: undefined,
-    defaultAssignee: undefined,
+    defaultAssignees: undefined,
 };
 
 const RESOLVED = 'resolved';
@@ -152,7 +152,7 @@ export default class EntryCommentModal extends React.PureComponent {
             requests: {
                 entryCommentsGet,
             },
-            defaultAssignee,
+            defaultAssignees,
         } = this.props;
 
         entryCommentsGet.setDefaultParams({
@@ -164,7 +164,7 @@ export default class EntryCommentModal extends React.PureComponent {
             comments: [],
             currentEdit: undefined,
             faramValues: {
-                assignee: defaultAssignee,
+                assignees: defaultAssignees,
             },
             faramErrors: {},
             globalPristine: true,

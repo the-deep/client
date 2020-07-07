@@ -83,6 +83,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
     static defaultProps = defaultProps;
 
     getEntryGroupsForCurrentEntry = memoize(getEntryGroupsForEntry);
+    getDefaultAssignees = memoize(entry => [entryAccessor.createdBy(entry)]);
 
     containerRef = React.createRef();
     dragEnterCount = 0;
@@ -188,6 +189,8 @@ export default class WidgetFaramContainer extends React.PureComponent {
             labels,
         );
 
+        const defaultAssignees = this.getDefaultAssignees(entry);
+
         return (
             <div className={_cs(
                 classNameFromProps,
@@ -234,7 +237,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                             <EntryCommentModal
                                 entryServerId={entryServerId}
                                 onCommentsCountChange={this.handleCommentsCountChange}
-                                defaultAssignee={entryAccessor.createdBy(entry)}
+                                defaultAssignees={defaultAssignees}
                             />
                         }
                         iconName="chat"

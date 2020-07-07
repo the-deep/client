@@ -33,7 +33,8 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     commentId: PropTypes.number.isRequired,
     userDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    assigneeDetail: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    assignees: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    assigneesDetail: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     isParent: PropTypes.bool,
     isResolved: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
@@ -59,7 +60,8 @@ const defaultProps = {
     isParent: false,
     isResolved: false,
     userDetails: {},
-    assigneeDetail: {},
+    assignees: [],
+    assigneesDetail: [],
     members: [],
 };
 
@@ -145,7 +147,7 @@ export default class Comment extends React.PureComponent {
 
         const {
             text,
-            assigneeDetail,
+            assignees,
             commentId,
         } = this.props;
 
@@ -153,7 +155,7 @@ export default class Comment extends React.PureComponent {
             deleteMode: false,
             faramValues: {
                 text,
-                assignee: assigneeDetail.id,
+                assignees,
             },
             faramErrors: {},
             pristine: true,
@@ -202,12 +204,12 @@ export default class Comment extends React.PureComponent {
     handleFaramChange = (values, errors) => {
         const {
             text,
-            assigneeDetail,
+            assignees,
             setGlobalPristine,
         } = this.props;
 
         // NOTE: This is to prevent unnecessary edits
-        const pristine = values.text === text && values.assignee === assigneeDetail.id;
+        const pristine = values.text === text && values.assignees === assignees;
 
         this.setState({
             faramValues: values,
@@ -275,13 +277,13 @@ export default class Comment extends React.PureComponent {
             onCurrentEditChange,
             setGlobalPristine,
             text,
-            assigneeDetail,
+            assignees,
         } = this.props;
 
         this.setState({
             faramValues: {
                 text,
-                assignee: assigneeDetail.id,
+                assignees,
             },
             faramErrors: {},
             pristine: true,
@@ -307,9 +309,7 @@ export default class Comment extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
-            assigneeDetail: {
-                name: assigneeName,
-            },
+            assigneesDetail,
             requests: {
                 commentEditRequest: { pending: editPending },
                 commentDeleteRequest: { pending: deletePending },
@@ -331,6 +331,9 @@ export default class Comment extends React.PureComponent {
         const hideActions = (activeUserId !== userDetails.id) || isResolved;
         const editMode = currentEdit === this.commentEditId;
         const hideEdit = isDefined(currentEdit);
+
+        const assigneeNamesMap = assigneesDetail.map(assigneeDetail => assigneeDetail.name);
+        const assigneeNames = assigneeNamesMap ? assigneeNamesMap.join(', ') : undefined;
 
         return (
             <div
@@ -374,9 +377,9 @@ export default class Comment extends React.PureComponent {
                             className={styles.commentText}
                             source={text}
                         />
-                        {(isParent && assigneeName) && (
+                        {(isParent && assigneeNames) && (
                             <div className={styles.assignee}>
-                                {_ts('entryComments', 'assignedTo', { name: assigneeName })}
+                                {_ts('entryComments', 'assignedTo', { name: assigneeNames })}
                             </div>
                         )}
                     </React.Fragment>

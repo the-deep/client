@@ -80,6 +80,8 @@ export default class Entry extends React.PureComponent {
         )
     ))
 
+    getDefaultAssignees = memoize(createdBy => [createdBy]);
+
     handleCommentsCountChange = (unresolvedCommentCount, resolvedCommentCount, entryId) => {
         const {
             leadId,
@@ -211,6 +213,8 @@ export default class Entry extends React.PureComponent {
             },
         );
 
+        const defaultAssignees = this.getDefaultAssignees(createdBy);
+
         return (
             <React.Fragment>
                 <header className={_cs('entry-container-header', styles.entryHeader)}>
@@ -241,7 +245,7 @@ export default class Entry extends React.PureComponent {
                                 <EntryCommentModal
                                     entryServerId={entryId}
                                     onCommentsCountChange={this.handleCommentsCountChange}
-                                    defaultAssignee={createdBy}
+                                    defaultAssignees={defaultAssignees}
                                 />
                             }
                             iconName="chat"
