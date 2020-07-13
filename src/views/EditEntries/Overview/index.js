@@ -121,6 +121,7 @@ export default class Overview extends React.PureComponent {
 
         const urlParams = new URLSearchParams(window.location.search);
         const entryIdFromRoute = urlParams.get('entry_id');
+        const showComment = urlParams.get('show_comment');
         const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
         const entryLocalId = entryAccessor.key(entry);
         if (entryLocalId) {
@@ -130,7 +131,7 @@ export default class Overview extends React.PureComponent {
             });
         }
 
-        this.showInitial = !!entryLocalId;
+        this.showInitial = !!entryLocalId && showComment === 'true';
     }
 
     componentDidMount() {

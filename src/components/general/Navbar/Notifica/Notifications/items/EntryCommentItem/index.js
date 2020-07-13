@@ -75,7 +75,7 @@ export default class EntryCommentItem extends React.PureComponent {
             ),
             comment: (
                 <LinkItem
-                    link={`${entriesLink}?entry_id=${entry}`}
+                    link={`${entriesLink}?entry_id=${entry}&show_comment=true`}
                     // This is intentional
                     title="comment"
                     closeModal={closeModal}

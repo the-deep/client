@@ -30,4 +30,8 @@
         border-color: var(--color-warning);
         color: var(--color-warning);
     }
+
+    &:hover {
+        background-color: var(--color-background-hover);
+    }
 }
