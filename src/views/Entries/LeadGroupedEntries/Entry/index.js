@@ -5,16 +5,20 @@ import { connect } from 'react-redux';
 import {
     _cs,
     isFalsy,
+    reverseRoute,
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import { entriesSetEntryCommentsCountAction } from '#redux';
 import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
+import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
 import EntryCommentModal from '#components/general/EntryCommentModal';
+import { pathNames } from '#constants';
 
 import {
     fetchWidgetViewComponent,
@@ -194,9 +198,18 @@ export default class Entry extends React.PureComponent {
                 unresolvedCommentCount: commentCount,
                 projectLabels,
             },
+            projectId,
+            leadId,
         } = this.props;
 
         const filteredWidgets = this.getWidgets(widgets);
+        const entriesPageLink = reverseRoute(
+            pathNames.editEntries,
+            {
+                projectId,
+                leadId,
+            },
+        );
 
         return (
             <React.Fragment>
@@ -210,6 +223,12 @@ export default class Entry extends React.PureComponent {
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
                         />
+                        <ButtonLikeLink
+                            className={styles.editEntryLink}
+                            to={`${entriesPageLink}?entry_id=${entryId}`}
+                        >
+                            <Icon name="edit" />
+                        </ButtonLikeLink>
                         <ModalButton
                             className={
                                 _cs(
