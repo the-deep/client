@@ -3,6 +3,7 @@
 }
 
 .widget-faram-container {
+    border: var(--width-separator-thin) solid transparent;
     border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
     .header {
@@ -64,5 +65,21 @@
     .widget {
         display: inline-block;
         min-width: 100%;
+    }
+
+    &.selected {
+        animation: flash 2 var(--duration-slow) var(--duration-relaxed)  ease-in-out forwards;
+    }
+
+    @keyframes flash {
+        0% {
+            border-color: transparent;
+        }
+        50% {
+            border-color: var(--color-accent);
+        }
+        100% {
+            border-color: transparent;
+        }
     }
 }
