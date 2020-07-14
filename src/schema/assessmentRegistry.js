@@ -187,5 +187,19 @@ const assessmentRegistrySchema = [];
     };
     assessmentRegistrySchema.push({ name, schema });
 }
+{
+    const name = 'arysCopyResponse';
+    const schema = {
+        doc: {
+            name: 'Ary Copy to Projects POST Response',
+            description: 'Copy assessments to other projects',
+        },
+        fields: {
+            assessments: { type: 'array.number' },
+            projects: { type: 'array.number' },
+        },
+    };
+    assessmentRegistrySchema.push({ name, schema });
+}
 
 export default assessmentRegistrySchema;

@@ -1129,7 +1129,9 @@
         "-59460837": "This framework is used by private projects you are not a part of.",
         "-61550815": "Widgets Preview",
         "-40186961": "View Details",
-        "-91728706": "Extract lead information from attached document\t"
+        "-91728706": "Extract lead information from attached document\t",
+        "-59171199": "Copy Assessment to Other Projects",
+        "-3021496": "You've successfully copied this assessment to {projectsCount} projects."
     },
     "links": {
         "browserExtension": {
@@ -3244,6 +3246,16 @@
         "project.questionnaire.list": {
             "addQuestionnaireButtonLabel": -16166235,
             "importQuestionnaireFromXLSFormButtonLabel": -37971354
+        },
+        "assessments.copyModal": {
+            "assessmentsCopyTitle": -59171199,
+            "successNotify": -3021496,
+            "projectsLabel": 173,
+            "searchInputLabel": 9,
+            "searchInputPlaceholder": 302,
+            "exportButtonTitle": 600,
+            "cancelButtonTitle": 61,
+            "clearSelectionButtonLabel": 528
         }
     }
 }
