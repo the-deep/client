@@ -170,6 +170,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
             leadId,
             entryGroups,
             labels,
+            selectedEntryKey,
         } = this.props;
 
         const {
@@ -188,7 +189,12 @@ export default class WidgetFaramContainer extends React.PureComponent {
         );
 
         return (
-            <div className={_cs(classNameFromProps, styles.widgetFaramContainer)} >
+            <div className={_cs(
+                classNameFromProps,
+                styles.widgetFaramContainer,
+                entryKey === selectedEntryKey && styles.selected,
+            )}
+            >
                 <header className={_cs('widget-container-header', styles.header)}>
                     <h3 className={styles.heading}>
                         {/* FIXME: use strings */}

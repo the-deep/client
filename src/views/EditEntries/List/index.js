@@ -11,6 +11,7 @@ import {
     editEntriesFilteredEntriesSelector,
     editEntriesWidgetsSelector,
     fieldsMapForTabularBookSelector,
+    editEntriesSelectedEntryKeySelector,
 } from '#redux';
 import {
     entryAccessor,
@@ -33,6 +34,7 @@ const propTypes = {
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     hash: PropTypes.string,
     leadId: PropTypes.number.isRequired,
+    selectedEntryKey: PropTypes.string,
 };
 
 const defaultProps = {
@@ -40,12 +42,14 @@ const defaultProps = {
     statuses: {},
     widgets: [],
     hash: undefined,
+    selectedEntryKey: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
     entries: editEntriesFilteredEntriesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
     tabularFields: fieldsMapForTabularBookSelector(state, props),
+    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
 });
 
 @connect(mapStateToProps)
@@ -58,22 +62,17 @@ export default class Listing extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
-        const { hash } = this.props;
+        const {
+            selectedEntryKey,
+            entries,
+            hash,
+        } = this.props;
 
-        if (isDefined(this.scrollTop) && prevProps.hash !== hash && hash === '#/list') {
-            const list = document.getElementsByClassName(styles.list)[0];
+        const selectedEntryChanged = prevProps.selectedEntryKey !== selectedEntryKey;
+        const hashChanged = prevProps.hash !== hash;
 
-            if (list) {
-                const scrollContainer = list.getElementsByClassName('virtualized-list-view')[0];
-
-                if (scrollContainer) {
-                    const lastScrollTop = this.scrollTop;
-
-                    setTimeout(() => {
-                        scrollContainer.scrollTop = lastScrollTop;
-                    }, 1000);
-                }
-            }
+        if (isDefined(this.itemHeight) && (selectedEntryChanged || hashChanged) && hash === '#/list') {
+            this.scrollToSelectedEntry(entries, selectedEntryKey);
         }
     }
 
@@ -81,9 +80,35 @@ export default class Listing extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    handleScroll = (e) => {
-        this.scrollTop = e.target.scrollTop;
 
+    scrollToSelectedEntry = (entries, selectedEntryKey) => {
+        const entryIndex = entries.findIndex(e => entryAccessor.key(e) === selectedEntryKey);
+        if (entryIndex !== -1) {
+            const list = document.getElementsByClassName(styles.list)[0];
+
+            if (list) {
+                const scrollContainer = list.getElementsByClassName('virtualized-list-view')[0];
+
+                if (scrollContainer) {
+                    setTimeout(() => {
+                        scrollContainer.scrollTop = entryIndex * this.itemHeight;
+                    }, 1000);
+                }
+            }
+        }
+    }
+
+    handleItemHeightCalculate = (itemHeight) => {
+        const {
+            entries,
+            selectedEntryKey,
+        } = this.props;
+
+        this.itemHeight = itemHeight;
+        this.scrollToSelectedEntry(entries, selectedEntryKey, itemHeight);
+    }
+
+    handleScroll = (e) => {
         const headers = e.target.getElementsByClassName('widget-container-header');
         for (let i = 0; i < headers.length; i += 1) {
             headers[i].style.transform = `translateX(${e.target.scrollLeft}px)`;
@@ -103,6 +128,7 @@ export default class Listing extends React.PureComponent {
             leadId,
             bookId,
             widgets,
+            selectedEntryKey,
         } = this.props;
 
         const fieldId = entryAccessor.tabularField(entry);
@@ -122,6 +148,7 @@ export default class Listing extends React.PureComponent {
             lead,
             leadId,
             widgets,
+            selectedEntryKey,
 
             index,
         };
@@ -133,6 +160,7 @@ export default class Listing extends React.PureComponent {
 
         return (
             <VirtualizedListView
+                onItemHeightCalculate={this.handleItemHeightCalculate}
                 className={styles.list}
                 data={entries}
                 renderer={WidgetFaramContainer}
