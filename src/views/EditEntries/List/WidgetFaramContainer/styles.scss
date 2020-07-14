@@ -19,6 +19,7 @@
         .heading {
             align-self: center;
             flex-grow: 1;
+            color: var(--color-text);
         }
 
         .entry-labels {
@@ -68,18 +69,10 @@
     }
 
     &.selected {
-        animation: flash 2 var(--duration-slow) var(--duration-relaxed)  ease-in-out forwards;
-    }
-
-    @keyframes flash {
-        0% {
-            border-color: transparent;
-        }
-        50% {
-            border-color: var(--color-accent);
-        }
-        100% {
-            border-color: transparent;
+        .header {
+            .heading {
+                color: var(--color-primary);
+            }
         }
     }
 }

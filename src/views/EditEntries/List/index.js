@@ -98,7 +98,7 @@ export default class Listing extends React.PureComponent {
         }
     }
 
-    handleItemHeight = (itemHeight) => {
+    handleItemHeightCalculate = (itemHeight) => {
         const {
             entries,
             selectedEntryKey,
@@ -160,7 +160,7 @@ export default class Listing extends React.PureComponent {
 
         return (
             <VirtualizedListView
-                onItemHeight={this.handleItemHeight}
+                onItemHeightCalculate={this.handleItemHeightCalculate}
                 className={styles.list}
                 data={entries}
                 renderer={WidgetFaramContainer}
