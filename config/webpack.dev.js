@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+// const CleanWebpackPlugin = require('clean-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 
 const ShellRunPlugin = require('./shellrun-plugin');
@@ -27,8 +27,8 @@ module.exports = (env) => {
         output: {
             path: appDist,
             publicPath: '/',
-            chunkFilename: 'js/[name].[hash].js',
-            filename: 'js/[name].[hash].js',
+            chunkFilename: 'js/[name].js',
+            filename: 'js/[name].js',
             sourceMapFilename: 'sourcemaps/[file].map',
         },
 
@@ -47,6 +47,8 @@ module.exports = (env) => {
         performance: {
             hints: 'warning',
         },
+
+        /*
         stats: {
             assets: true,
             colors: true,
@@ -54,6 +56,7 @@ module.exports = (env) => {
             errorDetails: true,
             hash: true,
         },
+        */
 
         devServer: {
             host: '0.0.0.0',
@@ -74,6 +77,7 @@ module.exports = (env) => {
                     include: appSrc,
                     exclude: nodeModulesSrc,
                     use: [
+                        'cache-loader',
                         'babel-loader',
                         {
                             loader: 'eslint-loader',
@@ -95,8 +99,9 @@ module.exports = (env) => {
                             options: {
                                 importLoaders: 1,
                                 modules: true,
-                                camelCase: true,
-                                localIdentName: '[name]_[local]_[hash:base64]',
+                                // camelCase: true,
+                                localsConvention: 'camelCase',
+                                // localsConvention: '[name]_[local]_[hash:base64]',
                                 sourceMap: true,
                             },
                         },
@@ -132,7 +137,7 @@ module.exports = (env) => {
                 allowAsyncCycles: false,
                 cwd: appBase,
             }),
-            new CleanWebpackPlugin([appDist], { root: appBase }),
+            // new CleanWebpackPlugin([appDist], { root: appBase }),
             new HtmlWebpackPlugin({
                 template: appIndexHtml,
                 filename: './index.html',
@@ -141,8 +146,8 @@ module.exports = (env) => {
                 chunksSortMode: 'none',
             }),
             new MiniCssExtractPlugin({
-                filename: 'css/[name].[hash].css',
-                chunkFilename: 'css/[id].[hash].css',
+                filename: 'css/[name].css',
+                chunkFilename: 'css/[id].css',
             }),
             new WebpackPwaManifest({
                 name: 'DEEP',

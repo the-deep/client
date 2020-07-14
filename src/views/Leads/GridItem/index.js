@@ -96,7 +96,7 @@ export default class GridItem extends React.PureComponent {
                         sourceType: lead.sourceType,
                         project: lead.project,
                         source: lead.source,
-                        author: lead.author,
+                        authors: lead.authors,
                         sourceRaw: lead.sourceRaw,
                         authorRaw: lead.authorRaw,
                         confidentiality: lead.confidentiality,
@@ -308,7 +308,7 @@ export default class GridItem extends React.PureComponent {
                 displayName: assigneeDisplayName,
             } = {},
             sourceDetail,
-            authorDetail,
+            authorsDetail,
             sourceRaw,
             authorRaw,
             emmTriggers,
@@ -316,7 +316,7 @@ export default class GridItem extends React.PureComponent {
         } = lead;
 
         const source = sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw;
-        const author = authorDetail ? organizationTitleSelector(authorDetail) : authorRaw;
+        const authors = authorsDetail ? authorsDetail.map(organizationTitleSelector).join(', ') : authorRaw;
 
         const showEmm = (isDefined(emmEntities) && emmEntities.length > 0)
             || (isDefined(emmTriggers) && emmTriggers.length > 0);
@@ -369,9 +369,9 @@ export default class GridItem extends React.PureComponent {
                         <div className={styles.publisher}>
                             {_ts('leadsGrid', 'publisherLabel')}: {source}
                         </div>
-                        {author &&
+                        {authors &&
                             <div className={styles.author}>
-                                {_ts('leadsGrid', 'authorLabel')}: {author}
+                                {_ts('leadsGrid', 'authorLabel')}: {authors}
                             </div>
                         }
                         <div className={styles.status}>

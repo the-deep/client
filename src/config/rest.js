@@ -1,5 +1,17 @@
 import { prepareUrlParams } from '@togglecorp/react-rest-request';
 
+export function getVersionedUrl(endpoint, url) {
+    const oldVersionString = '/v1';
+    const versionString = '/v2';
+    if (!url.startsWith(versionString)) {
+        return `${endpoint}${url}`;
+    }
+    const startIndex = 0;
+    const endIndex = endpoint.search(oldVersionString);
+    const newEndpoint = endpoint.slice(startIndex, endIndex);
+    return `${newEndpoint}${url}`;
+}
+
 export const POST = 'POST';
 export const GET = 'GET';
 export const PUT = 'PUT';

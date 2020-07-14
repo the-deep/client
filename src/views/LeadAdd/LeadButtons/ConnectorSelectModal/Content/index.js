@@ -282,13 +282,17 @@ export default class ConnectorContent extends React.PureComponent {
                 }) => (sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw),
             },
             {
-                key: 'author',
+                key: 'authors',
                 label: _ts('addLeads.connectorsSelect', 'authorTitle'),
                 order: 4,
                 modifier: ({
-                    authorDetail,
+                    authorsDetail,
                     authorRaw,
-                }) => (authorDetail ? organizationTitleSelector(authorDetail) : authorRaw),
+                }) => (
+                    authorsDetail.length > 0
+                        ? authorsDetail.map(organizationTitleSelector).join(', ')
+                        : authorRaw
+                ),
             },
             {
                 key: 'publishedOn',

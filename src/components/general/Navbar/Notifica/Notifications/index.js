@@ -14,7 +14,6 @@ import {
 
 import {
     setNotificationsAction,
-    updateNotificationAction,
     notificationItemsSelector,
     notificationsCountSelector,
 } from '#redux';
@@ -97,7 +96,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setNotifications: params => dispatch(setNotificationsAction(params)),
-    updateNotification: params => dispatch(updateNotificationAction(params)),
 });
 
 const requestOptions = {

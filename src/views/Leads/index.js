@@ -151,9 +151,9 @@ const tableHeadersMap = {
         label: _ts('leads', 'tableHeaderPublisher'),
         sortable: true,
     },
-    author: {
+    authors: {
         label: _ts('leads', 'tableHeaderAuthor'),
-        sortable: true,
+        sortable: false,
     },
     published_on: {
         label: _ts('leads', 'tableHeaderDatePublished'),

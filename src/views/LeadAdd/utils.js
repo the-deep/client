@@ -252,7 +252,7 @@ export function getFaramValuesFromLead(lead) {
         emmTriggers: lead.emmTriggers,
         emmEntities: lead.emmEntities,
         source: lead.sourceDetail ? lead.sourceDetail.id : undefined,
-        author: lead.authorDetail ? lead.authorDetail.id : undefined,
+        authors: lead.authorsDetail ? lead.authorsDetail.map(item => item.id) : undefined,
         publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
         // Website type
         website: lead.website,
@@ -282,7 +282,7 @@ export function getFaramValuesFromLeadCandidate(leadCandidate) {
         emmEntities: lead.emmEntities,
         emmTriggers: lead.emmTriggers,
         source: lead.sourceDetail ? lead.sourceDetail.id : undefined,
-        author: lead.authorDetail ? lead.authorDetail.id : undefined,
+        authors: lead.authorsDetail ? lead.authorsDetail.map(item => item.id) : undefined,
         publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
         // Website
         website: lead.website,
