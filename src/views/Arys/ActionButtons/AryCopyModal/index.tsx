@@ -1,9 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
-import {
-    isDefined,
-    isNotDefined,
-} from '@togglecorp/fujs';
+import { isDefined } from '@togglecorp/fujs';
 
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -63,9 +60,14 @@ interface Body {
     projects: number[];
 }
 
+interface AssessmentsByProjects {
+    [key: string]: number[] | undefined;
+}
+
 interface Response {
     assessments: number[];
     projects: number[];
+    assessmentsByProjects: AssessmentsByProjects;
 }
 
 interface Params {
@@ -84,34 +86,43 @@ const requestOptions: Requests<ComponentPropsWithAppState, Params> = {
         body: ({ params }) => params && params.bodyToSendToApi,
         method: methods.POST,
         onSuccess: ({
-            response: aryResponse,
+            response,
             props: {
+                userProjects,
                 closeModal,
             },
         }) => {
-            const response = aryResponse as Response;
+            const { assessmentsByProjects } = response as Response;
 
-            let message = _ts(
-                'assessments.copyModal',
-                'successNotify',
-                { projectsCount: response.projects ? response.projects.length : 0 },
-            );
-            let type = notify.type.SUCCESS;
+            if (Object.keys(assessmentsByProjects).length > 0) {
+                const successfulProjectsList = userProjects.filter(
+                    p => isDefined(assessmentsByProjects[p.id]),
+                ).map(p => p.title);
 
-            if (isNotDefined(response.projects) || response.projects.length === 0) {
-                message = _ts(
+                const messageIfEmpty = _ts(
                     'assessments.copyModal',
-                    'errorNotify',
+                    'successMessageIfEmpty',
                 );
-                type = notify.type.ERROR;
-            }
 
-            notify.send({
-                type,
-                title: _ts('assessments.copyModal', 'assessmentsCopyTitle'),
-                message,
-                duration: notify.duration.MEDIUM,
-            });
+                const message = _ts(
+                    'assessments.copyModal',
+                    'successNotify',
+                    { projects: successfulProjectsList.join(', ') },
+                );
+                notify.send({
+                    type: notify.type.SUCCESS,
+                    title: _ts('assessments.copyModal', 'assessmentsCopyTitle'),
+                    message: successfulProjectsList.length > 0 ? message : messageIfEmpty,
+                    duration: notify.duration.MEDIUM,
+                });
+            } else {
+                notify.send({
+                    type: notify.type.ERROR,
+                    title: _ts('assessments.copyModal', 'assessmentsCopyTitle'),
+                    message: _ts('assessments.copyModal', 'errorNotify'),
+                    duration: notify.duration.MEDIUM,
+                });
+            }
 
             if (closeModal) {
                 closeModal();

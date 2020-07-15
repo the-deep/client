@@ -1131,7 +1131,9 @@
         "-40186961": "View Details",
         "-91728706": "Extract lead information from attached document\t",
         "-59171199": "Copy Assessment to Other Projects",
-        "-3021496": "You've successfully copied this assessment to {projectsCount} projects."
+        "-3021496": "You've successfully copied this assessment to the projects {projects}.",
+        "-49575508": "The current assessment was not copied to any of the projects you selected.",
+        "-51126708": "You've successfully copied this assessment to selected projects."
     },
     "links": {
         "browserExtension": {
@@ -3255,7 +3257,9 @@
             "searchInputPlaceholder": 302,
             "exportButtonTitle": 600,
             "cancelButtonTitle": 61,
-            "clearSelectionButtonLabel": 528
+            "clearSelectionButtonLabel": 528,
+            "errorNotify": -49575508,
+            "successMessageIfEmpty": -51126708
         }
     }
 }
