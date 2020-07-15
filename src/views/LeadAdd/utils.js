@@ -269,7 +269,9 @@ export function getFaramValuesFromLead(lead) {
         confidentiality: lead.confidentiality,
         assignee: lead.assignee,
         sourceRaw: !lead.sourceDetail ? lead.sourceRaw : undefined,
-        authorRaw: !lead.authorDetail ? lead.authorRaw : undefined,
+        authorRaw: !lead.authorsDetail || lead.authorsDetail.length <= 0
+            ? lead.authorRaw
+            : undefined,
     };
 }
 
@@ -290,7 +292,9 @@ export function getFaramValuesFromLeadCandidate(leadCandidate) {
 
         // fields only on connectors
         sourceSuggestion: !lead.sourceDetail ? lead.sourceRaw : undefined,
-        authorSuggestion: !lead.authorDetail ? lead.authorRaw : undefined,
+        authorSuggestion: !lead.authorsDetail || lead.authorsDetail.length <= 0
+            ? lead.authorRaw
+            : undefined,
         // NOTE: organizations are created for connectors, so we may drop
         // organization suggestion
     };
