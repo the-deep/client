@@ -8,13 +8,16 @@ import {
 } from '#request';
 import { reverseRoute } from '@togglecorp/fujs';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import Button from '#rsu/../v2/Action/Button';
 import Icon from '#rscg/Icon';
+import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { pathNames } from '#constants/';
 import notify from '#notify';
 import _ts from '#ts';
 
+import AryCopyModal from './AryCopyModal';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -24,6 +27,8 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     onRemoveAry: PropTypes.func.isRequired,
 };
+
+const AryCopyModalButton = modalize(Button);
 
 const defaultProps = {};
 
@@ -91,6 +96,8 @@ export default class ActionButtons extends React.PureComponent {
                     pending,
                 },
             },
+            row,
+            activeProject,
         } = this.props;
         const links = this.getLinks();
 
@@ -104,6 +111,17 @@ export default class ActionButtons extends React.PureComponent {
                     transparent
                     iconName="delete"
                     confirmationMessage={_ts('assessments', 'aryDeleteConfirmText')}
+                />
+                <AryCopyModalButton
+                    className={styles.aryCopyButton}
+                    modal={(
+                        <AryCopyModal
+                            assessmentId={row.id}
+                            projectId={activeProject}
+                        />
+                    )}
+                    iconName="openLink"
+                    transparent
                 />
                 <Link
                     className={styles.editLink}
