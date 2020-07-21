@@ -5,7 +5,7 @@ import { _cs } from '@togglecorp/fujs';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import TextArea from '#rsci/TextArea';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
@@ -60,7 +60,7 @@ export default class CommentFaram extends React.PureComponent {
         };
 
         if (hasAssignee) {
-            this.schema.fields.assignee = [requiredCondition];
+            this.schema.fields.assignees = [requiredCondition];
         }
 
         this.contentRef = React.createRef();
@@ -122,9 +122,9 @@ export default class CommentFaram extends React.PureComponent {
                         autoFocus
                     />
                     {hasAssignee && (
-                        <SelectInput
-                            faramElementName="assignee"
-                            label="Assignee"
+                        <MultiSelectInput
+                            faramElementName="assignees"
+                            label="Assignees"
                             options={members}
                             keySelector={memberKeySelector}
                             labelSelector={memberLabelSelector}

@@ -6,6 +6,7 @@ import {
     isFalsy,
     isNotDefined,
 } from '@togglecorp/fujs';
+import memoize from 'memoize-one';
 
 import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
@@ -144,6 +145,8 @@ export default class Overview extends React.PureComponent {
         clearTimeout(this.entryCommentTimeout);
     }
 
+    getDefaultAssignees = memoize(entry => [entryAccessor.createdBy(entry)]);
+
     entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
         const fieldId = entryAccessor.tabularField(entry);
@@ -260,6 +263,8 @@ export default class Overview extends React.PureComponent {
         const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
 
+        const defaultAssignees = this.getDefaultAssignees(entry);
+
         return (
             <ResizableH
                 className={styles.overview}
@@ -335,7 +340,7 @@ export default class Overview extends React.PureComponent {
                                                 onCommentsCountChange={
                                                     this.handleCommentsCountChange
                                                 }
-                                                defaultAssignee={entryAccessor.createdBy(entry)}
+                                                defaultAssignees={defaultAssignees}
                                             />
                                         }
                                         iconName="chat"

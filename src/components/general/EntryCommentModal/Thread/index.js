@@ -260,7 +260,8 @@ export default class EntryCommentThread extends React.PureComponent {
             createdByDetail,
             text,
             textHistory,
-            assigneeDetail,
+            assigneesDetail,
+            assignees,
             id: parentId,
         } = parent;
 
@@ -276,7 +277,8 @@ export default class EntryCommentThread extends React.PureComponent {
                     onEdit={onEdit}
                     onDelete={onDelete}
                     userDetails={createdByDetail}
-                    assigneeDetail={assigneeDetail}
+                    assigneesDetail={assigneesDetail}
+                    assignees={assignees}
                     text={text}
                     setGlobalPristine={setGlobalPristine}
                     textHistory={textHistory}
