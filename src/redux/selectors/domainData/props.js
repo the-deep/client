@@ -17,6 +17,7 @@ export const wordCategoryIdFromRoute = getFromProps('wordCategoryId');
 export const countryIdFromRoute = getFromProps('countryId');
 export const groupIdFromRoute = getFromProps('userGroupId');
 export const leadIdFromRoute = getFromProps('leadId');
+export const entryIdFromRoute = getFromProps('entryId');
 export const projectIdFromRoute = getFromProps('projectId');
 export const userIdFromRoute = getFromProps('userId');
 export const connectorIdFromRoute = getFromProps('connectorId');
