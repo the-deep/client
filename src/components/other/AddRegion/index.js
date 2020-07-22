@@ -157,7 +157,7 @@ export default class AddRegion extends React.PureComponent {
                     duration: notify.duration.SLOW,
                 });
                 this.setState({
-                    faramErrors: { $internal: ['Error while trying to save region.'] },
+                    faramErrors: { $internal: ['Error while trying to save geo area.'] },
                 });
             })
             .build();
