@@ -317,6 +317,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'questionnaireBuilder');
 
+    entryCommentRedirect: {
+        order: 800,
+        type: ROUTE.private,
+        path: '/permalink/projects/:projectId/leads/:leadId/entries/:entryId/comments/',
+        loader: () => import('../redirects/EntryComment.js'),
+        links: allLinks,
+    },
 
     projectDenied: {
         order: 970,
@@ -326,6 +333,7 @@ export const routes = {
         hideNavbar: false,
         links: allLinks,
     }, // _ts('pageTitle', 'projectDenied');
+
     fourHundredThree: {
         order: 980,
         type: ROUTE.public,

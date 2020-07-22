@@ -52,6 +52,7 @@ export const connectorIdFromRouteSelector = createRouteSelector('connectorId');
 export const countryIdFromRouteSelector = createRouteSelector('countryId');
 export const groupIdFromRouteSelector = createRouteSelector('userGroupId');
 export const leadIdFromRouteSelector = createRouteSelector('leadId');
+export const entryIdFromRouteSelector = createRouteSelector('entryId');
 export const leadGroupIdFromRouteSelector = createRouteSelector('leadGroupId');
 export const projectIdFromRouteSelector = createRouteSelector('projectId');
 export const userIdFromRouteSelector = createRouteSelector('userId');
