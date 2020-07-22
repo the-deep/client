@@ -1133,7 +1133,8 @@
         "-59171199": "Copy Assessment to Other Projects",
         "-3021496": "You've successfully copied this assessment to the projects {projects}.",
         "-49575508": "The current assessment was not copied to any of the projects you selected.",
-        "-51126708": "You've successfully copied this assessment to selected projects."
+        "-51126708": "You've successfully copied this assessment to selected projects.",
+        "-54496992": "Lead Status"
     },
     "links": {
         "browserExtension": {
@@ -1592,7 +1593,9 @@
             "entryLabelsFilterLabel": -80269151,
             "entryGroupsHeaderTooltip": -47675119,
             "assigneeIconTitle": 6,
-            "calendarIconTitle": 163
+            "calendarIconTitle": 163,
+            "leadStatusFilterLabel": -54496992,
+            "leadStatusFilterPlaceholder": -54496992
         },
         "export": {
             "headerExport": 600,

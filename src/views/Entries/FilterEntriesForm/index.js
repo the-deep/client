@@ -270,6 +270,7 @@ export default class FilterEntriesForm extends React.PureComponent {
         const {
             createdBy,
             projectEntryLabel,
+            leadStatus,
         } = entryFilterOptions;
 
         const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
@@ -284,6 +285,17 @@ export default class FilterEntriesForm extends React.PureComponent {
                     showHintAndError={false}
                     value={filters.search}
                     disabled={pending}
+                />
+                <MultiSelectInput
+                    className={styles.entriesFilter}
+                    onChange={(value) => { this.handleFilterChange('lead_status', value); }}
+                    keySelector={FilterEntriesForm.optionKeySelector}
+                    label={_ts('entries', 'leadStatusFilterLabel')}
+                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    value={filters.lead_status}
+                    showHintAndError={false}
+                    options={leadStatus}
+                    placeholder={_ts('entries', 'leadStatusFilterPlaceholder')}
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
