@@ -1134,7 +1134,10 @@
         "-3021496": "You've successfully copied this assessment to the projects {projects}.",
         "-49575508": "The current assessment was not copied to any of the projects you selected.",
         "-51126708": "You've successfully copied this assessment to selected projects.",
-        "-54496992": "Lead Status"
+        "-54496992": "Lead Status",
+        "-3021496": "You've successfully copied this assessment to {projectsCount} projects.",
+        "-42205095": "Priority",
+        "-17130420": "Assessment couldn't be copied."
     },
     "links": {
         "browserExtension": {
@@ -1875,7 +1878,8 @@
             "authorPlaceholder": -4332303,
             "formatButtonTitle": -50025578,
             "suggestionsLabel": -75552913,
-            "extractLeadFromDocument": -91728706
+            "extractLeadFromDocument": -91728706,
+            "priorityLabel": -42205095
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -3261,8 +3265,12 @@
             "exportButtonTitle": 600,
             "cancelButtonTitle": 61,
             "clearSelectionButtonLabel": 528,
+<<<<<<< HEAD
             "errorNotify": -49575508,
             "successMessageIfEmpty": -51126708
+=======
+            "errorNotify": -17130420
+>>>>>>> Priority feature in Leads
         }
     }
 }

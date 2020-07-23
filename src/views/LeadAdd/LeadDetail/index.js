@@ -26,6 +26,7 @@ import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
 import BasicMultiSelectInput from '#rsu/../v2/Input/BasicMultiSelectInput';
+import SegmentInput from '#rsci/SegmentInput';
 
 import {
     RequestClient,
@@ -119,7 +120,20 @@ const defaultProps = {
     projects: [],
 };
 
-
+const prioritySelect = [
+    {
+        key: 'low',
+        value: 'Low',
+    },
+    {
+        key: 'medium',
+        value: 'Medium',
+    },
+    {
+        key: 'high',
+        value: 'High',
+    },
+];
 const idSelector = item => item.id;
 
 const keySelector = item => item.key;
@@ -468,6 +482,7 @@ class LeadDetail extends React.PureComponent {
         } = this.props;
 
         const key = leadKeySelector(lead);
+        console.warn('values', faramValues);
 
         // Clear lead-group if project has changed
         const oldFaramValues = leadFaramValuesSelector(lead);
@@ -1077,6 +1092,15 @@ class LeadDetail extends React.PureComponent {
                             placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
                         />
                     </ApplyAll>
+
+                    <SegmentInput
+                        faramElementName="priority"
+                        name="priority-selector"
+                        label={_ts('addLeads', 'priorityLabel')}
+                        labelSelector={labelSelector}
+                        keySelector={keySelector}
+                        options={prioritySelect}
+                    />
 
                     {
                         ATTACHMENT_TYPES.indexOf(type) !== -1 && (

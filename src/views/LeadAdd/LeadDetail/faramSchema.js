@@ -16,6 +16,7 @@ const commonFields = {
     publishedOn: [requiredCondition, dateCondition],
     sourceType: [requiredCondition],
     project: [requiredCondition],
+    priority: [],
 
     tabularBook: [],
 
