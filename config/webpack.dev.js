@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-// const CleanWebpackPlugin = require('clean-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 
 const ShellRunPlugin = require('./shellrun-plugin');
@@ -137,7 +136,6 @@ module.exports = (env) => {
                 allowAsyncCycles: false,
                 cwd: appBase,
             }),
-            // new CleanWebpackPlugin([appDist], { root: appBase }),
             new HtmlWebpackPlugin({
                 template: appIndexHtml,
                 filename: './index.html',
@@ -165,7 +163,7 @@ module.exports = (env) => {
                 ],
             }),
             new ShellRunPlugin({
-                messageBefore: 'Generating language map.',
+                messageBefore: 'Started generating language map.',
                 command: `
                     find "${appSrc}/" -regex ".*\\.\\(js\\|ts\\|tsx\\|jsx\\)" |
                         xargs gawk -f "${appSrc}/utils/finder.awk" > "${appSrc}/usage.tmp" &&
@@ -173,7 +171,7 @@ module.exports = (env) => {
                         rsync -c "${appSrc}/usage.tmp" "${appSrc}/generated/usage.js";
                         rm "${appSrc}/usage.tmp";
                 `,
-                messageAfter: 'Done.',
+                messageAfter: 'Finished generating language map.',
             }),
             new webpack.HotModuleReplacementPlugin(),
         ],

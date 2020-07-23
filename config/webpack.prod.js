@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -111,10 +111,10 @@ module.exports = (env) => {
                             options: {
                                 importLoaders: 1,
                                 modules: true,
-                                camelCase: true,
-                                localIdentName: '[name]_[local]_[hash:base64]',
+                                // camelCase: true,
+                                localsConvention: 'camelCase',
+                                // localIdentName: '[name]_[local]_[hash:base64]',
                                 sourceMap: true,
-                                minimize: true,
                             },
                         },
                         {
@@ -148,7 +148,7 @@ module.exports = (env) => {
                 allowAsyncCycles: false,
                 cwd: appBase,
             }),
-            new CleanWebpackPlugin([appDist], { root: appBase }),
+            new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: appIndexHtml,
                 filename: './index.html',
@@ -156,7 +156,9 @@ module.exports = (env) => {
                 favicon: path.resolve(appFavicon),
                 chunksSortMode: 'none',
             }),
-            new CopyWebpackPlugin([{ from: staticContent, to: appDist }]),
+            new CopyWebpackPlugin({
+                patterns: [{ from: staticContent, to: appDist }],
+            }),
             new MiniCssExtractPlugin({
                 filename: 'css/[name].[hash].css',
                 chunkFilename: 'css/[id].[hash].css',
@@ -177,7 +179,7 @@ module.exports = (env) => {
                 ],
             }),
             new ShellRunPlugin({
-                messageBefore: 'Generating language map.',
+                messageBefore: 'Started generating language map.',
                 command: `
                     find "${appSrc}/" -regex ".*\\.\\(js\\|ts\\|tsx\\|jsx\\)" |
                         xargs gawk -f "${appSrc}/utils/finder.awk" > "${appSrc}/usage.tmp" &&
@@ -185,7 +187,7 @@ module.exports = (env) => {
                         rsync -c "${appSrc}/usage.tmp" "${appSrc}/generated/usage.js";
                         rm "${appSrc}/usage.tmp";
                 `,
-                messageAfter: 'Done.',
+                messageAfter: 'Finished generating language map.',
             }),
         ],
     };
