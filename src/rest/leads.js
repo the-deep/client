@@ -6,10 +6,8 @@ import {
     DELETE,
     commonHeaderForPost,
     p,
-} from '#config/rest';
-import {
     getVersionedUrl,
-} from '#request';
+} from '#config/rest';
 
 // do no use this, use urlForLead instead
 export const urlForLead = getVersionedUrl(wsEndpoint, '/v2/leads/');

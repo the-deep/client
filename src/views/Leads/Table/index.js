@@ -131,12 +131,16 @@ export default class Table extends React.Component {
                 }) => (sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw),
             },
             {
-                key: 'author',
+                key: 'authors',
                 order: 5,
                 modifier: ({
-                    authorDetail,
+                    authorsDetail,
                     authorRaw,
-                }) => (authorDetail ? organizationTitleSelector(authorDetail) : authorRaw),
+                }) => (
+                    authorsDetail.length > 0
+                        ? authorsDetail.map(organizationTitleSelector).join(', ')
+                        : authorRaw
+                ),
             },
             {
                 key: 'published_on',

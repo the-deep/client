@@ -10,24 +10,13 @@ import { sanitizeResponse } from '#utils/common';
 import {
     wsEndpoint,
     serverlessEndpoint,
+    getVersionedUrl,
 } from '#config/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
 
 export { methods, RequestHandler } from '@togglecorp/react-rest-request';
-
-export function getVersionedUrl(endpoint, url) {
-    const oldVersionString = '/v1';
-    const versionString = '/v2';
-    if (!url.startsWith(versionString)) {
-        return `${endpoint}${url}`;
-    }
-    const startIndex = 0;
-    const endIndex = endpoint.search(oldVersionString);
-    const newEndpoint = endpoint.slice(startIndex, endIndex);
-    return `${newEndpoint}${url}`;
-}
 
 const mapStateToProps = state => ({
     myToken: tokenSelector(state),

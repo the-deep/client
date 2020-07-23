@@ -198,9 +198,13 @@ export default class ConnectorTestResults extends React.PureComponent {
                 label: _ts('connector', 'authorLabel'),
                 order: 6,
                 modifier: ({
-                    authorDetail,
+                    authorsDetail,
                     authorRaw,
-                }) => (authorDetail ? organizationTitleSelector(authorDetail) : authorRaw),
+                }) => (
+                    authorsDetail.length > 0
+                        ? authorsDetail.map(organizationTitleSelector).join(', ')
+                        : authorRaw
+                ),
             },
         ];
         if (connectorSource.key === 'emm') {

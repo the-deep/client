@@ -5,8 +5,8 @@ import {
     DELETE,
     p,
     commonHeaderForPost,
+    getVersionedUrl,
 } from '#config/rest';
-import { getVersionedUrl } from '#request';
 
 export const urlForEntry = `${wsEndpoint}/entries/`;
 export const urlForEntryCreate = `${wsEndpoint}/entries/`;

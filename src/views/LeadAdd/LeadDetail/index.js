@@ -25,6 +25,7 @@ import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
+import BasicMultiSelectInput from '#rsu/../v2/Input/BasicMultiSelectInput';
 
 import {
     RequestClient,
@@ -84,6 +85,7 @@ const AuthorEmptyComponent = () => (
 );
 
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
+const FaramBasicMultiSelectInput = FaramInputElement(BasicMultiSelectInput);
 const ModalButton = Modalize(Button);
 
 const propTypes = {
@@ -192,8 +194,9 @@ function fillWebInfo(values, webInfo) {
             safeValues.source = webInfo.source.id;
         }
         if (webInfo.author) {
+            // FIXME: we have to look into this
             // eslint-disable-next-line no-param-reassign
-            safeValues.author = webInfo.author.id;
+            safeValues.authors = [webInfo.author.id];
         }
     });
     return newValues;
@@ -305,7 +308,7 @@ const requestOptions = {
                 organizations: unique(
                     [
                         inputValues.source,
-                        inputValues.author,
+                        ...(inputValues.authors || []),
                     ].filter(isDefined),
                     id => id,
                 ),
@@ -543,7 +546,7 @@ class LeadDetail extends React.PureComponent {
             newOrgs.push(webInfo.source);
         }
         if (webInfo.author) {
-            newOrgs.push(webInfo.author);
+            newOrgs.push([webInfo.author.id]);
         }
         if (newOrgs.length > 0) {
             this.setState(state => ({
@@ -584,7 +587,9 @@ class LeadDetail extends React.PureComponent {
         const values = leadFaramValuesSelector(lead);
         const newValues = {
             ...values,
-            author: organization.id,
+            authors: values.authors
+                ? [...values.authors, organization.id]
+                : [organization.id],
         };
         this.handleLeadValueChange(newValues);
     }
@@ -622,12 +627,9 @@ class LeadDetail extends React.PureComponent {
         const newValues = produce(values, (safeValues) => {
             const {
                 source,
-                author,
             } = values;
-            if (source !== author) {
-                // eslint-disable-next-line no-param-reassign
-                safeValues.author = source;
-            }
+            // eslint-disable-next-line no-param-reassign
+            safeValues.authors = source ? [source] : undefined;
         });
 
         this.handleLeadValueChange(newValues);
@@ -983,7 +985,7 @@ class LeadDetail extends React.PureComponent {
                     <ApplyAll
                         className={styles.author}
                         disabled={isApplyAllDisabled}
-                        identifierName="author"
+                        identifierName="authors"
                         onApplyAllClick={this.handleApplyAllClick}
                         onApplyAllBelowClick={this.handleApplyAllBelowClick}
                         extraButtons={
@@ -996,8 +998,8 @@ class LeadDetail extends React.PureComponent {
                             />
                         }
                     >
-                        <FaramBasicSelectInput
-                            faramElementName="author"
+                        <FaramBasicMultiSelectInput
+                            faramElementName="authors"
                             label={_ts('addLeads', 'authorLabel')}
 
                             className={styles.input}

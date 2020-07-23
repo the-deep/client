@@ -22,8 +22,10 @@ const leadSchema = [];
             authorRaw: { type: 'string' },
             sourceDetail: { type: 'idTitlePair' },
             authorDetail: { type: 'idTitlePair' },
+            authorsDetail: { type: 'array.idTitlePair' },
             source: { type: 'uint' }, // url
             author: { type: 'uint' },
+            authors: { type: 'array.uint' },
             status: { type: 'string', required: true },
             text: { type: 'string' },
             title: { type: 'string', required: true },
