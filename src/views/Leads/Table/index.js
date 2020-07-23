@@ -137,7 +137,7 @@ export default class Table extends React.Component {
                     authorsDetail,
                     authorRaw,
                 }) => (
-                    authorsDetail.length > 0
+                    (authorsDetail && authorsDetail.length > 0)
                         ? authorsDetail.map(organizationTitleSelector).join(', ')
                         : authorRaw
                 ),
