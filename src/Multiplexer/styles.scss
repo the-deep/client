@@ -8,6 +8,17 @@
 }
 
 :global {
+    .disabled-map-draw-control {
+        .mapboxgl-control-container {
+            .mapboxgl-ctrl-top-right {
+                .mapbox-gl-draw_ctrl-draw-btn {
+                    pointer-events: none;
+                    filter: opacity(30%);
+                }
+            }
+        }
+    }
+
     .portal-child-shown {
         overflow: hidden;
 
