@@ -482,7 +482,6 @@ class LeadDetail extends React.PureComponent {
         } = this.props;
 
         const key = leadKeySelector(lead);
-        console.warn('values', faramValues);
 
         // Clear lead-group if project has changed
         const oldFaramValues = leadFaramValuesSelector(lead);

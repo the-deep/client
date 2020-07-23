@@ -1780,7 +1780,8 @@
             "filterEmmRiskFactors": -97734309,
             "filterEmmTriggers": -35842630,
             "emmButtonLabel": -26433055,
-            "emmCountButtonLabel": -54804860
+            "emmCountButtonLabel": -54804860,
+            "priorityLevel": -42205095
         },
         "leadsGrid": {
             "publisherLabel": 5,
