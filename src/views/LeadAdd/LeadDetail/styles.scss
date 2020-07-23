@@ -84,8 +84,9 @@
         }
 
         .project,
+        .priority,
         .lead-group {
-            flex-basis: calc(100% / 2 - var(--spacing-medium));
+            flex-basis: calc(100% / 3 - var(--spacing-medium));
             padding: var(--spacing-medium) 0;
         }
 

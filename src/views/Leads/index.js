@@ -183,6 +183,10 @@ const tableHeadersMap = {
         label: _ts('leads', 'tableHeaderNoOfEntries'),
         sortable: true,
     },
+    priority: {
+        label: _ts('leads', 'priorityLevel'),
+        sortable: true,
+    },
     actions: {
         label: _ts('leads', 'tableHeaderActions'),
         sortable: false,
