@@ -289,7 +289,7 @@ export default class ConnectorContent extends React.PureComponent {
                     authorsDetail,
                     authorRaw,
                 }) => (
-                    authorsDetail.length > 0
+                    (authorsDetail && authorsDetail.length > 0)
                         ? authorsDetail.map(organizationTitleSelector).join(', ')
                         : authorRaw
                 ),

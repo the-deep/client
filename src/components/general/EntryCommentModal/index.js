@@ -164,7 +164,7 @@ export default class EntryCommentModal extends React.PureComponent {
             comments: [],
             currentEdit: undefined,
             faramValues: {
-                assignees: defaultAssignees,
+                assignees: defaultAssignees.map(isDefined),
             },
             faramErrors: {},
             globalPristine: true,
