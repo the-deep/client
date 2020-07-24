@@ -1,57 +1,16 @@
-
 .notifications {
     display: flex;
     position: relative;
     flex-direction: column;
     background-color: var(--color-foreground);
 
-    .loading-animation {
-        position: absolute;
-        top: var(--spacing-medium);
-        right: var(--spacing-medium);
-        width: var(--font-size-extra-large);
-        height: var(--font-size-extra-large);
-
-        >div {
-            padding: 0!important;
-            font-size: var(--font-size-large)!important;
-        }
-    }
-
-    // TODO: Fix the header
-    // .header {
-    //     display: flex;
-    //     align-items: center;
-    //     flex-shrink: 0;
-    //     background-color: var(--color-foreground);
-    //     padding: var(--spacing-medium-alt);
-
-    //     .heading {
-    //         flex-grow: 1;
-    //     }
-
-    //     .loading-animation {
-    //         position: relative;
-    //         flex-shrink: 0;
-    //         padding: 0 var(--spacing-medium);
-    //     }
-    // }
-
     .content {
         flex-grow: 1;
         overflow-y: auto;
+    }
 
-        .heading {
-            position: sticky;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            border-bottom: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-foreground);
-            padding: var(--spacing-medium);
-            color: var(--color-primary);
-            font-size: var(--font-size-large);
-        }
+    .date-range {
+        margin-right: var(--spacing-small);
     }
 
     :global {

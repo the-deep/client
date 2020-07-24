@@ -1,10 +1,16 @@
+import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
+import {
+    _cs,
+    encodeDate,
+} from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import ScrollTabs from '#rscv/ScrollTabs';
+import SegmentInput from '#rsci/SegmentInput';
 
 import {
     RequestCoordinator,
@@ -17,6 +23,8 @@ import {
     notificationItemsSelector,
     notificationsCountSelector,
 } from '#redux';
+
+import { getDateWithTimezone } from '#utils/common';
 
 import _ts from '#ts';
 
@@ -70,25 +78,6 @@ NotificationItem.propTypes = {
     onNotificationReload: PropTypes.func.isRequired,
 };
 
-const NotificationEmpty = () => (
-    <Message>
-        {_ts('notifications', 'noNotificationsText')}
-    </Message>
-);
-
-const propTypes = {
-    className: PropTypes.string,
-    notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    closeModal: PropTypes.func,
-};
-
-const defaultProps = {
-    className: '',
-    notifications: [],
-    closeModal: undefined,
-};
-
 const mapStateToProps = state => ({
     notificationsCount: notificationsCountSelector(state),
     notifications: notificationItemsSelector(state),
@@ -101,6 +90,26 @@ const mapDispatchToProps = dispatch => ({
 const requestOptions = {
     notificationsGetRequest: {
         url: '/notifications/',
+        query: ({ params: {
+            dateRange,
+            isPending,
+        } }) => {
+            if (dateRange === 'all') {
+                return {};
+            }
+
+            const lastDate = new Date();
+            // Default is always 7 days old
+            lastDate.setDate(lastDate.getDate() - 7);
+
+            if (dateRange === '30d') {
+                lastDate.setDate(lastDate.getDate() - 30);
+            }
+            return {
+                isPending: !!isPending,
+                timestamp__gte: getDateWithTimezone(encodeDate(lastDate)),
+            };
+        },
         method: methods.GET,
         onMount: true,
         onPropsChanged: {
@@ -144,88 +153,132 @@ const requestOptions = {
     },
 };
 
-@connect(mapStateToProps, mapDispatchToProps)
-@RequestCoordinator
-@RequestClient(requestOptions)
-export default class Notifications extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+const notificationKeySelector = n => n.id;
 
-    static notificationKeySelector = n => n.id;
+const tabs = {
+    notifications: _ts('notifications', 'notificationsTabLabel'),
+    requests: _ts('notifications', 'requestsTabLabel'),
+};
 
-    static groupKeySelector = notification => (
-        notification.data.status === 'pending' ? 'pending' : 'notPending'
-    );
+const dateRangeOptions = [
+    {
+        key: '7d',
+        label: _ts('notifications', '7daysLabel'),
+    },
+    {
+        key: '30d',
+        label: _ts('notifications', '30daysLabel'),
+    },
+    {
+        key: 'all',
+        label: _ts('notifications', 'allDaysLabel'),
+    },
+];
 
-    static pendingToNumber = a => (a === 'pending' ? 1 : 0);
+const dateRangeKeySelector = d => d.key;
+const dateRangeLabelSelector = d => d.label;
 
-    static groupComparator = (a, b) => (
-        Notifications.pendingToNumber(b) - Notifications.pendingToNumber(a)
-    )
+const emptyNotifications = () => (
+    <Message>{_ts('notifications', 'noNotificationsText')}</Message>
+);
 
-    notificationItemRendererParams = (_, d) => ({
-        closeModal: this.props.closeModal,
-        notification: d,
-        onNotificationReload: this.props.requests.notificationsGetRequest.do,
-    });
+const emptyRequests = () => (
+    <Message>{_ts('notifications', 'noPendingActionsText')}</Message>
+);
 
-    groupRendererParams = (groupKey) => {
-        const pendingTitle = _ts('notifications', 'pendingHeaderTitle');
-        const otherTitle = _ts('notifications', 'otherHeaderTitle');
-
-        const children = groupKey === 'pending' ? pendingTitle : otherTitle;
-        return { children };
-    }
-
-    render() {
-        const {
-            className: classNameFromProps,
-            notifications,
-            requests: {
-                notificationsGetRequest: { pending: notificationsPending },
+function Notifications(props) {
+    const {
+        className: classNameFromProps,
+        notifications,
+        requests: {
+            notificationsGetRequest: {
+                pending: notificationsPending,
+                do: reDoNotificationsRequest,
             },
-        } = this.props;
+        },
+        closeModal,
+    } = props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.notifications}
-        `;
+    const [activeTab, setActiveTab] = useState('notifications');
+    const [dateRange, setDateRange] = useState('7d');
 
-        return (
-            <div className={className} >
-                { notificationsPending && (
-                    <div className={styles.loadingAnimation}>
-                        <LoadingAnimation />
-                    </div>
-                )}
-                {/*
-                TODO: Fix heading
-                <header className={styles.header} >
-                    <h3 className={styles.heading} >
-                        {_ts('notifications', 'notificationHeaderTitle')}
-                    </h3>
-                    { notificationsPending && (
-                        <div className={styles.loadingAnimation}>
-                            <LoadingAnimation
-                                small
-                            />
-                        </div>
-                    )}
-                </header>
-                */}
-                <ListView
-                    className={styles.content}
-                    data={notifications}
-                    keySelector={Notifications.notificationKeySelector}
-                    renderer={NotificationItem}
-                    rendererParams={this.notificationItemRendererParams}
-                    groupKeySelector={Notifications.groupKeySelector}
-                    groupRendererParams={this.groupRendererParams}
-                    groupRendererClassName={styles.heading}
-                    groupComparator={Notifications.groupComparator}
-                    emptyComponent={NotificationEmpty}
+    const notificationItemRendererParams = useCallback((_, d) => ({
+        closeModal,
+        notification: d,
+        onNotificationReload: reDoNotificationsRequest,
+    }), [closeModal, reDoNotificationsRequest]);
+
+    const filteredNotifications = useMemo(() => {
+        if (activeTab === 'requests') {
+            return notifications.filter(n => n.data.status === 'pending');
+        }
+        return notifications.filter(n => n.data.status !== 'pending');
+    }, [notifications, activeTab]);
+
+    const handleTabChange = useCallback((newTab) => {
+        setActiveTab(newTab);
+        reDoNotificationsRequest({
+            dateRange,
+            isPending: newTab === 'requests',
+        });
+    }, [
+        dateRange,
+        setActiveTab,
+        reDoNotificationsRequest,
+    ]);
+
+    const handleDateRangeChange = useCallback((newDateRange) => {
+        setDateRange(newDateRange);
+        reDoNotificationsRequest({
+            isPending: activeTab === 'requests',
+            dateRange: newDateRange,
+        });
+    }, [activeTab, setDateRange, reDoNotificationsRequest]);
+
+    return (
+        <div className={_cs(classNameFromProps, styles.notifications)} >
+            { notificationsPending && <LoadingAnimation />}
+            <ScrollTabs
+                tabs={tabs}
+                onClick={handleTabChange}
+                active={activeTab}
+            >
+                <SegmentInput
+                    className={styles.dateRange}
+                    options={dateRangeOptions}
+                    keySelector={dateRangeKeySelector}
+                    labelSelector={dateRangeLabelSelector}
+                    value={dateRange}
+                    onChange={handleDateRangeChange}
+                    showHintAndError={false}
+                    showLabel={false}
                 />
-            </div>
-        );
-    }
+            </ScrollTabs>
+            <ListView
+                className={styles.content}
+                data={filteredNotifications}
+                keySelector={notificationKeySelector}
+                renderer={NotificationItem}
+                rendererParams={notificationItemRendererParams}
+                emptyComponent={activeTab === 'requests' ? emptyRequests : emptyNotifications}
+            />
+        </div>
+    );
 }
+
+Notifications.propTypes = {
+    className: PropTypes.string,
+    notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    closeModal: PropTypes.func,
+};
+
+Notifications.defaultProps = {
+    className: '',
+    notifications: [],
+    closeModal: undefined,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+    RequestCoordinator(RequestClient(requestOptions)(Notifications)),
+);
