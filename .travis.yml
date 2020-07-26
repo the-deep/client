@@ -15,8 +15,6 @@ before_install:
   - mkdir -p src/vendor
   - git clone https://github.com/toggle-corp/react-store.git $REACT_STORE_DIR
   - git --git-dir=$REACT_STORE_DIR/.git --no-pager show --pretty=fuller --quiet
-  - git clone https://github.com/toggle-corp/react-store.git $RE_MAP_DIR
-  - git --git-dir=$RE_MAP_DIR/.git --no-pager show --pretty=fuller --quiet
 
   # Pull docker images
   - ./docker_ci pull
@@ -46,5 +44,4 @@ notifications:
 env:
   global:
     - REACT_STORE_DIR=src/vendor/react-store
-    - RE_MAP_DIR=src/vendor/re-map
     - DOCKER_TAG_CLIENT=`echo ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} | tr / _`

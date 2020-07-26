@@ -36,8 +36,6 @@
         "#rscz/*": ["./src/vendor/react-store/components/Visualization/*"],
         "#rsk/*": ["./src/vendor/react-store/constants/*"],
         "#rsu/*": ["./src/vendor/react-store/utils/*"],
-        "#re-map": ["./src/vendor/re-map"],
-        "#re-map/*": ["./src/vendor/re-map/*"],
         "#schema": ["./src/schema"],
         "#store": ["./src/store"],
         "#store/*": ["./src/store/*"],

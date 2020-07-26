@@ -3,6 +3,15 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 import memoize from 'memoize-one';
 import { _cs, getRandomFromList } from '@togglecorp/fujs';
+import Map, {
+    MapBounds,
+    MapContainer,
+    MapSource,
+    MapLayer,
+    MapState,
+    MapTooltip,
+    MapShapeEditor,
+} from '@togglecorp/re-map';
 
 import boundError from '#rscg/BoundError';
 import { FgRestBuilder } from '#rsu/rest';
@@ -12,15 +21,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 
 import ComponentError from '#components/error/ComponentError';
-
-import Map from '#re-map';
-import MapBounds from '#re-map/MapBounds';
-import MapContainer from '#re-map/MapContainer';
-import MapSource from '#re-map/MapSource';
-import MapLayer from '#re-map/MapSource/MapLayer';
-import MapState from '#re-map/MapSource/MapState';
-import MapTooltip from '#re-map/MapTooltip';
-import MapShapeEditor from '#re-map/MapShapeEditor';
 
 import {
     createParamsForGet,

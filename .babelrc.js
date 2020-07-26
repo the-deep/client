@@ -51,7 +51,6 @@ module.exports = {
                     '#request': './src/request',
                     '#resources': './src/resources',
                     '#rest': './src/rest',
-                    '#re-map': './src/vendor/re-map',
                     '#rsca': './src/vendor/react-store/components/Action',
                     '#rscg': './src/vendor/react-store/components/General',
                     '#rsci': './src/vendor/react-store/components/Input',
