@@ -20,6 +20,7 @@ import {
 import { pathNames } from '#constants';
 import { organizationTitleSelector } from '#entities/organization';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
+import Badge from '#components/viewer/Badge';
 import _ts from '#ts';
 
 import ActionButtons from '../ActionButtons';
@@ -79,6 +80,7 @@ export default class Table extends React.Component {
                         emmEntities,
                         emmTriggers,
                         title,
+                        assessmentId,
                     } = row;
 
                     const showEmm = (isDefined(emmEntities) && emmEntities.length > 0)
@@ -101,6 +103,14 @@ export default class Table extends React.Component {
                                 >
                                     {_ts('leads', 'emmButtonLabel')}
                                 </ModalButton>
+                            }
+                            {isDefined(assessmentId) &&
+                                <Badge
+                                    className={styles.assessmentBadge}
+                                    icon="assessment"
+                                    title={_ts('leads', 'assessmentBadgeTitle')}
+                                    tooltip={_ts('leads', 'assessmentBadgeTooltip')}
+                                />
                             }
                         </div>
                     );

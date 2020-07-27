@@ -2,6 +2,7 @@ const iconNames = {
     add: 'ion-plus',
     addCircle: 'ion-android-add-circle',
     addPerson: 'ion-person-add',
+    assessment: 'ion-android-locate',
     applyAll: 'ion-ios-world',
     applyAllBelow: 'ion-android-arrow-dropdown-circle',
     apps: 'ion-android-apps',
