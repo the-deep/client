@@ -26,6 +26,7 @@ import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
 import BasicMultiSelectInput from '#rsu/../v2/Input/BasicMultiSelectInput';
+import SegmentInput from '#rsci/SegmentInput';
 
 import {
     RequestClient,
@@ -119,7 +120,20 @@ const defaultProps = {
     projects: [],
 };
 
-
+const prioritySelect = [
+    {
+        key: 'low',
+        value: _ts('leads', 'priorityLow'),
+    },
+    {
+        key: 'medium',
+        value: _ts('leads', 'priorityMedium'),
+    },
+    {
+        key: 'high',
+        value: _ts('leads', 'priorityHigh'),
+    },
+];
 const idSelector = item => item.id;
 
 const keySelector = item => item.key;
@@ -893,6 +907,22 @@ class LeadDetail extends React.PureComponent {
                             projectId={projectId}
                         />
                     ) }
+                    <ApplyAll
+                        className={styles.priority}
+                        disabled={isApplyAllDisabled}
+                        identifierName="priority"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    >
+                        <SegmentInput
+                            faramElementName="priority"
+                            name="priority-selector"
+                            label={_ts('addLeads', 'priorityLabel')}
+                            labelSelector={labelSelector}
+                            keySelector={keySelector}
+                            options={prioritySelect}
+                        />
+                    </ApplyAll>
                     <ExtraFunctionsOnHover
                         className={styles.title}
                         buttons={

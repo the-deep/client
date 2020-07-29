@@ -397,6 +397,8 @@ class LeadAdd extends React.PureComponent {
                     publishedOn: formatDateToString(now, 'yyyy-MM-dd'),
                     // NOTE: hard-coded confidentiality value
                     confidentiality: 'unprotected',
+                    // NOTE: hard-coded priority value
+                    priority: 'low',
                     // Inject other values too
                     ...faramValues,
                 },

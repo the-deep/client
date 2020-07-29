@@ -1131,10 +1131,15 @@
         "-40186961": "View Details",
         "-91728706": "Extract lead information from attached document\t",
         "-59171199": "Copy Assessment to Other Projects",
-        "-3021496": "You've successfully copied this assessment to the projects {projects}.",
+        "-3021496": "You've successfully copied this assessment to {projectsCount} projects.",
         "-49575508": "The current assessment was not copied to any of the projects you selected.",
         "-51126708": "You've successfully copied this assessment to selected projects.",
-        "-54496992": "Lead Status"
+        "-54496992": "Lead Status",
+        "-42205095": "Priority",
+        "-17130420": "Assessment couldn't be copied.",
+        "-57458754": "Low",
+        "-10200091": "Medium",
+        "-5919184": "High"
     },
     "links": {
         "browserExtension": {
@@ -1777,7 +1782,12 @@
             "filterEmmRiskFactors": -97734309,
             "filterEmmTriggers": -35842630,
             "emmButtonLabel": -26433055,
-            "emmCountButtonLabel": -54804860
+            "emmCountButtonLabel": -54804860,
+            "priorityLevel": -42205095,
+            "priorityHigh": -5919184,
+            "priorityLow": -57458754,
+            "priorityMedium": -10200091,
+            "filterPriority": -42205095
         },
         "leadsGrid": {
             "publisherLabel": 5,
@@ -1875,7 +1885,8 @@
             "authorPlaceholder": -4332303,
             "formatButtonTitle": -50025578,
             "suggestionsLabel": -75552913,
-            "extractLeadFromDocument": -91728706
+            "extractLeadFromDocument": -91728706,
+            "priorityLabel": -42205095
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -3261,7 +3272,7 @@
             "exportButtonTitle": 600,
             "cancelButtonTitle": 61,
             "clearSelectionButtonLabel": 528,
-            "errorNotify": -49575508,
+            "errorNotify": -17130420,
             "successMessageIfEmpty": -51126708
         }
     }

@@ -215,8 +215,12 @@ export default class Table extends React.Component {
                 modifier: row => row.noOfEntries,
             },
             {
-                key: 'actions',
+                key: 'priority',
                 order: 13,
+            },
+            {
+                key: 'actions',
+                order: 14,
                 modifier: (row) => {
                     const {
                         onSearchSimilarLead,

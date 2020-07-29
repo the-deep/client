@@ -261,6 +261,7 @@ export function getFaramValuesFromLead(lead) {
         attachment: lead.attachment,
         // Text tye
         text: lead.text,
+        priority: lead.priority,
 
         // fields exclusive to lead (not on leadCandidate)
         leadGroup: lead.leadGroup,
