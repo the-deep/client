@@ -1143,7 +1143,12 @@
         "-55355663": "30d",
         "-67286798": "7d",
         "-56480064": "No requests to display",
-        "-5634506": "Requests"
+        "-5634506": "Requests",
+        "-28151161": "Has assessment",
+        "-65776700": "No",
+        "-38652666": "Yes",
+        "-59901057": "Ary",
+        "-25520086": "This lead is in the Assessment Registry."
     },
     "links": {
         "browserExtension": {
@@ -1791,7 +1796,12 @@
             "priorityHigh": -5919184,
             "priorityLow": -57458754,
             "priorityMedium": -10200091,
-            "filterPriority": -42205095
+            "filterPriority": -42205095,
+            "existsFilterLabel": -28151161,
+            "assessmentDoesNotExistsOptionLabel": -65776700,
+            "assessmentExistsOptionLabel": -38652666,
+            "assessmentBadgeTitle": -59901057,
+            "assessmentBadgeTooltip": -25520086
         },
         "leadsGrid": {
             "publisherLabel": 5,

@@ -18,6 +18,7 @@ import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
+import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 
@@ -112,6 +113,17 @@ const requestOptions = {
     },
 };
 
+const existsFilterOptions = [
+    {
+        key: 'assessment_exists',
+        value: _ts('leads', 'assessmentExistsOptionLabel'),
+    },
+    {
+        key: 'assessment_does_not_exist',
+        value: _ts('leads', 'assessmentDoesNotExistsOptionLabel'),
+    },
+];
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class FilterLeadsForm extends React.PureComponent {
@@ -152,6 +164,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 confidentiality: [],
                 status: [],
                 priority: [],
+                exists: [],
                 emm_risk_factors: [],
                 emm_keywords: [],
                 emm_entities: [],
@@ -289,6 +302,17 @@ export default class FilterLeadsForm extends React.PureComponent {
                     faramElementName="published_on"
                     label={_ts('leads', 'filterDatePublished')}
                     placeholder={_ts('leads', 'placeholderAnytime')}
+                    showHintAndError={false}
+                    showLabel
+                    className={styles.leadsFilter}
+                />
+                <SelectInput
+                    faramElementName="exists"
+                    keySelector={FilterLeadsForm.optionKeySelector}
+                    label={_ts('leads', 'existsFilterLabel')}
+                    labelSelector={FilterLeadsForm.optionLabelSelector}
+                    options={existsFilterOptions}
+                    placeholder={_ts('leads', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
                     className={styles.leadsFilter}

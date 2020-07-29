@@ -400,6 +400,7 @@ class LeadAdd extends React.PureComponent {
                     // NOTE: hard-coded priority value
                     priority: 'low',
                     // Inject other values too
+                    authors: isDefined(faramValues.authors) ? faramValues.authors : [],
                     ...faramValues,
                 },
                 faramErrors: {},
