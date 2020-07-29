@@ -1139,7 +1139,11 @@
         "-17130420": "Assessment couldn't be copied.",
         "-57458754": "Low",
         "-10200091": "Medium",
-        "-5919184": "High"
+        "-5919184": "High",
+        "-55355663": "30d",
+        "-67286798": "7d",
+        "-56480064": "No requests to display",
+        "-5634506": "Requests"
     },
     "links": {
         "browserExtension": {
@@ -2398,13 +2402,16 @@
             "languagePlaceholder": -82545000
         },
         "notifications": {
-            "notificationHeaderTitle": 1929,
             "projectJoinResponse": 1934,
             "projectJoinResponseFailure": 1935,
             "noNotificationsText": -70199668,
             "projectJoinRequestAbortText": 1940,
-            "pendingHeaderTitle": 16,
-            "otherHeaderTitle": 1929
+            "notificationsTabLabel": 1929,
+            "30daysLabel": -55355663,
+            "7daysLabel": -67286798,
+            "allDaysLabel": 5552,
+            "noPendingActionsText": -56480064,
+            "requestsTabLabel": -5634506
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,
