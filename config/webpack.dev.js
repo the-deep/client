@@ -51,16 +51,6 @@ module.exports = (env) => {
             hints: 'warning',
         },
 
-        /*
-        stats: {
-            assets: true,
-            colors: true,
-            errors: true,
-            errorDetails: true,
-            hash: true,
-        },
-        */
-
         devServer: {
             host: '0.0.0.0',
             port: 3000,
@@ -94,6 +84,7 @@ module.exports = (env) => {
                 {
                     test: /\.s?css$/,
                     include: appSrc,
+                    sideEffects: true,
                     exclude: nodeModulesSrc,
                     use: [
                         'style-loader',
@@ -104,7 +95,7 @@ module.exports = (env) => {
                                 modules: true,
                                 // camelCase: true,
                                 localsConvention: 'camelCase',
-                                // localsConvention: '[name]_[local]_[hash:base64]',
+                                // localIdentName: '[name]_[local]_[hash:base64]',
                                 sourceMap: true,
                             },
                         },
