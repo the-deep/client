@@ -398,7 +398,7 @@ class LeadAdd extends React.PureComponent {
                     // NOTE: hard-coded confidentiality value
                     confidentiality: 'unprotected',
                     // NOTE: hard-coded priority value
-                    priority: 'low',
+                    priority: 100,
                     // Inject other values too
                     authors: isDefined(faramValues.authors) ? faramValues.authors : [],
                     ...faramValues,
