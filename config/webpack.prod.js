@@ -3,8 +3,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -14,6 +14,7 @@ const getEnvVariables = require('./env.js');
 
 const appBase = process.cwd();
 const eslintFile = path.resolve(appBase, '.eslintrc-loader.js');
+const nodeModulesSrc = path.resolve(appBase, 'node_modules');
 const appSrc = path.resolve(appBase, 'src/');
 const appDist = path.resolve(appBase, 'build/');
 const appIndexJs = path.resolve(appBase, 'src/index.js');
@@ -45,6 +46,7 @@ module.exports = (env) => {
                 'base-scss': path.resolve(appBase, 'src/stylesheets/'),
                 'rs-scss': path.resolve(appBase, 'src/vendor/react-store/stylesheets/'),
             },
+            symlinks: false,
         },
 
         mode: 'production',
@@ -53,6 +55,7 @@ module.exports = (env) => {
         performance: {
             hints: 'warning',
         },
+
         stats: {
             assets: true,
             colors: true,
@@ -94,6 +97,7 @@ module.exports = (env) => {
                 {
                     test: /\.(js|jsx|ts|tsx)$/,
                     include: appSrc,
+                    exclude: nodeModulesSrc,
                     use: [
                         'babel-loader',
                         {
@@ -108,6 +112,7 @@ module.exports = (env) => {
                     test: /\.s?css$/,
                     include: appSrc,
                     sideEffects: true,
+                    exclude: nodeModulesSrc,
                     use: [
                         MiniCssExtractPlugin.loader,
                         {
@@ -131,6 +136,7 @@ module.exports = (env) => {
                 },
                 {
                     test: /\.(png|jpg|gif|svg)$/,
+                    exclude: nodeModulesSrc,
                     use: [
                         {
                             loader: 'file-loader',
@@ -143,6 +149,16 @@ module.exports = (env) => {
             ],
         },
         plugins: [
+            new webpack.ProgressPlugin({
+                // activeModules: true,
+                // entries: true,
+                // modules: true,
+                // modulesCount: 5000,
+                // profile: false,
+                // dependencies: true,
+                // dependenciesCount: 10000,
+                // percentBy: null,
+            }),
             new webpack.DefinePlugin({
                 'process.env': ENV_VARS,
             }),
@@ -152,16 +168,12 @@ module.exports = (env) => {
                 allowAsyncCycles: false,
                 cwd: appBase,
             }),
-            new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: appIndexHtml,
                 filename: './index.html',
                 title: 'DEEP',
                 favicon: path.resolve(appFavicon),
                 chunksSortMode: 'none',
-            }),
-            new CopyWebpackPlugin({
-                patterns: [{ from: staticContent, to: appDist }],
             }),
             new MiniCssExtractPlugin({
                 filename: 'css/[name].[hash].css',
@@ -193,6 +205,10 @@ module.exports = (env) => {
                 `,
                 messageAfter: 'Finished generating language map.',
             }),
+            new CopyWebpackPlugin({
+                patterns: [{ from: staticContent, to: appDist }],
+            }),
+            new CleanWebpackPlugin(),
         ],
     };
 };
