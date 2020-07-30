@@ -35,6 +35,10 @@ module.exports = (env) => {
             sourceMapFilename: 'sourcemaps/[file].map',
         },
 
+        node: {
+            fs: 'empty',
+        },
+
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             alias: {
