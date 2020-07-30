@@ -136,6 +136,7 @@ const iconNames = {
     xml: 'fa fa-file-code-o',
     people: 'ion-android-people',
     colorPalette: 'ion-android-color-palette',
+    shrink: 'ion-arrow-shrink',
 };
 
 export default iconNames;

@@ -8,6 +8,7 @@ import TextInput from '#rsci/TextInput';
 import Message from '#rscv/Message';
 import urlRegex from '#rsu/regexForWeburl';
 import Icon from '#rscg/Icon';
+import Modal from '#rscv/Modal';
 
 import { galleryMapping, galleryType } from '#config/deepMimeTypes';
 import notify from '#notify';
@@ -143,6 +144,27 @@ const Bar = ({ url = '', children }) => {
     );
 };
 
+function FullscreenButton(p) {
+    const {
+        isFullScreen,
+        onClick,
+    } = p;
+
+    return (
+        <AccentButton
+            onClick={onClick}
+            transparent
+        >
+            { isFullScreen ? (
+                <Icon name="shrink" />
+            ) : (
+                <Icon name="expand" />
+            )}
+        </AccentButton>
+    );
+}
+
+
 /*
  * Document [pdf, image, docx, html] viewer handler
  * Use required document viewer according to the mime-type
@@ -157,7 +179,15 @@ export default class GalleryViewer extends React.PureComponent {
         this.state = {
             screenshotMode: false,
             currentScreenshot: undefined,
+            fullscreenMode: false,
         };
+    }
+
+    handleFullscreenButtonClick = () => {
+        this.setState(({ fullscreenMode }) => ({
+            fullscreenMode: !fullscreenMode,
+            screenshotMode: false,
+        }));
     }
 
     handleScreenshot = (image) => {
@@ -174,7 +204,10 @@ export default class GalleryViewer extends React.PureComponent {
 
     handleScreenshotDone = () => {
         this.setState(
-            { screenshotMode: false },
+            {
+                screenshotMode: false,
+                fullscreenMode: false,
+            },
             () => {
                 if (this.props.onScreenshotCapture) {
                     this.props.onScreenshotCapture(this.state.currentScreenshot);
@@ -244,7 +277,10 @@ export default class GalleryViewer extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const { screenshotMode } = this.state;
+        const {
+            screenshotMode,
+            fullscreenMode,
+        } = this.state;
 
         const isHttps = !!(url || '').match(/^https:\/\//) || window.location.protocol === 'http:';
         const previewError = !canShowIframe || !isHttps;
@@ -255,6 +291,7 @@ export default class GalleryViewer extends React.PureComponent {
             styles.galleryViewer,
             showBar && styles.urlbarShown,
             classNameFromProps,
+            screenshotMode && styles.screenshot,
         );
 
 
@@ -271,6 +308,11 @@ export default class GalleryViewer extends React.PureComponent {
                         showScreenshot={showScreenshot}
                     >
                         { showScreenshot && this.renderScreenshotButton() }
+
+                        <FullscreenButton
+                            onClick={this.handleFullscreenButtonClick}
+                            isFullScreen={fullscreenMode}
+                        />
                     </Bar>
                 }
                 <div className={docContainerClassName}>
@@ -293,6 +335,43 @@ export default class GalleryViewer extends React.PureComponent {
                         {...otherProps}
                     />
                 </div>
+                { fullscreenMode && (
+                    <Modal className={styles.modal}>
+                        { showBar &&
+                            <Bar
+                                url={url}
+                                showScreenshot={showScreenshot}
+                            >
+                                { showScreenshot && this.renderScreenshotButton() }
+
+                                <FullscreenButton
+                                    onClick={this.handleFullscreenButtonClick}
+                                    isFullScreen={fullscreenMode}
+                                />
+                            </Bar>
+                        }
+                        <div className={docContainerClassName}>
+                            { screenshotMode &&
+                            <Screenshot
+                                onCapture={this.handleScreenshot}
+                                onCaptureError={this.handleScreenshotError}
+                                onCancel={this.handleScreenshotClose}
+                            />
+                            }
+                            <Preview
+                                className={styles.doc}
+                                url={url}
+                                mimeType={mimeType}
+                                canShowIframe={canShowIframe}
+                                previewError={previewError}
+                                isHttps={isHttps}
+                                invalidUrlMessage={invalidUrlMessage}
+                                cannotPreviewUrlMessage={cannotPreviewUrlMessage}
+                                {...otherProps}
+                            />
+                        </div>
+                    </Modal>
+                )}
             </div>
         );
     }
