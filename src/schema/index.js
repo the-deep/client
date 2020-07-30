@@ -94,6 +94,22 @@ const userDefinedSchemas = [];
     };
     userDefinedSchemas.push({ name, schema });
 }
+
+{
+    const name = 'keyValuePairNS';
+    const schema = {
+        doc: {
+            name: 'Key Value Pair',
+            description: 'Defines key value pair where key is number and value is string',
+        },
+        fields: {
+            key: { type: 'number', required: true },
+            value: { type: 'string', required: true },
+        },
+    };
+    userDefinedSchemas.push({ name, schema });
+}
+
 {
     const name = 'timevalue';
     const schema = {

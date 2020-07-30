@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import {
     _cs,
     isDefined,
     isFalsyString,
     isNotDefined,
+    compareNumber,
     isTruthy,
     unique,
 } from '@togglecorp/fujs';
@@ -120,20 +122,6 @@ const defaultProps = {
     projects: [],
 };
 
-const prioritySelect = [
-    {
-        key: 'low',
-        value: _ts('leads', 'priorityLow'),
-    },
-    {
-        key: 'medium',
-        value: _ts('leads', 'priorityMedium'),
-    },
-    {
-        key: 'high',
-        value: _ts('leads', 'priorityHigh'),
-    },
-];
 const idSelector = item => item.id;
 
 const keySelector = item => item.key;
@@ -160,6 +148,10 @@ function fillExtraInfo(values, leadOptions, activeUserId) {
                 // eslint-disable-next-line no-param-reassign
                 safeValues.assignee = undefined;
             }
+        }
+        if (isNotDefined(safeValues.priority) && isDefined(priority)) {
+            const sortedPriority = [...priority].sort((a, b) => compareNumber(a.key, b.key));
+            safeValues.priority = isDefined(sortedPriority[0]) ? sortedPriority[0].key : undefined;
         }
 
         if (
@@ -402,6 +394,10 @@ class LeadDetail extends React.PureComponent {
         webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
     }
 
+    getPriorityOptions = memoize((priority = []) => (
+        [...priority].sort((a, b) => compareNumber(a.key, b.key))
+    ));
+
     setSearchedOrganizations = (searchedOrganizations) => {
         this.setState({ searchedOrganizations });
     }
@@ -430,24 +426,24 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleExtractClick = () => {
-        const { lead } = this.props;
+        const {
+            requests: { webInfoRequest },
+            lead,
+        } = this.props;
         const values = leadFaramValuesSelector(lead);
         const { url } = values;
 
-        const {
-            requests: { webInfoRequest },
-        } = this.props;
         webInfoRequest.do({ url });
     }
 
     handleExtractClickForFiles = () => {
-        const { lead } = this.props;
+        const {
+            requests: { fileUrlGetRequest },
+            lead,
+        } = this.props;
         const values = leadFaramValuesSelector(lead);
         const { attachment } = values;
 
-        const {
-            requests: { fileUrlGetRequest },
-        } = this.props;
         fileUrlGetRequest.do({ fileId: attachment.id });
     }
 
@@ -535,7 +531,13 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleExtraInfoFill = (leadOptions) => {
-        const { organizations } = leadOptions;
+        const {
+            lead,
+        } = this.props;
+        const {
+            organizations,
+            priority,
+        } = leadOptions;
 
         if (organizations.length > 0) {
             this.setState(state => ({
@@ -544,6 +546,7 @@ class LeadDetail extends React.PureComponent {
         }
 
         /*
+        NOTE: Commented out because this needs to handled throughout all leads
         const values = leadFaramValuesSelector(lead);
         const newValues = fillExtraInfo(values, leadOptions, activeUserId);
         this.handleLeadValueChange(newValues);
@@ -789,6 +792,8 @@ class LeadDetail extends React.PureComponent {
             .filter(isDefined)
             .filter(suggestion => suggestion !== title);
 
+        const priorityOptions = this.getPriorityOptions(leadOptions.priority);
+
         return (
             <div
                 // TODO: STYLING the faram doesn't take full height and loading-animation is offset
@@ -920,7 +925,7 @@ class LeadDetail extends React.PureComponent {
                             label={_ts('addLeads', 'priorityLabel')}
                             labelSelector={labelSelector}
                             keySelector={keySelector}
-                            options={prioritySelect}
+                            options={priorityOptions}
                         />
                     </ApplyAll>
                     <ExtraFunctionsOnHover

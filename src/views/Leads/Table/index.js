@@ -227,6 +227,7 @@ export default class Table extends React.Component {
             {
                 key: 'priority',
                 order: 13,
+                modifier: row => row.priorityDisplay,
             },
             {
                 key: 'actions',
