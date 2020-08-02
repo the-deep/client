@@ -1,24 +1,19 @@
 .matrix-cell {
     position: relative;
     margin: var(--spacing-extra-small);
-    outline: 0;
+    outline: var(--width-separator-medium) dashed transparent;
+    outline-offset: calc(-1 * var(--spacing-extra-small-alt));
     border: 0;
     background-color: transparent;
-    background-color: var(--color-background-alt);
     cursor: pointer;
     padding: var(--spacing-extra-small) var(--spacing-small);
     color: var(--color-text-on-background-alt);
     font-family: inherit;
     font-size: inherit;
 
-    &.active {
-        background-color: var(--color-accent);
-        color: var(--color-text-on-accent);
-    }
-
     &.is-being-dragged-over {
         outline: var(--width-separator-thin) dashed get-text-color(var(--color-background-alt));
-        outline-offset: -var(--spacing-extra-small-alt);
+        outline-offset: -var(--spacing-extra-small);
 
         &.active {
             outline: var(--width-separator-thin) dashed get-text-color(var(--color-accent));

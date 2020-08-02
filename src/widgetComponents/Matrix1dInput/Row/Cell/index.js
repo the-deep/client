@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import _cs from '#cs';
+import {
+    _cs,
+    getColorOnBgColor,
+} from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
@@ -16,6 +19,7 @@ const propTypes = {
     tooltip: PropTypes.string,
     className: PropTypes.string,
     contentClassName: PropTypes.string,
+    color: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -84,6 +88,7 @@ export default class Matrix1dCell extends React.PureComponent {
         }
     }
 
+
     render() {
         const {
             content,
@@ -93,7 +98,14 @@ export default class Matrix1dCell extends React.PureComponent {
             tooltip,
             className: classNameFromProps,
             contentClassName,
+            color,
         } = this.props;
+
+        const fgColor = getColorOnBgColor(
+            color,
+            'var(--color-text-on-light)',
+            'var(--color-text-on-dark)',
+        );
 
         const { isBeingDraggedOver } = this.state;
 
@@ -116,6 +128,11 @@ export default class Matrix1dCell extends React.PureComponent {
                 tabIndex="-1"
                 title={tooltip}
                 disabled={disabled || readOnly}
+                style={{
+                    outlineColor: active ? fgColor : 'transparent',
+                    color: fgColor,
+                    backgroundColor: color,
+                }}
             >
                 <div className={_cs(styles.buttonContent, contentClassName)}>
                     { content }

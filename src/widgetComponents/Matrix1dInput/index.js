@@ -93,6 +93,7 @@ export default class Matrix1dInput extends React.PureComponent {
             title,
             tooltip,
             cells,
+            color,
         } = row;
 
         return ({
@@ -107,6 +108,7 @@ export default class Matrix1dInput extends React.PureComponent {
             disabled,
             readOnly,
             className: styles.row,
+            color,
         });
     }
 

@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    getColorOnBgColor,
+} from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 
@@ -18,6 +21,7 @@ const propTypes = {
     selectedCells: PropTypes.objectOf(PropTypes.bool),
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    color: PropTypes.string,
 };
 
 const defaultProps = {
@@ -30,6 +34,7 @@ const defaultProps = {
     selectedCells: {},
     disabled: false,
     readOnly: false,
+    color: '#f0f0f0',
 };
 
 const orientationStyleMaps = {
@@ -51,6 +56,7 @@ export default class Matrix1dRow extends React.PureComponent {
             selectedCells,
             disabled,
             readOnly,
+            color,
         } = this.props;
 
         return ({
@@ -64,6 +70,7 @@ export default class Matrix1dRow extends React.PureComponent {
             disabled,
             readOnly,
             className: styles.cell,
+            color,
         });
     }
 
@@ -74,6 +81,7 @@ export default class Matrix1dRow extends React.PureComponent {
             orientation,
             cells,
             className,
+            color,
         } = this.props;
 
         return (
@@ -87,6 +95,10 @@ export default class Matrix1dRow extends React.PureComponent {
                 <div
                     className={styles.title}
                     title={tooltip}
+                    style={{
+                        backgroundColor: color,
+                        color: getColorOnBgColor(color, 'var(--color-text-on-light)', 'var(--color-text-on-dark)'),
+                    }}
                 >
                     { title }
                 </div>
