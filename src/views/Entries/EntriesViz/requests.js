@@ -1,21 +1,21 @@
 import notify from '#notify';
 import _ts from '#ts';
 
-const ENTRIES_VIZ_POLL_TIME = 3000;
+const PROJECT_VIZ_POLL_TIME = 3000;
 
 const requestOptions = {
-    // NOTE: This is also used by ArysViz component. (Look for entriesDataUrl)
-    entriesVizGetRequest: {
+    // NOTE: This is also used by ArysViz component. (Look for projectVizDataUrl)
+    projectVizGetRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
-        schemaName: 'entriesVizGetResponse',
-        url: ({ props: { projectId } }) => `/projects/${projectId}/entries-viz/`,
+        schemaName: 'projectVizGetResponse',
+        url: ({ props: { projectId } }) => `/projects/${projectId}/project-viz/`,
         options: ({ params: { setState } }) => ({
-            pollTime: ENTRIES_VIZ_POLL_TIME,
+            pollTime: PROJECT_VIZ_POLL_TIME,
             maxPollAttempts: 20,
             shouldPoll: (r) => {
                 if (r.data) {
-                    setState({ entriesDataUrl: r.data });
+                    setState({ projectVizDataUrl: r.data });
                 }
                 return r.status === 'pending' || r.status === 'started';
             },

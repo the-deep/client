@@ -35,52 +35,37 @@ export default class ArysViz extends React.PureComponent {
         super(props);
 
         this.state = {
-            entriesDataUrl: undefined,
-            assessmentsDataUrl: undefined,
+            projectVizDataUrl: undefined,
         };
         this.props.setDefaultRequestParams({
-            setEntriesDataUrl: this.setEntriesDataUrl,
-            setAryDataUrl: this.setAryDataUrl,
+            setState: params => this.setState(params),
         });
     }
 
-    getVizRendererUrl = memoize(urls => (
-        `${vizRendererUrl}?${p(urls)}`
+    getVizRendererUrl = memoize(dataUrl => (
+        `${vizRendererUrl}?${p({ dataUrl })}`
     ))
-
-    setEntriesDataUrl = (entriesDataUrl) => {
-        this.setState({ entriesDataUrl });
-    }
-
-    setAryDataUrl = (assessmentsDataUrl) => {
-        this.setState({ assessmentsDataUrl });
-    }
 
     render() {
         const {
             requests: {
-                arysVizGetRequest,
-                entriesVizGetRequest,
+                projectVizGetRequest: {
+                    pending,
+                    responseError,
+                },
             },
         } = this.props;
-        const pending = arysVizGetRequest.pending || entriesVizGetRequest.pending;
-        const responseError = arysVizGetRequest.responseError || entriesVizGetRequest.responseError;
-        const {
-            entriesDataUrl,
-            assessmentsDataUrl,
-        } = this.state;
-        const urls = { entriesDataUrl, assessmentsDataUrl };
-        const invalidDataUrl = (!entriesDataUrl || !assessmentsDataUrl);
+        const { projectVizDataUrl } = this.state;
 
         // NOTE: Show old data even if pending
-        if (pending && invalidDataUrl) {
+        if (pending && !projectVizDataUrl) {
             return (
                 <div className={styles.content}>
                     <LoadingAnimation />
                 </div>
             );
         // NOTE: Show error if responseError or dataUrl is not defined
-        } else if (responseError || invalidDataUrl) {
+        } else if (responseError || !projectVizDataUrl) {
             return (
                 <Message>
                     {_ts('project', 'arysVizErrorMessage')}
@@ -94,7 +79,7 @@ export default class ArysViz extends React.PureComponent {
                 <iframe
                     className={styles.iframe}
                     title="Visualization"
-                    src={this.getVizRendererUrl(urls)}
+                    src={this.getVizRendererUrl(projectVizDataUrl)}
                     sandbox="allow-scripts allow-same-origin"
                 />
             </div>

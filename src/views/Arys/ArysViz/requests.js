@@ -1,22 +1,22 @@
 import notify from '#notify';
 import _ts from '#ts';
 
-const ENTRIES_VIZ_POLL_TIME = 3000;
+const PROJECT_VIZ_POLL_TIME = 3000;
 
 const requestOptions = {
     // NOTE: There is a similar request in entries viz, so any changes here may need
     // to be reflected on the other one as well
-    entriesVizGetRequest: {
+    projectVizGetRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
-        schemaName: 'entriesVizGetResponse',
-        url: ({ props: { projectId } }) => `/projects/${projectId}/entries-viz/`,
-        options: ({ params: { setEntriesDataUrl } }) => ({
-            pollTime: ENTRIES_VIZ_POLL_TIME,
+        schemaName: 'projectVizGetResponse',
+        url: ({ props: { projectId } }) => `/projects/${projectId}/project-viz/`,
+        options: ({ params: { setState } }) => ({
+            pollTime: PROJECT_VIZ_POLL_TIME,
             maxPollAttempts: 20,
             shouldPoll: (r) => {
                 if (r.data) {
-                    setEntriesDataUrl(r.data);
+                    setState({ projectVizDataUrl: r.data });
                 }
                 return r.status === 'pending' || r.status === 'started';
             },
@@ -24,68 +24,26 @@ const requestOptions = {
         onSuccess: ({ response }) => {
             if (response.status === 'failure') {
                 notify.send({
-                    title: _ts('entries.visualization', 'entriesViz'),
+                    title: _ts('entries.visualization', 'assessmentsViz'),
                     type: notify.type.WARNING,
-                    message: _ts('entries.visualization', 'entriesVizFailure'),
+                    message: _ts('entries.visualization', 'assessmentsVizFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             }
         },
         onFailure: () => {
             notify.send({
-                title: _ts('entries.visualization', 'entriesViz'),
+                title: _ts('entries.visualization', 'assessmentsViz'),
                 type: notify.type.WARNING,
-                message: _ts('entries.visualization', 'entriesVizFailure'),
+                message: _ts('entries.visualization', 'assessmentsVizFailure'),
                 duration: notify.duration.MEDIUM,
             });
         },
         onFatal: () => {
             notify.send({
-                title: _ts('entries.visualization', 'entriesViz'),
+                title: _ts('entries.visualization', 'assessmentsViz'),
                 type: notify.type.ERROR,
-                message: _ts('entries.visualization', 'entriesVizFatal'),
-                duration: notify.duration.SLOW,
-            });
-        },
-    },
-    arysVizGetRequest: {
-        onMount: true,
-        onPropsChanged: ['projectId'],
-        schemaName: 'arysVizGetResponse',
-        url: ({ props: { projectId } }) => `/projects/${projectId}/ary-viz/`,
-        options: ({ params: { setAryDataUrl } }) => ({
-            pollTime: ENTRIES_VIZ_POLL_TIME,
-            maxPollAttempts: 20,
-            shouldPoll: (r) => {
-                if (r.data) {
-                    setAryDataUrl(r.data);
-                }
-                return r.status === 'pending' || r.status === 'started';
-            },
-        }),
-        onSuccess: ({ response }) => {
-            if (response.status === 'failure') {
-                notify.send({
-                    title: _ts('assessments.visualization', 'assessmentsViz'),
-                    type: notify.type.WARNING,
-                    message: _ts('assessments.visualization', 'assessmentsVizFailure'),
-                    duration: notify.duration.MEDIUM,
-                });
-            }
-        },
-        onFailure: () => {
-            notify.send({
-                title: _ts('assessments.visualization', 'assessmentsViz'),
-                type: notify.type.WARNING,
-                message: _ts('assessments.visualization', 'assessmentsVizFailure'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
-        onFatal: () => {
-            notify.send({
-                title: _ts('assessments.visualization', 'assessmentsViz'),
-                type: notify.type.ERROR,
-                message: _ts('assessments.visualization', 'assessmentsVizFatal'),
+                message: _ts('entries.visualization', 'assessmentsVizFatal'),
                 duration: notify.duration.SLOW,
             });
         },
