@@ -905,6 +905,7 @@ class LeadAdd extends React.PureComponent {
 
                         leadStates={leadStates}
                         fileUploadStatuses={fileUploadStatuses}
+                        onLeadsAdd={this.handleLeadsAdd}
                     />
                     <Cloak
                         hide={LeadAdd.shouldHideButtons}
