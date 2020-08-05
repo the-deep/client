@@ -224,19 +224,4 @@ const entrySchema = [];
     };
     entrySchema.push({ name, schema });
 }
-{
-    const name = 'entriesVizGetResponse';
-    const schema = {
-        doc: {
-            name: 'Entries VIZ',
-            description: 'Viz Data Object URL',
-        },
-        fields: {
-            message: { type: 'string', required: false },
-            data: { type: 'string', required: false },
-            status: { type: 'string', required: true },
-        },
-    };
-    entrySchema.push({ name, schema });
-}
 export default entrySchema;

@@ -313,4 +313,19 @@ const projectSchema = [];
     };
     projectSchema.push({ name, schema });
 }
+{
+    const name = 'projectVizGetResponse';
+    const schema = {
+        doc: {
+            name: 'Project VIZ',
+            description: 'Viz Data Object URL',
+        },
+        fields: {
+            message: { type: 'string', required: false },
+            data: { type: 'string', required: false },
+            status: { type: 'string', required: true },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
 export default projectSchema;

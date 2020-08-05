@@ -35,37 +35,37 @@ export default class EntriesViz extends React.PureComponent {
         super(props);
 
         this.state = {
-            entriesDataUrl: undefined,
+            projectVizDataUrl: undefined,
         };
         this.props.setDefaultRequestParams({
             setState: params => this.setState(params),
         });
     }
 
-    getVizRendererUrl = memoize(entriesDataUrl => (
-        `${vizRendererUrl}?${p({ dataUrl: entriesDataUrl })}`
+    getVizRendererUrl = memoize(dataUrl => (
+        `${vizRendererUrl}?${p({ dataUrl })}`
     ))
 
     render() {
         const {
             requests: {
-                entriesVizGetRequest: {
+                projectVizGetRequest: {
                     pending,
                     responseError,
                 },
             },
         } = this.props;
-        const { entriesDataUrl } = this.state;
+        const { projectVizDataUrl } = this.state;
 
         // NOTE: Show old data even if pending
-        if (pending && !entriesDataUrl) {
+        if (pending && !projectVizDataUrl) {
             return (
                 <div className={styles.content}>
                     <LoadingAnimation />
                 </div>
             );
-        // NOTE: Show error if responseError or entriesDataUrl is not defined
-        } else if (responseError || !entriesDataUrl) {
+        // NOTE: Show error if responseError or projectVizDataUrl is not defined
+        } else if (responseError || !projectVizDataUrl) {
             return (
                 <Message>
                     {_ts('project', 'entriesVizErrorMessage')}
@@ -79,7 +79,7 @@ export default class EntriesViz extends React.PureComponent {
                 <iframe
                     className={styles.iframe}
                     title="Visualization"
-                    src={this.getVizRendererUrl(entriesDataUrl)}
+                    src={this.getVizRendererUrl(projectVizDataUrl)}
                     sandbox="allow-scripts allow-same-origin"
                 />
             </div>
