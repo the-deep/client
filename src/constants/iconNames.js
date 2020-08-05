@@ -97,6 +97,7 @@ const iconNames = {
     save: 'fa fa-save',
     search: 'ion-search',
     settings: 'ion-android-settings',
+    shrink: 'ion-arrow-shrink',
     sort: 'fa fa-sort',
     sortAscending: 'fa fa-sort-asc',
     sortDescending: 'fa fa-sort-desc',

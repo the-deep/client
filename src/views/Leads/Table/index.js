@@ -108,7 +108,6 @@ export default class Table extends React.Component {
                                 <Badge
                                     className={styles.assessmentBadge}
                                     icon="assessment"
-                                    title={_ts('leads', 'assessmentBadgeTitle')}
                                     tooltip={_ts('leads', 'assessmentBadgeTooltip')}
                                 />
                             }

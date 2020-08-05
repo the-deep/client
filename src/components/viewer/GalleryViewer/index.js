@@ -1,5 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
@@ -12,7 +17,6 @@ import Icon from '#rscg/Icon';
 import { galleryMapping, galleryType } from '#config/deepMimeTypes';
 import notify from '#notify';
 import _ts from '#ts';
-import _cs from '#cs';
 
 import Screenshot from './Screenshot';
 import GalleryImage from './GalleryImage';
@@ -155,9 +159,27 @@ export default class GalleryViewer extends React.PureComponent {
         super(props);
 
         this.state = {
+            isFullscreen: false,
             screenshotMode: false,
             currentScreenshot: undefined,
         };
+
+        this.viewerRef = React.createRef();
+    }
+
+    componentDidMount() {
+        // NOTE: This is to add listener to whenever full screen mode is entered
+        // and to change state of buttons after fullscreen mode is closed
+        document.addEventListener('fullscreenchange', this.handleFullscreenChange);
+    }
+
+    componentWillUnmount() {
+        // NOTE: Remove attached listener after this component is dismounted
+        document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
+    }
+
+    handleFullscreenChange = () => {
+        this.setState({ isFullscreen: isDefined(document.fullscreenElement) });
     }
 
     handleScreenshot = (image) => {
@@ -172,12 +194,32 @@ export default class GalleryViewer extends React.PureComponent {
         this.setState({ screenshotMode: false });
     }
 
+    handleFullscreenClick = () => {
+        const { isFullscreen } = this.state;
+        const { current: viewerContainer } = this.viewerRef;
+        if (isNotDefined(viewerContainer)) {
+            return;
+        }
+        if (!isFullscreen && isDefined(viewerContainer.requestFullscreen)) {
+            viewerContainer.requestFullscreen();
+        } else if (isFullscreen && isDefined(document.exitFullscreen)) {
+            document.exitFullscreen();
+        }
+    }
+
     handleScreenshotDone = () => {
         this.setState(
             { screenshotMode: false },
             () => {
-                if (this.props.onScreenshotCapture) {
-                    this.props.onScreenshotCapture(this.state.currentScreenshot);
+                const { onScreenshotCapture } = this.props;
+                const { currentScreenshot } = this.state;
+
+                if (onScreenshotCapture) {
+                    onScreenshotCapture(currentScreenshot);
+                }
+                const { current: viewerContainer } = this.viewerRef;
+                if (isDefined(viewerContainer) && isDefined(document.exitFullscreen)) {
+                    document.exitFullscreen();
                 }
             },
         );
@@ -244,7 +286,10 @@ export default class GalleryViewer extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const { screenshotMode } = this.state;
+        const {
+            screenshotMode,
+            isFullscreen,
+        } = this.state;
 
         const isHttps = !!(url || '').match(/^https:\/\//) || window.location.protocol === 'http:';
         const previewError = !canShowIframe || !isHttps;
@@ -257,20 +302,27 @@ export default class GalleryViewer extends React.PureComponent {
             classNameFromProps,
         );
 
-
         const docContainerClassName = _cs(
             styles.docContainer,
             'doc-container',
         );
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+                ref={this.viewerRef}
+            >
                 { showBar &&
                     <Bar
                         url={url}
                         showScreenshot={showScreenshot}
                     >
                         { showScreenshot && this.renderScreenshotButton() }
+                        <AccentButton
+                            transparent
+                            iconName={isFullscreen ? 'shrink' : 'expand'}
+                            onClick={this.handleFullscreenClick}
+                        />
                     </Bar>
                 }
                 <div className={docContainerClassName}>

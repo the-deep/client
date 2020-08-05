@@ -313,7 +313,7 @@ export default class GridItem extends React.PureComponent {
             authorRaw,
             emmTriggers,
             emmEntities,
-            priority,
+            priorityDisplay,
         } = lead;
 
         const source = sourceDetail ? organizationTitleSelector(sourceDetail) : sourceRaw;
@@ -368,7 +368,7 @@ export default class GridItem extends React.PureComponent {
                             </Link>
                         }
                         <div className={styles.priority}>
-                            {_ts('leads', 'priorityLevel')}: {priority}
+                            {_ts('leads', 'priorityLevel')}: {priorityDisplay}
                         </div>
                         <div className={styles.publisher}>
                             {_ts('leadsGrid', 'publisherLabel')}: {source}
