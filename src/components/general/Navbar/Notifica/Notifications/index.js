@@ -95,7 +95,9 @@ const requestOptions = {
             isPending,
         } }) => {
             if (dateRange === 'all') {
-                return {};
+                return {
+                    is_pending: !!isPending,
+                };
             }
 
             const lastDate = new Date();
@@ -106,7 +108,7 @@ const requestOptions = {
                 lastDate.setDate(lastDate.getDate() - 30);
             }
             return {
-                isPending: !!isPending,
+                is_pending: !!isPending,
                 timestamp__gte: getDateWithTimezone(encodeDate(lastDate)),
             };
         },
@@ -156,8 +158,18 @@ const requestOptions = {
 const notificationKeySelector = n => n.id;
 
 const tabs = {
-    notifications: _ts('notifications', 'notificationsTabLabel'),
-    requests: _ts('notifications', 'requestsTabLabel'),
+    notifications: (
+        <div className={styles.tabTitle}>
+            <span className={_cs(styles.count, styles.notificationsCount)} />
+            {_ts('notifications', 'notificationsTabLabel')}
+        </div>
+    ),
+    requests: (
+        <div className={styles.tabTitle}>
+            <span className={_cs(styles.count, styles.requestsCount)} />
+            {_ts('notifications', 'requestsTabLabel')}
+        </div>
+    ),
 };
 
 const dateRangeOptions = [
@@ -202,18 +214,18 @@ function Notifications(props) {
     const [activeTab, setActiveTab] = useState('notifications');
     const [dateRange, setDateRange] = useState('7d');
 
+    const handleNotificationsReload = useCallback(() => {
+        reDoNotificationsRequest({
+            dateRange,
+            isPending: activeTab === 'requests',
+        });
+    }, [reDoNotificationsRequest, activeTab, dateRange]);
+
     const notificationItemRendererParams = useCallback((_, d) => ({
         closeModal,
         notification: d,
-        onNotificationReload: reDoNotificationsRequest,
-    }), [closeModal, reDoNotificationsRequest]);
-
-    const filteredNotifications = useMemo(() => {
-        if (activeTab === 'requests') {
-            return notifications.filter(n => n.data.status === 'pending');
-        }
-        return notifications.filter(n => n.data.status !== 'pending');
-    }, [notifications, activeTab]);
+        onNotificationReload: handleNotificationsReload,
+    }), [closeModal, handleNotificationsReload]);
 
     const handleTabChange = useCallback((newTab) => {
         setActiveTab(newTab);
@@ -256,7 +268,7 @@ function Notifications(props) {
             </ScrollTabs>
             <ListView
                 className={styles.content}
-                data={filteredNotifications}
+                data={notifications}
                 keySelector={notificationKeySelector}
                 renderer={NotificationItem}
                 rendererParams={notificationItemRendererParams}
