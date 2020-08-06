@@ -218,7 +218,11 @@ export default class GalleryViewer extends React.PureComponent {
                     onScreenshotCapture(currentScreenshot);
                 }
                 const { current: viewerContainer } = this.viewerRef;
-                if (isDefined(viewerContainer) && isDefined(document.exitFullscreen)) {
+                if (
+                    isDefined(document.fullscreenElement)
+                    && isDefined(viewerContainer)
+                    && isDefined(document.exitFullscreen)
+                ) {
                     document.exitFullscreen();
                 }
             },
