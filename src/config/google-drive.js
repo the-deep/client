@@ -4,7 +4,7 @@ const getDeveloperKey = () => {
     if (isDevelopment) {
         return 'AIzaSyDINvjHwIS_HHsb3qCgFm_2GFHKqEUwucE';
     }
-    return 'AIzaSyBuq0C5lhnpoUkd1Rs80QO0vO5vVRf3SeA';
+    return 'AIzaSyAcaVOYWk0zGL9TVQfKXdziFI-5pEkw6X4';
 };
 
 const getClientId = () => {
