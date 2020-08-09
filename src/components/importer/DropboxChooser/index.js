@@ -6,8 +6,6 @@ import Button from '#rsca/Button';
 import _ts from '#ts';
 import { SCRIPT_ID } from '#config/dropbox';
 
-import styles from './styles.scss';
-
 const propTypes = {
     className: PropTypes.string,
     children: PropTypes.node,
@@ -118,7 +116,7 @@ export default class DropboxChooser extends React.Component {
 
         return (
             <Button
-                className={`${className} ${styles.dropboxBtn}`}
+                className={className}
                 onClick={this.handleClick}
                 disabled={disabled || !ready}
                 transparent
