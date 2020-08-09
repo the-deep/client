@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import modalize from '#rscg/Modalize';
@@ -34,36 +35,23 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
-const propTypes = {
-    onLeadsAdd: PropTypes.func.isRequired,
-    leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-};
+function LeadButtons(props) {
+    const {
+        leads,
+        onLeadsAdd,
+        className,
+    } = props;
 
-const defaultProps = {
-    leads: [],
-};
+    // NOTE: dropbox button must be manually disabled and enabled unlike
+    // google-drive which creates an overlay and disables everything in bg
+    const [dropboxDisabled, setDropboxDisabled] = useState(false);
+    // NOTE: google drive access token is received at start
+    const [googleDriveAccessToken, setGoogleDriveAccessToken] = useState(false);
 
-export default class LeadButtons extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            // NOTE: dropbox button must be manually disabled and enabled unlike
-            // google-drive which creates an overlay and disables everything in bg
-            dropboxDisabled: false,
-        };
-
-        // NOTE: google drive access token is received at start
-        this.googleDriveAccessToken = undefined;
-    }
-
-    handleGoogleDriveOnAuthenticated = (accessToken) => {
+    const handleGoogleDriveOnAuthenticated = useCallback((accessToken) => {
         if (accessToken) {
             // NOTE: use this token later during upload
-            this.googleDriveAccessToken = accessToken;
+            setGoogleDriveAccessToken(accessToken);
         } else {
             // FIXME: use strings
             notify.send({
@@ -73,21 +61,17 @@ export default class LeadButtons extends React.PureComponent {
                 duration: notify.duration.SLOW,
             });
         }
-    }
+    }, [setGoogleDriveAccessToken]);
 
-    handleDropboxChooserClick = () => {
-        this.setState({ dropboxDisabled: true });
-    }
+    const handleDropboxChooserClick = useCallback(() => {
+        setDropboxDisabled(true);
+    }, [setDropboxDisabled]);
 
-    handleDropboxChooserClose = () => {
-        this.setState({ dropboxDisabled: false });
-    }
+    const handleDropboxChooserClose = useCallback(() => {
+        setDropboxDisabled(true);
+    }, [setDropboxDisabled]);
 
-    handleLeadAddFromText = () => {
-        const {
-            onLeadsAdd,
-        } = this.props;
-
+    const handleLeadAddFromText = useCallback(() => {
         const lead = {
             faramValues: {
                 sourceType: LEAD_TYPE.text,
@@ -95,13 +79,9 @@ export default class LeadButtons extends React.PureComponent {
         };
 
         onLeadsAdd([lead]);
-    }
+    }, [onLeadsAdd]);
 
-    handleLeadAddFromWebsite = () => {
-        const {
-            onLeadsAdd,
-        } = this.props;
-
+    const handleLeadAddFromWebsite = useCallback(() => {
         const lead = {
             faramValues: {
                 sourceType: LEAD_TYPE.website,
@@ -111,9 +91,9 @@ export default class LeadButtons extends React.PureComponent {
         };
 
         onLeadsAdd([lead]);
-    }
+    }, [onLeadsAdd]);
 
-    handleLeadAddFromDisk = (files, options) => {
+    const handleLeadAddFromDisk = useCallback((files, options) => {
         const { invalidFiles } = options;
 
         if (invalidFiles > 0) {
@@ -129,12 +109,7 @@ export default class LeadButtons extends React.PureComponent {
             console.error('No files selected to upload');
             return;
         }
-
-        const {
-            onLeadsAdd,
-        } = this.props;
-
-        const leads = files.map((file) => {
+        const newLeads = files.map((file) => {
             const lead = {
                 faramValues: {
                     title: formatTitle(file.name),
@@ -144,10 +119,10 @@ export default class LeadButtons extends React.PureComponent {
             };
             return lead;
         });
-        onLeadsAdd(leads);
-    }
+        onLeadsAdd(newLeads);
+    }, [onLeadsAdd]);
 
-    handleLeadAddFromGoogleDrive = (response) => {
+    const handleLeadAddFromGoogleDrive = useCallback((response) => {
         const {
             docs,
             action,
@@ -158,35 +133,28 @@ export default class LeadButtons extends React.PureComponent {
             return;
         }
 
-        const {
-            onLeadsAdd,
-        } = this.props;
-
-        const leads = docs.map(doc => ({
+        const newLeads = docs.map(doc => ({
             faramValues: {
                 title: doc.name,
                 sourceType: LEAD_TYPE.drive,
             },
             drive: {
-                accessToken: this.googleDriveAccessToken,
+                accessToken: googleDriveAccessToken,
                 title: doc.name,
                 fileId: doc.id,
                 mimeType: doc.mimeType,
             },
         }));
-        onLeadsAdd(leads);
-    }
+        onLeadsAdd(newLeads);
+    }, [onLeadsAdd, googleDriveAccessToken]);
 
-    handleLeadAddFromDropbox = (response) => {
+    const handleLeadAddFromDropbox = useCallback((response) => {
         if (response.length <= 0) {
             console.error('No files selected to upload');
             return;
         }
-        const {
-            onLeadsAdd,
-        } = this.props;
 
-        const leads = response.map(doc => ({
+        const newLeads = response.map(doc => ({
             faramValues: {
                 title: doc.name,
                 sourceType: LEAD_TYPE.dropbox,
@@ -197,117 +165,154 @@ export default class LeadButtons extends React.PureComponent {
             },
         }));
 
-        onLeadsAdd(leads);
-        this.handleDropboxChooserClose();
-    }
+        onLeadsAdd(newLeads);
+        handleDropboxChooserClose();
+    }, [onLeadsAdd, handleDropboxChooserClose]);
 
-    handleLeadAddFromConnectors = (selectedLeads) => {
+    const handleLeadAddFromConnectors = useCallback((selectedLeads) => {
         if (selectedLeads.length <= 0) {
             console.error('No files selected to upload');
             return;
         }
 
-        const {
-            onLeadsAdd,
-        } = this.props;
-
-        const leads = selectedLeads.map(lead => ({
+        const newLeads = selectedLeads.map(lead => ({
             faramValues: getFaramValuesFromLeadCandidate(lead),
         }));
 
-        onLeadsAdd(leads);
-    }
+        onLeadsAdd(newLeads);
+    }, [onLeadsAdd]);
 
-    render() {
-        const { leads } = this.props;
-        const { dropboxDisabled } = this.state;
-
-        return (
-            <div className={styles.addLeadButtons}>
-                <h3 className={styles.heading}>
-                    {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
-                </h3>
-
+    return (
+        <div className={_cs(styles.addLeadButtons, className)}>
+            <h3 className={styles.heading}>
+                {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
+            </h3>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="googleDrive"
+                    />
+                    {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
+                </div>
                 <GooglePicker
                     className={styles.addLeadBtn}
                     clientId={googleDriveClientId}
                     developerKey={googleDriveDeveloperKey}
-                    onAuthenticate={this.handleGoogleDriveOnAuthenticated}
-                    onChange={this.handleLeadAddFromGoogleDrive}
+                    onAuthenticate={handleGoogleDriveOnAuthenticated}
+                    onChange={handleLeadAddFromGoogleDrive}
                     mimeTypes={supportedGoogleDriveMimeTypes}
                     multiselect
                     navHidden
                 >
-                    <Icon name="googleDrive" />
-                    <p>
-                        {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
-                    </p>
+                    <Icon name="add" />
                 </GooglePicker>
-
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="dropbox"
+                    />
+                    {_ts('addLeads.sourceButtons', 'dropboxLabel')}
+                </div>
                 <DropboxChooser
                     className={styles.addLeadBtn}
                     appKey={dropboxAppKey}
                     multiselect
                     extensions={supportedDropboxExtension}
-                    success={this.handleLeadAddFromDropbox}
+                    success={handleLeadAddFromDropbox}
                     disabled={dropboxDisabled}
-                    onClick={this.handleDropboxChooserClick}
-                    cancel={this.handleDropboxChooserClose}
+                    onClick={handleDropboxChooserClick}
+                    cancel={handleDropboxChooserClose}
                 >
-                    <Icon name="dropbox" />
-                    <p>
-                        {_ts('addLeads.sourceButtons', 'dropboxLabel')}
-                    </p>
+                    <Icon name="add" />
                 </DropboxChooser>
-
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="upload"
+                    />
+                    {_ts('addLeads.sourceButtons', 'localDiskLabel')}
+                </div>
                 <FileInput
-                    className={styles.addLeadBtn}
-                    onChange={this.handleLeadAddFromDisk}
+                    className={_cs(styles.addLeadBtn, styles.fileInput)}
+                    onChange={handleLeadAddFromDisk}
                     showStatus={false}
                     multiple
                     accept={supportedFileTypes}
                 >
-                    <Icon name="upload" />
-                    <p>
-                        {_ts('addLeads.sourceButtons', 'localDiskLabel')}
-                    </p>
+                    <Icon name="add" />
                 </FileInput>
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="globe"
+                    />
+                    {_ts('addLeads.sourceButtons', 'websiteLabel')}
+                </div>
                 <Button
                     className={styles.addLeadBtn}
                     transparent
-                    onClick={this.handleLeadAddFromWebsite}
+                    onClick={handleLeadAddFromWebsite}
                 >
-                    <Icon name="globe" />
-                    <p>
-                        {_ts('addLeads.sourceButtons', 'websiteLabel')}
-                    </p>
+                    <Icon name="add" />
                 </Button>
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="clipboard"
+                    />
+                    {_ts('addLeads.sourceButtons', 'textLabel')}
+                </div>
                 <Button
                     className={styles.addLeadBtn}
                     transparent
-                    onClick={this.handleLeadAddFromText}
+                    onClick={handleLeadAddFromText}
                 >
-                    <Icon name="clipboard" />
-                    <p>
-                        {_ts('addLeads.sourceButtons', 'textLabel')}
-                    </p>
+                    <Icon name="add" />
                 </Button>
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="link"
+                    />
+                    {_ts('addLeads.sourceButtons', 'connectorsLabel')}
+                </div>
                 <ModalButton
                     className={styles.addLeadBtn}
                     transparent
                     modal={
                         <ConnectorSelectModal
                             leads={leads}
-                            onLeadsSelect={this.handleLeadAddFromConnectors}
+                            onLeadsSelect={handleLeadAddFromConnectors}
                         />
                     }
                 >
-                    <Icon name="link" />
-                    <p>
-                        {_ts('addLeads.sourceButtons', 'connectorsLabel')}
-                    </p>
+                    <Icon name="add" />
                 </ModalButton>
             </div>
-        );
-    }
+        </div>
+    );
 }
+
+LeadButtons.propTypes = {
+    onLeadsAdd: PropTypes.func.isRequired,
+    className: PropTypes.string,
+    leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+};
+
+LeadButtons.defaultProps = {
+    className: undefined,
+    leads: [],
+};
+
+export default LeadButtons;
