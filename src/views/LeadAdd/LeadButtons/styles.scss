@@ -1,14 +1,11 @@
 .add-lead-buttons {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: space-around;
     background-color: var(--color-foreground);
     color: var(--color-text-on-foreground);
 
     .heading {
-        flex-basis: 100%;
         margin: 0;
         border-top: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-medium) var(--spacing-large);
@@ -16,29 +13,49 @@
         font-weight: var(--font-weight-medium);
     }
 
-    .add-lead-btn {
-        flex-basis: 16%;
-        color: var(--color-text);
-        font-family: inherit;
-        font-size: inherit;
+    .item {
+        display: flex;
+        align-items: center;
+        padding: var(--spacing-small);
 
-        span {
-            font-size: var(--font-size-extra-large);
+        .left-container {
+            flex-grow: 1;
+            padding: 0 var(--spacing-medium);
+
+            .icon {
+                padding-right: var(--spacing-small);
+            }
         }
 
-        p {
-            margin: var(--spacing-medium) 0 0;
-            font-size: var(--font-size-extra-small);
+        .add-lead-btn {
+            display: block;
+            flex-shrink: 0;
+            width: auto;
+            color: var(--color-text);
+            font-family: inherit;
+            font-size: inherit;
+
+            &:hover {
+                cursor: pointer;
+                color: var(--color-accent);
+            }
+
+            &:disabled {
+                cursor: pointer;
+                color: var(--color-text-disabled);
+            }
+        }
+
+        .file-input {
+            :global {
+                label {
+                    padding: var(--spacing-small) var(--spacing-small-alt);
+                }
+            }
         }
 
         &:hover {
-            cursor: pointer;
-            color: var(--color-accent);
-        }
-
-        &:disabled {
-            cursor: pointer;
-            color: var(--color-text-disabled);
+            background-color: var(--color-background-primary-hint);
         }
     }
 }

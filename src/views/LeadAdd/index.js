@@ -891,6 +891,18 @@ class LeadAdd extends React.PureComponent {
         const mainComponent = (
             <React.Fragment>
                 <div className={styles.left}>
+                    <Cloak
+                        hide={LeadAdd.shouldHideButtons}
+                        render={
+                            <LeadButtons
+                                className={styles.leadButtons}
+                                onLeadsAdd={this.handleLeadsAdd}
+                                leads={leads}
+                            />
+                        }
+                    />
+                </div>
+                <div className={styles.midContent}>
                     <LeadList
                         leads={filteredLeads}
                         activeLeadKey={activeLeadKey}
@@ -906,15 +918,6 @@ class LeadAdd extends React.PureComponent {
                         leadStates={leadStates}
                         fileUploadStatuses={fileUploadStatuses}
                         onLeadsAdd={this.handleLeadsAdd}
-                    />
-                    <Cloak
-                        hide={LeadAdd.shouldHideButtons}
-                        render={
-                            <LeadButtons
-                                onLeadsAdd={this.handleLeadsAdd}
-                                leads={leads}
-                            />
-                        }
                     />
                 </div>
                 { hasActiveLead ? (

@@ -17,8 +17,20 @@
 
         .left {
             display: flex;
-            flex-basis: 30%;
-            flex-direction: column;
+            flex-basis: 15%;
+            flex-shrink: 0;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            overflow-y: hidden;
+
+            .lead-buttons {
+                flex-grow: 1;
+            }
+        }
+
+        .mid-content {
+            display: flex;
+            flex-basis: 20%;
             flex-shrink: 0;
             border-right: var(--width-separator-thin) solid var(--color-separator);
             background-color: var(--color-foreground-alt);
