@@ -8,7 +8,6 @@ import Faram, {
 import {
     getDuplicates,
     randomString,
-    listToMap,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
