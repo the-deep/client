@@ -129,6 +129,31 @@
                 font-size: var(--font-size-large);
             }
         }
+
+        .inline-edit-container {
+            position: relative;
+
+            .dropdown {
+                position: absolute;
+                top: 0;
+                right: calc(-1 * var(--spacing-medium));
+                opacity: 0;
+
+                :global {
+                    .dropdown-button {
+                        &:hover {
+                            background-color: transparent;
+                        }
+                    }
+                }
+            }
+
+            &:hover {
+                .dropdown {
+                    opacity: 1;
+                }
+            }
+        }
     }
 }
 

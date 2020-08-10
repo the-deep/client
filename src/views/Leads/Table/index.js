@@ -13,6 +13,7 @@ import Numeral from '#rscv/Numeral';
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import TableHeader from '#rscv/TableHeader';
+import DropdownMenu from '#rsca/DropdownMenu';
 import FormattedDate from '#rscv/FormattedDate';
 import {
     leadsForProjectTableViewSelector,
@@ -21,19 +22,27 @@ import { pathNames } from '#constants';
 import { organizationTitleSelector } from '#entities/organization';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import Badge from '#components/viewer/Badge';
+
+import {
+    RequestClient,
+    methods,
+} from '#request';
 import _ts from '#ts';
 
 import ActionButtons from '../ActionButtons';
+import DropdownEdit from '../DropdownEdit';
 import FileTypeViewer from './FileTypeViewer';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
+const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
     activeSort: PropTypes.string.isRequired,
     leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     headersMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     loading: PropTypes.bool.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     setLeadPageActiveSort: PropTypes.func.isRequired,
@@ -55,7 +64,28 @@ const mapStateToProps = state => ({
     leads: leadsForProjectTableViewSelector(state),
 });
 
+const requestOptions = {
+    leadOptionsRequest: {
+        url: '/lead-options/',
+        method: methods.GET,
+        query: ({ props: { activeProject } }) => ({
+            projects: [activeProject],
+            fields: [
+                'priority',
+                'status',
+                'confidentialty',
+            ],
+        }),
+        onPropsChanged: ['activeProject'],
+        onMount: true,
+        extras: {
+            schemaName: 'projectLeadFilterOptions',
+        },
+    },
+};
+
 @connect(mapStateToProps)
+@RequestClient(requestOptions)
 export default class Table extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -218,15 +248,40 @@ export default class Table extends React.Component {
                 ),
             },
             {
-                key: 'no_of_entries',
+                key: 'priority',
                 order: 12,
-                defaultSortOrder: 'dsc',
-                modifier: row => row.noOfEntries,
+                modifier: (row) => {
+                    const {
+                        requests: {
+                            leadOptionsRequest: {
+                                response: {
+                                    priority,
+                                } = emptyObject,
+                            } = emptyObject,
+                        },
+                    } = this.props;
+                    const onItemSelect = (item) => { console.warn('click', item); };
+
+                    return (
+                        <div className={styles.inlineEditContainer}>
+                            <div className={styles.label}>
+                                {row.priorityDisplay}
+                            </div>
+                            <DropdownEdit
+                                currentSelection={row.priority}
+                                className={styles.dropdown}
+                                options={priority}
+                                onItemSelect={onItemSelect}
+                            />
+                        </div>
+                    );
+                },
             },
             {
-                key: 'priority',
+                key: 'no_of_entries',
                 order: 13,
-                modifier: row => row.priorityDisplay,
+                defaultSortOrder: 'dsc',
+                modifier: row => row.noOfEntries,
             },
             {
                 key: 'actions',
