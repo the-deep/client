@@ -124,17 +124,15 @@ export default class Notifica extends React.PureComponent {
         const {
             className: classNameFromProps,
             notificationsCount: {
-                unseen: unseenNotificationCount = 0,
+                unseenNotifications = 0,
+                unseenRequests = 0,
             } = {},
         } = this.props;
 
         return (
             <div className={_cs(classNameFromProps, styles.notifica)}>
-                { unseenNotificationCount > 0 && (
-                    <div className={styles.count}>
-                        { unseenNotificationCount }
-                    </div>
-                )}
+                { unseenNotifications > 0 && (<div className={styles.count} />)}
+                { unseenRequests > 0 && (<div className={styles.requestCount} />)}
                 <DropdownMenu
                     className={styles.dropdownMenu}
                     dropdownClassName={styles.notificationDropdown}
@@ -144,6 +142,8 @@ export default class Notifica extends React.PureComponent {
                     <Notifications
                         className={styles.notifications}
                         updateNotificationStatus={this.updateNotificationStatus}
+                        unseenNotificationsCount={unseenNotifications}
+                        unseenRequestsCount={unseenRequests}
                     />
                 </DropdownMenu>
             </div>

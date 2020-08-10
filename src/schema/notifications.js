@@ -24,7 +24,8 @@ const notificationsSchema = [];
             description: 'Response for /notifications/count/',
         },
         fields: {
-            unseen: { type: 'uint', required: true },
+            unseenRequests: { type: 'uint', required: true },
+            unseenNotifications: { type: 'uint', required: true },
             total: { type: 'uint', required: true },
         },
     };

@@ -4,6 +4,27 @@
     flex-direction: column;
     background-color: var(--color-foreground);
 
+    .tab-title {
+        display: flex;
+        align-items: center;
+
+        .count {
+            flex-shrink: 0;
+            margin-right: var(--spacing-small);
+            border-radius: 50%;
+            width: var(--spacing-medium);
+            height: var(--spacing-medium);
+        }
+
+        .notifications-count {
+            background-color: var(--color-danger);
+        }
+
+        .requests-count {
+            background-color: var(--color-primary);
+        }
+    }
+
     .content {
         flex-grow: 1;
         overflow-y: auto;
