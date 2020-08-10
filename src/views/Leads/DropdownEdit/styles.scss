@@ -21,6 +21,10 @@
             background-color: var(--color-background-accent-hint)!important;
         }
 
+        &:disabled {
+            background-color: transparent!important;
+        }
+
         &.active {
             color: var(--color-accent);
         }

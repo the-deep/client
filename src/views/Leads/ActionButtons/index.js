@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
-import { reverseRoute, formatDateToString } from '@togglecorp/fujs';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
@@ -25,8 +25,6 @@ const propTypes = {
     activeProject: PropTypes.number.isRequired,
     onSearchSimilarLead: PropTypes.func.isRequired,
     onRemoveLead: PropTypes.func.isRequired,
-    onMarkProcessed: PropTypes.func.isRequired,
-    onMarkPending: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -100,8 +98,6 @@ export default class ActionButtons extends React.PureComponent {
         const {
             onSearchSimilarLead,
             onRemoveLead,
-            onMarkProcessed,
-            onMarkPending,
             row,
             className,
         } = this.props;
@@ -116,34 +112,6 @@ export default class ActionButtons extends React.PureComponent {
 
         return (
             <div className={containerClassName}>
-                <div className={styles.actionGroup}>
-                    <Cloak
-                        hide={ActionButtons.shouldHideLeadEdit}
-                        render={
-                            <Button
-                                tabIndex="-1"
-                                title={_ts('leads', 'markAsProcessedTitle')}
-                                iconName="check"
-                                onClick={() => onMarkProcessed(row)}
-                                transparent
-                                disabled={row.status !== 'pending'}
-                            />
-                        }
-                    />
-                    <Cloak
-                        hide={ActionButtons.shouldHideLeadEdit}
-                        render={
-                            <Button
-                                tabIndex="-1"
-                                title={_ts('leads', 'markAsPendingTitle')}
-                                iconName="undo"
-                                onClick={() => onMarkPending(row)}
-                                transparent
-                                disabled={row.status !== 'processed'}
-                            />
-                        }
-                    />
-                </div>
                 <div className={styles.actionGroup}>
                     <Cloak
                         hide={ActionButtons.shouldHideLeadCopy}

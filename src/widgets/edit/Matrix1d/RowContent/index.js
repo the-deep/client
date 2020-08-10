@@ -70,6 +70,7 @@ export default class RowContent extends React.PureComponent {
                         <ColorInput
                             faramElementName="color"
                             label="Color"
+                            showSwatches
                         />
                         <TextInput
                             className={styles.input}

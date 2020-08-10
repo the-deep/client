@@ -38,6 +38,7 @@ function DropdownItem(props: DropdownItemProps) {
                 isActive && styles.active,
             )}
             onClick={handleDropdownItemClick}
+            disabled={isActive}
         >
             {label}
         </Button>
@@ -79,7 +80,7 @@ function DropdownEdit(props: Props) {
                 showDropdown && styles.visible,
             )}
             dropdownIcon="edit"
-            onClick={setShowDropdown}
+            onDropdownVisibilityChange={setShowDropdown}
             closeOnClick
         >
             <ListView
