@@ -659,8 +659,6 @@ export default class Leads extends React.PureComponent {
                 onSearchSimilarLead={this.handleSearchSimilarLead}
 
                 onRemoveLead={this.handleLeadDelete}
-                onMarkProcessed={this.handleMarkAsProcessed}
-                onMarkPending={this.handleMarkAsPending}
 
                 activeProject={activeProject}
             />

@@ -21,6 +21,8 @@
 
         :global {
             .header {
+                z-index: 1;
+
                 &.created_by,
                 &.assignee {
                     width: var(--width-assignee-column);
@@ -127,6 +129,36 @@
                 margin-left: var(--spacing-small);
                 padding: 0 var(--spacing-extra-small);
                 font-size: var(--font-size-large);
+            }
+        }
+
+        .inline-edit-container {
+            display: flex;
+            align-items: center;
+
+            .label {
+                flex-grow: 1;
+            }
+
+            .dropdown {
+                flex-shrink: 0;
+                opacity: 0;
+
+                :global {
+                    .dropdown-button {
+                        padding: 0;
+
+                        &:hover {
+                            background-color: transparent;
+                        }
+                    }
+                }
+            }
+
+            &:hover {
+                .dropdown {
+                    opacity: 1;
+                }
             }
         }
     }

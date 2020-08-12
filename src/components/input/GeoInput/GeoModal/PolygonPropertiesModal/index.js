@@ -133,6 +133,7 @@ export default class PolygonEditModal extends React.PureComponent {
                             colors={colorsForPolygons}
                             label={_ts('components.geo.geoModal.polygonModal', 'colorInputLabel')}
                             type="githubPicker"
+                            showSwatches
                         />
                     </ModalBody>
                     <ModalFooter>

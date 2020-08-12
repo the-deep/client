@@ -14,34 +14,48 @@ import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
-import {
-    leadsForProjectTableViewSelector,
-} from '#redux';
-import { pathNames } from '#constants';
-import { organizationTitleSelector } from '#entities/organization';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+
+import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import Badge from '#components/viewer/Badge';
+import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
+
+import { organizationTitleSelector } from '#entities/organization';
+import {
+    leadsForProjectTableViewSelector,
+    patchLeadAction,
+} from '#redux';
+import { pathNames } from '#constants';
+import {
+    RequestClient,
+    methods,
+} from '#request';
 import _ts from '#ts';
 
 import ActionButtons from '../ActionButtons';
+import DropdownEdit from '../DropdownEdit';
 import FileTypeViewer from './FileTypeViewer';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
+const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
     activeSort: PropTypes.string.isRequired,
     leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     headersMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     loading: PropTypes.bool.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     setLeadPageActiveSort: PropTypes.func.isRequired,
     isFilterEmpty: PropTypes.bool,
     onSearchSimilarLead: PropTypes.func.isRequired,
     onRemoveLead: PropTypes.func.isRequired,
-    onMarkProcessed: PropTypes.func.isRequired,
-    onMarkPending: PropTypes.func.isRequired,
     activeProject: PropTypes.number,
 };
 
@@ -55,7 +69,46 @@ const mapStateToProps = state => ({
     leads: leadsForProjectTableViewSelector(state),
 });
 
-@connect(mapStateToProps)
+const mapDispatchToProps = dispatch => ({
+    patchLead: params => dispatch(patchLeadAction(params)),
+});
+
+const requestOptions = {
+    leadOptionsRequest: {
+        url: '/lead-options/',
+        method: methods.GET,
+        query: ({ props: { activeProject } }) => ({
+            projects: [activeProject],
+            fields: [
+                'priority',
+                'status',
+                'confidentiality',
+            ],
+        }),
+        onPropsChanged: ['activeProject'],
+        onMount: true,
+        extras: {
+            schemaName: 'projectLeadFilterOptions',
+        },
+    },
+    leadPatchRequest: {
+        url: ({ params: { leadId } }) => `/v2/leads/${leadId}/`,
+        method: methods.PATCH,
+        body: ({ params: { patchBody } }) => patchBody,
+        onSuccess: ({ response, props }) => {
+            if (props.patchLead) {
+                props.patchLead({ lead: response });
+            }
+        },
+        onFailure: notifyOnFailure(_ts('leads', 'leads')),
+        onFatal: notifyOnFatal(_ts('leads', 'leads')),
+    },
+};
+
+const shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.modify;
+
+@connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requestOptions)
 export default class Table extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -202,31 +255,122 @@ export default class Table extends React.Component {
             {
                 key: 'confidentiality',
                 order: 10,
-                modifier: row => (
-                    <div className="confidentiality">
-                        {row.confidentiality}
-                    </div>
-                ),
+                modifier: (row) => {
+                    const {
+                        requests: {
+                            leadOptionsRequest: {
+                                response: {
+                                    confidentiality: confidentialityOptions,
+                                } = emptyObject,
+                            } = emptyObject,
+                            leadPatchRequest,
+                        },
+                    } = this.props;
+
+                    return (
+                        <div className={styles.inlineEditContainer}>
+                            <div className={styles.label}>
+                                {row.confidentiality}
+                            </div>
+                            <Cloak
+                                hide={shouldHideLeadEdit}
+                                render={
+                                    <DropdownEdit
+                                        currentSelection={row.confidentiality}
+                                        className={styles.dropdown}
+                                        options={confidentialityOptions}
+                                        onItemSelect={key => leadPatchRequest.do({
+                                            patchBody: { confidentiality: key },
+                                            leadId: row.id,
+                                        })}
+                                    />
+                                }
+                            />
+                        </div>
+                    );
+                },
             },
             {
                 key: 'status',
                 order: 11,
-                modifier: row => (
-                    <div className="status">
-                        {row.status}
-                    </div>
-                ),
-            },
-            {
-                key: 'no_of_entries',
-                order: 12,
-                defaultSortOrder: 'dsc',
-                modifier: row => row.noOfEntries,
+                modifier: (row) => {
+                    const {
+                        requests: {
+                            leadOptionsRequest: {
+                                response: {
+                                    status: statusOptions,
+                                } = emptyObject,
+                            } = emptyObject,
+                            leadPatchRequest,
+                        },
+                    } = this.props;
+
+                    return (
+                        <div className={styles.inlineEditContainer}>
+                            <div className={styles.label}>
+                                {row.status}
+                            </div>
+                            <Cloak
+                                hide={shouldHideLeadEdit}
+                                render={
+                                    <DropdownEdit
+                                        currentSelection={row.status}
+                                        className={styles.dropdown}
+                                        options={statusOptions}
+                                        onItemSelect={key => leadPatchRequest.do({
+                                            patchBody: { status: key },
+                                            leadId: row.id,
+                                        })}
+                                    />
+                                }
+                            />
+                        </div>
+                    );
+                },
             },
             {
                 key: 'priority',
+                order: 12,
+                modifier: (row) => {
+                    const {
+                        requests: {
+                            leadOptionsRequest: {
+                                response: {
+                                    priority,
+                                } = emptyObject,
+                            } = emptyObject,
+                            leadPatchRequest,
+                        },
+                    } = this.props;
+
+                    return (
+                        <div className={styles.inlineEditContainer}>
+                            <div className={styles.label}>
+                                {row.priorityDisplay}
+                            </div>
+                            <Cloak
+                                hide={shouldHideLeadEdit}
+                                render={
+                                    <DropdownEdit
+                                        currentSelection={row.priority}
+                                        className={styles.dropdown}
+                                        options={priority}
+                                        onItemSelect={key => leadPatchRequest.do({
+                                            patchBody: { priority: key },
+                                            leadId: row.id,
+                                        })}
+                                    />
+                                }
+                            />
+                        </div>
+                    );
+                },
+            },
+            {
+                key: 'no_of_entries',
                 order: 13,
-                modifier: row => row.priorityDisplay,
+                defaultSortOrder: 'dsc',
+                modifier: row => row.noOfEntries,
             },
             {
                 key: 'actions',
@@ -235,8 +379,6 @@ export default class Table extends React.Component {
                     const {
                         onSearchSimilarLead,
                         onRemoveLead,
-                        onMarkProcessed,
-                        onMarkPending,
                         activeProject,
                     } = this.props;
 
@@ -245,8 +387,6 @@ export default class Table extends React.Component {
                             row={row}
                             onSearchSimilarLead={onSearchSimilarLead}
                             onRemoveLead={onRemoveLead}
-                            onMarkProcessed={onMarkProcessed}
-                            onMarkPending={onMarkPending}
                             activeProject={activeProject}
                         />
                     );
@@ -315,10 +455,14 @@ export default class Table extends React.Component {
             loading,
             isFilterEmpty,
             className,
+            requests: {
+                leadPatchRequest: { pending },
+            },
         } = this.props;
 
         return (
             <div className={_cs(className, styles.tableContainer)}>
+                {pending && <LoadingAnimation />}
                 <RawTable
                     data={leads}
                     dataModifier={this.leadModifier}

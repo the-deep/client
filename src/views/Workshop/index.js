@@ -254,6 +254,7 @@ export default class Workshop extends React.PureComponent {
                             <ColorInput
                                 faramElementName="favoriteColor"
                                 label="Favorite Color"
+                                showSwatches
                             />
                             <DateInput
                                 faramElementName="dob"

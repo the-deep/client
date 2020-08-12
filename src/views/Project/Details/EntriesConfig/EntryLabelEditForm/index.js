@@ -270,6 +270,7 @@ export default class EntryLabelsActions extends React.PureComponent {
                             faramElementName="color"
                             label={_ts('project.entryGroups.editForm', 'entryLabelColorLabel')}
                             type="githubPicker"
+                            showSwatches
                         />
                     </ModalBody>
                     <ModalFooter>

@@ -33,6 +33,7 @@ export default class InputRow extends React.PureComponent {
                         className={styles.colorInput}
                         faramElementName="color"
                         label={_ts('widgets.editor.scale', 'colorLabel')}
+                        showSwatches
                     />
                     <TextInput
                         className={styles.titleInput}
