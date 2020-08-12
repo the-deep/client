@@ -104,6 +104,7 @@ export default class DimensionContent extends React.PureComponent {
                                 className={styles.colorInput}
                                 faramElementName="color"
                                 label={_ts('widgets.editor.matrix2d', 'colorLabel')}
+                                showSwatches
                             />
                             <TextInput
                                 className={styles.titleInput}

@@ -19,6 +19,10 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import Badge from '#components/viewer/Badge';
+import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
 
 import { organizationTitleSelector } from '#entities/organization';
 import {
@@ -96,6 +100,8 @@ const requestOptions = {
                 props.patchLead({ lead: response });
             }
         },
+        onFailure: notifyOnFailure(_ts('leads', 'leads')),
+        onFatal: notifyOnFatal(_ts('leads', 'leads')),
     },
 };
 
