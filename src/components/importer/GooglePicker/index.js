@@ -139,8 +139,12 @@ export default class GooglePicker extends React.Component {
             return createPicker(window.google, oauthToken);
         }
 
-        const googleViewId = window.google.picker.ViewId[viewId];
-        const view = new window.google.picker.View(googleViewId);
+        // const googleViewId = window.google.picker.ViewId[viewId];
+        const view = new window.google.picker
+            .DocsView(window.google.picker.ViewId.FOLDERS)
+            .setParent('root');
+        // const view = new window.google.picker
+        //     .View(googleViewId);
 
         if (!view) {
             console.warn('Can\'t find view by viewId');
