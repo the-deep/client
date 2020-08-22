@@ -1149,8 +1149,8 @@
         "-38652666": "Yes",
         "-59901057": "Ary",
         "-25520086": "This lead is in the Assessment Registry.",
-        "-93824832": "Read",
-        "-52553803": "Unread"
+        "-27783420": "Mark as done",
+        "-3063046": "Done"
     },
     "links": {
         "browserExtension": {
@@ -2425,8 +2425,10 @@
             "noPendingActionsText": -56480064,
             "requestsTabLabel": -5634506,
             "allNotificationsLabel": 5552,
-            "readNotificationsLabel": -93824832,
-            "unreadNotificationsLabel": -52553803
+            "markAsDoneLabel": -27783420,
+            "markAsPendingLabel": 802,
+            "doneNotificationsLabel": -3063046,
+            "pendingNotificationsLabel": 629
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,

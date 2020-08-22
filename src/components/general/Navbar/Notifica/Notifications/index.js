@@ -97,10 +97,13 @@ const requestOptions = {
         query: ({ params: {
             dateRange,
             isPending,
+            seenStatus = 'all',
         } }) => {
+            const status = seenStatus === 'all' ? undefined : seenStatus;
             if (dateRange === 'all') {
                 return {
                     is_pending: !!isPending,
+                    status,
                 };
             }
 
@@ -112,6 +115,7 @@ const requestOptions = {
                 lastDate.setDate(lastDate.getDate() - 30);
             }
             return {
+                status,
                 is_pending: !!isPending,
                 timestamp__gte: getDateWithTimezone(encodeDate(lastDate)),
             };
@@ -145,8 +149,12 @@ const requestOptions = {
         url: '/notifications/status/',
         method: methods.PUT,
         body: ({ params: { body } }) => body,
-        onSuccess: ({ params: { onSuccess } }) => {
+        onSuccess: ({
+            params: { onSuccess },
+            props: { onNotificationStatusChange },
+        }) => {
             onSuccess();
+            onNotificationStatusChange();
         },
     },
 };
@@ -170,12 +178,12 @@ const tabs = {
 
 const seenStatusOptions = [
     {
-        key: 'read',
-        label: _ts('notifications', 'readNotificationsLabel'),
+        key: 'seen',
+        label: _ts('notifications', 'doneNotificationsLabel'),
     },
     {
-        key: 'unread',
-        label: _ts('notifications', 'unreadNotificationsLabel'),
+        key: 'unseen',
+        label: _ts('notifications', 'pendingNotificationsLabel'),
     },
     {
         key: 'all',
@@ -236,8 +244,9 @@ function Notifications(props) {
         reDoNotificationsRequest({
             dateRange,
             isPending: activeTab === 'requests',
+            seenStatus,
         });
-    }, [reDoNotificationsRequest, activeTab, dateRange]);
+    }, [reDoNotificationsRequest, activeTab, dateRange, seenStatus]);
 
     const handleNotificationSeenStatusChange = useCallback((
         notificationId,
@@ -248,8 +257,9 @@ function Notifications(props) {
                 id: notificationId,
                 status: newSeenStatus,
             }],
+            onSuccess: handleNotificationsReload,
         });
-    }, [notificationStatusUpdate]);
+    }, [notificationStatusUpdate, handleNotificationsReload]);
 
     const notificationItemRendererParams = useCallback((_, d) => ({
         closeModal,
@@ -267,9 +277,11 @@ function Notifications(props) {
         reDoNotificationsRequest({
             dateRange,
             isPending: newTab === 'requests',
+            seenStatus,
         });
     }, [
         dateRange,
+        seenStatus,
         setActiveTab,
         reDoNotificationsRequest,
     ]);
@@ -277,6 +289,7 @@ function Notifications(props) {
     const handleSeenStatusChange = useCallback((newSeenStatus) => {
         setSeenStatus(newSeenStatus);
         reDoNotificationsRequest({
+            seenStatus: newSeenStatus,
             isPending: activeTab === 'requests',
             dateRange,
         });
@@ -287,8 +300,9 @@ function Notifications(props) {
         reDoNotificationsRequest({
             isPending: activeTab === 'requests',
             dateRange: newDateRange,
+            seenStatus,
         });
-    }, [activeTab, setDateRange, reDoNotificationsRequest]);
+    }, [activeTab, setDateRange, reDoNotificationsRequest, seenStatus]);
 
     return (
         <div className={_cs(classNameFromProps, styles.notifications)} >
@@ -336,6 +350,8 @@ Notifications.propTypes = {
     notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     closeModal: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onNotificationStatusChange: PropTypes.func.isRequired,
 };
 
 Notifications.defaultProps = {

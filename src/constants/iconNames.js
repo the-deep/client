@@ -17,7 +17,6 @@ const iconNames = {
     check: 'ion-checkmark',
     checkAll: 'ion-android-done-all',
     checkCircle: 'ion-checkmark-circled',
-    checkThin: 'ion-ios-checkmark-empty',
     checkbox: 'ion-android-checkbox',
     checkboxOutlineBlank: 'ion-android-checkbox-outline-blank',
     chevronDown: 'ion-chevron-down',

@@ -4,11 +4,8 @@
 
 .notification {
     display: flex;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
     padding: var(--spacing-small) 0;
-
-    &:not(:last-child) {
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-    }
 
     .left {
         flex-basis: var(--size-default-icon);
@@ -65,6 +62,10 @@
             opacity: 0;
             font-size: var(--font-size-large);
         }
+    }
+
+    &.read {
+        background-color: var(--color-background-read-notification);
     }
 
     &:hover {

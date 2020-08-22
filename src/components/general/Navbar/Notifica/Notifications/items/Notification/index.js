@@ -5,6 +5,9 @@ import { _cs } from '@togglecorp/fujs';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import FormattedDate from '#rscv/FormattedDate';
+
+import _ts from '#ts';
+
 import styles from './styles.scss';
 
 const NOTIFICATION_STATUS_UNSEEN = 'unseen';
@@ -51,7 +54,13 @@ function Notification(props) {
     }, [onNotificationSeenStatusChange, notificationId, seenStatus]);
 
     return (
-        <div className={_cs(classNameFromProps, styles.notification)}>
+        <div
+            className={_cs(
+                classNameFromProps,
+                styles.notification,
+                seenStatus && styles.read,
+            )}
+        >
             <div className={styles.left}>
                 { icon }
                 { !icon &&
@@ -86,6 +95,10 @@ function Notification(props) {
                 <Button
                     className={styles.statusChangeButton}
                     transparent
+                    title={seenStatus
+                        ? _ts('notifications', 'markAsPendingLabel')
+                        : _ts('notifications', 'markAsDoneLabel')
+                    }
                     iconName={seenStatus ? 'undo' : 'check'}
                     onClick={handleNotificationSeenStatusChange}
                 />

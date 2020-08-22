@@ -123,6 +123,7 @@ export default class Notifica extends React.PureComponent {
                         className={styles.notifications}
                         unseenNotificationsCount={unseenNotifications}
                         unseenRequestsCount={unseenRequests}
+                        onNotificationStatusChange={this.handleNotificationsStatusUpdateSuccess}
                     />
                 </DropdownMenu>
             </div>
