@@ -56,6 +56,7 @@ import {
 
     routeUrlSelector,
 
+    editEntriesSetSelectedEntryKeyAction,
     editEntriesAnalysisFrameworkSelector,
     editEntriesEntriesSelector,
     editEntriesLeadSelector,
@@ -124,6 +125,7 @@ const propTypes = {
     setRegions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setEntriesCommentsCount: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    setSelectedEntryKey: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     resetEntryGroupUiState: PropTypes.func.isRequired,
 
     clearEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -135,7 +137,6 @@ const propTypes = {
     updateEntriesBulk: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     setEntryGroupError: PropTypes.func.isRequired,
-
 
     setPending: PropTypes.func.isRequired,
     setEntryGroupPending: PropTypes.func.isRequired,
@@ -177,6 +178,7 @@ const mapDispatchToProps = dispatch => ({
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     setEntryGroups: params => dispatch(editEntriesSetEntryGroupsAction(params)),
     setEntriesCommentsCount: params => dispatch(editEntriesSetEntriesCommentsCountAction(params)),
+    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     setEntryGroupError: params => dispatch(editEntriesSetEntryGroupErrorsAction(params)),
@@ -346,6 +348,7 @@ export default class EditEntries extends React.PureComponent {
             pendingSaveAllEntryGroup: false,
             projectMismatch: false,
             entryStates: {},
+            showComment: this.getCommentVisibility(),
         };
 
         this.views = {
@@ -354,11 +357,13 @@ export default class EditEntries extends React.PureComponent {
                 rendererParams: () => ({
                     // injected inside WidgetFaram
                     schema: this.props.schema,
+                    showComment: this.state.showComment,
                     computeSchema: this.props.computeSchema,
                     onEntryStateChange: this.handleEntryStateChange,
                     analysisFramework: this.props.analysisFramework,
                     lead: this.props.lead,
                     leadId: this.props.leadId,
+                    onModalVisibilityChange: this.handleEntryCommentModalChange,
 
                     entryStates: this.state.entryStates,
                     bookId: this.props.lead && this.props.lead.tabularBook,
@@ -491,9 +496,40 @@ export default class EditEntries extends React.PureComponent {
         }
     }
 
+    componentWillReceiveProps({ location: newLocation }) {
+        const { location: oldLocation } = this.props;
+
+        if (newLocation.search !== oldLocation.search) {
+            this.setState({
+                showComment: this.getCommentVisibility(),
+            });
+        }
+    }
+
     componentWillUnmount() {
         this.saveRequestCoordinator.stop();
         this.saveEntryGroupRequestCoordinator.stop();
+    }
+
+    getCommentVisibility = () => {
+        const {
+            setSelectedEntryKey,
+            entries,
+            leadId,
+        } = this.props;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryIdFromRoute = urlParams.get('entry_id');
+        const showComment = urlParams.get('show_comment');
+        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
+        const entryLocalId = entryAccessor.key(entry);
+        if (entryLocalId) {
+            setSelectedEntryKey({
+                leadId,
+                key: entryLocalId,
+            });
+        }
+        return (!!entryLocalId && showComment === 'true');
     }
 
     getSavableEntries = memoize((entries, statuses) => entries.filter((entry) => {
@@ -531,6 +567,14 @@ export default class EditEntries extends React.PureComponent {
             },
         } = this.props;
         return !isAdmin;
+    }
+
+    handleEntryCommentModalChange = (showModal) => {
+        const { history } = this.props;
+
+        history.push({
+            search: `show_comment=${showModal}`,
+        });
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {

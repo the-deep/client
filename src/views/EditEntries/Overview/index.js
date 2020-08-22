@@ -8,7 +8,7 @@ import {
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
-import modalize from '#rscg/Modalize';
+import { controlledModalize } from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
@@ -48,7 +48,7 @@ import WidgetFaram from '../WidgetFaram';
 import LeftPane from './LeftPane';
 import styles from './styles.scss';
 
-const ModalButton = modalize(Button);
+const ModalButton = controlledModalize(Button);
 
 const propTypes = {
     leadId: PropTypes.number.isRequired,
@@ -110,29 +110,7 @@ export default class Overview extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {
-            setSelectedEntryKey,
-            leadId,
-            entries,
-        } = this.props;
-
-        this.state = {
-            mountModalButton: false,
-        };
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const entryIdFromRoute = urlParams.get('entry_id');
-        const showComment = urlParams.get('show_comment');
-        const entry = entries.find(e => String(entryAccessor.serverId(e)) === entryIdFromRoute);
-        const entryLocalId = entryAccessor.key(entry);
-        if (entryLocalId) {
-            setSelectedEntryKey({
-                leadId,
-                key: entryLocalId,
-            });
-        }
-
-        this.showInitial = !!entryLocalId && showComment === 'true';
+        this.state = { mountModalButton: false };
     }
 
     componentDidMount() {
@@ -253,9 +231,13 @@ export default class Overview extends React.PureComponent {
 
             entryGroups,
             labels,
+            showComment,
         } = this.props;
 
-        const { mountModalButton } = this.state;
+        const {
+            mountModalButton,
+            showModal,
+        } = this.state;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
@@ -333,7 +315,8 @@ export default class Overview extends React.PureComponent {
                                             )
                                         }
                                         disabled={isFalsy(entryAccessor.serverId(entry))}
-                                        initialShowModal={this.showInitial}
+                                        showModal={showComment}
+                                        onModalVisibilityChange={this.props.onModalVisibilityChange}
                                         modal={
                                             <EntryCommentModal
                                                 entryServerId={entryAccessor.serverId(entry)}
