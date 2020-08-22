@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
@@ -35,9 +35,6 @@ import EntryCommentItem from './items/EntryCommentItem';
 
 import styles from './styles.scss';
 
-const NOTIFICATION_STATUS_UNSEEN = 'unseen';
-const NOTIFICATION_STATUS_SEEN = 'seen';
-
 const notificationItems = {
     project_join_request: ProjectJoinRequestItem,
     project_join_response: ProjectJoinResponseItem,
@@ -51,7 +48,12 @@ const notificationItems = {
     entry_comment_reply_modify: EntryCommentItem,
 };
 
-const NotificationItem = ({ notification, closeModal, onNotificationReload }) => {
+const NotificationItem = ({
+    notification,
+    closeModal,
+    onNotificationReload,
+    onNotificationSeenStatusChange,
+}) => {
     const Item = notificationItems[notification.notificationType];
 
     if (Item) {
@@ -61,6 +63,7 @@ const NotificationItem = ({ notification, closeModal, onNotificationReload }) =>
                 notification={notification}
                 notificationType={notification.notificationType}
                 onNotificationReload={onNotificationReload}
+                onNotificationSeenStatusChange={onNotificationSeenStatusChange}
             />
         );
     }
@@ -76,6 +79,7 @@ NotificationItem.propTypes = {
     }).isRequired,
     closeModal: PropTypes.func.isRequired,
     onNotificationReload: PropTypes.func.isRequired,
+    onNotificationSeenStatusChange: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -131,26 +135,18 @@ const requestOptions = {
                 || newUnseenNotificationCount > 0,
         },
         onSuccess: ({
-            props: {
-                setNotifications,
-                updateNotificationStatus,
-            },
+            props: { setNotifications },
             response: { results },
         }) => {
             setNotifications({ notifications: results });
-            const unseenNotifications = results.filter(
-                d => d.status === NOTIFICATION_STATUS_UNSEEN,
-            );
-
-            if (unseenNotifications.length > 0) {
-                const notificationStatusUpdateBody = unseenNotifications.map(
-                    d => ({
-                        id: d.id,
-                        status: NOTIFICATION_STATUS_SEEN,
-                    }),
-                );
-                updateNotificationStatus(notificationStatusUpdateBody);
-            }
+        },
+    },
+    notificationStatusUpdateRequest: {
+        url: '/notifications/status/',
+        method: methods.PUT,
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ params: { onSuccess } }) => {
+            onSuccess();
         },
     },
 };
@@ -172,6 +168,21 @@ const tabs = {
     ),
 };
 
+const seenStatusOptions = [
+    {
+        key: 'read',
+        label: _ts('notifications', 'readNotificationsLabel'),
+    },
+    {
+        key: 'unread',
+        label: _ts('notifications', 'unreadNotificationsLabel'),
+    },
+    {
+        key: 'all',
+        label: _ts('notifications', 'allNotificationsLabel'),
+    },
+];
+
 const dateRangeOptions = [
     {
         key: '7d',
@@ -186,6 +197,9 @@ const dateRangeOptions = [
         label: _ts('notifications', 'allDaysLabel'),
     },
 ];
+
+const seenStatusKeySelector = d => d.key;
+const seenStatusLabelSelector = d => d.label;
 
 const dateRangeKeySelector = d => d.key;
 const dateRangeLabelSelector = d => d.label;
@@ -207,12 +221,16 @@ function Notifications(props) {
                 pending: notificationsPending,
                 do: reDoNotificationsRequest,
             },
+            notificationStatusUpdateRequest: {
+                do: notificationStatusUpdate,
+            },
         },
         closeModal,
     } = props;
 
     const [activeTab, setActiveTab] = useState('notifications');
     const [dateRange, setDateRange] = useState('7d');
+    const [seenStatus, setSeenStatus] = useState('all');
 
     const handleNotificationsReload = useCallback(() => {
         reDoNotificationsRequest({
@@ -221,11 +239,28 @@ function Notifications(props) {
         });
     }, [reDoNotificationsRequest, activeTab, dateRange]);
 
+    const handleNotificationSeenStatusChange = useCallback((
+        notificationId,
+        newSeenStatus,
+    ) => {
+        notificationStatusUpdate({
+            body: [{
+                id: notificationId,
+                status: newSeenStatus,
+            }],
+        });
+    }, [notificationStatusUpdate]);
+
     const notificationItemRendererParams = useCallback((_, d) => ({
         closeModal,
         notification: d,
         onNotificationReload: handleNotificationsReload,
-    }), [closeModal, handleNotificationsReload]);
+        onNotificationSeenStatusChange: handleNotificationSeenStatusChange,
+    }), [
+        closeModal,
+        handleNotificationsReload,
+        handleNotificationSeenStatusChange,
+    ]);
 
     const handleTabChange = useCallback((newTab) => {
         setActiveTab(newTab);
@@ -238,6 +273,14 @@ function Notifications(props) {
         setActiveTab,
         reDoNotificationsRequest,
     ]);
+
+    const handleSeenStatusChange = useCallback((newSeenStatus) => {
+        setSeenStatus(newSeenStatus);
+        reDoNotificationsRequest({
+            isPending: activeTab === 'requests',
+            dateRange,
+        });
+    }, [activeTab, setSeenStatus, dateRange, reDoNotificationsRequest]);
 
     const handleDateRangeChange = useCallback((newDateRange) => {
         setDateRange(newDateRange);
@@ -255,6 +298,16 @@ function Notifications(props) {
                 onClick={handleTabChange}
                 active={activeTab}
             >
+                <SegmentInput
+                    className={styles.seenStatus}
+                    options={seenStatusOptions}
+                    keySelector={seenStatusKeySelector}
+                    labelSelector={seenStatusLabelSelector}
+                    value={seenStatus}
+                    onChange={handleSeenStatusChange}
+                    showHintAndError={false}
+                    showLabel={false}
+                />
                 <SegmentInput
                     className={styles.dateRange}
                     options={dateRangeOptions}

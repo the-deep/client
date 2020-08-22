@@ -250,5 +250,5 @@ function AryCopyModal(props: Props) {
         </Modal>
     );
 }
-export default connect(mapStateToProps)(RequestClient(requestOptions)(AryCopyModal));
 
+export default connect(mapStateToProps)(RequestClient(requestOptions)(AryCopyModal));

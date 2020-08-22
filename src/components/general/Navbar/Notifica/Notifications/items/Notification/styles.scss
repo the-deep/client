@@ -32,7 +32,7 @@
         }
     }
 
-    .right {
+    .center {
         flex-grow: 1;
 
         .message {
@@ -58,8 +58,21 @@
         }
     }
 
+    .right {
+        padding: 0 var(--spacing-small);
+
+        .status-change-button {
+            opacity: 0;
+            font-size: var(--font-size-large);
+        }
+    }
+
     &:hover {
         background-color: var(--color-background-hover);
+
+        .status-change-button {
+            opacity: 1;
+        }
     }
 }
 
