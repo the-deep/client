@@ -157,8 +157,10 @@ export default class ActionButtons extends React.PureComponent {
                         render={
                             <ModalWarningButton
                                 iconName="edit"
+                                transparent
                                 modal={
                                     <LeadEditModal
+                                        leadId={row.id}
                                         lead={row}
                                         projectId={activeProject}
                                     />

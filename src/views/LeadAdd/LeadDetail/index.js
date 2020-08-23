@@ -1,3 +1,5 @@
+// NOTE: This component has also been used in Leads Table to quick edit leads
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
@@ -100,9 +102,8 @@ const propTypes = {
     projects: PropTypes.array,
 
     bulkActionDisabled: PropTypes.bool,
-    bulkActionHidden: PropTypes.bool,
     hideProjects: PropTypes.bool,
-    disableLeadIdentity: PropTypes.bool,
+    disableLeadUrlChange: PropTypes.bool,
 
     onChange: PropTypes.func.isRequired,
     onApplyAllClick: PropTypes.func.isRequired,
@@ -121,9 +122,8 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
-    bulkActionHidden: false,
     hideProjects: false,
-    disableLeadIdentity: false,
+    disableLeadUrlChange: false,
 
     projects: [],
 };
@@ -719,9 +719,8 @@ class LeadDetail extends React.PureComponent {
                     pending: pendingSearchedOrganizations,
                 },
             },
-            bulkActionHidden,
             hideProjects,
-            disableLeadIdentity,
+            disableLeadUrlChange,
         } = this.props;
         const {
             showAddLeadGroupModal,
@@ -730,7 +729,6 @@ class LeadDetail extends React.PureComponent {
             suggestedTitleFromUrl,
             suggestedTitleFromExtraction,
         } = this.state;
-        console.warn('hjere', lead);
 
         const values = leadFaramValuesSelector(lead);
         const serverId = leadIdSelector(lead);
@@ -847,7 +845,7 @@ class LeadDetail extends React.PureComponent {
                                         disabled={
                                             formDisabled
                                             || extractionDisabled
-                                            || disableLeadIdentity
+                                            || disableLeadUrlChange
                                         }
                                         onClick={this.handleExtractClick}
                                         tabIndex="-1"
@@ -860,7 +858,7 @@ class LeadDetail extends React.PureComponent {
                                     label={_ts('addLeads', 'urlLabel')}
                                     placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                                     autoFocus
-                                    disabled={disableLeadIdentity}
+                                    disabled={disableLeadUrlChange}
                                 />
                             </ExtraFunctionsOnHover>
                             <ApplyAll
@@ -887,7 +885,7 @@ class LeadDetail extends React.PureComponent {
                             rows="3"
                             className={styles.text}
                             autoFocus
-                            disabled={disableLeadIdentity}
+                            disabled={disableLeadUrlChange}
                         />
                     ) }
                     <ExtraFunctionsOnHover
