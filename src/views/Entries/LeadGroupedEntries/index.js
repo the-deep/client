@@ -81,6 +81,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
             title: leadTitle,
             id: leadId,
             createdAt: leadCreatedAt,
+            publishedOn: leadPublisedOn,
             entries,
             url: leadUrlFromProps,
             attachment,
@@ -119,15 +120,28 @@ export default class LeadGroupedEntries extends React.PureComponent {
                             )}
                         </div>
                         <div className={styles.leadDetails}>
-                            <Icon
-                                title={_ts('entries', 'calendarIconTitle')}
-                                name="calendar"
-                            />
-                            <FormattedDate
-                                className={styles.date}
-                                date={leadCreatedAt}
-                                mode="dd-MM-yyyy"
-                            />
+                            <div className={styles.dateContainer}>
+                                <Icon name="calendar" />
+                                <span className={styles.dateLabel}>
+                                    {_ts('entries', 'createdAtLabel')}
+                                </span>
+                                <FormattedDate
+                                    className={styles.date}
+                                    date={leadCreatedAt}
+                                    mode="dd-MM-yyyy"
+                                />
+                            </div>
+                            <div className={styles.dateContainer}>
+                                <Icon name="calendar" />
+                                <span className={styles.dateLabel}>
+                                    {_ts('entries', 'publishedOnLabel')}
+                                </span>
+                                <FormattedDate
+                                    className={styles.date}
+                                    date={leadPublisedOn}
+                                    mode="dd-MM-yyyy"
+                                />
+                            </div>
                             {assignee && assignee[0] && (
                                 <>
                                     <Icon
