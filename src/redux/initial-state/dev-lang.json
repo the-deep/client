@@ -1153,7 +1153,10 @@
         "-83960265": "Verified",
         "-45171916": "Unverified",
         "-35075096": "The verification status of this entry was last changed by {userName}.",
-        "-13339127": "We cannot currently preview this type of document."
+        "-13339127": "We cannot currently preview this type of document.",
+        "-23121024": "Edit connector",
+        "-3611094": "Are you sure you want to delete the connector {title}?",
+        "-31701107": "Updated On"
     },
     "links": {
         "browserExtension": {
@@ -2256,7 +2259,10 @@
             "noAfSelectedText": -86287086,
             "entriesVizErrorMessage": -9524324,
             "arysVizErrorMessage": -43430452,
-            "entriesConfigTitle": -47675119
+            "entriesConfigTitle": -47675119,
+            "arysVizErrorMessage": -76059043,
+            "entriesConfigTitle": -47675119,
+            "connectorsTitle": 1100
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -3312,6 +3318,20 @@
             "clearSelectionButtonLabel": 528,
             "errorNotify": -17130420,
             "successMessageIfEmpty": -51126708
+        },
+        "project.connector.editForm": {
+            "addConnectorTitle": 1102,
+            "cancelButtonLabel": 61,
+            "connectorTitleLabel": 13,
+            "saveButtonLabel": 25,
+            "editConnectorTitle": -23121024
+        },
+        "project.connector": {
+            "addButtonTitle": 301,
+            "connectorHeaderTitle": 1100,
+            "connectorDeleteMessage": -3611094,
+            "editButtonTitle": -23121024,
+            "updatedOnLabel": -31701107
         }
     }
 }

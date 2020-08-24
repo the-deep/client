@@ -61,6 +61,7 @@ export * from './framework';
 export * from './questionnaire';
 export * from './project';
 export * from './lead';
+export * from './connector';
 
 export type NullableField<T, K extends keyof T> = {
     [key in K]+?: T[key];
