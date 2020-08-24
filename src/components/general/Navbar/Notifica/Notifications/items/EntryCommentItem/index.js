@@ -52,14 +52,11 @@ const getNotificationText = (notificationType, notification, projects, closeModa
 
     const userLink = reverseRoute(pathNames.userProfile, { userId: id });
     const projectLink = reverseRoute(pathNames.projects, { projectId: project });
-
-    const entriesLink = reverseRoute(
-        pathNames.editEntries,
-        {
-            projectId: project,
-            leadId: lead,
-        },
-    );
+    const entriesLink = reverseRoute(pathNames.entryCommentRedirect, {
+        projectId: project,
+        leadId: lead,
+        entryId: entry,
+    });
 
     const stringParams = {
         userName: (
@@ -71,7 +68,7 @@ const getNotificationText = (notificationType, notification, projects, closeModa
         ),
         comment: (
             <LinkItem
-                link={`${entriesLink}?entry_id=${entry}&show_comment=true`}
+                link={entriesLink}
                 // This is intentional
                 title="comment"
                 closeModal={closeModal}

@@ -65,11 +65,21 @@
     }
 
     &.read {
-        background-color: var(--color-background-read-notification);
+        .center,
+        .left {
+            opacity: .5;
+        }
     }
 
     &:hover {
         background-color: var(--color-background-hover);
+
+        &.read {
+            .center,
+            .left {
+                opacity: .8;
+            }
+        }
 
         .status-change-button {
             opacity: 1;
