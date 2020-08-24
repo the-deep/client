@@ -27,6 +27,7 @@ import Regions from './Regions';
 import Frameworks from './Frameworks';
 import WordCategories from './WordCategories';
 import EntriesConfig from './EntriesConfig';
+import Connector from './Connector';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -116,6 +117,7 @@ export default class ProjectDetails extends React.PureComponent {
             frameworks: _ts('project', 'analysisFrameworkTitle'),
             categoryEditors: _ts('project', 'categoryEditorTitle'),
             entriesConfig: _ts('project', 'entriesConfigTitle'),
+            connectors: _ts('project', 'connectorsTitle'),
         };
 
         this.defaultHash = 'general';
@@ -216,6 +218,22 @@ export default class ProjectDetails extends React.PureComponent {
                     />
                 ),
             },
+            connectors: {
+                mount: true,
+                lazyMount: true,
+                wrapContainer: true,
+                component: () => (
+                    <Cloak
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <Connector
+                                className={styles.view}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
+            },
         };
     }
 
@@ -225,6 +243,7 @@ export default class ProjectDetails extends React.PureComponent {
                 projectDeleteRequest,
             },
         } = this.props;
+
         projectDeleteRequest.do({
             projectId: this.props.projectId,
         });
@@ -232,7 +251,6 @@ export default class ProjectDetails extends React.PureComponent {
 
     render() {
         const {
-            projectId,
             className,
             requests: {
                 projectDeleteRequest,
