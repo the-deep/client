@@ -1,0 +1,47 @@
+.project-connector-detail {
+    display: flex;
+    flex-direction: column;
+    margin: var(--spacing-medium);
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+    overflow-y: auto;
+
+    .header {
+        display: flex;
+        align-items: center;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) var(--spacing-medium);
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .right-component {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+
+            .label {
+                margin-right: var(--spacing-small);
+
+                &:after {
+                    content: ':';
+                }
+            }
+
+            .checkbox {
+                margin-left: var(--spacing-small);
+                padding: var(--spacing-small);
+            }
+
+            .button {
+                margin-left: var(--spacing-small);
+            }
+        }
+    }
+
+    .connector-sources {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
