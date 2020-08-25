@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
     _cs,
     encodeDate,
+    compareString,
 } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
@@ -32,6 +33,7 @@ import ProjectJoinRequestItem from './items/ProjectJoinRequest';
 import ProjectJoinRequestAbortItem from './items/ProjectJoinRequestAbort';
 import ProjectJoinResponseItem from './items/ProjectJoinResponse';
 import EntryCommentItem from './items/EntryCommentItem';
+import { NOTIFICATION_STATUS_SEEN } from './items/Notification';
 
 import styles from './styles.scss';
 
@@ -97,14 +99,9 @@ const requestOptions = {
         query: ({ params: {
             dateRange,
             isPending,
-            seenStatus = 'all',
         } }) => {
-            const status = seenStatus === 'all' ? undefined : seenStatus;
             if (dateRange === 'all') {
-                return {
-                    is_pending: !!isPending,
-                    status,
-                };
+                return { is_pending: !!isPending };
             }
 
             const lastDate = new Date();
@@ -115,7 +112,6 @@ const requestOptions = {
                 lastDate.setDate(lastDate.getDate() - 30);
             }
             return {
-                status,
                 is_pending: !!isPending,
                 timestamp__gte: getDateWithTimezone(encodeDate(lastDate)),
             };
@@ -176,21 +172,6 @@ const tabs = {
     ),
 };
 
-const seenStatusOptions = [
-    {
-        key: 'seen',
-        label: _ts('notifications', 'doneNotificationsLabel'),
-    },
-    {
-        key: 'unseen',
-        label: _ts('notifications', 'pendingNotificationsLabel'),
-    },
-    {
-        key: 'all',
-        label: _ts('notifications', 'allNotificationsLabel'),
-    },
-];
-
 const dateRangeOptions = [
     {
         key: '7d',
@@ -206,11 +187,21 @@ const dateRangeOptions = [
     },
 ];
 
-const seenStatusKeySelector = d => d.key;
-const seenStatusLabelSelector = d => d.label;
-
 const dateRangeKeySelector = d => d.key;
 const dateRangeLabelSelector = d => d.label;
+
+const groupKeySelector = d => d.status;
+const groupComparator = (a, b) => compareString(a, b, -1);
+
+const notificationGroupRendererParams = (groupKey) => {
+    const children = groupKey === NOTIFICATION_STATUS_SEEN
+        ? _ts('notifications', 'doneNotificationsLabel')
+        : _ts('notifications', 'pendingNotificationsLabel');
+
+    return {
+        children,
+    };
+};
 
 const emptyNotifications = () => (
     <Message>{_ts('notifications', 'noNotificationsText')}</Message>
@@ -238,15 +229,13 @@ function Notifications(props) {
 
     const [activeTab, setActiveTab] = useState('notifications');
     const [dateRange, setDateRange] = useState('7d');
-    const [seenStatus, setSeenStatus] = useState('all');
 
     const handleNotificationsReload = useCallback(() => {
         reDoNotificationsRequest({
             dateRange,
             isPending: activeTab === 'requests',
-            seenStatus,
         });
-    }, [reDoNotificationsRequest, activeTab, dateRange, seenStatus]);
+    }, [reDoNotificationsRequest, activeTab, dateRange]);
 
     const handleNotificationSeenStatusChange = useCallback((
         notificationId,
@@ -277,32 +266,20 @@ function Notifications(props) {
         reDoNotificationsRequest({
             dateRange,
             isPending: newTab === 'requests',
-            seenStatus,
         });
     }, [
         dateRange,
-        seenStatus,
         setActiveTab,
         reDoNotificationsRequest,
     ]);
-
-    const handleSeenStatusChange = useCallback((newSeenStatus) => {
-        setSeenStatus(newSeenStatus);
-        reDoNotificationsRequest({
-            seenStatus: newSeenStatus,
-            isPending: activeTab === 'requests',
-            dateRange,
-        });
-    }, [activeTab, setSeenStatus, dateRange, reDoNotificationsRequest]);
 
     const handleDateRangeChange = useCallback((newDateRange) => {
         setDateRange(newDateRange);
         reDoNotificationsRequest({
             isPending: activeTab === 'requests',
             dateRange: newDateRange,
-            seenStatus,
         });
-    }, [activeTab, setDateRange, reDoNotificationsRequest, seenStatus]);
+    }, [activeTab, setDateRange, reDoNotificationsRequest]);
 
     return (
         <div className={_cs(classNameFromProps, styles.notifications)} >
@@ -312,16 +289,6 @@ function Notifications(props) {
                 onClick={handleTabChange}
                 active={activeTab}
             >
-                <SegmentInput
-                    className={styles.seenStatus}
-                    options={seenStatusOptions}
-                    keySelector={seenStatusKeySelector}
-                    labelSelector={seenStatusLabelSelector}
-                    value={seenStatus}
-                    onChange={handleSeenStatusChange}
-                    showHintAndError={false}
-                    showLabel={false}
-                />
                 <SegmentInput
                     className={styles.dateRange}
                     options={dateRangeOptions}
@@ -340,6 +307,10 @@ function Notifications(props) {
                 renderer={NotificationItem}
                 rendererParams={notificationItemRendererParams}
                 emptyComponent={activeTab === 'requests' ? emptyRequests : emptyNotifications}
+                groupRendererClassName={styles.statusGroupHeader}
+                groupKeySelector={groupKeySelector}
+                groupComparator={groupComparator}
+                groupRendererParams={notificationGroupRendererParams}
             />
         </div>
     );

@@ -10,8 +10,8 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const NOTIFICATION_STATUS_UNSEEN = 'unseen';
-const NOTIFICATION_STATUS_SEEN = 'seen';
+export const NOTIFICATION_STATUS_UNSEEN = 'unseen';
+export const NOTIFICATION_STATUS_SEEN = 'seen';
 
 const propTypes = {
     className: PropTypes.string,

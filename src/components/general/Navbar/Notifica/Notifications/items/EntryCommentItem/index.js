@@ -9,7 +9,7 @@ import { pathNames } from '#constants';
 
 import _ts from '#ts';
 
-import Notification from '../Notification';
+import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';
 import LinkItem from '../LinkItem';
 import styles from './styles.scss';
 
@@ -162,7 +162,7 @@ function EntryCommentItem(props) {
         <Notification
             className={_cs(className, styles.entryCommentItem)}
             notificationId={notificationId}
-            seenStatus={seenStatus === 'seen'}
+            seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}
             icon={
                 <DisplayPicture

@@ -9,7 +9,7 @@ import DisplayPicture from '#components/viewer/DisplayPicture';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
-import Notification from '../Notification';
+import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';
 import LinkItem from '../LinkItem';
 
 import styles from './styles.scss';
@@ -60,6 +60,10 @@ function ProjectJoinResponseItem(props) {
         closeModal,
     } = props;
 
+    if (status !== PROJECT_JOIN_REJECTED && status !== PROJECT_JOIN_ACCEPTED) {
+        return null;
+    }
+
     const responderProfileLink = reverseRoute(
         pathNames.userProfile,
         { userId: responderId },
@@ -106,29 +110,26 @@ function ProjectJoinResponseItem(props) {
         messageText = _ts('notifications.projectJoinResponse', 'rejectText', stringParams);
     }
 
-    if (status === PROJECT_JOIN_REJECTED || status === PROJECT_JOIN_ACCEPTED) {
-        return (
-            <Notification
-                className={_cs(className, styles.projectJoinResponseNotification)}
-                notificationId={notificationId}
-                seenStatus={seenStatus === 'seen'}
-                onNotificationSeenStatusChange={onNotificationSeenStatusChange}
-                icon={
-                    <DisplayPicture
-                        className={styles.displayPicture}
-                        galleryId={responderDisplayPictureId}
-                    />
-                }
-                message={(
-                    <div>
-                        {messageText}
-                    </div>
-                )}
-                timestamp={timestamp}
-            />
-        );
-    }
-    return null;
+    return (
+        <Notification
+            className={_cs(className, styles.projectJoinResponseNotification)}
+            notificationId={notificationId}
+            seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
+            onNotificationSeenStatusChange={onNotificationSeenStatusChange}
+            icon={
+                <DisplayPicture
+                    className={styles.displayPicture}
+                    galleryId={responderDisplayPictureId}
+                />
+            }
+            message={(
+                <div>
+                    {messageText}
+                </div>
+            )}
+            timestamp={timestamp}
+        />
+    );
 }
 
 ProjectJoinResponseItem.propTypes = propTypes;

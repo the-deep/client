@@ -28,10 +28,18 @@
     .content {
         flex-grow: 1;
         overflow-y: auto;
-    }
 
-    .seen-status {
-        margin-right: var(--spacing-small);
+        .status-group-header {
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small) var(--spacing-medium);
+            color: var(--color-primary);
+            font-size: var(--font-size-large);
+        }
     }
 
     .date-range {

@@ -6,7 +6,7 @@ import { reverseRoute } from '@togglecorp/fujs';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
-import Notification from '../Notification';
+import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';
 import LinkItem from '../LinkItem';
 
 const propTypes = {
@@ -58,7 +58,7 @@ function ProjectJoinRequestAbortItem(props) {
         <Notification
             className={className}
             notificationId={notificationId}
-            seenStatus={seenStatus === 'seen'}
+            seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}
             message={
                 <div>
