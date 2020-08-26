@@ -24,26 +24,26 @@ const requestOptions = {
         onSuccess: ({ response }) => {
             if (response.status === 'failure') {
                 notify.send({
-                    title: _ts('entries.visualization', 'assessmentsViz'),
+                    title: _ts('assessments.visualization', 'assessmentsViz'),
                     type: notify.type.WARNING,
-                    message: _ts('entries.visualization', 'assessmentsVizFailure'),
+                    message: _ts('assessments.visualization', 'assessmentsVizFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             }
         },
         onFailure: () => {
             notify.send({
-                title: _ts('entries.visualization', 'assessmentsViz'),
+                title: _ts('assessments.visualization', 'assessmentsViz'),
                 type: notify.type.WARNING,
-                message: _ts('entries.visualization', 'assessmentsVizFailure'),
+                message: _ts('assessments.visualization', 'assessmentsVizFailure'),
                 duration: notify.duration.MEDIUM,
             });
         },
         onFatal: () => {
             notify.send({
-                title: _ts('entries.visualization', 'assessmentsViz'),
+                title: _ts('assessments.visualization', 'assessmentsViz'),
                 type: notify.type.ERROR,
-                message: _ts('entries.visualization', 'assessmentsVizFatal'),
+                message: _ts('assessments.visualization', 'assessmentsVizFatal'),
                 duration: notify.duration.SLOW,
             });
         },

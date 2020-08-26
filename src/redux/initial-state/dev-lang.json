@@ -1067,7 +1067,6 @@
         "-50180114": "Reload",
         "-97219656": "Unlock polygons",
         "-8007367": "Start Planned Assessment Export",
-        "-76059043": "Failed to load assessments visualization data. ",
         "-79392542": "Delete entry label",
         "-7812601": "Are you sure you want to delete  label {title}? {entryCount} entry is tagged with this label.",
         "-80269151": "Entry Labels",
@@ -1112,15 +1111,8 @@
         "-37971354": "XLSForm Import",
         "-46134674": "There are no connectors associated with this project. Click below to add some!",
         "-89304144": "Lock polygons",
-        "-71038298": "Overlaps",
-        "-32034327": "Alphabetical",
-        "-48567189": "Ordered by",
-        "-82896655": "Asc",
-        "-88031153": "Dsc",
         "-50025578": "format",
         "-75552913": "Suggestions:",
-        "-24896884": "Remove extension",
-        "-9263627": "Extension",
         "-20820968": "Assisted tagging features are currently disabled as we are performing infrastructure upgrades. If you have any questions please contact {email}.",
         "-46976486": "Currently unavailable",
         "-68525317": "Added by",
@@ -1132,14 +1124,10 @@
         "-91728706": "Extract lead information from attached document\t",
         "-59171199": "Copy Assessment to Other Projects",
         "-3021496": "You've successfully copied this assessment to {projectsCount} projects.",
-        "-49575508": "The current assessment was not copied to any of the projects you selected.",
         "-51126708": "You've successfully copied this assessment to selected projects.",
         "-54496992": "Lead Status",
         "-42205095": "Priority",
         "-17130420": "Assessment couldn't be copied.",
-        "-57458754": "Low",
-        "-10200091": "Medium",
-        "-5919184": "High",
         "-55355663": "30d",
         "-67286798": "7d",
         "-56480064": "No requests to display",
@@ -1147,10 +1135,10 @@
         "-28151161": "Has assessment",
         "-65776700": "No",
         "-38652666": "Yes",
-        "-59901057": "Ary",
         "-25520086": "This lead is in the Assessment Registry.",
-        "-27783420": "Mark as done",
-        "-3063046": "Done"
+        "-33843532": "Mark as completed",
+        "-43430452": "Failed to load assessments visualization data.",
+        "-17560008": "Assessments Visualization"
     },
     "links": {
         "browserExtension": {
@@ -1795,14 +1783,10 @@
             "emmButtonLabel": -26433055,
             "emmCountButtonLabel": -54804860,
             "priorityLevel": -42205095,
-            "priorityHigh": -5919184,
-            "priorityLow": -57458754,
-            "priorityMedium": -10200091,
             "filterPriority": -42205095,
             "existsFilterLabel": -28151161,
             "assessmentDoesNotExistsOptionLabel": -65776700,
             "assessmentExistsOptionLabel": -38652666,
-            "assessmentBadgeTitle": -59901057,
             "assessmentBadgeTooltip": -25520086
         },
         "leadsGrid": {
@@ -2236,7 +2220,7 @@
             "afCloneFatal": -48269508,
             "noAfSelectedText": -86287086,
             "entriesVizErrorMessage": -9524324,
-            "arysVizErrorMessage": -76059043,
+            "arysVizErrorMessage": -43430452,
             "entriesConfigTitle": -47675119
         },
         "connector": {
@@ -2424,11 +2408,10 @@
             "allDaysLabel": 5552,
             "noPendingActionsText": -56480064,
             "requestsTabLabel": -5634506,
-            "allNotificationsLabel": 5552,
-            "markAsDoneLabel": -27783420,
             "markAsPendingLabel": 802,
-            "doneNotificationsLabel": -3063046,
-            "pendingNotificationsLabel": 629
+            "pendingNotificationsLabel": 629,
+            "completedNotificationsLabel": 631,
+            "markAsCompletedLabel": -33843532
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,
@@ -2935,13 +2918,7 @@
             "regionLabel": -67487923,
             "geoAreasPlaceholder": -65943043,
             "listHeading": -63009300,
-            "title": -95724442,
-            "sortInputLabel": 13000,
-            "ascendingLabel": -82896655,
-            "descendingLabel": -88031153,
-            "alphabeticalLabel": -32034327,
-            "overlapsLabel": -71038298,
-            "sortOrderLabel": -48567189
+            "title": -95724442
         },
         "project.regions": {
             "saveButtonLabel": 25,
@@ -3220,9 +3197,9 @@
             "title": -47942303
         },
         "assessments.visualization": {
-            "assessmentsViz": -76059043,
-            "assessmentsVizFailure": -76059043,
-            "assessmentsVizFatal": -76059043
+            "assessmentsViz": -17560008,
+            "assessmentsVizFailure": -43430452,
+            "assessmentsVizFatal": -43430452
         },
         "widgets.tagging.text": {
             "textPlaceholder": 20

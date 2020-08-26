@@ -195,7 +195,7 @@ const groupComparator = (a, b) => compareString(a, b, -1);
 
 const notificationGroupRendererParams = (groupKey) => {
     const children = groupKey === NOTIFICATION_STATUS_SEEN
-        ? _ts('notifications', 'doneNotificationsLabel')
+        ? _ts('notifications', 'completedNotificationsLabel')
         : _ts('notifications', 'pendingNotificationsLabel');
 
     return {

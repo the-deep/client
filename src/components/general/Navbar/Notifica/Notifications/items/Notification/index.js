@@ -97,7 +97,7 @@ function Notification(props) {
                     transparent
                     title={seenStatus
                         ? _ts('notifications', 'markAsPendingLabel')
-                        : _ts('notifications', 'markAsDoneLabel')
+                        : _ts('notifications', 'markAsCompletedLabel')
                     }
                     iconName={seenStatus ? 'undo' : 'check'}
                     onClick={handleNotificationSeenStatusChange}
