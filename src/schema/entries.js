@@ -142,6 +142,7 @@ const entrySchema = [];
                                 },
                                 fields: {
                                     createdAt: { type: 'string', required: true }, // date
+                                    publishedOn: { type: 'string', required: true }, // date
                                     // createdBy: { type: 'uint' },
                                     id: { type: 'uint', required: true },
                                     assignee: { type: 'array.uint' },

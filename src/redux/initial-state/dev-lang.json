@@ -1140,7 +1140,8 @@
         "-17560008": "Assessments Visualization",
         "-59901057": "Ary",
         "-25520086": "This lead is in the Assessment Registry.",
-        "-27768788": "Lead successfully edited."
+        "-27768788": "Lead successfully edited.",
+        "-39063797": "Published On"
     },
     "links": {
         "browserExtension": {
@@ -1599,9 +1600,10 @@
             "entryLabelsFilterLabel": -80269151,
             "entryGroupsHeaderTooltip": -47675119,
             "assigneeIconTitle": 6,
-            "calendarIconTitle": 163,
             "leadStatusFilterLabel": -54496992,
-            "leadStatusFilterPlaceholder": -54496992
+            "leadStatusFilterPlaceholder": -54496992,
+            "createdAtLabel": 163,
+            "publishedOnLabel": -39063797
         },
         "export": {
             "headerExport": 600,
