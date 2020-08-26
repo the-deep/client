@@ -49,14 +49,6 @@ const requestOptions = {
             schemaName: 'notificationsCountResponse',
         },
     },
-    notificationsStatusUpdateRequest: {
-        url: '/notifications/status/',
-        method: methods.PUT,
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ params: { onSuccess } }) => {
-            onSuccess();
-        },
-    },
 };
 
 const NOTIFICATION_POLL_INTERVAL = 120000;
@@ -108,18 +100,6 @@ export default class Notifica extends React.PureComponent {
         this.startRequest();
     }
 
-    updateNotificationStatus = (body) => {
-        const {
-            requests: {
-                notificationsStatusUpdateRequest,
-            },
-        } = this.props;
-        notificationsStatusUpdateRequest.do({
-            body,
-            onSuccess: this.handleNotificationsStatusUpdateSuccess,
-        });
-    }
-
     render() {
         const {
             className: classNameFromProps,
@@ -141,9 +121,9 @@ export default class Notifica extends React.PureComponent {
                 >
                     <Notifications
                         className={styles.notifications}
-                        updateNotificationStatus={this.updateNotificationStatus}
                         unseenNotificationsCount={unseenNotifications}
                         unseenRequestsCount={unseenRequests}
+                        onNotificationStatusChange={this.handleNotificationsStatusUpdateSuccess}
                     />
                 </DropdownMenu>
             </div>

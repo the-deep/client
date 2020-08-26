@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
     _cs,
     encodeDate,
+    compareString,
 } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
@@ -20,6 +21,7 @@ import {
 
 import {
     setNotificationsAction,
+    setNotificationAction,
     notificationItemsSelector,
     notificationsCountSelector,
 } from '#redux';
@@ -32,11 +34,9 @@ import ProjectJoinRequestItem from './items/ProjectJoinRequest';
 import ProjectJoinRequestAbortItem from './items/ProjectJoinRequestAbort';
 import ProjectJoinResponseItem from './items/ProjectJoinResponse';
 import EntryCommentItem from './items/EntryCommentItem';
+import { NOTIFICATION_STATUS_SEEN } from './items/Notification';
 
 import styles from './styles.scss';
-
-const NOTIFICATION_STATUS_UNSEEN = 'unseen';
-const NOTIFICATION_STATUS_SEEN = 'seen';
 
 const notificationItems = {
     project_join_request: ProjectJoinRequestItem,
@@ -51,23 +51,28 @@ const notificationItems = {
     entry_comment_reply_modify: EntryCommentItem,
 };
 
-const NotificationItem = ({ notification, closeModal, onNotificationReload }) => {
+const NotificationItem = ({
+    notification,
+    closeModal,
+    onNotificationReload,
+    onNotificationSeenStatusChange,
+}) => {
     const Item = notificationItems[notification.notificationType];
 
-    if (Item) {
-        return (
-            <Item
-                closeModal={closeModal}
-                notification={notification}
-                notificationType={notification.notificationType}
-                onNotificationReload={onNotificationReload}
-            />
-        );
+    if (!Item) {
+        console.error(`Item not found for notification type: ${notification.notificationType}`);
+        return null;
     }
 
-    console.error(`Item not found for notification type: ${notification.notificationType}`);
-
-    return null;
+    return (
+        <Item
+            closeModal={closeModal}
+            notification={notification}
+            notificationType={notification.notificationType}
+            onNotificationReload={onNotificationReload}
+            onNotificationSeenStatusChange={onNotificationSeenStatusChange}
+        />
+    );
 };
 
 NotificationItem.propTypes = {
@@ -76,6 +81,7 @@ NotificationItem.propTypes = {
     }).isRequired,
     closeModal: PropTypes.func.isRequired,
     onNotificationReload: PropTypes.func.isRequired,
+    onNotificationSeenStatusChange: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -85,6 +91,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setNotifications: params => dispatch(setNotificationsAction(params)),
+    setNotification: params => dispatch(setNotificationAction(params)),
 });
 
 const requestOptions = {
@@ -95,9 +102,7 @@ const requestOptions = {
             isPending,
         } }) => {
             if (dateRange === 'all') {
-                return {
-                    is_pending: !!isPending,
-                };
+                return { is_pending: !!isPending };
             }
 
             const lastDate = new Date();
@@ -131,26 +136,28 @@ const requestOptions = {
                 || newUnseenNotificationCount > 0,
         },
         onSuccess: ({
-            props: {
-                setNotifications,
-                updateNotificationStatus,
-            },
+            props: { setNotifications },
             response: { results },
         }) => {
             setNotifications({ notifications: results });
-            const unseenNotifications = results.filter(
-                d => d.status === NOTIFICATION_STATUS_UNSEEN,
-            );
-
-            if (unseenNotifications.length > 0) {
-                const notificationStatusUpdateBody = unseenNotifications.map(
-                    d => ({
-                        id: d.id,
-                        status: NOTIFICATION_STATUS_SEEN,
-                    }),
-                );
-                updateNotificationStatus(notificationStatusUpdateBody);
-            }
+        },
+        extras: {
+            schemaName: 'notifications',
+        },
+    },
+    notificationStatusUpdateRequest: {
+        url: ({ params: { id } }) => `/notifications/${id}/`,
+        method: methods.PATCH,
+        body: ({ params: { body } }) => body,
+        onSuccess: ({
+            response,
+            props: { onNotificationStatusChange, setNotification },
+        }) => {
+            setNotification({ notification: response });
+            onNotificationStatusChange();
+        },
+        extras: {
+            schemaName: 'notification',
         },
     },
 };
@@ -190,6 +197,19 @@ const dateRangeOptions = [
 const dateRangeKeySelector = d => d.key;
 const dateRangeLabelSelector = d => d.label;
 
+const groupKeySelector = d => d.status;
+const groupComparator = (a, b) => compareString(a, b, -1);
+
+const notificationGroupRendererParams = (groupKey) => {
+    const children = groupKey === NOTIFICATION_STATUS_SEEN
+        ? _ts('notifications', 'completedNotificationsLabel')
+        : _ts('notifications', 'pendingNotificationsLabel');
+
+    return {
+        children,
+    };
+};
+
 const emptyNotifications = () => (
     <Message>{_ts('notifications', 'noNotificationsText')}</Message>
 );
@@ -207,6 +227,9 @@ function Notifications(props) {
                 pending: notificationsPending,
                 do: reDoNotificationsRequest,
             },
+            notificationStatusUpdateRequest: {
+                do: notificationStatusUpdate,
+            },
         },
         closeModal,
     } = props;
@@ -221,11 +244,29 @@ function Notifications(props) {
         });
     }, [reDoNotificationsRequest, activeTab, dateRange]);
 
+    const handleNotificationSeenStatusChange = useCallback((
+        notificationId,
+        newSeenStatus,
+    ) => {
+        notificationStatusUpdate({
+            id: notificationId,
+            body: {
+                id: notificationId,
+                status: newSeenStatus,
+            },
+        });
+    }, [notificationStatusUpdate]);
+
     const notificationItemRendererParams = useCallback((_, d) => ({
         closeModal,
         notification: d,
         onNotificationReload: handleNotificationsReload,
-    }), [closeModal, handleNotificationsReload]);
+        onNotificationSeenStatusChange: handleNotificationSeenStatusChange,
+    }), [
+        closeModal,
+        handleNotificationsReload,
+        handleNotificationSeenStatusChange,
+    ]);
 
     const handleTabChange = useCallback((newTab) => {
         setActiveTab(newTab);
@@ -273,6 +314,10 @@ function Notifications(props) {
                 renderer={NotificationItem}
                 rendererParams={notificationItemRendererParams}
                 emptyComponent={activeTab === 'requests' ? emptyRequests : emptyNotifications}
+                groupRendererClassName={styles.statusGroupHeader}
+                groupKeySelector={groupKeySelector}
+                groupComparator={groupComparator}
+                groupRendererParams={notificationGroupRendererParams}
             />
         </div>
     );
@@ -283,6 +328,8 @@ Notifications.propTypes = {
     notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     closeModal: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onNotificationStatusChange: PropTypes.func.isRequired,
 };
 
 Notifications.defaultProps = {

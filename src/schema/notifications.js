@@ -8,9 +8,12 @@ const notificationsSchema = [];
             description: 'Response for unit of users/me/notifications/',
         },
         fields: {
-            details: { type: 'object', required: true },
-            date: { type: 'string', required: true },
-            type: { type: 'string', required: true },
+            id: { type: 'uint', required: true },
+            notificationType: { type: 'string', required: true },
+            project: { type: 'uint', required: true },
+            receiver: { type: 'uint' },
+            status: { type: 'string' },
+            timestamp: { type: 'string' },
         },
     };
     notificationsSchema.push({ name, schema });

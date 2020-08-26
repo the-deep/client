@@ -98,11 +98,10 @@ export default class WidgetList extends React.PureComponent {
                     renderer={WidgetPreview}
                     keySelector={WidgetList.keySelector}
                     rendererParams={this.rendererParams}
-                    groupKeySelector={WidgetList.groupKeySelector}
                     rendererClassName={_cs(styles.item, 'widget-list-item')}
+                    groupKeySelector={WidgetList.groupKeySelector}
                     groupRendererParams={this.groupRendererParams}
                     groupRendererClassName={_cs(styles.group, 'widget-list-group')}
-                    groupComparator={this.groupComparator}
                 />
             </div>
         );

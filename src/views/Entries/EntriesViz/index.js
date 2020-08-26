@@ -80,7 +80,7 @@ export default class EntriesViz extends React.PureComponent {
                     className={styles.iframe}
                     title="Visualization"
                     src={this.getVizRendererUrl(projectVizDataUrl)}
-                    sandbox="allow-scripts allow-same-origin"
+                    sandbox="allow-scripts allow-same-origin allow-downloads"
                 />
             </div>
         );

@@ -1,15 +1,11 @@
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 
 import {
     RequestClient,
     methods,
 } from '#request';
-
-import {
-    setNotificationAction,
-} from '#redux';
 
 import { reverseRoute, _cs } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
@@ -19,7 +15,7 @@ import DisplayPicture from '#components/viewer/DisplayPicture';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
-import Notification from '../Notification';
+import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';
 import LinkItem from '../LinkItem';
 import styles from './styles.scss';
 
@@ -35,6 +31,7 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     onNotificationReload: PropTypes.func.isRequired,
+    onNotificationSeenStatusChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -56,17 +53,10 @@ const requestOptions = {
         onSuccess: ({
             response,
             props: {
-                updateNotification,
                 notification,
                 onNotificationReload,
             },
         }) => {
-            updateNotification({
-                notification: {
-                    ...notification,
-                    data: response,
-                },
-            });
             onNotificationReload();
         },
     },
@@ -88,153 +78,140 @@ const requestOptions = {
     },
 };
 
-const mapDispatchToProps = dispatch => ({
-    updateNotification: params => dispatch(setNotificationAction(params)),
-});
-
-@connect(undefined, mapDispatchToProps)
-@RequestClient(requestOptions)
-export default class ProjectJoinRequestItem extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-
-    handleAddButtonClick = () => {
-        const {
-            notification: {
-                data: {
-                    id: requestId,
-                    project: { id: projectId },
-                },
+function ProjectJoinRequestItem(props) {
+    const {
+        className: classNameFromProps,
+        notification: {
+            data: {
+                id: requestId,
+                status,
+                requestedBy: {
+                    displayPicture: requestorDisplayPictureId,
+                    displayName: requestorName,
+                    id: requestorId,
+                } = {},
+                project: {
+                    id: projectId,
+                    title: projectTitle,
+                } = {},
             },
-            requests: {
-                projectJoinApproveRequest,
-            },
-        } = this.props;
+            timestamp,
+            id: notificationId,
+            status: seenStatus,
+        },
+        requests: {
+            projectJoinApproveRequest,
+            projectJoinRejectRequest,
+        },
+        closeModal,
+        onNotificationSeenStatusChange,
+    } = props;
 
-        projectJoinApproveRequest.do({
+    const {
+        do: projectJoinApproveRequestDo,
+        pending: pendingProjectJoinAcceptRequest,
+    } = projectJoinApproveRequest;
+
+    const {
+        do: projectJoinRejectRequestDo,
+        pending: pendingProjectJoinRejectRequest,
+    } = projectJoinRejectRequest;
+
+    const handleAddButtonClick = useCallback(() => {
+        projectJoinApproveRequestDo({
             requestId,
             projectId,
             role: 'normal',
         });
-    }
+    }, [requestId, projectId, projectJoinApproveRequestDo]);
 
-    handleRejectButtonClick = () => {
-        const {
-            notification: {
-                data: {
-                    id: requestId,
-                    project: { id: projectId },
-                },
-            },
-            requests: {
-                projectJoinRejectRequest,
-            },
-        } = this.props;
-
-        projectJoinRejectRequest.do({
+    const handleRejectButtonClick = useCallback(() => {
+        projectJoinRejectRequestDo({
             requestId,
             projectId,
         });
+    }, [requestId, projectId, projectJoinRejectRequestDo]);
+
+    if (!projectId) {
+        return null;
     }
 
-    render() {
-        const {
-            className: classNameFromProps,
-            notification: {
-                data: {
-                    status,
-                    requestedBy: {
-                        displayPicture: requestorDisplayPictureId,
-                        displayName: requestorName,
-                        id: requestorId,
-                    } = {},
-                    project: {
-                        id: projectId,
-                        title: projectTitle,
-                    } = {},
-                },
-                timestamp,
-            },
-            requests: {
-                projectJoinApproveRequest: { pending: pendingProjectJoinAcceptRequest },
-                projectJoinRejectRequest: { pending: pendingProjectJoinRejectRequest },
-            },
-            closeModal,
-        } = this.props;
+    const pending = pendingProjectJoinAcceptRequest || pendingProjectJoinRejectRequest;
 
-        if (!projectId) {
-            return null;
-        }
+    const requestorProfileLink = reverseRoute(
+        pathNames.userProfile,
+        { userId: requestorId },
+    );
 
-        const pending = pendingProjectJoinAcceptRequest || pendingProjectJoinRejectRequest;
+    const projectLink = reverseRoute(
+        pathNames.projects,
+        { projectId },
+    );
 
-        const requestorProfileLink = reverseRoute(
-            pathNames.userProfile,
-            { userId: requestorId },
-        );
-
-        const projectLink = reverseRoute(
-            pathNames.projects,
-            { projectId },
-        );
-
-        return (
-            <Notification
-                className={_cs(classNameFromProps, styles.projectJoinRequestNotification)}
-                icon={
-                    <DisplayPicture
-                        className={styles.displayPicture}
-                        galleryId={requestorDisplayPictureId}
-                    />
-                }
-                message={
-                    <div>
-                        {_ts('notifications.projectJoinRequest', 'message', {
-                            requestorName: (
-                                <LinkItem
-                                    link={requestorProfileLink}
-                                    title={requestorName}
-                                    closeModal={closeModal}
-                                />
-                            ),
-                            projectTitle: (
-                                <LinkItem
-                                    link={projectLink}
-                                    title={projectTitle}
-                                    closeModal={closeModal}
-                                />
-                            ),
-                        })}
-                    </div>
-                }
-                timestamp={timestamp}
-                actions={
-                    status === 'pending' ? (
-                        <React.Fragment>
-                            <SuccessButton
-                                disabled={pending}
-                                className={styles.button}
-                                iconName="check"
-                                onClick={this.handleAddButtonClick}
-                                transparent
-                                pending={pendingProjectJoinAcceptRequest}
-                            >
-                                {_ts('notifications.projectJoinRequest', 'addButtonTitle')}
-                            </SuccessButton>
-                            <DangerButton
-                                disabled={pending}
-                                className={styles.button}
-                                iconName="close"
-                                onClick={this.handleRejectButtonClick}
-                                transparent
-                                pending={pendingProjectJoinRejectRequest}
-                            >
-                                {_ts('notifications.projectJoinRequest', 'rejectButtonTitle')}
-                            </DangerButton>
-                        </React.Fragment>
-                    ) : null
-                }
-            />
-        );
-    }
+    return (
+        <Notification
+            className={_cs(classNameFromProps, styles.projectJoinRequestNotification)}
+            notificationId={notificationId}
+            seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
+            onNotificationSeenStatusChange={onNotificationSeenStatusChange}
+            icon={
+                <DisplayPicture
+                    className={styles.displayPicture}
+                    galleryId={requestorDisplayPictureId}
+                />
+            }
+            message={
+                <div>
+                    {_ts('notifications.projectJoinRequest', 'message', {
+                        requestorName: (
+                            <LinkItem
+                                link={requestorProfileLink}
+                                title={requestorName}
+                                closeModal={closeModal}
+                            />
+                        ),
+                        projectTitle: (
+                            <LinkItem
+                                link={projectLink}
+                                title={projectTitle}
+                                closeModal={closeModal}
+                            />
+                        ),
+                    })}
+                </div>
+            }
+            timestamp={timestamp}
+            actions={
+                status === 'pending' ? (
+                    <React.Fragment>
+                        <SuccessButton
+                            disabled={pending}
+                            className={styles.button}
+                            iconName="check"
+                            onClick={handleAddButtonClick}
+                            transparent
+                            pending={pendingProjectJoinAcceptRequest}
+                        >
+                            {_ts('notifications.projectJoinRequest', 'addButtonTitle')}
+                        </SuccessButton>
+                        <DangerButton
+                            disabled={pending}
+                            className={styles.button}
+                            iconName="close"
+                            onClick={handleRejectButtonClick}
+                            transparent
+                            pending={pendingProjectJoinRejectRequest}
+                        >
+                            {_ts('notifications.projectJoinRequest', 'rejectButtonTitle')}
+                        </DangerButton>
+                    </React.Fragment>
+                ) : null
+            }
+        />
+    );
 }
+
+ProjectJoinRequestItem.propTypes = propTypes;
+ProjectJoinRequestItem.defaultProps = defaultProps;
+
+export default RequestClient(requestOptions)(ProjectJoinRequestItem);

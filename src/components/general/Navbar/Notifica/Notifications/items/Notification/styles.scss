@@ -4,11 +4,8 @@
 
 .notification {
     display: flex;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
     padding: var(--spacing-small) 0;
-
-    &:not(:last-child) {
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-    }
 
     .left {
         flex-basis: var(--size-default-icon);
@@ -32,7 +29,7 @@
         }
     }
 
-    .right {
+    .center {
         flex-grow: 1;
 
         .message {
@@ -58,8 +55,35 @@
         }
     }
 
+    .right {
+        padding: 0 var(--spacing-small);
+
+        .status-change-button {
+            opacity: 0;
+            font-size: var(--font-size-large);
+        }
+    }
+
+    &.read {
+        .center,
+        .left {
+            opacity: .5;
+        }
+    }
+
     &:hover {
         background-color: var(--color-background-hover);
+
+        &.read {
+            .center,
+            .left {
+                opacity: .8;
+            }
+        }
+
+        .status-change-button {
+            opacity: 1;
+        }
     }
 }
 
