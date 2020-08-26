@@ -1,3 +1,5 @@
+// NOTE: This component has also been used in Leads Table to quick edit leads
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
@@ -100,6 +102,8 @@ const propTypes = {
     projects: PropTypes.array,
 
     bulkActionDisabled: PropTypes.bool,
+    hideProjects: PropTypes.bool,
+    disableLeadUrlChange: PropTypes.bool,
 
     onChange: PropTypes.func.isRequired,
     onApplyAllClick: PropTypes.func.isRequired,
@@ -118,6 +122,8 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
+    hideProjects: false,
+    disableLeadUrlChange: false,
 
     projects: [],
 };
@@ -713,6 +719,8 @@ class LeadDetail extends React.PureComponent {
                     pending: pendingSearchedOrganizations,
                 },
             },
+            hideProjects,
+            disableLeadUrlChange,
         } = this.props;
         const {
             showAddLeadGroupModal,
@@ -811,6 +819,20 @@ class LeadDetail extends React.PureComponent {
                     <header className={styles.header}>
                         <NonFieldErrors faramElement />
                     </header>
+                    <div className={styles.section}>
+                        {!hideProjects && (
+                            <SelectInput
+                                faramElementName="project"
+                                keySelector={idSelector}
+                                label={_ts('addLeads', 'projectLabel')}
+                                labelSelector={titleSelector}
+                                options={projects}
+                                placeholder={_ts('addLeads', 'projectPlaceholderLabel')}
+                                className={styles.project}
+                                disabled={formDisabled || !!serverId}
+                            />
+                        )}
+                    </div>
                     { type === LEAD_TYPE.website && (
                         <React.Fragment>
                             <ExtraFunctionsOnHover
@@ -820,7 +842,11 @@ class LeadDetail extends React.PureComponent {
                                         transparent
                                         className={styles.extractButton}
                                         title={_ts('addLeads', 'extractLead')}
-                                        disabled={formDisabled || extractionDisabled}
+                                        disabled={
+                                            formDisabled
+                                            || extractionDisabled
+                                            || disableLeadUrlChange
+                                        }
                                         onClick={this.handleExtractClick}
                                         tabIndex="-1"
                                         iconName="eye"
@@ -832,6 +858,7 @@ class LeadDetail extends React.PureComponent {
                                     label={_ts('addLeads', 'urlLabel')}
                                     placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                                     autoFocus
+                                    disabled={disableLeadUrlChange}
                                 />
                             </ExtraFunctionsOnHover>
                             <ApplyAll
@@ -858,76 +885,9 @@ class LeadDetail extends React.PureComponent {
                             rows="3"
                             className={styles.text}
                             autoFocus
+                            disabled={disableLeadUrlChange}
                         />
                     ) }
-                    <SelectInput
-                        faramElementName="project"
-                        keySelector={idSelector}
-                        label={_ts('addLeads', 'projectLabel')}
-                        labelSelector={titleSelector}
-                        options={projects}
-                        placeholder={_ts('addLeads', 'projectPlaceholderLabel')}
-                        className={styles.project}
-                        disabled={formDisabled || !!serverId}
-                    />
-
-                    <Cloak
-                        // TODO: STYLING when cloaked
-                        hide={this.shouldHideLeadGroupInput}
-                        render={
-                            <ApplyAll
-                                className={styles.leadGroup}
-                                disabled={isApplyAllDisabled}
-                                identifierName="leadGroup"
-                                onApplyAllClick={this.handleApplyAllClick}
-                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                                extraButtons={
-                                    <Button
-                                        className={styles.smallButton}
-                                        onClick={this.handleAddLeadGroupClick}
-                                        iconName="add"
-                                        transparent
-                                        disabled={!projectIsSelected}
-                                    />
-                                }
-                            >
-                                <SelectInput
-                                    faramElementName="leadGroup"
-                                    keySelector={keySelector}
-                                    label={_ts('addLeads', 'leadGroupLabel')}
-                                    labelSelector={labelSelector}
-                                    options={leadOptions.leadGroup}
-                                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                                />
-                            </ApplyAll>
-                        }
-                        renderOnHide={
-                            <div className={styles.leadGroup} />
-                        }
-                    />
-                    { showAddLeadGroupModal && (
-                        <AddLeadGroup
-                            onModalClose={this.handleAddLeadGroupModalClose}
-                            onLeadGroupAdd={this.handleLeadGroupAdd}
-                            projectId={projectId}
-                        />
-                    ) }
-                    <ApplyAll
-                        className={styles.priority}
-                        disabled={isApplyAllDisabled}
-                        identifierName="priority"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SegmentInput
-                            faramElementName="priority"
-                            name="priority-selector"
-                            label={_ts('addLeads', 'priorityLabel')}
-                            labelSelector={labelSelector}
-                            keySelector={keySelector}
-                            options={priorityOptions}
-                        />
-                    </ApplyAll>
                     <ExtraFunctionsOnHover
                         className={styles.title}
                         buttons={
@@ -1066,6 +1026,23 @@ class LeadDetail extends React.PureComponent {
                     </ApplyAll>
 
                     <ApplyAll
+                        className={styles.priority}
+                        disabled={isApplyAllDisabled}
+                        identifierName="priority"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    >
+                        <SegmentInput
+                            faramElementName="priority"
+                            name="priority-selector"
+                            label={_ts('addLeads', 'priorityLabel')}
+                            labelSelector={labelSelector}
+                            keySelector={keySelector}
+                            options={priorityOptions}
+                        />
+                    </ApplyAll>
+
+                    <ApplyAll
                         className={styles.confidentiality}
                         disabled={isApplyAllDisabled}
                         identifierName="confidentiality"
@@ -1112,6 +1089,47 @@ class LeadDetail extends React.PureComponent {
                             placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
                         />
                     </ApplyAll>
+                    <Cloak
+                        // TODO: STYLING when cloaked
+                        hide={this.shouldHideLeadGroupInput}
+                        render={
+                            <ApplyAll
+                                className={styles.leadGroup}
+                                disabled={isApplyAllDisabled}
+                                identifierName="leadGroup"
+                                onApplyAllClick={this.handleApplyAllClick}
+                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                                extraButtons={
+                                    <Button
+                                        className={styles.smallButton}
+                                        onClick={this.handleAddLeadGroupClick}
+                                        iconName="add"
+                                        transparent
+                                        disabled={!projectIsSelected}
+                                    />
+                                }
+                            >
+                                <SelectInput
+                                    faramElementName="leadGroup"
+                                    keySelector={keySelector}
+                                    label={_ts('addLeads', 'leadGroupLabel')}
+                                    labelSelector={labelSelector}
+                                    options={leadOptions.leadGroup}
+                                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                                />
+                            </ApplyAll>
+                        }
+                        renderOnHide={
+                            <div className={styles.leadGroup} />
+                        }
+                    />
+                    { showAddLeadGroupModal && (
+                        <AddLeadGroup
+                            onModalClose={this.handleAddLeadGroupModalClose}
+                            onLeadGroupAdd={this.handleLeadGroupAdd}
+                            projectId={projectId}
+                        />
+                    ) }
 
                     {
                         ATTACHMENT_TYPES.indexOf(type) !== -1 && (

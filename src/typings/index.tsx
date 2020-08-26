@@ -60,6 +60,7 @@ export interface Permissions {
 export * from './framework';
 export * from './questionnaire';
 export * from './project';
+export * from './lead';
 
 export type NullableField<T, K extends keyof T> = {
     [key in K]+?: T[key];

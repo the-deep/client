@@ -7,6 +7,7 @@ import { reverseRoute } from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
+import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import { pathNames } from '#constants/';
@@ -15,9 +16,12 @@ import LeadCopyModal from '#components/general/LeadCopyModal';
 import _ts from '#ts';
 import _cs from '#cs';
 
+import LeadEditModal from './LeadEditModal';
+
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
+const ModalWarningButton = modalize(WarningButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -100,6 +104,7 @@ export default class ActionButtons extends React.PureComponent {
             onRemoveLead,
             row,
             className,
+            activeProject,
         } = this.props;
 
         const containerClassName = _cs(
@@ -150,14 +155,17 @@ export default class ActionButtons extends React.PureComponent {
                     <Cloak
                         hide={ActionButtons.shouldHideLeadEdit}
                         render={
-                            <Link
-                                className={styles.editLink}
-                                tabIndex="-1"
-                                title={_ts('leads', 'editLeadButtonTitle')}
-                                to={links.editLead}
-                            >
-                                <Icon name="edit" />
-                            </Link>
+                            <ModalWarningButton
+                                iconName="edit"
+                                transparent
+                                modal={
+                                    <LeadEditModal
+                                        leadId={row.id}
+                                        lead={row}
+                                        projectId={activeProject}
+                                    />
+                                }
+                            />
                         }
                     />
                 </div>

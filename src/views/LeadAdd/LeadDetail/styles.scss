@@ -11,6 +11,16 @@
         justify-content: space-between;
         padding: 0 var(--spacing-large);
 
+        .section {
+            display: flex;
+            flex-basis: 100%;
+            flex-wrap: wrap;
+        }
+
+        .project {
+            flex-basis: 30%;
+        }
+
         .small-button {
             margin-right: var(--spacing-extra-small);
             padding: var(--spacing-extra-small);
@@ -27,7 +37,11 @@
             padding: var(--spacing-small) 0;
         }
 
-        .title,
+        .title {
+            flex-basis: 100%;
+            padding: var(--spacing-medium) 0;
+        }
+
         .author,
         .source {
             flex-basis: calc(100% / 3 - var(--spacing-medium));
@@ -46,7 +60,6 @@
 
             .suggestion-badge {
                 display: block;
-                flex-basis: calc(50% - var(--spacing-extra-small));
                 margin-right: var(--spacing-extra-small);
                 overflow: hidden;
                 text-align: left;
@@ -54,7 +67,6 @@
                 white-space: nowrap;
             }
         }
-
 
         .source,
         .author {
@@ -83,7 +95,6 @@
             padding: var(--spacing-extra-small);
         }
 
-        .project,
         .priority,
         .lead-group {
             flex-basis: calc(100% / 3 - var(--spacing-medium));
