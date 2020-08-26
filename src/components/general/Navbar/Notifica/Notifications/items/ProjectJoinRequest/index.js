@@ -7,10 +7,6 @@ import {
     methods,
 } from '#request';
 
-import {
-    setNotificationAction,
-} from '#redux';
-
 import { reverseRoute, _cs } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -57,17 +53,10 @@ const requestOptions = {
         onSuccess: ({
             response,
             props: {
-                updateNotification,
                 notification,
                 onNotificationReload,
             },
         }) => {
-            updateNotification({
-                notification: {
-                    ...notification,
-                    data: response,
-                },
-            });
             onNotificationReload();
         },
     },
@@ -88,10 +77,6 @@ const requestOptions = {
         },
     },
 };
-
-const mapDispatchToProps = dispatch => ({
-    updateNotification: params => dispatch(setNotificationAction(params)),
-});
 
 function ProjectJoinRequestItem(props) {
     const {
@@ -229,6 +214,4 @@ function ProjectJoinRequestItem(props) {
 ProjectJoinRequestItem.propTypes = propTypes;
 ProjectJoinRequestItem.defaultProps = defaultProps;
 
-export default connect(undefined, mapDispatchToProps)(
-    RequestClient(requestOptions)(ProjectJoinRequestItem),
-);
+export default RequestClient(requestOptions)(ProjectJoinRequestItem);

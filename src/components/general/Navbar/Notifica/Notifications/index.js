@@ -21,6 +21,7 @@ import {
 
 import {
     setNotificationsAction,
+    setNotificationAction,
     notificationItemsSelector,
     notificationsCountSelector,
 } from '#redux';
@@ -58,21 +59,20 @@ const NotificationItem = ({
 }) => {
     const Item = notificationItems[notification.notificationType];
 
-    if (Item) {
-        return (
-            <Item
-                closeModal={closeModal}
-                notification={notification}
-                notificationType={notification.notificationType}
-                onNotificationReload={onNotificationReload}
-                onNotificationSeenStatusChange={onNotificationSeenStatusChange}
-            />
-        );
+    if (!Item) {
+        console.error(`Item not found for notification type: ${notification.notificationType}`);
+        return null;
     }
 
-    console.error(`Item not found for notification type: ${notification.notificationType}`);
-
-    return null;
+    return (
+        <Item
+            closeModal={closeModal}
+            notification={notification}
+            notificationType={notification.notificationType}
+            onNotificationReload={onNotificationReload}
+            onNotificationSeenStatusChange={onNotificationSeenStatusChange}
+        />
+    );
 };
 
 NotificationItem.propTypes = {
@@ -91,6 +91,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setNotifications: params => dispatch(setNotificationsAction(params)),
+    setNotification: params => dispatch(setNotificationAction(params)),
 });
 
 const requestOptions = {
@@ -140,17 +141,23 @@ const requestOptions = {
         }) => {
             setNotifications({ notifications: results });
         },
+        extras: {
+            schemaName: 'notifications',
+        },
     },
     notificationStatusUpdateRequest: {
-        url: '/notifications/status/',
-        method: methods.PUT,
+        url: ({ params: { id } }) => `/notifications/${id}/`,
+        method: methods.PATCH,
         body: ({ params: { body } }) => body,
         onSuccess: ({
-            params: { onSuccess },
-            props: { onNotificationStatusChange },
+            response,
+            props: { onNotificationStatusChange, setNotification },
         }) => {
-            onSuccess();
+            setNotification({ notification: response });
             onNotificationStatusChange();
+        },
+        extras: {
+            schemaName: 'notification',
         },
     },
 };
@@ -242,13 +249,13 @@ function Notifications(props) {
         newSeenStatus,
     ) => {
         notificationStatusUpdate({
-            body: [{
+            id: notificationId,
+            body: {
                 id: notificationId,
                 status: newSeenStatus,
-            }],
-            onSuccess: handleNotificationsReload,
+            },
         });
-    }, [notificationStatusUpdate, handleNotificationsReload]);
+    }, [notificationStatusUpdate]);
 
     const notificationItemRendererParams = useCallback((_, d) => ({
         closeModal,
