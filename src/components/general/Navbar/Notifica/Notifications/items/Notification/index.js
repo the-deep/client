@@ -82,7 +82,7 @@ function Notification(props) {
                     <FormattedDate
                         className={styles.date}
                         date={timestamp}
-                        mode="dd-MM-yyyy"
+                        mode="dd-MM-yyyy at hh:mm aaa"
                     />
                 </div>
                 { actions && (
