@@ -1141,7 +1141,8 @@
         "-59901057": "Ary",
         "-25520086": "This lead is in the Assessment Registry.",
         "-27768788": "Lead successfully edited.",
-        "-39063797": "Published On"
+        "-39063797": "Published On",
+        "-13339127": "We cannot currently preview this type of document."
     },
     "links": {
         "browserExtension": {
@@ -1371,7 +1372,8 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039
+            "viewLinkTooltip": -2224039,
+            "unsupportedType": -13339127
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,

@@ -51,9 +51,9 @@ export default class LeadPreview extends React.PureComponent {
                 <ExternalGallery
                     className={_cs(styles.preview, className)}
                     url={url}
+                    showUrl
                     onScreenshotCapture={this.props.handleScreenshot}
                     showScreenshot={showScreenshot}
-                    showUrl
                 />
             );
         } else if (LeadPreview.isTypeWithAttachment(type) && attachment) {

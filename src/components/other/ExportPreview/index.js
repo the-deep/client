@@ -125,10 +125,11 @@ export default class ExportPreview extends React.PureComponent {
                 <GalleryViewer
                     url={exportObj.file}
                     mimeType={exportObj.mimeType}
-                    // NOTE: should not this be true
+                    // NOTE: should not this be true?
                     canShowIframe={false}
-                    invalidUrlMessage={_ts('components.exportPreview', 'previewNotAvailableLabel')}
                     showUrl
+                    // eslint-disable-next-line max-len
+                    // invalidUrlMessage={_ts('components.exportPreview', 'previewNotAvailableLabel')}
                 />
             );
         }
