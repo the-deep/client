@@ -29,7 +29,6 @@ import BackLink from '#components/general/BackLink';
 
 import { RequestCoordinator } from '#request';
 import {
-    routeStateSelector,
     routeUrlSelector,
     projectIdFromRouteSelector,
     currentUserLeadChangeableProjectsSelector,
@@ -94,15 +93,12 @@ import {
     getNewLeadKey,
     isLeadPrevDisabled,
     isLeadNextDisabled,
-
-    getFaramValuesFromLead,
 } from './utils';
 import styles from './styles.scss';
 
 
 const mapStateToProps = state => ({
     routeUrl: routeUrlSelector(state),
-    routeState: routeStateSelector(state),
     projectId: projectIdFromRouteSelector(state),
     projects: currentUserLeadChangeableProjectsSelector(state),
     activeUser: activeUserSelector(state),
@@ -138,15 +134,6 @@ const propTypes = {
     projects: PropTypes.array,
     // eslint-disable-next-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    routeState: PropTypes.object.isRequired,
-
-    location: PropTypes.shape({
-        path: PropTypes.string,
-    }).isRequired,
-    history: PropTypes.shape({
-        replace: PropTypes.func,
-    }).isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     leads: PropTypes.array,
@@ -240,32 +227,6 @@ class LeadAdd extends React.PureComponent {
         this.dropboxUploadCoordinator = new CoordinatorBuilder()
             .maxActiveActors(3)
             .build();
-    }
-
-    componentDidMount() {
-        const {
-            routeState,
-            location: {
-                path,
-            },
-            history,
-        } = this.props;
-        const { lead: leadFromState } = routeState;
-
-        if (isDefined(leadFromState)) {
-            const serverId = leadFromState.id;
-            const lead = {
-                faramValues: getFaramValuesFromLead(leadFromState),
-                serverId,
-            };
-            this.handleLeadsAdd([lead]);
-
-            // NOTE:
-            // location.state is not cleared on replace so you lose your
-            // progress for the lead that was added as edit
-            // So clear location.state
-            history.replace(path, {});
-        }
     }
 
     getDefaultProjectId = memoize((projects, projectId) => {
@@ -775,11 +736,6 @@ class LeadAdd extends React.PureComponent {
         const {
             projectId,
             projects,
-            /*
-            activeUser: {
-                userId,
-            },
-            */
             activeLeadKey,
             leadFilters,
             leadPreviewHidden,
@@ -840,49 +796,6 @@ class LeadAdd extends React.PureComponent {
 
         const isFilterEmpty = doesObjectHaveNoData(leadFilters, ['']);
 
-        const headerComponent = (
-            <React.Fragment>
-                <div className={styles.leftContainer}>
-                    <BackLink
-                        defaultLink={
-                            reverseRoute(pathNames.leads, { projectId })
-                        }
-                    />
-                    <LeadFilter
-                        onFilterChange={setLeadFilters}
-                        onFilterClear={clearLeadFilters}
-                        filters={leadFilters}
-                        clearDisabled={isFilterEmpty}
-                    />
-                </div>
-                { hasActiveLead &&
-                    <LeadActions
-                        onLeadPrev={prevLead}
-                        onLeadNext={nextLead}
-                        onLeadPreviewHiddenChange={setLeadPreviewHidden}
-
-                        leadPreviewHidden={leadPreviewHidden}
-                        leadPrevDisabled={isLeadPrevDisabled(leads, activeLeadKey)}
-                        leadNextDisabled={isLeadNextDisabled(leads, activeLeadKey)}
-
-                        leadStates={leadStates}
-                        leads={leads}
-                        completedLeads={completedLeads}
-                        filteredLeads={filteredLeads}
-                        activeLead={activeLead}
-
-                        submitAllPending={submitAllPending}
-
-                        onLeadsSave={this.handleLeadsSave}
-                        onLeadsRemove={this.handleLeadsToRemoveSet}
-                        onLeadsExport={this.handleLeadsExport}
-
-                        filteredDisabled={isFilterEmpty}
-                    />
-                }
-            </React.Fragment>
-        );
-
         // TODO:
         const saveEnabledForAll = false;
 
@@ -890,42 +803,56 @@ class LeadAdd extends React.PureComponent {
 
         const mainComponent = (
             <React.Fragment>
-                <div className={styles.left}>
-                    <Cloak
-                        hide={LeadAdd.shouldHideButtons}
-                        render={
+                <Cloak
+                    hide={LeadAdd.shouldHideButtons}
+                    render={(
+                        <div className={styles.sources}>
                             <LeadButtons
                                 className={styles.leadButtons}
                                 onLeadsAdd={this.handleLeadsAdd}
                                 leads={leads}
                             />
-                        }
-                    />
-                </div>
-                <div className={styles.midContent}>
-                    <LeadList
-                        leads={filteredLeads}
-                        activeLeadKey={activeLeadKey}
-                        onLeadSelect={setActiveLeadKey}
-                        onLeadRemove={this.handleLeadToRemoveSet}
-                        onLeadExport={this.handleLeadExport}
-                        onLeadSave={this.handleLeadSave}
+                        </div>
+                    )}
+                />
+                <div className={styles.main}>
+                    <div className={styles.leadList}>
+                        <LeadFilter
+                            className={styles.filter}
+                            onFilterChange={setLeadFilters}
+                            onFilterClear={clearLeadFilters}
+                            filters={leadFilters}
+                            clearDisabled={isFilterEmpty}
+                        />
+                        <LeadList
+                            className={styles.list}
+                            leads={filteredLeads}
+                            activeLeadKey={activeLeadKey}
 
-                        onLeadsRemove={this.handleLeadsToRemoveSet}
-                        onLeadsExport={this.handleLeadsExport}
-                        onLeadsSave={this.handleLeadsSave}
+                            onLeadsAdd={this.handleLeadsAdd}
+                            onLeadSelect={setActiveLeadKey}
+                            onLeadRemove={this.handleLeadToRemoveSet}
+                            onLeadExport={this.handleLeadExport}
+                            onLeadSave={this.handleLeadSave}
 
-                        leadStates={leadStates}
-                        fileUploadStatuses={fileUploadStatuses}
-                        onLeadsAdd={this.handleLeadsAdd}
-                    />
-                </div>
-                { hasActiveLead ? (
-                    <div className={styles.right}>
+                            onLeadsRemove={this.handleLeadsToRemoveSet}
+                            onLeadsExport={this.handleLeadsExport}
+                            onLeadsSave={this.handleLeadsSave}
+
+                            onLeadPrev={prevLead}
+                            onLeadNext={nextLead}
+                            leadPrevDisabled={isLeadPrevDisabled(leads, activeLeadKey)}
+                            leadNextDisabled={isLeadNextDisabled(leads, activeLeadKey)}
+
+                            leadStates={leadStates}
+                            fileUploadStatuses={fileUploadStatuses}
+                        />
+                    </div>
+                    {hasActiveLead ? (
                         <ResizableV
                             className={
                                 _cs(
-                                    styles.resizable,
+                                    styles.leadDetail,
                                     leadIsTextType && styles.textLead,
                                 )
                             }
@@ -950,7 +877,8 @@ class LeadAdd extends React.PureComponent {
                                 !leadPreviewHidden && (
                                     <LeadPreview
                                         // NOTE: need to dismount LeadPreview
-                                        // because the children cannot handle change gracefully
+                                        // because the children
+                                        // cannot handle change gracefully
                                         key={activeLeadKey}
                                         lead={activeLead}
                                         className={styles.leadPreview}
@@ -959,12 +887,12 @@ class LeadAdd extends React.PureComponent {
                                 )
                             }
                         />
-                    </div>
-                ) : (
-                    <Message>
-                        { _ts('addLeads', 'noLeadsText') }
-                    </Message>
-                ) }
+                    ) : (
+                        <Message>
+                            { _ts('addLeads', 'noLeadsText') }
+                        </Message>
+                    )}
+                </div>
             </React.Fragment>
         );
 
@@ -986,17 +914,51 @@ class LeadAdd extends React.PureComponent {
                 <Page
                     className={styles.addLead}
                     headerClassName={styles.header}
-                    header={headerComponent}
+                    header={(
+                        <>
+                            <BackLink
+                                defaultLink={
+                                    reverseRoute(pathNames.leads, { projectId })
+                                }
+                            />
+                            <h4 className={styles.heading}>
+                                {/* FIXME: translate this */}
+                                Add Leads
+                            </h4>
+                            {hasActiveLead && (
+                                <LeadActions
+                                    className={styles.actions}
+
+                                    onLeadPreviewHiddenChange={setLeadPreviewHidden}
+                                    leadPreviewHidden={leadPreviewHidden}
+
+                                    leadStates={leadStates}
+                                    activeLead={activeLead}
+                                    leads={leads}
+                                    completedLeads={completedLeads}
+                                    filteredLeads={filteredLeads}
+
+                                    submitAllPending={submitAllPending}
+
+                                    onLeadsSave={this.handleLeadsSave}
+                                    onLeadsRemove={this.handleLeadsToRemoveSet}
+                                    onLeadsExport={this.handleLeadsExport}
+
+                                    filteredDisabled={isFilterEmpty}
+                                />
+                            )}
+                        </>
+                    )}
                     mainContentClassName={styles.mainContent}
                     mainContent={mainComponent}
                 />
-                { leadExportModalShown &&
+                {leadExportModalShown && (
                     <LeadCopyModal
                         leads={leadsToExport}
                         closeModal={this.handleLeadsExportCancel}
                     />
-                }
-                { leadRemoveConfirmShown &&
+                )}
+                {leadRemoveConfirmShown && (
                     <Confirm
                         onClose={this.handleLeadRemoveConfirmClose}
                         show
@@ -1008,7 +970,7 @@ class LeadAdd extends React.PureComponent {
                             }
                         </p>
                     </Confirm>
-                }
+                )}
             </React.Fragment>
         );
     }

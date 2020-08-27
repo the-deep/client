@@ -8,7 +8,6 @@ import {
 
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
-import WarningButton from '#rsca/Button/WarningButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import Jumper from '#components/general/Jumper';
@@ -206,15 +205,15 @@ export default class LeadListItem extends React.PureComponent {
                     />
                 </button>
                 <div className={styles.buttonContainer}>
-                    { exportShown &&
+                    {exportShown && (
                         <Button
                             className={styles.button}
                             disabled={exportDisabled}
                             onClick={this.handleExportClick}
                             iconName="openLink"
                         />
-                    }
-                    <WarningButton
+                    )}
+                    <Button
                         className={styles.button}
                         disabled={removeDisabled}
                         onClick={this.handleRemoveClick}

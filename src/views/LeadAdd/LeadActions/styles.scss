@@ -3,9 +3,9 @@
 }
 
 %button-basic {
-    align-self: stretch;
+    // align-self: stretch;
     flex-shrink: 0;
-    margin-left: var(--spacing-extra-small-alt);
+    margin: 0 var(--spacing-extra-small);
     border-radius: var(--radius-button-border);
 }
 
@@ -14,13 +14,9 @@
     align-items: center;
     flex-wrap: wrap;
 
-    .movement-buttons {
+    .lead-preview-checkbox {
         flex-shrink: 0;
-        margin: 0 var(--spacing-medium);
-
-        >button:first-child {
-            margin-right: var(--spacing-extra-small-alt);
-        }
+        margin: 0 var(--spacing-small);
     }
 
     .export-buttons {
@@ -32,16 +28,16 @@
 
     .save-buttons {
         @extend %button-basic;
-        border: var(--width-separator-thin) solid var(--color-success);
+        border: var(--width-separator-thin) solid var(--color-primary);
         background-color: var(--color-foreground);
-        color: var(--color-success);
+        color: var(--color-primary);
     }
 
     .remove-buttons {
         @extend %button-basic;
-        border: var(--width-separator-thin) solid var(--color-warning);
+        border: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground);
-        color: var(--color-warning);
+        color: var(--color-text);
     }
 }
 
