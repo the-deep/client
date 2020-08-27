@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
+import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
+import Button from '#rsca/Button';
+import _ts from '#ts';
+
 import { formatTitle } from '#utils/common';
 
 import {
@@ -15,6 +19,7 @@ import LeadListItem from './LeadListItem';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     leads: PropTypes.array.isRequired,
     activeLeadKey: PropTypes.string,
@@ -29,10 +34,18 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     fileUploadStatuses: PropTypes.object.isRequired,
+
+    onLeadNext: PropTypes.func.isRequired,
+    onLeadPrev: PropTypes.func.isRequired,
+    leadNextDisabled: PropTypes.bool,
+    leadPrevDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
     activeLeadKey: undefined,
+    className: undefined,
+    leadNextDisabled: true,
+    leadPrevDisabled: true,
 };
 
 function DroppableDiv(p) {
@@ -101,13 +114,38 @@ class LeadList extends React.PureComponent {
         const {
             leads,
             onLeadsAdd,
+            className,
+            onLeadPrev,
+            onLeadNext,
+            leadPrevDisabled,
+            leadNextDisabled,
         } = this.props;
 
         return (
             <DroppableDiv
-                className={styles.leadListContainer}
+                className={_cs(styles.leadListContainer, className)}
                 onLeadsAdd={onLeadsAdd}
             >
+                <div className={styles.movementButtons}>
+                    <div className={styles.stats}>
+                        {/* FIXME: translation */}
+                        {`${leads.length} leads`}
+                    </div>
+                    <div className={styles.actions}>
+                        <Button
+                            disabled={leadPrevDisabled}
+                            onClick={onLeadPrev}
+                            iconName="prev"
+                            title={_ts('addLeads.actions', 'previousButtonLabel')}
+                        />
+                        <Button
+                            disabled={leadNextDisabled}
+                            onClick={onLeadNext}
+                            iconName="next"
+                            title={_ts('addLeads.actions', 'nextButtonLabel')}
+                        />
+                    </div>
+                </div>
                 <ListView
                     className={styles.leadList}
                     data={leads}

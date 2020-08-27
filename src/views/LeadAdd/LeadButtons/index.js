@@ -184,51 +184,9 @@ function LeadButtons(props) {
 
     return (
         <div className={_cs(styles.addLeadButtons, className)}>
-            <h3 className={styles.heading}>
+            <h4 className={styles.heading}>
                 {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
-            </h3>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="googleDrive"
-                    />
-                    {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
-                </div>
-                <GooglePicker
-                    className={styles.addLeadBtn}
-                    clientId={googleDriveClientId}
-                    developerKey={googleDriveDeveloperKey}
-                    onAuthenticate={handleGoogleDriveOnAuthenticated}
-                    onChange={handleLeadAddFromGoogleDrive}
-                    mimeTypes={supportedGoogleDriveMimeTypes}
-                    multiselect
-                    navHidden
-                >
-                    <Icon name="add" />
-                </GooglePicker>
-            </div>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="dropbox"
-                    />
-                    {_ts('addLeads.sourceButtons', 'dropboxLabel')}
-                </div>
-                <DropboxChooser
-                    className={styles.addLeadBtn}
-                    appKey={dropboxAppKey}
-                    multiselect
-                    extensions={supportedDropboxExtension}
-                    success={handleLeadAddFromDropbox}
-                    disabled={dropboxDisabled}
-                    onClick={handleDropboxChooserClick}
-                    cancel={handleDropboxChooserClose}
-                >
-                    <Icon name="add" />
-                </DropboxChooser>
-            </div>
+            </h4>
             <div className={styles.item}>
                 <div className={styles.leftContainer}>
                     <Icon
@@ -278,6 +236,48 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </Button>
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="googleDrive"
+                    />
+                    {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
+                </div>
+                <GooglePicker
+                    className={styles.addLeadBtn}
+                    clientId={googleDriveClientId}
+                    developerKey={googleDriveDeveloperKey}
+                    onAuthenticate={handleGoogleDriveOnAuthenticated}
+                    onChange={handleLeadAddFromGoogleDrive}
+                    mimeTypes={supportedGoogleDriveMimeTypes}
+                    multiselect
+                    navHidden
+                >
+                    <Icon name="add" />
+                </GooglePicker>
+            </div>
+            <div className={styles.item}>
+                <div className={styles.leftContainer}>
+                    <Icon
+                        className={styles.icon}
+                        name="dropbox"
+                    />
+                    {_ts('addLeads.sourceButtons', 'dropboxLabel')}
+                </div>
+                <DropboxChooser
+                    className={styles.addLeadBtn}
+                    appKey={dropboxAppKey}
+                    multiselect
+                    extensions={supportedDropboxExtension}
+                    success={handleLeadAddFromDropbox}
+                    disabled={dropboxDisabled}
+                    onClick={handleDropboxChooserClick}
+                    cancel={handleDropboxChooserClose}
+                >
+                    <Icon name="add" />
+                </DropboxChooser>
             </div>
             <div className={styles.item}>
                 <div className={styles.leftContainer}>

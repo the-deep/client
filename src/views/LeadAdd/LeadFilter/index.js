@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import MultiSelectInput from '#rsci/MultiSelectInput';
@@ -37,10 +38,12 @@ const propTypes = {
     onFilterChange: PropTypes.func.isRequired,
     onFilterClear: PropTypes.func.isRequired,
     clearDisabled: PropTypes.bool,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     clearDisabled: false,
+    className: undefined,
 };
 
 const faramSchema = {
@@ -58,11 +61,12 @@ export default class LeadFilter extends React.PureComponent {
             onFilterChange,
             onFilterClear,
             clearDisabled,
+            className,
         } = this.props;
 
         return (
             <Faram
-                className={styles.container}
+                className={_cs(styles.container, className)}
                 value={filters}
                 onChange={onFilterChange}
                 schema={faramSchema}
