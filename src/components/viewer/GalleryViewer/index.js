@@ -24,56 +24,55 @@ import GalleryDocs from './GalleryDocs';
 
 import styles from './styles.scss';
 
-const propTypes = {
-    className: PropTypes.string,
-    url: PropTypes.string,
-    mimeType: PropTypes.string,
-    canShowIframe: PropTypes.bool,
-    showUrl: PropTypes.bool,
-    showScreenshot: PropTypes.bool,
-    onScreenshotCapture: PropTypes.func,
+function isUrlValid(url) {
+    return url && urlRegex.test(url);
+}
 
-    invalidUrlMessage: PropTypes.string,
-    cannotPreviewUrlMessage: PropTypes.string,
-};
+function Preview(props) {
+    const {
+        className,
 
-const defaultProps = {
-    className: '',
-    url: '',
-    mimeType: '',
-    canShowIframe: false,
-    showUrl: false,
-    showScreenshot: false,
-    onScreenshotCapture: undefined,
+        url,
+        mimeType,
 
-    invalidUrlMessage: undefined,
-    cannotPreviewUrlMessage: undefined,
-};
+        canShowIframe,
 
+        cannotPreviewUrlMessage,
+        invalidUrlMessage,
+        unsupportedTypeMessage,
 
-const isUrlValid = url => (url && urlRegex.test(url));
+        error,
+    } = props;
 
-const Preview = ({
-    className,
-    url,
-    mimeType,
-    canShowIframe,
-    previewError,
-    isHttps,
-    cannotPreviewUrlMessage,
-    invalidUrlMessage,
-    ...otherProps
-}) => {
-    if (isHttps && galleryMapping[mimeType] === galleryType.IMAGE) {
+    if (error) {
+        return (
+            <Message className={styles.errorUrl}>
+                {error}
+            </Message>
+        );
+    }
+
+    const isHttps = !!(url || '').match(/^https:\/\//) || window.location.protocol === 'http:';
+
+    if (galleryMapping[mimeType] === galleryType.IMAGE) {
+        // NOTE: Error can occur if
+        // 1. If there is no alternative https url and current url is http
+        const previewError = !isHttps;
+        if (previewError) {
+            return (
+                <Message className={styles.errorUrl}>
+                    {cannotPreviewUrlMessage || _ts('components.galleryViewer', 'cannotPreviewUrl')}
+                </Message>
+            );
+        }
         return (
             <GalleryImage
                 className={className}
                 imageUrl={url}
-                canShowIframe={canShowIframe}
-                {...otherProps}
             />
         );
     } else if (galleryMapping[mimeType] === galleryType.DOC) {
+        // NOTE: no need to check for https for GalleryDocs as it has google viewer as fallback
         return (
             <GalleryDocs
                 className={className}
@@ -81,15 +80,28 @@ const Preview = ({
                 mimeType={mimeType}
                 canShowIframe={canShowIframe}
                 notHttps={!isHttps}
-                {...otherProps}
             />
         );
-    } else if (!previewError && (
-        galleryMapping[mimeType] === galleryType.HTML || url.endsWith('txt')
-    )) {
+    } else if (galleryMapping[mimeType] === galleryType.HTML || url.endsWith('txt')) {
+        if (!url || !isUrlValid(url)) {
+            return (
+                <Message className={styles.errorUrl}>
+                    {invalidUrlMessage || _ts('components.galleryViewer', 'invalidUrl')}
+                </Message>
+            );
+        }
         // NOTE: Error can occur if
         // 1. We cannot show iframe
         // 2. If there is no alternative https url and current url is http
+        const previewError = !canShowIframe || !isHttps;
+        if (previewError) {
+            return (
+                <Message className={styles.errorUrl}>
+                    {cannotPreviewUrlMessage || _ts('components.galleryViewer', 'cannotPreviewUrl')}
+                </Message>
+            );
+        }
+
         return (
             <iframe
                 className={className}
@@ -102,18 +114,17 @@ const Preview = ({
 
     return (
         <Message className={styles.errorUrl}>
-            {
-                isUrlValid(url) ? (
-                    cannotPreviewUrlMessage || _ts('components.galleryViewer', 'cannotPreviewUrl')
-                ) : (
-                    invalidUrlMessage || _ts('components.galleryViewer', 'invalidUrl')
-                )
-            }
+            {unsupportedTypeMessage || _ts('components.galleryViewer', 'unsupportedType')}
         </Message>
     );
-};
+}
 
-const Bar = ({ url = '', children }) => {
+function Bar(props) {
+    const {
+        url = '',
+        children,
+    } = props;
+
     const className = _cs(
         styles.urlbar,
         'urlbar',
@@ -129,26 +140,52 @@ const Bar = ({ url = '', children }) => {
                 showHintAndError={false}
                 selectOnFocus
             />
-            {
-                <div className={styles.actionButtons}>
-                    <a
-                        className={styles.openLink}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={_ts('components.galleryViewer', 'viewLinkTooltip')} // open link in new tab
-                    >
-                        <Icon name="openLink" />
-                    </a>
-                    {children}
-                </div>
-            }
+            <div className={styles.actionButtons}>
+                <a
+                    className={styles.openLink}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={_ts('components.galleryViewer', 'viewLinkTooltip')} // open link in new tab
+                >
+                    <Icon name="openLink" />
+                </a>
+                {children}
+            </div>
         </div>
     );
+}
+
+const propTypes = {
+    className: PropTypes.string,
+    url: PropTypes.string,
+    mimeType: PropTypes.string,
+    canShowIframe: PropTypes.bool,
+    showUrl: PropTypes.bool,
+    showScreenshot: PropTypes.bool,
+    onScreenshotCapture: PropTypes.func,
+
+    invalidUrlMessage: PropTypes.string,
+    cannotPreviewUrlMessage: PropTypes.string,
+    unsupportedTypeMessage: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
+    url: '',
+    mimeType: '',
+    canShowIframe: false,
+    showUrl: false,
+    showScreenshot: false,
+    onScreenshotCapture: undefined,
+
+    invalidUrlMessage: undefined,
+    cannotPreviewUrlMessage: undefined,
+    unsupportedTypeMessage: undefined,
 };
 
 /*
- * Document [pdf, image, docx, html] viewer handler
+ * Document [pdf, image, docx, html, txt] viewer handler
  * Use required document viewer according to the mime-type
 */
 export default class GalleryViewer extends React.PureComponent {
@@ -259,14 +296,14 @@ export default class GalleryViewer extends React.PureComponent {
 
         return (
             <Fragment>
-                { currentScreenshot &&
+                {currentScreenshot && (
                     <SuccessButton
                         iconName="check"
                         onClick={this.handleScreenshotDone}
                         title={_ts('components.galleryViewer', 'saveButtonTitle')} // save screenshot
                         transparent
                     />
-                }
+                )}
                 <DangerButton
                     iconName="close"
                     onClick={this.handleScreenshotClose}
@@ -281,12 +318,8 @@ export default class GalleryViewer extends React.PureComponent {
         const {
             className: classNameFromProps,
             url,
-            mimeType,
-            canShowIframe,
             showUrl,
             showScreenshot,
-            invalidUrlMessage,
-            cannotPreviewUrlMessage,
             ...otherProps
         } = this.props;
 
@@ -294,9 +327,6 @@ export default class GalleryViewer extends React.PureComponent {
             screenshotMode,
             isFullscreen,
         } = this.state;
-
-        const isHttps = !!(url || '').match(/^https:\/\//) || window.location.protocol === 'http:';
-        const previewError = !canShowIframe || !isHttps;
 
         const showBar = showUrl || showScreenshot;
 
@@ -316,36 +346,27 @@ export default class GalleryViewer extends React.PureComponent {
                 className={className}
                 ref={this.viewerRef}
             >
-                { showBar &&
-                    <Bar
-                        url={url}
-                        showScreenshot={showScreenshot}
-                    >
-                        { showScreenshot && this.renderScreenshotButton() }
+                {showBar && (
+                    <Bar url={url}>
+                        {showScreenshot && this.renderScreenshotButton()}
                         <AccentButton
                             transparent
                             iconName={isFullscreen ? 'shrink' : 'expand'}
                             onClick={this.handleFullscreenClick}
                         />
                     </Bar>
-                }
+                )}
                 <div className={docContainerClassName}>
-                    { screenshotMode &&
+                    {screenshotMode && (
                         <Screenshot
                             onCapture={this.handleScreenshot}
                             onCaptureError={this.handleScreenshotError}
                             onCancel={this.handleScreenshotClose}
                         />
-                    }
+                    )}
                     <Preview
                         className={styles.doc}
                         url={url}
-                        mimeType={mimeType}
-                        canShowIframe={canShowIframe}
-                        previewError={previewError}
-                        isHttps={isHttps}
-                        invalidUrlMessage={invalidUrlMessage}
-                        cannotPreviewUrlMessage={cannotPreviewUrlMessage}
                         {...otherProps}
                     />
                 </div>

@@ -1144,7 +1144,8 @@
         "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project admins about why you want to join the project?",
         "-23615781": "Reason",
         "-62923641": "Show {label}",
-        "-39488279": "Hide {label}"
+        "-39488279": "Hide {label}",
+        "-13339127": "We cannot currently preview this type of document."
     },
     "links": {
         "browserExtension": {
@@ -1380,7 +1381,8 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039
+            "viewLinkTooltip": -2224039,
+            "unsupportedType": -13339127
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,

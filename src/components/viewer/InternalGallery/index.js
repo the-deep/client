@@ -80,6 +80,7 @@ const PreviewGallery = ({
             </div>
         );
     }
+    // NOTE: error prop of GalleryViewer can also be used instead
     if (notFound) {
         return (
             <div className={_cs(className, styles.previewGallery)}>

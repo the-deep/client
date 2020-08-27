@@ -14,6 +14,10 @@ import _ts from '#ts';
 import GalleryViewer from '../GalleryViewer';
 import styles from './styles.scss';
 
+function isUrlValid(url) {
+    return url && urlRegex.test(url);
+}
+
 const propTypes = {
     className: PropTypes.string,
     url: PropTypes.string,
@@ -24,7 +28,12 @@ const defaultProps = {
     url: undefined,
 };
 
-const isUrlValid = url => (url && urlRegex.test(url));
+const initialState = {
+    canShowIframe: false,
+    mimeType: undefined,
+    httpsUrl: undefined,
+    error: undefined,
+};
 
 export default class ExternalGallery extends React.PureComponent {
     static propTypes = propTypes;
@@ -33,13 +42,11 @@ export default class ExternalGallery extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.initialState = {
-            canShowIframe: false,
-            mimeType: undefined,
-            httpsUrl: undefined,
-        };
 
-        this.state = { pending: true, ...this.initialState };
+        this.state = {
+            pending: true,
+            ...initialState,
+        };
     }
 
     componentWillMount() {
@@ -68,8 +75,8 @@ export default class ExternalGallery extends React.PureComponent {
     startRequest = (url) => {
         if (!isUrlValid(url)) {
             this.setState({
+                ...initialState,
                 pending: false,
-                ...this.initialState,
             });
             return;
         }
@@ -117,24 +124,25 @@ export default class ExternalGallery extends React.PureComponent {
                     }
 
                     this.setState({
+                        error: undefined,
                         canShowIframe,
                         mimeType,
                         httpsUrl,
                     });
                 } catch (err) {
                     console.warn('External Gallery Error', err);
-                    this.setState({ ...this.initialState });
+                    this.setState({ ...initialState, error: 'Some error occurred' });
                 }
             })
             .failure((response) => {
                 // server can't fetch the url
                 console.warn('Failure: ', response);
-                this.setState({ ...this.initialState });
+                this.setState({ ...initialState, error: response.error });
             })
             .fatal((response) => {
                 // server can't fetch the url
                 console.warn('Fatal: ', response);
-                this.setState({ ...this.initialState });
+                this.setState({ ...initialState, error: 'Some error occurred' });
             })
             .build();
 
@@ -147,6 +155,7 @@ export default class ExternalGallery extends React.PureComponent {
             canShowIframe,
             mimeType,
             httpsUrl,
+            error,
         } = this.state;
 
         const {
@@ -172,6 +181,7 @@ export default class ExternalGallery extends React.PureComponent {
                 url={httpsUrl || url}
                 mimeType={mimeType}
                 canShowIframe={canShowIframe}
+                error={error}
             />
         );
     }
