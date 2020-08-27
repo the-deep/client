@@ -64,6 +64,7 @@ const requestOptions: Requests<OwnProps, Params> = {
             const lead = response as LeadFaramValues;
             const {
                 patchLead,
+                closeModal,
             } = props;
 
             patchLead({ lead });
@@ -73,6 +74,9 @@ const requestOptions: Requests<OwnProps, Params> = {
                 message: _ts('leads', 'leadEditedSuccessfullyMessage'),
                 duration: notify.duration.FAST,
             });
+            if (closeModal) {
+                closeModal();
+            }
         },
         onFailure: notifyOnFailure(_ts('leads', 'leads')),
         onFatal: notifyOnFatal(_ts('leads', 'leads')),
