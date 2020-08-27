@@ -20,7 +20,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
     docUrl: undefined,
     mimeType: undefined,
     canShowIframe: true,
