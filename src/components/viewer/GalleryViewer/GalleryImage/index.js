@@ -24,34 +24,31 @@ const defaultProps = {
 /*
  * Gallery viewer component for Images [galleryImageMimeType]
  */
-export default class GalleryImage extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+function GalleryImage(props) {
+    const {
+        className,
+        imageClassName,
+        imageUrl,
+    } = props;
 
-    render() {
-        const {
-            className,
-            imageClassName,
-            imageUrl,
-        } = this.props;
-
-        return (
-            <div className={_cs('gallery-image', styles.galleryImage, className)}>
-                {
-                    imageUrl ? (
-                        <img
-                            alt={_ts('components.galleryImage', 'altUser')}
-                            className={_cs('image', styles.image, imageClassName)}
-                            src={imageUrl}
-                        />
-                    ) : (
-                        <Icon
-                            className={_cs('image-alt', styles.imageAlt)}
-                            name="user"
-                        />
-                    )
-                }
-            </div>
-        );
-    }
+    return (
+        <div className={_cs('gallery-image', styles.galleryImage, className)}>
+            {imageUrl ? (
+                <img
+                    alt={_ts('components.galleryImage', 'altUser')}
+                    className={_cs('image', styles.image, imageClassName)}
+                    src={imageUrl}
+                />
+            ) : (
+                <Icon
+                    className={_cs('image-alt', styles.imageAlt)}
+                    name="user"
+                />
+            )}
+        </div>
+    );
 }
+GalleryImage.propTypes = propTypes;
+GalleryImage.defaultProps = defaultProps;
+
+export default GalleryImage;

@@ -12,7 +12,10 @@ const propTypes = {
     className: PropTypes.string,
     docUrl: PropTypes.string,
     mimeType: PropTypes.string,
+
+    // can the docUrl be shown in iframe
     canShowIframe: PropTypes.bool,
+    // is the docUrl https
     notHttps: PropTypes.bool,
 };
 
@@ -27,46 +30,51 @@ const defaultProps = {
 /*
  * Gallery viewer component for Docs [galleryDocsMimeType]
  */
-export default class GalleryDocs extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+function GalleryDocs(props) {
+    const {
+        className: classNameFromProps,
+        docUrl,
+        mimeType,
+        canShowIframe,
+        notHttps,
+    } = props;
 
-    render() {
-        const {
-            className: classNameFromProps,
-            docUrl,
-            mimeType,
-            canShowIframe,
-            notHttps,
-        } = this.props;
+    if (!docUrl) {
+        return null;
+    }
 
-        if (!docUrl) {
-            return null;
-        }
+    const className = _cs(
+        classNameFromProps,
+        'gallery-docs',
+        styles.galleryDocs,
+    );
 
-        const useGoogle = mimeType !== 'application/pdf' || !canShowIframe || notHttps;
-        const src = useGoogle
-            ? createUrlForGoogleViewer(docUrl)
-            : docUrl;
-        const sandbox = useGoogle
-            ? 'allow-scripts allow-same-origin allow-popups'
-            : undefined;
-
-        const className = _cs(
-            classNameFromProps,
-            'gallery-docs',
-            styles.galleryDocs,
-        );
-
+    // NOTE: Google also support pdf for viewing but it does not work for localhost
+    const digestablePdf = mimeType === 'application/pdf' && canShowIframe && !notHttps;
+    if (digestablePdf) {
         return (
             <div className={className}>
-                <iframe
-                    className={`doc ${styles.doc}`}
-                    title={docUrl}
-                    src={src}
-                    sandbox={sandbox}
+                <embed
+                    className={_cs('doc', styles.doc)}
+                    type="application/pdf"
+                    src={docUrl}
                 />
             </div>
         );
     }
+
+    return (
+        <div className={className}>
+            <iframe
+                className={_cs('doc', styles.doc)}
+                title={docUrl}
+                src={createUrlForGoogleViewer(docUrl)}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+            />
+        </div>
+    );
 }
+GalleryDocs.propTypes = propTypes;
+GalleryDocs.defaultProps = defaultProps;
+
+export default GalleryDocs;

@@ -1152,7 +1152,8 @@
         "-53772993": "The verification status of the entry was changed successfully.",
         "-83960265": "Verified",
         "-45171916": "Unverified",
-        "-35075096": "The verification status of this entry was last changed by {userName}."
+        "-35075096": "The verification status of this entry was last changed by {userName}.",
+        "-13339127": "We cannot currently preview this type of document."
     },
     "links": {
         "browserExtension": {
@@ -1388,7 +1389,8 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039
+            "viewLinkTooltip": -2224039,
+            "unsupportedType": -13339127
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,
