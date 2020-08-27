@@ -1172,9 +1172,17 @@
         "-7637573": "Draw tools",
         "-31875190": "Draw over screenshot",
         "-5492927": "Export to image",
+<<<<<<< HEAD
         "-16575221": "Lead confidentiality",
         "-78757252": "Lead priority",
         "-15193425": "Lead published on"
+=======
+        "-26861463": "Donors",
+        "-86018902": "Government",
+        "-30025571": "International Partners",
+        "-54364746": "Lead Organization",
+        "-49224651": "National Partners",
+>>>>>>> 296106ed1... Add organization on project page
     },
     "links": {
         "browserExtension": {
@@ -3366,7 +3374,23 @@
             "penSizeOptionSmallLabel": -80573166,
             "modalHeading": -31875190,
             "drawToolsTitle": -7637573,
+            "penSizeOptionSmallLabel": -80573166,
             "modalHeading": -31875190
+        },
+        "project.detail.general": {
+            "stakeholder": -35334807
+        },
+        "project.detail.stakeholders": {
+            "cancel": 61,
+            "save": 25,
+            "donors": -26861463,
+            "government": -86018902,
+            "internationalPartners": -30025571,
+            "leadOrganization": -54364746,
+            "nationalPartners": -49224651
+        },
+        "project.details.stakeholders": {
+            "stakeholdersModalTitle": -35334807
         }
     }
 }

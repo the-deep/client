@@ -10,11 +10,13 @@ import { decodeDate } from '@togglecorp/fujs';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
+import Button from '#rsu/../v2/Action/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
+import modalize from '#rscg/Modalize';
 
 import {
     RequestCoordinator,
@@ -31,9 +33,9 @@ import {
     routeUrlSelector,
 } from '#redux';
 
-
 import _ts from '#ts';
 
+import StakeholdersModal from './StakeholdersModal';
 import ActivityLog from './ActivityLog';
 import Dashboard from './Dashboard';
 import requestOptions from './requests';
@@ -59,6 +61,16 @@ const propTypes = {
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
+
+const StakeholderButton = props => (
+    <Button
+        buttonType="button-accent"
+        iconName="people"
+        transparent
+        {...props}
+    />
+);
+const ModalButton = modalize(StakeholderButton);
 
 const defaultProps = {
     className: '',
@@ -95,6 +107,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                 startDate: [dateCondition],
                 endDate: [dateCondition],
                 description: [],
+                organizations: [],
             },
             validation: ({ startDate, endDate } = {}) => {
                 const errors = [];
@@ -147,7 +160,16 @@ export default class ProjectDetailsGeneral extends PureComponent {
                 projectPutRequest,
             },
         } = this.props;
-        projectPutRequest.do({ projectDetails });
+        const organizations = projectDetails.organizations || {};
+        const newProjectDetails = {
+            ...projectDetails,
+            leadOrganizations: organizations.leadOrganizations,
+            internationalPartners: organizations.internationalPartners,
+            donors: organizations.donors,
+            nationalPartners: organizations.nationalPartners,
+            government: organizations.government,
+        };
+        projectPutRequest.do({ newProjectDetails });
     }
 
     renderUnsavedChangesPrompt = () => (
@@ -266,6 +288,16 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                 rows={7}
                                 resize="vertical"
                             />
+                            <ModalButton
+                                className={styles.modalButton}
+                                modal={
+                                    <StakeholdersModal
+                                        faramElementName="organizations"
+                                    />
+                                }
+                            >
+                                {_ts('project.detail.general', 'stakeholder')}
+                            </ModalButton>
                         </div>
                     </div>
                 </Faram>
