@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
-import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';
 import Checkbox from '#rsci/Checkbox';
 
@@ -22,12 +22,10 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
-    leadNextDisabled: PropTypes.bool,
-    leadPrevDisabled: PropTypes.bool,
+    className: PropTypes.string,
+
     leadPreviewHidden: PropTypes.bool,
 
-    onLeadNext: PropTypes.func.isRequired,
-    onLeadPrev: PropTypes.func.isRequired,
     onLeadPreviewHiddenChange: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
@@ -54,8 +52,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    leadNextDisabled: true,
-    leadPrevDisabled: true,
+    className: undefined,
     leadPreviewHidden: false,
     activeLead: undefined,
     submitAllPending: false,
@@ -189,10 +186,6 @@ export default class LeadActions extends React.PureComponent {
     render() {
         const {
             leadPreviewHidden,
-            onLeadPrev,
-            onLeadNext,
-            leadPrevDisabled,
-            leadNextDisabled,
 
             activeLead,
             filteredLeads,
@@ -203,6 +196,8 @@ export default class LeadActions extends React.PureComponent {
 
             submitAllPending,
             filteredDisabled,
+
+            className,
         } = this.props;
 
         const exportEnabledForAll = isExportEnabledForLeads(leads, leadStates);
@@ -225,26 +220,13 @@ export default class LeadActions extends React.PureComponent {
             : false;
 
         return (
-            <div className={styles.actionButtons}>
+            <div className={_cs(styles.actionButtons, className)}>
                 <Checkbox
+                    className={styles.leadPreviewCheckbox}
                     value={!leadPreviewHidden}
                     onChange={this.handleHideLeadPreviewChange}
                     label={_ts('addLeads.actions', 'showLeadPreviewLabel')}
                 />
-                <div className={styles.movementButtons}>
-                    <Button
-                        disabled={leadPrevDisabled}
-                        onClick={onLeadPrev}
-                        iconName="prev"
-                        title={_ts('addLeads.actions', 'previousButtonLabel')}
-                    />
-                    <Button
-                        disabled={leadNextDisabled}
-                        onClick={onLeadNext}
-                        iconName="next"
-                        title={_ts('addLeads.actions', 'nextButtonLabel')}
-                    />
-                </div>
                 <DropdownMenu
                     iconName="openLink"
                     className={styles.exportButtons}
@@ -259,7 +241,7 @@ export default class LeadActions extends React.PureComponent {
                     >
                         {_ts('addLeads.actions', 'exportCurrentButtonTitle')}
                     </button>
-                    { !filteredDisabled &&
+                    {!filteredDisabled &&
                         <button
                             className={styles.dropdownButton}
                             onClick={this.handleExportFilteredClick}
@@ -292,7 +274,7 @@ export default class LeadActions extends React.PureComponent {
                     >
                         {_ts('addLeads.actions', 'removeCurrentButtonTitle')}
                     </button>
-                    { !filteredDisabled &&
+                    {!filteredDisabled &&
                         <button
                             className={styles.dropdownButton}
                             onClick={this.handleRemoveFilteredClick}
@@ -333,7 +315,7 @@ export default class LeadActions extends React.PureComponent {
                     >
                         {_ts('addLeads.actions', 'saveCurrentButtonTitle')}
                     </button>
-                    { !filteredDisabled &&
+                    {!filteredDisabled &&
                         <button
                             className={styles.dropdownButton}
                             onClick={this.handleSaveFilteredClicked}
