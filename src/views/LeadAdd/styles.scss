@@ -19,14 +19,13 @@
 
     .main-content {
         display: flex;
+        overflow: auto;
 
         .sources {
             display: flex;
-            flex-basis: 15%;
             flex-shrink: 0;
             border-right: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-foreground-alt);
-            // overflow-y: hidden;
+            width: 15%;
 
             .lead-buttons {
                 flex-grow: 1;
@@ -35,16 +34,15 @@
 
         .main {
             display: flex;
-            flex-basis: 85%;
             flex-shrink: 0;
-            // overflow-y: hidden;
             background-color: var(--color-foreground);
+            width: 85%;
 
             .lead-list {
-                flex-basis: 30%;
                 flex-direction: column;
                 flex-shrink: 0;
                 border-right: var(--width-separator-thin) solid var(--color-separator);
+                width: 30%;
 
                 .filter {
                     display: flex;
@@ -67,7 +65,6 @@
                 flex-direction: column;
                 flex-shrink: 0;
                 background-color: var(--color-foreground-alt);
-                width: 100%;
                 overflow: auto;
 
                 .top {

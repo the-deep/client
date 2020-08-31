@@ -102,7 +102,6 @@ const propTypes = {
     projects: PropTypes.array,
 
     bulkActionDisabled: PropTypes.bool,
-    hideProjects: PropTypes.bool,
     disableLeadUrlChange: PropTypes.bool,
 
     onChange: PropTypes.func.isRequired,
@@ -122,7 +121,6 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
-    hideProjects: false,
     disableLeadUrlChange: false,
 
     projects: [],
@@ -133,8 +131,6 @@ const idSelector = item => item.id;
 const keySelector = item => item.key;
 
 const labelSelector = item => item.value;
-
-const titleSelector = item => item.title;
 
 const displayNameSelector = item => item.displayName;
 
@@ -225,6 +221,7 @@ function mergeLists(foo, bar) {
 }
 
 const requestOptions = {
+    // NOTE: this will be obsolete
     fileUrlGetRequest: {
         url: ({ params: { fileId } }) => `/files/${fileId}/`,
         query: ({ params: { url } }) => ({ url }),
@@ -240,6 +237,7 @@ const requestOptions = {
         onFailure: notifyOnFailure(_ts('addLeads', 'extractLead')),
         onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
     },
+    // NOTE: this will be moved outside
     webInfoRequest: {
         url: '/web-info-extract/',
         query: ({ params: { url } }) => ({ url }),
@@ -268,7 +266,7 @@ const requestOptions = {
             // schemaName: 'webInfo',
         },
     },
-
+    // NOTE: this will be moved outside
     webInfoDataRequest: {
         url: '/v2/web-info-data/',
         body: ({ params: {
@@ -304,6 +302,7 @@ const requestOptions = {
         onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
     },
 
+    // NOTE: move this logic outside LeadDetail
     leadOptionsRequest: {
         url: '/lead-options/',
         method: methods.POST,
@@ -485,28 +484,16 @@ class LeadDetail extends React.PureComponent {
 
         const key = leadKeySelector(lead);
 
-        // Clear lead-group if project has changed
         const oldFaramValues = leadFaramValuesSelector(lead);
         if (oldFaramValues.url !== faramValues.url) {
             this.setState({ suggestedTitleFromUrl: getTitleFromUrl(faramValues.url) });
         }
 
-        if (
-            !faramValues.project
-            || (oldFaramValues.project && oldFaramValues.project !== faramValues.project)
-        ) {
-            onChange({
-                leadKey: key,
-                faramValues: { ...faramValues, leadGroup: undefined },
-                faramErrors,
-            });
-        } else {
-            onChange({
-                leadKey: key,
-                faramValues,
-                faramErrors,
-            });
-        }
+        onChange({
+            leadKey: key,
+            faramValues,
+            faramErrors,
+        });
     }
 
     // private
@@ -515,34 +502,35 @@ class LeadDetail extends React.PureComponent {
             lead,
             onChange,
         } = this.props;
+
         const values = leadFaramValuesSelector(lead);
 
-        if (newValues !== values) {
-            const key = leadKeySelector(lead);
-            const errors = leadFaramErrorsSelector(lead);
-
-            const newErrors = accumulateDifferentialErrors(
-                values,
-                newValues,
-                errors,
-                schema,
-            );
-
-            onChange({
-                leadKey: key,
-                faramValues: newValues,
-                faramErrors: newErrors,
-            });
+        if (newValues === values) {
+            return;
         }
+
+        const key = leadKeySelector(lead);
+        const errors = leadFaramErrorsSelector(lead);
+
+        const newErrors = accumulateDifferentialErrors(
+            values,
+            newValues,
+            errors,
+            schema,
+        );
+
+        onChange({
+            leadKey: key,
+            faramValues: newValues,
+            faramErrors: newErrors,
+        });
     }
 
     handleExtraInfoFill = (leadOptions) => {
-        const {
-            lead,
-        } = this.props;
+        // const { lead } = this.props;
         const {
             organizations,
-            priority,
+            // priority,
         } = leadOptions;
 
         if (organizations.length > 0) {
@@ -560,9 +548,7 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleWebInfoFill = (webInfo) => {
-        const {
-            lead,
-        } = this.props;
+        const { lead } = this.props;
 
         const newOrgs = [];
         if (webInfo.source) {
@@ -585,9 +571,7 @@ class LeadDetail extends React.PureComponent {
     }
 
     handlePublisherAdd = (organization) => {
-        const {
-            lead,
-        } = this.props;
+        const { lead } = this.props;
 
         this.setState(state => ({
             organizations: mergeLists(state.organizations, [organization]),
@@ -617,6 +601,32 @@ class LeadDetail extends React.PureComponent {
         this.handleLeadValueChange(newValues);
     }
 
+    handleLeadGroupAdd = (leadGroup) => {
+        const { lead } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+        const newValues = produce(values, (safeValues) => {
+            // eslint-disable-next-line no-param-reassign
+            safeValues.leadGroup = leadGroup.id;
+        });
+
+        this.handleLeadValueChange(newValues);
+    }
+
+    handleSameAsPublisherButtonClick = () => {
+        const { lead } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+
+        const newValues = produce(values, (safeValues) => {
+            const { source } = values;
+            // eslint-disable-next-line no-param-reassign
+            safeValues.authors = source ? [source] : undefined;
+        });
+
+        this.handleLeadValueChange(newValues);
+    }
+
     handleAutoFormatTitleButton = () => {
         const { lead } = this.props;
         const { formatTitleAsTitleCase } = this.state;
@@ -637,38 +647,6 @@ class LeadDetail extends React.PureComponent {
         });
 
         this.setState({ formatTitleAsTitleCase: !formatTitleAsTitleCase });
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleSameAsPublisherButtonClick = () => {
-        const {
-            lead,
-        } = this.props;
-
-        const values = leadFaramValuesSelector(lead);
-
-        const newValues = produce(values, (safeValues) => {
-            const {
-                source,
-            } = values;
-            // eslint-disable-next-line no-param-reassign
-            safeValues.authors = source ? [source] : undefined;
-        });
-
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleLeadGroupAdd = (leadGroup) => {
-        const {
-            lead,
-        } = this.props;
-
-        const values = leadFaramValuesSelector(lead);
-        const newValues = produce(values, (safeValues) => {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.leadGroup = leadGroup.id;
-        });
-
         this.handleLeadValueChange(newValues);
     }
 
@@ -696,8 +674,6 @@ class LeadDetail extends React.PureComponent {
             lead,
             leadState,
 
-            projects,
-
             bulkActionDisabled,
 
             requests: {
@@ -719,7 +695,6 @@ class LeadDetail extends React.PureComponent {
                     pending: pendingSearchedOrganizations,
                 },
             },
-            hideProjects,
             disableLeadUrlChange,
         } = this.props;
         const {
@@ -731,7 +706,6 @@ class LeadDetail extends React.PureComponent {
         } = this.state;
 
         const values = leadFaramValuesSelector(lead);
-        const serverId = leadIdSelector(lead);
         const type = leadSourceTypeSelector(lead);
         const errors = leadFaramErrorsSelector(lead);
 
@@ -819,22 +793,8 @@ class LeadDetail extends React.PureComponent {
                     <header className={styles.header}>
                         <NonFieldErrors faramElement />
                     </header>
-                    <div className={styles.section}>
-                        {!hideProjects && (
-                            <SelectInput
-                                faramElementName="project"
-                                keySelector={idSelector}
-                                label={_ts('addLeads', 'projectLabel')}
-                                labelSelector={titleSelector}
-                                options={projects}
-                                placeholder={_ts('addLeads', 'projectPlaceholderLabel')}
-                                className={styles.project}
-                                disabled={formDisabled || !!serverId}
-                            />
-                        )}
-                    </div>
-                    { type === LEAD_TYPE.website && (
-                        <React.Fragment>
+                    {type === LEAD_TYPE.website && (
+                        <>
                             <ExtraFunctionsOnHover
                                 className={styles.url}
                                 buttons={(
@@ -875,9 +835,9 @@ class LeadDetail extends React.PureComponent {
                                     placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                                 />
                             </ApplyAll>
-                        </React.Fragment>
-                    ) }
-                    { type === LEAD_TYPE.text && (
+                        </>
+                    )}
+                    {type === LEAD_TYPE.text && (
                         <TextArea
                             faramElementName="text"
                             label={_ts('addLeads', 'textLabel')}
@@ -887,10 +847,10 @@ class LeadDetail extends React.PureComponent {
                             autoFocus
                             disabled={disableLeadUrlChange}
                         />
-                    ) }
+                    )}
                     <ExtraFunctionsOnHover
                         className={styles.title}
-                        buttons={
+                        buttons={(
                             <>
                                 <AccentButton
                                     className={styles.smallButton}
@@ -900,7 +860,7 @@ class LeadDetail extends React.PureComponent {
                                     {/* Treat this as icon */}
                                     Aa
                                 </AccentButton>
-                                { (type === LEAD_TYPE.file
+                                {(type === LEAD_TYPE.file
                                     || type === LEAD_TYPE.drive
                                     || type === LEAD_TYPE.dropbox) && (
                                     <AccentButton
@@ -914,7 +874,7 @@ class LeadDetail extends React.PureComponent {
                                     />
                                 )}
                             </>
-                        }
+                        )}
                     >
                         <TextInput
                             faramElementName="title"
@@ -967,13 +927,13 @@ class LeadDetail extends React.PureComponent {
                             title={_ts('addLeads', 'addPublisherTitle')}
                             iconName="addPerson"
                             transparent
-                            modal={
+                            modal={(
                                 <AddOrganizationModal
                                     title={_ts('addLeads', 'addPublisherModalTitle')}
                                     loadOrganizationList
                                     onOrganizationAdd={this.handlePublisherAdd}
                                 />
-                            }
+                            )}
                         />
                     </ApplyAll>
 
@@ -983,7 +943,7 @@ class LeadDetail extends React.PureComponent {
                         identifierName="authors"
                         onApplyAllClick={this.handleApplyAllClick}
                         onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                        extraButtons={
+                        extraButtons={(
                             <Button
                                 className={styles.smallButton}
                                 iconName="copyOutline"
@@ -991,7 +951,7 @@ class LeadDetail extends React.PureComponent {
                                 title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
                                 onClick={this.handleSameAsPublisherButtonClick}
                             />
-                        }
+                        )}
                     >
                         <FaramBasicMultiSelectInput
                             faramElementName="authors"
@@ -1015,13 +975,13 @@ class LeadDetail extends React.PureComponent {
                             title={_ts('addLeads', 'addAuthorTitle')}
                             iconName="addPerson"
                             transparent
-                            modal={
+                            modal={(
                                 <AddOrganizationModal
                                     title={_ts('addLeads', 'addAuthorModalTitle')}
                                     loadOrganizationList
                                     onOrganizationAdd={this.handleAuthorAdd}
                                 />
-                            }
+                            )}
                         />
                     </ApplyAll>
 
@@ -1090,16 +1050,15 @@ class LeadDetail extends React.PureComponent {
                         />
                     </ApplyAll>
                     <Cloak
-                        // TODO: STYLING when cloaked
                         hide={this.shouldHideLeadGroupInput}
-                        render={
+                        render={(
                             <ApplyAll
                                 className={styles.leadGroup}
                                 disabled={isApplyAllDisabled}
                                 identifierName="leadGroup"
                                 onApplyAllClick={this.handleApplyAllClick}
                                 onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                                extraButtons={
+                                extraButtons={(
                                     <Button
                                         className={styles.smallButton}
                                         onClick={this.handleAddLeadGroupClick}
@@ -1107,7 +1066,7 @@ class LeadDetail extends React.PureComponent {
                                         transparent
                                         disabled={!projectIsSelected}
                                     />
-                                }
+                                )}
                             >
                                 <SelectInput
                                     faramElementName="leadGroup"
@@ -1118,31 +1077,27 @@ class LeadDetail extends React.PureComponent {
                                     placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
                                 />
                             </ApplyAll>
-                        }
-                        renderOnHide={
+                        )}
+                        renderOnHide={(
                             <div className={styles.leadGroup} />
-                        }
+                        )}
                     />
-                    { showAddLeadGroupModal && (
+                    {showAddLeadGroupModal && (
                         <AddLeadGroup
                             onModalClose={this.handleAddLeadGroupModalClose}
                             onLeadGroupAdd={this.handleLeadGroupAdd}
                             projectId={projectId}
                         />
-                    ) }
+                    )}
 
-                    {
-                        ATTACHMENT_TYPES.indexOf(type) !== -1 && (
-                            <div className={styles.fileTitle}>
-                                { values.attachment &&
-                                    <InternalGallery
-                                        onlyFileName
-                                        galleryId={values.attachment.id}
-                                    />
-                                }
-                            </div>
-                        )
-                    }
+                    {values.attachment && ATTACHMENT_TYPES.includes(type) && (
+                        <div className={styles.fileTitle}>
+                            <InternalGallery
+                                onlyFileName
+                                galleryId={values.attachment.id}
+                            />
+                        </div>
+                    )}
                 </Faram>
                 <EmmStats
                     className={styles.emmStatsContainer}
