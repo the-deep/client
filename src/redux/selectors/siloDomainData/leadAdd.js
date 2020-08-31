@@ -3,29 +3,38 @@ import { isDefined } from '@togglecorp/fujs';
 
 import { leadKeySelector } from '#views/LeadAdd/utils';
 
+import { projectIdFromRoute } from '../domainData';
+
 const emptyObject = {};
 const emptyArray = [];
 
-const leadAddPageSelector = ({ siloDomainData }) => siloDomainData.leadAddPage || emptyObject;
+const leadAddPageSelector = ({ siloDomainData }) => siloDomainData.leadAddPage;
 
-export const leadAddPageLeadsSelector = createSelector(
+const leadAddPageForProjectSelector = createSelector(
     leadAddPageSelector,
-    leadAddPage => leadAddPage.leads || emptyArray,
+    projectIdFromRoute,
+    (leadPage, activeProject) => (
+        leadPage[activeProject] ?? emptyObject
+    ),
+);
+export const leadAddPageLeadsSelector = createSelector(
+    leadAddPageForProjectSelector,
+    leadAddPage => leadAddPage?.leads ?? emptyArray,
 );
 
 export const leadAddPageLeadFiltersSelector = createSelector(
-    leadAddPageSelector,
-    leadAddPage => leadAddPage.leadFilters || emptyObject,
+    leadAddPageForProjectSelector,
+    leadAddPage => leadAddPage?.leadFilters ?? emptyObject,
 );
 
 export const leadAddPageLeadPreviewHiddenSelector = createSelector(
-    leadAddPageSelector,
-    leadAddPage => leadAddPage.leadPreviewHidden,
+    leadAddPageForProjectSelector,
+    leadAddPage => leadAddPage?.leadPreviewHidden,
 );
 
 export const leadAddPageActiveLeadKeySelector = createSelector(
-    leadAddPageSelector,
-    leadAddPage => leadAddPage.activeLeadKey,
+    leadAddPageForProjectSelector,
+    leadAddPage => leadAddPage?.activeLeadKey,
 );
 
 export const leadAddPageActiveLeadSelector = createSelector(
