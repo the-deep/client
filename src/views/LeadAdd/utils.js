@@ -21,6 +21,7 @@ export const LEAD_TYPE = {
     file: 'disk',
     website: 'website',
     text: 'text',
+    connectors: 'connectors',
 };
 
 export const ATTACHMENT_TYPES = [

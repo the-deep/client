@@ -35,11 +35,76 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
+// FIXME: it doesn't make much sense to include the icon anymore
+const leadTypeToIconClassMap = {
+    [LEAD_TYPE.file]: 'upload',
+    [LEAD_TYPE.website]: 'globe',
+    [LEAD_TYPE.text]: 'clipboard',
+    [LEAD_TYPE.drive]: 'googleDrive',
+    [LEAD_TYPE.dropbox]: 'dropbox',
+    [LEAD_TYPE.connectors]: 'link',
+};
+
+function LeadButton(props) {
+    const {
+        className,
+        active,
+        source,
+        title,
+        onClick,
+        children,
+    } = props;
+
+    const handleClick = useCallback(() => {
+        onClick(source);
+    }, [onClick, source]);
+
+    return (
+        <div
+            role="presentation"
+            onClick={handleClick}
+            className={
+                _cs(
+                    className,
+                    styles.leadButton,
+                    active && styles.active,
+                )
+            }
+        >
+            <Icon
+                className={styles.icon}
+                name={leadTypeToIconClassMap[source]}
+            />
+            <span className={styles.title} >
+                { title }
+            </span>
+            <span className={styles.actions}>
+                {children}
+            </span>
+        </div>
+    );
+}
+LeadButton.propTypes = {
+    className: PropTypes.string,
+    active: PropTypes.bool,
+    source: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+    children: PropTypes.node,
+};
+LeadButton.defaultProps = {
+    className: undefined,
+    active: false,
+    children: undefined,
+};
+
 function LeadButtons(props) {
     const {
         leads,
         onLeadsAdd,
+        onSourceChange,
         className,
+        activeSource,
     } = props;
 
     // NOTE: dropbox button must be manually disabled and enabled unlike
@@ -187,14 +252,12 @@ function LeadButtons(props) {
             <h4 className={styles.heading}>
                 {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
             </h4>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="upload"
-                    />
-                    {_ts('addLeads.sourceButtons', 'localDiskLabel')}
-                </div>
+            <LeadButton
+                source={LEAD_TYPE.file}
+                active={activeSource === LEAD_TYPE.file}
+                title={_ts('addLeads.sourceButtons', 'localDiskLabel')}
+                onClick={onSourceChange}
+            >
                 <FileInput
                     className={_cs(styles.addLeadBtn, styles.fileInput)}
                     onChange={handleLeadAddFromDisk}
@@ -204,15 +267,13 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </FileInput>
-            </div>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="globe"
-                    />
-                    {_ts('addLeads.sourceButtons', 'websiteLabel')}
-                </div>
+            </LeadButton>
+            <LeadButton
+                source={LEAD_TYPE.website}
+                active={activeSource === LEAD_TYPE.website}
+                title={_ts('addLeads.sourceButtons', 'websiteLabel')}
+                onClick={onSourceChange}
+            >
                 <Button
                     className={styles.addLeadBtn}
                     transparent
@@ -220,15 +281,13 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </Button>
-            </div>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="clipboard"
-                    />
-                    {_ts('addLeads.sourceButtons', 'textLabel')}
-                </div>
+            </LeadButton>
+            <LeadButton
+                source={LEAD_TYPE.text}
+                active={activeSource === LEAD_TYPE.text}
+                title={_ts('addLeads.sourceButtons', 'textLabel')}
+                onClick={onSourceChange}
+            >
                 <Button
                     className={styles.addLeadBtn}
                     transparent
@@ -236,15 +295,15 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </Button>
-            </div>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="googleDrive"
-                    />
-                    {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
-                </div>
+            </LeadButton>
+
+
+            <LeadButton
+                source={LEAD_TYPE.drive}
+                active={activeSource === LEAD_TYPE.drive}
+                title={_ts('addLeads.sourceButtons', 'googleDriveLabel')}
+                onClick={onSourceChange}
+            >
                 <GooglePicker
                     className={styles.addLeadBtn}
                     clientId={googleDriveClientId}
@@ -257,15 +316,14 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </GooglePicker>
-            </div>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="dropbox"
-                    />
-                    {_ts('addLeads.sourceButtons', 'dropboxLabel')}
-                </div>
+            </LeadButton>
+
+            <LeadButton
+                source={LEAD_TYPE.dropbox}
+                active={activeSource === LEAD_TYPE.dropbox}
+                title={_ts('addLeads.sourceButtons', 'dropboxLabel')}
+                onClick={onSourceChange}
+            >
                 <DropboxChooser
                     className={styles.addLeadBtn}
                     appKey={dropboxAppKey}
@@ -278,15 +336,14 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </DropboxChooser>
-            </div>
-            <div className={styles.item}>
-                <div className={styles.leftContainer}>
-                    <Icon
-                        className={styles.icon}
-                        name="link"
-                    />
-                    {_ts('addLeads.sourceButtons', 'connectorsLabel')}
-                </div>
+            </LeadButton>
+
+            <LeadButton
+                source={LEAD_TYPE.connectors}
+                active={activeSource === LEAD_TYPE.connectors}
+                title={_ts('addLeads.sourceButtons', 'connectorsLabel')}
+                onClick={onSourceChange}
+            >
                 <ModalButton
                     className={styles.addLeadBtn}
                     transparent
@@ -299,15 +356,17 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </ModalButton>
-            </div>
+            </LeadButton>
         </div>
     );
 }
 
 LeadButtons.propTypes = {
     onLeadsAdd: PropTypes.func.isRequired,
+    onSourceChange: PropTypes.func.isRequired,
     className: PropTypes.string,
     leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    activeSource: PropTypes.string.isRequired,
 };
 
 LeadButtons.defaultProps = {

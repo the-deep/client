@@ -1,3 +1,43 @@
+.lead-button {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    border: 0;
+    border-left: var(--width-separator-thick) solid transparent;
+    background-color: transparent;
+    cursor: pointer;
+    padding: var(--spacing-small);
+    color: var(--color-text);
+    user-select: none;
+
+    &.active {
+        border-left: var(--width-separator-thick) solid var(--color-accent);
+        background-color: var(--color-background-hover);
+    }
+
+    .icon {
+        flex-shrink: 0;
+        margin: 0 var(--spacing-small);
+        padding: 0;
+        width: var(--width-icon-large);
+        font-size: var(--font-size-large);
+    }
+
+    .title {
+        flex-grow: 1;
+        margin: 0;
+        padding: var(--spacing-small) 0;
+        text-align: left;
+        word-break: break-all;
+    }
+
+    .actions {
+        flex-shrink: 0;
+        margin: 0 var(--spacing-small);
+        padding: 0;
+    }
+}
+
 .add-lead-buttons {
     display: flex;
     flex-direction: column;
@@ -10,51 +50,5 @@
         padding: var(--spacing-medium) var(--spacing-large);
         // font-size: var(--font-size-small);
         // font-weight: var(--font-weight-medium);
-    }
-
-    .item {
-        display: flex;
-        align-items: center;
-        padding: var(--spacing-small);
-
-        .left-container {
-            flex-grow: 1;
-            padding: 0 var(--spacing-medium);
-
-            .icon {
-                padding-right: var(--spacing-small);
-            }
-        }
-
-        .add-lead-btn {
-            display: block;
-            flex-shrink: 0;
-            width: auto;
-            color: var(--color-text);
-            font-family: inherit;
-            font-size: inherit;
-
-            &:hover {
-                cursor: pointer;
-                color: var(--color-accent);
-            }
-
-            &:disabled {
-                cursor: pointer;
-                color: var(--color-text-disabled);
-            }
-        }
-
-        .file-input {
-            :global {
-                label {
-                    padding: var(--spacing-small) var(--spacing-small-alt);
-                }
-            }
-        }
-
-        &:hover {
-            background-color: var(--color-background-primary-hint);
-        }
     }
 }
