@@ -935,28 +935,27 @@ class LeadAdd extends React.PureComponent {
                                 {/* FIXME: translate this */}
                                 Add Leads
                             </h4>
-                            {hasActiveLead && (
-                                <LeadActions
-                                    className={styles.actions}
+                            <LeadActions
+                                className={styles.actions}
 
-                                    onLeadPreviewHiddenChange={setLeadPreviewHidden}
-                                    leadPreviewHidden={leadPreviewHidden}
+                                onLeadPreviewHiddenChange={setLeadPreviewHidden}
+                                leadPreviewHidden={leadPreviewHidden}
 
-                                    leadStates={leadStates}
-                                    activeLead={activeLead}
-                                    leads={leads}
-                                    completedLeads={completedLeads}
-                                    filteredLeads={filteredLeads}
+                                leadStates={leadStates}
+                                activeLead={activeLead}
+                                leads={leads}
+                                completedLeads={completedLeads}
+                                filteredLeads={filteredLeads}
 
-                                    submitAllPending={submitAllPending}
+                                submitAllPending={submitAllPending}
 
-                                    onLeadsSave={this.handleLeadsSave}
-                                    onLeadsRemove={this.handleLeadsToRemoveSet}
-                                    onLeadsExport={this.handleLeadsExport}
+                                onLeadsSave={this.handleLeadsSave}
+                                onLeadsRemove={this.handleLeadsToRemoveSet}
+                                onLeadsExport={this.handleLeadsExport}
 
-                                    filteredDisabled={isFilterEmpty}
-                                />
-                            )}
+                                filteredDisabled={isFilterEmpty}
+                                selectedDisabled={!hasActiveLead}
+                            />
                         </>
                     )}
                     mainContentClassName={styles.mainContent}

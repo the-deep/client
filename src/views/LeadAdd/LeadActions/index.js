@@ -48,6 +48,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     onLeadsExport: PropTypes.func.isRequired,
 
+    selectedDisabled: PropTypes.bool,
     filteredDisabled: PropTypes.bool,
 };
 
@@ -56,6 +57,7 @@ const defaultProps = {
     leadPreviewHidden: false,
     activeLead: undefined,
     submitAllPending: false,
+    selectedDisabled: false,
     filteredDisabled: false,
 };
 
@@ -195,6 +197,7 @@ export default class LeadActions extends React.PureComponent {
             leadStates,
 
             submitAllPending,
+            selectedDisabled,
             filteredDisabled,
 
             className,
@@ -233,14 +236,16 @@ export default class LeadActions extends React.PureComponent {
                     title={_ts('addLeads.actions', 'exportButtonTitle')}
                     closeOnClick
                 >
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleExportActiveClick}
-                        disabled={!exportEnabledForActive}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'exportCurrentButtonTitle')}
-                    </button>
+                    {!selectedDisabled &&
+                        <button
+                            className={styles.dropdownButton}
+                            onClick={this.handleExportActiveClick}
+                            disabled={!exportEnabledForActive}
+                            type="button"
+                        >
+                            {_ts('addLeads.actions', 'exportCurrentButtonTitle')}
+                        </button>
+                    }
                     {!filteredDisabled &&
                         <button
                             className={styles.dropdownButton}
@@ -266,14 +271,16 @@ export default class LeadActions extends React.PureComponent {
                     title={_ts('addLeads.actions', 'removeButtonTitle')}
                     closeOnClick
                 >
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleRemoveActiveClick}
-                        disabled={!removeEnabledForActive}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'removeCurrentButtonTitle')}
-                    </button>
+                    {!selectedDisabled &&
+                        <button
+                            className={styles.dropdownButton}
+                            onClick={this.handleRemoveActiveClick}
+                            disabled={!removeEnabledForActive}
+                            type="button"
+                        >
+                            {_ts('addLeads.actions', 'removeCurrentButtonTitle')}
+                        </button>
+                    }
                     {!filteredDisabled &&
                         <button
                             className={styles.dropdownButton}
@@ -307,14 +314,16 @@ export default class LeadActions extends React.PureComponent {
                     title={_ts('addLeads.actions', 'saveButtonTitle')}
                     closeOnClick
                 >
-                    <button
-                        className={styles.dropdownButton}
-                        onClick={this.handleSaveActiveClicked}
-                        disabled={!saveEnabledForActive}
-                        type="button"
-                    >
-                        {_ts('addLeads.actions', 'saveCurrentButtonTitle')}
-                    </button>
+                    {!selectedDisabled &&
+                        <button
+                            className={styles.dropdownButton}
+                            onClick={this.handleSaveActiveClicked}
+                            disabled={!saveEnabledForActive}
+                            type="button"
+                        >
+                            {_ts('addLeads.actions', 'saveCurrentButtonTitle')}
+                        </button>
+                    }
                     {!filteredDisabled &&
                         <button
                             className={styles.dropdownButton}

@@ -1,6 +1,10 @@
 import notify from '#notify';
 
-export const notifyOnFailure = (title: string) => (response: { error: object }) => {
+interface Response {
+    error: Record<string, unknown>;
+}
+
+export const notifyOnFailure = (title: string) => (response: Response) => {
     const { error } = response;
 
     const typedError = error as { messageForNotification: string } | undefined;

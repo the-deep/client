@@ -41,6 +41,8 @@ module.exports = {
         'no-unused-vars': [1, { 'vars': 'all', 'args': 'after-used', 'ignoreRestSiblings': false }],
         'no-console': 0,
 
+        'camelcase': 'warn',
+
         'react/jsx-indent': [2, 4],
         'react/jsx-indent-props': [2, 4],
         'react/jsx-filename-extension': ['error', {'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
@@ -73,11 +75,13 @@ module.exports = {
         '@typescript-eslint/no-empty-interface': 0,
         '@typescript-eslint/explicit-function-return-type': 0,
         '@typescript-eslint/camelcase': 0,
+        '@typescript-eslint/no-empty-function': 'warn',
 
         'react/no-unused-state': 'warn',
         'react/default-props-match-prop-types': ['warn', {
             'allowRequiredDefaults': true,
         }],
+        'react/require-default-props': 'warn',
 
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
