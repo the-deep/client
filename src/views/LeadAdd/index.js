@@ -8,7 +8,6 @@ import {
     doesObjectHaveNoData,
     formatDateToString,
     isDefined,
-    isNotDefined,
     listToMap,
     reverseRoute,
 } from '@togglecorp/fujs';
@@ -20,7 +19,6 @@ import Page from '#rscv/Page';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
-import { UploadBuilder } from '#rsu/upload';
 
 import LeadCopyModal from '#components/general/LeadCopyModal';
 import { pathNames } from '#constants';
@@ -59,12 +57,6 @@ import {
     leadAddSetActiveSourceAction,
 } from '#redux';
 import {
-    urlForUpload,
-    createParamsForFileUpload,
-    urlForGoogleDriveFileUpload,
-    createHeaderForGoogleDriveFileUpload,
-    urlForDropboxFileUpload,
-    createHeaderForDropboxUpload,
     createUrlForLeadEdit,
     urlForLead,
     createParamsForLeadEdit,
@@ -81,6 +73,8 @@ import LeadActions from './LeadActions';
 import LeadList from './LeadList';
 import LeadFilter from './LeadFilter';
 import LeadDetail from './LeadDetail';
+import LeadProcessor from './LeadProcessor';
+import ProcessingLeads from './ProcessingLeads';
 import schema from './LeadDetail/faramSchema';
 
 import {
@@ -159,7 +153,6 @@ const propTypes = {
     appendLeads: PropTypes.func.isRequired,
     removeLeads: PropTypes.func.isRequired,
     setLeadTabularBook: PropTypes.func.isRequired,
-    setLeadAttachment: PropTypes.func.isRequired,
     changeLead: PropTypes.func.isRequired,
     saveLead: PropTypes.func.isRequired,
     applyLeadsAllBelow: PropTypes.func.isRequired,
@@ -175,21 +168,18 @@ const defaultProps = {
     leadPreviewHidden: false,
 };
 
+const shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
+
 class LeadAdd extends React.PureComponent {
     static propTypes = propTypes;
 
     static defaultProps = defaultProps;
-
-    static shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
 
     constructor(props) {
         super(props);
 
         this.state = {
             leadSaveStatuses: {},
-            fileUploadStatuses: {},
-            driveUploadStatuses: {},
-            dropboxUploadStatuses: {},
 
             submitAllPending: false,
 
@@ -224,15 +214,6 @@ class LeadAdd extends React.PureComponent {
                 this.setState({ submitAllPending: false });
             })
             .build();
-        this.uploadCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
-            .build();
-        this.driveUploadCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
-            .build();
-        this.dropboxUploadCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
-            .build();
     }
 
     getDefaultProjectId = memoize((projects, projectId) => {
@@ -244,9 +225,6 @@ class LeadAdd extends React.PureComponent {
 
     getLeadStates = memoize((
         leads,
-        driveUploadStatuses,
-        dropboxUploadStatuses,
-        fileUploadStatuses,
         leadSaveStatuses,
     ) => (
         listToMap(
@@ -255,12 +233,7 @@ class LeadAdd extends React.PureComponent {
             (lead, key) => (
                 getLeadState(
                     lead,
-                    {
-                        fileUploadStatus: fileUploadStatuses[key],
-                        leadSaveStatus: leadSaveStatuses[key],
-                        driveUploadStatus: driveUploadStatuses[key],
-                        dropboxUploadStatus: dropboxUploadStatuses[key],
-                    },
+                    { leadSaveStatus: leadSaveStatuses[key] },
                 )
             ),
         )
@@ -286,33 +259,6 @@ class LeadAdd extends React.PureComponent {
         )
     ))
 
-    handleFileUploadProgressChange = (key, progress) => {
-        this.setState(state => ({
-            fileUploadStatuses: {
-                ...state.fileUploadStatuses,
-                [key]: { progress },
-            },
-        }));
-    };
-
-    handleDropboxUploadPendingChange = (key, pending) => {
-        this.setState(state => ({
-            dropboxUploadStatuses: {
-                ...state.dropboxUploadStatuses,
-                [key]: { pending },
-            },
-        }));
-    };
-
-    handleDriveUploadPendingChange = (key, pending) => {
-        this.setState(state => ({
-            driveUploadStatuses: {
-                ...state.driveUploadStatuses,
-                [key]: { pending },
-            },
-        }));
-    };
-
     handleLeadSavePendingChange = (key, pending) => {
         this.setState(state => ({
             leadSaveStatuses: {
@@ -329,9 +275,6 @@ class LeadAdd extends React.PureComponent {
             activeUser: {
                 userId,
             },
-
-            setLeadAttachment,
-            changeLead,
             appendLeads,
         } = this.props;
 
@@ -341,9 +284,6 @@ class LeadAdd extends React.PureComponent {
             const {
                 faramValues,
                 serverId,
-                file,
-                drive,
-                dropbox,
             } = leadInfo;
 
             const key = getNewLeadKey();
@@ -377,183 +317,10 @@ class LeadAdd extends React.PureComponent {
                 },
             };
 
-            // Only call request for new leads
-            if (isNotDefined(serverId)) {
-                const leadType = leadSourceTypeSelector(newLead);
-                if (leadType === LEAD_TYPE.file) {
-                    const request = new UploadBuilder()
-                        .file(file)
-                        .url(urlForUpload)
-                        .params(createParamsForFileUpload)
-                        .preLoad(() => {
-                            this.handleFileUploadProgressChange(key, 0);
-                        })
-                        .progress((progress) => {
-                            // NOTE: set progress to 100 only after attachment is received
-                            this.handleFileUploadProgressChange(key, Math.min(99, progress));
-                        })
-                        .success((response) => {
-                            const { id: attachment } = response;
-
-                            setLeadAttachment({
-                                leadKey: key,
-                                attachmentId: attachment,
-                            });
-                            this.handleFileUploadProgressChange(key, 100);
-                            this.uploadCoordinator.notifyComplete(key);
-                        })
-                        .failure((response) => {
-                            this.handleFileUploadProgressChange(key, undefined);
-                            changeLead({
-                                leadKey: key,
-                                faramErrors: {
-                                    $internal: [
-                                        `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                    ],
-                                },
-                            });
-                            this.uploadCoordinator.notifyComplete(key, true);
-                        })
-                        .fatal(() => {
-                            this.handleFileUploadProgressChange(key, undefined);
-                            changeLead({
-                                leadKey: key,
-                                faramErrors: {
-                                    $internal: [
-                                        `${_ts('addLeads', 'fileUploadFailText')}`,
-                                    ],
-                                },
-                            });
-                            this.uploadCoordinator.notifyComplete(key, true);
-                        })
-                        .build();
-
-                    // NOTE: set progress to 0 initially, as pre-load may not be
-                    // called until it's turn comes up in queue
-                    this.handleFileUploadProgressChange(key, 0);
-
-                    this.uploadCoordinator.add(key, request);
-                } else if (leadType === LEAD_TYPE.drive) {
-                    const { title, accessToken, fileId, mimeType } = drive;
-                    const request = new FgRestBuilder()
-                        .url(urlForGoogleDriveFileUpload)
-                        .params(() => createHeaderForGoogleDriveFileUpload({
-                            title, accessToken, fileId, mimeType,
-                        }))
-                        .delay(0)
-                        .preLoad(() => {
-                            this.handleDriveUploadPendingChange(key, true);
-                        })
-                        .success((response) => {
-                            const { id: attachment } = response;
-
-                            setLeadAttachment({
-                                leadKey: key,
-                                attachmentId: attachment,
-                            });
-                            this.handleDriveUploadPendingChange(key, undefined);
-                            this.driveUploadCoordinator.notifyComplete(key);
-                        })
-                        .failure((response) => {
-                            this.handleDriveUploadPendingChange(key, undefined);
-
-                            changeLead({
-                                leadKey: key,
-                                faramErrors: {
-                                    $internal: [
-                                        `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                    ],
-                                },
-                            });
-
-                            this.driveUploadCoordinator.notifyComplete(key, true);
-                        })
-                        .fatal(() => {
-                            this.handleDriveUploadPendingChange(key, undefined);
-
-                            changeLead({
-                                leadKey: key,
-                                faramErrors: {
-                                    $internal: [
-                                        `${_ts('addLeads', 'fileUploadFailText')}`,
-                                    ],
-                                },
-                            });
-
-                            this.driveUploadCoordinator.notifyComplete(key, true);
-                        })
-                        .build();
-
-                    // NOTE: set pending to true initially, as pre-load may not be
-                    // called until it's turn comes up in queue
-                    this.handleDriveUploadPendingChange(key, true);
-
-                    this.driveUploadCoordinator.add(key, request);
-                } else if (leadType === LEAD_TYPE.dropbox) {
-                    const { title, fileUrl } = dropbox;
-                    const request = new FgRestBuilder()
-                        .url(urlForDropboxFileUpload)
-                        .params(createHeaderForDropboxUpload({ title, fileUrl }))
-                        .delay(0)
-                        .preLoad(() => {
-                            this.handleDropboxUploadPendingChange(key, true);
-                        })
-                        .success((response) => {
-                            const { id: attachment } = response;
-
-                            setLeadAttachment({
-                                leadKey: key,
-                                attachmentId: attachment,
-                            });
-                            this.handleDropboxUploadPendingChange(key, undefined);
-                            this.dropboxUploadCoordinator.notifyComplete(key);
-                        })
-                        .failure((response) => {
-                            this.handleDropboxUploadPendingChange(key, undefined);
-
-                            changeLead({
-                                leadKey: key,
-                                faramErrors: {
-                                    $internal: [
-                                        `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                    ],
-                                },
-                            });
-
-                            this.dropboxUploadCoordinator.notifyComplete(key, true);
-                        })
-                        .fatal(() => {
-                            this.handleDropboxUploadPendingChange(key, undefined);
-
-                            changeLead({
-                                leadKey: key,
-                                faramErrors: {
-                                    $internal: [
-                                        `${_ts('addLeads', 'fileUploadFailText')}`,
-                                    ],
-                                },
-                            });
-
-                            this.dropboxUploadCoordinator.notifyComplete(key, true);
-                        })
-                        .build();
-
-                    // NOTE: set pending to true initially, as pre-load may not be
-                    // called until it's turn comes up in queue
-                    this.handleDropboxUploadPendingChange(key, true);
-
-                    this.dropboxUploadCoordinator.add(key, request);
-                }
-            }
-
             return newLead;
         });
 
-
         appendLeads(newLeads);
-        this.uploadCoordinator.start();
-        this.driveUploadCoordinator.start();
-        this.dropboxUploadCoordinator.start();
     }
 
     handleLeadSave = (key) => {
@@ -762,9 +529,6 @@ class LeadAdd extends React.PureComponent {
 
         const {
             leadSaveStatuses,
-            fileUploadStatuses,
-            driveUploadStatuses,
-            dropboxUploadStatuses,
 
             submitAllPending,
 
@@ -775,9 +539,6 @@ class LeadAdd extends React.PureComponent {
 
         const leadStates = this.getLeadStates(
             leads,
-            driveUploadStatuses,
-            dropboxUploadStatuses,
-            fileUploadStatuses,
             leadSaveStatuses,
         );
 
@@ -812,15 +573,19 @@ class LeadAdd extends React.PureComponent {
         const mainComponent = (
             <React.Fragment>
                 <Cloak
-                    hide={LeadAdd.shouldHideButtons}
+                    hide={shouldHideButtons}
                     render={(
-                        <div className={styles.sources}>
+                        <div className={styles.leftPane}>
                             <LeadButtons
                                 className={styles.leadButtons}
-                                onLeadsAdd={this.handleLeadsAdd}
                                 onSourceChange={setActiveSource}
+                                onLeadsAdd={this.handleLeadsAdd}
                                 leads={leads}
                                 activeSource={activeSource}
+                            />
+                            <ProcessingLeads
+                                className={styles.processingLeadsBox}
+                                onLeadsAdd={this.handleLeadsAdd}
                             />
                         </div>
                     )}
@@ -839,7 +604,6 @@ class LeadAdd extends React.PureComponent {
                             leads={filteredLeads}
                             activeLeadKey={activeLeadKey}
 
-                            onLeadsAdd={this.handleLeadsAdd}
                             onLeadSelect={setActiveLeadKey}
                             onLeadRemove={this.handleLeadToRemoveSet}
                             onLeadExport={this.handleLeadExport}
@@ -855,7 +619,6 @@ class LeadAdd extends React.PureComponent {
                             leadNextDisabled={isLeadNextDisabled(leads, activeLeadKey)}
 
                             leadStates={leadStates}
-                            fileUploadStatuses={fileUploadStatuses}
                         />
                     </div>
                     {hasActiveLead ? (
@@ -907,7 +670,7 @@ class LeadAdd extends React.PureComponent {
         );
 
         return (
-            <React.Fragment>
+            <LeadProcessor>
                 <Prompt
                     message={
                         (location) => {
@@ -980,7 +743,7 @@ class LeadAdd extends React.PureComponent {
                         </p>
                     </Confirm>
                 )}
-            </React.Fragment>
+            </LeadProcessor>
         );
     }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 import { _cs } from '@togglecorp/fujs';
@@ -15,6 +15,7 @@ import {
     supportedFileTypes,
 } from '../utils';
 
+import { LeadProcessorContext } from '../LeadProcessor';
 import LeadListItem from './LeadListItem';
 import styles from './styles.scss';
 
@@ -27,7 +28,6 @@ const propTypes = {
     onLeadRemove: PropTypes.func.isRequired,
     onLeadExport: PropTypes.func.isRequired,
     onLeadSave: PropTypes.func.isRequired,
-    onLeadsAdd: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     leadStates: PropTypes.object.isRequired,
@@ -52,8 +52,9 @@ function DroppableDiv(p) {
     const {
         className,
         children,
-        onLeadsAdd,
     } = p;
+
+    const { addProcessingLeads } = useContext(LeadProcessorContext);
 
     const {
         acceptedFiles,
@@ -71,8 +72,10 @@ function DroppableDiv(p) {
             };
             return lead;
         });
-        onLeadsAdd(leads);
-    }, [acceptedFiles, onLeadsAdd]);
+        if (leads.length > 0) {
+            addProcessingLeads(leads);
+        }
+    }, [acceptedFiles, addProcessingLeads]);
 
     return (
         <div {...getRootProps({ className })}>
@@ -106,7 +109,6 @@ class LeadList extends React.PureComponent {
             onLeadSave,
 
             leadState: leadStates[key],
-            progress: fileUploadStatuses[key] ? fileUploadStatuses[key].progress : undefined,
         };
     }
 
@@ -124,7 +126,6 @@ class LeadList extends React.PureComponent {
         return (
             <DroppableDiv
                 className={_cs(styles.leadListContainer, className)}
-                onLeadsAdd={onLeadsAdd}
             >
                 <div className={styles.movementButtons}>
                     <div className={styles.stats}>

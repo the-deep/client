@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-    isNotDefined,
     isDefined,
 } from '@togglecorp/fujs';
 
@@ -28,37 +27,6 @@ import {
 } from '../../utils';
 
 import styles from './styles.scss';
-
-
-// FIXME: this will move outside LeadListItem
-const UploadProgress = ({ leadState, progress }) => {
-    const completed = leadState !== LEAD_STATUS.uploading;
-    const hide = completed || isNotDefined(progress);
-
-    const className = _cs(
-        styles.progressBar,
-        hide && styles.hide,
-        completed && styles.completed,
-    );
-
-    const style = { width: `${progress || 0}%` };
-
-    return (
-        <span className={className}>
-            <span
-                className={styles.progress}
-                style={style}
-            />
-        </span>
-    );
-};
-UploadProgress.propTypes = {
-    leadState: PropTypes.string.isRequired,
-    progress: PropTypes.number,
-};
-UploadProgress.defaultProps = {
-    progress: undefined,
-};
 
 // FIXME: it doesn't make much sense to include the icon anymore
 const leadTypeToIconClassMap = {
@@ -201,10 +169,6 @@ export default class LeadListItem extends React.PureComponent {
                     <Icon
                         className={stateIconClassName}
                         name={iconMap[leadState]}
-                    />
-                    <UploadProgress
-                        leadState={leadState}
-                        progress={progress}
                     />
                 </button>
                 <div className={styles.buttonContainer}>
