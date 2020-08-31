@@ -292,9 +292,11 @@ const usageMapSelector = () => {
     try {
         /* eslint-disable global-require */
         /* eslint-disable import/no-unresolved */
+        /* eslint-disable @typescript-eslint/no-var-requires */
         return require('../../../generated/usage').default;
         /* eslint-enable global-require */
         /* eslint-enable import/no-unresolved */
+        /* eslint-enable @typescript-eslint/no-var-requires */
     } catch (ex) {
         console.warn(ex);
         return {};
