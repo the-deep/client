@@ -1,7 +1,11 @@
 import { createSelector } from 'reselect';
 import { isDefined } from '@togglecorp/fujs';
 
-import { leadKeySelector } from '#views/LeadAdd/utils';
+import {
+    leadKeySelector,
+    leadSourceTypeSelector,
+    LEAD_TYPE,
+} from '#views/LeadAdd/utils';
 
 import { projectIdFromRoute } from '../domainData';
 
@@ -17,7 +21,8 @@ const leadAddPageForProjectSelector = createSelector(
         leadPage[activeProject] ?? emptyObject
     ),
 );
-export const leadAddPageLeadsSelector = createSelector(
+
+export const leadAddPageRawLeadsSelector = createSelector(
     leadAddPageForProjectSelector,
     leadAddPage => leadAddPage?.leads ?? emptyArray,
 );
@@ -37,12 +42,27 @@ export const leadAddPageActiveLeadKeySelector = createSelector(
     leadAddPage => leadAddPage?.activeLeadKey,
 );
 
+export const leadAddPageActiveSourceSelector = createSelector(
+    leadAddPageForProjectSelector,
+    leadAddPage => leadAddPage?.activeSource ?? LEAD_TYPE.text,
+);
+
+export const leadAddPageLeadsSelector = createSelector(
+    leadAddPageRawLeadsSelector,
+    leadAddPageActiveSourceSelector,
+    (leads, activeSource) => leads.filter(lead => leadSourceTypeSelector(lead) === activeSource),
+);
+
 export const leadAddPageActiveLeadSelector = createSelector(
-    leadAddPageLeadsSelector,
+    leadAddPageRawLeadsSelector,
     leadAddPageActiveLeadKeySelector,
-    (leads, activeLeadKey) => (
+    leadAddPageActiveSourceSelector,
+    (leads, activeLeadKey, activeSource) => (
         isDefined(activeLeadKey)
-            ? leads.find(lead => leadKeySelector(lead) === activeLeadKey)
+            ? leads.find(lead => (
+                leadKeySelector(lead) === activeLeadKey
+                && leadSourceTypeSelector(lead) === activeSource
+            ))
             : undefined
     ),
 );
