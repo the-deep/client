@@ -35,6 +35,9 @@ module.exports = {
         ['@babel/plugin-proposal-class-properties', { 'loose': false }],
         '@babel/plugin-proposal-json-strings',
 
+        '@babel/plugin-proposal-optional-chaining',
+        '@babel/plugin-proposal-nullish-coalescing-operator',
+
         [
             'module-resolver',
             {
