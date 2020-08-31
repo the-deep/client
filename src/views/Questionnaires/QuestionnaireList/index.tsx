@@ -73,7 +73,7 @@ interface Params {
     donotReloadList?: boolean;
     questionnaireId?: number;
     setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
-    body?: object;
+    body?: Record<string, unknown>;
     questions?: BaseQuestionElementWithoutId[];
 
     onExportReady?: (title: string, questions: QuestionnaireQuestionElement[]) => void;
