@@ -168,7 +168,6 @@ function LeadEditModal(props: Props) {
                     lead={lead}
                     disableLeadUrlChange
                     bulkActionDisabled
-                    hideProjects
                 />
             </ModalBody>
             <ModalFooter>
