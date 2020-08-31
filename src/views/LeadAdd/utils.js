@@ -48,7 +48,7 @@ export const LEAD_STATUS = {
 
 export const getLeadState = (
     lead,
-    { leadSaveStatus, fileUploadStatus, driveUploadStatus, dropboxUploadStatus },
+    { leadSaveStatus },
 ) => {
     const serverId = leadIdSelector(lead);
     const type = leadSourceTypeSelector(lead);
@@ -57,18 +57,9 @@ export const getLeadState = (
     const { attachment } = faramValues;
     const { pristine, error, serverError } = leadFaramInfoSelector(lead);
 
-    const isFileUploading = fileUploadStatus && fileUploadStatus.progress < 100;
-    const isDriveUploading = driveUploadStatus && driveUploadStatus.pending;
-    const isDropboxUploading = dropboxUploadStatus && dropboxUploadStatus.pending;
     const noAttachment = !attachment;
 
     if (
-        (type === LEAD_TYPE.file && isFileUploading) ||
-        (type === LEAD_TYPE.drive && isDriveUploading) ||
-        (type === LEAD_TYPE.dropbox && isDropboxUploading)
-    ) {
-        return LEAD_STATUS.uploading;
-    } else if (
         noAttachment && (
             type === LEAD_TYPE.file ||
             type === LEAD_TYPE.drive ||

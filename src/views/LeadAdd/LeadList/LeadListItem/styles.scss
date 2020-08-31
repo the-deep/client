@@ -68,31 +68,6 @@
         .pristine {
             color: var(--color-text-label);
         }
-
-        .progress-bar {
-            display: block;
-            flex-basis: 100%;
-            transition: 1s opacity ease-in-out;
-            opacity: 1;
-            background-color: var(--color-background);
-            width: 100%;
-            height: var(--height-progress-bar);
-
-            .progress {
-                display: block;
-                transition: .6s width ease-in-out;
-                background-color: var(--color-accent);
-                height: 100%;
-            }
-
-            &.completed {
-                opacity: 0;
-            }
-
-            &.hide {
-                opacity: 0;
-            }
-        }
     }
 
     .button-container {

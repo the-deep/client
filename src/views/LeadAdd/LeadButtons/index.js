@@ -1,5 +1,5 @@
+import React, { useState, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
-import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -28,6 +28,7 @@ import {
     supportedFileTypes,
     getFaramValuesFromLeadCandidate,
 } from '../utils';
+import { LeadProcessorContext } from '../LeadProcessor';
 
 import ConnectorSelectModal from './ConnectorSelectModal';
 
@@ -101,10 +102,10 @@ LeadButton.defaultProps = {
 function LeadButtons(props) {
     const {
         leads,
-        onLeadsAdd,
         onSourceChange,
         className,
         activeSource,
+        onLeadsAdd,
     } = props;
 
     // NOTE: dropbox button must be manually disabled and enabled unlike
@@ -112,6 +113,10 @@ function LeadButtons(props) {
     const [dropboxDisabled, setDropboxDisabled] = useState(false);
     // NOTE: google drive access token is received at start
     const [googleDriveAccessToken, setGoogleDriveAccessToken] = useState(false);
+
+    const {
+        addProcessingLeads,
+    } = useContext(LeadProcessorContext);
 
     const handleGoogleDriveOnAuthenticated = useCallback((accessToken) => {
         if (accessToken) {
@@ -184,8 +189,8 @@ function LeadButtons(props) {
             };
             return lead;
         });
-        onLeadsAdd(newLeads);
-    }, [onLeadsAdd]);
+        addProcessingLeads(newLeads);
+    }, [addProcessingLeads]);
 
     const handleLeadAddFromGoogleDrive = useCallback((response) => {
         const {
@@ -210,8 +215,8 @@ function LeadButtons(props) {
                 mimeType: doc.mimeType,
             },
         }));
-        onLeadsAdd(newLeads);
-    }, [onLeadsAdd, googleDriveAccessToken]);
+        addProcessingLeads(newLeads);
+    }, [addProcessingLeads, googleDriveAccessToken]);
 
     const handleLeadAddFromDropbox = useCallback((response) => {
         if (response.length <= 0) {
@@ -230,9 +235,9 @@ function LeadButtons(props) {
             },
         }));
 
-        onLeadsAdd(newLeads);
+        addProcessingLeads(newLeads);
         handleDropboxChooserClose();
-    }, [onLeadsAdd, handleDropboxChooserClose]);
+    }, [addProcessingLeads, handleDropboxChooserClose]);
 
     const handleLeadAddFromConnectors = useCallback((selectedLeads) => {
         if (selectedLeads.length <= 0) {
@@ -244,8 +249,8 @@ function LeadButtons(props) {
             faramValues: getFaramValuesFromLeadCandidate(lead),
         }));
 
-        onLeadsAdd(newLeads);
-    }, [onLeadsAdd]);
+        addProcessingLeads(newLeads);
+    }, [addProcessingLeads]);
 
     return (
         <div className={_cs(styles.addLeadButtons, className)}>
@@ -362,7 +367,6 @@ function LeadButtons(props) {
 }
 
 LeadButtons.propTypes = {
-    onLeadsAdd: PropTypes.func.isRequired,
     onSourceChange: PropTypes.func.isRequired,
     className: PropTypes.string,
     leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types

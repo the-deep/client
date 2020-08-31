@@ -21,14 +21,19 @@
         display: flex;
         overflow: auto;
 
-        .sources {
+        .left-pane {
             display: flex;
+            flex-direction: column;
             flex-shrink: 0;
             border-right: var(--width-separator-thin) solid var(--color-separator);
             width: 15%;
 
             .lead-buttons {
                 flex-grow: 1;
+            }
+
+            .processing-leads-box {
+                flex-shrink: 0;
             }
         }
 

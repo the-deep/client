@@ -1,0 +1,17 @@
+.processing-leads {
+    border: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-large);
+
+    .header {
+        display: flex;
+        align-items: center;
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .expand-button {
+            flex-shrink: 0;
+        }
+    }
+}
