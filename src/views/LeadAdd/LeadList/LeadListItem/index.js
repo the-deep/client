@@ -30,6 +30,7 @@ import {
 import styles from './styles.scss';
 
 
+// FIXME: this will move outside LeadListItem
 const UploadProgress = ({ leadState, progress }) => {
     const completed = leadState !== LEAD_STATUS.uploading;
     const hide = completed || isNotDefined(progress);
@@ -59,12 +60,14 @@ UploadProgress.defaultProps = {
     progress: undefined,
 };
 
+// FIXME: it doesn't make much sense to include the icon anymore
 const leadTypeToIconClassMap = {
     [LEAD_TYPE.drive]: 'googleDrive',
     [LEAD_TYPE.dropbox]: 'dropbox',
     [LEAD_TYPE.file]: 'upload',
     [LEAD_TYPE.website]: 'globe',
     [LEAD_TYPE.text]: 'clipboard',
+    [LEAD_TYPE.connectors]: 'link',
 };
 
 const styleMap = {

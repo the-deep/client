@@ -16,6 +16,8 @@ import {
     leadKeySelector,
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
+    leadSourceTypeSelector,
+    LEAD_TYPE,
 } from '#views/LeadAdd/utils';
 import schema from '#views/LeadAdd/LeadDetail/faramSchema';
 
@@ -23,6 +25,8 @@ export const LA__SET_LEAD_PREVIEW_HIDDEN = 'siloDomainData/LA__SET_LEAD_PREVIEW_
 export const LA__SET_LEAD_FILTERS = 'siloDomainData/LA__SET_LEAD_FILTERS';
 export const LA__CLEAR_LEAD_FILTERS = 'siloDomainData/LA__CLEAR_LEAD_FILTERS';
 export const LA__SET_ACTIVE_LEAD_KEY = 'siloDomainData/LA__SET_ACTIVE_LEAD_KEY';
+export const LA__SET_ACTIVE_SOURCE = 'siloDomainData/LA__SET_ACTIVE_SOURCE';
+
 export const LA__NEXT_LEAD = 'siloDomainData/LA__NEXT_LEAD';
 export const LA__PREV_LEAD = 'siloDomainData/LA__PREV_LEAD';
 export const LA__APPEND_LEADS = 'siloDomainData/LA__APPEND_LEADS';
@@ -46,6 +50,11 @@ export const leadAddSetLeadFiltersAction = filters => ({
 
 export const leadAddClearLeadFiltersAction = () => ({
     type: LA__CLEAR_LEAD_FILTERS,
+});
+
+export const leadAddSetActiveSourceAction = source => ({
+    type: LA__SET_ACTIVE_SOURCE,
+    source,
 });
 
 export const leadAddSetActiveLeadKeyAction = leadKey => ({
@@ -199,17 +208,44 @@ const setActiveLeadKey = (state, action) => {
     return newState;
 };
 
+const setActiveSource = (state, action) => {
+    const { source } = action;
+    const { activeProject } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.leadAddPage) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage = {};
+        }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
+        // eslint-disable-next-line no-param-reassign
+        safeState.leadAddPage[activeProject].activeSource = source;
+    });
+    return newState;
+};
+
 const nextLead = (state) => {
     const { activeProject } = state;
     const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
     const activeLeadKey = state.leadAddPage?.[activeProject]?.activeLeadKey;
+    const activeSource = state.leadAddPage?.[activeProject]?.activeSource ?? LEAD_TYPE.text;
 
     const index = findLeadIndex(leads, activeLeadKey);
     if (index === -1 || index === leads.length - 1) {
         return state;
     }
 
-    const newLead = leads[index + 1];
+    const newLead = leads.find((item, i) => (
+        i > index
+        && activeSource === leadSourceTypeSelector(item)
+    ));
+    if (!newLead) {
+        return state;
+    }
+
     const newLeadKey = leadKeySelector(newLead);
 
     const newState = produce(state, (safeState) => {
@@ -231,13 +267,21 @@ const prevLead = (state) => {
     const { activeProject } = state;
     const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
     const activeLeadKey = state.leadAddPage?.[activeProject]?.activeLeadKey;
+    const activeSource = state.leadAddPage?.[activeProject]?.activeSource ?? LEAD_TYPE.text;
 
     const index = findLeadIndex(leads, activeLeadKey);
     if (index === -1 || index === 0) {
         return state;
     }
 
-    const newLead = leads[index - 1];
+    const newLead = [...leads].reverse().find((item, i) => (
+        i > (leads.length - 1 - index)
+        && activeSource === leadSourceTypeSelector(item)
+    ));
+    if (!newLead) {
+        return state;
+    }
+
     const newLeadKey = leadKeySelector(newLead);
 
     const newState = produce(state, (safeState) => {
@@ -308,6 +352,7 @@ const removeLeads = (state, action) => {
     const { activeProject } = state;
     const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
     const activeLeadKey = state.leadAddPage?.[activeProject]?.activeLeadKey;
+    const activeSource = state.leadAddPage?.[activeProject]?.activeSource ?? LEAD_TYPE.text;
 
     const { leadKeys } = action;
 
@@ -317,11 +362,7 @@ const removeLeads = (state, action) => {
         () => true,
     );
 
-    const mappedLeads = leads.map(
-        lead => (leadKeysMapping[leadKeySelector(lead)] ? undefined : lead),
-    );
-
-    const filteredLeads = mappedLeads.filter(isDefined);
+    const filteredLeads = leads.filter(lead => !leadKeysMapping[leadKeySelector(lead)]);
 
     const shouldUpdateActiveLeadKey = (
         isNotDefined(activeLeadKey)
@@ -341,6 +382,14 @@ const removeLeads = (state, action) => {
         safeState.leadAddPage[activeProject].leads = filteredLeads;
 
         if (shouldUpdateActiveLeadKey) {
+            const mappedLeads = leads.map((lead) => {
+                const key = leadKeySelector(lead);
+                const sourceType = leadSourceTypeSelector(lead);
+                return (leadKeysMapping[key] && sourceType === activeSource)
+                    ? undefined
+                    : lead;
+            });
+
             const leadIndex = leads.findIndex(
                 lead => leadKeySelector(lead) === activeLeadKey,
             );
@@ -606,6 +655,7 @@ const reducers = {
     [LA__SET_LEAD_FILTERS]: setLeadFilters,
     [LA__CLEAR_LEAD_FILTERS]: clearLeadFilters,
     [LA__SET_ACTIVE_LEAD_KEY]: setActiveLeadKey,
+    [LA__SET_ACTIVE_SOURCE]: setActiveSource,
     [LA__NEXT_LEAD]: nextLead,
     [LA__PREV_LEAD]: prevLead,
     [LA__APPEND_LEADS]: appendLeads,

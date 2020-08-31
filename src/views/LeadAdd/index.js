@@ -40,6 +40,7 @@ import {
     leadAddPageActiveLeadSelector,
     leadAddPageLeadFiltersSelector,
     leadAddPageLeadPreviewHiddenSelector,
+    leadAddPageActiveSourceSelector,
 
     leadAddSetLeadPreviewHiddenAction,
     leadAddSetLeadFiltersAction,
@@ -55,6 +56,7 @@ import {
     leadAddSaveLeadAction,
     leadAddApplyLeadsAllBelowAction,
     leadAddApplyLeadsAllAction,
+    leadAddSetActiveSourceAction,
 } from '#redux';
 import {
     urlForUpload,
@@ -104,6 +106,7 @@ const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
 
     leads: leadAddPageLeadsSelector(state),
+    activeSource: leadAddPageActiveSourceSelector(state),
     activeLeadKey: leadAddPageActiveLeadKeySelector(state),
     activeLead: leadAddPageActiveLeadSelector(state),
     leadFilters: leadAddPageLeadFiltersSelector(state),
@@ -111,6 +114,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    setActiveSource: params => dispatch(leadAddSetActiveSourceAction(params)),
     setLeadPreviewHidden: params => dispatch(leadAddSetLeadPreviewHiddenAction(params)),
     setLeadFilters: params => dispatch(leadAddSetLeadFiltersAction(params)),
     clearLeadFilters: params => dispatch(leadAddClearLeadFiltersAction(params)),
@@ -137,6 +141,7 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     leads: PropTypes.array,
+    activeSource: PropTypes.string.isRequired,
     activeLeadKey: PropTypes.string,
     // eslint-disable-next-line react/forbid-prop-types
     activeLead: PropTypes.object,
@@ -144,6 +149,7 @@ const propTypes = {
     leadFilters: PropTypes.object.isRequired,
     leadPreviewHidden: PropTypes.bool,
 
+    setActiveSource: PropTypes.func.isRequired,
     setLeadPreviewHidden: PropTypes.func.isRequired,
     setLeadFilters: PropTypes.func.isRequired,
     clearLeadFilters: PropTypes.func.isRequired,
@@ -737,6 +743,7 @@ class LeadAdd extends React.PureComponent {
             projectId,
             projects,
             activeLeadKey,
+            activeSource,
             leadFilters,
             leadPreviewHidden,
             leads,
@@ -750,6 +757,7 @@ class LeadAdd extends React.PureComponent {
             setActiveLeadKey,
             changeLead,
             setLeadTabularBook,
+            setActiveSource,
         } = this.props;
 
         const {
@@ -810,7 +818,9 @@ class LeadAdd extends React.PureComponent {
                             <LeadButtons
                                 className={styles.leadButtons}
                                 onLeadsAdd={this.handleLeadsAdd}
+                                onSourceChange={setActiveSource}
                                 leads={leads}
+                                activeSource={activeSource}
                             />
                         </div>
                     )}
