@@ -37,6 +37,7 @@ export const allLinks = {
                 'workshop',
                 'leadGroups',
                 'leads',
+                'addLeads',
                 'leadsViz',
                 'clusterViz',
                 'entries',

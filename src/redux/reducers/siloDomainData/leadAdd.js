@@ -127,62 +127,82 @@ function findLeadIndex(leads, activeLeadKey) {
 
 const setLeadPreviewHidden = (state, action) => {
     const { value } = action;
+    const { activeProject } = state;
+
     const newState = produce(state, (safeState) => {
         if (!safeState.leadAddPage) {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leadPreviewHidden = value;
+        safeState.leadAddPage[activeProject].leadPreviewHidden = value;
     });
     return newState;
 };
 
 const setLeadFilters = (state, action) => {
     const { filters } = action;
+    const { activeProject } = state;
+
     const newState = produce(state, (safeState) => {
         if (!safeState.leadAddPage) {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leadFilters = filters;
+        safeState.leadAddPage[activeProject].leadFilters = filters;
     });
     return newState;
 };
 
 const clearLeadFilters = (state) => {
+    const { activeProject } = state;
     const newState = produce(state, (safeState) => {
         if (!safeState.leadAddPage) {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leadFilters = {};
+        safeState.leadAddPage[activeProject].leadFilters = {};
     });
     return newState;
 };
 
 const setActiveLeadKey = (state, action) => {
     const { leadKey } = action;
+    const { activeProject } = state;
+
     const newState = produce(state, (safeState) => {
         if (!safeState.leadAddPage) {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.activeLeadKey = leadKey;
+        safeState.leadAddPage[activeProject].activeLeadKey = leadKey;
     });
     return newState;
 };
 
 const nextLead = (state) => {
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-            activeLeadKey,
-        } = {},
-    } = state;
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+    const activeLeadKey = state.leadAddPage?.[activeProject]?.activeLeadKey;
 
     const index = findLeadIndex(leads, activeLeadKey);
     if (index === -1 || index === leads.length - 1) {
@@ -197,19 +217,20 @@ const nextLead = (state) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.activeLeadKey = newLeadKey;
+        safeState.leadAddPage[activeProject].activeLeadKey = newLeadKey;
     });
     return newState;
 };
 
 const prevLead = (state) => {
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-            activeLeadKey,
-        } = {},
-    } = state;
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+    const activeLeadKey = state.leadAddPage?.[activeProject]?.activeLeadKey;
 
     const index = findLeadIndex(leads, activeLeadKey);
     if (index === -1 || index === 0) {
@@ -224,18 +245,20 @@ const prevLead = (state) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.activeLeadKey = newLeadKey;
+        safeState.leadAddPage[activeProject].activeLeadKey = newLeadKey;
     });
     return newState;
 };
 
 const appendLeads = (state, action) => {
-    const {
-        leadAddPage: {
-            leads: oldLeads = emptyArray,
-        } = {},
-    } = state;
+    const { activeProject } = state;
+    const oldLeads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+
     const { leads } = action;
 
     const serverIdMapping = listToMap(
@@ -262,15 +285,19 @@ const appendLeads = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
-        if (!safeState.leadAddPage.leads) {
+        if (!safeState.leadAddPage[activeProject]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads = [];
+            safeState.leadAddPage[activeProject] = {};
+        }
+        if (!safeState.leadAddPage[activeProject].leads) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject].leads = [];
         }
 
-        safeState.leadAddPage.leads.unshift(...filteredLeads);
+        safeState.leadAddPage[activeProject].leads.unshift(...filteredLeads);
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.activeLeadKey = leadKeySelector(
+        safeState.leadAddPage[activeProject].activeLeadKey = leadKeySelector(
             filteredLeads[filteredLeads.length - 1],
         );
     });
@@ -278,12 +305,10 @@ const appendLeads = (state, action) => {
 };
 
 const removeLeads = (state, action) => {
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-            activeLeadKey,
-        } = {},
-    } = state;
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+    const activeLeadKey = state.leadAddPage?.[activeProject]?.activeLeadKey;
+
     const { leadKeys } = action;
 
     const leadKeysMapping = listToMap(
@@ -308,8 +333,12 @@ const removeLeads = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
+        if (!safeState.leadAddPage[activeProject]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject] = {};
+        }
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads = filteredLeads;
+        safeState.leadAddPage[activeProject].leads = filteredLeads;
 
         if (shouldUpdateActiveLeadKey) {
             const leadIndex = leads.findIndex(
@@ -317,7 +346,7 @@ const removeLeads = (state, action) => {
             );
             const newActiveLead = getDefinedElementAround(mappedLeads, leadIndex);
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.activeLeadKey = newActiveLead
+            safeState.leadAddPage[activeProject].activeLeadKey = newActiveLead
                 ? leadKeySelector(newActiveLead)
                 : undefined;
         }
@@ -326,15 +355,13 @@ const removeLeads = (state, action) => {
 };
 
 const setLeadTabularBook = (state, action) => {
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+
     const {
         leadKey,
         tabularBook,
     } = action;
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-        } = {},
-    } = state;
     const index = findLeadIndex(leads, leadKey);
     if (index === -1) {
         console.error(`Lead with key ${leadKey} not found.`);
@@ -346,28 +373,31 @@ const setLeadTabularBook = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
-        if (!safeState.leadAddPage.leads) {
+        if (!safeState.leadAddPage[activeProject]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads = [];
+            safeState.leadAddPage[activeProject] = {};
+        }
+        if (!safeState.leadAddPage[activeProject].leads) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject].leads = [];
         }
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramValues.tabularBook = tabularBook;
+        safeState.leadAddPage[activeProject].leads[index].faramValues.tabularBook = tabularBook;
     });
 
     return newState;
 };
 
 const setLeadAttachment = (state, action) => {
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+
     const {
         leadKey,
         attachmentId,
     } = action;
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-        } = {},
-    } = state;
+
     const index = findLeadIndex(leads, leadKey);
     if (index === -1) {
         console.error(`Lead with key ${leadKey} not found.`);
@@ -379,13 +409,17 @@ const setLeadAttachment = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
-        if (!safeState.leadAddPage.leads) {
+        if (!safeState.leadAddPage[activeProject]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads = [];
+            safeState.leadAddPage[activeProject] = {};
+        }
+        if (!safeState.leadAddPage[activeProject].leads) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject].leads = [];
         }
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramValues.attachment = {
+        safeState.leadAddPage[activeProject].leads[index].faramValues.attachment = {
             id: attachmentId,
         };
     });
@@ -394,16 +428,14 @@ const setLeadAttachment = (state, action) => {
 };
 
 const changeLead = (state, action) => {
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+
     const {
         leadKey,
         faramValues,
         faramErrors,
     } = action;
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-        } = {},
-    } = state;
 
     const index = findLeadIndex(leads, leadKey);
     if (index === -1) {
@@ -416,37 +448,39 @@ const changeLead = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
-        if (!safeState.leadAddPage.leads) {
+        if (!safeState.leadAddPage[activeProject]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads = [];
+            safeState.leadAddPage[activeProject] = {};
+        }
+        if (!safeState.leadAddPage[activeProject].leads) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject].leads = [];
         }
 
         if (isDefined(faramValues)) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads[index].faramValues = faramValues;
+            safeState.leadAddPage[activeProject].leads[index].faramValues = faramValues;
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads[index].faramInfo.pristine = false;
+            safeState.leadAddPage[activeProject].leads[index].faramInfo.pristine = false;
         }
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramErrors = faramErrors;
+        safeState.leadAddPage[activeProject].leads[index].faramErrors = faramErrors;
 
-        // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramInfo.error = analyzeErrors(faramErrors);
+        // eslint-disable-next-line no-param-reassign, max-len
+        safeState.leadAddPage[activeProject].leads[index].faramInfo.error = analyzeErrors(faramErrors);
     });
     return newState;
 };
 
 const saveLead = (state, action) => {
+    const { activeProject } = state;
+    const leads = state.leadAddPage?.[activeProject]?.leads ?? emptyArray;
+
     const {
         leadKey,
         lead,
     } = action;
-    const {
-        leadAddPage: {
-            leads = emptyArray,
-        } = {},
-    } = state;
 
     const index = findLeadIndex(leads, leadKey);
     if (index === -1) {
@@ -459,27 +493,32 @@ const saveLead = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
-        if (!safeState.leadAddPage.leads) {
+        if (!safeState.leadAddPage[activeProject]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads = [];
+            safeState.leadAddPage[activeProject] = {};
+        }
+        if (!safeState.leadAddPage[activeProject].leads) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject].leads = [];
         }
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].serverId = lead.id;
+        safeState.leadAddPage[activeProject].leads[index].serverId = lead.id;
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramErrors = {};
+        safeState.leadAddPage[activeProject].leads[index].faramErrors = {};
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramInfo.pristine = true;
+        safeState.leadAddPage[activeProject].leads[index].faramInfo.pristine = true;
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramInfo.error = false;
+        safeState.leadAddPage[activeProject].leads[index].faramInfo.error = false;
     });
     return newState;
 };
 
 const applyLeads = behavior => (state, action) => {
+    const { activeProject } = state;
     const {
         leadKey,
         values,
@@ -492,19 +531,28 @@ const applyLeads = behavior => (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.leadAddPage = {};
         }
-        if (!safeState.leadAddPage.leads) {
+        if (!safeState.leadAddPage[activeProject]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads = [];
+            safeState.leadAddPage[activeProject] = {};
+        }
+        if (!safeState.leadAddPage[activeProject].leads) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.leadAddPage[activeProject].leads = [];
         }
 
-        const leadIndex = safeState.leadAddPage.leads.findIndex(
+        const leadIndex = safeState.leadAddPage[activeProject].leads.findIndex(
             lead => leadKeySelector(lead) === leadKey,
         );
         const start = (behavior === 'below') ? (leadIndex + 1) : 0;
-        for (let i = start; i < safeState.leadAddPage.leads.length; i += 1) {
-            const oldFaramValues = leadFaramValuesSelector(safeState.leadAddPage.leads[i]);
-            const oldFaramErrors = leadFaramErrorsSelector(safeState.leadAddPage.leads[i]);
+        for (let i = start; i < safeState.leadAddPage[activeProject].leads.length; i += 1) {
+            const oldFaramValues = leadFaramValuesSelector(
+                safeState.leadAddPage[activeProject].leads[i],
+            );
+            const oldFaramErrors = leadFaramErrorsSelector(
+                safeState.leadAddPage[activeProject].leads[i],
+            );
 
+            /*
             if (
                 (
                     values.project === undefined
@@ -518,6 +566,7 @@ const applyLeads = behavior => (state, action) => {
                 // eslint-disable-next-line no-continue
                 continue;
             }
+            */
 
             if (oldFaramValues[attrName] === attrValue) {
                 // eslint-disable-next-line no-continue
@@ -537,16 +586,16 @@ const applyLeads = behavior => (state, action) => {
             );
 
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads[i].faramValues = newFaramValues;
+            safeState.leadAddPage[activeProject].leads[i].faramValues = newFaramValues;
 
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads[i].faramErrors = newFaramErrors;
+            safeState.leadAddPage[activeProject].leads[i].faramErrors = newFaramErrors;
 
             // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads[i].faramInfo.pristine = false;
+            safeState.leadAddPage[activeProject].leads[i].faramInfo.pristine = false;
 
-            // eslint-disable-next-line no-param-reassign
-            safeState.leadAddPage.leads[i].faramInfo.error = analyzeErrors(newFaramErrors);
+            // eslint-disable-next-line no-param-reassign, max-len
+            safeState.leadAddPage[activeProject].leads[i].faramInfo.error = analyzeErrors(newFaramErrors);
         }
     });
     return newState;
