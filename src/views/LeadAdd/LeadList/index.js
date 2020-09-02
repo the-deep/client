@@ -12,7 +12,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _ts from '#ts';
 
 import {
-    leadAddPageLeadsSelector,
+    leadAddPageActiveSourceLeadsSelector,
     leadAddPageActiveLeadKeySelector,
     leadAddPageLeadFiltersSelector,
 
@@ -183,7 +183,7 @@ LeadList.propTypes = propTypes;
 LeadList.defaultProps = defaultProps;
 
 const mapStateToProps = state => ({
-    leads: leadAddPageLeadsSelector(state),
+    leads: leadAddPageActiveSourceLeadsSelector(state),
     filters: leadAddPageLeadFiltersSelector(state),
     activeLeadKey: leadAddPageActiveLeadKeySelector(state),
 });
