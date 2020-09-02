@@ -1,10 +1,14 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _ts from '#ts';
 
 import { formatTitle } from '#utils/common';
@@ -13,6 +17,11 @@ import {
     LEAD_TYPE,
     leadKeySelector,
     supportedFileTypes,
+
+    leadIdSelector,
+    isLeadExportDisabled,
+    isLeadRemoveDisabled,
+    isLeadSaveDisabled,
 } from '../utils';
 
 import { LeadProcessorContext } from '../LeadProcessor';
@@ -31,9 +40,6 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     leadStates: PropTypes.object.isRequired,
-
-    // eslint-disable-next-line react/forbid-prop-types
-    fileUploadStatuses: PropTypes.object.isRequired,
 
     onLeadNext: PropTypes.func.isRequired,
     onLeadPrev: PropTypes.func.isRequired,
@@ -97,8 +103,44 @@ class LeadList extends React.PureComponent {
             onLeadExport,
             onLeadSave,
             leadStates,
-            fileUploadStatuses,
         } = this.props;
+
+        const leadState = leadStates[key];
+        const leadId = leadIdSelector(lead);
+        const exportShown = isDefined(leadId);
+
+        const exportDisabled = isLeadExportDisabled(leadState);
+        const removeDisabled = isLeadRemoveDisabled(leadState);
+        const saveDisabled = isLeadSaveDisabled(leadState);
+
+        const handleExportClick = () => onLeadExport(leadId);
+        const handleRemoveClick = () => onLeadRemove(key);
+        const handleSaveClick = () => onLeadSave(key);
+
+        const actionButtons = (
+            <>
+                {exportShown && (
+                    <Button
+                        className={styles.button}
+                        disabled={exportDisabled}
+                        onClick={handleExportClick}
+                        iconName="openLink"
+                    />
+                )}
+                <Button
+                    className={styles.button}
+                    disabled={removeDisabled}
+                    onClick={handleRemoveClick}
+                    iconName="delete"
+                />
+                <PrimaryButton
+                    className={styles.button}
+                    disabled={saveDisabled}
+                    onClick={handleSaveClick}
+                    iconName="save"
+                />
+            </>
+        );
 
         return {
             active: key === activeLeadKey,
@@ -109,13 +151,13 @@ class LeadList extends React.PureComponent {
             onLeadSave,
 
             leadState: leadStates[key],
+            actionButtons,
         };
     }
 
     render() {
         const {
             leads,
-            onLeadsAdd,
             className,
             onLeadPrev,
             onLeadNext,
