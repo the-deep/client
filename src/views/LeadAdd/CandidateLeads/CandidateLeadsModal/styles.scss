@@ -1,4 +1,4 @@
-.processing-leads {
+.candidate-leads {
     display: flex;
     flex-direction: column;
     width: 72vw;
@@ -12,7 +12,7 @@
         padding: 0;
         overflow-y: auto;
 
-        .processing-leads-list {
+        .candidate-leads-list {
             flex-grow: 1;
         }
     }

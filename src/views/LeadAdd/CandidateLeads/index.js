@@ -5,7 +5,7 @@ import { _cs } from '@togglecorp/fujs';
 import Button from '#rsca/Button';
 
 import { LeadProcessorContext } from '../LeadProcessor';
-import ProcessingLeadsModal from './ProcessingLeadsModal';
+import CandidateLeadsModal from './CandidateLeadsModal';
 
 import styles from './styles.scss';
 
@@ -18,14 +18,14 @@ const defaultProps = {
     className: undefined,
 };
 
-function ProcessingLeads(props) {
+function CandidateLeads(props) {
     const {
         className,
         onLeadsAdd,
     } = props;
 
     const {
-        processingLeads,
+        candidateLeads,
         showProcessingModal,
         setProcessingModalVisibility,
     } = useContext(LeadProcessorContext);
@@ -38,15 +38,15 @@ function ProcessingLeads(props) {
         setProcessingModalVisibility(false);
     }, [setProcessingModalVisibility]);
 
-    if (processingLeads.length < 1) {
+    if (candidateLeads.length < 1) {
         return null;
     }
 
     return (
-        <div className={_cs(className, styles.processingLeads)}>
+        <div className={_cs(className, styles.candidateLeads)}>
             <div className={styles.header}>
                 <h3 className={styles.heading}>
-                    {`Processing Leads (${processingLeads.length})`}
+                    {`Candidate Leads (${candidateLeads.length})`}
                 </h3>
                 <Button
                     className={styles.expandButton}
@@ -55,7 +55,7 @@ function ProcessingLeads(props) {
                     transparent
                 />
                 {showProcessingModal && (
-                    <ProcessingLeadsModal
+                    <CandidateLeadsModal
                         onLeadsAdd={onLeadsAdd}
                         closeModal={handleProcessingModalClose}
                     />
@@ -65,7 +65,7 @@ function ProcessingLeads(props) {
     );
 }
 
-ProcessingLeads.propTypes = propTypes;
-ProcessingLeads.defaultProps = defaultProps;
+CandidateLeads.propTypes = propTypes;
+CandidateLeads.defaultProps = defaultProps;
 
-export default ProcessingLeads;
+export default CandidateLeads;

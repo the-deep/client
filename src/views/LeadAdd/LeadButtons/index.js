@@ -52,7 +52,7 @@ function LeadButtons(props) {
     const [googleDriveAccessToken, setGoogleDriveAccessToken] = useState(false);
 
     const {
-        addProcessingLeads,
+        addCandidateLeads,
     } = useContext(LeadProcessorContext);
 
     const handleGoogleDriveOnAuthenticated = useCallback((accessToken) => {
@@ -126,8 +126,8 @@ function LeadButtons(props) {
             };
             return lead;
         });
-        addProcessingLeads(newLeads);
-    }, [addProcessingLeads]);
+        addCandidateLeads(newLeads);
+    }, [addCandidateLeads]);
 
     const handleLeadAddFromGoogleDrive = useCallback((response) => {
         const {
@@ -152,8 +152,8 @@ function LeadButtons(props) {
                 mimeType: doc.mimeType,
             },
         }));
-        addProcessingLeads(newLeads);
-    }, [addProcessingLeads, googleDriveAccessToken]);
+        addCandidateLeads(newLeads);
+    }, [addCandidateLeads, googleDriveAccessToken]);
 
     const handleLeadAddFromDropbox = useCallback((response) => {
         if (response.length <= 0) {
@@ -172,9 +172,9 @@ function LeadButtons(props) {
             },
         }));
 
-        addProcessingLeads(newLeads);
+        addCandidateLeads(newLeads);
         handleDropboxChooserClose();
-    }, [addProcessingLeads, handleDropboxChooserClose]);
+    }, [addCandidateLeads, handleDropboxChooserClose]);
 
     return (
         <div className={_cs(styles.addLeadButtons, className)}>

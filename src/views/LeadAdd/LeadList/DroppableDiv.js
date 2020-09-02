@@ -26,7 +26,7 @@ function DroppableDiv(p) {
         children,
     } = p;
 
-    const { addProcessingLeads } = useContext(LeadProcessorContext);
+    const { addCandidateLeads } = useContext(LeadProcessorContext);
 
     const {
         acceptedFiles,
@@ -45,9 +45,9 @@ function DroppableDiv(p) {
             return lead;
         });
         if (leads.length > 0) {
-            addProcessingLeads(leads);
+            addCandidateLeads(leads);
         }
-    }, [acceptedFiles, addProcessingLeads]);
+    }, [acceptedFiles, addCandidateLeads]);
 
     return (
         <div {...getRootProps({ className })}>

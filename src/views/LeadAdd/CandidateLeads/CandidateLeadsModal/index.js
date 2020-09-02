@@ -32,7 +32,7 @@ const defaultProps = {
     closeModal: undefined,
 };
 
-function ProcessingLeadsModal(props) {
+function CandidateLeadsModal(props) {
     const {
         className,
         onLeadsAdd,
@@ -40,16 +40,16 @@ function ProcessingLeadsModal(props) {
     } = props;
 
     const {
-        clearProcessingLeads,
-        processingLeads,
+        clearCandidateLeads,
+        candidateLeads,
         fileUploadStatuses,
         driveUploadStatuses,
         dropboxUploadStatuses,
-        removeProcessingLead,
+        removeCandidateLead,
     } = useContext(LeadProcessorContext);
 
-    const processingLeadsRendererParams = useCallback((key, data) => {
-        const handleLeadRemove = () => removeProcessingLead(key);
+    const candidateLeadsRendererParams = useCallback((key, data) => {
+        const handleLeadRemove = () => removeCandidateLead(key);
 
         const actionButtons = (
             <Button
@@ -65,7 +65,7 @@ function ProcessingLeadsModal(props) {
             progress: fileUploadStatuses?.[key]?.progress,
             actionButtons,
         });
-    }, [fileUploadStatuses, removeProcessingLead]);
+    }, [fileUploadStatuses, removeCandidateLead]);
 
     const isFileUploadPending = useMemo(() => (
         Object.values(fileUploadStatuses).some(fileUploadStatus => (
@@ -90,25 +90,25 @@ function ProcessingLeadsModal(props) {
      || isDropboxUploadPending;
 
     const handleLeadsAdd = useCallback(() => {
-        onLeadsAdd(processingLeads);
-        clearProcessingLeads();
+        onLeadsAdd(candidateLeads);
+        clearCandidateLeads();
         closeModal();
     }, [
-        processingLeads,
+        candidateLeads,
         onLeadsAdd,
-        clearProcessingLeads,
+        clearCandidateLeads,
         closeModal,
     ]);
 
     return (
         <Modal
-            className={_cs(className, styles.processingLeads)}
+            className={_cs(className, styles.candidateLeads)}
             closeOnEscape
             onClose={closeModal}
         >
             <ModalHeader
-                // FIXME: Use translation
-                title={`Processing Leads (${processingLeads.length})`}
+                // TODO: Translate string
+                title={`Processing Leads (${candidateLeads.length})`}
                 rightComponent={(
                     <DangerButton
                         iconName="contractContent"
@@ -119,27 +119,27 @@ function ProcessingLeadsModal(props) {
             />
             <ModalBody className={styles.modalBody}>
                 <ListView
-                    data={processingLeads}
-                    className={styles.processingLeadsList}
+                    data={candidateLeads}
+                    className={styles.candidateLeadsList}
                     keySelector={leadKeySelector}
                     renderer={LeadListItem}
-                    rendererParams={processingLeadsRendererParams}
+                    rendererParams={candidateLeadsRendererParams}
                 />
             </ModalBody>
             <ModalFooter>
                 <DangerConfirmButton
-                    onClick={clearProcessingLeads}
-                    // FIXME: Use translation
-                    confirmationMessage="Are you sure you want to clear all processing leads?"
+                    onClick={clearCandidateLeads}
+                    // TODO: Translate string
+                    confirmationMessage="Are you sure you want to clear all candidate leads?"
                 >
-                    {/* FIXME: use translation */}
+                    {/* TODO: Translate string */}
                     Clear All
                 </DangerConfirmButton>
                 <PrimaryButton
                     disabled={isInProgress}
                     onClick={handleLeadsAdd}
                 >
-                    {/* FIXME: use translation */}
+                    {/* TODO: Translate string */}
                     Load
                 </PrimaryButton>
             </ModalFooter>
@@ -147,7 +147,7 @@ function ProcessingLeadsModal(props) {
     );
 }
 
-ProcessingLeadsModal.propTypes = propTypes;
-ProcessingLeadsModal.defaultProps = defaultProps;
+CandidateLeadsModal.propTypes = propTypes;
+CandidateLeadsModal.defaultProps = defaultProps;
 
-export default ProcessingLeadsModal;
+export default CandidateLeadsModal;
