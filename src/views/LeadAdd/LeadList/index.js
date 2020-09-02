@@ -16,7 +16,7 @@ import {
 } from '../utils';
 
 import { LeadProcessorContext } from '../LeadProcessor';
-import LeadListItem from './LeadListItem';
+import LeadListItem from '../LeadListItem';
 import styles from './styles.scss';
 
 const propTypes = {

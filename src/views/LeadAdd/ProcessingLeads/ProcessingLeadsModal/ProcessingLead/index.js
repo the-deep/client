@@ -6,23 +6,17 @@ import {
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
+import Button from '#rsca/Button';
 
 import {
     LEAD_TYPE,
-    LEAD_STATUS,
     leadKeySelector,
     leadSourceTypeSelector,
-    leadFaramValuesSelector,
-    leadIdSelector,
-
-    isLeadExportDisabled,
-    isLeadRemoveDisabled,
-    isLeadSaveDisabled,
 } from '../../../utils';
+import { LeadProcessorContext } from '../../../LeadProcessor';
 
 import styles from './styles.scss';
 
-// FIXME: this will move outside LeadListItem
 const UploadProgress = ({ progress }) => {
     const hide = isNotDefined(progress) || progress === 100;
 
@@ -65,8 +59,14 @@ function ProcessingLead(props) {
         title,
         progress,
     } = props;
-    const leadFaramValues = leadFaramValuesSelector(lead);
+
+    const { removeProcessingLead } = useContext(LeadProcessorContext);
+
     const type = leadSourceTypeSelector(lead);
+
+    const handleLeadRemove = useCallback(() => {
+        removeProcessingLead(leadKeySelector(lead));
+    }, [removeProcessingLead, lead]);
 
     return (
         <div className={styles.processingLead}>
@@ -82,6 +82,13 @@ function ProcessingLead(props) {
             <UploadProgress
                 progress={progress}
             />
+            <div className={styles.buttonContainer}>
+                <Button
+                    className={styles.button}
+                    onClick={handleLeadRemove}
+                    iconName="delete"
+                />
+            </div>
         </div>
     );
 }

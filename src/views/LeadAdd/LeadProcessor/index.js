@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import {
-    isDefined,
-    isNotDefined,
-} from '@togglecorp/fujs';
+import PropTypes from 'prop-types';
+import { isDefined } from '@togglecorp/fujs';
 import produce from 'immer';
 import { analyzeErrors } from '@togglecorp/faram';
 
@@ -28,10 +26,17 @@ import {
 } from '../utils';
 
 export const LeadProcessorContext = React.createContext({
+    showProcessingModal: false,
+    setProcessingModalVisibility: (processingModalVisibility) => {
+        console.warn('setting processing modal visibility', processingModalVisibility);
+    },
     processingLeads: [],
     fileUploadStatuses: {},
     driveUploadStatuses: {},
     dropboxUploadStatuses: {},
+    removeProcessingLead: (leadId) => {
+        console.warn('removing lead with id', leadId);
+    },
     clearProcessingLeads: () => {
         console.warn('clearing all processing leads');
     },
@@ -47,6 +52,7 @@ function LeadProcessor(props) {
 
     const [processingLeads, setProcessingLeads] = useState([]);
 
+    const [showProcessingModal, setProcessingModalVisibility] = useState(false);
     const [fileUploadStatuses, setFileUploadStatues] = useState({});
     const [driveUploadStatuses, setDriveUploadStatues] = useState({});
     const [dropboxUploadStatuses, setDropboxUploadStatues] = useState({});
@@ -99,6 +105,19 @@ function LeadProcessor(props) {
             [key]: { pending },
         }));
     }, [setDriveUploadStatues]);
+
+    const removeProcessingLead = useCallback((leadKey) => {
+        setProcessingLeads(currentProcessingLeads => (
+            produce(currentProcessingLeads, (safeProcessingLeads) => {
+                const selectedIndex = safeProcessingLeads
+                    .findIndex(lead => leadKey === leadKeySelector(lead));
+
+                if (selectedIndex !== -1) {
+                    safeProcessingLeads.splice(selectedIndex, 1);
+                }
+            })
+        ));
+    }, [setProcessingLeads]);
 
     const handleProcessingLeadAttachmentSet = useCallback(({ leadKey, attachmentId }) => {
         setProcessingLeads(currentProcessingLeads => (
@@ -332,6 +351,7 @@ function LeadProcessor(props) {
             ...currentProcessingLeads,
             ...newLeads,
         ]));
+        setProcessingModalVisibility(true);
         uploadCoordinator.start();
         driveUploadCoordinator.start();
         dropboxUploadCoordinator.start();
@@ -345,6 +365,7 @@ function LeadProcessor(props) {
         dropboxUploadCoordinator,
         uploadCoordinator,
         setProcessingLeads,
+        setProcessingModalVisibility,
     ]);
 
     const contextValue = useMemo(() => ({
@@ -354,6 +375,10 @@ function LeadProcessor(props) {
         dropboxUploadStatuses,
         processingLeads,
         addProcessingLeads,
+        removeProcessingLead,
+
+        showProcessingModal,
+        setProcessingModalVisibility,
     }), [
         clearProcessingLeads,
         driveUploadStatuses,
@@ -361,6 +386,10 @@ function LeadProcessor(props) {
         fileUploadStatuses,
         processingLeads,
         addProcessingLeads,
+        removeProcessingLead,
+
+        showProcessingModal,
+        setProcessingModalVisibility,
     ]);
 
     return (
@@ -371,5 +400,9 @@ function LeadProcessor(props) {
         </LeadProcessorContext.Provider>
     );
 }
+
+LeadProcessor.propTypes = {
+    children: PropTypes.node.isRequired,
+};
 
 export default LeadProcessor;
