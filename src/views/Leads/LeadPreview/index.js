@@ -22,78 +22,65 @@ const defaultProps = {
     closeModal: () => {},
 };
 
-export default class LeadPreview extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+function LeadPreview(props) {
+    const {
+        value: {
+            title,
+            url,
+            attachment,
+            projectId,
+            tabularBook,
+        },
+        closeModal,
+    } = props;
 
-    renderLeadPreview = () => {
-        const {
-            value: {
-                url,
-                attachment,
-                projectId,
-                tabularBook,
-            },
-        } = this.props;
-
-        if (url) {
-            return (
-                <ExternalGallery
-                    className={styles.galleryFile}
-                    url={url}
-                    showUrl
-                />
-            );
-        }
-        if (attachment) {
-            return (
-                <Attachment
-                    attachment={attachment}
-                    tabularBook={tabularBook}
-                    className={styles.galleryFile}
-                    projectId={projectId}
-                    viewOnly
-                />
-            );
-        }
-        return (
-            <Message>
-                {_ts('addLeads', 'previewNotAvailable')}
-            </Message>
-        );
-    }
-
-    render() {
-        const {
-            value,
-            closeModal,
-        } = this.props;
-
-        const Preview = this.renderLeadPreview;
-
-        return (
-            <Modal
-                className={styles.leadPreview}
-                onClose={closeModal}
-                closeOnEscape
+    return (
+        <Modal
+            className={styles.leadPreview}
+            onClose={closeModal}
+            closeOnEscape
+        >
+            <ModalHeader
+                className={styles.modalHeader}
+                title={title || _ts('leads', 'Preview')}
+                rightComponent={
+                    <Button
+                        onClick={closeModal}
+                        transparent
+                        iconName="close"
+                    />
+                }
+            />
+            <ModalBody
+                className={styles.body}
             >
-                <ModalHeader
-                    className={styles.modalHeader}
-                    title={value.title || _ts('leads', 'Preview')}
-                    rightComponent={
-                        <Button
-                            onClick={closeModal}
-                            transparent
-                            iconName="close"
-                        />
-                    }
-                />
-                <ModalBody
-                    className={styles.body}
-                >
-                    <Preview />
-                </ModalBody>
-            </Modal>
-        );
-    }
+                {url && (
+                    <ExternalGallery
+                        className={styles.galleryFile}
+                        url={url}
+                        showUrl
+                    />
+                )}
+                {!url && attachment && (
+                    <Attachment
+                        attachment={attachment}
+                        tabularBook={tabularBook}
+                        className={styles.galleryFile}
+                        projectId={projectId}
+                        viewOnly
+                    />
+                )}
+                {!url && !attachment && (
+                    <Message>
+                        {_ts('addLeads', 'previewNotAvailable')}
+                    </Message>
+                )}
+            </ModalBody>
+        </Modal>
+    );
 }
+
+LeadPreview.propTypes = propTypes;
+LeadPreview.defaultProps = defaultProps;
+
+export default LeadPreview;

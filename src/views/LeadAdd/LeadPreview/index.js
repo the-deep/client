@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
     isTruthyString,
@@ -13,6 +14,11 @@ import TabularBook from '#components/other/TabularBook';
 import Attachment from '#components/viewer/Attachment';
 
 import _ts from '#ts';
+
+import {
+    leadAddSetLeadTabularBookAction,
+    leadAddPageActiveLeadSelector,
+} from '#redux';
 
 import {
     leadKeySelector,
@@ -33,156 +39,145 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
+    className: undefined,
 };
 
-class LeadPreview extends React.PureComponent {
-    static propTypes = propTypes;
+function LeadPreview(props) {
+    const {
+        className,
+        lead,
+        onTabularBookSet,
+    } = props;
 
-    static defaultProps = defaultProps;
+    const [tabularModalShown, setTabularModalShown] = useState(false);
+    const [tabularChangeKey, setTabularChangeKey] = useState(1);
+    const [tabularFileType, setTabularFileType] = useState();
 
-    constructor(props) {
-        super(props);
+    const handleTabularButtonClick = useCallback(
+        (response) => {
+            const { fileType } = response;
+            setTabularModalShown(true);
+            setTabularFileType(fileType);
+        },
+        [],
+    );
 
-        this.state = {
-            showTabularModal: false,
-            tabularChangeKey: 1,
-            tabularFileType: undefined,
-        };
-    }
+    const handleTabularModalClose = useCallback(
+        () => {
+            setTabularModalShown(false);
+            setTabularFileType(undefined);
+            setTabularChangeKey(i => i + 1);
+        },
+        [],
+    );
 
-    handleTabularButtonClick = (response) => {
-        const {
-            fileType,
-        } = response;
+    const handleTabularBookDelete = useCallback(
+        () => {
+            const leadKey = leadKeySelector(lead);
+            onTabularBookSet({ leadKey, tabularBook: undefined });
+            handleTabularModalClose();
+        },
+        [lead, onTabularBookSet, handleTabularModalClose],
+    );
 
-        this.setState({
-            showTabularModal: true,
-            tabularFileType: fileType,
-        });
-    }
+    const handleTabularBookSet = useCallback(
+        (tabularBook) => {
+            const leadKey = leadKeySelector(lead);
+            onTabularBookSet({ leadKey, tabularBook });
+        },
+        [lead, onTabularBookSet],
+    );
 
-    handleTabularModalClose = () => {
-        const { tabularChangeKey } = this.state;
+    const type = leadSourceTypeSelector(lead);
+    const values = leadFaramValuesSelector(lead);
+    const {
+        project: projectId,
+        url,
+        attachment,
+        title,
+        tabularBook,
+    } = values;
 
-        this.setState({
-            showTabularModal: false,
-            tabularFileType: undefined,
-            tabularChangeKey: tabularChangeKey + 1,
-        });
-    }
-
-    handleTabularBookDelete = () => {
-        const {
-            lead,
-            onTabularBookSet,
-        } = this.props;
-        const leadKey = leadKeySelector(lead);
-        onTabularBookSet({ leadKey, tabularBook: undefined });
-        this.handleTabularModalClose();
-    }
-
-    handleTabularBookSet = (tabularBook) => {
-        const {
-            lead,
-            onTabularBookSet,
-        } = this.props;
-        const leadKey = leadKeySelector(lead);
-        onTabularBookSet({ leadKey, tabularBook });
-    }
-
-    render() {
-        const {
-            className,
-            lead,
-        } = this.props;
-        const {
-            showTabularModal,
-            tabularFileType,
-            tabularChangeKey,
-        } = this.state;
-
-        const type = leadSourceTypeSelector(lead);
-        const values = leadFaramValuesSelector(lead);
-        const {
-            project: projectId,
-            url,
-            attachment,
-            title,
-            tabularBook,
-        } = values;
-
-        switch (type) {
-            case LEAD_TYPE.text:
-                return null;
-            case LEAD_TYPE.website:
-                return (
-                    <div className={className} >
-                        { isTruthyString(url) ? (
-                            <ExternalGallery
-                                className={styles.galleryFile}
-                                url={url}
-                                showUrl
-                            />
-                        ) : (
-                            <Message className={className}>
-                                {_ts('addLeads', 'sourcePreview')}
-                            </Message>
-                        ) }
-                    </div>
-                );
-            default:
-                return (
-                    <div className={className} >
-                        { isDefined(attachment) ? (
-                            <Attachment
-                                key={tabularChangeKey}
-                                attachment={attachment}
-                                title={title}
-                                tabularBook={tabularBook}
-                                className={styles.galleryFile}
-                                projectId={projectId}
-                                onTabularButtonClick={this.handleTabularButtonClick}
-                            />
-                        ) : (
-                            <Message>
-                                {_ts('addLeads', 'previewNotAvailable')}
-                            </Message>
-                        ) }
-                        { showTabularModal && (
-                            <Modal
-                                className={styles.tabularModal}
-                                onClose={this.handleTabularModalClose}
-                            >
-                                {
-                                    tabularBook || tabularFileType !== 'csv' ? (
-                                        <TabularBook
-                                            leadTitle={title}
-                                            className={styles.tabularBook}
-                                            bookId={tabularBook}
-                                            projectId={projectId}
-                                            onDelete={this.handleTabularBookDelete}
-                                            onCancel={this.handleTabularModalClose}
-                                            fileId={attachment.id}
-                                            fileType={tabularFileType}
-                                            onTabularBookCreate={this.handleTabularBookSet}
-                                        />
-                                    ) : (
-                                        <LeadTabular
-                                            className={styles.leadTabular}
-                                            fileType={tabularFileType}
-                                            setTabularBook={this.handleTabularBookSet}
-                                            onCancel={this.handleTabularModalClose}
-                                            lead={lead}
-                                        />
-                                    )
-                                }
-                            </Modal>
-                        ) }
-                    </div>
-                );
-        }
+    switch (type) {
+        case LEAD_TYPE.text:
+            return null;
+        case LEAD_TYPE.website:
+            return (
+                <div className={className} >
+                    {isTruthyString(url) ? (
+                        <ExternalGallery
+                            className={styles.galleryFile}
+                            url={url}
+                            showUrl
+                        />
+                    ) : (
+                        <Message className={className}>
+                            {_ts('addLeads', 'sourcePreview')}
+                        </Message>
+                    )}
+                </div>
+            );
+        default:
+            return (
+                <div className={className} >
+                    {isDefined(attachment) ? (
+                        <Attachment
+                            key={tabularChangeKey}
+                            attachment={attachment}
+                            title={title}
+                            tabularBook={tabularBook}
+                            className={styles.galleryFile}
+                            projectId={projectId}
+                            onTabularButtonClick={handleTabularButtonClick}
+                        />
+                    ) : (
+                        <Message>
+                            {_ts('addLeads', 'previewNotAvailable')}
+                        </Message>
+                    )}
+                    {tabularModalShown && (
+                        <Modal
+                            className={styles.tabularModal}
+                            onClose={handleTabularModalClose}
+                        >
+                            {tabularBook || tabularFileType !== 'csv' ? (
+                                <TabularBook
+                                    leadTitle={title}
+                                    className={styles.tabularBook}
+                                    bookId={tabularBook}
+                                    projectId={projectId}
+                                    onDelete={handleTabularBookDelete}
+                                    onCancel={handleTabularModalClose}
+                                    fileId={attachment.id}
+                                    fileType={tabularFileType}
+                                    onTabularBookCreate={handleTabularBookSet}
+                                />
+                            ) : (
+                                <LeadTabular
+                                    className={styles.leadTabular}
+                                    fileType={tabularFileType}
+                                    setTabularBook={handleTabularBookSet}
+                                    onCancel={handleTabularModalClose}
+                                    lead={lead}
+                                />
+                            )}
+                        </Modal>
+                    )}
+                </div>
+            );
     }
 }
 
-export default LeadPreview;
+LeadPreview.propTypes = propTypes;
+LeadPreview.defaultProps = defaultProps;
+
+const mapStateToProps = state => ({
+    lead: leadAddPageActiveLeadSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    onTabularBookSet: params => dispatch(leadAddSetLeadTabularBookAction(params)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(
+    LeadPreview,
+);
