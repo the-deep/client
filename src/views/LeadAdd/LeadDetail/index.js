@@ -2,6 +2,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import {
     _cs,
@@ -31,6 +32,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import BasicSelectInput from '#rsu/../v2/Input/BasicSelectInput';
 import BasicMultiSelectInput from '#rsu/../v2/Input/BasicMultiSelectInput';
 import SegmentInput from '#rsci/SegmentInput';
+import Message from '#rscv/Message';
 
 import {
     RequestClient,
@@ -48,7 +50,14 @@ import BadgeInput from '#components/input/BadgeInput';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
-import Message from '#rscv/Message';
+
+import {
+    currentUserActiveProjectSelector,
+    leadAddChangeLeadAction,
+    leadAddApplyLeadsAllBelowAction,
+    leadAddApplyLeadsAllAction,
+    leadAddPageActiveLeadSelector,
+} from '#redux';
 
 import _ts from '#ts';
 import {
@@ -65,7 +74,6 @@ import {
     isLeadFormLoading,
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
-    leadIdSelector,
     leadKeySelector,
     leadSourceTypeSelector,
 } from '../utils';
@@ -77,61 +85,29 @@ import EmmStats from './EmmStats';
 import schema from './faramSchema';
 import styles from './styles.scss';
 
-const PublisherEmptyComponent = () => (
-    <Message>
-        {_ts('addLeads', 'searchInputEmptyText', { title: 'publisher' })}
-    </Message>
-);
-
-const AuthorEmptyComponent = () => (
-    <Message>
-        {_ts('addLeads', 'searchInputEmptyText', { title: 'author' })}
-    </Message>
-);
-
 const FaramBasicSelectInput = FaramInputElement(BasicSelectInput);
 const FaramBasicMultiSelectInput = FaramInputElement(BasicMultiSelectInput);
 const ModalButton = Modalize(Button);
 
-const propTypes = {
-    className: PropTypes.string,
-    // activeUserId: PropTypes.number.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    lead: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    projects: PropTypes.array,
+function PublisherEmptyComponent() {
+    return (
+        <Message>
+            {_ts('addLeads', 'searchInputEmptyText', { title: 'publisher' })}
+        </Message>
+    );
+}
 
-    bulkActionDisabled: PropTypes.bool,
-    disableLeadUrlChange: PropTypes.bool,
-
-    onChange: PropTypes.func.isRequired,
-    onApplyAllClick: PropTypes.func.isRequired,
-    onApplyAllBelowClick: PropTypes.func.isRequired,
-
-    // onLeadSave: PropTypes.func.isRequired,
-    // onLeadRemove: PropTypes.func.isRequired,
-    // onLeadExport: PropTypes.func.isRequired,
-
-    leadState: PropTypes.string.isRequired,
-
-    // eslint-disable-next-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired,
-};
-
-const defaultProps = {
-    className: undefined,
-    bulkActionDisabled: false,
-    disableLeadUrlChange: false,
-
-    projects: [],
-};
+function AuthorEmptyComponent() {
+    return (
+        <Message>
+            {_ts('addLeads', 'searchInputEmptyText', { title: 'author' })}
+        </Message>
+    );
+}
 
 const idSelector = item => item.id;
-
 const keySelector = item => item.key;
-
 const labelSelector = item => item.value;
-
 const displayNameSelector = item => item.displayName;
 
 /*
@@ -177,10 +153,13 @@ function fillExtraInfo(values, leadOptions, activeUserId) {
 
 function fillWebInfo(values, webInfo) {
     const newValues = produce(values, (safeValues) => {
+        /*
         if ((!safeValues.project || safeValues.project.length <= 0) && webInfo.project) {
+            const project = projects.find(p => idSelector(p) === projectId);
             // eslint-disable-next-line no-param-reassign
             safeValues.project = [webInfo.project];
         }
+        */
         if (webInfo.date) {
             // eslint-disable-next-line no-param-reassign
             safeValues.publishedOn = webInfo.date;
@@ -364,6 +343,38 @@ const requestOptions = {
     },
 };
 
+const propTypes = {
+    className: PropTypes.string,
+    // activeUserId: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    activeProject: PropTypes.object.isRequired,
+
+    bulkActionDisabled: PropTypes.bool,
+    disableLeadUrlChange: PropTypes.bool,
+
+    onChange: PropTypes.func.isRequired,
+    onApplyAllClick: PropTypes.func.isRequired,
+    onApplyAllBelowClick: PropTypes.func.isRequired,
+
+    // onLeadSave: PropTypes.func.isRequired,
+    // onLeadRemove: PropTypes.func.isRequired,
+    // onLeadExport: PropTypes.func.isRequired,
+
+    leadState: PropTypes.string.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired,
+};
+
+const defaultProps = {
+    className: undefined,
+    bulkActionDisabled: false,
+    disableLeadUrlChange: false,
+};
+
+// FIXME: don't use lead-detail that is connected
 class LeadDetail extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -412,14 +423,8 @@ class LeadDetail extends React.PureComponent {
     }
 
     shouldHideLeadGroupInput = () => {
-        const {
-            lead,
-            projects,
-        } = this.props;
-        const values = leadFaramValuesSelector(lead);
-        const { project: projectId } = values;
-        const project = projects.find(p => idSelector(p) === projectId);
-        return !project || !project.assessmentTemplate;
+        const { activeProject } = this.props;
+        return !activeProject || !activeProject.assessmentTemplate;
     };
 
     handleAddLeadGroupClick = () => {
@@ -461,7 +466,7 @@ class LeadDetail extends React.PureComponent {
         const key = leadKeySelector(lead);
         const values = leadFaramValuesSelector(lead);
         const attrValue = values[attrName];
-        onApplyAllClick(key, values, attrName, attrValue);
+        onApplyAllClick({ leadKey: key, values, attrName, attrValue });
     }
 
     handleApplyAllBelowClick = (attrName) => {
@@ -473,7 +478,7 @@ class LeadDetail extends React.PureComponent {
         const key = leadKeySelector(lead);
         const values = leadFaramValuesSelector(lead);
         const attrValue = values[attrName];
-        onApplyAllBelowClick(key, values, attrName, attrValue);
+        onApplyAllBelowClick({ leadKey: key, values, attrName, attrValue });
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -1109,8 +1114,17 @@ class LeadDetail extends React.PureComponent {
     }
 }
 
-export default RequestCoordinator(
-    RequestClient(requestOptions)(
-        LeadDetail,
-    ),
+const mapStateToProps = state => ({
+    activeProject: currentUserActiveProjectSelector(state),
+    lead: leadAddPageActiveLeadSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    onChange: params => dispatch(leadAddChangeLeadAction(params)),
+    onApplyAllBelowClick: params => dispatch(leadAddApplyLeadsAllBelowAction(params)),
+    onApplyAllClick: params => dispatch(leadAddApplyLeadsAllAction(params)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+    RequestCoordinator(RequestClient(requestOptions)(LeadDetail)),
 );

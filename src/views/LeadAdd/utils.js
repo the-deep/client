@@ -213,12 +213,12 @@ export function leadFilterMethod(lead, filters, leadState) {
     // NOTE: removed filter by publisher
     const {
         search,
-        type,
+        // type,
         // source,
         status,
     } = filters;
 
-    const leadType = leadSourceTypeSelector(lead);
+    // const leadType = leadSourceTypeSelector(lead);
     const {
         title: leadTitle = '',
         // source: leadSource = '',
@@ -226,10 +226,12 @@ export function leadFilterMethod(lead, filters, leadState) {
 
     if (search && !caseInsensitiveSubmatch(leadTitle, search)) {
         return false;
-    // } else if (source && !caseInsensitiveSubmatch(leadSource, source)) {
-    //     return false;
+    /*
+    } else if (source && !caseInsensitiveSubmatch(leadSource, source)) {
+        return false;
     } else if (type && type.length > 0 && type.indexOf(leadType) === -1) {
         return false;
+    */
     } else if (status && status.length > 0 && !statusMatches(leadState, status)) {
         return false;
     }

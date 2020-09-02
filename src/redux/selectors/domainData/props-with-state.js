@@ -133,19 +133,7 @@ export const currentUserProjectsSelector = createSelector(
     ),
 );
 
-export const currentUserLeadChangeableProjectsSelector = createSelector(
-    currentUserProjectsSelector,
-    projectRolesSelector,
-    (projects, roles) => projects.filter((project) => {
-        const role = roles[project.role];
-        if (!role) {
-            return false;
-        }
-        const { leadPermissions } = role;
-        return leadPermissions.create || leadPermissions.modify;
-    }),
-);
-
+// FIXME: this doesn't make sense at all
 // activeUser
 export const currentUserAdminProjectsSelector = createSelector(
     currentUserProjectsSelector,
