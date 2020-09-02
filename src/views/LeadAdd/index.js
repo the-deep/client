@@ -58,7 +58,7 @@ import LeadList from './LeadList';
 import LeadFilter from './LeadFilter';
 import LeadDetail from './LeadDetail';
 import LeadProcessor from './LeadProcessor';
-import ProcessingLeads from './ProcessingLeads';
+import CandidateLeads from './CandidateLeads';
 import schema from './LeadDetail/faramSchema';
 
 import {
@@ -495,8 +495,8 @@ class LeadAdd extends React.PureComponent {
                                             className={styles.leadButtons}
                                             onLeadsAdd={this.handleLeadsAdd}
                                         />
-                                        <ProcessingLeads
-                                            className={styles.processingLeadsBox}
+                                        <CandidateLeads
+                                            className={styles.candidateLeadsBox}
                                             onLeadsAdd={this.handleLeadsAdd}
                                         />
                                     </div>
