@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
 
 import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
@@ -81,15 +82,20 @@ function ProcessingLeadsModal(props) {
         processingLeads,
         onLeadsAdd,
         clearProcessingLeads,
+        closeModal,
     ]);
 
     return (
-        <Modal className={_cs(className, styles.processingLeads)}>
+        <Modal
+            className={_cs(className, styles.processingLeads)}
+            closeOnEscape
+            onClose={closeModal}
+        >
             <ModalHeader
                 title={`Processing Leads (${processingLeads.length})`}
                 rightComponent={(
                     <DangerButton
-                        iconName="close"
+                        iconName="contractContent"
                         onClick={closeModal}
                         transparent
                     />
@@ -105,14 +111,13 @@ function ProcessingLeadsModal(props) {
                 />
             </ModalBody>
             <ModalFooter>
-                <DangerButton
-                    className={styles.footerButton}
-                    onClick={closeModal}
+                <DangerConfirmButton
+                    onClick={clearProcessingLeads}
+                    confirmationMessage="Are you sure you want to clear all processing leads?"
                 >
-                    Cancel
-                </DangerButton>
+                    Clear All
+                </DangerConfirmButton>
                 <PrimaryButton
-                    className={styles.footerButton}
                     disabled={isInProgress}
                     onClick={handleLeadsAdd}
                 >
