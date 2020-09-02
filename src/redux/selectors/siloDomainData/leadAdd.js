@@ -22,7 +22,7 @@ const leadAddPageForProjectSelector = createSelector(
     ),
 );
 
-export const leadAddPageRawLeadsSelector = createSelector(
+export const leadAddPageLeadsSelector = createSelector(
     leadAddPageForProjectSelector,
     leadAddPage => leadAddPage?.leads ?? emptyArray,
 );
@@ -47,22 +47,18 @@ export const leadAddPageActiveSourceSelector = createSelector(
     leadAddPage => leadAddPage?.activeSource ?? LEAD_TYPE.text,
 );
 
-export const leadAddPageLeadsSelector = createSelector(
-    leadAddPageRawLeadsSelector,
+export const leadAddPageActiveSourceLeadsSelector = createSelector(
+    leadAddPageLeadsSelector,
     leadAddPageActiveSourceSelector,
     (leads, activeSource) => leads.filter(lead => leadSourceTypeSelector(lead) === activeSource),
 );
 
 export const leadAddPageActiveLeadSelector = createSelector(
-    leadAddPageRawLeadsSelector,
+    leadAddPageActiveSourceLeadsSelector,
     leadAddPageActiveLeadKeySelector,
-    leadAddPageActiveSourceSelector,
-    (leads, activeLeadKey, activeSource) => (
+    (leads, activeLeadKey) => (
         isDefined(activeLeadKey)
-            ? leads.find(lead => (
-                leadKeySelector(lead) === activeLeadKey
-                && leadSourceTypeSelector(lead) === activeSource
-            ))
+            ? leads.find(lead => leadKeySelector(lead) === activeLeadKey)
             : undefined
     ),
 );
