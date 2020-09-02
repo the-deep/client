@@ -9,7 +9,7 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const ApplyAll = ({
+function ApplyAll({
     className,
     disabled,
     children,
@@ -18,43 +18,45 @@ const ApplyAll = ({
     onApplyAllClick,
     onApplyAllBelowClick,
     extraButtons,
-}) => (
-    <div className={_cs(styles.applyInput, className)}>
-        { children }
-        <div className={styles.applyButtons}>
-            { extraButtons }
-            {!hidden && (
-                <>
-                    <AccentConfirmButton
-                        className={styles.applyButton}
-                        transparent
-                        title={_ts('addLeads', 'applyAllButtonTitle')}
-                        disabled={disabled}
-                        onClick={() => onApplyAllClick(identifierName)}
-                        tabIndex="-1"
-                        iconName="applyAll"
-                        confirmationMessage={_ts('addLeads', 'applyToAll')}
-                    />
-                    <WarningConfirmButton
-                        className={styles.applyButton}
-                        transparent
-                        title={_ts('addLeads', 'applyAllBelowButtonTitle')}
-                        disabled={disabled}
-                        onClick={() => onApplyAllBelowClick(identifierName)}
-                        tabIndex="-1"
-                        iconName="applyAllBelow"
-                        confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
-                    />
-                </>
-            )}
+}) {
+    return (
+        <div className={_cs(styles.applyInput, className)}>
+            { children }
+            <div className={styles.applyButtons}>
+                { extraButtons }
+                {!hidden && (
+                    <>
+                        <AccentConfirmButton
+                            className={styles.applyButton}
+                            transparent
+                            title={_ts('addLeads', 'applyAllButtonTitle')}
+                            disabled={disabled}
+                            onClick={() => onApplyAllClick(identifierName)}
+                            tabIndex="-1"
+                            iconName="applyAll"
+                            confirmationMessage={_ts('addLeads', 'applyToAll')}
+                        />
+                        <WarningConfirmButton
+                            className={styles.applyButton}
+                            transparent
+                            title={_ts('addLeads', 'applyAllBelowButtonTitle')}
+                            disabled={disabled}
+                            onClick={() => onApplyAllBelowClick(identifierName)}
+                            tabIndex="-1"
+                            iconName="applyAllBelow"
+                            confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
+                        />
+                    </>
+                )}
+            </div>
         </div>
-    </div>
-);
+    );
+}
 
 ApplyAll.propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool.isRequired,
-    hidden: PropTypes.bool.isRequired,
+    hidden: PropTypes.bool,
     children: PropTypes.node.isRequired,
     identifierName: PropTypes.string.isRequired,
     onApplyAllClick: PropTypes.func.isRequired,
@@ -65,6 +67,7 @@ ApplyAll.propTypes = {
 ApplyAll.defaultProps = {
     className: '',
     extraButtons: undefined,
+    hidden: false,
 };
 
 export default ApplyAll;

@@ -1,3 +1,4 @@
+// NOTE: this component is obsolete
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';

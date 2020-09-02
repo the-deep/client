@@ -101,7 +101,8 @@
 
                 &.text-lead {
                     .top {
-                        height: 100%;
+                        /* Using important because we need to override style set using js */
+                        height: 100% !important;
                     }
 
                     .bottom {

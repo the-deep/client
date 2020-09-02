@@ -1,30 +1,39 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useDropzone } from 'react-dropzone';
 import {
     _cs,
     isDefined,
 } from '@togglecorp/fujs';
+import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _ts from '#ts';
 
-import { formatTitle } from '#utils/common';
+import {
+    leadAddPageLeadsSelector,
+    leadAddPageActiveLeadKeySelector,
+    leadAddPageLeadFiltersSelector,
+
+    leadAddSetActiveLeadKeyAction,
+    leadAddNextLeadAction,
+    leadAddPrevLeadAction,
+} from '#redux';
+
 
 import {
-    LEAD_TYPE,
-    leadKeySelector,
-    supportedFileTypes,
-
-    leadIdSelector,
     isLeadExportDisabled,
+    isLeadNextDisabled,
+    isLeadPrevDisabled,
     isLeadRemoveDisabled,
     isLeadSaveDisabled,
+    leadFilterMethod,
+    leadIdSelector,
+    leadKeySelector,
 } from '../utils';
 
-import { LeadProcessorContext } from '../LeadProcessor';
+import DroppableDiv from './DroppableDiv';
 import LeadListItem from '../LeadListItem';
 import styles from './styles.scss';
 
@@ -33,172 +42,156 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     leads: PropTypes.array.isRequired,
     activeLeadKey: PropTypes.string,
-    onLeadSelect: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    leadStates: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    filters: PropTypes.object.isRequired,
+
     onLeadRemove: PropTypes.func.isRequired,
     onLeadExport: PropTypes.func.isRequired,
     onLeadSave: PropTypes.func.isRequired,
 
-    // eslint-disable-next-line react/forbid-prop-types
-    leadStates: PropTypes.object.isRequired,
-
+    onLeadSelect: PropTypes.func.isRequired,
     onLeadNext: PropTypes.func.isRequired,
     onLeadPrev: PropTypes.func.isRequired,
-    leadNextDisabled: PropTypes.bool,
-    leadPrevDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
     activeLeadKey: undefined,
     className: undefined,
-    leadNextDisabled: true,
-    leadPrevDisabled: true,
 };
 
-function DroppableDiv(p) {
+function LeadList(props) {
     const {
+        activeLeadKey,
         className,
-        children,
-    } = p;
+        leadStates,
+        leads,
+        filters,
+        onLeadExport,
+        onLeadNext,
+        onLeadPrev,
+        onLeadRemove,
+        onLeadSave,
+        onLeadSelect,
+    } = props;
 
-    const { addProcessingLeads } = useContext(LeadProcessorContext);
-
-    const {
-        acceptedFiles,
-        getRootProps,
-    } = useDropzone({ accept: supportedFileTypes });
-
-    React.useEffect(() => {
-        const leads = acceptedFiles.map((file) => {
-            const lead = {
-                faramValues: {
-                    title: formatTitle(file.name),
-                    sourceType: LEAD_TYPE.file,
+    const filteredLeads = useMemo(
+        () => (
+            leads.filter(
+                (lead) => {
+                    const key = leadKeySelector(lead);
+                    const leadState = leadStates[key];
+                    return leadFilterMethod(lead, filters, leadState);
                 },
-                file,
-            };
-            return lead;
-        });
-        if (leads.length > 0) {
-            addProcessingLeads(leads);
-        }
-    }, [acceptedFiles, addProcessingLeads]);
-
-    return (
-        <div {...getRootProps({ className })}>
-            { children }
-        </div>
+            )
+        ),
+        [filters, leadStates, leads],
     );
-}
 
-class LeadList extends React.PureComponent {
-    static propTypes = propTypes;
+    const leadPrevDisabled = isLeadPrevDisabled(leads, activeLeadKey);
+    const leadNextDisabled = isLeadNextDisabled(leads, activeLeadKey);
 
-    static defaultProps = defaultProps;
+    const rendererParams = useCallback(
+        (key, lead) => {
+            const leadState = leadStates[key];
+            const leadId = leadIdSelector(lead);
+            const exportShown = isDefined(leadId);
 
-    rendererParams = (key, lead) => {
-        const {
-            activeLeadKey,
-            onLeadSelect,
-            onLeadRemove,
-            onLeadExport,
-            onLeadSave,
-            leadStates,
-        } = this.props;
+            const exportDisabled = isLeadExportDisabled(leadState);
+            const removeDisabled = isLeadRemoveDisabled(leadState);
+            const saveDisabled = isLeadSaveDisabled(leadState);
 
-        const leadState = leadStates[key];
-        const leadId = leadIdSelector(lead);
-        const exportShown = isDefined(leadId);
+            const handleExportClick = () => onLeadExport(leadId);
+            const handleRemoveClick = () => onLeadRemove(key);
+            const handleSaveClick = () => onLeadSave(key);
 
-        const exportDisabled = isLeadExportDisabled(leadState);
-        const removeDisabled = isLeadRemoveDisabled(leadState);
-        const saveDisabled = isLeadSaveDisabled(leadState);
-
-        const handleExportClick = () => onLeadExport(leadId);
-        const handleRemoveClick = () => onLeadRemove(key);
-        const handleSaveClick = () => onLeadSave(key);
-
-        const actionButtons = (
-            <>
-                {exportShown && (
+            const actionButtons = (
+                <>
+                    {exportShown && (
+                        <Button
+                            className={styles.button}
+                            disabled={exportDisabled}
+                            onClick={handleExportClick}
+                            iconName="openLink"
+                        />
+                    )}
                     <Button
                         className={styles.button}
-                        disabled={exportDisabled}
-                        onClick={handleExportClick}
-                        iconName="openLink"
+                        disabled={removeDisabled}
+                        onClick={handleRemoveClick}
+                        iconName="delete"
                     />
-                )}
-                <Button
-                    className={styles.button}
-                    disabled={removeDisabled}
-                    onClick={handleRemoveClick}
-                    iconName="delete"
-                />
-                <PrimaryButton
-                    className={styles.button}
-                    disabled={saveDisabled}
-                    onClick={handleSaveClick}
-                    iconName="save"
-                />
-            </>
-        );
+                    <PrimaryButton
+                        className={styles.button}
+                        disabled={saveDisabled}
+                        onClick={handleSaveClick}
+                        iconName="save"
+                    />
+                </>
+            );
 
-        return {
-            active: key === activeLeadKey,
-            lead,
-            onLeadSelect,
-            onLeadRemove,
-            onLeadExport,
-            onLeadSave,
+            return {
+                active: key === activeLeadKey,
+                lead,
+                onLeadSelect,
+                leadState: leadStates[key],
+                actionButtons,
+            };
+        },
+        [activeLeadKey, onLeadSelect, onLeadRemove, onLeadExport, onLeadSave, leadStates],
+    );
 
-            leadState: leadStates[key],
-            actionButtons,
-        };
-    }
-
-    render() {
-        const {
-            leads,
-            className,
-            onLeadPrev,
-            onLeadNext,
-            leadPrevDisabled,
-            leadNextDisabled,
-        } = this.props;
-
-        return (
-            <DroppableDiv
-                className={_cs(styles.leadListContainer, className)}
-            >
-                <div className={styles.movementButtons}>
-                    <div className={styles.stats}>
-                        {/* FIXME: translation */}
-                        {`${leads.length} leads`}
-                    </div>
-                    <div className={styles.actions}>
-                        <Button
-                            disabled={leadPrevDisabled}
-                            onClick={onLeadPrev}
-                            iconName="prev"
-                            title={_ts('addLeads.actions', 'previousButtonLabel')}
-                        />
-                        <Button
-                            disabled={leadNextDisabled}
-                            onClick={onLeadNext}
-                            iconName="next"
-                            title={_ts('addLeads.actions', 'nextButtonLabel')}
-                        />
-                    </div>
+    return (
+        <DroppableDiv
+            className={_cs(styles.leadListContainer, className)}
+        >
+            <div className={styles.movementButtons}>
+                <div className={styles.stats}>
+                    {/* FIXME: translation */}
+                    {leads.length === filteredLeads.length
+                        ? `${leads.length} leads`
+                        : `Showing ${filteredLeads.length} of ${leads.length} leads`
+                    }
                 </div>
-                <ListView
-                    className={styles.leadList}
-                    data={leads}
-                    keySelector={leadKeySelector}
-                    renderer={LeadListItem}
-                    rendererParams={this.rendererParams}
-                />
-            </DroppableDiv>
-        );
-    }
+                <div className={styles.actions}>
+                    <Button
+                        disabled={leadPrevDisabled}
+                        onClick={onLeadPrev}
+                        iconName="prev"
+                        title={_ts('addLeads.actions', 'previousButtonLabel')}
+                    />
+                    <Button
+                        disabled={leadNextDisabled}
+                        onClick={onLeadNext}
+                        iconName="next"
+                        title={_ts('addLeads.actions', 'nextButtonLabel')}
+                    />
+                </div>
+            </div>
+            <ListView
+                className={styles.leadList}
+                data={filteredLeads}
+                keySelector={leadKeySelector}
+                renderer={LeadListItem}
+                rendererParams={rendererParams}
+            />
+        </DroppableDiv>
+    );
 }
+LeadList.propTypes = propTypes;
+LeadList.defaultProps = defaultProps;
 
-export default LeadList;
+const mapStateToProps = state => ({
+    leads: leadAddPageLeadsSelector(state),
+    filters: leadAddPageLeadFiltersSelector(state),
+    activeLeadKey: leadAddPageActiveLeadKeySelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    onLeadSelect: params => dispatch(leadAddSetActiveLeadKeyAction(params)),
+    onLeadNext: params => dispatch(leadAddNextLeadAction(params)),
+    onLeadPrev: params => dispatch(leadAddPrevLeadAction(params)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LeadList);

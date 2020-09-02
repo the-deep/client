@@ -1,5 +1,3 @@
-// NOTE: This component has also been used in Leads Table to quick edit leads
-
 import {
     requiredCondition,
     urlCondition,
