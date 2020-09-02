@@ -107,16 +107,16 @@ function LeadProcessor(props) {
     }, [setDriveUploadStatues]);
 
     const removeProcessingLead = useCallback((leadKey) => {
-        setProcessingLeads(currentProcessingLeads => (
-            produce(currentProcessingLeads, (safeProcessingLeads) => {
-                const selectedIndex = safeProcessingLeads
-                    .findIndex(lead => leadKey === leadKeySelector(lead));
+        setProcessingLeads((currentProcessingLeads) => {
+            const newProcessingLeads = [...currentProcessingLeads];
+            const selectedIndex = newProcessingLeads
+                .findIndex(lead => leadKey === leadKeySelector(lead));
 
-                if (selectedIndex !== -1) {
-                    safeProcessingLeads.splice(selectedIndex, 1);
-                }
-            })
-        ));
+            if (selectedIndex !== -1) {
+                newProcessingLeads.splice(selectedIndex, 1);
+            }
+            return newProcessingLeads;
+        });
     }, [setProcessingLeads]);
 
     const handleProcessingLeadAttachmentSet = useCallback(({ leadKey, attachmentId }) => {

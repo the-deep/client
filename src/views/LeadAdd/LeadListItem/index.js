@@ -1,12 +1,8 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import {
-    isDefined,
-} from '@togglecorp/fujs';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
-import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import Jumper from '#components/general/Jumper';
 
@@ -18,14 +14,36 @@ import {
     leadKeySelector,
     leadSourceTypeSelector,
     leadFaramValuesSelector,
-    leadIdSelector,
-
-    isLeadExportDisabled,
-    isLeadRemoveDisabled,
-    isLeadSaveDisabled,
 } from '../utils';
 
 import styles from './styles.scss';
+
+const UploadProgress = ({ progress }) => {
+    const hide = isNotDefined(progress) || progress === 100;
+
+    const className = _cs(
+        styles.progressBar,
+        hide && styles.hide,
+        progress === 100 && styles.completed,
+    );
+
+    const style = { width: `${progress || 0}%` };
+
+    return (
+        <span className={className}>
+            <span
+                className={styles.progress}
+                style={style}
+            />
+        </span>
+    );
+};
+UploadProgress.propTypes = {
+    progress: PropTypes.number,
+};
+UploadProgress.defaultProps = {
+    progress: undefined,
+};
 
 // FIXME: it doesn't make much sense to include the icon anymore
 const leadTypeToIconClassMap = {
@@ -63,27 +81,28 @@ const propTypes = {
     leadState: PropTypes.string,
 
     onLeadSelect: PropTypes.func.isRequired,
-    onLeadRemove: PropTypes.func.isRequired,
-    onLeadExport: PropTypes.func.isRequired,
-    onLeadSave: PropTypes.func.isRequired,
     active: PropTypes.bool,
+    actionButtons: PropTypes.node,
+
+    progress: PropTypes.number,
 };
 
 const defaultProps = {
     active: false,
+    progress: undefined,
     className: undefined,
     leadState: undefined,
+    actionButtons: undefined,
 };
 
 function LeadListItem(props) {
     const {
         lead,
         onLeadSelect,
-        onLeadSave,
-        onLeadRemove,
-        onLeadExport,
+        actionButtons,
         active,
         className,
+        progress,
         leadState,
     } = props;
 
@@ -92,21 +111,6 @@ function LeadListItem(props) {
         onLeadSelect(leadKey);
     }, [onLeadSelect, lead]);
 
-    const handleSaveClick = useCallback(() => {
-        const leadKey = leadKeySelector(lead);
-        onLeadSave(leadKey);
-    }, [onLeadSave, lead]);
-
-    const handleRemoveClick = useCallback(() => {
-        const leadKey = leadKeySelector(lead);
-        onLeadRemove(leadKey);
-    }, [onLeadRemove, lead]);
-
-    const handleExportClick = useCallback(() => {
-        const leadId = leadIdSelector(lead);
-        onLeadExport(leadId);
-    }, [onLeadExport, lead]);
-
     const type = leadSourceTypeSelector(lead);
     const { title } = leadFaramValuesSelector(lead);
 
@@ -114,12 +118,6 @@ function LeadListItem(props) {
         styles.statusIcon,
         styleMap[leadState],
     );
-
-    const exportShown = isDefined(leadIdSelector(lead));
-
-    const exportDisabled = isLeadExportDisabled(leadState);
-    const removeDisabled = isLeadRemoveDisabled(leadState);
-    const saveDisabled = isLeadSaveDisabled(leadState);
 
     // TODO: STYLING loading doesn't rotate
     return (
@@ -151,27 +149,11 @@ function LeadListItem(props) {
                 />
             </button>
             <div className={styles.buttonContainer}>
-                {exportShown && (
-                    <Button
-                        className={styles.button}
-                        disabled={exportDisabled}
-                        onClick={handleExportClick}
-                        iconName="openLink"
-                    />
-                )}
-                <Button
-                    className={styles.button}
-                    disabled={removeDisabled}
-                    onClick={handleRemoveClick}
-                    iconName="delete"
-                />
-                <PrimaryButton
-                    className={styles.button}
-                    disabled={saveDisabled}
-                    onClick={handleSaveClick}
-                    iconName="save"
-                />
+                {actionButtons}
             </div>
+            <UploadProgress
+                progress={progress}
+            />
         </Jumper>
     );
 }
