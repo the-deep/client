@@ -8,7 +8,6 @@ import {
     _cs,
     isDefined,
     isFalsyString,
-    isNotDefined,
     compareNumber,
     isTruthy,
     unique,
@@ -34,16 +33,6 @@ import BasicMultiSelectInput from '#rsu/../v2/Input/BasicMultiSelectInput';
 import SegmentInput from '#rsci/SegmentInput';
 import Message from '#rscv/Message';
 
-import {
-    RequestClient,
-    RequestCoordinator,
-    methods,
-} from '#request';
-import {
-    notifyOnFailure,
-    notifyOnFatal,
-} from '#utils/requestNotify';
-
 import Cloak from '#components/general/Cloak';
 import ExtraFunctionsOnHover from '#components/general/ExtraFunctionOnHover';
 import BadgeInput from '#components/input/BadgeInput';
@@ -51,6 +40,10 @@ import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
 
+import {
+    RequestClient,
+    methods,
+} from '#request';
 import {
     currentUserActiveProjectSelector,
     leadAddChangeLeadAction,
@@ -61,7 +54,6 @@ import {
 
 import _ts from '#ts';
 import {
-    isUrlValid,
     getTitleFromUrl,
     capitalizeOnlyFirstLetter,
     trimFileExtension,
@@ -108,225 +100,10 @@ function AuthorEmptyComponent() {
 const idSelector = item => item.id;
 const keySelector = item => item.key;
 const labelSelector = item => item.value;
+const titleSelector = item => item.title;
 const displayNameSelector = item => item.displayName;
 
-/*
-function fillExtraInfo(values, leadOptions, activeUserId) {
-    const newValues = produce(values, (safeValues) => {
-        if (!safeValues.assignee) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.assignee = activeUserId;
-        } else {
-            const memberMapping = listToMap(
-                leadOptions.members,
-                member => member.id,
-                () => true,
-            );
-            if (!memberMapping[safeValues.assignee]) {
-                // eslint-disable-next-line no-param-reassign
-                safeValues.assignee = undefined;
-            }
-        }
-        if (isNotDefined(safeValues.priority) && isDefined(priority)) {
-            const sortedPriority = [...priority].sort((a, b) => compareNumber(a.key, b.key));
-            safeValues.priority = isDefined(sortedPriority[0]) ? sortedPriority[0].key : undefined;
-        }
-
-        if (
-            !safeValues.confidentiality
-            && leadOptions.confidentiality
-            && leadOptions.confidentiality.length > 0
-        ) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.confidentiality = leadOptions.confidentiality[0].key;
-        }
-
-        if (!safeValues.publishedOn) {
-            const now = new Date();
-            // eslint-disable-next-line no-param-reassign
-            safeValues.publishedOn = formatDateToString(now, 'yyyy-MM-dd');
-        }
-    });
-    return newValues;
-}
-*/
-
-function fillWebInfo(values, webInfo) {
-    const newValues = produce(values, (safeValues) => {
-        /*
-        if ((!safeValues.project || safeValues.project.length <= 0) && webInfo.project) {
-            const project = projects.find(p => idSelector(p) === projectId);
-            // eslint-disable-next-line no-param-reassign
-            safeValues.project = [webInfo.project];
-        }
-        */
-        if (webInfo.date) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.publishedOn = webInfo.date;
-        }
-        if (webInfo.website) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.website = webInfo.website;
-        }
-        if (webInfo.title) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.title = webInfo.title;
-        }
-        if (webInfo.url) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.url = webInfo.url;
-        }
-        if (webInfo.source) {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.source = webInfo.source.id;
-        }
-        if (webInfo.author) {
-            // FIXME: we have to look into this
-            // eslint-disable-next-line no-param-reassign
-            safeValues.authors = [webInfo.author.id];
-        }
-    });
-    return newValues;
-}
-
-function mergeLists(foo, bar) {
-    return unique(
-        [
-            ...foo,
-            ...bar,
-        ],
-        item => item.id,
-    );
-}
-
 const requestOptions = {
-    // NOTE: this will be obsolete
-    fileUrlGetRequest: {
-        url: ({ params: { fileId } }) => `/files/${fileId}/`,
-        query: ({ params: { url } }) => ({ url }),
-        method: methods.GET,
-        onSuccess: ({ props: { requests }, response }) => {
-            if (requests.webInfoRequest) {
-                requests.webInfoRequest.do({
-                    url: response.file,
-                    isFile: true,
-                });
-            }
-        },
-        onFailure: notifyOnFailure(_ts('addLeads', 'extractLead')),
-        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
-    },
-    // NOTE: this will be moved outside
-    webInfoRequest: {
-        url: '/web-info-extract/',
-        query: ({ params: { url } }) => ({ url }),
-        method: methods.GET,
-        onSuccess: ({ params, props: { requests }, response }) => {
-            if (params && params.isFile) {
-                if (params.handleWebInfoFill) {
-                    params.handleWebInfoFill({ title: params.title });
-                }
-            } else if (requests.webInfoDataRequest) {
-                requests.webInfoDataRequest.do({
-                    url: params.url,
-                    title: response.title,
-                    date: response.date,
-                    website: response.website,
-                    country: response.country,
-                    source: response.sourceRaw,
-                    author: response.authorRaw,
-                });
-            }
-        },
-        onFailure: notifyOnFailure(_ts('addLeads', 'extractLead')),
-        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
-        extras: {
-            type: 'serverless',
-            // schemaName: 'webInfo',
-        },
-    },
-    // NOTE: this will be moved outside
-    webInfoDataRequest: {
-        url: '/v2/web-info-data/',
-        body: ({ params: {
-            source,
-            author,
-            country,
-            url,
-        } }) => ({
-            sourceRaw: source,
-            authorRaw: author,
-            country,
-            url,
-        }),
-        method: methods.POST,
-        onSuccess: ({ params, response }) => {
-            params.handleWebInfoFill({
-                date: params.date,
-                website: params.website,
-                title: params.title,
-                url: params.url,
-                ...response,
-            });
-        },
-        onFailure: ({ params }) => {
-            // NOTE: Even on failure fill data from webInfoExtract
-            params.handleWebInfoFill({
-                date: params.date,
-                website: params.website,
-                title: params.title,
-                url: params.url,
-            });
-        },
-        onFatal: notifyOnFatal(_ts('addLeads', 'extractLead')),
-    },
-
-    // NOTE: move this logic outside LeadDetail
-    leadOptionsRequest: {
-        url: '/lead-options/',
-        method: methods.POST,
-
-        options: {
-            delay: 1000,
-        },
-
-        body: ({ props: { lead } }) => {
-            const inputValues = leadFaramValuesSelector(lead);
-            return {
-                projects: [inputValues.project],
-                leadGroups: [], // this will not fetch any leadGroups
-                organizations: unique(
-                    [
-                        inputValues.source,
-                        ...(inputValues.authors || []),
-                    ].filter(isDefined),
-                    id => id,
-                ),
-            };
-        },
-        onSuccess: ({ params, response }) => {
-            params.handleExtraInfoFill(response);
-        },
-        onMount: ({ props: { lead } }) => {
-            const initialProject = leadFaramValuesSelector(lead).project;
-            return isDefined(initialProject);
-        },
-        onPropsChanged: {
-            lead: ({
-                prevProps: { lead: oldLead },
-                props: { lead: newLead },
-            }) => {
-                const oldProject = leadFaramValuesSelector(oldLead).project;
-                const newProject = leadFaramValuesSelector(newLead).project;
-
-                return newProject !== oldProject && isDefined(newProject);
-            },
-        },
-        // extras: {
-        //     schemaName: 'leadOptions',
-        // },
-    },
-
     organizationsRequest: {
         url: '/organizations/',
         query: ({ params }) => ({
@@ -345,7 +122,6 @@ const requestOptions = {
 
 const propTypes = {
     className: PropTypes.string,
-    // activeUserId: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     lead: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
@@ -358,12 +134,23 @@ const propTypes = {
     onApplyAllClick: PropTypes.func.isRequired,
     onApplyAllBelowClick: PropTypes.func.isRequired,
 
-    // onLeadSave: PropTypes.func.isRequired,
-    // onLeadRemove: PropTypes.func.isRequired,
-    // onLeadExport: PropTypes.func.isRequired,
+    onOrganizationsAdd: PropTypes.func.isRequired,
+    onLeadGroupsAdd: PropTypes.func.isRequired,
+
+    pending: PropTypes.boolean, // pending lead options
+
+    // eslint-disable-next-line react/forbid-prop-types
+    priorityOptions: PropTypes.array,
+    // eslint-disable-next-line react/forbid-prop-types
+    confidentialityOptions: PropTypes.array,
+    // eslint-disable-next-line react/forbid-prop-types
+    assignees: PropTypes.array,
+    // eslint-disable-next-line react/forbid-prop-types
+    leadGroups: PropTypes.array,
+    // eslint-disable-next-line react/forbid-prop-types
+    organizations: PropTypes.array,
 
     leadState: PropTypes.string.isRequired,
-
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
 };
@@ -371,10 +158,18 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
+    // TODO: this should always be true
     disableLeadUrlChange: false,
+
+    pending: false,
+    priorityOptions: [],
+    confidentialityOptions: [],
+    assignees: [],
+    leadGroups: [],
+    organizations: [],
 };
 
-// FIXME: don't use lead-detail that is connected
+// FIXME: change to functional component
 class LeadDetail extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -383,43 +178,30 @@ class LeadDetail extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {
-            requests: {
-                leadOptionsRequest,
-                webInfoDataRequest,
-                webInfoRequest,
-            },
-            lead,
-        } = this.props;
+        const { lead } = this.props;
         const currentFaramValues = leadFaramValuesSelector(lead);
+        const suggestedTitleFromUrl = getTitleFromUrl(currentFaramValues.url);
 
         this.state = {
             showAddLeadGroupModal: false,
+
             // NOTE: If false, it will capitalize the first letter of first word only
             formatTitleAsTitleCase: true,
-            suggestedTitleFromUrl: getTitleFromUrl(currentFaramValues.url),
+
+            suggestedTitleFromUrl,
+            // FIXME: this was previously filled by web-info-extract
             suggestedTitleFromExtraction: undefined,
 
             searchedOrganizations: [],
-            // Organizations filled by web-info-extract and lead-options
-            organizations: [],
         };
-
-        leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
-        webInfoRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
-        webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
     }
 
-    getPriorityOptions = memoize((priority = []) => (
-        [...priority].sort((a, b) => compareNumber(a.key, b.key))
+    getPriorityOptions = memoize((priorityOptions = []) => (
+        [...priorityOptions].sort((a, b) => compareNumber(a.key, b.key))
     ));
 
     setSearchedOrganizations = (searchedOrganizations) => {
         this.setState({ searchedOrganizations });
-    }
-
-    setOrganizations = (organizations) => {
-        this.setState({ organizations });
     }
 
     shouldHideLeadGroupInput = () => {
@@ -433,28 +215,6 @@ class LeadDetail extends React.PureComponent {
 
     handleAddLeadGroupModalClose = () => {
         this.setState({ showAddLeadGroupModal: false });
-    }
-
-    handleExtractClick = () => {
-        const {
-            requests: { webInfoRequest },
-            lead,
-        } = this.props;
-        const values = leadFaramValuesSelector(lead);
-        const { url } = values;
-
-        webInfoRequest.do({ url });
-    }
-
-    handleExtractClickForFiles = () => {
-        const {
-            requests: { fileUrlGetRequest },
-            lead,
-        } = this.props;
-        const values = leadFaramValuesSelector(lead);
-        const { attachment } = values;
-
-        fileUrlGetRequest.do({ fileId: attachment.id });
     }
 
     handleApplyAllClick = (attrName) => {
@@ -531,56 +291,9 @@ class LeadDetail extends React.PureComponent {
         });
     }
 
-    handleExtraInfoFill = (leadOptions) => {
-        // const { lead } = this.props;
-        const {
-            organizations,
-            // priority,
-        } = leadOptions;
-
-        if (organizations.length > 0) {
-            this.setState(state => ({
-                organizations: mergeLists(state.organizations, organizations),
-            }));
-        }
-
-        /*
-        NOTE: Commented out because this needs to handled throughout all leads
-        const values = leadFaramValuesSelector(lead);
-        const newValues = fillExtraInfo(values, leadOptions, activeUserId);
-        this.handleLeadValueChange(newValues);
-        */
-    }
-
-    handleWebInfoFill = (webInfo) => {
-        const { lead } = this.props;
-
-        const newOrgs = [];
-        if (webInfo.source) {
-            newOrgs.push(webInfo.source);
-        }
-        if (webInfo.author) {
-            newOrgs.push([webInfo.author.id]);
-        }
-        if (newOrgs.length > 0) {
-            this.setState(state => ({
-                organizations: mergeLists(state.organizations, newOrgs),
-            }));
-        }
-
-        this.setState({ suggestedTitleFromExtraction: webInfo.title });
-
-        const values = leadFaramValuesSelector(lead);
-        const newValues = fillWebInfo(values, webInfo);
-        this.handleLeadValueChange(newValues);
-    }
-
     handlePublisherAdd = (organization) => {
-        const { lead } = this.props;
-
-        this.setState(state => ({
-            organizations: mergeLists(state.organizations, [organization]),
-        }));
+        const { lead, onOrganizationsAdd } = this.props;
+        onOrganizationsAdd([organization]);
 
         const values = leadFaramValuesSelector(lead);
         const newValues = {
@@ -591,11 +304,9 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleAuthorAdd = (organization) => {
-        this.setState(state => ({
-            organizations: mergeLists(state.organizations, [organization]),
-        }));
+        const { lead, onOrganizationsAdd } = this.props;
+        onOrganizationsAdd([organization]);
 
-        const { lead } = this.props;
         const values = leadFaramValuesSelector(lead);
         const newValues = {
             ...values,
@@ -607,7 +318,8 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleLeadGroupAdd = (leadGroup) => {
-        const { lead } = this.props;
+        const { lead, onLeadGroupsAdd } = this.props;
+        onLeadGroupsAdd([leadGroup]);
 
         const values = leadFaramValuesSelector(lead);
         const newValues = produce(values, (safeValues) => {
@@ -682,30 +394,26 @@ class LeadDetail extends React.PureComponent {
             bulkActionDisabled,
 
             requests: {
-                webInfoRequest: { pending: webInfoRequestPending },
-                webInfoDataRequest: {
-                    pending: webInfoDataRequestPending,
-                    response: {
-                        sourceRaw,
-                        source,
-                        authorRaw,
-                        author,
-                    } = {},
-                },
-                leadOptionsRequest: {
-                    pending: leadOptionsPending,
-                    response: leadOptions = {},
-                },
                 organizationsRequest: {
                     pending: pendingSearchedOrganizations,
                 },
             },
+
+            pending: pendingFromProps, // pending lead options
+
+            priorityOptions,
+            confidentialityOptions,
+            assignees,
+            leadGroups,
+
+            organizations,
+            onOrganizationsAdd,
+
             disableLeadUrlChange,
         } = this.props;
         const {
             showAddLeadGroupModal,
             searchedOrganizations,
-            organizations,
             suggestedTitleFromUrl,
             suggestedTitleFromExtraction,
         } = this.state;
@@ -716,46 +424,27 @@ class LeadDetail extends React.PureComponent {
 
         const {
             project: projectId,
-            url,
             title,
 
             sourceRaw: oldSourceTitle,
             authorRaw: oldAuthorTitle,
 
-            // NOTE: these values are set by connectors
-            sourceSuggestion,
-            authorSuggestion,
+            // NOTE: previously: these values are set by connectors
+            // NOTE: now: these values should be set by candidate leads
+            sourceSuggestion: suggestedSourceTitle,
+            authorSuggestion: suggestedAuthorTitle,
 
             emmEntities,
             emmTriggers,
-
-            attachment,
         } = values;
-
-        const suggestedSourceTitle = sourceSuggestion || sourceRaw;
-        const suggestedAuthorTitle = authorSuggestion || authorRaw;
 
         const pending = (
             isLeadFormLoading(leadState)
-            || leadOptionsPending
-            || webInfoRequestPending
-            || webInfoDataRequestPending
+            || pendingFromProps
         );
         const formDisabled = (
             isLeadFormDisabled(leadState)
             || pending
-        );
-        const extractionDisabled = (
-            isLeadFormDisabled(leadState)
-            || !isUrlValid(url)
-            || webInfoRequestPending
-            || webInfoDataRequestPending
-        );
-        const extractionForFileDisabled = (
-            isLeadFormDisabled(leadState)
-            || isNotDefined(attachment && attachment.id)
-            || webInfoRequestPending
-            || webInfoDataRequestPending
         );
         const projectIsSelected = isTruthy(projectId);
 
@@ -764,22 +453,20 @@ class LeadDetail extends React.PureComponent {
         let sourceHint;
         if (oldSourceTitle) {
             sourceHint = _ts('addLeads', 'previousOrganization', { organization: oldSourceTitle });
-        } else if (!source && suggestedSourceTitle) {
+        } else if (suggestedSourceTitle) {
             sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedSourceTitle });
         }
 
         let authorHint;
         if (oldAuthorTitle) {
             authorHint = _ts('addLeads', 'previousOrganization', { organization: oldAuthorTitle });
-        } else if (!author && suggestedAuthorTitle) {
+        } else if (suggestedAuthorTitle) {
             authorHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedAuthorTitle });
         }
 
         const suggestions = unique([suggestedTitleFromUrl, suggestedTitleFromExtraction])
             .filter(isDefined)
             .filter(suggestion => suggestion !== title);
-
-        const priorityOptions = this.getPriorityOptions(leadOptions.priority);
 
         return (
             <div
@@ -800,32 +487,14 @@ class LeadDetail extends React.PureComponent {
                     </header>
                     {type === LEAD_TYPE.website && (
                         <>
-                            <ExtraFunctionsOnHover
+                            <TextInput
                                 className={styles.url}
-                                buttons={(
-                                    <AccentButton
-                                        transparent
-                                        className={styles.extractButton}
-                                        title={_ts('addLeads', 'extractLead')}
-                                        disabled={
-                                            formDisabled
-                                            || extractionDisabled
-                                            || disableLeadUrlChange
-                                        }
-                                        onClick={this.handleExtractClick}
-                                        tabIndex="-1"
-                                        iconName="eye"
-                                    />
-                                )}
-                            >
-                                <TextInput
-                                    faramElementName="url"
-                                    label={_ts('addLeads', 'urlLabel')}
-                                    placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
-                                    autoFocus
-                                    disabled={disableLeadUrlChange}
-                                />
-                            </ExtraFunctionsOnHover>
+                                faramElementName="url"
+                                label={_ts('addLeads', 'urlLabel')}
+                                placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                                autoFocus
+                                disabled={disableLeadUrlChange}
+                            />
                             <ApplyAll
                                 className={styles.website}
                                 disabled={isApplyAllDisabled}
@@ -865,19 +534,6 @@ class LeadDetail extends React.PureComponent {
                                     {/* Treat this as icon */}
                                     Aa
                                 </AccentButton>
-                                {(type === LEAD_TYPE.file
-                                    || type === LEAD_TYPE.drive
-                                    || type === LEAD_TYPE.dropbox) && (
-                                    <AccentButton
-                                        transparent
-                                        className={styles.extractButton}
-                                        title={_ts('addLeads', 'extractLeadFromDocument')}
-                                        disabled={formDisabled || extractionForFileDisabled}
-                                        onClick={this.handleExtractClickForFiles}
-                                        tabIndex="-1"
-                                        iconName="eye"
-                                    />
-                                )}
                             </>
                         )}
                     >
@@ -920,12 +576,12 @@ class LeadDetail extends React.PureComponent {
                             className={styles.input}
                             labelSelector={organizationTitleSelector}
                             emptyWhenFilterComponent={PublisherEmptyComponent}
-                            disabled={leadOptionsPending || formDisabled || !projectIsSelected}
+                            disabled={pendingFromProps || formDisabled || !projectIsSelected}
                             hint={sourceHint}
 
                             searchOptions={searchedOrganizations}
                             searchOptionsPending={pendingSearchedOrganizations}
-                            onOptionsChange={this.setOrganizations}
+                            onOptionsChange={onOrganizationsAdd}
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                         />
                         <ModalButton
@@ -967,12 +623,12 @@ class LeadDetail extends React.PureComponent {
                             keySelector={idSelector}
                             labelSelector={organizationTitleSelector}
                             emptyWhenFilterComponent={AuthorEmptyComponent}
-                            disabled={leadOptionsPending || formDisabled || !projectIsSelected}
+                            disabled={pendingFromProps || formDisabled || !projectIsSelected}
                             hint={authorHint}
 
                             searchOptions={searchedOrganizations}
                             searchOptionsPending={pendingSearchedOrganizations}
-                            onOptionsChange={this.setOrganizations}
+                            onOptionsChange={onOrganizationsAdd}
                             onSearchValueChange={this.handleOrganizationSearchValueChange}
                             placeholder={_ts('addLeads', 'authorPlaceholder')}
                         />
@@ -1003,7 +659,7 @@ class LeadDetail extends React.PureComponent {
                             label={_ts('addLeads', 'priorityLabel')}
                             labelSelector={labelSelector}
                             keySelector={keySelector}
-                            options={priorityOptions}
+                            options={this.getPriorityOptions(priorityOptions)}
                         />
                     </ApplyAll>
 
@@ -1019,7 +675,7 @@ class LeadDetail extends React.PureComponent {
                             keySelector={keySelector}
                             label={_ts('addLeads', 'confidentialityLabel')}
                             labelSelector={labelSelector}
-                            options={leadOptions.confidentiality}
+                            options={confidentialityOptions}
                             placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
                         />
                     </ApplyAll>
@@ -1036,7 +692,7 @@ class LeadDetail extends React.PureComponent {
                             keySelector={idSelector}
                             label={_ts('addLeads', 'assigneeLabel')}
                             labelSelector={displayNameSelector}
-                            options={leadOptions.members}
+                            options={assignees}
                             placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
                         />
                     </ApplyAll>
@@ -1075,10 +731,10 @@ class LeadDetail extends React.PureComponent {
                             >
                                 <SelectInput
                                     faramElementName="leadGroup"
-                                    keySelector={keySelector}
+                                    keySelector={idSelector}
                                     label={_ts('addLeads', 'leadGroupLabel')}
-                                    labelSelector={labelSelector}
-                                    options={leadOptions.leadGroup}
+                                    labelSelector={titleSelector}
+                                    options={leadGroups}
                                     placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
                                 />
                             </ApplyAll>
@@ -1087,23 +743,22 @@ class LeadDetail extends React.PureComponent {
                             <div className={styles.leadGroup} />
                         )}
                     />
-                    {showAddLeadGroupModal && (
-                        <AddLeadGroup
-                            onModalClose={this.handleAddLeadGroupModalClose}
-                            onLeadGroupAdd={this.handleLeadGroupAdd}
-                            projectId={projectId}
-                        />
-                    )}
-
-                    {values.attachment && ATTACHMENT_TYPES.includes(type) && (
-                        <div className={styles.fileTitle}>
-                            <InternalGallery
-                                onlyFileName
-                                galleryId={values.attachment.id}
-                            />
-                        </div>
-                    )}
                 </Faram>
+                {showAddLeadGroupModal && (
+                    <AddLeadGroup
+                        onModalClose={this.handleAddLeadGroupModalClose}
+                        onLeadGroupAdd={this.handleLeadGroupAdd}
+                        projectId={projectId}
+                    />
+                )}
+                {values.attachment && ATTACHMENT_TYPES.includes(type) && (
+                    <div className={styles.fileTitle}>
+                        <InternalGallery
+                            onlyFileName
+                            galleryId={values.attachment.id}
+                        />
+                    </div>
+                )}
                 <EmmStats
                     className={styles.emmStatsContainer}
                     emmTriggers={emmTriggers}
@@ -1126,5 +781,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    RequestCoordinator(RequestClient(requestOptions)(LeadDetail)),
+    RequestClient(requestOptions)(LeadDetail),
 );
