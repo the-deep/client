@@ -7,7 +7,6 @@ import Icon from '#rscg/Icon';
 import { LEAD_TYPE } from '../../utils';
 import styles from './styles.scss';
 
-// FIXME: it doesn't make much sense to include the icon anymore
 const leadTypeToIconClassMap = {
     [LEAD_TYPE.file]: 'upload',
     [LEAD_TYPE.website]: 'globe',
@@ -17,7 +16,7 @@ const leadTypeToIconClassMap = {
     [LEAD_TYPE.connectors]: 'link',
 };
 
-function LeadButton(props) {
+function LeadSource(props) {
     const {
         className,
         active,
@@ -38,7 +37,7 @@ function LeadButton(props) {
             className={
                 _cs(
                     className,
-                    styles.leadButton,
+                    styles.leadSource,
                     active && styles.active,
                 )
             }
@@ -56,7 +55,7 @@ function LeadButton(props) {
         </div>
     );
 }
-LeadButton.propTypes = {
+LeadSource.propTypes = {
     className: PropTypes.string,
     active: PropTypes.bool,
     source: PropTypes.string.isRequired,
@@ -64,10 +63,10 @@ LeadButton.propTypes = {
     onClick: PropTypes.func.isRequired,
     children: PropTypes.node,
 };
-LeadButton.defaultProps = {
+LeadSource.defaultProps = {
     className: undefined,
     active: false,
     children: undefined,
 };
 
-export default LeadButton;
+export default LeadSource;

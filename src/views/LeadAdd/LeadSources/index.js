@@ -34,10 +34,10 @@ import {
 } from '../utils';
 import { LeadProcessorContext } from '../LeadProcessor';
 
-import LeadButton from './LeadButton';
+import LeadSource from './LeadSource';
 import styles from './styles.scss';
 
-function LeadButtons(props) {
+function LeadSources(props) {
     const {
         className,
         onSourceChange,
@@ -177,11 +177,11 @@ function LeadButtons(props) {
     }, [addCandidateLeads, handleDropboxChooserClose]);
 
     return (
-        <div className={_cs(styles.addLeadButtons, className)}>
+        <div className={_cs(styles.addLeadSources, className)}>
             <h4 className={styles.heading}>
                 {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
             </h4>
-            <LeadButton
+            <LeadSource
                 source={LEAD_TYPE.file}
                 active={activeSource === LEAD_TYPE.file}
                 title={_ts('addLeads.sourceButtons', 'localDiskLabel')}
@@ -195,8 +195,8 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </FileInput>
-            </LeadButton>
-            <LeadButton
+            </LeadSource>
+            <LeadSource
                 source={LEAD_TYPE.website}
                 active={activeSource === LEAD_TYPE.website}
                 title={_ts('addLeads.sourceButtons', 'websiteLabel')}
@@ -208,8 +208,8 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </Button>
-            </LeadButton>
-            <LeadButton
+            </LeadSource>
+            <LeadSource
                 source={LEAD_TYPE.text}
                 active={activeSource === LEAD_TYPE.text}
                 title={_ts('addLeads.sourceButtons', 'textLabel')}
@@ -221,10 +221,10 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </Button>
-            </LeadButton>
+            </LeadSource>
 
 
-            <LeadButton
+            <LeadSource
                 source={LEAD_TYPE.drive}
                 active={activeSource === LEAD_TYPE.drive}
                 title={_ts('addLeads.sourceButtons', 'googleDriveLabel')}
@@ -241,9 +241,9 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </GooglePicker>
-            </LeadButton>
+            </LeadSource>
 
-            <LeadButton
+            <LeadSource
                 source={LEAD_TYPE.dropbox}
                 active={activeSource === LEAD_TYPE.dropbox}
                 title={_ts('addLeads.sourceButtons', 'dropboxLabel')}
@@ -260,9 +260,9 @@ function LeadButtons(props) {
                 >
                     <Icon name="add" />
                 </DropboxChooser>
-            </LeadButton>
+            </LeadSource>
 
-            <LeadButton
+            <LeadSource
                 source={LEAD_TYPE.connectors}
                 active={activeSource === LEAD_TYPE.connectors}
                 title={_ts('addLeads.sourceButtons', 'connectorsLabel')}
@@ -272,14 +272,14 @@ function LeadButtons(props) {
     );
 }
 
-LeadButtons.propTypes = {
+LeadSources.propTypes = {
     onSourceChange: PropTypes.func.isRequired,
     onLeadsAdd: PropTypes.func.isRequired,
     className: PropTypes.string,
     activeSource: PropTypes.string.isRequired,
 };
 
-LeadButtons.defaultProps = {
+LeadSources.defaultProps = {
     className: undefined,
 };
 
@@ -292,5 +292,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    LeadButtons,
+    LeadSources,
 );
