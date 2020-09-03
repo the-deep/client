@@ -32,12 +32,23 @@
             font-size: var(--font-size-large);
         }
 
-        .title {
+        .title-container {
+            display: flex;
+            align-items: center;
             flex-basis: calc(100% - (var(--width-icon-large) + var(--spacing-small) * 2 ) * 2);
             margin: 0;
             padding: var(--spacing-small) 0;
-            text-align: left;
-            word-break: break-all;
+
+            .title {
+                flex-grow: 1;
+                text-align: left;
+                word-break: break-all;
+            }
+
+            .badge {
+                flex-shrink: 0;
+                margin-left: var(--spacing-extra-small);
+            }
         }
 
         .status-icon {

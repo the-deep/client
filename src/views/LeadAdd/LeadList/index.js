@@ -31,6 +31,9 @@ import {
     leadFilterMethod,
     leadIdSelector,
     leadKeySelector,
+
+    leadSourceTypeSelector,
+    leadFaramValuesSelector,
 } from '../utils';
 
 import DroppableDiv from './DroppableDiv';
@@ -132,10 +135,12 @@ function LeadList(props) {
             );
 
             return {
+                itemKey: key,
                 active: key === activeLeadKey,
-                lead,
-                onLeadSelect,
-                leadState: leadStates[key],
+                title: leadFaramValuesSelector(lead)?.title,
+                type: leadSourceTypeSelector(lead),
+                onItemSelect: onLeadSelect,
+                itemState: leadStates[key],
                 actionButtons,
             };
         },

@@ -16,6 +16,7 @@ import { LeadProcessorContext } from '../../LeadProcessor';
 import {
     leadKeySelector,
     leadFaramValuesSelector,
+    leadSourceTypeSelector,
 } from '../../utils';
 import LeadListItem from '../../LeadListItem';
 
@@ -60,9 +61,10 @@ function CandidateLeadsModal(props) {
         );
 
         return ({
+            itemKey: key,
             title: leadFaramValuesSelector(data)?.title,
-            lead: data,
             progress: fileUploadStatuses?.[key]?.progress,
+            type: leadSourceTypeSelector(data),
             actionButtons,
         });
     }, [fileUploadStatuses, removeCandidateLead]);
