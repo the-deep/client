@@ -19,6 +19,7 @@ import {
 import _ts from '#ts';
 
 import {
+    LEAD_STATUS,
     LEAD_TYPE,
     leadKeySelector,
     leadSourceTypeSelector,
@@ -90,7 +91,18 @@ function LeadProcessor(props) {
             ...currentFileUploadStatues,
             [key]: { progress },
         }));
-    }, [setFileUploadStatues]);
+        setCandidateLeads(currentCandidateLeads => (
+            produce(currentCandidateLeads, (safeCandidateLeads) => {
+                const currentLeadIndex = safeCandidateLeads
+                    .findIndex(lead => leadKeySelector(lead) === key);
+                if (currentLeadIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[currentLeadIndex].leadState = (progress === 100)
+                        ? LEAD_STATUS.complete : LEAD_STATUS.uploading;
+                }
+            })
+        ));
+    }, [setFileUploadStatues, setCandidateLeads]);
 
     const handleDropboxUploadPendingChange = useCallback((key, pending) => {
         setDropboxUploadStatues(currentDropboxUploadStatues => ({
@@ -104,6 +116,16 @@ function LeadProcessor(props) {
             ...currentDriveUploadStatuses,
             [key]: { pending },
         }));
+        setCandidateLeads(currentCandidateLeads => (
+            produce(currentCandidateLeads, (safeCandidateLeads) => {
+                const currentLeadIndex = safeCandidateLeads
+                    .findIndex(lead => leadKeySelector(lead) === key);
+                if (currentLeadIndex !== -1 && pending) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[currentLeadIndex].leadState = LEAD_STATUS.uploading;
+                }
+            })
+        ));
     }, [setDriveUploadStatues]);
 
     const removeCandidateLead = useCallback((leadKey) => {
@@ -146,6 +168,8 @@ function LeadProcessor(props) {
                     safeCandidateLeads[selectedIndex].faramErrors = faramErrors;
                     // eslint-disable-next-line no-param-reassign
                     safeCandidateLeads[selectedIndex].faramInfo.error = analyzeErrors(faramErrors);
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.error;
                 }
             })
         ));
@@ -178,6 +202,7 @@ function LeadProcessor(props) {
                     error: false,
                     pristine: isDefined(serverId),
                 },
+                leadState: LEAD_STATUS.pristine,
             };
 
             const leadType = leadSourceTypeSelector(newLead);

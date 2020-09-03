@@ -44,6 +44,7 @@
             width: 85%;
 
             .lead-list {
+                display: flex;
                 flex-direction: column;
                 flex-shrink: 0;
                 border-right: var(--width-separator-thin) solid var(--color-separator);

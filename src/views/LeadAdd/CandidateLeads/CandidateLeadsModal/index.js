@@ -60,12 +60,15 @@ function CandidateLeadsModal(props) {
             />
         );
 
+        const progress = fileUploadStatuses?.[key]?.progress;
+
         return ({
             itemKey: key,
             title: leadFaramValuesSelector(data)?.title,
-            progress: fileUploadStatuses?.[key]?.progress,
             type: leadSourceTypeSelector(data),
+            progress,
             actionButtons,
+            itemState: data.leadState,
         });
     }, [fileUploadStatuses, removeCandidateLead]);
 
@@ -110,7 +113,7 @@ function CandidateLeadsModal(props) {
         >
             <ModalHeader
                 // TODO: Translate string
-                title={`Processing Leads (${candidateLeads.length})`}
+                title={`Candidate Leads (${candidateLeads.length})`}
                 rightComponent={(
                     <DangerButton
                         iconName="contractContent"
