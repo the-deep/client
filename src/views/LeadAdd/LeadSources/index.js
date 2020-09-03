@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, listToGroupList, mapToMap } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
@@ -24,13 +24,17 @@ import { formatTitle } from '#utils/common';
 import {
     leadAddPageActiveSourceSelector,
     leadAddSetActiveSourceAction,
+    leadAddPageLeadsSelector,
 } from '#redux';
 
 import {
     LEAD_TYPE,
+    LEAD_STATUS,
+    leadKeySelector,
     supportedGoogleDriveMimeTypes,
     supportedDropboxExtension,
     supportedFileTypes,
+    leadSourceTypeSelector,
 } from '../utils';
 import { LeadProcessorContext } from '../LeadProcessor';
 
@@ -43,7 +47,51 @@ function LeadSources(props) {
         onSourceChange,
         activeSource,
         onLeadsAdd,
+        leadStates,
+        leads,
     } = props;
+
+    const leadsBySource = useMemo(
+        () => listToGroupList(
+            leads,
+            leadSourceTypeSelector,
+            item => item,
+        ),
+        [leads],
+    );
+
+    const counts = useMemo(
+        () => mapToMap(
+            leadsBySource,
+            key => key,
+            l => l.length,
+        ),
+        [leadsBySource],
+    );
+
+    const sourceStates = useMemo(
+        () => mapToMap(
+            leadsBySource,
+            key => key,
+            (l) => {
+                const leadsKeys = l.map(leadKeySelector);
+                if (leadsKeys.some(key => leadStates[key] === LEAD_STATUS.invalid)) {
+                    return LEAD_STATUS.invalid;
+                }
+                if (leadsKeys.some(key => leadStates[key] === LEAD_STATUS.requesting)) {
+                    return LEAD_STATUS.requesting;
+                }
+                if (leadsKeys.some(key => leadStates[key] === LEAD_STATUS.nonPristine)) {
+                    return LEAD_STATUS.nonPristine;
+                }
+                if (leadsKeys.every(key => leadStates[key] === LEAD_STATUS.complete)) {
+                    return LEAD_STATUS.complete;
+                }
+                return LEAD_STATUS.pristine;
+            },
+        ),
+        [leadsBySource, leadStates],
+    );
 
     // NOTE: dropbox button must be manually disabled and enabled unlike
     // google-drive which creates an overlay and disables everything in bg
@@ -186,6 +234,8 @@ function LeadSources(props) {
                 active={activeSource === LEAD_TYPE.file}
                 title={_ts('addLeads.sourceButtons', 'localDiskLabel')}
                 onClick={onSourceChange}
+                count={counts[LEAD_TYPE.file]}
+                state={sourceStates[LEAD_TYPE.file]}
             >
                 <FileInput
                     onChange={handleLeadAddFromDisk}
@@ -201,6 +251,8 @@ function LeadSources(props) {
                 active={activeSource === LEAD_TYPE.website}
                 title={_ts('addLeads.sourceButtons', 'websiteLabel')}
                 onClick={onSourceChange}
+                count={counts[LEAD_TYPE.website]}
+                state={sourceStates[LEAD_TYPE.website]}
             >
                 <Button
                     transparent
@@ -214,6 +266,8 @@ function LeadSources(props) {
                 active={activeSource === LEAD_TYPE.text}
                 title={_ts('addLeads.sourceButtons', 'textLabel')}
                 onClick={onSourceChange}
+                count={counts[LEAD_TYPE.text]}
+                state={sourceStates[LEAD_TYPE.text]}
             >
                 <Button
                     transparent
@@ -229,6 +283,8 @@ function LeadSources(props) {
                 active={activeSource === LEAD_TYPE.drive}
                 title={_ts('addLeads.sourceButtons', 'googleDriveLabel')}
                 onClick={onSourceChange}
+                count={counts[LEAD_TYPE.drive]}
+                state={sourceStates[LEAD_TYPE.drive]}
             >
                 <GooglePicker
                     clientId={googleDriveClientId}
@@ -248,6 +304,8 @@ function LeadSources(props) {
                 active={activeSource === LEAD_TYPE.dropbox}
                 title={_ts('addLeads.sourceButtons', 'dropboxLabel')}
                 onClick={onSourceChange}
+                count={counts[LEAD_TYPE.dropbox]}
+                state={sourceStates[LEAD_TYPE.dropbox]}
             >
                 <DropboxChooser
                     appKey={dropboxAppKey}
@@ -267,6 +325,8 @@ function LeadSources(props) {
                 active={activeSource === LEAD_TYPE.connectors}
                 title={_ts('addLeads.sourceButtons', 'connectorsLabel')}
                 onClick={onSourceChange}
+                count={counts[LEAD_TYPE.connectors]}
+                state={sourceStates[LEAD_TYPE.connectors]}
             />
         </div>
     );
@@ -277,6 +337,10 @@ LeadSources.propTypes = {
     onLeadsAdd: PropTypes.func.isRequired,
     className: PropTypes.string,
     activeSource: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    leadStates: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    leads: PropTypes.array.isRequired,
 };
 
 LeadSources.defaultProps = {
@@ -285,6 +349,7 @@ LeadSources.defaultProps = {
 
 const mapStateToProps = state => ({
     activeSource: leadAddPageActiveSourceSelector(state),
+    leads: leadAddPageLeadsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
