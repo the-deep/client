@@ -5,15 +5,13 @@ import { isNotDefined } from '@togglecorp/fujs';
 import Icon from '#rscg/Icon';
 
 import Jumper from '#components/general/Jumper';
+import Badge from '#components/viewer/Badge';
 
 import _cs from '#cs';
 
 import {
     LEAD_TYPE,
     LEAD_STATUS,
-    leadKeySelector,
-    leadSourceTypeSelector,
-    leadFaramValuesSelector,
 } from '../utils';
 
 import styles from './styles.scss';
@@ -76,47 +74,50 @@ const iconMap = {
 const propTypes = {
     className: PropTypes.string,
 
-    // eslint-disable-next-line react/forbid-prop-types
-    lead: PropTypes.object.isRequired,
-    leadState: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    itemState: PropTypes.string,
+    type: PropTypes.string,
+    itemKey: PropTypes.string.isRequired,
 
-    onLeadSelect: PropTypes.func.isRequired,
+    onItemSelect: PropTypes.func.isRequired,
     active: PropTypes.bool,
     actionButtons: PropTypes.node,
 
     progress: PropTypes.number,
+    count: PropTypes.number,
 };
 
 const defaultProps = {
     active: false,
     progress: undefined,
+    count: undefined,
+    type: undefined,
     className: undefined,
-    leadState: undefined,
+    itemState: undefined,
     actionButtons: undefined,
 };
 
 function LeadListItem(props) {
     const {
-        lead,
-        onLeadSelect,
+        itemKey,
+        title,
+        onItemSelect,
         actionButtons,
         active,
         className,
         progress,
-        leadState,
+        type,
+        count,
+        itemState,
     } = props;
 
     const handleClick = useCallback(() => {
-        const leadKey = leadKeySelector(lead);
-        onLeadSelect(leadKey);
-    }, [onLeadSelect, lead]);
-
-    const type = leadSourceTypeSelector(lead);
-    const { title } = leadFaramValuesSelector(lead);
+        onItemSelect(itemKey);
+    }, [onItemSelect, itemKey]);
 
     const stateIconClassName = _cs(
         styles.statusIcon,
-        styleMap[leadState],
+        styleMap[itemState],
     );
 
     // TODO: STYLING loading doesn't rotate
@@ -140,12 +141,20 @@ function LeadListItem(props) {
                     className={styles.icon}
                     name={leadTypeToIconClassMap[type]}
                 />
-                <span className={styles.title} >
-                    { title }
-                </span>
+                <div className={styles.titleContainer}>
+                    <span className={styles.title}>
+                        {title}
+                    </span>
+                    {count && (
+                        <Badge
+                            className={styles.badge}
+                            title={count}
+                        />
+                    )}
+                </div>
                 <Icon
                     className={stateIconClassName}
-                    name={iconMap[leadState]}
+                    name={iconMap[itemState]}
                 />
             </button>
             <div className={styles.buttonContainer}>
