@@ -611,6 +611,7 @@ class LeadAdd extends React.PureComponent {
                                             <LeadSources
                                                 className={styles.leadButtons}
                                                 onLeadsAdd={this.handleLeadsAdd}
+                                                leadStates={leadStates}
                                             />
                                             <CandidateLeads
                                                 className={styles.candidateLeadsBox}
