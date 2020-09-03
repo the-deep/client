@@ -51,7 +51,7 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
-import LeadButtons from './LeadButtons';
+import LeadSources from './LeadSources';
 import LeadPreview from './LeadPreview';
 import LeadActions from './LeadActions';
 import LeadList from './LeadList';
@@ -448,7 +448,7 @@ class LeadAdd extends React.PureComponent {
         const saveEnabledForAll = false;
 
         return (
-            <LeadProcessor>
+            <>
                 <Prompt
                     message={
                         (location) => {
@@ -491,14 +491,16 @@ class LeadAdd extends React.PureComponent {
                                 hide={shouldHideButtons}
                                 render={(
                                     <div className={styles.leftPane}>
-                                        <LeadButtons
-                                            className={styles.leadButtons}
-                                            onLeadsAdd={this.handleLeadsAdd}
-                                        />
-                                        <CandidateLeads
-                                            className={styles.candidateLeadsBox}
-                                            onLeadsAdd={this.handleLeadsAdd}
-                                        />
+                                        <LeadProcessor>
+                                            <LeadSources
+                                                className={styles.leadButtons}
+                                                onLeadsAdd={this.handleLeadsAdd}
+                                            />
+                                            <CandidateLeads
+                                                className={styles.candidateLeadsBox}
+                                                onLeadsAdd={this.handleLeadsAdd}
+                                            />
+                                        </LeadProcessor>
                                     </div>
                                 )}
                             />
@@ -568,7 +570,7 @@ class LeadAdd extends React.PureComponent {
                         </p>
                     </Confirm>
                 )}
-            </LeadProcessor>
+            </>
         );
     }
 }
