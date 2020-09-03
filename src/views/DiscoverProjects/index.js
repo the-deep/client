@@ -145,11 +145,13 @@ const requestOptions = {
     },
     projectJoinRequest: {
         url: ({ params: { projectId } }) => `/projects/${projectId}/join/`,
+        body: ({ params }) => params && params.body,
         method: methods.POST,
         onSuccess: ({
             params: {
                 projectId,
                 projectTitle,
+                closeModal,
             },
             props: { setProjectJoin },
         }) => {
@@ -157,6 +159,10 @@ const requestOptions = {
                 projectId,
                 isJoining: true,
             });
+
+            if (closeModal) {
+                closeModal();
+            }
 
             notify.send({
                 title: _ts('discoverProjects', 'discoverProjectsNotificationTitle'),
@@ -247,6 +253,12 @@ export default class DiscoverProjects extends React.PureComponent {
     }
 
     dataModifier = (project, columnKey) => {
+        const {
+            requests: {
+                projectJoinRequest: { pending: pendingProjectJoinRequest },
+            },
+        } = this.props;
+
         switch (columnKey) {
             case 'title': {
                 return (
@@ -351,6 +363,7 @@ export default class DiscoverProjects extends React.PureComponent {
                         project={project}
                         onProjectJoin={this.handleProjectJoin}
                         onProjectJoinCancel={this.handleProjectJoinCancel}
+                        projectJoinRequestPending={pendingProjectJoinRequest}
                     />
                 );
             case 'status':
@@ -389,13 +402,10 @@ export default class DiscoverProjects extends React.PureComponent {
         this.props.setActiveSort(activeSort);
     }
 
-    handleProjectJoin = (project) => {
+    handleProjectJoin = (options) => {
         const { requests: { projectJoinRequest } } = this.props;
 
-        projectJoinRequest.do({
-            projectId: project.id,
-            projectTitle: project.title,
-        });
+        projectJoinRequest.do(options);
     }
 
     handleProjectJoinCancel = (project) => {

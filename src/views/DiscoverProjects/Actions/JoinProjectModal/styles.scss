@@ -1,0 +1,10 @@
+.modal {
+    width: 50vw;
+    min-width: 720px;
+    max-width: 900px;
+
+    .modal-body {
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+}

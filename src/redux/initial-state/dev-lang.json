@@ -1141,7 +1141,10 @@
         "-59901057": "Ary",
         "-25520086": "This lead is in the Assessment Registry.",
         "-27768788": "Lead successfully edited.",
-        "-39063797": "Published On"
+        "-39063797": "Published On",
+        "-11231231": "Send Request",
+        "-10909809": "Request to join ${projectName}",
+        "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project admins about why you want to join the project?"
     },
     "links": {
         "browserExtension": {
@@ -1189,6 +1192,12 @@
             "filterApplyFilter": 10,
             "filterClearFilter": 11,
             "regionSelectLabel": 336
+        },
+        "discoverProjects.joinProject": {
+            "title": -10909809,
+            "cancel": 61,
+            "sendRequest": -11231231,
+            "requestQuestion": -23409823
         },
         "framework": {
             "analysisFramework": 379,
