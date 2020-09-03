@@ -9,6 +9,8 @@ import {
     isDefined,
     listToMap,
     reverseRoute,
+    compareNumber,
+    unique,
 } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
@@ -24,7 +26,11 @@ import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
 
-import { RequestCoordinator } from '#request';
+import {
+    RequestClient,
+    RequestCoordinator,
+    methods,
+} from '#request';
 import {
     routeUrlSelector,
     projectIdFromRouteSelector,
@@ -72,6 +78,12 @@ import {
 } from './utils';
 import styles from './styles.scss';
 
+function mergeEntities(foo = [], bar = []) {
+    return unique(
+        [...foo, ...bar],
+        item => item.id,
+    );
+}
 
 const mapStateToProps = state => ({
     routeUrl: routeUrlSelector(state),
@@ -92,12 +104,55 @@ const mapDispatchToProps = dispatch => ({
     saveLead: params => dispatch(leadAddSaveLeadAction(params)),
 });
 
+const requestOptions = {
+    leadOptionsRequest: {
+        url: '/lead-options/',
+        method: methods.POST,
+        body: ({ props: { leads, projectId } }) => {
+            const values = leads.map(leadFaramValuesSelector);
+            const leadSources = values.map(item => item.source).filter(isDefined);
+            const leadAuthors = values.map(item => item.authors).filter(isDefined).flat();
+            // const leadGroups = values.map(item => item.leadGroup).filter(isDefined);
+
+            return {
+                projects: [projectId],
+                organizations: unique([...leadSources, ...leadAuthors], id => id),
+                // TODO: get only required lead groups and use same process as organizations
+                // leadGroups: unique(leadGroups, id => id),
+            };
+        },
+        onSuccess: ({ params, response }) => {
+            params.setOrganizations(response.organizations);
+            params.setLeadGroups(response.leadGroups);
+        },
+        onFailure: ({ params }) => {
+            params.setOrganizations([]);
+            params.setLeadGroups([]);
+        },
+        onFatal: ({ params }) => {
+            params.setOrganizations([]);
+            params.setLeadGroups([]);
+        },
+        onMount: true,
+        onPropsChanged: {
+            lead: ({
+                prevProps: { projectId: oldProject },
+                props: { projectId: newProject },
+            }) => (
+                newProject !== oldProject
+            ),
+        },
+        // extras: {
+        //     schemaName: 'leadOptions',
+        // },
+    },
+};
+
 const propTypes = {
     routeUrl: PropTypes.string.isRequired,
     projectId: PropTypes.number,
     // eslint-disable-next-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired,
-
     // eslint-disable-next-line react/forbid-prop-types
     leads: PropTypes.array,
     // eslint-disable-next-line react/forbid-prop-types
@@ -108,6 +163,9 @@ const propTypes = {
     removeLeads: PropTypes.func.isRequired,
     changeLead: PropTypes.func.isRequired,
     saveLead: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -127,6 +185,21 @@ class LeadAdd extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const {
+            requests: {
+                leadOptionsRequest,
+            },
+        } = this.props;
+
+        leadOptionsRequest.setDefaultParams({
+            setOrganizations: (organizations = []) => {
+                this.setState({ organizations });
+            },
+            setLeadGroups: (leadGroups = []) => {
+                this.setState({ leadGroups });
+            },
+        });
+
         this.state = {
             leadSaveStatuses: {},
 
@@ -137,6 +210,9 @@ class LeadAdd extends React.PureComponent {
 
             leadsToRemove: [],
             leadRemoveConfirmShown: false,
+
+            organizations: [],
+            leadGroups: [],
         };
 
         this.formCoordinator = new CoordinatorBuilder()
@@ -145,6 +221,8 @@ class LeadAdd extends React.PureComponent {
                 this.setState({ submitAllPending: true });
             })
             .postSession((totalErrors) => {
+                this.setState({ submitAllPending: false });
+
                 if (totalErrors > 0) {
                     notify.send({
                         title: _ts('addLeads', 'leadSave'),
@@ -160,7 +238,6 @@ class LeadAdd extends React.PureComponent {
                         duration: notify.duration.MEDIUM,
                     });
                 }
-                this.setState({ submitAllPending: false });
             })
             .build();
     }
@@ -181,6 +258,24 @@ class LeadAdd extends React.PureComponent {
         )
     ));
 
+    handleOrganizationsAdd = (organizations) => {
+        if (organizations.length <= 0) {
+            return;
+        }
+        this.setState(state => ({
+            organizations: mergeEntities(state.organizations, organizations),
+        }));
+    }
+
+    handleLeadGroupsAdd = (leadGroups) => {
+        if (leadGroups.length <= 0) {
+            return;
+        }
+        this.setState(state => ({
+            leadGroups: mergeEntities(state.leadGroups, leadGroups),
+        }));
+    }
+
     handleLeadSavePendingChange = (key, pending) => {
         this.setState(state => ({
             leadSaveStatuses: {
@@ -193,41 +288,49 @@ class LeadAdd extends React.PureComponent {
     handleLeadsAdd = (leadsInfo) => {
         const {
             projectId,
-            activeUser: {
-                userId,
-            },
+            activeUser: { userId },
             appendLeads,
+            requests: {
+                leadOptionsRequest: {
+                    response: leadOptions,
+                },
+            },
         } = this.props;
+
+        const confidentiality = leadOptions?.confidentiality ?? [];
+        const priority = leadOptions?.priority ?? [];
+
+        const now = new Date();
+        const title = `Lead ${now.toLocaleTimeString()}`;
+        const publishedDate = formatDateToString(now, 'yyyy-MM-dd');
+
+        const defaultConfidentiality = confidentiality[0]?.key;
+        const defaultPriority = [...priority].sort((a, b) => compareNumber(a.key, b.key))[0]?.key;
 
         const newLeads = leadsInfo.map((leadInfo) => {
             const {
                 faramValues,
+                // FIXME: serverId is no longer the case
                 serverId,
             } = leadInfo;
 
             const key = getNewLeadKey();
 
-            const now = new Date();
-
             const newLead = {
                 id: key,
                 serverId,
                 faramValues: {
-                    title: `Lead ${(new Date()).toLocaleTimeString()}`,
-                    // NOTE: setting current project as project for lead
+                    title,
                     project: projectId,
-                    // NOTE: only projects where user can create lead should be listed
-                    // so, having current user as assignee shouldn't hurt
                     assignee: userId,
-                    // NOTE: setting current date as published date if there is none
-                    publishedOn: formatDateToString(now, 'yyyy-MM-dd'),
-                    // NOTE: hard-coded confidentiality value
-                    confidentiality: 'unprotected',
-                    // NOTE: hard-coded priority value
-                    priority: 100,
-                    // Inject other values too
-                    authors: isDefined(faramValues.authors) ? faramValues.authors : [],
+                    publishedOn: publishedDate,
+                    confidentiality: defaultConfidentiality,
+                    priority: defaultPriority,
+
                     ...faramValues,
+
+                    // NOTE: Server expects a value for authors
+                    authors: faramValues.authors ?? [],
                 },
                 faramErrors: {},
                 faramInfo: {
@@ -242,18 +345,14 @@ class LeadAdd extends React.PureComponent {
         appendLeads(newLeads);
     }
 
-    handleLeadSave = (key) => {
-        this.handleLeadsSave([key]);
-    }
-
     handleLeadsSave = (leadKeys) => {
-        leadKeys.forEach((leadKey) => {
-            const {
-                leads,
-                changeLead,
-                saveLead,
-            } = this.props;
+        const {
+            leads,
+            changeLead,
+            saveLead,
+        } = this.props;
 
+        leadKeys.forEach((leadKey) => {
             // FIXME: use leadKeysMapping
             const lead = leads.find(l => leadKeySelector(l) === leadKey);
             if (!lead) {
@@ -261,85 +360,108 @@ class LeadAdd extends React.PureComponent {
                 return;
             }
 
-            this.formCoordinator.add(
-                leadKey,
-                {
-                    start: () => {
-                        const serverId = leadIdSelector(lead);
-                        const value = leadFaramValuesSelector(lead);
-                        detachedFaram({
-                            value,
-                            schema,
-                            onValidationFailure: (faramErrors) => {
+            const worker = {
+                start: () => {
+                    const serverId = leadIdSelector(lead);
+                    const value = leadFaramValuesSelector(lead);
+
+                    const onValidationFailure = (faramErrors) => {
+                        changeLead({
+                            leadKey,
+                            faramErrors,
+                        });
+
+                        this.formCoordinator.notifyComplete(leadKey, true);
+                    };
+
+                    const onValidationSuccess = (faramValues) => {
+                        let url;
+                        let params;
+                        if (serverId) {
+                            url = createUrlForLeadEdit(serverId);
+                            params = () => createParamsForLeadEdit(faramValues);
+                        } else {
+                            url = urlForLead;
+                            params = () => createParamsForLeadCreate(faramValues);
+                        }
+
+                        const request = new FgRestBuilder()
+                            .url(url)
+                            .params(params)
+                            .delay(0)
+                            .preLoad(() => {
+                                this.handleLeadSavePendingChange(leadKey, true);
+                            })
+                            .success((response) => {
+                                saveLead({
+                                    leadKey,
+                                    lead: response,
+                                });
+                                this.handleLeadSavePendingChange(leadKey, false);
+                                this.formCoordinator.notifyComplete(leadKey);
+                            })
+                            .failure((response) => {
+                                const faramErrors = alterResponseErrorToFaramError(
+                                    response.errors,
+                                );
+
                                 changeLead({
                                     leadKey,
                                     faramErrors,
                                 });
 
+                                this.handleLeadSavePendingChange(leadKey, false);
                                 this.formCoordinator.notifyComplete(leadKey, true);
-                            },
-                            onValidationSuccess: (faramValues) => {
-                                let url;
-                                let params;
-                                if (serverId) {
-                                    url = createUrlForLeadEdit(serverId);
-                                    params = () => createParamsForLeadEdit(faramValues);
-                                } else {
-                                    url = urlForLead;
-                                    params = () => createParamsForLeadCreate(faramValues);
-                                }
+                            })
+                            .fatal(() => {
+                                const faramErrors = {
+                                    $internal: ['Error while trying to save lead.'],
+                                };
 
-                                const request = new FgRestBuilder()
-                                    .url(url)
-                                    .params(params)
-                                    .delay(0)
-                                    .preLoad(() => {
-                                        this.handleLeadSavePendingChange(leadKey, true);
-                                    })
-                                    .success((response) => {
-                                        this.handleLeadSavePendingChange(leadKey, false);
-                                        saveLead({
-                                            leadKey,
-                                            lead: response,
-                                        });
-                                        this.formCoordinator.notifyComplete(leadKey);
-                                    })
-                                    .failure((response) => {
-                                        const faramErrors = alterResponseErrorToFaramError(
-                                            response.errors,
-                                        );
+                                changeLead({
+                                    leadKey,
+                                    faramErrors,
+                                });
 
-                                        changeLead({
-                                            leadKey,
-                                            faramErrors,
-                                        });
+                                this.handleLeadSavePendingChange(leadKey, false);
+                                this.formCoordinator.notifyComplete(leadKey, true);
+                            })
+                            .build();
+                        request.start();
+                    };
 
-                                        this.handleLeadSavePendingChange(leadKey, false);
-                                        this.formCoordinator.notifyComplete(leadKey, true);
-                                    })
-                                    .fatal(() => {
-                                        changeLead({
-                                            leadKey,
-                                            faramErrors: {
-                                                $internal: ['Error while trying to save lead.'],
-                                            },
-                                        });
-
-                                        this.handleLeadSavePendingChange(leadKey, false);
-                                        this.formCoordinator.notifyComplete(leadKey, true);
-                                    })
-                                    .build();
-                                request.start();
-                            },
-                        });
-                    },
-                    stop: () => {
-                        // No-op
-                    },
+                    detachedFaram({
+                        value,
+                        schema,
+                        onValidationFailure,
+                        onValidationSuccess,
+                    });
                 },
+                stop: () => {
+                    // No-op
+                },
+            };
+
+            this.formCoordinator.add(
+                leadKey,
+                worker,
             );
         });
         this.formCoordinator.start();
+    }
+
+    handleLeadsToRemoveSet = (leadKeys) => {
+        this.setState({
+            leadsToRemove: leadKeys,
+            leadRemoveConfirmShown: true,
+        });
+    }
+
+    handleLeadsExport = (leadIds) => {
+        this.setState({
+            leadExportModalShown: true,
+            leadsToExport: leadIds,
+        });
     }
 
     handleLeadRemoveConfirmClose = (confirm) => {
@@ -372,20 +494,6 @@ class LeadAdd extends React.PureComponent {
         });
     }
 
-    handleLeadsToRemoveSet = (leadKeys) => {
-        this.setState({
-            leadsToRemove: leadKeys,
-            leadRemoveConfirmShown: true,
-        });
-    }
-
-    handleLeadToRemoveSet = (leadKey) => {
-        this.setState({
-            leadsToRemove: [leadKey],
-            leadRemoveConfirmShown: true,
-        });
-    }
-
     handleLeadsExportCancel = () => {
         this.setState({
             leadExportModalShown: false,
@@ -393,15 +501,16 @@ class LeadAdd extends React.PureComponent {
         });
     }
 
-    handleLeadsExport = (leadIds) => {
-        this.setState({
-            leadExportModalShown: true,
-            leadsToExport: leadIds,
-        });
+    handleLeadSave = (key) => {
+        this.handleLeadsSave([key]);
     }
 
     handleLeadExport = (leadId) => {
         this.handleLeadsExport([leadId]);
+    }
+
+    handleLeadToRemoveSet = (leadKey) => {
+        this.handleLeadsToRemoveSet([leadKey]);
     }
 
     render() {
@@ -410,10 +519,17 @@ class LeadAdd extends React.PureComponent {
             leadPreviewHidden,
             leads,
             activeLead,
-
+            requests: {
+                leadOptionsRequest: {
+                    pending,
+                    response: leadOptions,
+                },
+            },
         } = this.props;
 
         const {
+            leadGroups,
+            organizations,
             leadSaveStatuses,
 
             submitAllPending,
@@ -471,7 +587,7 @@ class LeadAdd extends React.PureComponent {
                                 defaultLink={reverseRoute(pathNames.leads, { projectId })}
                             />
                             <h4 className={styles.heading}>
-                                {/* FIXME: translate this */}
+                                {/* TODO: translate this */}
                                 Add Leads
                             </h4>
                             <LeadActions
@@ -531,6 +647,18 @@ class LeadAdd extends React.PureComponent {
                                                 key={activeLeadKey}
                                                 leadState={activeLeadState}
                                                 bulkActionDisabled={submitAllPending}
+
+                                                pending={pending}
+
+                                                priorityOptions={leadOptions?.priority}
+                                                confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
+                                                assignees={leadOptions?.members}
+
+                                                leadGroups={leadGroups}
+                                                onLeadGroupsAdd={this.handleLeadGroupsAdd}
+
+                                                organizations={organizations}
+                                                onOrganizationsAdd={this.handleOrganizationsAdd}
                                             />
                                         )}
                                         bottomChild={!leadPreviewMinimized && (
@@ -576,5 +704,5 @@ class LeadAdd extends React.PureComponent {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    RequestCoordinator(LeadAdd),
+    RequestCoordinator(RequestClient(requestOptions)(LeadAdd)),
 );

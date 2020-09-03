@@ -11,16 +11,6 @@
         justify-content: space-between;
         padding: 0 var(--spacing-large);
 
-        .section {
-            display: flex;
-            flex-basis: 100%;
-            flex-wrap: wrap;
-        }
-
-        .project {
-            flex-basis: 30%;
-        }
-
         .small-button {
             margin-right: var(--spacing-extra-small);
             padding: var(--spacing-extra-small);
@@ -90,11 +80,6 @@
             flex-basis: calc(50% - var(--spacing-medium));
         }
 
-        .extract-button {
-            margin-right: var(--spacing-extra-small);
-            padding: var(--spacing-extra-small);
-        }
-
         .priority,
         .lead-group {
             flex-basis: calc(100% / 3 - var(--spacing-medium));
@@ -104,12 +89,11 @@
         .text {
             flex-basis: 100%;
         }
+    }
 
-        .file-title {
-            flex-grow: 1;
-            margin: var(--spacing-small) 0;
-            color: var(--color-text);
-        }
+    .file-title {
+        flex-shrink: 0;
+        padding: 0 var(--spacing-large);
     }
 
     .emm-stats-container {
