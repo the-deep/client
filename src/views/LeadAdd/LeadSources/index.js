@@ -38,7 +38,7 @@ import {
 } from '../utils';
 import { LeadProcessorContext } from '../LeadProcessor';
 
-import LeadSource from './LeadSource';
+import LeadListItem from '../LeadListItem';
 import styles from './styles.scss';
 
 function LeadSources(props) {
@@ -229,104 +229,111 @@ function LeadSources(props) {
             <h4 className={styles.heading}>
                 {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
             </h4>
-            <LeadSource
-                source={LEAD_TYPE.file}
+            <LeadListItem
+                count={counts[LEAD_TYPE.file]}
+                itemKey={LEAD_TYPE.file}
+                type={LEAD_TYPE.file}
                 active={activeSource === LEAD_TYPE.file}
                 title={_ts('addLeads.sourceButtons', 'localDiskLabel')}
-                onClick={onSourceChange}
-                count={counts[LEAD_TYPE.file]}
-                state={sourceStates[LEAD_TYPE.file]}
-            >
-                <FileInput
-                    onChange={handleLeadAddFromDisk}
-                    showStatus={false}
-                    multiple
-                    accept={supportedFileTypes}
-                >
-                    <Icon name="add" />
-                </FileInput>
-            </LeadSource>
-            <LeadSource
-                source={LEAD_TYPE.website}
+                onItemSelect={onSourceChange}
+                itemState={sourceStates[LEAD_TYPE.file]}
+                actionButtons={(
+                    <FileInput
+                        onChange={handleLeadAddFromDisk}
+                        showStatus={false}
+                        multiple
+                        accept={supportedFileTypes}
+                    >
+                        <Icon name="add" />
+                    </FileInput>
+                )}
+            />
+            <LeadListItem
+                itemKey={LEAD_TYPE.website}
+                type={LEAD_TYPE.website}
                 active={activeSource === LEAD_TYPE.website}
                 title={_ts('addLeads.sourceButtons', 'websiteLabel')}
-                onClick={onSourceChange}
+                onItemSelect={onSourceChange}
                 count={counts[LEAD_TYPE.website]}
-                state={sourceStates[LEAD_TYPE.website]}
-            >
-                <Button
-                    transparent
-                    onClick={handleLeadAddFromWebsite}
-                >
-                    <Icon name="add" />
-                </Button>
-            </LeadSource>
-            <LeadSource
-                source={LEAD_TYPE.text}
+                itemState={sourceStates[LEAD_TYPE.website]}
+                actionButtons={(
+                    <Button
+                        transparent
+                        onClick={handleLeadAddFromWebsite}
+                    >
+                        <Icon name="add" />
+                    </Button>
+                )}
+            />
+            <LeadListItem
+                itemKey={LEAD_TYPE.text}
+                type={LEAD_TYPE.text}
                 active={activeSource === LEAD_TYPE.text}
                 title={_ts('addLeads.sourceButtons', 'textLabel')}
-                onClick={onSourceChange}
+                onItemSelect={onSourceChange}
                 count={counts[LEAD_TYPE.text]}
-                state={sourceStates[LEAD_TYPE.text]}
-            >
-                <Button
-                    transparent
-                    onClick={handleLeadAddFromText}
-                >
-                    <Icon name="add" />
-                </Button>
-            </LeadSource>
-
-
-            <LeadSource
-                source={LEAD_TYPE.drive}
+                itemState={sourceStates[LEAD_TYPE.text]}
+                actionButtons={(
+                    <Button
+                        transparent
+                        onClick={handleLeadAddFromText}
+                    >
+                        <Icon name="add" />
+                    </Button>
+                )}
+            />
+            <LeadListItem
+                itemKey={LEAD_TYPE.drive}
+                type={LEAD_TYPE.drive}
                 active={activeSource === LEAD_TYPE.drive}
                 title={_ts('addLeads.sourceButtons', 'googleDriveLabel')}
-                onClick={onSourceChange}
+                onItemSelect={onSourceChange}
                 count={counts[LEAD_TYPE.drive]}
-                state={sourceStates[LEAD_TYPE.drive]}
-            >
-                <GooglePicker
-                    clientId={googleDriveClientId}
-                    developerKey={googleDriveDeveloperKey}
-                    onAuthenticate={handleGoogleDriveOnAuthenticated}
-                    onChange={handleLeadAddFromGoogleDrive}
-                    mimeTypes={supportedGoogleDriveMimeTypes}
-                    multiselect
-                    navHidden
-                >
-                    <Icon name="add" />
-                </GooglePicker>
-            </LeadSource>
-
-            <LeadSource
-                source={LEAD_TYPE.dropbox}
+                itemState={sourceStates[LEAD_TYPE.drive]}
+                actionButtons={(
+                    <GooglePicker
+                        clientId={googleDriveClientId}
+                        developerKey={googleDriveDeveloperKey}
+                        onAuthenticate={handleGoogleDriveOnAuthenticated}
+                        onChange={handleLeadAddFromGoogleDrive}
+                        mimeTypes={supportedGoogleDriveMimeTypes}
+                        multiselect
+                        navHidden
+                    >
+                        <Icon name="add" />
+                    </GooglePicker>
+                )}
+            />
+            <LeadListItem
+                itemKey={LEAD_TYPE.dropbox}
+                type={LEAD_TYPE.dropbox}
                 active={activeSource === LEAD_TYPE.dropbox}
                 title={_ts('addLeads.sourceButtons', 'dropboxLabel')}
-                onClick={onSourceChange}
+                onItemSelect={onSourceChange}
                 count={counts[LEAD_TYPE.dropbox]}
-                state={sourceStates[LEAD_TYPE.dropbox]}
-            >
-                <DropboxChooser
-                    appKey={dropboxAppKey}
-                    multiselect
-                    extensions={supportedDropboxExtension}
-                    success={handleLeadAddFromDropbox}
-                    disabled={dropboxDisabled}
-                    onClick={handleDropboxChooserClick}
-                    cancel={handleDropboxChooserClose}
-                >
-                    <Icon name="add" />
-                </DropboxChooser>
-            </LeadSource>
-
-            <LeadSource
-                source={LEAD_TYPE.connectors}
+                itemState={sourceStates[LEAD_TYPE.dropbox]}
+                actionButtons={(
+                    <DropboxChooser
+                        appKey={dropboxAppKey}
+                        multiselect
+                        extensions={supportedDropboxExtension}
+                        success={handleLeadAddFromDropbox}
+                        disabled={dropboxDisabled}
+                        onClick={handleDropboxChooserClick}
+                        cancel={handleDropboxChooserClose}
+                    >
+                        <Icon name="add" />
+                    </DropboxChooser>
+                )}
+            />
+            <LeadListItem
+                itemKey={LEAD_TYPE.connectors}
+                type={LEAD_TYPE.connectors}
                 active={activeSource === LEAD_TYPE.connectors}
                 title={_ts('addLeads.sourceButtons', 'connectorsLabel')}
-                onClick={onSourceChange}
+                onItemSelect={onSourceChange}
                 count={counts[LEAD_TYPE.connectors]}
-                state={sourceStates[LEAD_TYPE.connectors]}
+                itemState={sourceStates[LEAD_TYPE.connectors]}
             />
         </div>
     );
