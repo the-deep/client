@@ -1143,8 +1143,10 @@
         "-27768788": "Lead successfully edited.",
         "-39063797": "Published On",
         "-11231231": "Send Request",
-        "-10909809": "Request to join ${projectName}",
-        "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project admins about why you want to join the project?"
+        "-10909809": "Request to join {projectName}",
+        "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project admins about why you want to join the project?",
+        "-12131231": "Expand",
+        "-30498120": "Close"
     },
     "links": {
         "browserExtension": {
@@ -2429,7 +2431,9 @@
             "markAsPendingLabel": 802,
             "pendingNotificationsLabel": 629,
             "completedNotificationsLabel": 631,
-            "markAsCompletedLabel": -33843532
+            "markAsCompletedLabel": -33843532,
+            "expand": -12131231,
+            "close": -30498120
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,

@@ -31,6 +31,7 @@
 
     .center {
         flex-grow: 1;
+        overflow: hidden;
 
         .message {
             padding: var(--spacing-small) var(--spacing-medium);
@@ -50,15 +51,34 @@
             }
         }
 
+        .closed {
+            padding: var(--spacing-small) var(--spacing-medium);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .expanded {
+            padding: var(--spacing-small) var(--spacing-medium);
+            overflow: visible;
+        }
+
         .actions {
             margin-top: var(--spacing-medium-alt);
         }
     }
 
     .right {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
         padding: 0 var(--spacing-small);
 
+        .expandButton {
+            font-size: var(--font-size-large);
+        }
         .status-change-button {
+            flex-grow: 1;
             opacity: 0;
             font-size: var(--font-size-large);
         }

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
 
@@ -22,6 +22,8 @@ const propTypes = {
     seenStatus: PropTypes.bool,
     notificationId: PropTypes.number.isRequired,
     onNotificationSeenStatusChange: PropTypes.func.isRequired,
+    expandText: PropTypes.string,
+    isExpandable: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -31,6 +33,8 @@ const defaultProps = {
     actions: undefined,
     timestamp: undefined,
     seenStatus: false,
+    expandText: '',
+    isExpandable: false,
 };
 
 function Notification(props) {
@@ -43,6 +47,8 @@ function Notification(props) {
         seenStatus,
         notificationId,
         onNotificationSeenStatusChange,
+        expandText,
+        isExpandable,
     } = props;
 
     const handleNotificationSeenStatusChange = useCallback(() => {
@@ -52,6 +58,12 @@ function Notification(props) {
             newSeenStatus,
         );
     }, [onNotificationSeenStatusChange, notificationId, seenStatus]);
+
+    const [isExpanded, setExpanded] = useState(false);
+
+    const handleButtonClick = useCallback(() => {
+        setExpanded(!isExpanded);
+    }, [isExpanded, setExpanded]);
 
     return (
         <div
@@ -85,6 +97,13 @@ function Notification(props) {
                         mode="dd-MM-yyyy at hh:mm aaa"
                     />
                 </div>
+                {isExpandable && (
+                    <div>
+                        <div className={isExpanded ? styles.expanded : styles.closed}>
+                            {expandText}
+                        </div>
+                    </div>
+                )}
                 { actions && (
                     <div className={styles.actions}>
                         { actions }
@@ -92,6 +111,18 @@ function Notification(props) {
                 )}
             </div>
             <div className={styles.right}>
+                {isExpandable && (
+                    <Button
+                        className={styles.expandButton}
+                        transparent
+                        title={isExpanded
+                            ? _ts('notifications', 'expand')
+                            : _ts('notifications', 'close')
+                        }
+                        iconName={isExpanded ? 'up' : 'down'}
+                        onClick={handleButtonClick}
+                    />
+                )}
                 <Button
                     className={styles.statusChangeButton}
                     transparent

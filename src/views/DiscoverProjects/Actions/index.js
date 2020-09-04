@@ -6,7 +6,7 @@ import { reverseRoute } from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
-import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import { pathNames } from '#constants';
@@ -31,7 +31,7 @@ const defaultProps = {
     // className: '',
 };
 
-const ModalButton = modalize(Button);
+const ModalButton = modalize(PrimaryButton);
 
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;

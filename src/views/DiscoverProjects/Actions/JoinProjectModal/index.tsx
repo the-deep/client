@@ -5,7 +5,7 @@ import Faram, {
 } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextArea from '#rsci/TextArea';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -37,6 +37,12 @@ interface Props {
     closeModal: () => void;
     projectJoinRequestPending: boolean;
 }
+
+const schema: Schema = {
+    fields: {
+        reason: [requiredCondition],
+    },
+};
 
 function JoinProjectModal(props: Props) {
     const {
@@ -78,14 +84,8 @@ function JoinProjectModal(props: Props) {
         });
     };
 
-    const handleValidationFailure = (faramErrors: setJoinProjectFaramErrors) => {
+    const handleValidationFailure = (faramErrors: JoinProjectFaramErrors) => {
         setJoinProjectFaramErrors(faramErrors);
-    };
-
-    const schema: Schema = {
-        fields: {
-            reason: [requiredCondition],
-        },
     };
 
     return (
@@ -94,7 +94,13 @@ function JoinProjectModal(props: Props) {
             closeOnEscape
         >
             <ModalHeader
-                title={_ts('discoverProjects.joinProject', 'title', { projectName })}
+                title={_ts('discoverProjects.joinProject', 'title', {
+                    projectName: (
+                        <span className={styles.headerProjectName}>
+                            {projectName}
+                        </span>
+                    ),
+                })}
             />
             <Faram
                 schema={schema}
@@ -107,10 +113,18 @@ function JoinProjectModal(props: Props) {
             >
                 <ModalBody className={styles.modalBody}>
                     <div>
-                        {_ts('discoverProjects.joinProject', 'requestQuestion', { projectName })}
+                        {_ts('discoverProjects.joinProject', 'requestQuestion', {
+                            projectName: (
+                                <span className={styles.projectName}>
+                                    {projectName}
+                                </span>
+                            ),
+                        })}
                     </div>
                     <TextArea
                         faramElementName="reason"
+                        rows="5"
+                        autoFocus
                     />
                 </ModalBody>
                 <ModalFooter>
@@ -119,13 +133,13 @@ function JoinProjectModal(props: Props) {
                     >
                         {_ts('discoverProjects.joinProject', 'cancel')}
                     </DangerButton>
-                    <Button
+                    <PrimaryButton
                         type="submit"
                         disabled={pristine}
                         pending={projectJoinRequestPending}
                     >
                         {_ts('discoverProjects.joinProject', 'sendRequest')}
-                    </Button>
+                    </PrimaryButton>
                 </ModalFooter>
             </Faram>
         </Modal>

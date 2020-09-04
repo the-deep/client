@@ -90,6 +90,7 @@ function ProjectJoinRequestItem(props) {
                     displayName: requestorName,
                     id: requestorId,
                 } = {},
+                reason,
                 project: {
                     id: projectId,
                     title: projectTitle,
@@ -180,7 +181,9 @@ function ProjectJoinRequestItem(props) {
                     })}
                 </div>
             }
+            expandText={reason}
             timestamp={timestamp}
+            isExpandable
             actions={
                 status === 'pending' ? (
                     <React.Fragment>
