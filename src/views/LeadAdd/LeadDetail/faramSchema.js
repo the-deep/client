@@ -19,7 +19,6 @@ const commonFields = {
     priority: [requiredCondition],
 
     tabularBook: [],
-
     leadGroup: [],
 };
 
