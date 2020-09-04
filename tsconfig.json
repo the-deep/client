@@ -26,6 +26,7 @@
         "#redux": ["./src/redux"],
         "#redux/*": ["./src/redux/*"],
         "#request": ["./src/request"],
+        "#restrequest": ["./src/restrequest"],
         "#resources/*": ["./src/resources/*"],
         "#rest": ["./src/rest"],
         "#rest/*": ["./src/rest/*"],
