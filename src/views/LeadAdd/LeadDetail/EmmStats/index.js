@@ -11,7 +11,18 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const EmptyComponent = () => '';
+const emmTriggerKeySelector = t => t.emmKeyword;
+const emmEntitiesKeySelector = t => t.name;
+
+const emmTriggerRendererParams = (key, data) => ({
+    keyword: data.emmKeyword,
+    riskFactor: data.emmRiskFactor,
+    count: data.count,
+});
+
+const emmEntitiesRendererParams = (key, data) => ({
+    name: data.name,
+});
 
 const propTypes = {
     className: PropTypes.string,
@@ -25,70 +36,61 @@ const defaultProps = {
     emmTriggers: [],
 };
 
-const emmTriggerRendererParams = (key, data) => ({
-    keyword: data.emmKeyword,
-    riskFactor: data.emmRiskFactor,
-    count: data.count,
-});
+function EmmStatsModal(props) {
+    const {
+        className,
+        emmEntities,
+        emmTriggers,
+    } = props;
 
-const emmEntitiesRendererParams = (key, data) => ({
-    name: data.name,
-});
+    const showEntities = emmEntities.length > 0;
+    const showTriggers = emmTriggers.length > 0;
 
-const emmTriggerKeySelector = t => t.emmKeyword;
-const emmEntitiesKeySelector = t => t.name;
-
-export default class EmmStatsModal extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-
-    render() {
-        const {
-            className,
-            emmEntities,
-            emmTriggers,
-        } = this.props;
-
-        const showEntities = emmEntities.length > 0;
-        const showTriggers = emmTriggers.length > 0;
-
-        return (
-            <div className={_cs(className, styles.body)}>
-                {showTriggers && (
-                    <div className={styles.content}>
-                        <header className={styles.header}>
-                            <h4 className={styles.heading}>
-                                {_ts('emmStatsModal', 'emmTriggersTitle')}
-                            </h4>
-                        </header>
-                        <ListView
-                            className={styles.list}
-                            renderer={EmmTrigger}
-                            data={emmTriggers}
-                            keySelector={emmTriggerKeySelector}
-                            rendererParams={emmTriggerRendererParams}
-                            emptyComponent={EmptyComponent}
-                        />
-                    </div>
-                )}
-                {showEntities && (
-                    <div className={styles.content}>
-                        <header className={styles.header}>
-                            <h4 className={styles.heading}>
-                                {_ts('emmStatsModal', 'emmEntitiesTitle')}
-                            </h4>
-                        </header>
-                        <ListView
-                            className={styles.list}
-                            renderer={EmmEntity}
-                            data={emmEntities}
-                            keySelector={emmEntitiesKeySelector}
-                            rendererParams={emmEntitiesRendererParams}
-                            emptyComponent={EmptyComponent}
-                        />
-                    </div>
-                )}
-            </div>
-        );
+    if (!showTriggers && !showEntities) {
+        return null;
     }
+
+    return (
+        <div className={_cs(className, styles.body)}>
+            {showTriggers && (
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <h4 className={styles.heading}>
+                            {_ts('emmStatsModal', 'emmTriggersTitle')}
+                        </h4>
+                    </header>
+                    <ListView
+                        className={styles.list}
+                        renderer={EmmTrigger}
+                        data={emmTriggers}
+                        keySelector={emmTriggerKeySelector}
+                        rendererParams={emmTriggerRendererParams}
+                        emptyComponent={null}
+                    />
+                </div>
+            )}
+            {showEntities && (
+                <div className={styles.content}>
+                    <header className={styles.header}>
+                        <h4 className={styles.heading}>
+                            {_ts('emmStatsModal', 'emmEntitiesTitle')}
+                        </h4>
+                    </header>
+                    <ListView
+                        className={styles.list}
+                        renderer={EmmEntity}
+                        data={emmEntities}
+                        keySelector={emmEntitiesKeySelector}
+                        rendererParams={emmEntitiesRendererParams}
+                        emptyComponent={null}
+                    />
+                </div>
+            )}
+        </div>
+    );
 }
+
+EmmStatsModal.propTypes = propTypes;
+EmmStatsModal.defaultProps = defaultProps;
+
+export default EmmStatsModal;

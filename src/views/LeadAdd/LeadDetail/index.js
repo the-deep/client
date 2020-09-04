@@ -1,13 +1,13 @@
 // NOTE: This component has also been used in Leads Table to quick edit leads
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
 import {
     _cs,
     isDefined,
     isFalsyString,
+    isTruthyString,
     compareNumber,
     isTruthy,
     unique,
@@ -40,10 +40,7 @@ import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import InternalGallery from '#components/viewer/InternalGallery';
 import { organizationTitleSelector } from '#entities/organization';
 
-import {
-    RequestClient,
-    methods,
-} from '#request';
+import useRequest from '#restrequest';
 import {
     currentUserActiveProjectSelector,
     leadAddChangeLeadAction,
@@ -103,22 +100,7 @@ const labelSelector = item => item.value;
 const titleSelector = item => item.title;
 const displayNameSelector = item => item.displayName;
 
-const requestOptions = {
-    organizationsRequest: {
-        url: '/organizations/',
-        query: ({ params }) => ({
-            search: params.searchText,
-            // limit: 30,
-        }),
-        method: methods.GET,
-        onSuccess: ({ params, response }) => {
-            params.setSearchedOrganizations(response.results);
-        },
-        options: {
-            delay: 300,
-        },
-    },
-};
+const emptyList = [];
 
 const propTypes = {
     className: PropTypes.string,
@@ -137,7 +119,7 @@ const propTypes = {
     onOrganizationsAdd: PropTypes.func.isRequired,
     onLeadGroupsAdd: PropTypes.func.isRequired,
 
-    pending: PropTypes.boolean, // pending lead options
+    pending: PropTypes.bool, // pending lead options
 
     // eslint-disable-next-line react/forbid-prop-types
     priorityOptions: PropTypes.array,
@@ -151,8 +133,6 @@ const propTypes = {
     organizations: PropTypes.array,
 
     leadState: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -169,605 +149,571 @@ const defaultProps = {
     organizations: [],
 };
 
-// FIXME: change to functional component
-class LeadDetail extends React.PureComponent {
-    static propTypes = propTypes;
+function LeadDetail(props) {
+    const {
+        activeProject,
+        assignees,
+        bulkActionDisabled,
+        className: classNameFromProps,
+        confidentialityOptions,
+        disableLeadUrlChange,
+        lead,
+        leadGroups,
+        leadState,
+        onApplyAllBelowClick,
+        onApplyAllClick,
+        onChange,
+        onOrganizationsAdd,
+        onLeadGroupsAdd,
+        organizations,
+        pending: pendingFromProps, // pending lead options
+        priorityOptions,
+    } = props;
 
-    static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
+    const [searchedText, setSearchedText] = useState(undefined);
 
-        const { lead } = this.props;
+    const options = useMemo(
+        () => ({
+            // NOTE: only call request when searchText is truthy
+            url: searchText ? '/organizations/' : undefined,
+            query: { search: searchedText },
+        }),
+        [searchedText],
+    );
+    const [pendingSearchedOrganizations, searchedOrganizations] = useRequest(
+        options,
+    );
+
+    const [addLeadGroupModalShown, setAddLeadGroupModalShown] = useState(false);
+    const [formatTitleAsTitleCase, setFormatTitleAsTitleCase] = useState(true);
+    const [suggestedTitleFromUrl, setSuggestedTitleFromUrl] = useState(() => {
         const currentFaramValues = leadFaramValuesSelector(lead);
-        const suggestedTitleFromUrl = getTitleFromUrl(currentFaramValues.url);
+        return getTitleFromUrl(currentFaramValues.url);
+    });
 
-        this.state = {
-            showAddLeadGroupModal: false,
+    // FIXME: suggestedTitleFromExtraction is now obsolete
+    const [suggestedTitleFromExtraction, setSuggestedTitleFromExtraction] = useState('');
+    // const [searchedOrganizations, setSearchedOrganizations] = useState([]);
 
-            // NOTE: If false, it will capitalize the first letter of first word only
-            formatTitleAsTitleCase: true,
+    const key = leadKeySelector(lead);
+    const values = leadFaramValuesSelector(lead);
+    const type = leadSourceTypeSelector(lead);
+    const errors = leadFaramErrorsSelector(lead);
 
-            suggestedTitleFromUrl,
-            // FIXME: this was previously filled by web-info-extract
-            suggestedTitleFromExtraction: undefined,
+    const {
+        project: projectId,
+        title,
 
-            searchedOrganizations: [],
-        };
+        sourceRaw: oldSourceTitle,
+        authorRaw: oldAuthorTitle,
+
+        // NOTE: previously: these values are set by connectors
+        // NOTE: now: these values should be set by candidate leads
+        sourceSuggestion: suggestedSourceTitle,
+        authorSuggestion: suggestedAuthorTitle,
+
+        emmEntities,
+        emmTriggers,
+    } = values;
+
+    const pending = (
+        isLeadFormLoading(leadState)
+        || pendingFromProps
+    );
+    const formDisabled = (
+        isLeadFormDisabled(leadState)
+        || pending
+    );
+    const projectIsSelected = isTruthy(projectId);
+
+    const isApplyAllDisabled = formDisabled || bulkActionDisabled;
+
+    let sourceHint;
+    if (oldSourceTitle) {
+        sourceHint = _ts('addLeads', 'previousOrganization', { organization: oldSourceTitle });
+    } else if (suggestedSourceTitle) {
+        sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedSourceTitle });
     }
 
-    getPriorityOptions = memoize((priorityOptions = []) => (
-        [...priorityOptions].sort((a, b) => compareNumber(a.key, b.key))
-    ));
-
-    setSearchedOrganizations = (searchedOrganizations) => {
-        this.setState({ searchedOrganizations });
+    let authorHint;
+    if (oldAuthorTitle) {
+        authorHint = _ts('addLeads', 'previousOrganization', { organization: oldAuthorTitle });
+    } else if (suggestedAuthorTitle) {
+        authorHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedAuthorTitle });
     }
 
-    shouldHideLeadGroupInput = () => {
-        const { activeProject } = this.props;
-        return !activeProject || !activeProject.assessmentTemplate;
-    };
+    const suggestions = unique([suggestedTitleFromUrl, suggestedTitleFromExtraction])
+        .filter(isTruthyString)
+        .filter(suggestion => suggestion !== title);
 
-    handleAddLeadGroupClick = () => {
-        this.setState({ showAddLeadGroupModal: true });
-    }
+    const sortedPriorityOptions = useMemo(
+        () => (
+            [...priorityOptions].sort((a, b) => compareNumber(a.key, b.key))
+        ),
+        [priorityOptions],
+    );
 
-    handleAddLeadGroupModalClose = () => {
-        this.setState({ showAddLeadGroupModal: false });
-    }
+    const shouldHideLeadGroupInput = useCallback(
+        () => (
+            !activeProject || !activeProject.assessmentTemplate
+        ),
+        [activeProject],
+    );
 
-    handleApplyAllClick = (attrName) => {
-        const {
-            onApplyAllClick,
-            lead,
-        } = this.props;
+    const handleAddLeadGroupClick = useCallback(
+        () => {
+            setAddLeadGroupModalShown(true);
+        },
+        [],
+    );
+    const handleAddLeadGroupModalClose = useCallback(
+        () => {
+            setAddLeadGroupModalShown(false);
+        },
+        [],
+    );
 
-        const key = leadKeySelector(lead);
-        const values = leadFaramValuesSelector(lead);
-        const attrValue = values[attrName];
-        onApplyAllClick({ leadKey: key, values, attrName, attrValue });
-    }
+    const handleApplyAllClick = useCallback(
+        (attrName) => {
+            const attrValue = values[attrName];
+            onApplyAllClick({ leadKey: key, values, attrName, attrValue });
+        },
+        [key, values, onApplyAllClick],
+    );
 
-    handleApplyAllBelowClick = (attrName) => {
-        const {
-            onApplyAllBelowClick,
-            lead,
-        } = this.props;
+    const handleApplyAllBelowClick = useCallback(
+        (attrName) => {
+            const attrValue = values[attrName];
+            onApplyAllBelowClick({ leadKey: key, values, attrName, attrValue });
+        },
+        [key, values, onApplyAllBelowClick],
+    );
 
-        const key = leadKeySelector(lead);
-        const values = leadFaramValuesSelector(lead);
-        const attrValue = values[attrName];
-        onApplyAllBelowClick({ leadKey: key, values, attrName, attrValue });
-    }
+    const handleFaramChange = useCallback(
+        (faramValues, faramErrors) => {
+            const oldFaramValues = values;
+            if (oldFaramValues.url !== faramValues.url) {
+                setSuggestedTitleFromUrl(getTitleFromUrl(faramValues.url));
+            }
 
-    handleFaramChange = (faramValues, faramErrors) => {
-        const {
-            lead,
-            onChange,
-        } = this.props;
+            onChange({
+                leadKey: key,
+                faramValues,
+                faramErrors,
+            });
+        },
+        [key, values, onChange],
+    );
 
-        const key = leadKeySelector(lead);
-
-        const oldFaramValues = leadFaramValuesSelector(lead);
-        if (oldFaramValues.url !== faramValues.url) {
-            this.setState({ suggestedTitleFromUrl: getTitleFromUrl(faramValues.url) });
-        }
-
-        onChange({
-            leadKey: key,
-            faramValues,
-            faramErrors,
-        });
-    }
-
-    // private
-    handleLeadValueChange = (newValues) => {
-        const {
-            lead,
-            onChange,
-        } = this.props;
-
-        const values = leadFaramValuesSelector(lead);
-
-        if (newValues === values) {
-            return;
-        }
-
-        const key = leadKeySelector(lead);
-        const errors = leadFaramErrorsSelector(lead);
-
-        const newErrors = accumulateDifferentialErrors(
-            values,
-            newValues,
-            errors,
-            schema,
-        );
-
-        onChange({
-            leadKey: key,
-            faramValues: newValues,
-            faramErrors: newErrors,
-        });
-    }
-
-    handlePublisherAdd = (organization) => {
-        const { lead, onOrganizationsAdd } = this.props;
-        onOrganizationsAdd([organization]);
-
-        const values = leadFaramValuesSelector(lead);
-        const newValues = {
-            ...values,
-            source: organization.id,
-        };
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleAuthorAdd = (organization) => {
-        const { lead, onOrganizationsAdd } = this.props;
-        onOrganizationsAdd([organization]);
-
-        const values = leadFaramValuesSelector(lead);
-        const newValues = {
-            ...values,
-            authors: values.authors
-                ? [...values.authors, organization.id]
-                : [organization.id],
-        };
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleLeadGroupAdd = (leadGroup) => {
-        const { lead, onLeadGroupsAdd } = this.props;
-        onLeadGroupsAdd([leadGroup]);
-
-        const values = leadFaramValuesSelector(lead);
-        const newValues = produce(values, (safeValues) => {
-            // eslint-disable-next-line no-param-reassign
-            safeValues.leadGroup = leadGroup.id;
-        });
-
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleSameAsPublisherButtonClick = () => {
-        const { lead } = this.props;
-
-        const values = leadFaramValuesSelector(lead);
-
-        const newValues = produce(values, (safeValues) => {
-            const { source } = values;
-            // eslint-disable-next-line no-param-reassign
-            safeValues.authors = source ? [source] : undefined;
-        });
-
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleAutoFormatTitleButton = () => {
-        const { lead } = this.props;
-        const { formatTitleAsTitleCase } = this.state;
-
-        const values = leadFaramValuesSelector(lead);
-        const newValues = produce(values, (safeValues) => {
-            const { title } = values;
-
-            if (isFalsyString(title)) {
+    const handleLeadValueChange = useCallback(
+        (newValues) => {
+            if (newValues === values) {
                 return;
             }
 
-            // eslint-disable-next-line no-param-reassign
-            safeValues.title = formatTitleAsTitleCase
-                ? titleCase(title) : capitalizeOnlyFirstLetter(title);
-            // eslint-disable-next-line no-param-reassign
-            safeValues.title = trimFileExtension(safeValues.title);
-        });
+            const newErrors = accumulateDifferentialErrors(
+                values,
+                newValues,
+                errors,
+                schema,
+            );
 
-        this.setState({ formatTitleAsTitleCase: !formatTitleAsTitleCase });
-        this.handleLeadValueChange(newValues);
-    }
-
-    handleOrganizationSearchValueChange = (searchText) => {
-        const {
-            requests: {
-                organizationsRequest,
-            },
-        } = this.props;
-
-        if (isFalsyString(searchText)) {
-            organizationsRequest.abort();
-            this.setSearchedOrganizations([]);
-        } else {
-            organizationsRequest.do({
-                searchText,
-                setSearchedOrganizations: this.setSearchedOrganizations,
+            onChange({
+                leadKey: key,
+                faramValues: newValues,
+                faramErrors: newErrors,
             });
-        }
-    }
+        },
+        [key, values, errors, onChange],
+    );
 
-    render() {
-        const {
-            className: classNameFromProps,
-            lead,
-            leadState,
+    const handlePublisherAdd = useCallback(
+        (organization) => {
+            onOrganizationsAdd([organization]);
 
-            bulkActionDisabled,
+            const newValues = {
+                ...values,
+                source: organization.id,
+            };
+            handleLeadValueChange(newValues);
+        },
+        [handleLeadValueChange, values, onOrganizationsAdd],
+    );
 
-            requests: {
-                organizationsRequest: {
-                    pending: pendingSearchedOrganizations,
-                },
-            },
+    // FIXME: add useCallback after this point
+    const handleAuthorAdd = useCallback(
+        (organization) => {
+            onOrganizationsAdd([organization]);
 
-            pending: pendingFromProps, // pending lead options
+            const newValues = {
+                ...values,
+                authors: values.authors
+                    ? [...values.authors, organization.id]
+                    : [organization.id],
+            };
+            handleLeadValueChange(newValues);
+        },
+        [handleLeadValueChange, onOrganizationsAdd, values],
+    );
 
-            priorityOptions,
-            confidentialityOptions,
-            assignees,
-            leadGroups,
+    const handleLeadGroupAdd = useCallback(
+        (leadGroup) => {
+            onLeadGroupsAdd([leadGroup]);
 
-            organizations,
-            onOrganizationsAdd,
+            const newValues = produce(values, (safeValues) => {
+                // eslint-disable-next-line no-param-reassign
+                safeValues.leadGroup = leadGroup.id;
+            });
 
-            disableLeadUrlChange,
-        } = this.props;
-        const {
-            showAddLeadGroupModal,
-            searchedOrganizations,
-            suggestedTitleFromUrl,
-            suggestedTitleFromExtraction,
-        } = this.state;
+            handleLeadValueChange(newValues);
+        },
+        [handleLeadValueChange, onLeadGroupsAdd, values],
+    );
 
-        const values = leadFaramValuesSelector(lead);
-        const type = leadSourceTypeSelector(lead);
-        const errors = leadFaramErrorsSelector(lead);
+    const handleSameAsPublisherButtonClick = useCallback(
+        () => {
+            const newValues = produce(values, (safeValues) => {
+                const { source } = values;
+                // eslint-disable-next-line no-param-reassign
+                safeValues.authors = source ? [source] : undefined;
+            });
 
-        const {
-            project: projectId,
-            title,
+            handleLeadValueChange(newValues);
+        },
+        [handleLeadValueChange, values],
+    );
 
-            sourceRaw: oldSourceTitle,
-            authorRaw: oldAuthorTitle,
+    const handleAutoFormatTitleButton = useCallback(
+        () => {
+            const newValues = produce(values, (safeValues) => {
+                const { title: myTitle } = values;
 
-            // NOTE: previously: these values are set by connectors
-            // NOTE: now: these values should be set by candidate leads
-            sourceSuggestion: suggestedSourceTitle,
-            authorSuggestion: suggestedAuthorTitle,
+                if (isFalsyString(myTitle)) {
+                    return;
+                }
 
-            emmEntities,
-            emmTriggers,
-        } = values;
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = formatTitleAsTitleCase
+                    ? titleCase(myTitle) : capitalizeOnlyFirstLetter(myTitle);
+                // eslint-disable-next-line no-param-reassign
+                safeValues.title = trimFileExtension(safeValues.title);
+            });
 
-        const pending = (
-            isLeadFormLoading(leadState)
-            || pendingFromProps
-        );
-        const formDisabled = (
-            isLeadFormDisabled(leadState)
-            || pending
-        );
-        const projectIsSelected = isTruthy(projectId);
+            setFormatTitleAsTitleCase(item => !item);
+            handleLeadValueChange(newValues);
+        },
+        [formatTitleAsTitleCase, handleLeadValueChange, values],
+    );
 
-        const isApplyAllDisabled = formDisabled || bulkActionDisabled;
+    const handleOrganizationSearchValueChange = useCallback(
+        (searchText) => {
+            setSearchedText(searchText);
+        },
+        [],
+    );
 
-        let sourceHint;
-        if (oldSourceTitle) {
-            sourceHint = _ts('addLeads', 'previousOrganization', { organization: oldSourceTitle });
-        } else if (suggestedSourceTitle) {
-            sourceHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedSourceTitle });
-        }
-
-        let authorHint;
-        if (oldAuthorTitle) {
-            authorHint = _ts('addLeads', 'previousOrganization', { organization: oldAuthorTitle });
-        } else if (suggestedAuthorTitle) {
-            authorHint = _ts('addLeads', 'suggestedOrganization', { organization: suggestedAuthorTitle });
-        }
-
-        const suggestions = unique([suggestedTitleFromUrl, suggestedTitleFromExtraction])
-            .filter(isDefined)
-            .filter(suggestion => suggestion !== title);
-
-        return (
-            <div
-                // TODO: STYLING the faram doesn't take full height and loading-animation is offset
-                className={_cs(classNameFromProps, styles.leadItem)}
+    return (
+        <div
+            // TODO: STYLING the faram doesn't take full height and loading-animation is offset
+            className={_cs(classNameFromProps, styles.leadItem)}
+        >
+            { pending && <LoadingAnimation /> }
+            <Faram
+                className={styles.addLeadForm}
+                onChange={handleFaramChange}
+                schema={schema}
+                value={values}
+                error={errors}
+                disabled={formDisabled}
             >
-                { pending && <LoadingAnimation /> }
-                <Faram
-                    className={styles.addLeadForm}
-                    onChange={this.handleFaramChange}
-                    schema={schema}
-                    value={values}
-                    error={errors}
-                    disabled={formDisabled}
-                >
-                    <header className={styles.header}>
-                        <NonFieldErrors faramElement />
-                    </header>
-                    {type === LEAD_TYPE.website && (
-                        <>
-                            <TextInput
-                                className={styles.url}
-                                faramElementName="url"
-                                label={_ts('addLeads', 'urlLabel')}
-                                placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
-                                autoFocus
-                                disabled={disableLeadUrlChange}
-                            />
-                            <ApplyAll
-                                className={styles.website}
-                                disabled={isApplyAllDisabled}
-                                identifierName="website"
-                                onApplyAllClick={this.handleApplyAllClick}
-                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                            >
-                                <TextInput
-                                    faramElementName="website"
-                                    key="website"
-                                    label={_ts('addLeads', 'websiteLabel')}
-                                    placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
-                                />
-                            </ApplyAll>
-                        </>
-                    )}
-                    {type === LEAD_TYPE.text && (
-                        <TextArea
-                            faramElementName="text"
-                            label={_ts('addLeads', 'textLabel')}
-                            placeholder={_ts('addLeads', 'textareaPlaceholderLabel')}
-                            rows="3"
-                            className={styles.text}
+                <header className={styles.header}>
+                    <NonFieldErrors faramElement />
+                </header>
+                {type === LEAD_TYPE.website && (
+                    <>
+                        <TextInput
+                            className={styles.url}
+                            faramElementName="url"
+                            label={_ts('addLeads', 'urlLabel')}
+                            placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                             autoFocus
                             disabled={disableLeadUrlChange}
                         />
-                    )}
-                    <ExtraFunctionsOnHover
-                        className={styles.title}
-                        buttons={(
-                            <>
-                                <AccentButton
-                                    className={styles.smallButton}
-                                    title={_ts('addLeads', 'formatButtonTitle')}
-                                    onClick={this.handleAutoFormatTitleButton}
-                                >
-                                    {/* Treat this as icon */}
-                                    Aa
-                                </AccentButton>
-                            </>
-                        )}
-                    >
-                        <TextInput
-                            faramElementName="title"
-                            label={_ts('addLeads', 'titleLabel')}
-                            placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
-                        />
-                        {suggestions.length > 0 && (
-                            <>
-                                <h5 className={styles.suggestionLabel}>
-                                    {_ts('addLeads', 'suggestionsLabel')}
-                                </h5>
-                                <div className={styles.suggestions}>
-                                    {suggestions.map(suggestion => (
-                                        <BadgeInput
-                                            key={suggestion}
-                                            className={styles.suggestionBadge}
-                                            faramElementName="title"
-                                            title={suggestion}
-                                        />
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    </ExtraFunctionsOnHover>
-
-                    <ApplyAll
-                        className={styles.source}
-                        disabled={isApplyAllDisabled}
-                        identifierName="source"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <FaramBasicSelectInput
-                            faramElementName="source"
-                            label={_ts('addLeads', 'publisherLabel')}
-                            options={organizations}
-                            keySelector={idSelector}
-                            className={styles.input}
-                            labelSelector={organizationTitleSelector}
-                            emptyWhenFilterComponent={PublisherEmptyComponent}
-                            disabled={pendingFromProps || formDisabled || !projectIsSelected}
-                            hint={sourceHint}
-
-                            searchOptions={searchedOrganizations}
-                            searchOptionsPending={pendingSearchedOrganizations}
-                            onOptionsChange={onOrganizationsAdd}
-                            onSearchValueChange={this.handleOrganizationSearchValueChange}
-                        />
-                        <ModalButton
-                            title={_ts('addLeads', 'addPublisherTitle')}
-                            iconName="addPerson"
-                            transparent
-                            modal={(
-                                <AddOrganizationModal
-                                    title={_ts('addLeads', 'addPublisherModalTitle')}
-                                    loadOrganizationList
-                                    onOrganizationAdd={this.handlePublisherAdd}
-                                />
-                            )}
-                        />
-                    </ApplyAll>
-
-                    <ApplyAll
-                        className={styles.author}
-                        disabled={isApplyAllDisabled}
-                        identifierName="authors"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                        extraButtons={(
-                            <Button
+                        <ApplyAll
+                            className={styles.website}
+                            disabled={isApplyAllDisabled}
+                            identifierName="website"
+                            onApplyAllClick={handleApplyAllClick}
+                            onApplyAllBelowClick={handleApplyAllBelowClick}
+                        >
+                            <TextInput
+                                faramElementName="website"
+                                key="website"
+                                label={_ts('addLeads', 'websiteLabel')}
+                                placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
+                            />
+                        </ApplyAll>
+                    </>
+                )}
+                {type === LEAD_TYPE.text && (
+                    <TextArea
+                        faramElementName="text"
+                        label={_ts('addLeads', 'textLabel')}
+                        placeholder={_ts('addLeads', 'textareaPlaceholderLabel')}
+                        rows="3"
+                        className={styles.text}
+                        autoFocus
+                        disabled={disableLeadUrlChange}
+                    />
+                )}
+                <ExtraFunctionsOnHover
+                    className={styles.title}
+                    buttons={(
+                        <>
+                            <AccentButton
                                 className={styles.smallButton}
-                                iconName="copyOutline"
-                                transparent
-                                title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
-                                onClick={this.handleSameAsPublisherButtonClick}
+                                title={_ts('addLeads', 'formatButtonTitle')}
+                                onClick={handleAutoFormatTitleButton}
+                            >
+                                {/* Treat this as icon */}
+                                Aa
+                            </AccentButton>
+                        </>
+                    )}
+                >
+                    <TextInput
+                        faramElementName="title"
+                        label={_ts('addLeads', 'titleLabel')}
+                        placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
+                    />
+                    {suggestions.length > 0 && (
+                        <>
+                            <h5 className={styles.suggestionLabel}>
+                                {_ts('addLeads', 'suggestionsLabel')}
+                            </h5>
+                            <div className={styles.suggestions}>
+                                {suggestions.map(suggestion => (
+                                    <BadgeInput
+                                        key={suggestion}
+                                        className={styles.suggestionBadge}
+                                        faramElementName="title"
+                                        title={suggestion}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </ExtraFunctionsOnHover>
+
+                <ApplyAll
+                    className={styles.source}
+                    disabled={isApplyAllDisabled}
+                    identifierName="source"
+                    onApplyAllClick={handleApplyAllClick}
+                    onApplyAllBelowClick={handleApplyAllBelowClick}
+                >
+                    <FaramBasicSelectInput
+                        faramElementName="source"
+                        label={_ts('addLeads', 'publisherLabel')}
+                        options={organizations}
+                        keySelector={idSelector}
+                        className={styles.input}
+                        labelSelector={organizationTitleSelector}
+                        emptyWhenFilterComponent={PublisherEmptyComponent}
+                        disabled={pendingFromProps || formDisabled || !projectIsSelected}
+                        hint={sourceHint}
+
+                        searchOptions={searchedOrganizations?.results ?? emptyList}
+                        searchOptionsPending={pendingSearchedOrganizations}
+                        onOptionsChange={onOrganizationsAdd}
+                        onSearchValueChange={handleOrganizationSearchValueChange}
+                    />
+                    <ModalButton
+                        title={_ts('addLeads', 'addPublisherTitle')}
+                        iconName="addPerson"
+                        transparent
+                        modal={(
+                            <AddOrganizationModal
+                                title={_ts('addLeads', 'addPublisherModalTitle')}
+                                loadOrganizationList
+                                onOrganizationAdd={handlePublisherAdd}
                             />
                         )}
-                    >
-                        <FaramBasicMultiSelectInput
-                            faramElementName="authors"
-                            label={_ts('addLeads', 'authorLabel')}
+                    />
+                </ApplyAll>
 
-                            className={styles.input}
-                            options={organizations}
-                            keySelector={idSelector}
-                            labelSelector={organizationTitleSelector}
-                            emptyWhenFilterComponent={AuthorEmptyComponent}
-                            disabled={pendingFromProps || formDisabled || !projectIsSelected}
-                            hint={authorHint}
-
-                            searchOptions={searchedOrganizations}
-                            searchOptionsPending={pendingSearchedOrganizations}
-                            onOptionsChange={onOrganizationsAdd}
-                            onSearchValueChange={this.handleOrganizationSearchValueChange}
-                            placeholder={_ts('addLeads', 'authorPlaceholder')}
-                        />
-                        <ModalButton
-                            title={_ts('addLeads', 'addAuthorTitle')}
-                            iconName="addPerson"
+                <ApplyAll
+                    className={styles.author}
+                    disabled={isApplyAllDisabled}
+                    identifierName="authors"
+                    onApplyAllClick={handleApplyAllClick}
+                    onApplyAllBelowClick={handleApplyAllBelowClick}
+                    extraButtons={(
+                        <Button
+                            className={styles.smallButton}
+                            iconName="copyOutline"
                             transparent
-                            modal={(
-                                <AddOrganizationModal
-                                    title={_ts('addLeads', 'addAuthorModalTitle')}
-                                    loadOrganizationList
-                                    onOrganizationAdd={this.handleAuthorAdd}
+                            title={_ts('addLeads', 'sameAsPublisherButtonTitle')}
+                            onClick={handleSameAsPublisherButtonClick}
+                        />
+                    )}
+                >
+                    <FaramBasicMultiSelectInput
+                        faramElementName="authors"
+                        label={_ts('addLeads', 'authorLabel')}
+
+                        className={styles.input}
+                        options={organizations}
+                        keySelector={idSelector}
+                        labelSelector={organizationTitleSelector}
+                        emptyWhenFilterComponent={AuthorEmptyComponent}
+                        disabled={pendingFromProps || formDisabled || !projectIsSelected}
+                        hint={authorHint}
+
+                        searchOptions={searchedOrganizations?.results ?? emptyList}
+                        searchOptionsPending={pendingSearchedOrganizations}
+                        onOptionsChange={onOrganizationsAdd}
+                        onSearchValueChange={handleOrganizationSearchValueChange}
+                        placeholder={_ts('addLeads', 'authorPlaceholder')}
+                    />
+                    <ModalButton
+                        title={_ts('addLeads', 'addAuthorTitle')}
+                        iconName="addPerson"
+                        transparent
+                        modal={(
+                            <AddOrganizationModal
+                                title={_ts('addLeads', 'addAuthorModalTitle')}
+                                loadOrganizationList
+                                onOrganizationAdd={handleAuthorAdd}
+                            />
+                        )}
+                    />
+                </ApplyAll>
+
+                <ApplyAll
+                    className={styles.priority}
+                    disabled={isApplyAllDisabled}
+                    identifierName="priority"
+                    onApplyAllClick={handleApplyAllClick}
+                    onApplyAllBelowClick={handleApplyAllBelowClick}
+                >
+                    <SegmentInput
+                        faramElementName="priority"
+                        name="priority-selector"
+                        label={_ts('addLeads', 'priorityLabel')}
+                        labelSelector={labelSelector}
+                        keySelector={keySelector}
+                        options={sortedPriorityOptions}
+                    />
+                </ApplyAll>
+
+                <ApplyAll
+                    className={styles.confidentiality}
+                    disabled={isApplyAllDisabled}
+                    identifierName="confidentiality"
+                    onApplyAllClick={handleApplyAllClick}
+                    onApplyAllBelowClick={handleApplyAllBelowClick}
+                >
+                    <SelectInput
+                        faramElementName="confidentiality"
+                        keySelector={keySelector}
+                        label={_ts('addLeads', 'confidentialityLabel')}
+                        labelSelector={labelSelector}
+                        options={confidentialityOptions}
+                        placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                    />
+                </ApplyAll>
+
+                <ApplyAll
+                    className={styles.user}
+                    disabled={isApplyAllDisabled}
+                    identifierName="assignee"
+                    onApplyAllClick={handleApplyAllClick}
+                    onApplyAllBelowClick={handleApplyAllBelowClick}
+                >
+                    <SelectInput
+                        faramElementName="assignee"
+                        keySelector={idSelector}
+                        label={_ts('addLeads', 'assigneeLabel')}
+                        labelSelector={displayNameSelector}
+                        options={assignees}
+                        placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                    />
+                </ApplyAll>
+
+                <ApplyAll
+                    className={styles.date}
+                    disabled={isApplyAllDisabled}
+                    identifierName="publishedOn"
+                    onApplyAllClick={handleApplyAllClick}
+                    onApplyAllBelowClick={handleApplyAllBelowClick}
+                >
+                    <DateInput
+                        faramElementName="publishedOn"
+                        label={_ts('addLeads', 'datePublishedLabel')}
+                        placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
+                    />
+                </ApplyAll>
+                <Cloak
+                    hide={shouldHideLeadGroupInput}
+                    render={(
+                        <ApplyAll
+                            className={styles.leadGroup}
+                            disabled={isApplyAllDisabled}
+                            identifierName="leadGroup"
+                            onApplyAllClick={handleApplyAllClick}
+                            onApplyAllBelowClick={handleApplyAllBelowClick}
+                            extraButtons={(
+                                <Button
+                                    className={styles.smallButton}
+                                    onClick={handleAddLeadGroupClick}
+                                    iconName="add"
+                                    transparent
+                                    disabled={!projectIsSelected}
                                 />
                             )}
-                        />
-                    </ApplyAll>
-
-                    <ApplyAll
-                        className={styles.priority}
-                        disabled={isApplyAllDisabled}
-                        identifierName="priority"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SegmentInput
-                            faramElementName="priority"
-                            name="priority-selector"
-                            label={_ts('addLeads', 'priorityLabel')}
-                            labelSelector={labelSelector}
-                            keySelector={keySelector}
-                            options={this.getPriorityOptions(priorityOptions)}
-                        />
-                    </ApplyAll>
-
-                    <ApplyAll
-                        className={styles.confidentiality}
-                        disabled={isApplyAllDisabled}
-                        identifierName="confidentiality"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SelectInput
-                            faramElementName="confidentiality"
-                            keySelector={keySelector}
-                            label={_ts('addLeads', 'confidentialityLabel')}
-                            labelSelector={labelSelector}
-                            options={confidentialityOptions}
-                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                        />
-                    </ApplyAll>
-
-                    <ApplyAll
-                        className={styles.user}
-                        disabled={isApplyAllDisabled}
-                        identifierName="assignee"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SelectInput
-                            faramElementName="assignee"
-                            keySelector={idSelector}
-                            label={_ts('addLeads', 'assigneeLabel')}
-                            labelSelector={displayNameSelector}
-                            options={assignees}
-                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                        />
-                    </ApplyAll>
-
-                    <ApplyAll
-                        className={styles.date}
-                        disabled={isApplyAllDisabled}
-                        identifierName="publishedOn"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <DateInput
-                            faramElementName="publishedOn"
-                            label={_ts('addLeads', 'datePublishedLabel')}
-                            placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
-                        />
-                    </ApplyAll>
-                    <Cloak
-                        hide={this.shouldHideLeadGroupInput}
-                        render={(
-                            <ApplyAll
-                                className={styles.leadGroup}
-                                disabled={isApplyAllDisabled}
-                                identifierName="leadGroup"
-                                onApplyAllClick={this.handleApplyAllClick}
-                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                                extraButtons={(
-                                    <Button
-                                        className={styles.smallButton}
-                                        onClick={this.handleAddLeadGroupClick}
-                                        iconName="add"
-                                        transparent
-                                        disabled={!projectIsSelected}
-                                    />
-                                )}
-                            >
-                                <SelectInput
-                                    faramElementName="leadGroup"
-                                    keySelector={idSelector}
-                                    label={_ts('addLeads', 'leadGroupLabel')}
-                                    labelSelector={titleSelector}
-                                    options={leadGroups}
-                                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                                />
-                            </ApplyAll>
-                        )}
-                        renderOnHide={(
-                            <div className={styles.leadGroup} />
-                        )}
-                    />
-                </Faram>
-                {showAddLeadGroupModal && (
-                    <AddLeadGroup
-                        onModalClose={this.handleAddLeadGroupModalClose}
-                        onLeadGroupAdd={this.handleLeadGroupAdd}
-                        projectId={projectId}
-                    />
-                )}
-                {values.attachment && ATTACHMENT_TYPES.includes(type) && (
-                    <div className={styles.fileTitle}>
-                        <InternalGallery
-                            onlyFileName
-                            galleryId={values.attachment.id}
-                        />
-                    </div>
-                )}
-                <EmmStats
-                    className={styles.emmStatsContainer}
-                    emmTriggers={emmTriggers}
-                    emmEntities={emmEntities}
+                        >
+                            <SelectInput
+                                faramElementName="leadGroup"
+                                keySelector={idSelector}
+                                label={_ts('addLeads', 'leadGroupLabel')}
+                                labelSelector={titleSelector}
+                                options={leadGroups}
+                                placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                            />
+                        </ApplyAll>
+                    )}
+                    renderOnHide={(
+                        <div className={styles.leadGroup} />
+                    )}
                 />
-            </div>
-        );
-    }
+            </Faram>
+            {addLeadGroupModalShown && (
+                <AddLeadGroup
+                    onModalClose={handleAddLeadGroupModalClose}
+                    onLeadGroupAdd={handleLeadGroupAdd}
+                    projectId={projectId}
+                />
+            )}
+            {values.attachment && ATTACHMENT_TYPES.includes(type) && (
+                <div className={styles.fileTitle}>
+                    <InternalGallery
+                        onlyFileName
+                        galleryId={values.attachment.id}
+                    />
+                </div>
+            )}
+            <EmmStats
+                className={styles.emmStatsContainer}
+                emmTriggers={emmTriggers}
+                emmEntities={emmEntities}
+            />
+        </div>
+    );
 }
+LeadDetail.propTypes = propTypes;
+LeadDetail.defaultProps = defaultProps;
 
 const mapStateToProps = state => ({
     activeProject: currentUserActiveProjectSelector(state),
@@ -781,5 +727,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    RequestClient(requestOptions)(LeadDetail),
+    LeadDetail,
 );

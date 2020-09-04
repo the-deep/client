@@ -16,7 +16,7 @@ import {
 
 import styles from './styles.scss';
 
-const UploadProgress = ({ progress }) => {
+function UploadProgress({ progress }) {
     const hide = isNotDefined(progress) || progress === 100;
 
     const className = _cs(
@@ -35,7 +35,7 @@ const UploadProgress = ({ progress }) => {
             />
         </span>
     );
-};
+}
 UploadProgress.propTypes = {
     progress: PropTypes.number,
 };

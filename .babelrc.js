@@ -52,6 +52,7 @@ module.exports = {
                     '#notify': './src/notify',
                     '#redux': './src/redux',
                     '#request': './src/request',
+                    '#restrequest': './src/restrequest',
                     '#resources': './src/resources',
                     '#rest': './src/rest',
                     '#rsca': './src/vendor/react-store/components/Action',
