@@ -181,9 +181,9 @@ function ProjectJoinRequestItem(props) {
                     })}
                 </div>
             }
-            expandText={reason}
+            description={reason}
+            descriptionLabel={_ts('notifications.projectJoinRequest', 'expandButtonLabel')}
             timestamp={timestamp}
-            isExpandable
             actions={
                 status === 'pending' ? (
                     <React.Fragment>

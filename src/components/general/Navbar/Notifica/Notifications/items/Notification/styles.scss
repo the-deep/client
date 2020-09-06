@@ -39,7 +39,8 @@
 
         .timestamp {
             display: flex;
-            padding: 0 var(--spacing-medium);
+            align-items: center;
+            padding: 0 var(--spacing-medium) var(--spacing-small);
 
             .timestamp-icon {
                 flex-shrink: 0;
@@ -49,22 +50,31 @@
             .date {
                 color: var(--color-text-label);
             }
+
+            .expand-button {
+                display: inline;
+                margin: 0 var(--spacing-medium);
+                padding: var(--spacing-extra-small);
+            }
+
         }
 
-        .closed {
-            padding: var(--spacing-small) var(--spacing-medium);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .extra-text-container {
+            padding: 0;
+            padding: var(--spacing-extra-small) var(--spacing-medium);
 
-        .expanded {
-            padding: var(--spacing-small) var(--spacing-medium);
-            overflow: visible;
+            .description {
+                padding: var(--spacing-extra-small);
+
+                p {
+                    margin: var(--spacing-small) 0;
+                }
+            }
         }
 
         .actions {
-            margin-top: var(--spacing-medium-alt);
+            margin-top: var(--spacing-small);
+            color: var(--color-text);
         }
     }
 
@@ -74,11 +84,7 @@
         flex-direction: column;
         padding: 0 var(--spacing-small);
 
-        .expandButton {
-            font-size: var(--font-size-large);
-        }
         .status-change-button {
-            flex-grow: 1;
             opacity: 0;
             font-size: var(--font-size-large);
         }

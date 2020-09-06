@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import Faram, {
     requiredCondition,
+    lengthGreaterThanCondition,
     Schema,
 } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextArea from '#rsci/TextArea';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -21,14 +23,14 @@ import {
 import styles from './styles.scss';
 
 interface JoinProjectFaramValues {
-    reason: string;
+    reason?: string;
 }
 interface JoinProjectFaramErrors {}
 
 interface JoinProjectParams {
     projectId: number;
     projectName: string;
-    body: string;
+    body: JoinProjectFaramValues;
 }
 
 interface Props {
@@ -40,7 +42,7 @@ interface Props {
 
 const schema: Schema = {
     fields: {
-        reason: [requiredCondition],
+        reason: [requiredCondition, lengthGreaterThanCondition(50)],
     },
 };
 
@@ -59,6 +61,7 @@ function JoinProjectModal(props: Props) {
         joinProjectFaramValues,
         setJoinProjectFaramValues,
     ] = useState<JoinProjectFaramValues>({});
+
     const [
         joinProjectFaramErrors,
         setJoinProjectFaramErrors,
@@ -121,6 +124,7 @@ function JoinProjectModal(props: Props) {
                             ),
                         })}
                     </div>
+                    <NonFieldErrors faramElement />
                     <TextArea
                         faramElementName="reason"
                         rows="5"

@@ -1,10 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isTruthyString,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import FormattedDate from '#rscv/FormattedDate';
+import ReactMarkdown from 'react-markdown';
 
 import _ts from '#ts';
 
@@ -22,8 +26,8 @@ const propTypes = {
     seenStatus: PropTypes.bool,
     notificationId: PropTypes.number.isRequired,
     onNotificationSeenStatusChange: PropTypes.func.isRequired,
-    expandText: PropTypes.string,
-    isExpandable: PropTypes.bool,
+    description: PropTypes.string,
+    descriptionLabel: PropTypes.string,
 };
 
 const defaultProps = {
@@ -33,8 +37,8 @@ const defaultProps = {
     actions: undefined,
     timestamp: undefined,
     seenStatus: false,
-    expandText: '',
-    isExpandable: false,
+    description: '',
+    descriptionLabel: undefined,
 };
 
 function Notification(props) {
@@ -47,8 +51,8 @@ function Notification(props) {
         seenStatus,
         notificationId,
         onNotificationSeenStatusChange,
-        expandText,
-        isExpandable,
+        description,
+        descriptionLabel,
     } = props;
 
     const handleNotificationSeenStatusChange = useCallback(() => {
@@ -62,8 +66,8 @@ function Notification(props) {
     const [isExpanded, setExpanded] = useState(false);
 
     const handleButtonClick = useCallback(() => {
-        setExpanded(!isExpanded);
-    }, [isExpanded, setExpanded]);
+        setExpanded(currentIsExpanded => !currentIsExpanded);
+    }, [setExpanded]);
 
     return (
         <div
@@ -96,12 +100,28 @@ function Notification(props) {
                         date={timestamp}
                         mode="dd-MM-yyyy at hh:mm aaa"
                     />
+                    {isTruthyString(description) && (
+                        <Button
+                            className={styles.expandButton}
+                            transparent
+                            onClick={handleButtonClick}
+                            iconName="chat"
+                        >
+                            {isExpanded
+                                ? _ts('notifications', 'hideLabel', { label: descriptionLabel })
+                                : _ts('notifications', 'showLabel', { label: descriptionLabel })
+                            }
+                        </Button>
+                    )}
                 </div>
-                {isExpandable && (
-                    <div>
-                        <div className={isExpanded ? styles.expanded : styles.closed}>
-                            {expandText}
-                        </div>
+                {isTruthyString(description) && (
+                    <div className={styles.extraTextContainer}>
+                        {isExpanded && (
+                            <ReactMarkdown
+                                className={styles.description}
+                                source={description}
+                            />
+                        )}
                     </div>
                 )}
                 { actions && (
@@ -111,18 +131,6 @@ function Notification(props) {
                 )}
             </div>
             <div className={styles.right}>
-                {isExpandable && (
-                    <Button
-                        className={styles.expandButton}
-                        transparent
-                        title={isExpanded
-                            ? _ts('notifications', 'expand')
-                            : _ts('notifications', 'close')
-                        }
-                        iconName={isExpanded ? 'up' : 'down'}
-                        onClick={handleButtonClick}
-                    />
-                )}
                 <Button
                     className={styles.statusChangeButton}
                     transparent
