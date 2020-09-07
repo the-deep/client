@@ -5,7 +5,6 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
-    isDefined,
     isFalsyString,
     isTruthyString,
     compareNumber,
@@ -173,16 +172,17 @@ function LeadDetail(props) {
 
     const [searchedText, setSearchedText] = useState(undefined);
 
-    const options = useMemo(
+    const organizationsRequestOptions = useMemo(
         () => ({
-            // NOTE: only call request when searchText is truthy
-            url: searchText ? '/organizations/' : undefined,
+            url: searchedText ? '/organizations/' : undefined,
             query: { search: searchedText },
         }),
         [searchedText],
     );
     const [pendingSearchedOrganizations, searchedOrganizations] = useRequest(
-        options,
+        organizationsRequestOptions,
+        undefined,
+        300, // delay before actual fetch
     );
 
     const [addLeadGroupModalShown, setAddLeadGroupModalShown] = useState(false);
@@ -194,7 +194,6 @@ function LeadDetail(props) {
 
     // FIXME: suggestedTitleFromExtraction is now obsolete
     const [suggestedTitleFromExtraction, setSuggestedTitleFromExtraction] = useState('');
-    // const [searchedOrganizations, setSearchedOrganizations] = useState([]);
 
     const key = leadKeySelector(lead);
     const values = leadFaramValuesSelector(lead);
@@ -341,7 +340,6 @@ function LeadDetail(props) {
         [handleLeadValueChange, values, onOrganizationsAdd],
     );
 
-    // FIXME: add useCallback after this point
     const handleAuthorAdd = useCallback(
         (organization) => {
             onOrganizationsAdd([organization]);
@@ -407,8 +405,8 @@ function LeadDetail(props) {
     );
 
     const handleOrganizationSearchValueChange = useCallback(
-        (searchText) => {
-            setSearchedText(searchText);
+        (text) => {
+            setSearchedText(text);
         },
         [],
     );

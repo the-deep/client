@@ -12,13 +12,39 @@ import AbortController from 'abort-controller';
 
 import schema from './schema';
 
+// Example Promise, which takes signal into account
+function sleep(delay: number, { signal }: { signal: AbortSignal }): Promise<string> {
+    if (signal.aborted) {
+        return Promise.reject(new DOMException('aborted', 'AbortError'));
+    }
+
+    if (delay <= 0) {
+        return Promise.resolve('resolved');
+    }
+
+    return new Promise((resolve, reject) => {
+        const timeout = window.setTimeout(resolve, delay, 'resolved');
+
+        signal.addEventListener('abort', () => {
+            window.clearTimeout(timeout);
+            reject(new DOMException('aborted', 'AbortError'));
+        });
+    });
+}
+
+/* TODO:
+1. Accept callback for completed and failed
+2. Poll request until certain condition is met
+3. Retry request with exponential backoff
+*/
+
 export type Maybe<T> = T | null | undefined;
 
 export interface UrlParams {
     [key: string]: Maybe<string | number | boolean | (string | number | boolean)[]>;
 }
 
-export function prepareUrlParams(params: UrlParams) {
+export function prepareUrlParams(params: UrlParams): string {
     return Object.keys(params)
         .filter(k => isDefined(params[k]))
         .map((k) => {
@@ -59,15 +85,6 @@ const defaultContext: ContextInterface = {
 
 export const RequestContext = createContext(defaultContext);
 
-/* TODO:
-1. Handle onComplete, onFailure callbacks
-2. Handle delay
-3. Handle polling
-4. Handle retrying
-5. Handle transforming
-6. Handle base settings
-*/
-
 interface Err {
     [key: string]: string[];
 }
@@ -105,6 +122,7 @@ async function fetchResource<T>(
     myUrl: string,
     myOptions: RequestInit,
     myController: AbortController,
+    delay: number,
     setPendingSafe: (value: boolean, clientId: number) => void,
     setResponseSafe: (value: T | undefined, clientId: number) => void,
     setErrorSafe: (error: Error | undefined, clientId: number) => void,
@@ -114,10 +132,11 @@ async function fetchResource<T>(
 
     let res;
     try {
+        await sleep(delay, { signal });
         res = await fetch(myUrl, { ...myOptions, signal });
     } catch (e) {
         if (!signal.aborted) {
-            console.error(`An error occured while fetching ${myUrl}`, e);
+            console.error(`An error occurred while fetching ${myUrl}`, e);
         }
         setPendingSafe(false, clientId);
         setResponseSafe(undefined, clientId);
@@ -139,7 +158,7 @@ async function fetchResource<T>(
         // console.warn('Clearing response on parse error');
         setResponseSafe(undefined, clientId);
         setPendingSafe(false, clientId);
-        console.error(`An error occured while parsing data from ${myUrl}`, e);
+        console.error(`An error occurred while parsing data from ${myUrl}`, e);
         setErrorSafe({
             reason: 'parse',
             exception: e,
@@ -180,6 +199,7 @@ function useRequest<T>(
         other?: RequestInit,
     } | undefined,
     schemaName: string,
+    delay = 0,
     preserveResponse = true,
 ): [boolean, T | undefined, Err | undefined] {
     const [pending, setPending] = useState(!!options?.url);
@@ -252,7 +272,7 @@ function useRequest<T>(
     const query = options?.query;
 
     const urlQuery = query ? prepareUrlParams(query) : undefined;
-    const extendedUrl = url && urlQuery ? `${query}?${urlQuery}` : url;
+    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
 
     useEffect(
         () => {
@@ -281,6 +301,7 @@ function useRequest<T>(
                     method: options?.method,
                 }),
                 controller,
+                delay,
                 setPendingSafe,
                 setResponseSafe,
                 setErrorSafe,
@@ -295,8 +316,10 @@ function useRequest<T>(
             extendedUrl,
             options?.method,
             options?.other,
+
             schemaName,
             preserveResponse,
+            delay,
 
             transformOptions,
 
