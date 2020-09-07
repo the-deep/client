@@ -3,129 +3,58 @@ import {
     useEffect,
     useRef,
     useCallback,
-    createContext,
     useContext,
     useLayoutEffect,
 } from 'react';
-import { isFalsyString, isDefined, isNotDefined } from '@togglecorp/fujs';
+import { isFalsyString } from '@togglecorp/fujs';
 import AbortController from 'abort-controller';
 
-import schema from './schema';
+import sleep from './sleep';
+import { prepareUrlParams } from './utils';
+import {
+    UrlParams,
+    Error,
+    Err,
+} from './types';
+import RequestContext from './context';
 
-// Example Promise, which takes signal into account
-function sleep(delay: number, { signal }: { signal: AbortSignal }): Promise<string> {
-    if (signal.aborted) {
-        return Promise.reject(new DOMException('aborted', 'AbortError'));
-    }
-
-    if (delay <= 0) {
-        return Promise.resolve('resolved');
-    }
-
-    return new Promise((resolve, reject) => {
-        const timeout = window.setTimeout(resolve, delay, 'resolved');
-
-        signal.addEventListener('abort', () => {
-            window.clearTimeout(timeout);
-            reject(new DOMException('aborted', 'AbortError'));
-        });
-    });
-}
+import schema from '../schema';
 
 /* TODO:
-1. Accept callback for completed and failed
-2. Poll request until certain condition is met
-3. Retry request with exponential backoff
+1. Poll request until certain condition is met
+2. Retry request with exponential backoff
 */
 
-export type Maybe<T> = T | null | undefined;
-
-export interface UrlParams {
-    [key: string]: Maybe<string | number | boolean | (string | number | boolean)[]>;
+interface RequestOptions {
+    url: string | undefined,
+    query?: UrlParams,
+    body?: RequestInit['body'],
+    method?: 'GET' | 'PUT' | 'PATCH' | 'DELETE',
+    other?: RequestInit,
+    delay?: number;
+    preserveResponse?: boolean;
 }
 
-export function prepareUrlParams(params: UrlParams): string {
-    return Object.keys(params)
-        .filter(k => isDefined(params[k]))
-        .map((k) => {
-            const param = params[k];
-            if (isNotDefined(param)) {
-                return undefined;
-            }
-            let val: string;
-            if (Array.isArray(param)) {
-                val = param.join(',');
-            } else if (typeof param === 'number' || typeof param === 'boolean') {
-                val = String(param);
-            } else {
-                val = param;
-            }
-            return `${encodeURIComponent(k)}=${encodeURIComponent(val)}`;
-        })
-        .filter(isDefined)
-        .join('&');
-}
+interface GeneralOptions<T> {
+    schemaName?: string;
 
-interface ContextInterface {
-    transformUrl: (props: string) => string;
-    transformOptions: (props: RequestInit) => RequestInit;
-}
-
-const defaultContext: ContextInterface = {
-    transformUrl: value => value,
-    transformOptions: value => ({
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json; charset=utf-8',
-        },
-        ...value,
-    }),
-};
-
-export const RequestContext = createContext(defaultContext);
-
-interface Err {
-    [key: string]: string[];
-}
-
-/*
-export function alterResponseErrorToFaramError(errors: Err) {
-    const {
-        nonFieldErrors = [],
-        ...formFieldErrors
-    } = errors;
-
-    const otherValues: {
-        [key: string]: string | undefined;
-    } = mapToMap(
-        formFieldErrors,
-        key => key,
-        value => (Array.isArray(value) ? value.join(' ') : value),
-    );
-
-    return ({
-        $internal: nonFieldErrors,
-        ...otherValues,
-    });
-}
-*/
-
-interface Error {
-    reason: string;
-    exception: any;
-    value: Err;
+    onSuccess?: (val: T) => void;
+    onFailure?: (val: Err) => void;
 }
 
 async function fetchResource<T>(
-    schemaName: string,
     myUrl: string,
     myOptions: RequestInit,
-    myController: AbortController,
     delay: number,
+
+    generalOptionsRef: React.MutableRefObject<GeneralOptions<T>>,
+
     setPendingSafe: (value: boolean, clientId: number) => void,
     setResponseSafe: (value: T | undefined, clientId: number) => void,
-    setErrorSafe: (error: Error | undefined, clientId: number) => void,
+    setErrorSafe: (value: Error | undefined, clientId: number) => void,
+    callSideEffectSafe: (value: () => void, clientId: number) => void,
+
+    myController: AbortController,
     clientId: number,
 ) {
     const { signal } = myController;
@@ -140,11 +69,18 @@ async function fetchResource<T>(
         }
         setPendingSafe(false, clientId);
         setResponseSafe(undefined, clientId);
-        setErrorSafe({
+        const message = {
             reason: 'network',
             exception: e,
             value: { nonFieldErrors: ['Network error'] },
-        }, clientId);
+        };
+        setErrorSafe(message, clientId);
+        const { onFailure } = generalOptionsRef.current;
+        if (onFailure) {
+            callSideEffectSafe(() => {
+                onFailure(message.value);
+            }, clientId);
+        }
         return;
     }
 
@@ -159,16 +95,24 @@ async function fetchResource<T>(
         setResponseSafe(undefined, clientId);
         setPendingSafe(false, clientId);
         console.error(`An error occurred while parsing data from ${myUrl}`, e);
-        setErrorSafe({
+        const message = {
             reason: 'parse',
             exception: e,
             value: { nonFieldErrors: ['JSON parse error'] },
-        }, clientId);
+        };
+        setErrorSafe(message, clientId);
+        const { onFailure } = generalOptionsRef.current;
+        if (onFailure) {
+            callSideEffectSafe(() => {
+                onFailure(message.value);
+            }, clientId);
+        }
         return;
     }
 
     setPendingSafe(false, clientId);
     if (res.ok) {
+        const { schemaName } = generalOptionsRef.current;
         if (schemaName && myOptions.method !== 'DELETE') {
             try {
                 schema.validate(resBody, schemaName);
@@ -176,33 +120,54 @@ async function fetchResource<T>(
                 console.error(myUrl, myOptions.method, resBody, e.message);
             }
         }
-        setResponseSafe(resBody as T, clientId);
         setErrorSafe(undefined, clientId);
+        setResponseSafe(resBody as T, clientId);
+        const { onSuccess } = generalOptionsRef.current;
+        if (onSuccess) {
+            callSideEffectSafe(() => {
+                onSuccess(resBody as T);
+            }, clientId);
+        }
     } else {
         setResponseSafe(undefined, clientId);
+        const message = {
+            reason: 'other',
+            exception: undefined,
+            value: (resBody as { errors: Err }).errors,
+        };
         setErrorSafe(
-            {
-                reason: 'other',
-                exception: undefined,
-                value: (resBody as { errors: Err }).errors,
-            },
+            message,
             clientId,
         );
+        const { onFailure } = generalOptionsRef.current;
+        if (onFailure) {
+            callSideEffectSafe(() => {
+                onFailure(message.value);
+            }, clientId);
+        }
     }
 }
 
 function useRequest<T>(
-    options: {
-        url: string | undefined,
-        query?: UrlParams,
-        method?: 'GET' | 'PUT' | 'PATCH' | 'DELETE',
-        other?: RequestInit,
-    } | undefined,
-    schemaName: string,
-    delay = 0,
-    preserveResponse = true,
+    requestOptions: RequestOptions,
+    generalOptions: GeneralOptions<T> = {},
 ): [boolean, T | undefined, Err | undefined] {
-    const [pending, setPending] = useState(!!options?.url);
+    const {
+        transformOptions,
+        transformUrl,
+    } = useContext(RequestContext);
+
+    const {
+        url,
+        query,
+        method,
+        body,
+        other,
+        delay = 0,
+        preserveResponse = true,
+    } = requestOptions;
+
+    const [pending, setPending] = useState(!!url);
     const [response, setResponse] = useState<T | undefined>();
     const [error, setError] = useState<Error | undefined>();
 
@@ -212,26 +177,32 @@ function useRequest<T>(
     const responseSetByRef = useRef<number>(-1);
     const errorSetByRef = useRef<number>(-1);
 
-    const { transformOptions, transformUrl } = useContext(RequestContext);
-
     // NOTE: let's not add transformOptions as dependency
+    const generalOptionsRef = useRef(generalOptions);
     const transformOptionsRef = useRef(transformOptions);
+    const transformUrlRef = useRef(transformUrl);
+
     useLayoutEffect(
         () => {
             transformOptionsRef.current = transformOptions;
         },
         [transformOptions],
     );
-    const transformUrlRef = useRef(transformUrl);
     useLayoutEffect(
         () => {
             transformUrlRef.current = transformUrl;
         },
         [transformUrl],
     );
+    useLayoutEffect(
+        () => {
+            generalOptionsRef.current = generalOptions;
+        },
+        [generalOptions],
+    );
 
     const setPendingSafe = useCallback(
-        (value: boolean, clientId) => {
+        (value: boolean, clientId: number) => {
             if (clientId >= pendingSetByRef.current) {
                 pendingSetByRef.current = clientId;
                 setPending(value);
@@ -240,7 +211,7 @@ function useRequest<T>(
         [],
     );
     const setResponseSafe = useCallback(
-        (value: T | undefined, clientId) => {
+        (value: T | undefined, clientId: number) => {
             if (clientId >= responseSetByRef.current) {
                 responseSetByRef.current = clientId;
                 setResponse(value);
@@ -250,7 +221,7 @@ function useRequest<T>(
     );
 
     const setErrorSafe = useCallback(
-        (value: Error | undefined, clientId) => {
+        (value: Error | undefined, clientId: number) => {
             if (clientId >= errorSetByRef.current) {
                 errorSetByRef.current = clientId;
                 setError(value);
@@ -258,18 +229,15 @@ function useRequest<T>(
         },
         [],
     );
-    // NOTE: used for schema warning only
-    useEffect(
-        () => {
-            if (options?.url && options?.method !== 'DELETE' && !schemaName) {
-                console.error(`Schema is not defined for ${options?.url} ${options?.method}`);
+
+    const callSideEffectSafe = useCallback(
+        (callback: () => void, clientId: number) => {
+            if (clientId >= clientIdRef.current) {
+                callback();
             }
         },
-        [options?.url, options?.method, schemaName],
+        [],
     );
-
-    const url = options?.url;
-    const query = options?.query;
 
     const urlQuery = query ? prepareUrlParams(query) : undefined;
     const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
@@ -293,18 +261,31 @@ function useRequest<T>(
 
             const controller = new AbortController();
 
+            const transformedUrl = transformUrlRef.current(extendedUrl);
+            const transformedOptions = transformOptionsRef.current({
+                ...other,
+                method,
+                body,
+            });
+
+            const { schemaName } = generalOptionsRef.current;
+            if (method !== 'DELETE' && !schemaName) {
+                console.error(`Schema is not defined for ${transformedUrl} ${method}`);
+            }
+
             fetchResource(
-                schemaName,
-                transformUrlRef.current(extendedUrl),
-                transformOptionsRef.current({
-                    ...options?.other,
-                    method: options?.method,
-                }),
-                controller,
+                transformedUrl,
+                transformedOptions,
                 delay,
+
+                generalOptionsRef,
+
                 setPendingSafe,
                 setResponseSafe,
                 setErrorSafe,
+                callSideEffectSafe,
+
+                controller,
                 clientIdRef.current,
             );
 
@@ -313,22 +294,13 @@ function useRequest<T>(
             };
         },
         [
-            extendedUrl,
-            options?.method,
-            options?.other,
-
-            schemaName,
-            preserveResponse,
-            delay,
-
+            extendedUrl, method, body, other, preserveResponse, delay,
             transformOptions,
-
-            setPendingSafe,
-            setResponseSafe,
-            setErrorSafe,
+            setPendingSafe, setResponseSafe, setErrorSafe, callSideEffectSafe,
         ],
     );
 
     return [pending, response, error?.value];
 }
 export default useRequest;
+export { RequestContext };

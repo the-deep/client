@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
-import memoize from 'memoize-one';
 import {
     _cs,
     formatDateToString,
@@ -26,11 +25,8 @@ import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
 
-import {
-    RequestClient,
-    RequestCoordinator,
-    methods,
-} from '#request';
+import useRequest from '#restrequest';
+import { RequestCoordinator } from '#request';
 import {
     routeUrlSelector,
     projectIdFromRouteSelector,
@@ -104,49 +100,7 @@ const mapDispatchToProps = dispatch => ({
     saveLead: params => dispatch(leadAddSaveLeadAction(params)),
 });
 
-const requestOptions = {
-    leadOptionsRequest: {
-        url: '/lead-options/',
-        method: methods.POST,
-        body: ({ props: { leads, projectId } }) => {
-            const values = leads.map(leadFaramValuesSelector);
-            const leadSources = values.map(item => item.source).filter(isDefined);
-            const leadAuthors = values.map(item => item.authors).filter(isDefined).flat();
-            // const leadGroups = values.map(item => item.leadGroup).filter(isDefined);
-
-            return {
-                projects: [projectId],
-                organizations: unique([...leadSources, ...leadAuthors], id => id),
-                // TODO: get only required lead groups and use same process as organizations
-                // leadGroups: unique(leadGroups, id => id),
-            };
-        },
-        onSuccess: ({ params, response }) => {
-            params.setOrganizations(response.organizations);
-            params.setLeadGroups(response.leadGroups);
-        },
-        onFailure: ({ params }) => {
-            params.setOrganizations([]);
-            params.setLeadGroups([]);
-        },
-        onFatal: ({ params }) => {
-            params.setOrganizations([]);
-            params.setLeadGroups([]);
-        },
-        onMount: true,
-        onPropsChanged: {
-            lead: ({
-                prevProps: { projectId: oldProject },
-                props: { projectId: newProject },
-            }) => (
-                newProject !== oldProject
-            ),
-        },
-        // extras: {
-        //     schemaName: 'leadOptions',
-        // },
-    },
-};
+const shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
 
 const propTypes = {
     routeUrl: PropTypes.string.isRequired,
@@ -163,9 +117,6 @@ const propTypes = {
     removeLeads: PropTypes.func.isRequired,
     changeLead: PropTypes.func.isRequired,
     saveLead: PropTypes.func.isRequired,
-
-    // eslint-disable-next-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -175,78 +126,93 @@ const defaultProps = {
     leadPreviewHidden: false,
 };
 
-const shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
-
-class LeadAdd extends React.PureComponent {
-    static propTypes = propTypes;
-
-    static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-
-        const {
-            requests: {
-                leadOptionsRequest,
-            },
-        } = this.props;
-
-        leadOptionsRequest.setDefaultParams({
-            setOrganizations: (organizations = []) => {
-                this.setState({ organizations });
-            },
-            setLeadGroups: (leadGroups = []) => {
-                this.setState({ leadGroups });
-            },
-        });
-
-        this.state = {
-            leadSaveStatuses: {},
-
-            submitAllPending: false,
-
-            leadsToExport: [],
-            leadExportModalShown: false,
-
-            leadsToRemove: [],
-            leadRemoveConfirmShown: false,
-
-            organizations: [],
-            leadGroups: [],
-        };
-
-        this.formCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
-            .preSession(() => {
-                this.setState({ submitAllPending: true });
-            })
-            .postSession((totalErrors) => {
-                this.setState({ submitAllPending: false });
-
-                if (totalErrors > 0) {
-                    notify.send({
-                        title: _ts('addLeads', 'leadSave'),
-                        type: notify.type.ERROR,
-                        message: _ts('addLeads', 'leadSaveFailure', { errorCount: totalErrors }),
-                        duration: notify.duration.SLOW,
-                    });
-                } else {
-                    notify.send({
-                        title: _ts('addLeads', 'leadSave'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('addLeads', 'leadSaveSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                }
-            })
-            .build();
-    }
-
-    getLeadStates = memoize((
+function LeadAdd(props) {
+    const {
+        activeLead,
+        activeUser: { userId },
+        appendLeads,
+        leadPreviewHidden,
         leads,
-        leadSaveStatuses,
-    ) => (
-        listToMap(
+        projectId,
+        routeUrl,
+        changeLead,
+        saveLead,
+        removeLeads,
+    } = props;
+
+    const [leadSaveStatuses, setLeadSaveStatuses] = useState({});
+    const [submitAllPending, setSubmitAllPending] = useState(false);
+
+    const [leadsToExport, setLeadsToExport] = useState([]);
+    const [leadsToRemove, setLeadsToRemove] = useState([]);
+    const [leadExportModalShown, setLeadExportModalShown] = useState(false);
+    const [leadRemoveConfirmShown, setLeadRemoveConfirmShown] = useState(false);
+
+    const [organizations, setOrganizations] = useState([]);
+    const [leadGroups, setLeadGroups] = useState([]);
+
+    const body = useMemo(
+        () => {
+            const values = leads.map(leadFaramValuesSelector);
+            const leadSources = values.map(item => item.source).filter(isDefined);
+            const leadAuthors = values.map(item => item.authors).filter(isDefined).flat();
+            return {
+                projects: [projectId],
+                organizations: unique([...leadSources, ...leadAuthors], id => id),
+            };
+        },
+        // NOTE: only re-calculate when project id changes
+        [projectId],
+    );
+
+    const [pending, leadOptions] = useRequest({
+        url: '/lead-options/',
+        method: 'POST',
+        body,
+    }, {
+        onSuccess: (response) => {
+            setOrganizations(response.organizations);
+            setLeadGroups(response.leadGroups);
+        },
+        onFailure: () => {
+            setOrganizations([]);
+            setLeadGroups([]);
+        },
+    });
+
+    const formCoordinator = useMemo(
+        () => (
+            new CoordinatorBuilder()
+                .maxActiveActors(3)
+                .preSession(() => {
+                    setSubmitAllPending(true);
+                })
+                .postSession((totalErrors) => {
+                    setSubmitAllPending(false);
+
+                    if (totalErrors > 0) {
+                        notify.send({
+                            title: _ts('addLeads', 'leadSave'),
+                            type: notify.type.ERROR,
+                            message: _ts('addLeads', 'leadSaveFailure', { errorCount: totalErrors }),
+                            duration: notify.duration.SLOW,
+                        });
+                    } else {
+                        notify.send({
+                            title: _ts('addLeads', 'leadSave'),
+                            type: notify.type.SUCCESS,
+                            message: _ts('addLeads', 'leadSaveSuccess'),
+                            duration: notify.duration.MEDIUM,
+                        });
+                    }
+                })
+                .build()
+        ),
+        [],
+    );
+
+    const leadStates = useMemo(
+        () => listToMap(
             leads,
             leadKeySelector,
             (lead, key) => (
@@ -255,455 +221,431 @@ class LeadAdd extends React.PureComponent {
                     { leadSaveStatus: leadSaveStatuses[key] },
                 )
             ),
-        )
-    ));
+        ),
+        [leads, leadSaveStatuses],
+    );
 
-    handleOrganizationsAdd = (organizations) => {
-        if (organizations.length <= 0) {
-            return;
-        }
-        this.setState(state => ({
-            organizations: mergeEntities(state.organizations, organizations),
-        }));
-    }
-
-    handleLeadGroupsAdd = (leadGroups) => {
-        if (leadGroups.length <= 0) {
-            return;
-        }
-        this.setState(state => ({
-            leadGroups: mergeEntities(state.leadGroups, leadGroups),
-        }));
-    }
-
-    handleLeadSavePendingChange = (key, pending) => {
-        this.setState(state => ({
-            leadSaveStatuses: {
-                ...state.leadSaveStatuses,
-                [key]: { pending },
-            },
-        }));
-    };
-
-    handleLeadsAdd = (leadsInfo) => {
-        const {
-            projectId,
-            activeUser: { userId },
-            appendLeads,
-            requests: {
-                leadOptionsRequest: {
-                    response: leadOptions,
-                },
-            },
-        } = this.props;
-
-        const confidentiality = leadOptions?.confidentiality ?? [];
-        const priority = leadOptions?.priority ?? [];
-
-        const now = new Date();
-        const title = `Lead ${now.toLocaleTimeString()}`;
-        const publishedDate = formatDateToString(now, 'yyyy-MM-dd');
-
-        const defaultConfidentiality = confidentiality[0]?.key;
-        const defaultPriority = [...priority].sort((a, b) => compareNumber(a.key, b.key))[0]?.key;
-
-        const newLeads = leadsInfo.map((leadInfo) => {
-            const {
-                faramValues,
-                // FIXME: serverId is no longer the case
-                serverId,
-            } = leadInfo;
-
-            const key = getNewLeadKey();
-
-            const newLead = {
-                id: key,
-                serverId,
-                faramValues: {
-                    title,
-                    project: projectId,
-                    assignee: userId,
-                    publishedOn: publishedDate,
-                    confidentiality: defaultConfidentiality,
-                    priority: defaultPriority,
-
-                    ...faramValues,
-
-                    // NOTE: Server expects a value for authors
-                    authors: faramValues.authors ?? [],
-                },
-                faramErrors: {},
-                faramInfo: {
-                    error: false,
-                    pristine: isDefined(serverId),
-                },
-            };
-
-            return newLead;
-        });
-
-        appendLeads(newLeads);
-    }
-
-    handleLeadsSave = (leadKeys) => {
-        const {
-            leads,
-            changeLead,
-            saveLead,
-        } = this.props;
-
-        leadKeys.forEach((leadKey) => {
-            // FIXME: use leadKeysMapping
-            const lead = leads.find(l => leadKeySelector(l) === leadKey);
-            if (!lead) {
-                console.error(`Lead with key ${leadKey} not found.`);
+    const handleOrganizationsAdd = useCallback(
+        (newOrganizations) => {
+            if (newOrganizations.length <= 0) {
                 return;
             }
+            setOrganizations(stateOrganizations => (
+                mergeEntities(stateOrganizations, newOrganizations)
+            ));
+        },
+        [],
+    );
 
-            const worker = {
-                start: () => {
-                    const serverId = leadIdSelector(lead);
-                    const value = leadFaramValuesSelector(lead);
-
-                    const onValidationFailure = (faramErrors) => {
-                        changeLead({
-                            leadKey,
-                            faramErrors,
-                        });
-
-                        this.formCoordinator.notifyComplete(leadKey, true);
-                    };
-
-                    const onValidationSuccess = (faramValues) => {
-                        let url;
-                        let params;
-                        if (serverId) {
-                            url = createUrlForLeadEdit(serverId);
-                            params = () => createParamsForLeadEdit(faramValues);
-                        } else {
-                            url = urlForLead;
-                            params = () => createParamsForLeadCreate(faramValues);
-                        }
-
-                        const request = new FgRestBuilder()
-                            .url(url)
-                            .params(params)
-                            .delay(0)
-                            .preLoad(() => {
-                                this.handleLeadSavePendingChange(leadKey, true);
-                            })
-                            .success((response) => {
-                                saveLead({
-                                    leadKey,
-                                    lead: response,
-                                });
-                                this.handleLeadSavePendingChange(leadKey, false);
-                                this.formCoordinator.notifyComplete(leadKey);
-                            })
-                            .failure((response) => {
-                                const faramErrors = alterResponseErrorToFaramError(
-                                    response.errors,
-                                );
-
-                                changeLead({
-                                    leadKey,
-                                    faramErrors,
-                                });
-
-                                this.handleLeadSavePendingChange(leadKey, false);
-                                this.formCoordinator.notifyComplete(leadKey, true);
-                            })
-                            .fatal(() => {
-                                const faramErrors = {
-                                    $internal: ['Error while trying to save lead.'],
-                                };
-
-                                changeLead({
-                                    leadKey,
-                                    faramErrors,
-                                });
-
-                                this.handleLeadSavePendingChange(leadKey, false);
-                                this.formCoordinator.notifyComplete(leadKey, true);
-                            })
-                            .build();
-                        request.start();
-                    };
-
-                    detachedFaram({
-                        value,
-                        schema,
-                        onValidationFailure,
-                        onValidationSuccess,
-                    });
-                },
-                stop: () => {
-                    // No-op
-                },
-            };
-
-            this.formCoordinator.add(
-                leadKey,
-                worker,
-            );
-        });
-        this.formCoordinator.start();
-    }
-
-    handleLeadsToRemoveSet = (leadKeys) => {
-        this.setState({
-            leadsToRemove: leadKeys,
-            leadRemoveConfirmShown: true,
-        });
-    }
-
-    handleLeadsExport = (leadIds) => {
-        this.setState({
-            leadExportModalShown: true,
-            leadsToExport: leadIds,
-        });
-    }
-
-    handleLeadRemoveConfirmClose = (confirm) => {
-        if (confirm) {
-            const { leadsToRemove } = this.state;
-            const { removeLeads } = this.props;
-
-            removeLeads(leadsToRemove);
-
-            if (leadsToRemove.length === 1) {
-                notify.send({
-                    title: _ts('addLeads.actions', 'leadDiscard'),
-                    type: notify.type.SUCCESS,
-                    message: _ts('addLeads.actions', 'leadDiscardSuccess'),
-                    duration: notify.duration.MEDIUM,
-                });
-            } else if (leadsToRemove.length > 1) {
-                notify.send({
-                    title: _ts('addLeads.actions', 'leadsDiscard'),
-                    type: notify.type.SUCCESS,
-                    message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
-                    duration: notify.duration.MEDIUM,
-                });
+    const handleLeadGroupsAdd = useCallback(
+        (newLeadGroups) => {
+            if (newLeadGroups.length <= 0) {
+                return;
             }
-        }
+            setLeadGroups(stateLeadGroups => (
+                mergeEntities(stateLeadGroups, newLeadGroups)
+            ));
+        },
+        [],
+    );
 
-        this.setState({
-            leadsToRemove: [],
-            leadRemoveConfirmShown: false,
-        });
-    }
+    const handleLeadSavePendingChange = useCallback(
+        (leadKey, leadPending) => {
+            setLeadSaveStatuses(statuses => ({
+                ...statuses,
+                [leadKey]: { pending: leadPending },
+            }));
+        },
+        [],
+    );
 
-    handleLeadsExportCancel = () => {
-        this.setState({
-            leadExportModalShown: false,
-            leadsToExport: [],
-        });
-    }
+    const handleLeadsAdd = useCallback(
+        (leadsInfo) => {
+            const confidentiality = leadOptions?.confidentiality ?? [];
+            const priority = leadOptions?.priority ?? [];
 
-    handleLeadSave = (key) => {
-        this.handleLeadsSave([key]);
-    }
+            const now = new Date();
+            const title = `Lead ${now.toLocaleTimeString()}`;
+            const publishedDate = formatDateToString(now, 'yyyy-MM-dd');
 
-    handleLeadExport = (leadId) => {
-        this.handleLeadsExport([leadId]);
-    }
+            const defaultConfidentiality = confidentiality[0]?.key;
+            const defaultPriority = [...priority]
+                .sort((a, b) => compareNumber(a.key, b.key))[0]?.key;
 
-    handleLeadToRemoveSet = (leadKey) => {
-        this.handleLeadsToRemoveSet([leadKey]);
-    }
+            const newLeads = leadsInfo.map((leadInfo) => {
+                const {
+                    faramValues,
+                    // FIXME: serverId is no longer the case
+                    serverId,
+                } = leadInfo;
 
-    render() {
-        const {
-            projectId,
-            leadPreviewHidden,
-            leads,
-            activeLead,
-            requests: {
-                leadOptionsRequest: {
-                    pending,
-                    response: leadOptions,
-                },
-            },
-        } = this.props;
+                const key = getNewLeadKey();
 
-        const {
-            leadGroups,
-            organizations,
-            leadSaveStatuses,
+                const newLead = {
+                    id: key,
+                    serverId,
+                    faramValues: {
+                        title,
+                        project: projectId,
+                        assignee: userId,
+                        publishedOn: publishedDate,
+                        confidentiality: defaultConfidentiality,
+                        priority: defaultPriority,
 
-            submitAllPending,
+                        ...faramValues,
 
-            leadsToExport,
-            leadExportModalShown,
-            leadRemoveConfirmShown,
-        } = this.state;
+                        // NOTE: Server expects a value for authors
+                        authors: faramValues.authors ?? [],
+                    },
+                    faramErrors: {},
+                    faramInfo: {
+                        error: false,
+                        pristine: isDefined(serverId),
+                    },
+                };
 
-        const leadStates = this.getLeadStates(
-            leads,
-            leadSaveStatuses,
-        );
+                return newLead;
+            });
 
-        const hasActiveLead = isDefined(activeLead);
+            appendLeads(newLeads);
+        },
+        [appendLeads, leadOptions?.confidentiality, leadOptions?.priority, projectId, userId],
+    );
 
-        const leadIsTextType = hasActiveLead && (
-            leadSourceTypeSelector(activeLead) === LEAD_TYPE.text
-        );
+    const handleLeadsSave = useCallback(
+        (leadKeys) => {
+            leadKeys.forEach((leadKey) => {
+                // FIXME: use leadKeysMapping
+                const lead = leads.find(l => leadKeySelector(l) === leadKey);
+                if (!lead) {
+                    console.error(`Lead with key ${leadKey} not found.`);
+                    return;
+                }
 
-        const activeLeadKey = activeLead
-            ? leadKeySelector(activeLead)
-            : undefined;
+                const worker = {
+                    start: () => {
+                        const serverId = leadIdSelector(lead);
+                        const value = leadFaramValuesSelector(lead);
 
-        const activeLeadState = activeLeadKey
-            ? leadStates[activeLeadKey]
-            : undefined;
+                        const onValidationFailure = (faramErrors) => {
+                            changeLead({
+                                leadKey,
+                                faramErrors,
+                            });
 
-        const leadPreviewMinimized = leadPreviewHidden || leadIsTextType;
+                            formCoordinator.notifyComplete(leadKey, true);
+                        };
 
-        // TODO:
-        const saveEnabledForAll = false;
-
-        return (
-            <>
-                <Prompt
-                    message={
-                        (location) => {
-                            const { routeUrl } = this.props;
-                            if (location.pathname === routeUrl) {
-                                return true;
-                            } else if (!saveEnabledForAll) {
-                                return true;
+                        const onValidationSuccess = (faramValues) => {
+                            let url;
+                            let params;
+                            if (serverId) {
+                                url = createUrlForLeadEdit(serverId);
+                                params = () => createParamsForLeadEdit(faramValues);
+                            } else {
+                                url = urlForLead;
+                                params = () => createParamsForLeadCreate(faramValues);
                             }
-                            return _ts('common', 'youHaveUnsavedChanges');
+
+                            const request = new FgRestBuilder()
+                                .url(url)
+                                .params(params)
+                                .delay(0)
+                                .preLoad(() => {
+                                    handleLeadSavePendingChange(leadKey, true);
+                                })
+                                .success((response) => {
+                                    saveLead({
+                                        leadKey,
+                                        lead: response,
+                                    });
+                                    handleLeadSavePendingChange(leadKey, false);
+                                    formCoordinator.notifyComplete(leadKey);
+                                })
+                                .failure((response) => {
+                                    const faramErrors = alterResponseErrorToFaramError(
+                                        response.errors,
+                                    );
+
+                                    changeLead({
+                                        leadKey,
+                                        faramErrors,
+                                    });
+
+                                    handleLeadSavePendingChange(leadKey, false);
+                                    formCoordinator.notifyComplete(leadKey, true);
+                                })
+                                .fatal(() => {
+                                    const faramErrors = {
+                                        $internal: ['Error while trying to save lead.'],
+                                    };
+
+                                    changeLead({
+                                        leadKey,
+                                        faramErrors,
+                                    });
+
+                                    handleLeadSavePendingChange(leadKey, false);
+                                    formCoordinator.notifyComplete(leadKey, true);
+                                })
+                                .build();
+                            request.start();
+                        };
+
+                        detachedFaram({
+                            value,
+                            schema,
+                            onValidationFailure,
+                            onValidationSuccess,
+                        });
+                    },
+                    stop: () => {
+                        // No-op
+                    },
+                };
+
+                formCoordinator.add(
+                    leadKey,
+                    worker,
+                );
+            });
+            formCoordinator.start();
+        },
+        [leads, changeLead, saveLead, formCoordinator, handleLeadSavePendingChange],
+    );
+
+    const handleLeadsToRemoveSet = useCallback(
+        (leadKeys) => {
+            setLeadsToRemove(leadKeys);
+            setLeadRemoveConfirmShown(true);
+        },
+        [],
+    );
+
+    const handleLeadsExport = useCallback(
+        (leadIds) => {
+            setLeadsToExport(leadIds);
+            setLeadExportModalShown(true);
+        },
+        [],
+    );
+
+    const handleLeadRemoveConfirmClose = useCallback(
+        (confirm) => {
+            if (confirm) {
+                removeLeads(leadsToRemove);
+                if (leadsToRemove.length === 1) {
+                    notify.send({
+                        title: _ts('addLeads.actions', 'leadDiscard'),
+                        type: notify.type.SUCCESS,
+                        message: _ts('addLeads.actions', 'leadDiscardSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                } else if (leadsToRemove.length > 1) {
+                    notify.send({
+                        title: _ts('addLeads.actions', 'leadsDiscard'),
+                        type: notify.type.SUCCESS,
+                        message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                }
+            }
+
+            setLeadsToRemove([]);
+            setLeadRemoveConfirmShown(false);
+        },
+        [leadsToRemove, removeLeads],
+    );
+
+    const handleLeadsExportCancel = useCallback(
+        () => {
+            setLeadExportModalShown(false);
+            setLeadsToExport([]);
+        },
+        [],
+    );
+
+    const handleLeadSave = useCallback(
+        (key) => {
+            handleLeadsSave([key]);
+        },
+        [handleLeadsSave],
+    );
+
+    const handleLeadExport = useCallback(
+        (leadId) => {
+            handleLeadsExport([leadId]);
+        },
+        [handleLeadsExport],
+    );
+
+    const handleLeadToRemoveSet = useCallback(
+        (leadKey) => {
+            handleLeadsToRemoveSet([leadKey]);
+        },
+        [handleLeadsToRemoveSet],
+    );
+
+    const hasActiveLead = isDefined(activeLead);
+
+    const leadIsTextType = hasActiveLead && (
+        leadSourceTypeSelector(activeLead) === LEAD_TYPE.text
+    );
+
+    const activeLeadKey = activeLead
+        ? leadKeySelector(activeLead)
+        : undefined;
+
+    const activeLeadState = activeLeadKey
+        ? leadStates[activeLeadKey]
+        : undefined;
+
+    const leadPreviewMinimized = leadPreviewHidden || leadIsTextType;
+
+    // TODO:
+    const saveEnabledForAll = false;
+
+    return (
+        <>
+            <Prompt
+                message={
+                    (location) => {
+                        if (location.pathname === routeUrl) {
+                            return true;
+                        } else if (!saveEnabledForAll) {
+                            return true;
                         }
+                        return _ts('common', 'youHaveUnsavedChanges');
                     }
-                />
-                <Page
-                    className={styles.addLead}
-                    headerClassName={styles.header}
-                    header={(
-                        <>
-                            <BackLink
-                                defaultLink={reverseRoute(pathNames.leads, { projectId })}
-                            />
-                            <h4 className={styles.heading}>
-                                {/* TODO: translate this */}
-                                Add Leads
-                            </h4>
-                            <LeadActions
-                                className={styles.actions}
-                                disabled={submitAllPending}
-                                leadStates={leadStates}
-                                onLeadsSave={this.handleLeadsSave}
-                                onLeadsRemove={this.handleLeadsToRemoveSet}
-                                onLeadsExport={this.handleLeadsExport}
-                            />
-                        </>
-                    )}
-                    mainContentClassName={styles.mainContent}
-                    mainContent={(
-                        <>
-                            <Cloak
-                                hide={shouldHideButtons}
-                                render={(
-                                    <div className={styles.leftPane}>
-                                        <LeadProcessor>
-                                            <LeadSources
-                                                className={styles.leadButtons}
-                                                onLeadsAdd={this.handleLeadsAdd}
-                                                leadStates={leadStates}
-                                            />
-                                            <CandidateLeads
-                                                className={styles.candidateLeadsBox}
-                                                onLeadsAdd={this.handleLeadsAdd}
-                                            />
-                                        </LeadProcessor>
-                                    </div>
-                                )}
-                            />
-                            <div className={styles.main}>
-                                <div className={styles.leadList}>
-                                    <LeadFilter
-                                        className={styles.filter}
-                                    />
-                                    <LeadList
-                                        className={styles.list}
-                                        leadStates={leadStates}
-                                        onLeadRemove={this.handleLeadToRemoveSet}
-                                        onLeadExport={this.handleLeadExport}
-                                        onLeadSave={this.handleLeadSave}
-                                    />
+                }
+            />
+            <Page
+                className={styles.addLead}
+                headerClassName={styles.header}
+                header={(
+                    <>
+                        <BackLink
+                            defaultLink={reverseRoute(pathNames.leads, { projectId })}
+                        />
+                        <h4 className={styles.heading}>
+                            {/* TODO: translate this */}
+                            Add Leads
+                        </h4>
+                        <LeadActions
+                            className={styles.actions}
+                            disabled={submitAllPending}
+                            leadStates={leadStates}
+                            onLeadsSave={handleLeadsSave}
+                            onLeadsRemove={handleLeadsToRemoveSet}
+                            onLeadsExport={handleLeadsExport}
+                        />
+                    </>
+                )}
+                mainContentClassName={styles.mainContent}
+                mainContent={(
+                    <>
+                        <Cloak
+                            hide={shouldHideButtons}
+                            render={(
+                                <div className={styles.leftPane}>
+                                    <LeadProcessor>
+                                        <LeadSources
+                                            className={styles.leadButtons}
+                                            onLeadsAdd={handleLeadsAdd}
+                                            leadStates={leadStates}
+                                        />
+                                        <CandidateLeads
+                                            className={styles.candidateLeadsBox}
+                                            onLeadsAdd={handleLeadsAdd}
+                                        />
+                                    </LeadProcessor>
                                 </div>
-                                {hasActiveLead ? (
-                                    <ResizableV
-                                        className={_cs(
-                                            styles.leadDetail,
-                                            leadPreviewMinimized && styles.textLead,
-                                        )}
-                                        topContainerClassName={styles.top}
-                                        bottomContainerClassName={styles.bottom}
-                                        disabled={leadPreviewMinimized}
-                                        topChild={(
-                                            <LeadDetail
-                                                key={activeLeadKey}
-                                                leadState={activeLeadState}
-                                                bulkActionDisabled={submitAllPending}
-
-                                                pending={pending}
-
-                                                priorityOptions={leadOptions?.priority}
-                                                confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
-                                                assignees={leadOptions?.members}
-
-                                                leadGroups={leadGroups}
-                                                onLeadGroupsAdd={this.handleLeadGroupsAdd}
-
-                                                organizations={organizations}
-                                                onOrganizationsAdd={this.handleOrganizationsAdd}
-                                            />
-                                        )}
-                                        bottomChild={!leadPreviewMinimized && (
-                                            <LeadPreview
-                                                // NOTE: need to dismount
-                                                // LeadPreview because the
-                                                // children cannot handle
-                                                // change gracefully
-                                                key={activeLeadKey}
-                                                className={styles.leadPreview}
-                                            />
-                                        )}
-                                    />
-                                ) : (
-                                    <Message>
-                                        { _ts('addLeads', 'noLeadsText') }
-                                    </Message>
-                                )}
+                            )}
+                        />
+                        <div className={styles.main}>
+                            <div className={styles.leadList}>
+                                <LeadFilter
+                                    className={styles.filter}
+                                />
+                                <LeadList
+                                    className={styles.list}
+                                    leadStates={leadStates}
+                                    onLeadRemove={handleLeadToRemoveSet}
+                                    onLeadExport={handleLeadExport}
+                                    onLeadSave={handleLeadSave}
+                                />
                             </div>
-                        </>
-                    )}
+                            {hasActiveLead ? (
+                                <ResizableV
+                                    className={_cs(
+                                        styles.leadDetail,
+                                        leadPreviewMinimized && styles.textLead,
+                                    )}
+                                    topContainerClassName={styles.top}
+                                    bottomContainerClassName={styles.bottom}
+                                    disabled={leadPreviewMinimized}
+                                    topChild={(
+                                        <LeadDetail
+                                            key={activeLeadKey}
+                                            leadState={activeLeadState}
+                                            bulkActionDisabled={submitAllPending}
+
+                                            pending={pending}
+
+                                            priorityOptions={leadOptions?.priority}
+                                            confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
+                                            assignees={leadOptions?.members}
+
+                                            leadGroups={leadGroups}
+                                            onLeadGroupsAdd={handleLeadGroupsAdd}
+
+                                            organizations={organizations}
+                                            onOrganizationsAdd={handleOrganizationsAdd}
+                                        />
+                                    )}
+                                    bottomChild={!leadPreviewMinimized && (
+                                        <LeadPreview
+                                            // NOTE: need to dismount
+                                            // LeadPreview because the
+                                            // children cannot handle
+                                            // change gracefully
+                                            key={activeLeadKey}
+                                            className={styles.leadPreview}
+                                        />
+                                    )}
+                                />
+                            ) : (
+                                <Message>
+                                    { _ts('addLeads', 'noLeadsText') }
+                                </Message>
+                            )}
+                        </div>
+                    </>
+                )}
+            />
+            {leadExportModalShown && (
+                <LeadCopyModal
+                    leads={leadsToExport}
+                    closeModal={handleLeadsExportCancel}
                 />
-                {leadExportModalShown && (
-                    <LeadCopyModal
-                        leads={leadsToExport}
-                        closeModal={this.handleLeadsExportCancel}
-                    />
-                )}
-                {leadRemoveConfirmShown && (
-                    <Confirm
-                        onClose={this.handleLeadRemoveConfirmClose}
-                        show
-                    >
-                        <p>
-                            {/* TODO: different message for delete modes */}
-                            {_ts('addLeads.actions', 'deleteLeadConfirmText')}
-                        </p>
-                    </Confirm>
-                )}
-            </>
-        );
-    }
+            )}
+            {leadRemoveConfirmShown && (
+                <Confirm
+                    onClose={handleLeadRemoveConfirmClose}
+                    show
+                >
+                    <p>
+                        {/* TODO: different message for delete modes */}
+                        {_ts('addLeads.actions', 'deleteLeadConfirmText')}
+                    </p>
+                </Confirm>
+            )}
+        </>
+    );
 }
+LeadAdd.propTypes = propTypes;
+LeadAdd.defaultProps = defaultProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    RequestCoordinator(RequestClient(requestOptions)(LeadAdd)),
+    RequestCoordinator(LeadAdd),
 );
