@@ -172,18 +172,11 @@ function LeadDetail(props) {
 
     const [searchedText, setSearchedText] = useState(undefined);
 
-    const organizationsRequestOptions = useMemo(
-        () => ({
-            url: searchedText ? '/organizations/' : undefined,
-            query: { search: searchedText },
-        }),
-        [searchedText],
-    );
-    const [pendingSearchedOrganizations, searchedOrganizations] = useRequest(
-        organizationsRequestOptions,
-        undefined,
-        300, // delay before actual fetch
-    );
+    const [pendingSearchedOrganizations, searchedOrganizations] = useRequest({
+        url: searchedText ? '/organizations/' : undefined,
+        query: { search: searchedText },
+        delay: 300,
+    });
 
     const [addLeadGroupModalShown, setAddLeadGroupModalShown] = useState(false);
     const [formatTitleAsTitleCase, setFormatTitleAsTitleCase] = useState(true);
