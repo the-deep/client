@@ -14,6 +14,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 
 import { LeadProcessorContext } from '../../LeadProcessor';
 import {
+    LEAD_STATUS,
     leadKeySelector,
     leadFaramValuesSelector,
     leadSourceTypeSelector,
@@ -43,9 +44,6 @@ function CandidateLeadsModal(props) {
     const {
         clearCandidateLeads,
         candidateLeads,
-        fileUploadStatuses,
-        driveUploadStatuses,
-        dropboxUploadStatuses,
         removeCandidateLead,
     } = useContext(LeadProcessorContext);
 
@@ -60,39 +58,21 @@ function CandidateLeadsModal(props) {
             />
         );
 
-        const progress = fileUploadStatuses?.[key]?.progress;
-
         return ({
             itemKey: key,
             title: leadFaramValuesSelector(data)?.title,
             type: leadSourceTypeSelector(data),
-            progress,
+            progress: data.progress,
             actionButtons,
             itemState: data.leadState,
         });
-    }, [fileUploadStatuses, removeCandidateLead]);
+    }, [removeCandidateLead]);
 
-    const isFileUploadPending = useMemo(() => (
-        Object.values(fileUploadStatuses).some(fileUploadStatus => (
-            fileUploadStatus.progress !== 100
+    const isInProgress = useMemo(() => (
+        candidateLeads.some(candidateLead => (
+            candidateLead.leadState !== LEAD_STATUS.uploading
         ))
-    ), [fileUploadStatuses]);
-
-    const isDriveUploadPending = useMemo(() => (
-        Object.values(driveUploadStatuses).some(driveUploadStatus => (
-            driveUploadStatus.pending
-        ))
-    ), [driveUploadStatuses]);
-
-    const isDropboxUploadPending = useMemo(() => (
-        Object.values(dropboxUploadStatuses).some(dropboxUploadStatus => (
-            dropboxUploadStatus.pending
-        ))
-    ), [dropboxUploadStatuses]);
-
-    const isInProgress = isFileUploadPending
-     || isDriveUploadPending
-     || isDropboxUploadPending;
+    ), [candidateLeads]);
 
     const handleLeadsAdd = useCallback(() => {
         onLeadsAdd(candidateLeads);

@@ -32,9 +32,6 @@ export const LeadProcessorContext = React.createContext({
         console.warn('setting processing modal visibility', processingModalVisibility);
     },
     candidateLeads: [],
-    fileUploadStatuses: {},
-    driveUploadStatuses: {},
-    dropboxUploadStatuses: {},
     removeCandidateLead: (leadId) => {
         console.warn('removing lead with id', leadId);
     },
@@ -54,9 +51,6 @@ function LeadProcessor(props) {
     const [candidateLeads, setCandidateLeads] = useState([]);
 
     const [showProcessingModal, setProcessingModalVisibility] = useState(false);
-    const [fileUploadStatuses, setFileUploadStatues] = useState({});
-    const [driveUploadStatuses, setDriveUploadStatues] = useState({});
-    const [dropboxUploadStatuses, setDropboxUploadStatues] = useState({});
 
     const clearCandidateLeads = useCallback(() => {
         setCandidateLeads([]);
@@ -87,35 +81,22 @@ function LeadProcessor(props) {
     }, []);
 
     const handleFileUploadProgressChange = useCallback((key, progress) => {
-        setFileUploadStatues(currentFileUploadStatues => ({
-            ...currentFileUploadStatues,
-            [key]: { progress },
-        }));
         setCandidateLeads(currentCandidateLeads => (
             produce(currentCandidateLeads, (safeCandidateLeads) => {
                 const currentLeadIndex = safeCandidateLeads
                     .findIndex(lead => leadKeySelector(lead) === key);
                 if (currentLeadIndex !== -1) {
                     // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[currentLeadIndex].leadState = (progress === 100)
-                        ? LEAD_STATUS.complete : LEAD_STATUS.uploading;
+                    safeCandidateLeads[currentLeadIndex].progress = progress;
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[currentLeadIndex].leadState = (progress === 0)
+                        ? LEAD_STATUS.pending : LEAD_STATUS.uploading;
                 }
             })
         ));
-    }, [setFileUploadStatues, setCandidateLeads]);
+    }, [setCandidateLeads]);
 
-    const handleDropboxUploadPendingChange = useCallback((key, pending) => {
-        setDropboxUploadStatues(currentDropboxUploadStatues => ({
-            ...currentDropboxUploadStatues,
-            [key]: { pending },
-        }));
-    }, [setDropboxUploadStatues]);
-
-    const handleDriveUploadPendingChange = useCallback((key, pending) => {
-        setDriveUploadStatues(currentDriveUploadStatuses => ({
-            ...currentDriveUploadStatuses,
-            [key]: { pending },
-        }));
+    const handleExternalUploadPendingChange = useCallback((key, pending) => {
         setCandidateLeads(currentCandidateLeads => (
             produce(currentCandidateLeads, (safeCandidateLeads) => {
                 const currentLeadIndex = safeCandidateLeads
@@ -126,7 +107,7 @@ function LeadProcessor(props) {
                 }
             })
         ));
-    }, [setDriveUploadStatues]);
+    }, [setCandidateLeads]);
 
     const removeCandidateLead = useCallback((leadKey) => {
         setCandidateLeads((currentCandidateLeads) => {
@@ -152,6 +133,10 @@ function LeadProcessor(props) {
                     safeCandidateLeads[selectedIndex].faramValues.attachment = {
                         id: attachmentId,
                     };
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].progress = undefined;
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.complete;
                 }
             })
         ));
@@ -225,11 +210,9 @@ function LeadProcessor(props) {
                             leadKey: key,
                             attachmentId: attachment,
                         });
-                        handleFileUploadProgressChange(key, 100);
                         uploadCoordinator.notifyComplete(key);
                     })
                     .failure((response) => {
-                        handleFileUploadProgressChange(key, undefined);
                         handleCandidateLeadFaramErrorsChange({
                             leadKey: key,
                             faramErrors: {
@@ -241,7 +224,6 @@ function LeadProcessor(props) {
                         uploadCoordinator.notifyComplete(key, true);
                     })
                     .fatal(() => {
-                        handleFileUploadProgressChange(key, undefined);
                         handleCandidateLeadFaramErrorsChange({
                             leadKey: key,
                             faramErrors: {
@@ -253,10 +235,6 @@ function LeadProcessor(props) {
                         uploadCoordinator.notifyComplete(key, true);
                     })
                     .build();
-
-                // NOTE: set progress to 0 initially, as pre-load may not be
-                // called until it's turn comes up in queue
-                handleFileUploadProgressChange(key, 0);
 
                 uploadCoordinator.add(key, request);
             } else if (leadType === LEAD_TYPE.drive) {
@@ -268,7 +246,7 @@ function LeadProcessor(props) {
                     }))
                     .delay(0)
                     .preLoad(() => {
-                        handleDriveUploadPendingChange(key, true);
+                        handleExternalUploadPendingChange(key, true);
                     })
                     .success((response) => {
                         const { id: attachment } = response;
@@ -277,11 +255,10 @@ function LeadProcessor(props) {
                             leadKey: key,
                             attachmentId: attachment,
                         });
-                        handleDriveUploadPendingChange(key, undefined);
                         driveUploadCoordinator.notifyComplete(key);
                     })
                     .failure((response) => {
-                        handleDriveUploadPendingChange(key, undefined);
+                        handleExternalUploadPendingChange(key, undefined);
 
                         handleCandidateLeadFaramErrorsChange({
                             leadKey: key,
@@ -295,7 +272,7 @@ function LeadProcessor(props) {
                         driveUploadCoordinator.notifyComplete(key, true);
                     })
                     .fatal(() => {
-                        handleDriveUploadPendingChange(key, undefined);
+                        handleExternalUploadPendingChange(key, undefined);
 
                         handleCandidateLeadFaramErrorsChange({
                             leadKey: key,
@@ -309,10 +286,6 @@ function LeadProcessor(props) {
                         driveUploadCoordinator.notifyComplete(key, true);
                     })
                     .build();
-
-                // NOTE: set pending to true initially, as pre-load may not be
-                // called until it's turn comes up in queue
-                handleDriveUploadPendingChange(key, true);
 
                 driveUploadCoordinator.add(key, request);
             } else if (leadType === LEAD_TYPE.dropbox) {
@@ -322,7 +295,7 @@ function LeadProcessor(props) {
                     .params(createHeaderForDropboxUpload({ title, fileUrl }))
                     .delay(0)
                     .preLoad(() => {
-                        handleDropboxUploadPendingChange(key, true);
+                        handleExternalUploadPendingChange(key, true);
                     })
                     .success((response) => {
                         const { id: attachment } = response;
@@ -331,11 +304,11 @@ function LeadProcessor(props) {
                             leadKey: key,
                             attachmentId: attachment,
                         });
-                        handleDropboxUploadPendingChange(key, undefined);
+                        handleExternalUploadPendingChange(key, undefined);
                         dropboxUploadCoordinator.notifyComplete(key);
                     })
                     .failure((response) => {
-                        handleDropboxUploadPendingChange(key, undefined);
+                        handleExternalUploadPendingChange(key, undefined);
 
                         handleCandidateLeadFaramErrorsChange({
                             leadKey: key,
@@ -349,7 +322,7 @@ function LeadProcessor(props) {
                         dropboxUploadCoordinator.notifyComplete(key, true);
                     })
                     .fatal(() => {
-                        handleDropboxUploadPendingChange(key, undefined);
+                        handleExternalUploadPendingChange(key, undefined);
 
                         handleCandidateLeadFaramErrorsChange({
                             leadKey: key,
@@ -364,9 +337,6 @@ function LeadProcessor(props) {
                     })
                     .build();
 
-                // NOTE: set pending to true initially, as pre-load may not be
-                // called until it's turn comes up in queue
-                handleDropboxUploadPendingChange(key, true);
                 dropboxUploadCoordinator.add(key, request);
             }
 
@@ -385,8 +355,7 @@ function LeadProcessor(props) {
         handleCandidateLeadAttachmentSet,
         handleFileUploadProgressChange,
         driveUploadCoordinator,
-        handleDropboxUploadPendingChange,
-        handleDriveUploadPendingChange,
+        handleExternalUploadPendingChange,
         dropboxUploadCoordinator,
         uploadCoordinator,
         setCandidateLeads,
@@ -395,9 +364,6 @@ function LeadProcessor(props) {
 
     const contextValue = useMemo(() => ({
         clearCandidateLeads,
-        fileUploadStatuses,
-        driveUploadStatuses,
-        dropboxUploadStatuses,
         candidateLeads,
         addCandidateLeads,
         removeCandidateLead,
@@ -406,9 +372,6 @@ function LeadProcessor(props) {
         setProcessingModalVisibility,
     }), [
         clearCandidateLeads,
-        driveUploadStatuses,
-        dropboxUploadStatuses,
-        fileUploadStatuses,
         candidateLeads,
         addCandidateLeads,
         removeCandidateLead,
