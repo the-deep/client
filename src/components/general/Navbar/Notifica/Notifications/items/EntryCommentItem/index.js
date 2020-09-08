@@ -152,6 +152,7 @@ function EntryCommentItem(props) {
             createdByDetail: {
                 displayPicture,
             } = {},
+            text,
         } = {},
         timestamp,
         id: notificationId,
@@ -172,6 +173,8 @@ function EntryCommentItem(props) {
             }
             message={notificationText}
             timestamp={timestamp}
+            description={text}
+            descriptionLabel={_ts('entryComments.notifications', 'expandButtonLabel')}
         />
     );
 }

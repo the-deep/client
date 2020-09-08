@@ -509,8 +509,6 @@
         "1928": "Failed to update users list. Please check your network connection and try again",
         "1929": "Notifications",
         "1930": "{requestorName} requested to join the project {projectTitle}.",
-        "1934": "Project join response",
-        "1935": "Project join failure",
         "1937": "Reject",
         "1940": "{requestorName} cancelled join request for the project {projectTitle}.",
         "1941": "{responderName} accepted the join request from {requestorName} for the project {projectTitle}.",
@@ -1138,10 +1136,15 @@
         "-33843532": "Mark as completed",
         "-43430452": "Failed to load assessments visualization data.",
         "-17560008": "Assessments Visualization",
-        "-59901057": "Ary",
         "-25520086": "This lead is in the Assessment Registry.",
         "-27768788": "Lead successfully edited.",
-        "-39063797": "Published On"
+        "-39063797": "Published On",
+        "-11231231": "Send Request",
+        "-10909809": "Request to join {projectName}",
+        "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project admins about why you want to join the project?",
+        "-23615781": "Reason",
+        "-62923641": "Show {label}",
+        "-39488279": "Hide {label}"
     },
     "links": {
         "browserExtension": {
@@ -1189,6 +1192,12 @@
             "filterApplyFilter": 10,
             "filterClearFilter": 11,
             "regionSelectLabel": 336
+        },
+        "discoverProjects.joinProject": {
+            "title": -10909809,
+            "cancel": 61,
+            "sendRequest": -11231231,
+            "requestQuestion": -23409823
         },
         "framework": {
             "analysisFramework": 379,
@@ -1792,7 +1801,6 @@
             "assessmentDoesNotExistsOptionLabel": -65776700,
             "assessmentExistsOptionLabel": -38652666,
             "assessmentBadgeTooltip": -25520086,
-            "assessmentBadgeTitle": -59901057,
             "cancelLeadEditButtonLabel": 61,
             "editLeadModalTitle": 136,
             "saveLeadEditButtonLabel": 25,
@@ -2407,8 +2415,6 @@
             "languagePlaceholder": -82545000
         },
         "notifications": {
-            "projectJoinResponse": 1934,
-            "projectJoinResponseFailure": 1935,
             "noNotificationsText": -70199668,
             "projectJoinRequestAbortText": 1940,
             "notificationsTabLabel": 1929,
@@ -2420,7 +2426,9 @@
             "markAsPendingLabel": 802,
             "pendingNotificationsLabel": 629,
             "completedNotificationsLabel": 631,
-            "markAsCompletedLabel": -33843532
+            "markAsCompletedLabel": -33843532,
+            "hideLabel": -39488279,
+            "showLabel": -62923641
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,
@@ -2429,7 +2437,8 @@
         "notifications.projectJoinRequest": {
             "message": 1930,
             "addButtonTitle": 301,
-            "rejectButtonTitle": 1937
+            "rejectButtonTitle": 1937,
+            "expandButtonLabel": -23615781
         },
         "components.addProject": {
             "addProjectModalLabel": 180,
@@ -3131,7 +3140,8 @@
             "entryCommentReplyAdd": -12333226,
             "entryCommentModified": -32902609,
             "entryCommentReplyModified": -63285888,
-            "entryCommentResolved": -74972973
+            "entryCommentResolved": -74972973,
+            "expandButtonLabel": -37497941
         },
         "emmStatsModal": {
             "emmEntitiesTitle": -28548476,

@@ -90,6 +90,7 @@ function ProjectJoinRequestItem(props) {
                     displayName: requestorName,
                     id: requestorId,
                 } = {},
+                reason,
                 project: {
                     id: projectId,
                     title: projectTitle,
@@ -180,6 +181,8 @@ function ProjectJoinRequestItem(props) {
                     })}
                 </div>
             }
+            description={reason}
+            descriptionLabel={_ts('notifications.projectJoinRequest', 'expandButtonLabel')}
             timestamp={timestamp}
             actions={
                 status === 'pending' ? (

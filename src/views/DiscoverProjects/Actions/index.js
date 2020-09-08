@@ -4,12 +4,15 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import { pathNames } from '#constants';
 import _ts from '#ts';
+
+import JoinProjectModal from './JoinProjectModal';
 
 import styles from './styles.scss';
 
@@ -21,18 +24,26 @@ const propTypes = {
     }).isRequired,
     onProjectJoin: PropTypes.func.isRequired,
     onProjectJoinCancel: PropTypes.func.isRequired,
+    projectJoinRequestPending: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     // className: '',
 };
 
+const ModalButton = modalize(PrimaryButton);
+
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     renderUserAccessButtons = () => {
-        const { project } = this.props;
+        const {
+            project,
+            onProjectJoin,
+            onProjectJoinCancel,
+            projectJoinRequestPending,
+        } = this.props;
 
         switch (project.memberStatus) {
             case 'admin': {
@@ -56,7 +67,7 @@ export default class Actions extends React.PureComponent {
                         iconName="close"
                         title={_ts('discoverProjects.table', 'cancelJoinRequest')}
                         transparent
-                        onClick={() => this.props.onProjectJoinCancel(project)}
+                        onClick={() => onProjectJoinCancel(project)}
                     />
                 );
             case 'rejected':
@@ -65,13 +76,18 @@ export default class Actions extends React.PureComponent {
                 );
             case 'none':
                 return (
-                    <PrimaryButton
+                    <ModalButton
                         className="join-button"
-                        title={_ts('discoverProjects.table', 'joinLabel')}
-                        onClick={() => this.props.onProjectJoin(project)}
+                        modal={
+                            <JoinProjectModal
+                                project={project}
+                                onProjectJoin={onProjectJoin}
+                                projectJoinRequestPending={projectJoinRequestPending}
+                            />
+                        }
                     >
                         {_ts('discoverProjects.table', 'joinLabel')}
-                    </PrimaryButton>
+                    </ModalButton>
                 );
             default:
                 return null;

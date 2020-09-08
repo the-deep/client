@@ -1,6 +1,7 @@
 :root {
     --width-notification-dropdown: 520px;
-    --height-notification-dropdown: 640px;
+    --height-notification-dropdown: 80vh;
+    --max-height-notification-dropdown: 640px;
 }
 
 .notifica {
@@ -36,6 +37,7 @@
 .notification-dropdown {
     width: var(--width-notification-dropdown);
     height: var(--height-notification-dropdown);
+    max-height: var(--max-height-notification-dropdown);
 
     .notifications {
         height: 100%;
