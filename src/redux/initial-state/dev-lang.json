@@ -1148,7 +1148,8 @@
         "-13339127": "We cannot currently preview this type of document.",
         "-23121024": "Edit connector",
         "-3611094": "Are you sure you want to delete the connector {title}?",
-        "-31701107": "Updated On"
+        "-31701107": "Updated On",
+        "-48401335": "Please select one or more connector sources."
     },
     "links": {
         "browserExtension": {
@@ -2242,8 +2243,6 @@
             "afCloneFatal": -48269508,
             "noAfSelectedText": -86287086,
             "entriesVizErrorMessage": -9524324,
-            "arysVizErrorMessage": -43430452,
-            "entriesConfigTitle": -47675119,
             "arysVizErrorMessage": -76059043,
             "entriesConfigTitle": -47675119,
             "connectorsTitle": 1100
@@ -3308,7 +3307,9 @@
             "cancelButtonLabel": 61,
             "connectorTitleLabel": 13,
             "saveButtonLabel": 25,
-            "editConnectorTitle": -23121024
+            "editConnectorTitle": -23121024,
+            "connectorSourcesSelection": 1109,
+            "sourceOptionsEmptyText": -48401335
         },
         "project.connector": {
             "addButtonTitle": 301,

@@ -1,6 +1,71 @@
-.project-connectors {
+.connector-edit-form {
     display: flex;
     flex-direction: column;
-    background-color: var(--color-foreground);
-    overflow-y: auto;
+    width: 80vw;
+    min-width: 720px;
+    height: 80vh;
+    overflow: auto;
+
+    .modal-header {
+        flex-shrink: 0;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0;
+            overflow-y: auto;
+
+            .title {
+                flex-shrink: 0;
+                padding: var(--spacing-medium);
+            }
+
+            .sources-selection-header {
+                flex-shrink: 0;
+                padding: 0 var(--spacing-medium);
+
+                .label {
+                    text-transform: uppercase;
+                    color: var(--color-text-label);
+                    font-size: var(--font-size-extra-small);
+                    font-weight: var(--font-weight-bold);
+                }
+            }
+
+            .sources-selection-buttons {
+                display: flex;
+                flex-shrink: 0;
+                flex-wrap: wrap;
+                padding: 0 var(--spacing-medium) var(--spacing-small);
+
+                .button {
+                    margin: calc(var(--spacing-medium) / 2) calc(var(--spacing-medium) / 2);
+                    padding: var(--spacing-small-alt);
+
+                    &.active {
+                        border-color: var(--color-accent);
+                        color: var(--color-accent);
+                    }
+                }
+            }
+
+            .source-options {
+                flex-grow: 1;
+                border-top: var(--width-separator-thin) solid var(--color-separator);
+                overflow-y: auto;
+            }
+        }
+
+        .modal-footer {
+            flex-shrink: 0;
+        }
+    }
 }

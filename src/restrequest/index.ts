@@ -35,7 +35,6 @@ interface RequestOptions<T> {
     query?: UrlParams,
 
     body?: RequestInit['body'],
-
     method?: Methods,
     other?: RequestInit,
 

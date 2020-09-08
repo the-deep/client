@@ -1,0 +1,24 @@
+.connector-source-options {
+    display: flex;
+    flex-direction: column;
+    margin: var(--spacing-medium);
+    border: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-small);
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+        padding-bottom: var(--spacing-small);
+    }
+
+    .fields-container {
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+
+        .input-element {
+            margin: var(--spacing-extra-small) var(--spacing-small);
+            width: 192px;
+        }
+    }
+}

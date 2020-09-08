@@ -10,7 +10,7 @@ import ListView from '#rscv/List/ListView';
 
 import {
     Connector,
-    ConnectorSource,
+    UnifiedConnectorSource,
 } from '#typings';
 
 import _ts from '#ts';
@@ -27,7 +27,7 @@ interface OwnProps {
     details: Connector;
 }
 
-const sourceKeySelector = (source: ConnectorSource) => source.key;
+const sourceKeySelector = (source: UnifiedConnectorSource) => source.source;
 
 function ProjectConnectorDetail(props: OwnProps) {
     const {

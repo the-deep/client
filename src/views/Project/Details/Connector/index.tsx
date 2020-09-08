@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -7,6 +7,7 @@ import ListView from '#rscv/List/ListView';
 
 import _ts from '#ts';
 import { Connector } from '#typings';
+import useRequest from '#restrequest';
 
 import ConnectorEditForm from './ConnectorEditForm';
 import ConnectorDetails from './ConnectorDetails';
@@ -19,7 +20,7 @@ const testConnectors: Connector[] = [
         title: 'Corona Virus - India (from January)',
         sources: [
             {
-                key: 1,
+                source: 'relief-web',
                 title: 'ACAPS',
                 noOfLeads: 324,
                 publishedDates: [
@@ -42,7 +43,7 @@ const testConnectors: Connector[] = [
                 ],
             },
             {
-                key: 2,
+                source: 'acaps',
                 title: 'ReliefWeb',
                 noOfLeads: 112,
                 publishedDates: [
@@ -65,7 +66,7 @@ const testConnectors: Connector[] = [
                 ],
             },
             {
-                key: 3,
+                source: 'idmc-libarry',
                 title: 'IDMC Library',
                 noOfLeads: 102,
                 broken: true,
@@ -97,7 +98,7 @@ const testConnectors: Connector[] = [
         title: 'Corona Virus - Nigeria',
         sources: [
             {
-                key: 1,
+                source: 'acaps',
                 title: 'ACAPS',
                 noOfLeads: 324,
                 publishedDates: [
@@ -120,7 +121,7 @@ const testConnectors: Connector[] = [
                 ],
             },
             {
-                key: 4,
+                source: 'reach-library',
                 title: 'Reach Library',
                 noOfLeads: 102,
                 publishedDates: [
@@ -162,6 +163,16 @@ function ProjectConnector(props: OwnProps) {
         projectId,
         className,
     } = props;
+
+    const organizationsRequestOptions = useMemo(() => ({
+        url: `/projects/${projectId}/unified-connectors/`,
+    }), [projectId]);
+
+    const [pendingConnectors, connectors] = useRequest(
+        organizationsRequestOptions,
+        undefined,
+        300, // delay before actual fetch
+    );
 
     const connectorRendererParams = useCallback((key, data) => ({
         projectId,
