@@ -59,7 +59,7 @@ export const getLeadState = (
 
     const noAttachment = !attachment;
 
-    // FIXME: this warning should not be here
+    // FIXME: IMP warning state should not be here
     if (
         noAttachment && (
             type === LEAD_TYPE.file ||

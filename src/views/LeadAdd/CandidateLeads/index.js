@@ -38,30 +38,30 @@ function CandidateLeads(props) {
         setProcessingModalVisibility(false);
     }, [setProcessingModalVisibility]);
 
-    if (candidateLeads.length < 1) {
-        return null;
-    }
-
     return (
-        <div className={_cs(className, styles.candidateLeads)}>
-            <div className={styles.header}>
-                <h3 className={styles.heading}>
-                    {`Candidate Leads (${candidateLeads.length})`}
-                </h3>
-                <Button
-                    className={styles.expandButton}
-                    onClick={handleProcessingModalShow}
-                    iconName="expand"
-                    transparent
+        <>
+            {candidateLeads.length > 0 && (
+                <div className={_cs(className, styles.candidateLeads)}>
+                    <div className={styles.header}>
+                        <h3 className={styles.heading}>
+                            {`Candidate Leads (${candidateLeads.length})`}
+                        </h3>
+                        <Button
+                            className={styles.expandButton}
+                            onClick={handleProcessingModalShow}
+                            iconName="expand"
+                            transparent
+                        />
+                    </div>
+                </div>
+            )}
+            {showProcessingModal && (
+                <CandidateLeadsModal
+                    onLeadsAdd={onLeadsAdd}
+                    closeModal={handleProcessingModalClose}
                 />
-                {showProcessingModal && (
-                    <CandidateLeadsModal
-                        onLeadsAdd={onLeadsAdd}
-                        closeModal={handleProcessingModalClose}
-                    />
-                )}
-            </div>
-        </div>
+            )}
+        </>
     );
 }
 

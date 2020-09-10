@@ -153,7 +153,7 @@ function LeadList(props) {
         >
             <div className={styles.movementButtons}>
                 <div className={styles.stats}>
-                    {/* FIXME: translation */}
+                    {/* FIXME: use strings */}
                     {leads.length === filteredLeads.length
                         ? `${leads.length} leads`
                         : `Showing ${filteredLeads.length} of ${leads.length} leads`

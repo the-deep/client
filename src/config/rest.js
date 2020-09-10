@@ -1,5 +1,8 @@
 import { prepareUrlParams } from '@togglecorp/react-rest-request';
 
+// if starts with deep://v[number] leave it be, else add v1 after deep://
+
+// NOTE: currently 'v1' is auto added so, we need to replace it
 export function getVersionedUrl(endpoint, url) {
     const oldVersionString = '/v1';
     const versionString = '/v2';
@@ -49,6 +52,9 @@ export const serverlessEndpoint = (() => {
 })();
 
 export const deeplEndPoint = (() => {
+    if (process.env.REACT_APP_DEEPL_END) {
+        return process.env.REACT_APP_DEEPL_END;
+    }
     switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
         case 'nightly':
             return 'https://deepl-nightly.thedeep.io';
@@ -57,7 +63,7 @@ export const deeplEndPoint = (() => {
         case 'beta':
             return 'https://deepl.thedeep.io';
         default:
-            return process.env.REACT_APP_DEEPL_END || 'http://localhost:8001/';
+            return 'http://localhost:8001/';
     }
 })();
 
