@@ -1141,7 +1141,7 @@
         "-39063797": "Published On",
         "-11231231": "Send Request",
         "-10909809": "Request to join {projectName}",
-        "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project admins about why you want to join the project?",
+        "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project owners about why you want to join the project?",
         "-23615781": "Reason",
         "-62923641": "Show {label}",
         "-39488279": "Hide {label}"
