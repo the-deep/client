@@ -1,10 +1,12 @@
 import { isDevelopment } from './env';
 
 const getSiteKey = () => {
-    if (isDevelopment) {
-        return '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+    if (process.env.REACT_APP_RECAPTCHA_SITE_KEY) {
+        return process.env.REACT_APP_RECAPTCHA_SITE_KEY;
     }
-    return '6LdPGpoUAAAAAFLC0TwfQ1xdxGQOEizy2GyvQ3XJ';
+    return isDevelopment
+        ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+        : '6LdPGpoUAAAAAFLC0TwfQ1xdxGQOEizy2GyvQ3XJ';
 };
 
 // eslint-disable-next-line

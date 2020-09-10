@@ -6,7 +6,7 @@ import {
     useContext,
     useLayoutEffect,
 } from 'react';
-import { isFalsyString } from '@togglecorp/fujs';
+import { isFalsyString, isNotDefined } from '@togglecorp/fujs';
 import AbortController from 'abort-controller';
 
 import sleep from './sleep';
@@ -21,23 +21,35 @@ import RequestContext from './context';
 import schema from '../schema';
 
 /* TODO:
-1. Poll request until certain condition is met
-2. Retry request with exponential backoff
+1. Retry request with exponential backoff
 */
 
 interface RequestOptions {
+    // TODO:
+    // re-trigger if autoRetrigger
     url: string | undefined,
     query?: UrlParams,
+
     body?: RequestInit['body'],
-    method?: 'GET' | 'PUT' | 'PATCH' | 'DELETE',
+
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     other?: RequestInit,
+
+    // TODO:
+    // don't ever retrigger
     delay?: number;
     preserveResponse?: boolean;
 }
 
+// if auto-trigger then use direct values
+// if not set values with do (get new values)
+
 interface GeneralOptions<T> {
+    // TODO: add this
+    // autoTrigger?: boolean;
     schemaName?: string;
 
+    shouldPoll?: (val: T) => number;
     onSuccess?: (val: T) => void;
     onFailure?: (val: Err) => void;
 }
@@ -58,10 +70,10 @@ async function fetchResource<T>(
     clientId: number,
 ) {
     const { signal } = myController;
+    await sleep(delay, { signal });
 
     let res;
     try {
-        await sleep(delay, { signal });
         res = await fetch(myUrl, { ...myOptions, signal });
     } catch (e) {
         if (!signal.aborted) {
@@ -112,7 +124,7 @@ async function fetchResource<T>(
 
     setPendingSafe(false, clientId);
     if (res.ok) {
-        const { schemaName } = generalOptionsRef.current;
+        const { schemaName, shouldPoll } = generalOptionsRef.current;
         if (schemaName && myOptions.method !== 'DELETE') {
             try {
                 schema.validate(resBody, schemaName);
@@ -120,6 +132,29 @@ async function fetchResource<T>(
                 console.error(myUrl, myOptions.method, resBody, e.message);
             }
         }
+
+        const pollTime = shouldPoll ? shouldPoll(resBody as T) : -1;
+
+        if (pollTime >= 0) {
+            await sleep(pollTime, { signal });
+            await fetchResource(
+                myUrl,
+                myOptions,
+                delay,
+
+                generalOptionsRef,
+
+                setPendingSafe,
+                setResponseSafe,
+                setErrorSafe,
+                callSideEffectSafe,
+
+                myController,
+                clientId,
+            );
+            return;
+        }
+
         setErrorSafe(undefined, clientId);
         setResponseSafe(resBody as T, clientId);
         const { onSuccess } = generalOptionsRef.current;
@@ -160,7 +195,7 @@ function useRequest<T>(
     const {
         url,
         query,
-        method,
+        method = 'GET',
         body,
         other,
         delay = 0,
@@ -244,12 +279,16 @@ function useRequest<T>(
 
     useEffect(
         () => {
-            if (isFalsyString(extendedUrl)) {
+            if (
+                isFalsyString(extendedUrl)
+                || (['PUT', 'PATCH', 'POST'].includes(method) && isNotDefined(body))
+            ) {
                 setResponseSafe(undefined, clientIdRef.current);
                 setErrorSafe(undefined, clientIdRef.current);
                 setPendingSafe(false, clientIdRef.current);
                 return () => {};
             }
+
             if (!preserveResponse) {
                 setResponseSafe(undefined, clientIdRef.current);
                 setErrorSafe(undefined, clientIdRef.current);

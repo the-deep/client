@@ -11,7 +11,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    title: PropTypes.string,
+    title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     titleClassName: PropTypes.string,
     tooltip: PropTypes.node,
     icon: PropTypes.string,

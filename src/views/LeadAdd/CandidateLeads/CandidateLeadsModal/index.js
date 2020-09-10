@@ -1,7 +1,8 @@
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, listToMap } from '@togglecorp/fujs';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -11,6 +12,8 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
+
+import useRequest from '#restrequest';
 
 import { LeadProcessorContext } from '../../LeadProcessor';
 import {
@@ -46,6 +49,75 @@ function CandidateLeadsModal(props) {
         removeCandidateLead,
     } = useContext(LeadProcessorContext);
 
+    const [sources, setSources] = useState(undefined);
+    const [asyncJobUuid, setAsycJobUuid] = useState();
+
+    const [extractions, setExtractions] = useState([]);
+    const [extractionCompleted, setExtractionCompleted] = useState(false);
+
+    const initialBody = useMemo(
+        () => (
+            sources ? { sources } : undefined
+        ),
+        [sources],
+    );
+    const [initialRequestPending] = useRequest(
+        {
+            url: 'serverless://source-extract/',
+            method: 'POST',
+            body: initialBody,
+        },
+        {
+            onSuccess: (response) => {
+                if (response.existingSources) {
+                    setExtractions(response.existingSources);
+                    setExtractionCompleted(!response.asyncJobUuid);
+                }
+                if (response.asyncJobUuid) {
+                    setAsycJobUuid(response.asyncJobUuid);
+                }
+            },
+            onFailure: () => {
+                console.debug('failed');
+            },
+        },
+    );
+
+    const pollBody = useMemo(
+        () => (
+            asyncJobUuid ? { asyncJobUuid } : undefined
+        ),
+        [asyncJobUuid],
+    );
+    const [pollRequestPending] = useRequest(
+        {
+            url: 'serverless://source-extract/',
+            method: 'POST',
+            body: pollBody,
+            shouldPoll: (response) => {
+                if (response.status === 'pending' || response.status === 'started') {
+                    return 1000;
+                }
+                return -1;
+            },
+        },
+        {
+            onSuccess: (response) => {
+                if (response.status === 'success') {
+                    setExtractions(ex => [...ex, response.existingSources]);
+                    setExtractionCompleted(true);
+                } else {
+                    console.debug('failed');
+                }
+            },
+            onFailure: () => {
+                console.debug('failed');
+            },
+        },
+    );
+
+    const pending = initialRequestPending || pollRequestPending;
+
     const candidateLeadsRendererParams = useCallback((key, candidateLead) => {
         const handleLeadRemove = () => removeCandidateLead(key);
 
@@ -67,6 +139,14 @@ function CandidateLeadsModal(props) {
         });
     }, [removeCandidateLead]);
 
+
+    const completedCandidateLeads = useMemo(
+        () => candidateLeads.filter(
+            candidateLead => candidateLead.leadState === LEAD_STATUS.complete,
+        ),
+        [candidateLeads],
+    );
+
     const isInProgress = useMemo(() => (
         candidateLeads.some(candidateLead => (
             candidateLead.leadState === LEAD_STATUS.pristine
@@ -75,23 +155,30 @@ function CandidateLeadsModal(props) {
     ), [candidateLeads]);
 
     const handleLeadsAdd = useCallback(() => {
-        // TODO: filter only completed leads
-        const newLeads = candidateLeads
-            .filter(candidateLead => candidateLead.leadState === LEAD_STATUS.complete)
+        // FIXME: filter out those which have already been done
+        const mySources = completedCandidateLeads.map(lead => ({
+            s3: lead.data.attachment.s3,
+        }));
+        setSources(mySources);
+        /*
+        const newLeads = completedCandidateLeads
             .map(candidateLead => ({
                 faramValues: candidateLead.data,
                 // FIXME: serverId is not required
-                serverId: candidateLeads.serverId,
+                serverId: candidateLead.serverId,
             }));
+
         onLeadsAdd(newLeads);
         // TODO: Only remove completed leads
         clearCompletedCandidateLeads();
         closeModal();
+        */
     }, [
-        candidateLeads,
-        onLeadsAdd,
-        clearCompletedCandidateLeads,
-        closeModal,
+        completedCandidateLeads,
+        // completedCandidateLeads,
+        // onLeadsAdd,
+        // clearCompletedCandidateLeads,
+        // closeModal,
     ]);
 
     return (
@@ -112,6 +199,7 @@ function CandidateLeadsModal(props) {
                 )}
             />
             <ModalBody className={styles.modalBody}>
+                {pending && <LoadingAnimation />}
                 <ListView
                     data={candidateLeads}
                     className={styles.candidateLeadsList}
@@ -123,7 +211,7 @@ function CandidateLeadsModal(props) {
             <ModalFooter>
                 <DangerConfirmButton
                     onClick={clearCandidateLeads}
-                    disabled={isInProgress}
+                    disabled={isInProgress || pending}
                     // TODO: Translate string
                     confirmationMessage="Are you sure you want to clear all candidate leads?"
                 >
@@ -131,7 +219,7 @@ function CandidateLeadsModal(props) {
                     Clear All
                 </DangerConfirmButton>
                 <PrimaryButton
-                    disabled={isInProgress}
+                    disabled={isInProgress || pending}
                     onClick={handleLeadsAdd}
                 >
                     {/* TODO: Translate string */}

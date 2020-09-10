@@ -81,17 +81,36 @@ function LeadProcessor(props) {
         ));
     }, [setCandidateLeads]);
 
-    const handleUploadSuccess = useCallback(({ leadKey, attachmentId }) => {
+    const handleUploadSuccess = useCallback(({ leadKey, attachment }) => {
         uploadCoordinator.notifyComplete(leadKey);
         setCandidateLeads(currentCandidateLeads => (
             produce(currentCandidateLeads, (safeCandidateLeads) => {
                 const selectedIndex = safeCandidateLeads
                     .findIndex(lead => leadKey === leadKeySelector(lead));
 
+                const {
+                    id,
+                    file,
+                } = attachment;
+
+                // "https://s3.amazonaws.com/nightly.thedeep.io/media/gallery/typography.pdf"
+
+                const startToken = '/media/gallery/';
+                // NOTE: search treats string as regex
+                const endToken = '\\?';
+
+                const startIndex = file.search(startToken);
+                const endIndex = file.search(endToken);
+
+                let s3;
+                if (startIndex !== -1 && endIndex !== -1) {
+                    s3 = `gallery/${file.slice(startIndex + startToken.length, endIndex)}`;
+                }
                 if (selectedIndex !== -1) {
                     // eslint-disable-next-line no-param-reassign
                     safeCandidateLeads[selectedIndex].data.attachment = {
-                        id: attachmentId,
+                        id,
+                        s3,
                     };
                     // eslint-disable-next-line no-param-reassign
                     safeCandidateLeads[selectedIndex].progress = undefined;
@@ -189,10 +208,9 @@ function LeadProcessor(props) {
                         handleUploadProgressChange(key, Math.min(99, progress));
                     })
                     .success((response) => {
-                        const { id: attachment } = response;
                         handleUploadSuccess({
                             leadKey: key,
-                            attachmentId: attachment,
+                            attachment: response,
                         });
                     })
                     .failure((response) => {
@@ -220,10 +238,9 @@ function LeadProcessor(props) {
                         handleUploadProgressChange(key);
                     })
                     .success((response) => {
-                        const { id: attachment } = response;
                         handleUploadSuccess({
                             leadKey: key,
-                            attachmentId: attachment,
+                            attachment: response,
                         });
                     })
                     .failure((response) => {
@@ -249,10 +266,9 @@ function LeadProcessor(props) {
                         handleUploadProgressChange(key);
                     })
                     .success((response) => {
-                        const { id: attachment } = response;
                         handleUploadSuccess({
                             leadKey: key,
-                            attachmentId: attachment,
+                            attachmentId: response,
                         });
                     })
                     .failure((response) => {

@@ -128,8 +128,9 @@ function LeadSources(props) {
     }, [setDropboxDisabled]);
 
     const handleLeadAddFromText = useCallback(() => {
+        // TODO: Open a popup to enter text information
         const lead = {
-            data: {
+            faramValues: {
                 sourceType: LEAD_TYPE.text,
             },
         };
@@ -138,8 +139,9 @@ function LeadSources(props) {
     }, [onLeadsAdd]);
 
     const handleLeadAddFromWebsite = useCallback(() => {
+        // TODO: Open a popup to enter website information and fetch data
         const lead = {
-            data: {
+            faramValues: {
                 sourceType: LEAD_TYPE.website,
                 emmTriggers: [],
                 emmEntities: [],

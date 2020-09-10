@@ -1,0 +1,8 @@
+version: '3.4'
+services:
+  nginx:
+    build: .
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./configs/:/etc/nginx/conf.d/:z
