@@ -3,4 +3,9 @@
     margin: var(--spacing-medium);
     border: var(--width-separator-thin) solid var(--color-separator);
     padding: var(--spacing-large);
+
+    .chart-container {
+        width: 240px;
+        height: 160px;
+    }
 }

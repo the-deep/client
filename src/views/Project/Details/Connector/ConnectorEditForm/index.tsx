@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     listToMap,
+    isNotDefined,
     isDefined,
 } from '@togglecorp/fujs';
 import produce from 'immer';
@@ -26,6 +27,7 @@ import Message from '#rscv/Message';
 import useRequest from '#restrequest';
 import {
     MultiResponse,
+    Connector,
     ConnectorSource,
     UnifiedConnectorSource,
 } from '#typings';
@@ -77,12 +79,13 @@ interface ConnectorSourceFaramInstance {
     params: Record<string, unknown>;
 }
 
-interface Connector {
+interface ConnectorFaramValues {
+    id?: number;
     title?: string;
     sources?: ConnectorSourceFaramInstance[];
 }
 
-interface BodyForRequest extends Connector {
+interface BodyForRequest extends ConnectorFaramValues {
     project: number;
 }
 
@@ -109,7 +112,8 @@ interface OwnProps {
     projectId: number;
     isAddForm?: boolean;
     connector?: Connector;
-    closeModal?: () => void;
+    onSuccess?: (connector: Connector) => void;
+    closeModal: () => void;
 }
 
 const unifiedConnectorSourceKeySelector = (d: UnifiedConnectorSource) => d.source;
@@ -122,9 +126,10 @@ function ProjectConnectorEditForm(props: OwnProps) {
         className,
         closeModal,
         isAddForm,
+        onSuccess,
     } = props;
 
-    const [faramValues, setFaramValues] = useState<Connector>(connector ?? {});
+    const [faramValues, setFaramValues] = useState<ConnectorFaramValues>(connector ?? {});
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [bodyToSend, setBodyToSend] = useState<BodyForRequest | undefined>(undefined);
     const [pristine, setPristine] = useState<boolean>(true);
@@ -133,7 +138,9 @@ function ProjectConnectorEditForm(props: OwnProps) {
         pendingConnectorSourcesList,
         connectorSourcesList,
     ] = useRequest<MultiResponse<ConnectorSource>>({
-        url: '/connector-sources/',
+        url: 'server://connector-sources/',
+    }, {
+        schemaName: 'connectorSources',
     });
 
     const connectorSources = useMemo(() => (
@@ -147,26 +154,43 @@ function ProjectConnectorEditForm(props: OwnProps) {
     }, [setFaramValues, setFaramErrors, setPristine]);
 
     const handleFaramValidationFailure = useCallback((newFaramErrors) => {
-        console.warn('i am errored here', newFaramErrors);
         setFaramErrors(newFaramErrors);
         setPristine(true);
     }, [setFaramErrors, setPristine]);
 
     const handleFaramValidationSucces = useCallback((finalFaramValues) => {
-        console.warn('here', finalFaramValues);
         setBodyToSend({
             project: projectId,
             ...finalFaramValues,
         });
     }, [setBodyToSend, projectId]);
 
-    const [pending] = useRequest({
-        url: isDefined(bodyToSend) ? `/projects/${projectId}/unified-connectors/` : undefined,
-        method: 'POST',
+    const connectorUrl = useMemo(() => {
+        if (isNotDefined(bodyToSend)) {
+            return undefined;
+        }
+
+        if (!isAddForm && connector) {
+            return `server://projects/${projectId}/unified-connectors/${connector.id}/`;
+        }
+        return `server://projects/${projectId}/unified-connectors/`;
+    }, [
+        bodyToSend,
+        isAddForm,
+        projectId,
+        connector,
+    ]);
+
+    const [pending] = useRequest<Connector>({
+        url: connectorUrl,
+        method: isAddForm ? 'POST' : 'PATCH',
         body: bodyToSend,
     }, {
         onSuccess: (response) => {
-            console.warn('here', response);
+            if (onSuccess) {
+                onSuccess(response);
+            }
+            closeModal();
         },
     });
 
@@ -237,10 +261,10 @@ function ProjectConnectorEditForm(props: OwnProps) {
                 schema={schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={pending}
+                disabled={pending || pendingConnectorSourcesList}
             >
                 <ModalBody className={styles.modalBody}>
-                    {pending && <LoadingAnimation />}
+                    {(pending || pendingConnectorSourcesList) && <LoadingAnimation />}
                     <TextInput
                         className={styles.title}
                         faramElementName="title"

@@ -1,153 +1,22 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
 import ListView from '#rscv/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import _ts from '#ts';
-import { Connector } from '#typings';
+import {
+    MultiResponse,
+    Connector,
+} from '#typings';
 import useRequest from '#restrequest';
 
 import ConnectorEditForm from './ConnectorEditForm';
 import ConnectorDetails from './ConnectorDetails';
 
 import styles from './styles.scss';
-
-const testConnectors: Connector[] = [
-    {
-        id: 1,
-        title: 'Corona Virus - India (from January)',
-        sources: [
-            {
-                source: 'relief-web',
-                title: 'ACAPS',
-                noOfLeads: 324,
-                publishedDates: [
-                    {
-                        count: 10,
-                        date: '2019-10-12',
-                    },
-                    {
-                        count: 14,
-                        date: '2019-11-12',
-                    },
-                    {
-                        count: 24,
-                        date: '2019-12-12',
-                    },
-                    {
-                        count: 16,
-                        date: '2020-01-12',
-                    },
-                ],
-            },
-            {
-                source: 'acaps',
-                title: 'ReliefWeb',
-                noOfLeads: 112,
-                publishedDates: [
-                    {
-                        count: 9,
-                        date: '2019-10-12',
-                    },
-                    {
-                        count: 14,
-                        date: '2019-11-12',
-                    },
-                    {
-                        count: 34,
-                        date: '2019-12-12',
-                    },
-                    {
-                        count: 16,
-                        date: '2020-01-12',
-                    },
-                ],
-            },
-            {
-                source: 'idmc-libarry',
-                title: 'IDMC Library',
-                noOfLeads: 102,
-                broken: true,
-                publishedDates: [
-                    {
-                        count: 9,
-                        date: '2019-10-12',
-                    },
-                    {
-                        count: 9,
-                        date: '2019-11-12',
-                    },
-                    {
-                        count: 4,
-                        date: '2019-12-12',
-                    },
-                    {
-                        count: 16,
-                        date: '2020-01-12',
-                    },
-                ],
-            },
-        ],
-        updatedOn: '2020-01-30',
-        disabled: false,
-    },
-    {
-        id: 2,
-        title: 'Corona Virus - Nigeria',
-        sources: [
-            {
-                source: 'acaps',
-                title: 'ACAPS',
-                noOfLeads: 324,
-                publishedDates: [
-                    {
-                        count: 9,
-                        date: '2019-10-12',
-                    },
-                    {
-                        count: 9,
-                        date: '2019-11-12',
-                    },
-                    {
-                        count: 4,
-                        date: '2019-12-12',
-                    },
-                    {
-                        count: 16,
-                        date: '2020-01-12',
-                    },
-                ],
-            },
-            {
-                source: 'reach-library',
-                title: 'Reach Library',
-                noOfLeads: 102,
-                publishedDates: [
-                    {
-                        count: 9,
-                        date: '2019-10-12',
-                    },
-                    {
-                        count: 9,
-                        date: '2019-11-12',
-                    },
-                    {
-                        count: 4,
-                        date: '2019-12-12',
-                    },
-                    {
-                        count: 16,
-                        date: '2020-01-12',
-                    },
-                ],
-            },
-        ],
-        updatedOn: '2020-02-30',
-        disabled: true,
-    },
-];
 
 const ModalButton = modalize(Button);
 
@@ -164,23 +33,64 @@ function ProjectConnector(props: OwnProps) {
         className,
     } = props;
 
-    const organizationsRequestOptions = useMemo(() => ({
-        url: `/projects/${projectId}/unified-connectors/`,
-    }), [projectId]);
+    const [connectors, setConnectors] = useState<Connector[]>([]);
 
-    const [pendingConnectors, connectors] = useRequest(
-        organizationsRequestOptions,
-        undefined,
-        300, // delay before actual fetch
-    );
+    const handleConnectorAdd = useCallback((connector: Connector) => {
+        setConnectors(currentConnectors => ([
+            connector,
+            ...currentConnectors,
+        ]));
+    }, [setConnectors]);
+
+    const handleConnectorEdit = useCallback((connector: Connector) => {
+        setConnectors((currentConnectors) => {
+            const selectedConnectorIndex = currentConnectors
+                .findIndex(c => c.id === connector.id);
+
+            if (selectedConnectorIndex === -1) {
+                return currentConnectors;
+            }
+            const newConnectors = [...currentConnectors];
+            newConnectors.splice(selectedConnectorIndex, 1, connector);
+
+            return newConnectors;
+        });
+    }, [setConnectors]);
+
+    const handleConnectorDelete = useCallback((connectorId: number) => {
+        setConnectors((currentConnectors) => {
+            const selectedConnectorIndex = currentConnectors
+                .findIndex(c => c.id === connectorId);
+
+            if (selectedConnectorIndex === -1) {
+                return currentConnectors;
+            }
+            const newConnectors = [...currentConnectors];
+            newConnectors.splice(selectedConnectorIndex, 1);
+
+            return newConnectors;
+        });
+    }, [setConnectors]);
+
+    const [pendingConnectors] = useRequest<MultiResponse<Connector>>({
+        url: `server://projects/${projectId}/unified-connectors/`,
+        delay: 300,
+    }, {
+        onSuccess: (response) => {
+            setConnectors(response.results);
+        },
+    });
 
     const connectorRendererParams = useCallback((key, data) => ({
         projectId,
         details: data,
-    }), [projectId]);
+        onConnectorDelete: handleConnectorDelete,
+        onConnectorEdit: handleConnectorEdit,
+    }), [projectId, handleConnectorDelete]);
 
     return (
         <div className={_cs(className, styles.projectConnectors)}>
+            {pendingConnectors && <LoadingAnimation />}
             <header className={styles.header}>
                 <h3 className={styles.heading}>
                     {_ts('project.connector', 'connectorHeaderTitle')}
@@ -190,6 +100,7 @@ function ProjectConnector(props: OwnProps) {
                     modal={(
                         <ConnectorEditForm
                             projectId={projectId}
+                            onSuccess={handleConnectorAdd}
                             isAddForm
                         />
                     )}
@@ -198,7 +109,7 @@ function ProjectConnector(props: OwnProps) {
                 </ModalButton>
             </header>
             <ListView
-                data={testConnectors}
+                data={connectors}
                 keySelector={connectorKeySelector}
                 renderer={ConnectorDetails}
                 rendererParams={connectorRendererParams}

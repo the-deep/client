@@ -6,6 +6,7 @@ export interface PublishedDateCount {
 }
 
 export type FieldType = 'string' | 'number' | 'url' | 'select' | 'date';
+export type ConnectorSourceStatus = 'processing' | 'success' | 'failure';
 
 export interface ConnectorSourceOption {
     key: string;
@@ -26,10 +27,17 @@ export interface UnifiedConnectorSource {
     title: string;
 }
 
-export interface UnifiedConnectorSourceInstance extends UnifiedConnectorSource {
+export interface ConnectorSourceStats {
     noOfLeads?: number;
-    broken?: boolean;
     publishedDates: PublishedDateCount[];
+}
+
+export interface UnifiedConnectorSourceInstance extends UnifiedConnectorSource {
+    stats?: ConnectorSourceStats;
+    status?: ConnectorSourceStatus;
+    lastCalculatedAt?: string;
+    params: Record<string, unknown>;
+    source: string;
 }
 
 export interface Connector {
