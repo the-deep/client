@@ -2,6 +2,7 @@ import {
     listToMap,
     union,
     encodeDate,
+    isDefined,
 } from '@togglecorp/fujs';
 import { generateRelation } from '#utils/forest';
 import { getDateWithTimezone } from '#utils/common';
@@ -53,7 +54,7 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
     const result = [];
     Object.keys(filters).forEach((filterKey) => {
         const filterOptions = filters[filterKey];
-        if (!filterOptions) {
+        if (!isDefined(filterOptions)) {
             return;
         }
 

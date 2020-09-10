@@ -19,6 +19,8 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
 import Badge from '#components/viewer/Badge';
+import DropdownEdit from '#components/general/DropdownEdit';
+
 import {
     notifyOnFailure,
     notifyOnFatal,
@@ -37,7 +39,6 @@ import {
 import _ts from '#ts';
 
 import ActionButtons from '../ActionButtons';
-import DropdownEdit from '../DropdownEdit';
 import FileTypeViewer from './FileTypeViewer';
 import styles from './styles.scss';
 

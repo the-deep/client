@@ -1,0 +1,26 @@
+.verify-container {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-small);
+
+    .dropdown {
+        flex-shrink: 0;
+        opacity: 0;
+
+        :global {
+            .dropdown-button {
+                padding: 0;
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+
+    &:hover {
+        .dropdown {
+            opacity: 1;
+        }
+    }
+}

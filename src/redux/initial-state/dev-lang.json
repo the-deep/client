@@ -1144,7 +1144,10 @@
         "-23409823": "Howdy DEEP user - looks like you want to join {projectName}. Could you please provide a message to the project owners about why you want to join the project?",
         "-23615781": "Reason",
         "-62923641": "Show {label}",
-        "-39488279": "Hide {label}"
+        "-39488279": "Hide {label}",
+        "-87987213": "Failed to set verification status for entry",
+        "-90989808": "Verification Status",
+        "-19802301": "Status"
     },
     "links": {
         "browserExtension": {
@@ -1547,7 +1550,8 @@
             "entryGroupSave": -19337357,
             "entryGroupSaveSuccess": -24270008,
             "entryGroupSaveFailure": -86483548,
-            "entryGroupUpdate": -93218852
+            "entryGroupUpdate": -93218852,
+            "entryVerifyFailure": -87987213
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
@@ -1612,7 +1616,9 @@
             "leadStatusFilterLabel": -54496992,
             "leadStatusFilterPlaceholder": -54496992,
             "createdAtLabel": 163,
-            "publishedOnLabel": -39063797
+            "publishedOnLabel": -39063797,
+            "verificationStatusOptionsFilterLabel": -90989808,
+            "verificationStatusPlaceholder": -19802301
         },
         "export": {
             "headerExport": 600,

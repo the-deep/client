@@ -65,6 +65,10 @@ function DropdownEdit(props: Props) {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
+    const handleDropdownChange = useCallback((value) => {
+        setShowDropdown(value);
+    }, [setShowDropdown]);
+
     const optionRendererParams = useCallback((key, data) => ({
         isActive: key === currentSelection,
         itemKey: key,
@@ -80,7 +84,7 @@ function DropdownEdit(props: Props) {
                 showDropdown && styles.visible,
             )}
             dropdownIcon="edit"
-            onDropdownVisibilityChange={setShowDropdown}
+            onDropdownVisibilityChange={handleDropdownChange}
             closeOnClick
         >
             <ListView
