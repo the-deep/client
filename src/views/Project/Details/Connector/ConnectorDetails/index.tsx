@@ -1,12 +1,16 @@
-import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useState, useCallback } from 'react';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
+import { Switch } from '@togglecorp/toggle-ui';
 
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FormattedDate from '#rscv/FormattedDate';
-import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
+import useRequest from '#restrequest';
 
 import {
     Connector,
@@ -25,37 +29,54 @@ interface OwnProps {
     className?: string;
     projectId: number;
     details: Connector;
+    onConnectorDelete: (id: number) => void;
+    onConnectorEdit: (connector: Connector) => void;
 }
 
 const sourceKeySelector = (source: UnifiedConnectorSource) => source.source;
 
 function ProjectConnectorDetail(props: OwnProps) {
     const {
+        onConnectorDelete,
+        onConnectorEdit,
         projectId,
         className,
         details,
     } = props;
 
     const {
+        id: connectorId,
         title,
         updatedOn,
         disabled,
         sources,
     } = details;
 
+    const [connectorToBeDeleted, setConnectorToBeDeleted] = useState<number | undefined>();
+
+    const [pendingConnectorDelete] = useRequest({
+        url: isDefined(connectorToBeDeleted)
+            ? `server://projects/${projectId}/unified-connectors/${connectorToBeDeleted}`
+            : undefined,
+        method: 'DELETE',
+    }, {
+        onSuccess: () => {
+            onConnectorDelete(connectorId);
+        },
+    });
+
     const handleConnectorActiveStatusChange = useCallback((value) => {
         console.warn('changed value', value);
     }, []);
 
     const handleConnectorDelete = useCallback(() => {
-        console.warn('connector delete clicked');
-    }, []);
+        setConnectorToBeDeleted(connectorId);
+    }, [setConnectorToBeDeleted, connectorId]);
 
     const connectorSourceRendererParams = useCallback((key, data) => ({
         title: data.title,
-        noOfLeads: data.noOfLeads,
-        broken: data.broken,
-        publishedDates: data.publishedDates,
+        status: data.status,
+        stats: data.stats,
     }), []);
 
     return (
@@ -69,12 +90,11 @@ function ProjectConnectorDetail(props: OwnProps) {
                         {_ts('project.connector', 'updatedOnLabel')}
                     </span>
                     <FormattedDate
-                        className={styles.date}
                         value={updatedOn}
                         mode="dd-MM-yyyy"
                     />
-                    <Checkbox
-                        className={styles.checkbox}
+                    <Switch
+                        name="disable-switch"
                         value={disabled}
                         onChange={handleConnectorActiveStatusChange}
                     />
@@ -86,6 +106,7 @@ function ProjectConnectorDetail(props: OwnProps) {
                             <ConnectorEditForm
                                 projectId={projectId}
                                 connector={details}
+                                onSuccess={onConnectorEdit}
                             />
                         )}
                         title={_ts('project.connector', 'editButtonTitle')}

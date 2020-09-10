@@ -1,5 +1,6 @@
 .project-connectors {
     display: flex;
+    position: relative;
     flex-direction: column;
     background-color: var(--color-foreground);
     overflow-y: auto;
