@@ -1,4 +1,5 @@
 import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { serverlessEndpoint, wsEndpoint, getVersionedUrl } from '#config/rest';
 
 import { UrlParams } from './types';
 
@@ -23,6 +24,48 @@ export function prepareUrlParams(params: UrlParams): string {
         })
         .filter(isDefined)
         .join('&');
+}
+
+const serverPrefix = 'server://';
+const serverlessPrefix = 'serverless://';
+export function processDeepUrls(url: string) {
+    if (url.startsWith(serverPrefix)) {
+        // NOTE: -1 to leave out the starting slash
+        const cleanedUrl = url.slice(serverPrefix.length - 1);
+        return getVersionedUrl(wsEndpoint, cleanedUrl);
+    } else if (url.startsWith(serverlessPrefix)) {
+        // NOTE: -1 to leave out the starting slash
+        const cleanedUrl = url.slice(serverlessPrefix.length - 1);
+        return `${serverlessEndpoint}${cleanedUrl}`;
+    } else if (/^https?:\/\//i.test(url)) {
+        return url;
+    }
+    console.error('Url should start with http/https or a defined scope', url);
+    return url;
+}
+
+export function processDeepOptions(url: string, options: RequestInit, access: string | undefined) {
+    const {
+        body,
+        headers,
+        ...otherOptions
+    } = options;
+
+    const isInternalRequest = url.startsWith(serverPrefix) || url.startsWith(serverlessPrefix);
+
+    return {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            Authorization: access && isInternalRequest
+                ? `Bearer ${access}`
+                : undefined,
+            'Content-Type': 'application/json; charset=utf-8',
+            ...headers,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        ...otherOptions,
+    };
 }
 
 /*

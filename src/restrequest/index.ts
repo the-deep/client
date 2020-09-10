@@ -262,7 +262,7 @@ function useRequest<T>(
             const controller = new AbortController();
 
             const transformedUrl = transformUrlRef.current(extendedUrl);
-            const transformedOptions = transformOptionsRef.current({
+            const transformedOptions = transformOptionsRef.current(extendedUrl, {
                 ...other,
                 method,
                 body,

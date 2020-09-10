@@ -19,10 +19,6 @@ import {
     setZeLang,
 } from '#config/zE';
 import {
-    wsEndpoint,
-    getVersionedUrl,
-} from '#config/rest';
-import {
     createParamsForTokenRefresh,
     urlForTokenRefresh,
 } from '#rest';
@@ -41,6 +37,7 @@ import {
 import getUserConfirmation from '#utils/getUserConfirmation';
 
 import { RequestContext } from '#restrequest';
+import { processDeepUrls, processDeepOptions } from '#restrequest/utils';
 
 import schema from '#schema';
 
@@ -164,26 +161,8 @@ export default class App extends React.PureComponent {
         }
 
         const requestContextValue = {
-            transformUrl: (url) => {
-                const isAbsolute = /^https?:\/\//i.test(url);
-                // FIXME: choose between wsEndpoint and other endpoints
-                return isAbsolute ? url : getVersionedUrl(wsEndpoint, url);
-            },
-            transformOptions: (options) => {
-                const { body, headers, ...otherOptions } = options;
-
-                return {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: access ? `Bearer ${access}` : undefined,
-                        'Content-Type': 'application/json; charset=utf-8',
-                        ...headers,
-                    },
-                    body: body ? JSON.stringify(body) : undefined,
-                    ...otherOptions,
-                };
-            },
+            transformUrl: processDeepUrls,
+            transformOptions: (url, options) => processDeepOptions(url, options, access),
         };
 
         return (

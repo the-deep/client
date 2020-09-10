@@ -17,7 +17,7 @@ import {
 import styles from './styles.scss';
 
 function UploadProgress({ progress }) {
-    const hide = isNotDefined(progress) || progress === 100;
+    const hide = isNotDefined(progress) || progress === 100 || progress < 0;
 
     const className = _cs(
         styles.progressBar,
@@ -43,7 +43,6 @@ UploadProgress.defaultProps = {
     progress: undefined,
 };
 
-// FIXME: it doesn't make much sense to include the icon anymore
 const leadTypeToIconClassMap = {
     [LEAD_TYPE.drive]: 'googleDrive',
     [LEAD_TYPE.dropbox]: 'dropbox',
@@ -79,7 +78,7 @@ const propTypes = {
     type: PropTypes.string,
     itemKey: PropTypes.string.isRequired,
 
-    onItemSelect: PropTypes.func.isRequired,
+    onItemSelect: PropTypes.func,
     active: PropTypes.bool,
     actionButtons: PropTypes.node,
 
@@ -95,6 +94,7 @@ const defaultProps = {
     className: undefined,
     itemState: undefined,
     actionButtons: undefined,
+    onItemSelect: undefined,
 };
 
 function LeadListItem(props) {
@@ -112,7 +112,9 @@ function LeadListItem(props) {
     } = props;
 
     const handleClick = useCallback(() => {
-        onItemSelect(itemKey);
+        if (onItemSelect) {
+            onItemSelect(itemKey);
+        }
     }, [onItemSelect, itemKey]);
 
     const stateIconClassName = _cs(
@@ -120,7 +122,6 @@ function LeadListItem(props) {
         styleMap[itemState],
     );
 
-    // TODO: STYLING loading doesn't rotate
     return (
         <Jumper
             active={active}

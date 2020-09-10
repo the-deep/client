@@ -16,8 +16,6 @@ import { LeadProcessorContext } from '../../LeadProcessor';
 import {
     LEAD_STATUS,
     leadKeySelector,
-    leadFaramValuesSelector,
-    leadSourceTypeSelector,
 } from '../../utils';
 import LeadListItem from '../../LeadListItem';
 
@@ -42,12 +40,13 @@ function CandidateLeadsModal(props) {
     } = props;
 
     const {
+        clearCompletedCandidateLeads,
         clearCandidateLeads,
         candidateLeads,
         removeCandidateLead,
     } = useContext(LeadProcessorContext);
 
-    const candidateLeadsRendererParams = useCallback((key, data) => {
+    const candidateLeadsRendererParams = useCallback((key, candidateLead) => {
         const handleLeadRemove = () => removeCandidateLead(key);
 
         const actionButtons = (
@@ -60,28 +59,38 @@ function CandidateLeadsModal(props) {
 
         return ({
             itemKey: key,
-            title: leadFaramValuesSelector(data)?.title,
-            type: leadSourceTypeSelector(data),
-            progress: data.progress,
+            title: candidateLead.data?.title,
+            type: candidateLead.data.sourceType,
+            progress: candidateLead.progress,
             actionButtons,
-            itemState: data.leadState,
+            itemState: candidateLead.leadState,
         });
     }, [removeCandidateLead]);
 
     const isInProgress = useMemo(() => (
         candidateLeads.some(candidateLead => (
-            candidateLead.leadState !== LEAD_STATUS.uploading
+            candidateLead.leadState === LEAD_STATUS.pristine
+            || candidateLead.leadState === LEAD_STATUS.uploading
         ))
     ), [candidateLeads]);
 
     const handleLeadsAdd = useCallback(() => {
-        onLeadsAdd(candidateLeads);
-        clearCandidateLeads();
+        // TODO: filter only completed leads
+        const newLeads = candidateLeads
+            .filter(candidateLead => candidateLead.leadState === LEAD_STATUS.complete)
+            .map(candidateLead => ({
+                faramValues: candidateLead.data,
+                // FIXME: serverId is not required
+                serverId: candidateLeads.serverId,
+            }));
+        onLeadsAdd(newLeads);
+        // TODO: Only remove completed leads
+        clearCompletedCandidateLeads();
         closeModal();
     }, [
         candidateLeads,
         onLeadsAdd,
-        clearCandidateLeads,
+        clearCompletedCandidateLeads,
         closeModal,
     ]);
 
@@ -114,6 +123,7 @@ function CandidateLeadsModal(props) {
             <ModalFooter>
                 <DangerConfirmButton
                     onClick={clearCandidateLeads}
+                    disabled={isInProgress}
                     // TODO: Translate string
                     confirmationMessage="Are you sure you want to clear all candidate leads?"
                 >

@@ -7,6 +7,7 @@ import { formatTitle } from '#utils/common';
 import {
     LEAD_TYPE,
     supportedFileTypes,
+    getNewLeadKey,
 } from '../utils';
 
 import { LeadProcessorContext } from '../LeadProcessor';
@@ -36,7 +37,8 @@ function DroppableDiv(p) {
     React.useEffect(() => {
         const leads = acceptedFiles.map((file) => {
             const lead = {
-                faramValues: {
+                key: getNewLeadKey(),
+                data: {
                     title: formatTitle(file.name),
                     sourceType: LEAD_TYPE.file,
                 },

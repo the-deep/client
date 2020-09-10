@@ -137,7 +137,7 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
-    // TODO: this should always be true
+    // TODO: IMP this should always be true
     disableLeadUrlChange: false,
 
     pending: false,
@@ -173,7 +173,7 @@ function LeadDetail(props) {
     const [searchedText, setSearchedText] = useState(undefined);
 
     const [pendingSearchedOrganizations, searchedOrganizations] = useRequest({
-        url: searchedText ? '/organizations/' : undefined,
+        url: searchedText ? 'server://organizations/' : undefined,
         query: { search: searchedText },
         delay: 300,
     });
@@ -185,7 +185,7 @@ function LeadDetail(props) {
         return getTitleFromUrl(currentFaramValues.url);
     });
 
-    // FIXME: suggestedTitleFromExtraction is now obsolete
+    // FIXME: IMP suggestedTitleFromExtraction is now obsolete
     const [suggestedTitleFromExtraction, setSuggestedTitleFromExtraction] = useState('');
 
     const key = leadKeySelector(lead);
@@ -405,10 +405,7 @@ function LeadDetail(props) {
     );
 
     return (
-        <div
-            // TODO: STYLING the faram doesn't take full height and loading-animation is offset
-            className={_cs(classNameFromProps, styles.leadItem)}
-        >
+        <div className={_cs(classNameFromProps, styles.leadItem)}>
             { pending && <LoadingAnimation /> }
             <Faram
                 className={styles.addLeadForm}

@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { isDefined } from '@togglecorp/fujs';
 import produce from 'immer';
-import { analyzeErrors } from '@togglecorp/faram';
 
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
@@ -22,8 +20,6 @@ import {
     LEAD_STATUS,
     LEAD_TYPE,
     leadKeySelector,
-    leadSourceTypeSelector,
-    getNewLeadKey,
 } from '../utils';
 
 export const LeadProcessorContext = React.createContext({
@@ -36,6 +32,9 @@ export const LeadProcessorContext = React.createContext({
         console.warn('removing lead with id', leadId);
     },
     clearCandidateLeads: () => {
+        console.warn('clearing all candidate leads');
+    },
+    clearCompletedCandidateLeads: () => {
         console.warn('clearing all candidate leads');
     },
     addCandidateLeads: (newLeads) => {
@@ -55,31 +54,19 @@ function LeadProcessor(props) {
         setCandidateLeads([]);
     }, [setCandidateLeads]);
 
-    const {
-        uploadCoordinator,
-        driveUploadCoordinator,
-        dropboxUploadCoordinator,
-    } = useMemo(() => {
-        const newUploadCoordinator = new CoordinatorBuilder()
+    const clearCompletedCandidateLeads = useCallback(() => {
+        setCandidateLeads(items => (
+            items.filter(item => item.leadState === LEAD_STATUS.complete)
+        ));
+    }, [setCandidateLeads]);
+
+    const uploadCoordinator = useMemo(() => (
+        new CoordinatorBuilder()
             .maxActiveActors(3)
-            .build();
+            .build()
+    ), []);
 
-        const newDriveUploadCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
-            .build();
-
-        const newDropboxUploadCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
-            .build();
-
-        return {
-            uploadCoordinator: newUploadCoordinator,
-            driveUploadCoordinator: newDriveUploadCoordinator,
-            dropboxUploadCoordinator: newDropboxUploadCoordinator,
-        };
-    }, []);
-
-    const handleExternalUploadPendingSet = useCallback((key, progress = 0) => {
+    const handleUploadProgressChange = useCallback((key, progress = -1) => {
         setCandidateLeads(currentCandidateLeads => (
             produce(currentCandidateLeads, (safeCandidateLeads) => {
                 const currentLeadIndex = safeCandidateLeads
@@ -94,6 +81,44 @@ function LeadProcessor(props) {
         ));
     }, [setCandidateLeads]);
 
+    const handleUploadSuccess = useCallback(({ leadKey, attachmentId }) => {
+        uploadCoordinator.notifyComplete(leadKey);
+        setCandidateLeads(currentCandidateLeads => (
+            produce(currentCandidateLeads, (safeCandidateLeads) => {
+                const selectedIndex = safeCandidateLeads
+                    .findIndex(lead => leadKey === leadKeySelector(lead));
+
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].data.attachment = {
+                        id: attachmentId,
+                    };
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].progress = undefined;
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.complete;
+                }
+            })
+        ));
+    }, [setCandidateLeads, uploadCoordinator]);
+
+    const handleUploadFailure = useCallback(({ leadKey, error }) => {
+        uploadCoordinator.notifyComplete(leadKey, true);
+        setCandidateLeads(currentCandidateLeads => (
+            produce(currentCandidateLeads, (safeCandidateLeads) => {
+                const selectedIndex = safeCandidateLeads
+                    .findIndex(lead => leadKey === leadKeySelector(lead));
+
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].error = error;
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.error;
+                }
+            })
+        ));
+    }, [setCandidateLeads, uploadCoordinator]);
+
     const removeCandidateLead = useCallback((leadKey) => {
         setCandidateLeads((currentCandidateLeads) => {
             const newCandidateLeads = [...currentCandidateLeads];
@@ -107,235 +132,162 @@ function LeadProcessor(props) {
         });
     }, [setCandidateLeads]);
 
-    const handleCandidateLeadAttachmentSet = useCallback(({ leadKey, attachmentId }) => {
-        setCandidateLeads(currentCandidateLeads => (
-            produce(currentCandidateLeads, (safeCandidateLeads) => {
-                const selectedIndex = safeCandidateLeads
-                    .findIndex(lead => leadKey === leadKeySelector(lead));
-
-                if (selectedIndex !== -1) {
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].faramValues.attachment = {
-                        id: attachmentId,
-                    };
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].progress = undefined;
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].pending = false;
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.complete;
-                }
-            })
-        ));
-    }, [setCandidateLeads]);
-
-    const handleCandidateLeadFaramErrorsChange = useCallback(({ leadKey, faramErrors }) => {
-        setCandidateLeads(currentCandidateLeads => (
-            produce(currentCandidateLeads, (safeCandidateLeads) => {
-                const selectedIndex = safeCandidateLeads
-                    .findIndex(lead => leadKey === leadKeySelector(lead));
-
-                if (selectedIndex !== -1) {
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].faramErrors = faramErrors;
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].faramInfo.error = analyzeErrors(faramErrors);
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.error;
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].pending = false;
-                }
-            })
-        ));
-    }, [setCandidateLeads]);
-
     const addCandidateLeads = useCallback((leads) => {
         if (leads.length < 1) {
             return;
         }
-        const newLeads = leads.map((leadInfo) => {
+
+        function getInitialState(sourceType) {
+            // NOTE: pristine means pending here
+            return [LEAD_TYPE.file, LEAD_TYPE.dropbox, LEAD_STATUS.drive].includes(sourceType)
+                ? LEAD_STATUS.pristine
+                : LEAD_STATUS.complete;
+        }
+
+        const newCandidateLeads = leads.map((lead) => {
             const {
-                faramValues,
+                key,
                 serverId,
+                data,
+            } = lead;
+
+            return {
+                id: key,
+                serverId,
+                data: {
+                    // NOTE: just add a title if we don't have one
+                    title: `Lead ${(new Date()).toLocaleTimeString()}`,
+                    ...data,
+                },
+                progress: undefined,
+                error: undefined,
+                leadState: getInitialState(data.sourceType),
+            };
+        });
+
+        const uploadRequests = leads.map((lead) => {
+            const {
+                key,
+                data: { sourceType: leadType },
+
                 file,
                 drive,
                 dropbox,
-            } = leadInfo;
+            } = lead;
 
-            const key = getNewLeadKey();
-
-            const newLead = {
-                id: key,
-                serverId,
-                faramValues: {
-                    title: `Lead ${(new Date()).toLocaleTimeString()}`,
-                    ...faramValues,
-                },
-                faramErrors: {},
-                faramInfo: {
-                    error: false,
-                    pristine: isDefined(serverId),
-                },
-                leadState: LEAD_STATUS.pristine,
-            };
-
-            const leadType = leadSourceTypeSelector(newLead);
+            let request;
             if (leadType === LEAD_TYPE.file) {
-                const request = new UploadBuilder()
+                request = new UploadBuilder()
                     .file(file)
                     .url(urlForUpload)
                     .params(createParamsForFileUpload)
                     .preLoad(() => {
-                        handleExternalUploadPendingSet(key);
+                        handleUploadProgressChange(key, 0);
                     })
                     .progress((progress) => {
                         // NOTE: set progress to 100 only after attachment is received
-                        handleExternalUploadPendingSet(key, Math.min(99, progress));
+                        handleUploadProgressChange(key, Math.min(99, progress));
                     })
                     .success((response) => {
                         const { id: attachment } = response;
-
-                        handleCandidateLeadAttachmentSet({
+                        handleUploadSuccess({
                             leadKey: key,
                             attachmentId: attachment,
                         });
-                        uploadCoordinator.notifyComplete(key);
                     })
                     .failure((response) => {
-                        handleCandidateLeadFaramErrorsChange({
+                        handleUploadFailure({
                             leadKey: key,
-                            faramErrors: {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                ],
-                            },
+                            error: `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
                         });
-                        uploadCoordinator.notifyComplete(key, true);
                     })
                     .fatal(() => {
-                        handleCandidateLeadFaramErrorsChange({
+                        handleUploadFailure({
                             leadKey: key,
-                            faramErrors: {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')}`,
-                                ],
-                            },
+                            error: `${_ts('addLeads', 'fileUploadFailText')}`,
                         });
-                        uploadCoordinator.notifyComplete(key, true);
                     })
                     .build();
-
-                uploadCoordinator.add(key, request);
             } else if (leadType === LEAD_TYPE.drive) {
                 const { title, accessToken, fileId, mimeType } = drive;
-                const request = new FgRestBuilder()
+                request = new FgRestBuilder()
                     .url(urlForGoogleDriveFileUpload)
                     .params(() => createHeaderForGoogleDriveFileUpload({
                         title, accessToken, fileId, mimeType,
                     }))
                     .delay(0)
                     .preLoad(() => {
-                        handleExternalUploadPendingSet(key);
+                        handleUploadProgressChange(key);
                     })
                     .success((response) => {
                         const { id: attachment } = response;
-
-                        handleCandidateLeadAttachmentSet({
+                        handleUploadSuccess({
                             leadKey: key,
                             attachmentId: attachment,
                         });
-                        driveUploadCoordinator.notifyComplete(key);
                     })
                     .failure((response) => {
-                        handleCandidateLeadFaramErrorsChange({
+                        handleUploadFailure({
                             leadKey: key,
-                            faramErrors: {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                ],
-                            },
+                            error: `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
                         });
-
-                        driveUploadCoordinator.notifyComplete(key, true);
                     })
                     .fatal(() => {
-                        handleCandidateLeadFaramErrorsChange({
+                        handleUploadFailure({
                             leadKey: key,
-                            faramErrors: {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')}`,
-                                ],
-                            },
+                            error: `${_ts('addLeads', 'fileUploadFailText')}`,
                         });
-
-                        driveUploadCoordinator.notifyComplete(key, true);
                     })
                     .build();
-
-                driveUploadCoordinator.add(key, request);
             } else if (leadType === LEAD_TYPE.dropbox) {
                 const { title, fileUrl } = dropbox;
-                const request = new FgRestBuilder()
+                request = new FgRestBuilder()
                     .url(urlForDropboxFileUpload)
                     .params(createHeaderForDropboxUpload({ title, fileUrl }))
                     .delay(0)
                     .preLoad(() => {
-                        handleExternalUploadPendingSet(key);
+                        handleUploadProgressChange(key);
                     })
                     .success((response) => {
                         const { id: attachment } = response;
-
-                        handleCandidateLeadAttachmentSet({
+                        handleUploadSuccess({
                             leadKey: key,
                             attachmentId: attachment,
                         });
-                        dropboxUploadCoordinator.notifyComplete(key);
                     })
                     .failure((response) => {
-                        handleCandidateLeadFaramErrorsChange({
+                        handleUploadFailure({
                             leadKey: key,
-                            faramErrors: {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
-                                ],
-                            },
+                            error: `${_ts('addLeads', 'fileUploadFailText')} ${response.errors.file[0]}`,
                         });
-
-                        dropboxUploadCoordinator.notifyComplete(key, true);
                     })
                     .fatal(() => {
-                        handleCandidateLeadFaramErrorsChange({
+                        handleUploadFailure({
                             leadKey: key,
-                            faramErrors: {
-                                $internal: [
-                                    `${_ts('addLeads', 'fileUploadFailText')}`,
-                                ],
-                            },
+                            error: `${_ts('addLeads', 'fileUploadFailText')}`,
                         });
-
-                        dropboxUploadCoordinator.notifyComplete(key, true);
                     })
                     .build();
-
-                dropboxUploadCoordinator.add(key, request);
             }
-
-            return newLead;
+            return { key, request };
         });
+
+        setProcessingModalVisibility(true);
         setCandidateLeads(currentCandidateLeads => ([
             ...currentCandidateLeads,
-            ...newLeads,
+            ...newCandidateLeads,
         ]));
-        setProcessingModalVisibility(true);
+
+        uploadRequests.forEach(({ key, request }) => {
+            if (request) {
+                uploadCoordinator.add(key, request);
+            }
+        });
         uploadCoordinator.start();
-        driveUploadCoordinator.start();
-        dropboxUploadCoordinator.start();
     }, [
-        handleCandidateLeadFaramErrorsChange,
-        handleCandidateLeadAttachmentSet,
-        driveUploadCoordinator,
-        handleExternalUploadPendingSet,
-        dropboxUploadCoordinator,
+        handleUploadFailure,
+        handleUploadSuccess,
+        handleUploadProgressChange,
         uploadCoordinator,
         setCandidateLeads,
         setProcessingModalVisibility,
@@ -343,6 +295,7 @@ function LeadProcessor(props) {
 
     const contextValue = useMemo(() => ({
         clearCandidateLeads,
+        clearCompletedCandidateLeads,
         candidateLeads,
         addCandidateLeads,
         removeCandidateLead,
@@ -351,6 +304,7 @@ function LeadProcessor(props) {
         setProcessingModalVisibility,
     }), [
         clearCandidateLeads,
+        clearCompletedCandidateLeads,
         candidateLeads,
         addCandidateLeads,
         removeCandidateLead,

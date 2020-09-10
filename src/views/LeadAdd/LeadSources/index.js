@@ -35,6 +35,7 @@ import {
     supportedDropboxExtension,
     supportedFileTypes,
     leadSourceTypeSelector,
+    getNewLeadKey,
 } from '../utils';
 import { LeadProcessorContext } from '../LeadProcessor';
 
@@ -128,7 +129,7 @@ function LeadSources(props) {
 
     const handleLeadAddFromText = useCallback(() => {
         const lead = {
-            faramValues: {
+            data: {
                 sourceType: LEAD_TYPE.text,
             },
         };
@@ -138,7 +139,7 @@ function LeadSources(props) {
 
     const handleLeadAddFromWebsite = useCallback(() => {
         const lead = {
-            faramValues: {
+            data: {
                 sourceType: LEAD_TYPE.website,
                 emmTriggers: [],
                 emmEntities: [],
@@ -166,7 +167,8 @@ function LeadSources(props) {
         }
         const newLeads = files.map((file) => {
             const lead = {
-                faramValues: {
+                key: getNewLeadKey(),
+                data: {
                     title: formatTitle(file.name),
                     sourceType: LEAD_TYPE.file,
                 },
@@ -189,7 +191,8 @@ function LeadSources(props) {
         }
 
         const newLeads = docs.map(doc => ({
-            faramValues: {
+            key: getNewLeadKey(),
+            data: {
                 title: doc.name,
                 sourceType: LEAD_TYPE.drive,
             },
@@ -210,7 +213,8 @@ function LeadSources(props) {
         }
 
         const newLeads = response.map(doc => ({
-            faramValues: {
+            key: getNewLeadKey(),
+            data: {
                 title: doc.name,
                 sourceType: LEAD_TYPE.dropbox,
             },

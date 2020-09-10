@@ -166,7 +166,7 @@ function LeadAdd(props) {
     );
 
     const [pending, leadOptions] = useRequest({
-        url: '/lead-options/',
+        url: 'server://lead-options/',
         method: 'POST',
         body,
     }, {
@@ -275,7 +275,7 @@ function LeadAdd(props) {
             const newLeads = leadsInfo.map((leadInfo) => {
                 const {
                     faramValues,
-                    // FIXME: serverId is no longer the case
+                    // FIXME: IMP serverId is no longer the case
                     serverId,
                 } = leadInfo;
 
@@ -502,7 +502,7 @@ function LeadAdd(props) {
 
     const leadPreviewMinimized = leadPreviewHidden || leadIsTextType;
 
-    // TODO:
+    // TODO: IMP calculate this value
     const saveEnabledForAll = false;
 
     return (
