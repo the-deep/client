@@ -6,7 +6,7 @@ import {
     useContext,
     useLayoutEffect,
 } from 'react';
-import { isFalsyString, isNotDefined } from '@togglecorp/fujs';
+import { isTruthyString, isDefined } from '@togglecorp/fujs';
 import AbortController from 'abort-controller';
 
 import sleep from './sleep';
@@ -24,7 +24,9 @@ import schema from '../schema';
 1. Retry request with exponential backoff
 */
 
-interface RequestOptions {
+type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+interface RequestOptions<T> {
     // TODO:
     // re-trigger if autoRetrigger
     url: string | undefined,
@@ -32,34 +34,40 @@ interface RequestOptions {
 
     body?: RequestInit['body'],
 
-    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    method?: Methods,
     other?: RequestInit,
 
-    // TODO:
+    // TODO: add this
+    autoTrigger?: boolean;
+
+    // NOTE:
     // don't ever retrigger
+    schemaName?: string;
     delay?: number;
     preserveResponse?: boolean;
-}
-
-// if auto-trigger then use direct values
-// if not set values with do (get new values)
-
-interface GeneralOptions<T> {
-    // TODO: add this
-    // autoTrigger?: boolean;
-    schemaName?: string;
-
     shouldPoll?: (val: T) => number;
     onSuccess?: (val: T) => void;
     onFailure?: (val: Err) => void;
 }
+
+function isFetchable(
+    url: string | undefined,
+    method: Methods,
+    body: RequestInit['body'] | undefined,
+): url is string {
+    return (
+        isTruthyString(url)
+        && (!['PUT', 'PATCH', 'POST'].includes(method) || isDefined(body))
+    );
+}
+
 
 async function fetchResource<T>(
     myUrl: string,
     myOptions: RequestInit,
     delay: number,
 
-    generalOptionsRef: React.MutableRefObject<GeneralOptions<T>>,
+    requestOptionsRef: React.MutableRefObject<Omit<RequestOptions<T>, 'url' | 'query' | 'method' | 'body' | 'other'>>,
 
     setPendingSafe: (value: boolean, clientId: number) => void,
     setResponseSafe: (value: T | undefined, clientId: number) => void,
@@ -87,7 +95,7 @@ async function fetchResource<T>(
             value: { nonFieldErrors: ['Network error'] },
         };
         setErrorSafe(message, clientId);
-        const { onFailure } = generalOptionsRef.current;
+        const { onFailure } = requestOptionsRef.current;
         if (onFailure) {
             callSideEffectSafe(() => {
                 onFailure(message.value);
@@ -113,7 +121,7 @@ async function fetchResource<T>(
             value: { nonFieldErrors: ['JSON parse error'] },
         };
         setErrorSafe(message, clientId);
-        const { onFailure } = generalOptionsRef.current;
+        const { onFailure } = requestOptionsRef.current;
         if (onFailure) {
             callSideEffectSafe(() => {
                 onFailure(message.value);
@@ -122,9 +130,8 @@ async function fetchResource<T>(
         return;
     }
 
-    setPendingSafe(false, clientId);
     if (res.ok) {
-        const { schemaName, shouldPoll } = generalOptionsRef.current;
+        const { schemaName, shouldPoll } = requestOptionsRef.current;
         if (schemaName && myOptions.method !== 'DELETE') {
             try {
                 schema.validate(resBody, schemaName);
@@ -142,7 +149,7 @@ async function fetchResource<T>(
                 myOptions,
                 delay,
 
-                generalOptionsRef,
+                requestOptionsRef,
 
                 setPendingSafe,
                 setResponseSafe,
@@ -155,15 +162,17 @@ async function fetchResource<T>(
             return;
         }
 
+        setPendingSafe(false, clientId);
         setErrorSafe(undefined, clientId);
         setResponseSafe(resBody as T, clientId);
-        const { onSuccess } = generalOptionsRef.current;
+        const { onSuccess } = requestOptionsRef.current;
         if (onSuccess) {
             callSideEffectSafe(() => {
                 onSuccess(resBody as T);
             }, clientId);
         }
     } else {
+        setPendingSafe(false, clientId);
         setResponseSafe(undefined, clientId);
         const message = {
             reason: 'other',
@@ -174,7 +183,7 @@ async function fetchResource<T>(
             message,
             clientId,
         );
-        const { onFailure } = generalOptionsRef.current;
+        const { onFailure } = requestOptionsRef.current;
         if (onFailure) {
             callSideEffectSafe(() => {
                 onFailure(message.value);
@@ -184,27 +193,12 @@ async function fetchResource<T>(
 }
 
 function useRequest<T>(
-    requestOptions: RequestOptions,
-    generalOptions: GeneralOptions<T> = {},
-): [boolean, T | undefined, Err | undefined] {
+    requestOptions: RequestOptions<T>,
+): [boolean, T | undefined, Err | undefined, () => void] {
     const {
         transformOptions,
         transformUrl,
     } = useContext(RequestContext);
-
-    const {
-        url,
-        query,
-        method = 'GET',
-        body,
-        other,
-        delay = 0,
-        preserveResponse = true,
-    } = requestOptions;
-
-    const [pending, setPending] = useState(!!url);
-    const [response, setResponse] = useState<T | undefined>();
-    const [error, setError] = useState<Error | undefined>();
 
     // NOTE: forgot why the clientId is required but it is required
     const clientIdRef = useRef<number>(-1);
@@ -213,31 +207,45 @@ function useRequest<T>(
     const errorSetByRef = useRef<number>(-1);
 
     // NOTE: let's not add transformOptions as dependency
-    const generalOptionsRef = useRef(generalOptions);
+    const requestOptionsRef = useRef(requestOptions);
     const transformOptionsRef = useRef(transformOptions);
     const transformUrlRef = useRef(transformUrl);
 
-    useLayoutEffect(
-        () => {
-            transformOptionsRef.current = transformOptions;
-        },
-        [transformOptions],
-    );
-    useLayoutEffect(
-        () => {
-            transformUrlRef.current = transformUrl;
-        },
-        [transformUrl],
-    );
-    useLayoutEffect(
-        () => {
-            generalOptionsRef.current = generalOptions;
-        },
-        [generalOptions],
-    );
+    const {
+        autoTrigger = false,
+    } = requestOptions;
+
+    // NOTE: timestamp is used to re-trigger fetch
+    const [timestamp, setTimestamp] = useState(() => {
+        if (autoTrigger) {
+            return new Date().getTime();
+        }
+        return -1;
+    });
+
+    const [requestOptionsFromState, setRequestOptionsFromState] = useState(requestOptions);
+
+    const {
+        url,
+        query,
+        method = 'GET',
+        body,
+        other,
+    } = autoTrigger ? requestOptions : requestOptionsFromState;
+
+    const urlQuery = query ? prepareUrlParams(query) : undefined;
+    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
+
+    // NOTE: the initial value is the condition to fetch a url
+    const [pending, setPending] = useState(() => (
+        timestamp >= 0 && isFetchable(extendedUrl, method, body)
+    ));
+    const [response, setResponse] = useState<T | undefined>();
+    const [error, setError] = useState<Error | undefined>();
 
     const setPendingSafe = useCallback(
         (value: boolean, clientId: number) => {
+            console.warn(clientId, 'setting pending', value);
             if (clientId >= pendingSetByRef.current) {
                 pendingSetByRef.current = clientId;
                 setPending(value);
@@ -274,20 +282,45 @@ function useRequest<T>(
         [],
     );
 
-    const urlQuery = query ? prepareUrlParams(query) : undefined;
-    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
+    const trigger = useCallback(
+        () => {
+            setRequestOptionsFromState(requestOptionsRef.current);
+            setTimestamp(new Date().getTime());
+        },
+        [],
+    );
 
+    useLayoutEffect(
+        () => {
+            transformOptionsRef.current = transformOptions;
+        },
+        [transformOptions],
+    );
+    useLayoutEffect(
+        () => {
+            transformUrlRef.current = transformUrl;
+        },
+        [transformUrl],
+    );
+    useLayoutEffect(
+        () => {
+            requestOptionsRef.current = requestOptions;
+        },
+        [requestOptions],
+    );
     useEffect(
         () => {
-            if (
-                isFalsyString(extendedUrl)
-                || (['PUT', 'PATCH', 'POST'].includes(method) && isNotDefined(body))
-            ) {
+            if (timestamp < 0 || !isFetchable(extendedUrl, method, body)) {
                 setResponseSafe(undefined, clientIdRef.current);
                 setErrorSafe(undefined, clientIdRef.current);
                 setPendingSafe(false, clientIdRef.current);
                 return () => {};
             }
+            const {
+                schemaName,
+                preserveResponse,
+                delay = 0,
+            } = requestOptionsRef.current;
 
             if (!preserveResponse) {
                 setResponseSafe(undefined, clientIdRef.current);
@@ -307,7 +340,6 @@ function useRequest<T>(
                 body,
             });
 
-            const { schemaName } = generalOptionsRef.current;
             if (method !== 'DELETE' && !schemaName) {
                 console.error(`Schema is not defined for ${transformedUrl} ${method}`);
             }
@@ -317,7 +349,7 @@ function useRequest<T>(
                 transformedOptions,
                 delay,
 
-                generalOptionsRef,
+                requestOptionsRef,
 
                 setPendingSafe,
                 setResponseSafe,
@@ -333,13 +365,14 @@ function useRequest<T>(
             };
         },
         [
-            extendedUrl, method, body, other, preserveResponse, delay,
+            extendedUrl, method, body, other,
             transformOptions,
             setPendingSafe, setResponseSafe, setErrorSafe, callSideEffectSafe,
+            timestamp,
         ],
     );
 
-    return [pending, response, error?.value];
+    return [pending, response, error?.value, trigger];
 }
 export default useRequest;
 export { RequestContext };

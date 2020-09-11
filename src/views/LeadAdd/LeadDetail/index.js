@@ -176,6 +176,7 @@ function LeadDetail(props) {
         url: searchedText ? 'server://organizations/' : undefined,
         query: { search: searchedText },
         delay: 300,
+        autoTrigger: true,
     });
 
     const [addLeadGroupModalShown, setAddLeadGroupModalShown] = useState(false);

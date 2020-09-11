@@ -108,12 +108,12 @@ function LeadProcessor(props) {
                 }
                 if (selectedIndex !== -1) {
                     // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].progress = undefined;
+                    // eslint-disable-next-line no-param-reassign
                     safeCandidateLeads[selectedIndex].data.attachment = {
                         id,
                         s3,
                     };
-                    // eslint-disable-next-line no-param-reassign
-                    safeCandidateLeads[selectedIndex].progress = undefined;
                     // eslint-disable-next-line no-param-reassign
                     safeCandidateLeads[selectedIndex].leadState = LEAD_STATUS.complete;
                 }
@@ -129,6 +129,8 @@ function LeadProcessor(props) {
                     .findIndex(lead => leadKey === leadKeySelector(lead));
 
                 if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeCandidateLeads[selectedIndex].progress = undefined;
                     // eslint-disable-next-line no-param-reassign
                     safeCandidateLeads[selectedIndex].error = error;
                     // eslint-disable-next-line no-param-reassign
