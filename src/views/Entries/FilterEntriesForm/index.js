@@ -87,14 +87,12 @@ const commentStatusOptions = [
 
 const verificationStatusOptions = [
     {
-        key: 'verified',
-        value: 'Verified',
-        isVerified: true,
+        key: true,
+        value: _ts('editEntry', 'verifiedLabel'),
     },
     {
-        key: 'unverified',
-        value: 'Unverified',
-        isVerified: false,
+        key: false,
+        value: _ts('editEntry', 'unverifiedLabel'),
     },
 ];
 
@@ -288,7 +286,7 @@ export default class FilterEntriesForm extends React.PureComponent {
 
         const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
         const selectedVerification = verificationStatusOptions.find(
-            v => v.isVerified === filters.verified,
+            v => v.key === filters.verified,
         );
 
         return (
@@ -402,15 +400,13 @@ export default class FilterEntriesForm extends React.PureComponent {
                     options={verificationStatusOptions}
                     label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
                     onChange={(value) => {
-                        const option = verificationStatusOptions.find(v => v.key === value);
-                        const status = option ? option.isVerified : undefined;
                         this.handleFilterChange(
                             'verified',
-                            status,
+                            value,
                         );
                     }}
                     showHintAndError={false}
-                    value={(selectedVerification && selectedVerification.key) || emptyList}
+                    value={(selectedVerification ? selectedVerification.key : emptyList)}
                     disabled={pending}
                     placeholder={_ts('entries', 'verificationStatusPlaceholder')}
                 />

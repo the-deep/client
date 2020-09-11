@@ -8,12 +8,12 @@ import Button from '#rsca/Button';
 import styles from './styles.scss';
 
 interface Option {
-    key: string | number;
+    key: string | number | boolean;
     value: string;
 }
 
 interface DropdownItemProps {
-    itemKey: string | number;
+    itemKey: string | number | boolean;
     label: string;
     onItemSelect: (optionKey: Option['key']) => void;
     isActive: boolean;

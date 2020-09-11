@@ -25,7 +25,7 @@ import notify from '#notify';
 import styles from './styles.scss';
 
 interface ComponentProps {
-    id: number;
+    id: boolean;
     verified: boolean;
     hide: (entryPermission) => boolean;
     className?: string;
@@ -39,19 +39,17 @@ interface Params {
 interface VerificationOption {
     key: string;
     value: string;
-    isVerified: boolean;
 }
 
 const verificationStatusOptions: VerificationOption[] = [
     {
-        key: 'verified',
+
+        key: true,
         value: _ts('editEntry', 'verifiedLabel'),
-        isVerified: true,
     },
     {
-        key: 'unverified',
+        key: false,
         value: _ts('editEntry', 'unverifiedLabel'),
-        isVerified: false,
     },
 ];
 
@@ -97,14 +95,11 @@ function EntryVerify(props: Props) {
         setVerificationStatus(verifiedFromProps);
     }, [verifiedFromProps]);
 
-    const selectedOption = verificationStatusOptions.find(v => v.isVerified === verified);
+    const selectedOption = verificationStatusOptions.find(v => v.key === verified);
 
-    const handleItemSelect = useCallback((key: VerificationOption['key']) => {
-        const verificationObject = verificationStatusOptions.find(v => v.key === key);
-        const verify = verificationObject && verificationObject.isVerified;
-
+    const handleItemSelect = useCallback((key: boolean) => {
         setEntryVerification.do({
-            verify: !!verify,
+            verify: key,
             setVerificationStatus,
         });
     }, [setEntryVerification]);
