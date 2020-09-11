@@ -389,7 +389,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     label={_ts('entries', 'commentStatusOptionsFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('comment_status', value); }}
                     showHintAndError={false}
-                    value={filters.comment_status || emptyList}
+                    value={filters.comment_status || undefined}
                     disabled={pending}
                     placeholder={_ts('entries', 'commentStatusPlaceholder')}
                 />
@@ -406,7 +406,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                         );
                     }}
                     showHintAndError={false}
-                    value={(selectedVerification ? selectedVerification.key : emptyList)}
+                    value={(selectedVerification ? selectedVerification.key : undefined)}
                     disabled={pending}
                     placeholder={_ts('entries', 'verificationStatusPlaceholder')}
                 />

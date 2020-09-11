@@ -235,7 +235,8 @@ export default class Entry extends React.PureComponent {
                         />
                         <EntryVerify
                             verified={verified}
-                            id={entryId}
+                            entryId={entryId}
+                            leadId={leadId}
                             hide={Entry.shouldHideEntryEdit}
                         />
                         <ButtonLikeLink

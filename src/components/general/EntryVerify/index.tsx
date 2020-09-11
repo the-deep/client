@@ -1,10 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 
 import Cloak from '#components/general/Cloak';
 import Icon from '#rscg/Icon';
 import DropdownEdit from '#components/general/DropdownEdit';
 
+import {
+    patchEntryVerificationAction,
+} from '#redux';
 import {
     AddRequestProps,
     Requests,
@@ -25,19 +29,20 @@ import notify from '#notify';
 import styles from './styles.scss';
 
 interface ComponentProps {
-    id: boolean;
+    entryId: number;
+    leadId: number;
     verified: boolean;
     hide: (entryPermission) => boolean;
     className?: string;
+    setEntryVerification: ({ entryId: number, leadId: number, status: boolean }) => void;
 }
 
 interface Params {
-    setVerificationStatus: (status: boolean) => void;
     verify: boolean;
 }
 
 interface VerificationOption {
-    key: string;
+    key: boolean;
     value: string;
 }
 
@@ -56,15 +61,20 @@ const verificationStatusOptions: VerificationOption[] = [
 
 type Props = AddRequestProps<ComponentProps, Params>;
 
+const mapDispatchToProps = dispatch => ({
+    setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
+});
+
 const requestOptions: Requests<ComponentProps, Params> = {
-    setEntryVerification: {
-        url: ({ props: { id } }) => `/entries/${id}/verify/`,
+    setEntryVerificationRequest: {
+        url: ({ props: { entryId } }) => `/entries/${entryId}/verify/`,
         method: methods.POST,
         query: ({ params: { verify } }) => ({ verify }),
-        onSuccess: ({ params = {} }) => {
-            const { setVerificationStatus, verify } = params;
-            if (setVerificationStatus) {
-                setVerificationStatus(!!verify);
+        onSuccess: ({ props, params = {} }) => {
+            const { setEntryVerification, entryId, leadId } = props;
+            const { verify } = params;
+            if (setEntryVerification) {
+                setEntryVerification({ entryId, leadId, status: verify });
             }
             notify.send({
                 title: _ts('editEntry', 'entryVerificationStatusChange'),
@@ -86,7 +96,7 @@ function EntryVerify(props: Props) {
         requests,
     } = props;
     const {
-        setEntryVerification,
+        setEntryVerificationRequest,
     } = requests;
 
     const [verified, setVerificationStatus] = useState(verifiedFromProps);
@@ -98,11 +108,11 @@ function EntryVerify(props: Props) {
     const selectedOption = verificationStatusOptions.find(v => v.key === verified);
 
     const handleItemSelect = useCallback((key: boolean) => {
-        setEntryVerification.do({
+        setEntryVerificationRequest.do({
             verify: key,
             setVerificationStatus,
         });
-    }, [setEntryVerification]);
+    }, [setEntryVerificationRequest]);
 
     return (
         <div className={_cs(className, styles.verifyContainer)}>
@@ -132,8 +142,8 @@ function EntryVerify(props: Props) {
                 renderOnHide={(
                     <div className={styles.label}>
                         <Icon
-                            name={verified && 'check'}
-                            className={styles.verifiedIcon}
+                            name={(verified ? 'checkOutlined' : 'help')}
+                            className={verified ? styles.verifiedIcon : styles.unverifiedIcon}
                         />
                         {selectedOption && selectedOption.value}
                     </div>
@@ -143,6 +153,8 @@ function EntryVerify(props: Props) {
     );
 }
 
-export default RequestClient(requestOptions)(
-    EntryVerify,
+export default connect(null, mapDispatchToProps)(
+    RequestClient(requestOptions)(
+        EntryVerify,
+    ),
 );
