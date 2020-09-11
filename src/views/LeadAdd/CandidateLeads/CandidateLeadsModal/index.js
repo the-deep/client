@@ -49,39 +49,37 @@ function CandidateLeadsModal(props) {
         removeCandidateLead,
     } = useContext(LeadProcessorContext);
 
-    const [sources, setSources] = useState(undefined);
+    // FIXME: no need to set sources, they can be calculated,
+    // use trigger mechanism
+    // FIXME: fix autotrigger
+    // const [sources, setSources] = useState(undefined);
     const [asyncJobUuid, setAsycJobUuid] = useState();
+
+    const completedCandidateLeads = useMemo(
+        () => candidateLeads.filter(
+            candidateLead => candidateLead.leadState === LEAD_STATUS.complete,
+        ),
+        [candidateLeads],
+    );
+
+    const isInProgress = useMemo(() => (
+        candidateLeads.some(candidateLead => (
+            candidateLead.leadState === LEAD_STATUS.pristine
+            || candidateLead.leadState === LEAD_STATUS.uploading
+        ))
+    ), [candidateLeads]);
+
+    const sources = useMemo(
+        () => (
+            completedCandidateLeads.map(lead => ({
+                s3: lead.data.attachment.s3,
+            }))
+        ),
+        [completedCandidateLeads],
+    );
 
     const [extractions, setExtractions] = useState([]);
     const [extractionCompleted, setExtractionCompleted] = useState(false);
-
-    const initialBody = useMemo(
-        () => (
-            sources ? { sources } : undefined
-        ),
-        [sources],
-    );
-    const [initialRequestPending] = useRequest(
-        {
-            url: 'serverless://source-extract/',
-            method: 'POST',
-            body: initialBody,
-        },
-        {
-            onSuccess: (response) => {
-                if (response.existingSources) {
-                    setExtractions(response.existingSources);
-                    setExtractionCompleted(!response.asyncJobUuid);
-                }
-                if (response.asyncJobUuid) {
-                    setAsycJobUuid(response.asyncJobUuid);
-                }
-            },
-            onFailure: () => {
-                console.debug('failed');
-            },
-        },
-    );
 
     const pollBody = useMemo(
         () => (
@@ -89,32 +87,54 @@ function CandidateLeadsModal(props) {
         ),
         [asyncJobUuid],
     );
-    const [pollRequestPending] = useRequest(
-        {
-            url: 'serverless://source-extract/',
-            method: 'POST',
-            body: pollBody,
-            shouldPoll: (response) => {
-                if (response.status === 'pending' || response.status === 'started') {
-                    return 1000;
-                }
-                return -1;
-            },
+    const [pollRequestPending,,, pollRequestTrigger] = useRequest({
+        url: 'serverless://source-extract/',
+        method: 'POST',
+        body: pollBody,
+        shouldPoll: (response) => {
+            if (response.status === 'pending' || response.status === 'started') {
+                return 1000;
+            }
+            return -1;
         },
-        {
-            onSuccess: (response) => {
-                if (response.status === 'success') {
-                    setExtractions(ex => [...ex, response.existingSources]);
-                    setExtractionCompleted(true);
-                } else {
-                    console.debug('failed');
-                }
-            },
-            onFailure: () => {
+        onSuccess: (response) => {
+            if (response.status === 'success') {
+                console.debug('success', response);
+                setExtractions(ex => [...ex, response.existingSources]);
+                setExtractionCompleted(true);
+            } else {
                 console.debug('failed');
-            },
+            }
         },
+        onFailure: () => {
+            console.debug('failed');
+        },
+    });
+
+    const initialBody = useMemo(
+        () => (
+            sources ? { sources } : undefined
+        ),
+        [sources],
     );
+    const [initialRequestPending,,, initialRequestTrigger] = useRequest({
+        url: 'serverless://source-extract/',
+        method: 'POST',
+        body: initialBody,
+        onSuccess: (response) => {
+            if (response.existingSources) {
+                setExtractions(response.existingSources);
+                setExtractionCompleted(!response.asyncJobUuid);
+            }
+            if (response.asyncJobUuid) {
+                setAsycJobUuid(response.asyncJobUuid);
+                pollRequestTrigger();
+            }
+        },
+        onFailure: () => {
+            console.debug('failed');
+        },
+    });
 
     const pending = initialRequestPending || pollRequestPending;
 
@@ -139,28 +159,8 @@ function CandidateLeadsModal(props) {
         });
     }, [removeCandidateLead]);
 
-
-    const completedCandidateLeads = useMemo(
-        () => candidateLeads.filter(
-            candidateLead => candidateLead.leadState === LEAD_STATUS.complete,
-        ),
-        [candidateLeads],
-    );
-
-    const isInProgress = useMemo(() => (
-        candidateLeads.some(candidateLead => (
-            candidateLead.leadState === LEAD_STATUS.pristine
-            || candidateLead.leadState === LEAD_STATUS.uploading
-        ))
-    ), [candidateLeads]);
-
+    /*
     const handleLeadsAdd = useCallback(() => {
-        // FIXME: filter out those which have already been done
-        const mySources = completedCandidateLeads.map(lead => ({
-            s3: lead.data.attachment.s3,
-        }));
-        setSources(mySources);
-        /*
         const newLeads = completedCandidateLeads
             .map(candidateLead => ({
                 faramValues: candidateLead.data,
@@ -172,14 +172,15 @@ function CandidateLeadsModal(props) {
         // TODO: Only remove completed leads
         clearCompletedCandidateLeads();
         closeModal();
-        */
     }, [
+        initialRequestTrigger,
         completedCandidateLeads,
-        // completedCandidateLeads,
-        // onLeadsAdd,
-        // clearCompletedCandidateLeads,
-        // closeModal,
+        completedCandidateLeads,
+        onLeadsAdd,
+        clearCompletedCandidateLeads,
+        closeModal,
     ]);
+    */
 
     return (
         <Modal
@@ -220,7 +221,7 @@ function CandidateLeadsModal(props) {
                 </DangerConfirmButton>
                 <PrimaryButton
                     disabled={isInProgress || pending}
-                    onClick={handleLeadsAdd}
+                    onClick={initialRequestTrigger}
                 >
                     {/* TODO: Translate string */}
                     Load

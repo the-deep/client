@@ -169,7 +169,7 @@ function LeadAdd(props) {
         url: 'server://lead-options/',
         method: 'POST',
         body,
-    }, {
+        autoTrigger: true,
         onSuccess: (response) => {
             setOrganizations(response.organizations);
             setLeadGroups(response.leadGroups);
