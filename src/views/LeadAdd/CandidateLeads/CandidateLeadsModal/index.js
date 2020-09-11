@@ -91,9 +91,9 @@ function CandidateLeadsModal(props) {
         url: 'serverless://source-extract/',
         method: 'POST',
         body: pollBody,
-        shouldPoll: (response) => {
+        shouldPoll: (response, run) => {
             if (response.status === 'pending' || response.status === 'started') {
-                return 1000;
+                return 1000 * Math.min(2 ** run, 64);
             }
             return -1;
         },

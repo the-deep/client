@@ -45,7 +45,7 @@ interface RequestOptions<T> {
     schemaName?: string;
     delay?: number;
     preserveResponse?: boolean;
-    shouldPoll?: (val: T) => number;
+    shouldPoll?: (val: T, run: number) => number;
     onSuccess?: (val: T) => void;
     onFailure?: (val: Err) => void;
 }
@@ -76,6 +76,7 @@ async function fetchResource<T>(
 
     myController: AbortController,
     clientId: number,
+    run = 1,
 ) {
     const { signal } = myController;
     await sleep(delay, { signal });
@@ -140,7 +141,7 @@ async function fetchResource<T>(
             }
         }
 
-        const pollTime = shouldPoll ? shouldPoll(resBody as T) : -1;
+        const pollTime = shouldPoll ? shouldPoll(resBody as T, run) : -1;
 
         if (pollTime >= 0) {
             await sleep(pollTime, { signal });
@@ -158,6 +159,7 @@ async function fetchResource<T>(
 
                 myController,
                 clientId,
+                run + 1,
             );
             return;
         }
