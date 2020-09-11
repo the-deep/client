@@ -61,6 +61,8 @@ function DropdownEdit(props: Props) {
         onItemSelect,
         options,
         currentSelection,
+        dropdownLeftComponent,
+        dropdownIcon = 'edit',
     } = props;
 
     const [showDropdown, setShowDropdown] = useState(false);
@@ -83,7 +85,8 @@ function DropdownEdit(props: Props) {
                 className,
                 showDropdown && styles.visible,
             )}
-            dropdownIcon="edit"
+            leftComponent={dropdownLeftComponent}
+            dropdownIcon={dropdownIcon}
             onDropdownVisibilityChange={handleDropdownChange}
             closeOnClick
         >

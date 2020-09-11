@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
+
 import Cloak from '#components/general/Cloak';
+import Icon from '#rscg/Icon';
 import DropdownEdit from '#components/general/DropdownEdit';
 
 import {
@@ -18,7 +18,9 @@ import {
     notifyOnFailure,
     notifyOnFatal,
 } from '#utils/requestNotify';
+
 import _ts from '#ts';
+import notify from '#notify';
 
 import styles from './styles.scss';
 
@@ -30,7 +32,7 @@ interface ComponentProps {
 }
 
 interface Params {
-    setVerificationStatus: () => void;
+    setVerificationStatus: (status: boolean) => void;
     verify: boolean;
 }
 
@@ -43,13 +45,13 @@ interface VerificationOption {
 const verificationStatusOptions: VerificationOption[] = [
     {
         key: 'verified',
-        value: 'Verified',
-        isVerifed: true,
+        value: _ts('editEntry', 'verifiedLabel'),
+        isVerified: true,
     },
     {
         key: 'unverified',
-        value: 'Unverified',
-        isVerifed: false,
+        value: _ts('editEntry', 'unverifiedLabel'),
+        isVerified: false,
     },
 ];
 
@@ -61,11 +63,17 @@ const requestOptions: Requests<ComponentProps, Params> = {
         url: ({ props: { id } }) => `/entries/${id}/verify/`,
         method: methods.POST,
         query: ({ params: { verify } }) => ({ verify }),
-        onSuccess: ({ params }) => {
+        onSuccess: ({ params = {} }) => {
             const { setVerificationStatus, verify } = params;
             if (setVerificationStatus) {
-                setVerificationStatus(verify);
+                setVerificationStatus(!!verify);
             }
+            notify.send({
+                title: _ts('editEntry', 'entryVerificationStatusChange'),
+                type: notify.type.SUCCESS,
+                message: _ts('editEntry', 'entryVerificationStatusChangeSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
         },
         onFailure: notifyOnFailure(_ts('editEntry', 'entryVerifyFailure')),
         onFatal: notifyOnFatal(_ts('editEntry', 'entryVerifyFailure')),
@@ -83,39 +91,58 @@ function EntryVerify(props: Props) {
         setEntryVerification,
     } = requests;
 
-    const [verified, setVerificationStatus] = useState(verifiedFromProps || false);
+    const [verified, setVerificationStatus] = useState(verifiedFromProps);
 
     useEffect(() => {
         setVerificationStatus(verifiedFromProps);
     }, [verifiedFromProps]);
 
-    const selectedOption = verificationStatusOptions.find(v => v.isVerifed === verified);
+    const selectedOption = verificationStatusOptions.find(v => v.isVerified === verified);
 
-    const handleItemSelect = useCallback((key: VerificationOption.key) => {
-        const verify = verificationStatusOptions.find(
-            v => v.key === key,
-        ).isVerifed;
+    const handleItemSelect = useCallback((key: VerificationOption['key']) => {
+        const verificationObject = verificationStatusOptions.find(v => v.key === key);
+        const verify = verificationObject && verificationObject.isVerified;
+
         setEntryVerification.do({
-            verify,
+            verify: !!verify,
             setVerificationStatus,
         });
     }, [setEntryVerification]);
 
     return (
         <div className={_cs(className, styles.verifyContainer)}>
-            <div>
-                {selectedOption && selectedOption.value}
-            </div>
             <Cloak
                 hide={hide}
                 render={
                     <DropdownEdit
-                        currentSelection={selectedOption.key}
+                        currentSelection={selectedOption && selectedOption.key}
                         className={styles.dropdown}
                         options={verificationStatusOptions}
                         onItemSelect={handleItemSelect}
+                        dropdownIcon=""
+                        dropdownLeftComponent={(
+                            <div className={styles.label}>
+                                <Icon
+                                    name={verified ? 'checkOutlined' : 'help'}
+                                    className={verified
+                                        ? styles.verifiedIcon
+                                        : styles.unverifiedIcon
+                                    }
+                                />
+                                {selectedOption && selectedOption.value}
+                            </div>
+                        )}
                     />
                 }
+                renderOnHide={(
+                    <div className={styles.label}>
+                        <Icon
+                            name={verified && 'check'}
+                            className={styles.verifiedIcon}
+                        />
+                        {selectedOption && selectedOption.value}
+                    </div>
+                )}
             />
         </div>
     );
