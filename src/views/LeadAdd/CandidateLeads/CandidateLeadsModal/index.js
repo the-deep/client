@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { _cs, listToMap } from '@togglecorp/fujs';
+import { _cs, listToMap, isDefined, union, isTruthyString } from '@togglecorp/fujs';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -19,10 +19,32 @@ import { LeadProcessorContext } from '../../LeadProcessor';
 import {
     LEAD_STATUS,
     leadKeySelector,
+    LEAD_TYPE,
 } from '../../utils';
 import LeadListItem from '../../LeadListItem';
 
 import styles from './styles.scss';
+
+function getSourceKey(data) {
+    const { sourceType, url, attachment } = data;
+    if (sourceType === LEAD_TYPE.website) {
+        return data.url;
+    }
+    if ([LEAD_TYPE.dropbox, LEAD_TYPE.drive, LEAD_TYPE.file].includes(sourceType)) {
+        return attachment?.s3 ? `s3::${attachment.s3}` : undefined;
+    }
+    return undefined;
+}
+function getSource(data) {
+    const { sourceType, url, attachment } = data;
+    if (sourceType === LEAD_TYPE.website) {
+        return data.url ? { url: data.url } : undefined;
+    }
+    if ([LEAD_TYPE.dropbox, LEAD_TYPE.drive, LEAD_TYPE.file].includes(sourceType)) {
+        return attachment?.s3 ? { s3: attachment.s3 } : undefined;
+    }
+    return undefined;
+}
 
 const propTypes = {
     className: PropTypes.string,
@@ -49,10 +71,6 @@ function CandidateLeadsModal(props) {
         removeCandidateLead,
     } = useContext(LeadProcessorContext);
 
-    // FIXME: no need to set sources, they can be calculated,
-    // use trigger mechanism
-    // FIXME: fix autotrigger
-    // const [sources, setSources] = useState(undefined);
     const [asyncJobUuid, setAsycJobUuid] = useState();
 
     const completedCandidateLeads = useMemo(
@@ -71,15 +89,64 @@ function CandidateLeadsModal(props) {
 
     const sources = useMemo(
         () => (
-            completedCandidateLeads.map(lead => ({
-                s3: lead.data.attachment.s3,
-            }))
+            // TODO: filter already extracted leads
+            completedCandidateLeads
+                .map(lead => getSource(lead.data))
+                .filter(isDefined)
         ),
         [completedCandidateLeads],
     );
 
-    const [extractions, setExtractions] = useState([]);
-    const [extractionCompleted, setExtractionCompleted] = useState(false);
+    const [extractions, setExtractions] = useState({});
+
+    const organizationsRaw = useMemo(
+        () => {
+            const extraMetaList = Object.values(extractions)
+                .map(extraction => extraction.extraMeta)
+                .filter(isDefined);
+
+            const authors = new Set(
+                extraMetaList.map(item => item.authorRaw).filter(isTruthyString),
+            );
+            const publishers = new Set(
+                extraMetaList.map(item => item.sourceRaw).filter(isTruthyString),
+            );
+            const orgs = [...union(authors, publishers)];
+            console.log(orgs);
+            return orgs;
+        },
+        [extractions],
+    );
+
+    const mergeExtractions = useCallback(
+        (ext) => {
+            if (!ext) {
+                return;
+            }
+
+            setExtractions(oldExtractions => ({
+                ...oldExtractions,
+                ...listToMap(
+                    ext,
+                    item => (item.url ? item.url : item.key),
+                    item => item,
+                ),
+            }));
+        },
+        [],
+    );
+
+    /*
+    const [organizations, setOrganizations] = useState({});
+    const [organizationRequestPending,,, organizationRequestTrigger] = useRequest({
+        url: 'server://organizations/',
+        query: {
+            limit: 100,
+        },
+        // method: 'POST',
+        // body,
+    });
+    */
 
     const pollBody = useMemo(
         () => (
@@ -100,8 +167,8 @@ function CandidateLeadsModal(props) {
         onSuccess: (response) => {
             if (response.status === 'success') {
                 console.debug('success', response);
-                setExtractions(ex => [...ex, response.existingSources]);
-                setExtractionCompleted(true);
+                mergeExtractions(response.existingSources);
+                // trigger organizations
             } else {
                 console.debug('failed');
             }
@@ -123,12 +190,13 @@ function CandidateLeadsModal(props) {
         body: initialBody,
         onSuccess: (response) => {
             if (response.existingSources) {
-                setExtractions(response.existingSources);
-                setExtractionCompleted(!response.asyncJobUuid);
+                mergeExtractions(response.existingSources);
             }
             if (response.asyncJobUuid) {
                 setAsycJobUuid(response.asyncJobUuid);
                 pollRequestTrigger();
+            } else {
+                // trigger organizations
             }
         },
         onFailure: () => {
