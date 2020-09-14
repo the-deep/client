@@ -1,9 +1,18 @@
 import React, { useState, useCallback, useContext, useMemo } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Faram, { requiredCondition, urlCondition } from '@togglecorp/faram';
 import { _cs, listToGroupList, mapToMap } from '@togglecorp/fujs';
 
+import TextInput from '#rsci/TextInput';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalFooter from '#rscv/Modal/Footer';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import Icon from '#rscg/Icon';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
 
@@ -42,6 +51,108 @@ import { LeadProcessorContext } from '../LeadProcessor';
 import LeadListItem from '../LeadListItem';
 import styles from './styles.scss';
 
+function useModalState(initialValue) {
+    const [visible, setVisibility] = useState(initialValue);
+    const setVisible = useCallback(
+        () => {
+            setVisibility(true);
+        },
+        [],
+    );
+    const setHidden = useCallback(
+        () => {
+            setVisibility(false);
+        },
+        [],
+    );
+
+    return [visible, setVisible, setHidden, setVisibility];
+}
+
+const schema = {
+    fields: {
+        url: [requiredCondition, urlCondition],
+    },
+};
+
+function WebsiteLeadModal(props) {
+    const {
+        onSubmit,
+        onClose,
+    } = props;
+
+    const [faramValues, setFaramValues] = useState({});
+    const [faramErrors, setFaramErrors] = useState({});
+    const [pristine, setPristine] = useState(true);
+    const [errored, setErrored] = useState(false);
+
+    const handleChange = useCallback(
+        (values, errors, info) => {
+            setFaramValues(values);
+            setFaramErrors(errors);
+            setPristine(false);
+            setErrored(info.hasError);
+        },
+        [],
+    );
+
+    const handleValidationFailure = useCallback(
+        (errors) => {
+            setFaramErrors(errors);
+            setErrored(true);
+        },
+        [],
+    );
+
+    const handleValidationSuccess = useCallback(
+        (values) => {
+            onSubmit(values.url);
+            onClose();
+        },
+        [onSubmit, onClose],
+    );
+
+    return (
+        <Modal>
+            <Faram
+                onChange={handleChange}
+                onValidationFailure={handleValidationFailure}
+                onValidationSuccess={handleValidationSuccess}
+                schema={schema}
+                value={faramValues}
+                error={faramErrors}
+            >
+                <ModalHeader title="Add lead from url" />
+                <ModalBody>
+                    <NonFieldErrors faramElement />
+                    <TextInput
+                        faramElementName="url"
+                        label="Url"
+                        autoFocus
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <DangerButton
+                        onClick={onClose}
+                    >
+                        Cancel
+                    </DangerButton>
+                    <PrimaryButton
+                        type="submit"
+                        disabled={pristine || errored}
+                    >
+                        Add
+                    </PrimaryButton>
+                </ModalFooter>
+            </Faram>
+        </Modal>
+    );
+}
+WebsiteLeadModal.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+};
+
 function LeadSources(props) {
     const {
         className,
@@ -51,6 +162,12 @@ function LeadSources(props) {
         leadStates,
         leads,
     } = props;
+
+    const [
+        websiteModalVisible,
+        setWebsiteModalVisible,
+        setWebsiteModalHidden,
+    ] = useModalState(false);
 
     const leadsBySource = useMemo(
         () => listToGroupList(
@@ -138,18 +255,27 @@ function LeadSources(props) {
         onLeadsAdd([lead]);
     }, [onLeadsAdd]);
 
-    const handleLeadAddFromWebsite = useCallback(() => {
+    const handleLeadAddFromWebsite = useCallback((url) => {
         // TODO: Open a popup to enter website information and fetch data
-        const lead = {
+        const newLead = {
+            key: getNewLeadKey(),
+            data: {
+                title: url,
+                sourceType: LEAD_TYPE.website,
+                url,
+            },
+            /*
             faramValues: {
                 sourceType: LEAD_TYPE.website,
                 emmTriggers: [],
                 emmEntities: [],
             },
+            */
         };
 
-        onLeadsAdd([lead]);
-    }, [onLeadsAdd]);
+        // onLeadsAdd([lead]);
+        addCandidateLeads([newLead]);
+    }, [addCandidateLeads]);
 
     const handleLeadAddFromDisk = useCallback((files, options) => {
         const { invalidFiles } = options;
@@ -265,12 +391,19 @@ function LeadSources(props) {
                 actionButtons={(
                     <Button
                         transparent
-                        onClick={handleLeadAddFromWebsite}
+                        // onClick={handleLeadAddFromWebsite}
+                        onClick={setWebsiteModalVisible}
                     >
                         <Icon name="add" />
                     </Button>
                 )}
             />
+            {websiteModalVisible && (
+                <WebsiteLeadModal
+                    onSubmit={handleLeadAddFromWebsite}
+                    onClose={setWebsiteModalHidden}
+                />
+            )}
             <LeadListItem
                 itemKey={LEAD_TYPE.text}
                 type={LEAD_TYPE.text}
