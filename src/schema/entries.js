@@ -47,6 +47,7 @@ const entrySchema = [];
             informationDate: { type: 'string' },
             droppedExcerpt: { type: 'string' },
             highlightHidden: { type: 'boolean' },
+            verified: { type: 'boolean' },
             /*
             exportData: {
                 arrayType: {

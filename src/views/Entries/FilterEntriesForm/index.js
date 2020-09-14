@@ -85,6 +85,17 @@ const commentStatusOptions = [
     },
 ];
 
+const verificationStatusOptions = [
+    {
+        key: true,
+        value: _ts('editEntry', 'verifiedLabel'),
+    },
+    {
+        key: false,
+        value: _ts('editEntry', 'unverifiedLabel'),
+    },
+];
+
 const requestOptions = {
     entryFilterOptionsRequest: {
         url: '/entry-options/',
@@ -274,6 +285,9 @@ export default class FilterEntriesForm extends React.PureComponent {
         } = entryFilterOptions;
 
         const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
+        const selectedVerification = verificationStatusOptions.find(
+            v => v.key === filters.verified,
+        );
 
         return (
             <div className={_cs(styles.entriesFilters, className)} >
@@ -375,9 +389,26 @@ export default class FilterEntriesForm extends React.PureComponent {
                     label={_ts('entries', 'commentStatusOptionsFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('comment_status', value); }}
                     showHintAndError={false}
-                    value={filters.comment_status || emptyList}
+                    value={filters.comment_status || undefined}
                     disabled={pending}
                     placeholder={_ts('entries', 'commentStatusPlaceholder')}
+                />
+                <SelectInput
+                    className={styles.entriesFilter}
+                    keySelector={FilterEntriesForm.optionKeySelector}
+                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    options={verificationStatusOptions}
+                    label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
+                    onChange={(value) => {
+                        this.handleFilterChange(
+                            'verified',
+                            value,
+                        );
+                    }}
+                    showHintAndError={false}
+                    value={(selectedVerification ? selectedVerification.key : undefined)}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'verificationStatusPlaceholder')}
                 />
                 { this.props.filters.map(this.renderFilter) }
                 {

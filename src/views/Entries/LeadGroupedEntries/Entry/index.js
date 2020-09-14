@@ -9,14 +9,17 @@ import {
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
-import { entriesSetEntryCommentsCountAction } from '#redux';
+import {
+    entriesSetEntryCommentsCountAction,
+} from '#redux';
 import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
-import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
+import ButtonLikeLink from '#components/general/ButtonLikeLink';
+import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import { pathNames } from '#constants';
 
@@ -27,6 +30,7 @@ import {
 } from '#widgets';
 
 import EntryLabelBadge from '#components/general/EntryLabel';
+
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -73,6 +77,7 @@ const entryLabelKeySelector = d => d.labelId;
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    static shouldHideEntryEdit = ({ entryPermissions }) => !entryPermissions.modify;
 
     getWidgets = memoize(widgets => (
         widgets.filter(
@@ -199,6 +204,7 @@ export default class Entry extends React.PureComponent {
                 attributes,
                 unresolvedCommentCount: commentCount,
                 projectLabels,
+                verified,
             },
             projectId,
             leadId,
@@ -226,6 +232,12 @@ export default class Entry extends React.PureComponent {
                             renderer={EntryLabelBadge}
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
+                        />
+                        <EntryVerify
+                            verified={verified}
+                            entryId={entryId}
+                            leadId={leadId}
+                            hide={Entry.shouldHideEntryEdit}
                         />
                         <ButtonLikeLink
                             className={styles.editEntryLink}

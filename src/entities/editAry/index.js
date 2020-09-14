@@ -293,6 +293,7 @@ export const createMethodologySchema = (aryTemplateMethodology = [], plannedAsse
                         },
                     },
                 },
+                /*
                 validation: (value) => {
                     const errors = [];
                     if (!value || value.length < 1) {
@@ -301,6 +302,7 @@ export const createMethodologySchema = (aryTemplateMethodology = [], plannedAsse
                     }
                     return errors;
                 },
+                */
             },
 
             focuses: [],

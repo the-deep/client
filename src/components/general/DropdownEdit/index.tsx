@@ -8,12 +8,12 @@ import Button from '#rsca/Button';
 import styles from './styles.scss';
 
 interface Option {
-    key: string | number;
+    key: string | number | boolean;
     value: string;
 }
 
 interface DropdownItemProps {
-    itemKey: string | number;
+    itemKey: string | number | boolean;
     label: string;
     onItemSelect: (optionKey: Option['key']) => void;
     isActive: boolean;
@@ -61,9 +61,15 @@ function DropdownEdit(props: Props) {
         onItemSelect,
         options,
         currentSelection,
+        dropdownLeftComponent,
+        dropdownIcon = 'edit',
     } = props;
 
     const [showDropdown, setShowDropdown] = useState(false);
+
+    const handleDropdownChange = useCallback((value) => {
+        setShowDropdown(value);
+    }, [setShowDropdown]);
 
     const optionRendererParams = useCallback((key, data) => ({
         isActive: key === currentSelection,
@@ -79,8 +85,9 @@ function DropdownEdit(props: Props) {
                 className,
                 showDropdown && styles.visible,
             )}
-            dropdownIcon="edit"
-            onDropdownVisibilityChange={setShowDropdown}
+            leftComponent={dropdownLeftComponent}
+            dropdownIcon={dropdownIcon}
+            onDropdownVisibilityChange={handleDropdownChange}
             closeOnClick
         >
             <ListView
