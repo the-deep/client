@@ -29,6 +29,7 @@ import notify from '#notify';
 import styles from './styles.scss';
 
 interface ComponentProps {
+    title?: string;
     entryId: number;
     leadId: number;
     verified: boolean;
@@ -67,7 +68,10 @@ const mapDispatchToProps = dispatch => ({
 
 const requestOptions: Requests<ComponentProps, Params> = {
     setEntryVerificationRequest: {
-        url: ({ props: { entryId } }) => `/entries/${entryId}/verify/`,
+        url: ({
+            props: { entryId },
+            params: { verify },
+        }) => (verify ? `/entries/${entryId}/verify/` : `/entries/${entryId}/unverify/`),
         method: methods.POST,
         query: ({ params: { verify } }) => ({ verify }),
         onSuccess: ({ props, params = {} }) => {
@@ -94,6 +98,7 @@ function EntryVerify(props: Props) {
         hide,
         verified: verifiedFromProps = false,
         requests,
+        title,
     } = props;
     const {
         setEntryVerificationRequest,
@@ -126,7 +131,10 @@ function EntryVerify(props: Props) {
                         onItemSelect={handleItemSelect}
                         dropdownIcon=""
                         dropdownLeftComponent={(
-                            <div className={styles.label}>
+                            <div
+                                title={title}
+                                className={styles.label}
+                            >
                                 <Icon
                                     name={verified ? 'checkOutlined' : 'help'}
                                     className={verified

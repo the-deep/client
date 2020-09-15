@@ -30,6 +30,7 @@ import {
 } from '#widgets';
 
 import EntryLabelBadge from '#components/general/EntryLabel';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -205,6 +206,7 @@ export default class Entry extends React.PureComponent {
                 unresolvedCommentCount: commentCount,
                 projectLabels,
                 verified,
+                verificationLastChangedByDetails,
             },
             projectId,
             leadId,
@@ -234,6 +236,15 @@ export default class Entry extends React.PureComponent {
                             emptyComponent={null}
                         />
                         <EntryVerify
+                            title={verificationLastChangedByDetails ? (
+                                _ts(
+                                    'entries',
+                                    'verificationLastChangedBy',
+                                    {
+                                        userName: verificationLastChangedByDetails.displayName,
+                                    },
+                                )
+                            ) : undefined}
                             verified={verified}
                             entryId={entryId}
                             leadId={leadId}

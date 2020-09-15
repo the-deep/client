@@ -1151,7 +1151,8 @@
         "-28899891": "Entry verification status",
         "-53772993": "The verification status of the entry was changed successfully.",
         "-83960265": "Verified",
-        "-45171916": "Unverified"
+        "-45171916": "Unverified",
+        "-35075096": "The verification status of this entry was last changed by {userName}."
     },
     "links": {
         "browserExtension": {
@@ -1626,7 +1627,8 @@
             "createdAtLabel": 163,
             "publishedOnLabel": -39063797,
             "verificationStatusOptionsFilterLabel": -90989808,
-            "verificationStatusPlaceholder": -19802301
+            "verificationStatusPlaceholder": -19802301,
+            "verificationLastChangedBy": -35075096
         },
         "export": {
             "headerExport": 600,
