@@ -56,7 +56,7 @@ function LeadProcessor(props) {
 
     const clearCompletedCandidateLeads = useCallback(() => {
         setCandidateLeads(items => (
-            items.filter(item => item.leadState === LEAD_STATUS.complete)
+            items.filter(item => item.leadState !== LEAD_STATUS.complete)
         ));
     }, [setCandidateLeads]);
 

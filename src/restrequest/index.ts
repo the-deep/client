@@ -6,6 +6,8 @@ import {
     useContext,
     useLayoutEffect,
 } from 'react';
+import ReactDOM from 'react-dom';
+
 import { isTruthyString, isDefined } from '@togglecorp/fujs';
 import AbortController from 'abort-controller';
 
@@ -36,6 +38,8 @@ interface RequestOptions<T> {
 
     method?: Methods,
     other?: RequestInit,
+
+    mockResponse?: T,
 
     // TODO: add this
     autoTrigger?: boolean;
@@ -88,14 +92,16 @@ async function fetchResource<T>(
         if (!signal.aborted) {
             console.error(`An error occurred while fetching ${myUrl}`, e);
         }
-        setPendingSafe(false, clientId);
-        setResponseSafe(undefined, clientId);
-        const message = {
-            reason: 'network',
-            exception: e,
-            value: { nonFieldErrors: ['Network error'] },
-        };
-        setErrorSafe(message, clientId);
+        ReactDOM.unstable_batchedUpdates(() => {
+            setPendingSafe(false, clientId);
+            setResponseSafe(undefined, clientId);
+            const message = {
+                reason: 'network',
+                exception: e,
+                value: { nonFieldErrors: ['Network error'] },
+            };
+            setErrorSafe(message, clientId);
+        });
         const { onFailure } = requestOptionsRef.current;
         if (onFailure) {
             callSideEffectSafe(() => {
@@ -112,16 +118,17 @@ async function fetchResource<T>(
             resBody = JSON.parse(resText);
         }
     } catch (e) {
-        // console.warn('Clearing response on parse error');
-        setResponseSafe(undefined, clientId);
-        setPendingSafe(false, clientId);
-        console.error(`An error occurred while parsing data from ${myUrl}`, e);
-        const message = {
-            reason: 'parse',
-            exception: e,
-            value: { nonFieldErrors: ['JSON parse error'] },
-        };
-        setErrorSafe(message, clientId);
+        ReactDOM.unstable_batchedUpdates(() => {
+            setResponseSafe(undefined, clientId);
+            setPendingSafe(false, clientId);
+            console.error(`An error occurred while parsing data from ${myUrl}`, e);
+            const message = {
+                reason: 'parse',
+                exception: e,
+                value: { nonFieldErrors: ['JSON parse error'] },
+            };
+            setErrorSafe(message, clientId);
+        });
         const { onFailure } = requestOptionsRef.current;
         if (onFailure) {
             callSideEffectSafe(() => {
@@ -164,9 +171,11 @@ async function fetchResource<T>(
             return;
         }
 
-        setPendingSafe(false, clientId);
-        setErrorSafe(undefined, clientId);
-        setResponseSafe(resBody as T, clientId);
+        ReactDOM.unstable_batchedUpdates(() => {
+            setPendingSafe(false, clientId);
+            setErrorSafe(undefined, clientId);
+            setResponseSafe(resBody as T, clientId);
+        });
         const { onSuccess } = requestOptionsRef.current;
         if (onSuccess) {
             callSideEffectSafe(() => {
@@ -174,17 +183,19 @@ async function fetchResource<T>(
             }, clientId);
         }
     } else {
-        setPendingSafe(false, clientId);
-        setResponseSafe(undefined, clientId);
-        const message = {
-            reason: 'other',
-            exception: undefined,
-            value: (resBody as { errors: Err }).errors,
-        };
-        setErrorSafe(
-            message,
-            clientId,
-        );
+        ReactDOM.unstable_batchedUpdates(() => {
+            setPendingSafe(false, clientId);
+            setResponseSafe(undefined, clientId);
+            const message = {
+                reason: 'other',
+                exception: undefined,
+                value: (resBody as { errors: Err }).errors,
+            };
+            setErrorSafe(
+                message,
+                clientId,
+            );
+        });
         const { onFailure } = requestOptionsRef.current;
         if (onFailure) {
             callSideEffectSafe(() => {
@@ -247,7 +258,6 @@ function useRequest<T>(
 
     const setPendingSafe = useCallback(
         (value: boolean, clientId: number) => {
-            console.warn(clientId, 'setting pending', value);
             if (clientId >= pendingSetByRef.current) {
                 pendingSetByRef.current = clientId;
                 setPending(value);
@@ -286,8 +296,10 @@ function useRequest<T>(
 
     const trigger = useCallback(
         () => {
-            setRequestOptionsFromState(requestOptionsRef.current);
-            setTimestamp(new Date().getTime());
+            ReactDOM.unstable_batchedUpdates(() => {
+                setTimestamp(new Date().getTime());
+                setRequestOptionsFromState(requestOptionsRef.current);
+            });
         },
         [],
     );
@@ -312,6 +324,26 @@ function useRequest<T>(
     );
     useEffect(
         () => {
+            const { mockResponse } = requestOptionsRef.current;
+            if (mockResponse) {
+                if (timestamp < 0) {
+                    return () => {};
+                }
+                clientIdRef.current += 1;
+
+                setResponseSafe(mockResponse, clientIdRef.current);
+                setErrorSafe(undefined, clientIdRef.current);
+                setPendingSafe(false, clientIdRef.current);
+
+                const { onSuccess } = requestOptionsRef.current;
+                if (onSuccess) {
+                    callSideEffectSafe(() => {
+                        onSuccess(mockResponse);
+                    }, clientIdRef.current);
+                }
+                return () => {};
+            }
+
             if (timestamp < 0 || !isFetchable(extendedUrl, method, body)) {
                 setResponseSafe(undefined, clientIdRef.current);
                 setErrorSafe(undefined, clientIdRef.current);
