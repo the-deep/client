@@ -17,13 +17,9 @@ import {
     ConnectorSourceOption,
 } from '#typings';
 
-import styles from './styles.scss';
+import { xmlConnectorTypes } from '../../../utils';
 
-const xmlConnectorTypes = [
-    'rss-feed',
-    'atom-feed',
-    'emm',
-];
+import styles from './styles.scss';
 
 interface ComponentProps {
     className?: string;

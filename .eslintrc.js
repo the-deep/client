@@ -35,6 +35,7 @@ module.exports = {
                     '#restrequest': './src/restrequest',
                     '#resources': './src/resources',
                     '#rest': './src/rest',
+                    '#hooks': './src/hooks',
                     '#rsca': './src/vendor/react-store/components/Action',
                     '#rscg': './src/vendor/react-store/components/General',
                     '#rsci': './src/vendor/react-store/components/Input',

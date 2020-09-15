@@ -54,14 +54,13 @@ function ProjectConnectorDetail(props: OwnProps) {
 
     const [connectorToBeDeleted, setConnectorToBeDeleted] = useState<number | undefined>();
 
-    const [pendingConnectorDelete] = useRequest({
-        url: isDefined(connectorToBeDeleted)
-            ? `server://projects/${projectId}/unified-connectors/${connectorToBeDeleted}`
-            : undefined,
+    const [pendingConnectorDelete,,, deleteConnectorTrigger] = useRequest({
+        url: `server://projects/${projectId}/unified-connectors/${connectorToBeDeleted}/`,
         method: 'DELETE',
-    }, {
         onSuccess: () => {
-            onConnectorDelete(connectorId);
+            if (connectorToBeDeleted) {
+                onConnectorDelete(connectorToBeDeleted);
+            }
         },
     });
 
@@ -71,12 +70,14 @@ function ProjectConnectorDetail(props: OwnProps) {
 
     const handleConnectorDelete = useCallback(() => {
         setConnectorToBeDeleted(connectorId);
-    }, [setConnectorToBeDeleted, connectorId]);
+        deleteConnectorTrigger();
+    }, [setConnectorToBeDeleted, connectorId, deleteConnectorTrigger]);
 
     const connectorSourceRendererParams = useCallback((key, data) => ({
         title: data.title,
         status: data.status,
-        stats: data.stats,
+        // NOTE: We get stats from server
+        statistics: data.stats,
     }), []);
 
     return (
@@ -94,7 +95,7 @@ function ProjectConnectorDetail(props: OwnProps) {
                         mode="dd-MM-yyyy"
                     />
                     <Switch
-                        name="disable-switch"
+                        name="disableSwitch"
                         value={disabled}
                         onChange={handleConnectorActiveStatusChange}
                     />

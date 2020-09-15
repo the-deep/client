@@ -12,7 +12,7 @@ import Message from '#rscv/Message';
 import TextOutput from '#components/general/TextOutput';
 
 import {
-    ConnectorSourceStats,
+    ConnectorSourceStatistics,
     ConnectorSourceStatus,
 } from '#typings';
 
@@ -21,7 +21,7 @@ import styles from './styles.scss';
 interface OwnProps {
     title: string;
     className?: string;
-    stats: ConnectorSourceStats;
+    statistics: ConnectorSourceStatistics;
     status: ConnectorSourceStatus;
 }
 
@@ -35,15 +35,15 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
         status,
         title,
         className,
-        stats,
+        statistics,
     } = props;
 
     const convertedPublishedDates = useMemo(() => (
-        stats?.publishedDates?.map(pd => ({
+        statistics?.publishedDates?.map(pd => ({
             count: pd.count,
             date: (new Date(pd.date)).getTime(),
         }))
-    ), [stats]);
+    ), [statistics]);
 
     return (
         <div className={_cs(styles.sourceDetail, className)}>
@@ -51,13 +51,14 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                 {title}
                 <TextOutput
                     label="Leads"
-                    value={stats?.noOfLeads}
+                    value={statistics?.noOfLeads}
                     type="block"
                 />
             </div>
             <div className={styles.chartContainer}>
                 {status === 'processing' ? (
                     <Message>
+                        {/* FIXME: Use translation */ }
                         Processing...
                     </Message>
                 ) : (

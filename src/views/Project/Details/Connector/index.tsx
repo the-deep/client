@@ -12,6 +12,7 @@ import {
     Connector,
 } from '#typings';
 import useRequest from '#restrequest';
+import { useArrayEdit } from '#hooks/stateManagement';
 
 import ConnectorEditForm from './ConnectorEditForm';
 import ConnectorDetails from './ConnectorDetails';
@@ -34,48 +35,15 @@ function ProjectConnector(props: OwnProps) {
     } = props;
 
     const [connectors, setConnectors] = useState<Connector[]>([]);
-
-    const handleConnectorAdd = useCallback((connector: Connector) => {
-        setConnectors(currentConnectors => ([
-            connector,
-            ...currentConnectors,
-        ]));
-    }, [setConnectors]);
-
-    const handleConnectorEdit = useCallback((connector: Connector) => {
-        setConnectors((currentConnectors) => {
-            const selectedConnectorIndex = currentConnectors
-                .findIndex(c => c.id === connector.id);
-
-            if (selectedConnectorIndex === -1) {
-                return currentConnectors;
-            }
-            const newConnectors = [...currentConnectors];
-            newConnectors.splice(selectedConnectorIndex, 1, connector);
-
-            return newConnectors;
-        });
-    }, [setConnectors]);
-
-    const handleConnectorDelete = useCallback((connectorId: number) => {
-        setConnectors((currentConnectors) => {
-            const selectedConnectorIndex = currentConnectors
-                .findIndex(c => c.id === connectorId);
-
-            if (selectedConnectorIndex === -1) {
-                return currentConnectors;
-            }
-            const newConnectors = [...currentConnectors];
-            newConnectors.splice(selectedConnectorIndex, 1);
-
-            return newConnectors;
-        });
-    }, [setConnectors]);
+    const [
+        handleConnectorAdd,
+        handleConnectorDelete,
+        handleConnectorEdit,
+    ] = useArrayEdit(setConnectors, connectorKeySelector);
 
     const [pendingConnectors] = useRequest<MultiResponse<Connector>>({
+        autoTrigger: true,
         url: `server://projects/${projectId}/unified-connectors/`,
-        delay: 300,
-    }, {
         onSuccess: (response) => {
             setConnectors(response.results);
         },
@@ -86,7 +54,7 @@ function ProjectConnector(props: OwnProps) {
         details: data,
         onConnectorDelete: handleConnectorDelete,
         onConnectorEdit: handleConnectorEdit,
-    }), [projectId, handleConnectorDelete]);
+    }), [projectId, handleConnectorDelete, handleConnectorEdit]);
 
     return (
         <div className={_cs(className, styles.projectConnectors)}>
