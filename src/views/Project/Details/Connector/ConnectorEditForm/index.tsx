@@ -38,11 +38,13 @@ import ConnectorSourceOptions from './ConnectorSourceOptions';
 
 import styles from './styles.scss';
 
-const SourceOptionsEmptyComponent = () => (
-    <Message>
-        {_ts('project.connector.editForm', 'sourceOptionsEmptyText')}
-    </Message>
-);
+function SourceOptionsEmptyComponent() {
+    return (
+        <Message>
+            {_ts('project.connector.editForm', 'sourceOptionsEmptyText')}
+        </Message>
+    );
+}
 
 interface ConnectorSourceButtonProps {
     title: string;
@@ -139,8 +141,8 @@ function ProjectConnectorEditForm(props: OwnProps) {
         connectorSourcesList,
     ] = useRequest<MultiResponse<ConnectorSource>>({
         url: 'server://connector-sources/',
-    }, {
         schemaName: 'connectorSources',
+        autoTrigger: true,
     });
 
     const connectorSources = useMemo(() => (
@@ -158,13 +160,6 @@ function ProjectConnectorEditForm(props: OwnProps) {
         setPristine(true);
     }, [setFaramErrors, setPristine]);
 
-    const handleFaramValidationSucces = useCallback((finalFaramValues) => {
-        setBodyToSend({
-            project: projectId,
-            ...finalFaramValues,
-        });
-    }, [setBodyToSend, projectId]);
-
     const connectorUrl = useMemo(() => {
         if (isNotDefined(bodyToSend)) {
             return undefined;
@@ -181,11 +176,10 @@ function ProjectConnectorEditForm(props: OwnProps) {
         connector,
     ]);
 
-    const [pending] = useRequest<Connector>({
+    const [pending,,, triggerConnectorSave] = useRequest<Connector>({
         url: connectorUrl,
         method: isAddForm ? 'POST' : 'PATCH',
         body: bodyToSend,
-    }, {
         onSuccess: (response) => {
             if (onSuccess) {
                 onSuccess(response);
@@ -194,12 +188,25 @@ function ProjectConnectorEditForm(props: OwnProps) {
         },
     });
 
-    const connectorSourceOptionsRendererParams = useCallback((key, data, index) => ({
-        index,
-        options: connectorSources[data.source]?.options,
-        title: connectorSources[data.source]?.title,
-        sourceKey: data.key,
-    }), [connectorSources]);
+    const handleFaramValidationSucces = useCallback((finalFaramValues) => {
+        setBodyToSend({
+            ...finalFaramValues,
+            project: projectId,
+        });
+        triggerConnectorSave();
+    }, [setBodyToSend, projectId, triggerConnectorSave]);
+
+    const connectorSourceOptionsRendererParams = useCallback((key, data, index) => {
+        const connectorSourceValues = faramValues?.sources?.find(s => s.source === key);
+
+        return ({
+            index,
+            options: connectorSources[data.source]?.options,
+            title: connectorSources[data.source]?.title,
+            sourceKey: data.key,
+            connectorSourceValues,
+        });
+    }, [connectorSources, faramValues]);
 
     const handleConnectorAdd = useCallback((connectorSourceKey) => {
         setFaramValues((currentFaramValues) => {

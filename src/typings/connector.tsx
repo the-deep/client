@@ -27,13 +27,13 @@ export interface UnifiedConnectorSource {
     title: string;
 }
 
-export interface ConnectorSourceStats {
+export interface ConnectorSourceStatistics {
     noOfLeads?: number;
     publishedDates: PublishedDateCount[];
 }
 
 export interface UnifiedConnectorSourceInstance extends UnifiedConnectorSource {
-    stats?: ConnectorSourceStats;
+    statistics?: ConnectorSourceStatistics;
     status?: ConnectorSourceStatus;
     lastCalculatedAt?: string;
     params: Record<string, unknown>;

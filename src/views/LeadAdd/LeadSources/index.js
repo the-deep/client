@@ -29,6 +29,7 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import { formatTitle } from '#utils/common';
+import { useModalState } from '#hooks/stateManagement';
 
 import {
     leadAddPageActiveSourceSelector,
@@ -50,24 +51,6 @@ import { LeadProcessorContext } from '../LeadProcessor';
 
 import LeadListItem from '../LeadListItem';
 import styles from './styles.scss';
-
-function useModalState(initialValue) {
-    const [visible, setVisibility] = useState(initialValue);
-    const setVisible = useCallback(
-        () => {
-            setVisibility(true);
-        },
-        [],
-    );
-    const setHidden = useCallback(
-        () => {
-            setVisibility(false);
-        },
-        [],
-    );
-
-    return [visible, setVisible, setHidden, setVisibility];
-}
 
 const schema = {
     fields: {
