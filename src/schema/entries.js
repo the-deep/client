@@ -48,6 +48,8 @@ const entrySchema = [];
             droppedExcerpt: { type: 'string' },
             highlightHidden: { type: 'boolean' },
             verified: { type: 'boolean' },
+            verificationLastChangedBy: { type: 'uint' },
+            verificationLastChangedByDetails: { type: 'user-s' },
             /*
             exportData: {
                 arrayType: {
