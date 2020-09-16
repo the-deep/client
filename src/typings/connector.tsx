@@ -8,6 +8,12 @@ export interface PublishedDateCount {
 export type FieldType = 'string' | 'number' | 'url' | 'select' | 'date';
 export type ConnectorSourceStatus = 'processing' | 'success' | 'failure';
 
+export interface ConnectorSourceFaramInstance {
+    id?: number;
+    source: string;
+    params: Record<string, unknown>;
+}
+
 export interface ConnectorSourceOption {
     key: string;
     title: string;
