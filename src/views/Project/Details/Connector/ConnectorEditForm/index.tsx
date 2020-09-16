@@ -30,6 +30,7 @@ import {
     Connector,
     ConnectorSource,
     UnifiedConnectorSource,
+    ConnectorSourceFaramInstance,
 } from '#typings';
 
 import _ts from '#ts';
@@ -73,12 +74,6 @@ function ConnectorSourceButton(props: ConnectorSourceButtonProps) {
             {title}
         </Button>
     );
-}
-
-interface ConnectorSourceFaramInstance {
-    id?: number;
-    source: string;
-    params: Record<string, unknown>;
 }
 
 interface ConnectorFaramValues {
@@ -203,7 +198,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
             index,
             options: connectorSources[data.source]?.options,
             title: connectorSources[data.source]?.title,
-            sourceKey: data.key,
+            sourceKey: data.source,
             connectorSourceValues,
         });
     }, [connectorSources, faramValues]);

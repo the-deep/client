@@ -1,8 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {
-    _cs,
-    isDefined,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import { Switch } from '@togglecorp/toggle-ui';
 
 import modalize from '#rscg/Modalize';

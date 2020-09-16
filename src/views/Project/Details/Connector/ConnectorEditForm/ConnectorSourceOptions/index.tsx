@@ -1,16 +1,30 @@
-import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useEffect } from 'react';
+import {
+    _cs,
+    isValidUrl,
+} from '@togglecorp/fujs';
 import { FaramGroup } from '@togglecorp/faram';
 
 import ListView from '#rscv/List/ListView';
 import {
     ConnectorSource,
     ConnectorSourceOption,
+    ConnectorSourceFaramInstance,
 } from '#typings';
 
+import useRequest from '#restrequest';
+
 import FieldInput from './FieldInput';
+import { xmlConnectorTypes } from '../../utils';
 
 import styles from './styles.scss';
+
+interface XmlFieldOptionsResponse {
+    count: number;
+    hasEmmEntities: boolean;
+    hasEmmTriggers: boolean;
+    results: ConnectorSource['options'];
+}
 
 interface ComponentProps {
     className?: string;
@@ -19,6 +33,7 @@ interface ComponentProps {
     options: ConnectorSource['options'];
     disabled?: boolean;
     index: number;
+    connectorSourceValues: ConnectorSourceFaramInstance;
 }
 
 const sourceOptionKeySelector = (d: ConnectorSourceOption) => d.key;
@@ -31,14 +46,41 @@ function ConnectorSourceOptions(props: ComponentProps) {
         title,
         options,
         disabled,
+        connectorSourceValues: {
+            params: { 'feed-url': feedUrl } = {},
+        },
     } = props;
+
+    const [
+        pendingXmlOptions,
+        xmlFieldOptions,
+        ,
+        triggerXmlOptionsFetch,
+    ] = useRequest<XmlFieldOptionsResponse>({
+        url: `server://connector-sources/${sourceKey}/fields/`,
+        method: 'GET',
+        query: ({ 'feed-url': feedUrl }),
+    });
+
+    useEffect(() => {
+        if (xmlConnectorTypes.indexOf(sourceKey) !== -1 && isValidUrl(feedUrl)) {
+            triggerXmlOptionsFetch();
+        }
+    }, [feedUrl, triggerXmlOptionsFetch, sourceKey]);
 
     const sourceOptionRendererParams = useCallback((key, data) => ({
         className: styles.inputElement,
         field: data,
         connectorSourceKey: sourceKey,
         disabled,
-    }), [sourceKey, disabled]);
+        pendingXmlOptions,
+        xmlFieldOptions: xmlFieldOptions?.results,
+    }), [
+        sourceKey,
+        disabled,
+        pendingXmlOptions,
+        xmlFieldOptions,
+    ]);
 
     return (
         <div className={_cs(styles.connectorSourceOptions, className)}>
