@@ -34,6 +34,7 @@
         .button {
             display: flex;
             align-items: center;
+            margin-right: var(--spacing-small);
             padding: var(--spacing-extra-small) var(--spacing-small);
 
             .comment-count {
@@ -44,6 +45,10 @@
                 border-color: var(--color-danger)!important;
                 color: var(--color-danger);
             }
+        }
+
+        .delete-button {
+            padding: var(--spacing-extra-small) var(--spacing-small);
         }
     }
 }

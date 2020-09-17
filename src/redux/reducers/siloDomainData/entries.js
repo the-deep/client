@@ -9,6 +9,7 @@ export const E__UNSET_FILTER = 'siloDomainData/E__UNSET_FILTER';
 export const E__SET_ACTIVE_PAGE = 'siloDomainData/E__SET_ACTIVE_PAGE';
 export const E__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/E__SET_ENTRY_COMMENTS_COUNT';
 export const E__PATCH_ENTRY_VERIFICATION = 'siloDomainData/E__PATCH_ENTRY_VERIFICATION';
+export const E__DELETE_ENTRY = 'siloDomainData/E__DELETE_ENTRY';
 
 // ACTION-CREATOR
 
@@ -45,6 +46,12 @@ export const patchEntryVerificationAction = ({ entryId, leadId, status }) => ({
     entryId,
     leadId,
     status,
+});
+
+export const deleteEntryAction = ({ entryId, leadId }) => ({
+    type: E__DELETE_ENTRY,
+    entryId,
+    leadId,
 });
 
 // REDUCER
@@ -171,6 +178,55 @@ const patchEntryVerification = (state, action) => {
     return newState;
 };
 
+const deleteEntry = (state, action) => {
+    const {
+        entryId,
+        leadId,
+    } = action;
+
+    const { activeProject: projectId } = state;
+    const {
+        entriesView: {
+            [projectId]: {
+                entries: leadGroupedEntries = [],
+            } = {},
+        } = {},
+    } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.entriesView) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView = {};
+        }
+        if (!safeState.entriesView[projectId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView[projectId] = {};
+        }
+        if (!safeState.entriesView[projectId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView[projectId].entries = [];
+        }
+        const safeLeads = safeState.entriesView[projectId].entries;
+        const leadIndex = leadGroupedEntries.findIndex(l => leadId === l.id);
+        if (leadIndex > -1) {
+            if (!safeLeads[leadIndex].entries) {
+                // eslint-disable-next-line no-param-reassign
+                safeLeads[leadIndex].entries = [];
+            }
+
+            const entryIndex = safeLeads[leadIndex].entries.findIndex(e => entryId === e.id);
+            const safeEntries = safeLeads[leadIndex].entries;
+
+            if (entryIndex > -1) {
+                // eslint-disable-next-line no-param-reassign
+                safeEntries.splice(entryIndex, 1);
+            }
+        }
+    });
+
+    return newState;
+};
+
 const entryViewSetFilter = (state, action) => {
     const { filters } = action;
     const { activeProject } = state;
@@ -220,5 +276,6 @@ const reducers = {
     [E__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
     [E__SET_ACTIVE_PAGE]: entriesViewSetActivePage,
     [E__PATCH_ENTRY_VERIFICATION]: patchEntryVerification,
+    [E__DELETE_ENTRY]: deleteEntry,
 };
 export default reducers;

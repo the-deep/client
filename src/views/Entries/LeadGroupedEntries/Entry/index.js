@@ -11,14 +11,17 @@ import memoize from 'memoize-one';
 
 import {
     entriesSetEntryCommentsCountAction,
+    deleteEntryAction,
 } from '#redux';
 import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
+import Cloak from '#components/general/Cloak';
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import { pathNames } from '#constants';
@@ -29,8 +32,18 @@ import {
     VIEW,
 } from '#widgets';
 
-import EntryLabelBadge from '#components/general/EntryLabel';
+import {
+    RequestClient,
+    methods,
+} from '#request';
+import {
+    notifyOnFailure,
+    notifyOnFatal,
+} from '#utils/requestNotify';
+
+import notify from '#notify';
 import _ts from '#ts';
+import EntryLabelBadge from '#components/general/EntryLabel';
 
 import styles from './styles.scss';
 
@@ -47,6 +60,8 @@ const propTypes = {
     projectId: PropTypes.number,
     leadId: PropTypes.number,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -55,8 +70,37 @@ const defaultProps = {
     className: '',
 };
 
+const requestOptions = {
+    deleteEntryRequest: {
+        url: ({ props: { entry: { id } } }) => `/entries/${id}/`,
+        method: methods.DELETE,
+        onMount: false,
+        onSuccess: ({ props }) => {
+            const {
+                leadId,
+                onEntryDelete,
+                entry: {
+                    id: entryId,
+                },
+            } = props;
+            if (onEntryDelete) {
+                onEntryDelete({ leadId, entryId });
+            }
+            notify.send({
+                title: _ts('entries', 'deleteEntrySuccessTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('entries', 'deleteEntrySuccessMessage'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    },
+    onFailure: notifyOnFailure(_ts('entries', 'deleteEntryFailure')),
+    onFatal: notifyOnFatal(_ts('entries', 'deleteEntryFailure')),
+};
+
 const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
+    onEntryDelete: params => dispatch(deleteEntryAction(params)),
 });
 
 const widgetLayoutSelector = (widget) => {
@@ -75,10 +119,12 @@ const emptySchema = { fields: {} };
 const entryLabelKeySelector = d => d.labelId;
 
 @connect(null, mapDispatchToProps)
+@RequestClient(requestOptions)
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static shouldHideEntryEdit = ({ entryPermissions }) => !entryPermissions.modify;
+    static shouldHideEntryDelete = ({ entryPermissions }) => !entryPermissions.delete;
 
     getWidgets = memoize(widgets => (
         widgets.filter(
@@ -102,6 +148,16 @@ export default class Entry extends React.PureComponent {
         };
 
         setEntryCommentsCount({ entry, projectId, leadId });
+    }
+
+    handleEntryDelete = () => {
+        const {
+            requests: {
+                deleteEntryRequest,
+            },
+        } = this.props;
+
+        deleteEntryRequest.do();
     }
 
     entryLabelsRendererParams = (key, data) => ({
@@ -279,6 +335,18 @@ export default class Entry extends React.PureComponent {
                                 </div>
                             }
                         </ModalButton>
+                        <Cloak
+                            hide={Entry.shouldHideEntryDelete}
+                            render={
+                                <DangerConfirmButton
+                                    iconName="delete"
+                                    onClick={this.handleEntryDelete}
+                                    confirmationTitle={_ts('entries', 'deleteConfirmTitle')}
+                                    confirmationMessage={_ts('entries', 'deleteConfirmMessage')}
+                                    className={styles.deleteButton}
+                                />
+                            }
+                        />
                     </div>
                 </header>
                 <Faram
