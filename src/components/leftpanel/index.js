@@ -10,6 +10,7 @@ import memoize from 'memoize-one';
 
 import Icon from '#rscg/Icon';
 import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
 import modalize from '#rscg/Modalize';
 import Confirm from '#rscv/Modal/Confirm';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -20,6 +21,7 @@ import { LEAD_TYPE } from '#entities/lead';
 import { entryAccessor } from '#entities/editEntries';
 import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
+import CanvasDraw from '#components/general/CanvasDraw';
 import {
     currentUserActiveProjectSelector,
     activeProjectRoleSelector,
@@ -147,6 +149,8 @@ export default class LeftPane extends React.PureComponent {
             showAssistedTabMessage: false,
 
             showGraphs: false,
+            showDrawModal: false,
+            screenshot: undefined,
         };
 
         const { viewsModifier } = this.props;
@@ -390,6 +394,14 @@ export default class LeftPane extends React.PureComponent {
     // Lead Preview
 
     handleScreenshot = (image) => {
+        this.setState({
+            screenshot: image,
+            showDrawModal: true,
+        });
+    }
+
+    handleDrawDone = (image) => {
+        this.setState({ showDrawModal: false });
         this.props.onExcerptCreate({
             type: 'image',
             value: image,
@@ -455,6 +467,8 @@ export default class LeftPane extends React.PureComponent {
             currentTab,
             showGraphs,
             showAssistedTabMessage,
+            showDrawModal,
+            screenshot,
         } = this.state;
 
         const tabs = this.getTabs(lead, images, entryPermissions, isPrivate, categoryEditor);
@@ -536,6 +550,19 @@ export default class LeftPane extends React.PureComponent {
                         )
                     }
                 </Confirm>
+                { showDrawModal && (
+                    <Modal className={styles.drawModal}>
+                        <ModalHeader
+                            // FIXME: use strings
+                            title="Draw on screenshot"
+                        />
+                        <CanvasDraw
+                            className={styles.draw}
+                            imgSrc={screenshot}
+                            onDone={this.handleDrawDone}
+                        />
+                    </Modal>
+                )}
             </div>
         );
     }
