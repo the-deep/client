@@ -1159,7 +1159,15 @@
         "-12435324": "Entry successfully deleted",
         "-90809809": "Entry delete failed. Please check your network connection and try again",
         "-6144826": "Hey DEEP user - it seems you're not using Google Chrome as your browser! DEEP is only supported on the latest versions of Chrome, which you can download {chromeUrl}. If you continue using your browser, you may face some unexpected issues.",
-        "-40128868": "here"
+        "-40128868": "here",
+        "-80573166": "S",
+        "-65407480": "M",
+        "-22259584": "L",
+        "-32081272": "Clear drawings",
+        "-25166641": "Done",
+        "-88808908": "Pen color",
+        "-63730365": "Pen size",
+        "-31875190": "Draw over screenshot"
     },
     "links": {
         "browserExtension": {
@@ -1395,7 +1403,8 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039
+            "viewLinkTooltip": -2224039,
+            "drawOverScreenshotButtonTitle": -31875190
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,
@@ -3323,9 +3332,22 @@
             "errorNotify": -17130420,
             "successMessageIfEmpty": -51126708
         },
+<<<<<<< HEAD
         "multiplexer": {
             "unsupportedBrowserMessage": -6144826,
             "hereLabel": -40128868
+=======
+        "canvasDrawModal": {},
+        "components.canvasDrawModal": {
+            "cancelButtonLabel": 61,
+            "clearButtonLabel": -32081272,
+            "doneButtonLabel": -25166641,
+            "penColorInputLabel": -88808908,
+            "penSizeInputLabel": -63730365,
+            "penSizeOptionLargeLabel": -22259584,
+            "penSizeOptionMediumLabel": -65407480,
+            "penSizeOptionSmallLabel": -80573166
+>>>>>>> 0b7c6f0b3... Add strings for canvas draw modal
         }
     }
 }

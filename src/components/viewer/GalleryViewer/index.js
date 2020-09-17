@@ -296,6 +296,7 @@ export default class GalleryViewer extends React.PureComponent {
                         iconName="paintBrush"
                         transparent
                         onClick={this.handlePaintBrushButtonClick}
+                        title={_ts('components.galleryViewer', 'drawOverScreenshotButtonTitle')} // draw over screenshot
                     />
                 )}
                 <DangerButton

@@ -6,6 +6,8 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalBody from '#rscv/Modal/Body';
 
+import _ts from '#ts';
+
 import ColorInput from '#rsci/ColorInput';
 import SegmentInput from '#rsci/SegmentInput';
 import Button from '#rsca/Button';
@@ -84,11 +86,10 @@ function useDraw(
     }, [handleMouseDown, handleMouseUp, handleMouseMove, canvasRef]);
 }
 
-// FIXME: use strings
 const penSizeOptions = [
-    { key: 1, label: 'S' },
-    { key: 3, label: 'M' },
-    { key: 7, label: 'L' },
+    { key: 1, label: _ts('components.canvasDrawModal', 'penSizeOptionSmallLabel') },
+    { key: 3, label: _ts('components.canvasDrawModal', 'penSizeOptionMediumLabel') },
+    { key: 7, label: _ts('components.canvasDrawModal', 'penSizeOptionLargeLabel') },
 ];
 const DEFAULT_PEN_SIZE = penSizeOptions[1].key;
 
@@ -214,7 +215,7 @@ function CanvasDraw(props: Props) {
     }, [imgSrc]);
 
     return (
-        <Modal className={styles.canvasDrawModal}>
+        <Modal className={styles.components.canvasDrawModal}>
             <ModalHeader title="Draw over the screenshot" />
             <ModalBody className={_cs(className, styles.canvasDraw)}>
                 <div
@@ -233,14 +234,12 @@ function CanvasDraw(props: Props) {
                         </h4>
                         <div className={styles.content}>
                             <ColorInput
-                                // FIXME: use strings
-                                label="Pen color"
+                                label={_ts('components.canvasDrawModal', 'penColorInputLabel')}
                                 value={color}
                                 onChange={handleColorInputChange}
                             />
                             <SegmentInput
-                                // FIXME: use strings
-                                label="Pen size"
+                                label={_ts('components.canvasDrawModal', 'penSizeInputLabel')}
                                 options={penSizeOptions}
                                 value={penSize}
                                 onChange={handlePenSizeInputChange}
@@ -249,8 +248,7 @@ function CanvasDraw(props: Props) {
                                 onClick={handleClearButtonClick}
                                 iconName="trash"
                             >
-                                {/* FIXME: use strings */}
-                                Clear drawings
+                                {_ts('components.canvasDrawModal', 'clearButtonLabel')}
                             </Button>
                         </div>
                     </div>
@@ -260,12 +258,10 @@ function CanvasDraw(props: Props) {
                 <Button
                     onClick={onCancel}
                 >
-                    {/* FIXME: use strings */}
-                    Cancel
+                    {_ts('components.canvasDrawModal', 'cancelButtonLabel')}
                 </Button>
                 <PrimaryButton onClick={handleDoneButtonClick}>
-                    {/* FIXME: use strings */}
-                    Done
+                    {_ts('components.canvasDrawModal', 'doneButtonLabel')}
                 </PrimaryButton>
             </ModalFooter>
         </Modal>
