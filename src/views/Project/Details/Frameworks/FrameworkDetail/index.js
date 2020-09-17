@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import html2canvas from 'html2canvas';
 import {
     _cs,
     reverseRoute,
@@ -8,7 +9,6 @@ import {
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
-import Cloak from '#components/general/Cloak';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -17,6 +17,9 @@ import List from '#rscv/List';
 import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
+import Modal from '#rscv/Modal';
+
+import Cloak from '#components/general/Cloak';
 import Badge from '#components/viewer/Badge';
 import EntityLink from '#components/viewer/EntityLink';
 
@@ -127,6 +130,59 @@ const projectRendererParams = (_, p) => ({
 
 const hideQuestionnaire = ({ accessQuestionnaire }) => !accessQuestionnaire;
 
+function saveAs(uri, filename) {
+    const link = document.createElement('a');
+    if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+    } else {
+        window.open(uri);
+    }
+}
+
+const getFrameworkSize = (framework) => {
+    let width = 0;
+    let listHeight = 0;
+    let overviewHeight = 0;
+
+    framework.widgets.forEach((w) => {
+        const listRight = w.properties.listGridLayout.left + w.properties.listGridLayout.width;
+        const listBottom = w.properties.listGridLayout.top + w.properties.listGridLayout.height;
+        const overviewRight = w.properties.overviewGridLayout.left
+            + w.properties.overviewGridLayout.width;
+        const overviewBottom = w.properties.overviewGridLayout.top
+            + w.properties.overviewGridLayout.height;
+
+        if (listRight > width) {
+            width = listRight;
+        }
+
+        if (overviewRight > width) {
+            width = overviewRight;
+        }
+
+        if (listBottom > listHeight) {
+            listHeight = listBottom;
+        }
+
+        if (overviewBottom > overviewHeight) {
+            overviewHeight = overviewBottom;
+        }
+    });
+
+    return {
+        width: `${width}px`,
+        height: `${listHeight + overviewHeight}px`,
+    };
+};
+
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class FrameworkDetail extends React.PureComponent {
@@ -143,7 +199,10 @@ export default class FrameworkDetail extends React.PureComponent {
                 title: '',
                 description: '',
             },
+            isExporting: false,
         };
+
+        this.exportSectionRef = React.createRef();
 
         this.tabs = {
             overview: _ts('project.framework', 'entryOverviewTitle'),
@@ -183,6 +242,27 @@ export default class FrameworkDetail extends React.PureComponent {
                 };
                 patchAnalysisFramework({ analysisFramework });
             }
+        });
+    }
+
+    handleExportButtonClick = () => {
+        const {
+            requests: {
+                frameworkGetRequest: { response: framework },
+            },
+        } = this.props;
+
+        this.setState({
+            isExporting: true,
+        }, () => {
+            setTimeout(() => {
+                if (this.exportSectionRef.current) {
+                    html2canvas(this.exportSectionRef.current).then((canvas) => {
+                        saveAs(canvas.toDataURL(), `export-${framework.title}.png`);
+                        this.setState({ isExporting: false });
+                    });
+                }
+            }, 0);
         });
     }
 
@@ -290,6 +370,11 @@ export default class FrameworkDetail extends React.PureComponent {
                                     setProjectFramework={setProjectFramework}
                                 />
                             }
+                            <Button
+                                onClick={this.handleExportButtonClick}
+                            >
+                                { _ts('project.framework', 'exportButtonTitle') }
+                            </Button>
                             {canCloneFramework &&
                                 <AccentModalButton
                                     className={styles.button}
@@ -470,6 +555,8 @@ export default class FrameworkDetail extends React.PureComponent {
             },
         } = this.props;
 
+        const { isExporting } = this.state;
+
         const Header = this.renderHeader;
 
         return (
@@ -480,6 +567,25 @@ export default class FrameworkDetail extends React.PureComponent {
                     className={styles.preview}
                     framework={framework}
                 />
+                { isExporting && (
+                    <Modal className={styles.exportModal}>
+                        <div
+                            ref={this.exportSectionRef}
+                            style={{
+                                ...getFrameworkSize(framework),
+                            }}
+                        >
+                            <Preview
+                                activeView="overview"
+                                framework={framework}
+                            />
+                            <Preview
+                                activeView="list"
+                                framework={framework}
+                            />
+                        </div>
+                    </Modal>
+                )}
             </div>
         );
     }
