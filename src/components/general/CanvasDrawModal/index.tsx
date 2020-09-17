@@ -1,6 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalBody from '#rscv/Modal/Body';
+
 import ColorInput from '#rsci/ColorInput';
 import SegmentInput from '#rsci/SegmentInput';
 import Button from '#rsca/Button';
@@ -79,14 +84,13 @@ function useDraw(
     }, [handleMouseDown, handleMouseUp, handleMouseMove, canvasRef]);
 }
 
-const DEFAULT_PEN_COLOR = '#ff0000';
 // FIXME: use strings
 const penSizeOptions = [
     { key: 1, label: 'S' },
     { key: 3, label: 'M' },
     { key: 7, label: 'L' },
 ];
-const DEFAULT_PEN_SIZE = penSizeOptions[0].key;
+const DEFAULT_PEN_SIZE = penSizeOptions[1].key;
 
 const drawImage = (
     canvasRef: React.RefObject<HTMLCanvasElement>,
@@ -108,17 +112,21 @@ interface Props {
     className?: string;
     imgSrc?: string;
     onDone?: (imgData: string) => void;
+    onCancel?: () => void;
 }
 
 function CanvasDraw(props: Props) {
     const {
         className,
-        imgSrc = 'https://i.imgur.com/TjbE3JO.jpg',
+        imgSrc,
         onDone,
+        onCancel,
     } = props;
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = React.useRef<HTMLDivElement>(null);
-    const [color, setColor] = React.useState(DEFAULT_PEN_COLOR);
+    const [color, setColor] = React.useState(
+        getComputedStyle(document.body).getPropertyValue('--color-accent'),
+    );
     const [penSize, setPenSize] = React.useState(DEFAULT_PEN_SIZE);
     const colorRef = React.useRef(color);
     const penSizeRef = React.useRef(penSize);
@@ -206,44 +214,61 @@ function CanvasDraw(props: Props) {
     }, [imgSrc]);
 
     return (
-        <div className={_cs(className, styles.canvasDraw)}>
-            <div
-                ref={canvasContainerRef}
-                className={styles.canvasContainer}
-            >
-                <canvas
-                    ref={canvasRef}
-                    className={styles.canvas}
-                />
-            </div>
-            <div className={styles.toolbar}>
-                <div className={styles.canvasActions}>
-                    <ColorInput
-                        // FIXME: use strings
-                        label="Color"
-                        value={color}
-                        onChange={handleColorInputChange}
+        <Modal className={styles.canvasDrawModal}>
+            <ModalHeader title="Draw over the screenshot" />
+            <ModalBody className={_cs(className, styles.canvasDraw)}>
+                <div
+                    ref={canvasContainerRef}
+                    className={styles.canvasContainer}
+                >
+                    <canvas
+                        ref={canvasRef}
+                        className={styles.canvas}
                     />
-                    <SegmentInput
-                        // FIXME: use strings
-                        label="Pen size"
-                        options={penSizeOptions}
-                        value={penSize}
-                        onChange={handlePenSizeInputChange}
-                    />
-                    <Button onClick={handleClearButtonClick}>
-                        {/* FIXME: use strings */}
-                        Clear
-                    </Button>
                 </div>
-                <div className={styles.generalActions}>
-                    <PrimaryButton onClick={handleDoneButtonClick}>
-                        {/* FIXME: use strings */}
-                        Done
-                    </PrimaryButton>
+                <div className={styles.toolbar}>
+                    <div className={styles.drawTools}>
+                        <h4 className={styles.heading}>
+                            Draw tools
+                        </h4>
+                        <div className={styles.content}>
+                            <ColorInput
+                                // FIXME: use strings
+                                label="Pen color"
+                                value={color}
+                                onChange={handleColorInputChange}
+                            />
+                            <SegmentInput
+                                // FIXME: use strings
+                                label="Pen size"
+                                options={penSizeOptions}
+                                value={penSize}
+                                onChange={handlePenSizeInputChange}
+                            />
+                            <Button
+                                onClick={handleClearButtonClick}
+                                iconName="trash"
+                            >
+                                {/* FIXME: use strings */}
+                                Clear drawings
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </ModalBody>
+            <ModalFooter>
+                <Button
+                    onClick={onCancel}
+                >
+                    {/* FIXME: use strings */}
+                    Cancel
+                </Button>
+                <PrimaryButton onClick={handleDoneButtonClick}>
+                    {/* FIXME: use strings */}
+                    Done
+                </PrimaryButton>
+            </ModalFooter>
+        </Modal>
     );
 }
 
