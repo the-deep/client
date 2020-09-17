@@ -2,13 +2,14 @@ import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     listToMap,
-    isNotDefined,
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 import produce from 'immer';
 import Faram, {
     FaramList,
     requiredCondition,
+    urlCondition,
     Schema,
 } from '@togglecorp/faram';
 
@@ -36,6 +37,7 @@ import {
 import _ts from '#ts';
 
 import ConnectorSourceOptions from './ConnectorSourceOptions';
+import { xmlConnectorTypes } from '../utils';
 
 import styles from './styles.scss';
 
@@ -91,11 +93,36 @@ const schema: Schema = {
         title: [requiredCondition],
         sources: {
             keySelector: d => d.source,
+            identifier: (d) => {
+                if (xmlConnectorTypes.indexOf(d.source) !== -1) {
+                    return 'xmlConnector';
+                }
+                return 'default';
+            },
             member: {
-                fields: {
-                    id: [],
-                    source: [requiredCondition],
-                    params: [],
+                xmlConnector: {
+                    fields: {
+                        id: [],
+                        source: [requiredCondition],
+                        params: {
+                            fields: {
+                                'feed-url': [requiredCondition, urlCondition],
+                                'website-field': [],
+                                'title-field': [],
+                                'date-field': [],
+                                'source-field': [],
+                                'author-field': [],
+                                'url-field': [],
+                            },
+                        },
+                    },
+                },
+                default: {
+                    fields: {
+                        id: [],
+                        source: [requiredCondition],
+                        params: [],
+                    },
                 },
             },
         },
@@ -226,12 +253,11 @@ function ProjectConnectorEditForm(props: OwnProps) {
         });
     }, [setFaramValues]);
 
-    const connectorSourceButtonRendererParams = useCallback((key, data, index) => {
-        const active = faramValues.sources
+    const connectorSourceButtonRendererParams = useCallback((key, data) => {
+        const active = isDefined(faramValues.sources)
             && faramValues.sources.findIndex(s => s.source === key) !== -1;
 
         return ({
-            index,
             title: data.title,
             sourceKey: data.key,
             onConnectorClick: handleConnectorAdd,

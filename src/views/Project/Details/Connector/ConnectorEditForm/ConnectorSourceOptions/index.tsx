@@ -7,6 +7,7 @@ import { FaramGroup } from '@togglecorp/faram';
 
 import ListView from '#rscv/List/ListView';
 import {
+    KeyValueElement,
     ConnectorSource,
     ConnectorSourceOption,
     ConnectorSourceFaramInstance,
@@ -23,7 +24,7 @@ interface XmlFieldOptionsResponse {
     count: number;
     hasEmmEntities: boolean;
     hasEmmTriggers: boolean;
-    results: ConnectorSource['options'];
+    results: KeyValueElement[];
 }
 
 interface ComponentProps {
@@ -33,7 +34,7 @@ interface ComponentProps {
     options: ConnectorSource['options'];
     disabled?: boolean;
     index: number;
-    connectorSourceValues: ConnectorSourceFaramInstance;
+    connectorSourceValues?: ConnectorSourceFaramInstance;
 }
 
 const sourceOptionKeySelector = (d: ConnectorSourceOption) => d.key;
@@ -46,10 +47,10 @@ function ConnectorSourceOptions(props: ComponentProps) {
         title,
         options,
         disabled,
-        connectorSourceValues: {
-            params: { 'feed-url': feedUrl } = {},
-        },
+        connectorSourceValues,
     } = props;
+
+    const feedUrl = connectorSourceValues?.params?.['feed-url'] as string;
 
     const [
         pendingXmlOptions,

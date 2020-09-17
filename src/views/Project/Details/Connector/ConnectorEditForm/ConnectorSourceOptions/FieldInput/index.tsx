@@ -27,7 +27,7 @@ interface ComponentProps {
     connectorSourceKey: ConnectorSource['key'];
     disabled?: boolean;
     xmlFieldOptions?: KeyValueElement[];
-    pendingXmlFieldOptions?: boolean;
+    pendingXmlOptions?: boolean;
 }
 
 function ConnectorFormFieldInput(props: ComponentProps) {
@@ -36,7 +36,7 @@ function ConnectorFormFieldInput(props: ComponentProps) {
         field: data,
         connectorSourceKey,
         xmlFieldOptions,
-        pendingXmlFieldOptions,
+        pendingXmlOptions,
         disabled,
     } = props;
 
@@ -52,7 +52,7 @@ function ConnectorFormFieldInput(props: ComponentProps) {
                             faramElementName={data.key}
                             label={data.title}
                         />
-                        { pendingXmlFieldOptions &&
+                        { pendingXmlOptions &&
                             <div className={styles.loadingAnimationContainer} >
                                 <LoadingAnimation className={styles.loadingAnimation} />
                             </div>
@@ -80,7 +80,7 @@ function ConnectorFormFieldInput(props: ComponentProps) {
                         faramElementName={data.key}
                         label={data.title}
                         options={xmlFieldOptions}
-                        disabled={pendingXmlFieldOptions || disabled}
+                        disabled={pendingXmlOptions || disabled}
                     />
                 );
             }

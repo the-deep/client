@@ -49,14 +49,12 @@ function ProjectConnectorDetail(props: OwnProps) {
         sources,
     } = details;
 
-    const [connectorToBeDeleted, setConnectorToBeDeleted] = useState<number | undefined>();
-
     const [pendingConnectorDelete,,, deleteConnectorTrigger] = useRequest({
-        url: `server://projects/${projectId}/unified-connectors/${connectorToBeDeleted}/`,
+        url: `server://projects/${projectId}/unified-connectors/${connectorId}/`,
         method: 'DELETE',
         onSuccess: () => {
-            if (connectorToBeDeleted) {
-                onConnectorDelete(connectorToBeDeleted);
+            if (connectorId) {
+                onConnectorDelete(connectorId);
             }
         },
     });
@@ -64,11 +62,6 @@ function ProjectConnectorDetail(props: OwnProps) {
     const handleConnectorActiveStatusChange = useCallback((value) => {
         console.warn('changed value', value);
     }, []);
-
-    const handleConnectorDelete = useCallback(() => {
-        setConnectorToBeDeleted(connectorId);
-        deleteConnectorTrigger();
-    }, [setConnectorToBeDeleted, connectorId, deleteConnectorTrigger]);
 
     const connectorSourceRendererParams = useCallback((key, data) => ({
         title: data.title,
@@ -113,7 +106,7 @@ function ProjectConnectorDetail(props: OwnProps) {
                         className={styles.button}
                         transparent
                         iconName="delete"
-                        onClick={handleConnectorDelete}
+                        onClick={deleteConnectorTrigger}
                         confirmationMessage={_ts(
                             'project.connector',
                             'connectorDeleteMessage',
