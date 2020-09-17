@@ -4,6 +4,21 @@
     border: var(--width-separator-thin) solid var(--color-separator);
     padding: var(--spacing-large);
 
+    .details-container {
+        display: flex;
+        flex-direction: column;
+
+        .image-container {
+            overflow: hidden;
+
+            .image {
+                width: 120px;
+                height: 48px;
+                object-fit: contain;
+            }
+        }
+    }
+
     .chart-container {
         width: 240px;
         height: 160px;

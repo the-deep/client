@@ -8,10 +8,14 @@ export interface PublishedDateCount {
 export type FieldType = 'string' | 'number' | 'url' | 'select' | 'date';
 export type ConnectorSourceStatus = 'processing' | 'success' | 'failure';
 
+export interface ConnectorSourceParams {
+    [key: string]: string | number;
+}
+
 export interface ConnectorSourceFaramInstance {
     id?: number;
     source: string;
-    params: Record<string, unknown>;
+    params: ConnectorSourceParams;
 }
 
 export interface ConnectorSourceOption {
@@ -34,15 +38,16 @@ export interface UnifiedConnectorSource {
 }
 
 export interface ConnectorSourceStatistics {
-    noOfLeads?: number;
     publishedDates: PublishedDateCount[];
 }
 
 export interface UnifiedConnectorSourceInstance extends UnifiedConnectorSource {
     statistics?: ConnectorSourceStatistics;
+    totalLeads?: number;
+    logo?: string;
     status?: ConnectorSourceStatus;
     lastCalculatedAt?: string;
-    params: Record<string, unknown>;
+    params: ConnectorSourceParams;
     source: string;
 }
 

@@ -10,6 +10,7 @@ import {
 
 import Message from '#rscv/Message';
 import TextOutput from '#components/general/TextOutput';
+import Image from '#rscv/Image';
 
 import {
     ConnectorSourceStatistics,
@@ -23,6 +24,8 @@ interface OwnProps {
     className?: string;
     statistics: ConnectorSourceStatistics;
     status: ConnectorSourceStatus;
+    totalLeads: number;
+    logo?: string;
 }
 
 const tickFormatter = (value: number | string) => {
@@ -36,6 +39,8 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
         title,
         className,
         statistics,
+        totalLeads,
+        logo,
     } = props;
 
     const convertedPublishedDates = useMemo(() => (
@@ -48,10 +53,16 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
     return (
         <div className={_cs(styles.sourceDetail, className)}>
             <div className={styles.detailsContainer}>
-                {title}
+                <Image
+                    className={styles.imageContainer}
+                    imageClassName={styles.image}
+                    alt=""
+                    src={logo}
+                />
+                <h3>{title}</h3>
                 <TextOutput
                     label="Leads"
-                    value={statistics?.noOfLeads}
+                    value={totalLeads}
                     type="block"
                 />
             </div>

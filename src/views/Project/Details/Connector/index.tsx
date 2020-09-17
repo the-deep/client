@@ -43,7 +43,7 @@ function ProjectConnector(props: OwnProps) {
 
     const [pendingConnectors] = useRequest<MultiResponse<Connector>>({
         autoTrigger: true,
-        url: `server://projects/${projectId}/unified-connectors/`,
+        url: `server://projects/${projectId}/unified-connectors/with-trending-stats/`,
         onSuccess: (response) => {
             setConnectors(response.results);
         },
