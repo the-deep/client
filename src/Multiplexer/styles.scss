@@ -126,11 +126,36 @@ body {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--color-warning);
+            background-color: var(--color-danger);
+            padding: 0 var(--spacing-medium);
             height: var(--height-nagbar);
-            color: var(--color-text-on-warning);
+            color: var(--color-text-on-danger);
             font-weight: var(--font-weight-bold);
+
+            button {
+                font-size: var(--font-size-large);
+                cursor: pointer;
+
+                * {
+                    color: var(--color-text-on-danger);
+                }
+            }
         }
+    }
+}
+
+.nagbar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .message {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .nagbar-dismiss-button {
+        flex-shrink: 0;
     }
 }
 

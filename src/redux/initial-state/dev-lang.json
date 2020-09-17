@@ -1157,7 +1157,9 @@
         "-12312312": "Warning!",
         "-12312313": "Delete Entry",
         "-12435324": "Entry successfully deleted",
-        "-90809809": "Entry delete failed. Please check your network connection and try again"
+        "-90809809": "Entry delete failed. Please check your network connection and try again",
+        "-6144826": "Hey DEEP user - it seems you're not using Google Chrome as your browser! DEEP is only supported on the latest versions of Chrome, which you can download {chromeUrl}. If you continue using your browser, you may face some unexpected issues.",
+        "-40128868": "here"
     },
     "links": {
         "browserExtension": {
@@ -3320,6 +3322,10 @@
             "clearSelectionButtonLabel": 528,
             "errorNotify": -17130420,
             "successMessageIfEmpty": -51126708
+        },
+        "multiplexer": {
+            "unsupportedBrowserMessage": -6144826,
+            "hereLabel": -40128868
         }
     }
 }

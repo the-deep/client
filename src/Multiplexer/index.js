@@ -1,23 +1,20 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     Switch,
     Route,
     withRouter,
 } from 'react-router-dom';
 import { connect } from 'react-redux';
+import browserDetect from 'browser-detect';
 
-/*
-import {
-    addClassName,
-    removeClassName,
-} from '@togglecorp/fujs';
-*/
-// import _ts from '#ts';
+import _ts from '#ts';
 
 import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
 import PrivateRoute from '#rscg/PrivateRoute';
 import Toast from '#rscv/Toast';
+import Button from '#rsca/Button';
 
 import RouteSynchronizer from '#components/general/RouteSynchronizer';
 import Navbar from '#components/general/Navbar';
@@ -67,11 +64,25 @@ const mapDispatchToProps = dispatch => ({
     // removeSelfTabStatus: params => dispatch(removeSelfTabStatusAction(params)),
 });
 
-/*
-const Nagbar = ({ children }) => (
-    <div className="nagbar">{ children }</div>
-);
-*/
+function Nagbar({
+    className,
+    children,
+}) {
+    return (
+        <div className={_cs(className, 'nagbar')}>
+            { children }
+        </div>
+    );
+}
+
+Nagbar.propTypes = {
+    className: PropTypes.string,
+    children: PropTypes.node.isRequired,
+};
+
+Nagbar.defaultProps = {
+    className: undefined,
+};
 
 const views = mapObjectToObject(
     routes,
@@ -85,17 +96,41 @@ const views = mapObjectToObject(
     ),
 );
 
+const ChromeDownloadLink = () => (
+    <a href="https://www.google.com/chrome/">
+        {_ts('multiplexer', 'hereLabel')}
+    </a>
+);
+
 // NOTE: withRouter is required here so that link change are updated
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Multiplexer extends React.PureComponent {
     static propTypes = propTypes;
 
+    constructor(props) {
+        super(props);
+        const browser = browserDetect();
+        this.state = {
+            showBrowserWarning: browser.name !== 'chrome' && !localStorage.getItem('browserWarningDismissed'),
+        };
+    }
+
     componentDidMount() {
         const { currentThemeId } = this.props;
         // window.onunload = this.props.removeSelfTabStatus;
 
         setTheme(currentThemeId);
+
+        if (this.state.showBrowserWarning) {
+            document.body.classList.add('nagbar-shown');
+        }
+    }
+
+    handleCloseMessageButtonClick = () => {
+        this.setState({ showBrowserWarning: false });
+        document.body.classList.remove('nagbar-shown');
+        localStorage.setItem('browserWarningDismissed', true);
     }
 
     handleToastClose = () => {
@@ -168,6 +203,26 @@ export default class Multiplexer extends React.PureComponent {
 
         return (
             <Fragment>
+                { this.state.showBrowserWarning && (
+                    <Nagbar className={styles.nagbar}>
+                        <div className={styles.message}>
+                            {_ts(
+                                'multiplexer',
+                                'unsupportedBrowserMessage',
+                                {
+                                    chromeUrl: <ChromeDownloadLink />,
+                                },
+                            )}
+                        </div>
+                        <Button
+                            className={styles.nagbarDismissButton}
+                            onClick={this.handleCloseMessageButtonClick}
+                            iconName="close"
+                            transparent
+                            type="button"
+                        />
+                    </Nagbar>
+                )}
                 <Navbar className="navbar" />
                 <Toast
                     notification={lastNotify}
