@@ -187,6 +187,7 @@ const deleteEntry = (state, action) => {
     const { activeProject: projectId } = state;
     const {
         entriesView: {
+            totalEntriesCount,
             [projectId]: {
                 entries: leadGroupedEntries = [],
             } = {},
@@ -196,11 +197,14 @@ const deleteEntry = (state, action) => {
     const newState = produce(state, (safeState) => {
         if (!safeState.entriesView) {
             // eslint-disable-next-line no-param-reassign
-            safeState.entriesView = {};
+            safeState.entriesView = {
+            };
         }
         if (!safeState.entriesView[projectId]) {
             // eslint-disable-next-line no-param-reassign
-            safeState.entriesView[projectId] = {};
+            safeState.entriesView[projectId] = {
+                totalEntriesCount: 0,
+            };
         }
         if (!safeState.entriesView[projectId].entries) {
             // eslint-disable-next-line no-param-reassign
@@ -219,6 +223,7 @@ const deleteEntry = (state, action) => {
 
             if (entryIndex > -1) {
                 // eslint-disable-next-line no-param-reassign
+                safeState.entriesView[projectId].totalEntriesCount -= 1;
                 safeEntries.splice(entryIndex, 1);
             }
         }

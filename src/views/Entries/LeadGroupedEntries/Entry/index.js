@@ -18,10 +18,11 @@ import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
-import Cloak from '#components/general/Cloak';
-
-import ButtonLikeLink from '#components/general/ButtonLikeLink';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+
+import Cloak from '#components/general/Cloak';
+import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import { pathNames } from '#constants';
@@ -255,6 +256,11 @@ export default class Entry extends React.PureComponent {
         const {
             className: classNameFromProps,
             widgets,
+            requests: {
+                deleteEntryRequest: {
+                    pending,
+                },
+            },
             entry: {
                 id: entryId,
                 createdBy,
@@ -281,6 +287,7 @@ export default class Entry extends React.PureComponent {
 
         return (
             <React.Fragment>
+                {pending && <LoadingAnimation />}
                 <header className={_cs('entry-container-header', styles.entryHeader)}>
                     <div className={styles.rightContainer}>
                         <ListView
@@ -343,6 +350,7 @@ export default class Entry extends React.PureComponent {
                                     onClick={this.handleEntryDelete}
                                     confirmationTitle={_ts('entries', 'deleteConfirmTitle')}
                                     confirmationMessage={_ts('entries', 'deleteConfirmMessage')}
+                                    disabled={pending}
                                     className={styles.deleteButton}
                                 />
                             }
