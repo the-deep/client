@@ -129,7 +129,7 @@ function EntryVerify(props: Props) {
                         className={styles.dropdown}
                         options={verificationStatusOptions}
                         onItemSelect={handleItemSelect}
-                        dropdownIcon=""
+                        dropdownIcon="arrowDropdown"
                         dropdownLeftComponent={(
                             <div
                                 title={title}
