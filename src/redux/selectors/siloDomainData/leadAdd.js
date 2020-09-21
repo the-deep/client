@@ -44,13 +44,15 @@ export const leadAddPageActiveLeadKeySelector = createSelector(
 
 export const leadAddPageActiveSourceSelector = createSelector(
     leadAddPageForProjectSelector,
-    leadAddPage => leadAddPage?.activeSource ?? LEAD_TYPE.text,
+    leadAddPage => leadAddPage?.activeSource,
 );
 
 export const leadAddPageActiveSourceLeadsSelector = createSelector(
     leadAddPageLeadsSelector,
     leadAddPageActiveSourceSelector,
-    (leads, activeSource) => leads.filter(lead => leadSourceTypeSelector(lead) === activeSource),
+    (leads, activeSource) => (
+        activeSource ? leads.filter(lead => leadSourceTypeSelector(lead) === activeSource) : []
+    ),
 );
 
 export const leadAddPageActiveLeadSelector = createSelector(

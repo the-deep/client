@@ -1,3 +1,5 @@
+@import '~base-scss/utils';
+
 .add-lead-sources {
     display: flex;
     flex-direction: column;
@@ -8,5 +10,13 @@
     .heading {
         margin: 0;
         padding: var(--spacing-medium) var(--spacing-large);
+    }
+
+    .file-input {
+        :global {
+            label {
+                @include button-like-link(var(--color-primary));
+            }
+        }
     }
 }

@@ -161,7 +161,7 @@ function LeadProcessor(props) {
         function getInitialState(sourceType) {
             // NOTE: pristine means pending here
             return [LEAD_TYPE.file, LEAD_TYPE.dropbox, LEAD_STATUS.drive].includes(sourceType)
-                ? LEAD_STATUS.pristine
+                ? LEAD_STATUS.nonPristine
                 : LEAD_STATUS.complete;
         }
 
@@ -207,7 +207,8 @@ function LeadProcessor(props) {
                     })
                     .progress((progress) => {
                         // NOTE: set progress to 100 only after attachment is received
-                        handleUploadProgressChange(key, Math.min(99, progress));
+                        // handleUploadProgressChange(key, Math.min(99, progress));
+                        handleUploadProgressChange(key, progress);
                     })
                     .success((response) => {
                         handleUploadSuccess({

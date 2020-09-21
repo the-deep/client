@@ -13,7 +13,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
 
 import DropboxChooser from '#components/importer/DropboxChooser';
@@ -32,8 +31,8 @@ import { formatTitle } from '#utils/common';
 import { useModalState } from '#hooks/stateManagement';
 
 import {
-    leadAddPageActiveSourceSelector,
-    leadAddSetActiveSourceAction,
+    // leadAddPageActiveSourceSelector,
+    // leadAddSetActiveSourceAction,
     leadAddPageLeadsSelector,
 } from '#redux';
 
@@ -354,6 +353,7 @@ function LeadSources(props) {
                 itemState={sourceStates[LEAD_TYPE.file]}
                 actionButtons={(
                     <FileInput
+                        className={styles.fileInput}
                         onChange={handleLeadAddFromDisk}
                         showStatus={false}
                         multiple
@@ -372,13 +372,11 @@ function LeadSources(props) {
                 count={counts[LEAD_TYPE.website]}
                 itemState={sourceStates[LEAD_TYPE.website]}
                 actionButtons={(
-                    <Button
-                        transparent
-                        // onClick={handleLeadAddFromWebsite}
+                    <PrimaryButton
                         onClick={setWebsiteModalVisible}
                     >
                         <Icon name="add" />
-                    </Button>
+                    </PrimaryButton>
                 )}
             />
             {websiteModalVisible && (
@@ -396,12 +394,11 @@ function LeadSources(props) {
                 count={counts[LEAD_TYPE.text]}
                 itemState={sourceStates[LEAD_TYPE.text]}
                 actionButtons={(
-                    <Button
-                        transparent
+                    <PrimaryButton
                         onClick={handleLeadAddFromText}
                     >
                         <Icon name="add" />
-                    </Button>
+                    </PrimaryButton>
                 )}
             />
             <LeadListItem
@@ -421,6 +418,8 @@ function LeadSources(props) {
                         mimeTypes={supportedGoogleDriveMimeTypes}
                         multiselect
                         navHidden
+                        transparent={false}
+                        buttonType="button-primary"
                     >
                         <Icon name="add" />
                     </GooglePicker>
@@ -443,6 +442,8 @@ function LeadSources(props) {
                         disabled={dropboxDisabled}
                         onClick={handleDropboxChooserClick}
                         cancel={handleDropboxChooserClose}
+                        transparent={false}
+                        buttonType="button-primary"
                     >
                         <Icon name="add" />
                     </DropboxChooser>
@@ -477,14 +478,17 @@ LeadSources.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    activeSource: leadAddPageActiveSourceSelector(state),
+    // activeSource: leadAddPageActiveSourceSelector(state),
     leads: leadAddPageLeadsSelector(state),
 });
 
+/*
 const mapDispatchToProps = dispatch => ({
     onSourceChange: params => dispatch(leadAddSetActiveSourceAction(params)),
 });
+*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+// export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(mapStateToProps)(
     LeadSources,
 );

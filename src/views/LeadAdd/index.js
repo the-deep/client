@@ -13,6 +13,7 @@ import {
 } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
+import Button from '#rsca/Button';
 import Message from '#rscv/Message';
 import Confirm from '#rscv/Modal/Confirm';
 import Page from '#rscv/Page';
@@ -41,6 +42,9 @@ import {
     leadAddSetLeadAttachmentAction,
     leadAddChangeLeadAction,
     leadAddSaveLeadAction,
+
+    leadAddSetActiveSourceAction,
+    leadAddPageActiveSourceSelector,
 } from '#redux';
 import {
     createUrlForLeadEdit,
@@ -53,6 +57,7 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
+import LeadListItem from './LeadListItem';
 import LeadSources from './LeadSources';
 import LeadPreview from './LeadPreview';
 import LeadActions from './LeadActions';
@@ -74,6 +79,557 @@ import {
 } from './utils';
 import styles from './styles.scss';
 
+const mockConnectors = {
+    count: 1,
+    next: null,
+    previous: null,
+    results: [
+        {
+            id: 1,
+            createdAt: '2020-09-16T09:17:56.999452Z',
+            modifiedAt: '2020-09-16T09:19:32.621638Z',
+            createdBy: 2,
+            modifiedBy: 2,
+            createdByName: 'Safar Ligal',
+            modifiedByName: 'Safar Ligal',
+            clientId: null,
+            versionId: 2,
+            sources: [
+                {
+                    id: 6,
+                    params: {
+                        country: '695',
+                        dateFrom: '2020-01-01',
+                    },
+                    lastCalculatedAt: null,
+                    stats: {},
+                    status: 'processing',
+                    source: 'unhcr-portal',
+                    connector: 1,
+                },
+                {
+                    id: 5,
+                    params: {
+                        from: '2020-01-01',
+                        country: 'NPL',
+                        'primary-country': 'NPL',
+                    },
+                    lastCalculatedAt: null,
+                    stats: {},
+                    status: 'processing',
+                    source: 'relief-web',
+                    connector: 1,
+                },
+                {
+                    id: 4,
+                    params: {
+                        country: 'Nepal',
+                    },
+                    lastCalculatedAt: null,
+                    stats: {},
+                    status: 'processing',
+                    source: 'post-disaster-needs-assessment',
+                    connector: 1,
+                },
+                {
+                    id: 3,
+                    params: {
+                        'nameList[]': 'NP',
+                    },
+                    lastCalculatedAt: null,
+                    stats: {},
+                    status: 'processing',
+                    source: 'research-resource-center',
+                    connector: 1,
+                },
+                {
+                    id: 2,
+                    params: {
+                        tid1: '260',
+                        tid6: 'All',
+                    },
+                    lastCalculatedAt: null,
+                    stats: {},
+                    status: 'processing',
+                    source: 'world-food-programme',
+                    connector: 1,
+                },
+                {
+                    id: 1,
+                    params: {
+                        country: 'nepal',
+                    },
+                    lastCalculatedAt: null,
+                    stats: {},
+                    status: 'processing',
+                    source: 'humanitarian-response',
+                    connector: 1,
+                },
+            ],
+            title: 'My First Connector',
+            project: 1,
+        },
+    ],
+};
+
+const mockLeads = {
+    count: 10,
+    next: null,
+    previous: null,
+    results: [
+        {
+            id: 74,
+            lead: {
+                id: 44,
+                url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/UNHCR%20Asia-Pacific%20COVID-19%20external%20update%2016-09-20%20rev.pdf',
+                status: 'success',
+                data: {
+                    key: '3670998',
+                    url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/UNHCR%20Asia-Pacific%20COVID-19%20external%20update%2016-09-20%20rev.pdf',
+                    title: 'UNHCR Asia and the Pacific COVID-19 External Update (16 September 2020)',
+                    source: 4232,
+                    authors: [
+                        3369,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'UN High Commissioner for Refugees',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-16 00:00:00+00:00',
+                    authorDetail: {
+                        id: 3369,
+                        title: 'UN High Commissioner for Refugees',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 3369,
+                            title: 'UN High Commissioner for Refugees',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 73,
+            lead: {
+                id: 43,
+                url: 'https://reliefweb.int/report/nepal/nepal-earthquake-national-seismological-centre-media-echo-daily-flash-16-september',
+                status: 'success',
+                data: {
+                    key: '3670672',
+                    url: 'https://reliefweb.int/report/nepal/nepal-earthquake-national-seismological-centre-media-echo-daily-flash-16-september',
+                    title: 'Nepal – Earthquake (National Seismological Centre, Media) (ECHO Daily Flash of 16 September)',
+                    source: 4232,
+                    authors: [
+                        1957,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: "European Commission's Directorate-General for European Civil Protection and Humanitarian Aid Operations",
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-16 00:00:00+00:00',
+                    authorDetail: {
+                        id: 1957,
+                        title: "ECHO (European Commission's Directorate-General for European Civil Protection and Humanitarian Aid Operations)",
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 1957,
+                            title: "ECHO (European Commission's Directorate-General for European Civil Protection and Humanitarian Aid Operations)",
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 71,
+            lead: {
+                id: 41,
+                url: 'https://reliefweb.int/report/nepal/nepal-makes-progress-human-capital-development-though-pandemic-threatens-gains-past',
+                status: 'success',
+                data: {
+                    key: '3670885',
+                    url: 'https://reliefweb.int/report/nepal/nepal-makes-progress-human-capital-development-though-pandemic-threatens-gains-past',
+                    title: 'Nepal makes progress in human capital development though pandemic threatens gains of the past decade',
+                    source: 4232,
+                    authors: [
+                        2984,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'World Bank',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-17 00:00:00+00:00',
+                    authorDetail: {
+                        id: 2984,
+                        title: 'World Bank',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 2984,
+                            title: 'World Bank',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 76,
+            lead: {
+                id: 46,
+                url: 'https://reliefweb.int/report/nepal/feature-lessons-pandemic-nepal-learning-transform-its-agricultural-sector',
+                status: 'success',
+                data: {
+                    key: '3670292',
+                    url: 'https://reliefweb.int/report/nepal/feature-lessons-pandemic-nepal-learning-transform-its-agricultural-sector',
+                    title: 'FEATURE: Lessons from the pandemic – Nepal is learning to transform its agricultural sector',
+                    source: 4232,
+                    authors: [
+                        3922,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'Climate and Development Knowledge Network',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-15 00:00:00+00:00',
+                    authorDetail: {
+                        id: 3922,
+                        title: 'Climate and Development Knowledge Network',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 3922,
+                            title: 'Climate and Development Knowledge Network',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 72,
+            lead: {
+                id: 42,
+                url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/roap_covid_response_sitrep_18.pdf',
+                status: 'success',
+                data: {
+                    key: '3670541',
+                    url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/roap_covid_response_sitrep_18.pdf',
+                    title: 'COVID-19 Response: IOM Regional Office for Asia Pacific Situation Report 18 - September 16, 2020',
+                    source: 4232,
+                    authors: [
+                        3310,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'International Organization for Migration',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-16 00:00:00+00:00',
+                    authorDetail: {
+                        id: 3310,
+                        title: 'International Organization for Migration',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 3310,
+                            title: 'International Organization for Migration',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 78,
+            lead: {
+                id: 48,
+                url: 'https://reliefweb.int/report/united-states-america/cws-condemns-tps-termination-which-could-lead-family-separation',
+                status: 'success',
+                data: {
+                    key: '3670141',
+                    url: 'https://reliefweb.int/report/united-states-america/cws-condemns-tps-termination-which-could-lead-family-separation',
+                    title: 'CWS Condemns TPS Termination, Which Could lead to Family Separation & Deportation of Hundreds of Thousands in the United States',
+                    source: 4232,
+                    authors: [
+                        2041,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'Church World Service',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-14 00:00:00+00:00',
+                    authorDetail: {
+                        id: 2041,
+                        title: 'Church World Service',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 2041,
+                            title: 'Church World Service',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 80,
+            lead: {
+                id: 50,
+                url: 'https://reliefweb.int/report/nepal/nepal-landslides-echo-daily-flash-14-september-2020',
+                status: 'success',
+                data: {
+                    key: '3669991',
+                    url: 'https://reliefweb.int/report/nepal/nepal-landslides-echo-daily-flash-14-september-2020',
+                    title: 'Nepal - Landslides (ECHO Daily Flash of 14 September 2020)',
+                    source: 4232,
+                    authors: [
+                        1957,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: "European Commission's Directorate-General for European Civil Protection and Humanitarian Aid Operations",
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-14 00:00:00+00:00',
+                    authorDetail: {
+                        id: 1957,
+                        title: "ECHO (European Commission's Directorate-General for European Civil Protection and Humanitarian Aid Operations)",
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 1957,
+                            title: "ECHO (European Commission's Directorate-General for European Civil Protection and Humanitarian Aid Operations)",
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 79,
+            lead: {
+                id: 49,
+                url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/DCA%20COVID-19%20and%20Flood%20Response_SITREP%20%23XXIV_Final%20.pdf',
+                status: 'success',
+                data: {
+                    key: '3670037',
+                    url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/DCA%20COVID-19%20and%20Flood%20Response_SITREP%20%23XXIV_Final%20.pdf',
+                    title: 'Covid19: Nepal Covid 19 and Flood Response Situation Report No.XXIV, as of 14 September 2020',
+                    source: 4232,
+                    authors: [
+                        2602,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'DanChurchAid',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-14 00:00:00+00:00',
+                    authorDetail: {
+                        id: 2602,
+                        title: 'DanChurchAid',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 2602,
+                            title: 'DanChurchAid',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 77,
+            lead: {
+                id: 47,
+                url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/pacific_logistics_cluster_airport_restrictions_information_200915.pdf',
+                status: 'success',
+                data: {
+                    key: '3670180',
+                    url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/pacific_logistics_cluster_airport_restrictions_information_200915.pdf',
+                    title: 'Pacific - Airport Restrictions Information (Updated 15 September 2020)',
+                    source: 4232,
+                    authors: [
+                        3171,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'World Food Programme',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-15 00:00:00+00:00',
+                    authorDetail: {
+                        id: 3171,
+                        title: 'World Food Programme',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 3171,
+                            title: 'World Food Programme',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+        {
+            id: 75,
+            lead: {
+                id: 45,
+                url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/ROAP_Snapshot_200915.pdf',
+                status: 'success',
+                data: {
+                    key: '3670318',
+                    url: 'https://reliefweb.int/sites/reliefweb.int/files/resources/ROAP_Snapshot_200915.pdf',
+                    title: 'Asia and the Pacific: Weekly Regional Humanitarian Snapshot (8 - 14 September 2020)',
+                    source: 4232,
+                    authors: [
+                        4206,
+                    ],
+                    website: 'www.reliefweb.int',
+                    existing: false,
+                    authorRaw: 'UN Office for the Coordination of Humanitarian Affairs',
+                    sourceRaw: 'reliefweb',
+                    sourceType: 'website',
+                    emmEntities: [],
+                    emmTriggers: [],
+                    publishedOn: '2020-09-15 00:00:00+00:00',
+                    authorDetail: {
+                        id: 4206,
+                        title: 'UN Office for the Coordination of Humanitarian Affairs',
+                    },
+                    sourceDetail: {
+                        id: 4232,
+                        title: 'ReliefWeb',
+                        mergedAs: {
+                            id: 3507,
+                            title: 'Reliefweb',
+                        },
+                    },
+                    authorsDetail: [
+                        {
+                            id: 4206,
+                            title: 'UN Office for the Coordination of Humanitarian Affairs',
+                        },
+                    ],
+                },
+            },
+            blocked: false,
+            alreadyAdded: false,
+        },
+    ],
+};
+
 function mergeEntities(foo = [], bar = []) {
     return unique(
         [...foo, ...bar],
@@ -90,9 +646,12 @@ const mapStateToProps = state => ({
     leads: leadAddPageLeadsSelector(state),
     activeLead: leadAddPageActiveLeadSelector(state),
     leadPreviewHidden: leadAddPageLeadPreviewHiddenSelector(state),
+
+    activeSource: leadAddPageActiveSourceSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
+    onSourceChange: params => dispatch(leadAddSetActiveSourceAction(params)),
     appendLeads: params => dispatch(leadAddAppendLeadsAction(params)),
     removeLeads: params => dispatch(leadAddRemoveLeadsAction(params)),
     changeLead: params => dispatch(leadAddChangeLeadAction(params)),
@@ -117,6 +676,9 @@ const propTypes = {
     removeLeads: PropTypes.func.isRequired,
     changeLead: PropTypes.func.isRequired,
     saveLead: PropTypes.func.isRequired,
+
+    onSourceChange: PropTypes.func.isRequired,
+    activeSource: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -138,6 +700,8 @@ function LeadAdd(props) {
         changeLead,
         saveLead,
         removeLeads,
+        onSourceChange,
+        activeSource,
     } = props;
 
     const [leadSaveStatuses, setLeadSaveStatuses] = useState({});
@@ -150,6 +714,15 @@ function LeadAdd(props) {
 
     const [organizations, setOrganizations] = useState([]);
     const [leadGroups, setLeadGroups] = useState([]);
+
+    const mergeOrganizations = useCallback(
+        (newOrganizations) => {
+            setOrganizations(stateOrganizations => (
+                mergeEntities(stateOrganizations, newOrganizations)
+            ));
+        },
+        [],
+    );
 
     const body = useMemo(
         () => {
@@ -230,11 +803,9 @@ function LeadAdd(props) {
             if (newOrganizations.length <= 0) {
                 return;
             }
-            setOrganizations(stateOrganizations => (
-                mergeEntities(stateOrganizations, newOrganizations)
-            ));
+            mergeOrganizations(newOrganizations);
         },
-        [],
+        [mergeOrganizations],
     );
 
     const handleLeadGroupsAdd = useCallback(
@@ -486,20 +1057,49 @@ function LeadAdd(props) {
         [handleLeadsToRemoveSet],
     );
 
-    const hasActiveLead = isDefined(activeLead);
 
+    const [connectorsPending, connectorsResponse] = useRequest({
+        url: `server://projects/${projectId}/unified-connectors/`,
+        mockResponse: mockConnectors,
+        autoTrigger: true,
+    });
+    const [selectedConnector, setSelectedConnector] = useState(undefined);
+    // TODO: validate this selected connector source
+    const [selectedConnectorSource, setSelectedConnectorSource] = useState(undefined);
+    // TODO: validate this selected connector lead
+    const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
+    const connectors = connectorsResponse?.results;
+
+    let connectorLeadUrl;
+    if (selectedConnectorSource) {
+        connectorLeadUrl = `server://projects/${projectId}/unified-connector-sources/${selectedConnectorSource}/leads/`;
+    } else if (selectedConnector) {
+        connectorLeadUrl = `server://projects/${projectId}/unified-connectors/${selectedConnector}/leads/`;
+    }
+
+    const [connectorLeadsPending, connectorLeadsResponse] = useRequest({
+        url: connectorLeadUrl,
+        query: {
+            offset: 1,
+            limit: 20,
+        },
+        mockResponse: mockLeads,
+        autoTrigger: true,
+    });
+
+    const connectorMode = !!selectedConnector;
+    const hasActiveConnectorLead = !!selectedConnectorLead;
+
+    const hasActiveLead = isDefined(activeLead);
     const leadIsTextType = hasActiveLead && (
         leadSourceTypeSelector(activeLead) === LEAD_TYPE.text
     );
-
     const activeLeadKey = activeLead
         ? leadKeySelector(activeLead)
         : undefined;
-
     const activeLeadState = activeLeadKey
         ? leadStates[activeLeadKey]
         : undefined;
-
     const leadPreviewMinimized = leadPreviewHidden || leadIsTextType;
 
     // TODO: IMP calculate this value
@@ -531,14 +1131,6 @@ function LeadAdd(props) {
                             {/* TODO: translate this */}
                             Add Leads
                         </h4>
-                        <LeadActions
-                            className={styles.actions}
-                            disabled={submitAllPending}
-                            leadStates={leadStates}
-                            onLeadsSave={handleLeadsSave}
-                            onLeadsRemove={handleLeadsToRemoveSet}
-                            onLeadsExport={handleLeadsExport}
-                        />
                     </>
                 )}
                 mainContentClassName={styles.mainContent}
@@ -553,71 +1145,152 @@ function LeadAdd(props) {
                                             className={styles.leadButtons}
                                             onLeadsAdd={handleLeadsAdd}
                                             leadStates={leadStates}
+                                            activeSource={activeSource}
+                                            onSourceChange={(source) => {
+                                                onSourceChange(source);
+                                                setSelectedConnector(undefined);
+                                                setSelectedConnectorSource(undefined);
+                                            }}
                                         />
+                                        {connectors && connectors.length > 0 && (
+                                            <h4>
+                                                {/* FIXME: use strings */}
+                                                Connectors
+                                            </h4>
+                                        )}
+                                        {connectors?.map(connector => (
+                                            <div
+                                                key={connector.id}
+                                                className={styles.connectorContainer}
+                                            >
+                                                <LeadListItem
+                                                    key={connector.id}
+                                                    className={styles.connector}
+                                                    title={connector.title}
+                                                    type={LEAD_TYPE.connectors}
+                                                    // eslint-disable-next-line max-len
+                                                    active={connector.id === selectedConnector && !selectedConnectorSource}
+                                                    onItemSelect={() => {
+                                                        onSourceChange(undefined);
+                                                        setSelectedConnector(connector.id);
+                                                        setSelectedConnectorSource(undefined);
+                                                    }}
+                                                    count={connector.stats?.noOfLeads}
+                                                />
+                                                {connector.sources.map(source => (
+                                                    <LeadListItem
+                                                        className={styles.subConnector}
+                                                        key={source.id}
+                                                        title={source.source}
+                                                        // eslint-disable-next-line max-len
+                                                        active={connector.id === selectedConnector && source.id === selectedConnectorSource}
+                                                        onItemSelect={() => {
+                                                            onSourceChange(undefined);
+                                                            setSelectedConnector(connector.id);
+                                                            setSelectedConnectorSource(source.id);
+                                                        }}
+                                                        count={source.stats?.noOfLeads}
+                                                    />
+                                                ))}
+                                            </div>
+                                        ))}
                                         <CandidateLeads
                                             className={styles.candidateLeadsBox}
                                             onLeadsAdd={handleLeadsAdd}
+                                            onOrganizationsAdd={mergeOrganizations}
                                         />
                                     </LeadProcessor>
                                 </div>
                             )}
                         />
                         <div className={styles.main}>
-                            <div className={styles.leadList}>
-                                <LeadFilter
-                                    className={styles.filter}
-                                />
-                                <LeadList
-                                    className={styles.list}
-                                    leadStates={leadStates}
-                                    onLeadRemove={handleLeadToRemoveSet}
-                                    onLeadExport={handleLeadExport}
-                                    onLeadSave={handleLeadSave}
-                                />
-                            </div>
-                            {hasActiveLead ? (
-                                <ResizableV
-                                    className={_cs(
-                                        styles.leadDetail,
-                                        leadPreviewMinimized && styles.textLead,
-                                    )}
-                                    topContainerClassName={styles.top}
-                                    bottomContainerClassName={styles.bottom}
-                                    disabled={leadPreviewMinimized}
-                                    topChild={(
-                                        <LeadDetail
-                                            key={activeLeadKey}
-                                            leadState={activeLeadState}
-                                            bulkActionDisabled={submitAllPending}
-
-                                            pending={pending}
-
-                                            priorityOptions={leadOptions?.priority}
-                                            confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
-                                            assignees={leadOptions?.members}
-
-                                            leadGroups={leadGroups}
-                                            onLeadGroupsAdd={handleLeadGroupsAdd}
-
-                                            organizations={organizations}
-                                            onOrganizationsAdd={handleOrganizationsAdd}
+                            {!connectorMode && (
+                                <>
+                                    <div className={styles.bar}>
+                                        <LeadFilter
+                                            className={styles.filter}
                                         />
-                                    )}
-                                    bottomChild={!leadPreviewMinimized && (
-                                        <LeadPreview
-                                            // NOTE: need to dismount
-                                            // LeadPreview because the
-                                            // children cannot handle
-                                            // change gracefully
-                                            key={activeLeadKey}
-                                            className={styles.leadPreview}
+                                        <LeadActions
+                                            className={styles.actions}
+                                            disabled={submitAllPending}
+                                            leadStates={leadStates}
+
+                                            onLeadsSave={handleLeadsSave}
+                                            onLeadsRemove={handleLeadsToRemoveSet}
+                                            onLeadsExport={handleLeadsExport}
                                         />
+                                    </div>
+                                    <div className={styles.content}>
+                                        <LeadList
+                                            className={styles.list}
+                                            leadStates={leadStates}
+                                            onLeadRemove={handleLeadToRemoveSet}
+                                            onLeadExport={handleLeadExport}
+                                            onLeadSave={handleLeadSave}
+                                        />
+                                        {hasActiveLead ? (
+                                            <ResizableV
+                                                className={_cs(
+                                                    styles.leadDetail,
+                                                    leadPreviewMinimized && styles.textLead,
+                                                )}
+                                                topContainerClassName={styles.top}
+                                                bottomContainerClassName={styles.bottom}
+                                                disabled={leadPreviewMinimized}
+                                                topChild={(
+                                                    <LeadDetail
+                                                        key={activeLeadKey}
+                                                        leadState={activeLeadState}
+                                                        bulkActionDisabled={submitAllPending}
+
+                                                        pending={pending}
+
+                                                        priorityOptions={leadOptions?.priority}
+                                                        confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
+                                                        assignees={leadOptions?.members}
+
+                                                        leadGroups={leadGroups}
+                                                        onLeadGroupsAdd={handleLeadGroupsAdd}
+
+                                                        organizations={organizations}
+                                                        onOrganizationsAdd={handleOrganizationsAdd}
+                                                    />
+                                                )}
+                                                bottomChild={!leadPreviewMinimized && (
+                                                    <LeadPreview
+                                                        // NOTE: need to dismount
+                                                        // LeadPreview because the
+                                                        // children cannot handle
+                                                        // change gracefully
+                                                        key={activeLeadKey}
+                                                        className={styles.leadPreview}
+                                                    />
+                                                )}
+                                            />
+                                        ) : (
+                                            <Message>
+                                                { _ts('addLeads', 'noLeadsText') }
+                                            </Message>
+                                        )}
+                                    </div>
+                                </>
+                            )}
+                            {connectorMode && (
+                                <div className={styles.content}>
+                                    {/* TODO: add actions */}
+                                    <div className={styles.list}>
+                                        <div> Lead list goes here </div>
+                                    </div>
+                                    {hasActiveConnectorLead ? (
+                                        <div className={styles.leadDetail}>
+                                            Lead preview goes here
+                                        </div>
+                                    ) : (
+                                        <Message>
+                                            { _ts('addLeads', 'noLeadsText') }
+                                        </Message>
                                     )}
-                                />
-                            ) : (
-                                <Message>
-                                    { _ts('addLeads', 'noLeadsText') }
-                                </Message>
+                                </div>
                             )}
                         </div>
                     </>

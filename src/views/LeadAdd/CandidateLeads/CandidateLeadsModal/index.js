@@ -93,6 +93,7 @@ function CandidateLeadsModal(props) {
                     data={candidateLeads}
                     className={styles.candidateLeadsList}
                     keySelector={leadKeySelector}
+                    // TODO: show states (upload, extraction, etc) with better progress
                     renderer={LeadListItem}
                     rendererParams={candidateLeadsRendererParams}
                 />

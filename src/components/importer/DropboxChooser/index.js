@@ -19,6 +19,9 @@ const propTypes = {
     disabled: PropTypes.bool,
     // Callback when api is loaded successfully and ready to use
     onApiLoad: PropTypes.func,
+
+    buttonType: PropTypes.string,
+    transparent: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -31,6 +34,8 @@ const defaultProps = {
     extensions: undefined,
     onClick: undefined,
     onApiLoad: undefined,
+    buttonType: undefined,
+    transparent: undefined,
 };
 
 // read more
@@ -111,6 +116,8 @@ export default class DropboxChooser extends React.Component {
             className,
             disabled,
             children,
+            transparent = true,
+            buttonType,
         } = this.props;
         const { ready } = this.state;
 
@@ -119,7 +126,8 @@ export default class DropboxChooser extends React.Component {
                 className={className}
                 onClick={this.handleClick}
                 disabled={disabled || !ready}
-                transparent
+                transparent={transparent}
+                buttonType={buttonType}
             >
                 {
                     children || _ts('components.dropboxChooser', 'openDropboxChooserText')

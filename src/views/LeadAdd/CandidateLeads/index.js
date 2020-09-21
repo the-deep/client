@@ -41,6 +41,7 @@ function getSource(data) {
 const propTypes = {
     className: PropTypes.string,
     onLeadsAdd: PropTypes.func.isRequired,
+    onOrganizationsAdd: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -51,6 +52,7 @@ function CandidateLeads(props) {
     const {
         className,
         onLeadsAdd,
+        onOrganizationsAdd,
     } = props;
 
     const {
@@ -162,8 +164,9 @@ function CandidateLeads(props) {
             ],
         },
         onSuccess: (response) => {
+            const orgs = response.results;
             const organizationMapping = listToMap(
-                response.results,
+                orgs,
                 item => item.key,
                 item => item.organization.id,
             );
@@ -206,7 +209,10 @@ function CandidateLeads(props) {
                 };
             });
 
+            // NOTE: Adding organizations used on new leads
+            onOrganizationsAdd(orgs);
             onLeadsAdd(newLeads);
+
             clearCompletedCandidateLeads();
             setProcessingModalVisibility(false);
         },
@@ -263,6 +269,7 @@ function CandidateLeads(props) {
 
     const pending = initialRequestPending || pollRequestPending || organizationPending;
 
+    // TODO: show pending/progress
     return (
         <>
             {candidateLeads.length > 0 && (

@@ -4,7 +4,7 @@
     .add-lead-list-item {
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         outline: none;
         border: 0;
         border-bottom: var(--width-separator-thin) solid var(--color-separator);
@@ -24,6 +24,24 @@
             background-color: var(--color-background-hover);
         }
 
+        .progress-bar {
+            display: block;
+            flex-shrink: 0;
+            transition: 1s opacity ease-in-out;
+            border-radius: 3px;
+            background-color: var(--color-separator);
+            width: 32px;
+            height: var(--height-progress-bar);
+
+            .progress {
+                display: block;
+                transition: .6s width ease-in-out;
+                border-radius: 3px;
+                background-color: var(--color-accent);
+                height: 100%;
+            }
+        }
+
         .icon {
             flex-shrink: 0;
             margin: 0 var(--spacing-small);
@@ -33,22 +51,19 @@
         }
 
         .title-container {
-            display: flex;
             align-items: center;
-            flex-basis: calc(100% - (var(--width-icon-large) + var(--spacing-small) * 2 ) * 2);
+            flex-grow: 1;
             margin: 0;
             padding: var(--spacing-small) 0;
+            overflow: hidden;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            // word-break: break-all;
+        }
 
-            .title {
-                flex-grow: 1;
-                text-align: left;
-                word-break: break-all;
-            }
-
-            .badge {
-                flex-shrink: 0;
-                margin-left: var(--spacing-extra-small);
-            }
+        .badge {
+            flex-shrink: 0;
         }
 
         .status-icon {
@@ -81,32 +96,6 @@
         }
     }
 
-    .progress-bar {
-        display: block;
-        flex-basis: 100%;
-        transition: 1s opacity ease-in-out;
-        opacity: 1;
-        background-color: var(--color-background);
-        width: 100%;
-        height: var(--height-progress-bar);
-
-        .progress {
-            display: block;
-            transition: .6s width ease-in-out;
-            background-color: var(--color-accent);
-            height: 100%;
-        }
-
-        &.completed {
-            opacity: 0;
-        }
-
-        &.hide {
-            display: none;
-        }
-    }
-
-
     .button-container {
         display: none;
         position: absolute;
@@ -120,6 +109,12 @@
             .status-icon {
                 display: none;
             }
+            .badge {
+                display: none;
+            }
+            .progress {
+                display: none;
+            }
         }
 
         .button-container {
@@ -128,6 +123,7 @@
         }
     }
 }
+
 @keyframes spin {
     from {
         transform:rotate(0deg);

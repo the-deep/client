@@ -293,6 +293,7 @@ function useRequest<T>(
         [],
     );
 
+    // TODO: make trigger take latest value from props
     const trigger = useCallback(
         () => {
             // NOTE: This is done to prevent race condition where request body
@@ -329,7 +330,7 @@ function useRequest<T>(
         () => {
             const { mockResponse } = requestOptionsRef.current;
             if (mockResponse) {
-                if (timestamp < 0) {
+                if (timestamp < 0 || !isFetchable(extendedUrl, method, body)) {
                     return () => {};
                 }
                 clientIdRef.current += 1;

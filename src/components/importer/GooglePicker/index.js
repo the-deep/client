@@ -10,7 +10,7 @@ const propTypes = {
     clientId: PropTypes.string.isRequired,
     developerKey: PropTypes.string.isRequired,
     scope: PropTypes.string,
-    viewId: PropTypes.string,
+    // viewId: PropTypes.string,
     origin: PropTypes.string,
     onChange: PropTypes.func,
     onAuthenticate: PropTypes.func,
@@ -21,6 +21,9 @@ const propTypes = {
     mimeTypes: PropTypes.arrayOf(PropTypes.string),
     // Callback when api is loaded successfully and ready to use
     onApiLoad: PropTypes.func,
+
+    buttonType: PropTypes.string,
+    transparent: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -29,7 +32,7 @@ const defaultProps = {
     onChange: () => {},
     onAuthenticate: () => {},
     scope: 'https://www.googleapis.com/auth/drive.readonly',
-    viewId: 'DOCS',
+    // viewId: 'DOCS',
     multiselect: false,
     navHidden: false,
     disabled: false,
@@ -37,6 +40,8 @@ const defaultProps = {
     mimeTypes: undefined,
     origin: window.location.origin,
     onApiLoad: undefined,
+    buttonType: undefined,
+    transparent: undefined,
 };
 
 const POLL_TIME = 3000;
@@ -124,7 +129,7 @@ export default class GooglePicker extends React.Component {
         const {
             onAuthenticate,
             createPicker,
-            viewId,
+            // viewId,
             mimeTypes,
             developerKey,
             onChange,
@@ -192,6 +197,8 @@ export default class GooglePicker extends React.Component {
             className,
             disabled,
             children,
+            transparent = true,
+            buttonType,
         } = this.props;
 
         const {
@@ -206,7 +213,8 @@ export default class GooglePicker extends React.Component {
                 className={className}
                 onClick={this.handleChoose}
                 disabled={disabled || !ready}
-                transparent
+                transparent={transparent}
+                buttonType={buttonType}
             >
                 { children || _ts('components.googlePicker', 'openGoogleChooserText') }
             </Button>

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { isNotDefined } from '@togglecorp/fujs';
+import { isDefined, bound } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 
@@ -16,16 +16,13 @@ import {
 
 import styles from './styles.scss';
 
-function UploadProgress({ progress }) {
-    const hide = isNotDefined(progress) || progress === 100 || progress < 0;
-
+function UploadProgress({ progress = 0, className: classNameFromProps }) {
     const className = _cs(
         styles.progressBar,
-        hide && styles.hide,
-        progress === 100 && styles.completed,
+        classNameFromProps,
     );
 
-    const style = { width: `${progress || 0}%` };
+    const style = { width: `${bound(progress, 0, 100)}%` };
 
     return (
         <span className={className}>
@@ -38,9 +35,11 @@ function UploadProgress({ progress }) {
 }
 UploadProgress.propTypes = {
     progress: PropTypes.number,
+    className: PropTypes.string,
 };
 UploadProgress.defaultProps = {
     progress: undefined,
+    className: undefined,
 };
 
 const leadTypeToIconClassMap = {
@@ -138,32 +137,41 @@ function LeadListItem(props) {
                 onClick={handleClick}
                 type="button"
             >
-                <Icon
-                    className={styles.icon}
-                    name={leadTypeToIconClassMap[type]}
-                />
-                <div className={styles.titleContainer}>
-                    <span className={styles.title}>
-                        {title}
-                    </span>
-                    {count && (
-                        <Badge
-                            className={styles.badge}
-                            title={count}
-                        />
-                    )}
-                </div>
-                <Icon
-                    className={stateIconClassName}
-                    name={iconMap[itemState]}
-                />
+                {leadTypeToIconClassMap[type] ? (
+                    <Icon
+                        className={styles.icon}
+                        name={leadTypeToIconClassMap[type]}
+                    />
+                ) : (
+                    <div className={styles.icon} />
+                )}
+                <span
+                    className={styles.titleContainer}
+                    title={title}
+                >
+                    {title}
+                </span>
+                {count && (
+                    <Badge
+                        className={styles.badge}
+                        title={count}
+                    />
+                )}
+                {isDefined(progress) && progress > 0 && progress < 100 ? (
+                    <UploadProgress
+                        className={styles.progress}
+                        progress={progress}
+                    />
+                ) : (
+                    <Icon
+                        className={stateIconClassName}
+                        name={iconMap[itemState]}
+                    />
+                )}
             </button>
             <div className={styles.buttonContainer}>
                 {actionButtons}
             </div>
-            <UploadProgress
-                progress={progress}
-            />
         </Jumper>
     );
 }
