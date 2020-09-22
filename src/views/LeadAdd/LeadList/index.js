@@ -151,6 +151,13 @@ function LeadList(props) {
         <DroppableDiv
             className={_cs(styles.leadListContainer, className)}
         >
+            <ListView
+                className={styles.leadList}
+                data={filteredLeads}
+                keySelector={leadKeySelector}
+                renderer={LeadListItem}
+                rendererParams={rendererParams}
+            />
             <div className={styles.movementButtons}>
                 <div className={styles.stats}>
                     {/* FIXME: use strings */}
@@ -174,13 +181,6 @@ function LeadList(props) {
                     />
                 </div>
             </div>
-            <ListView
-                className={styles.leadList}
-                data={filteredLeads}
-                keySelector={leadKeySelector}
-                renderer={LeadListItem}
-                rendererParams={rendererParams}
-            />
         </DroppableDiv>
     );
 }

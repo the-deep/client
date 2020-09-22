@@ -272,11 +272,12 @@ function CandidateLeads(props) {
     // TODO: show pending/progress
     return (
         <>
-            {candidateLeads.length > 0 && (
+            {candidateLeads.length > -1 && (
                 <div className={_cs(className, styles.candidateLeads)}>
                     <div className={styles.header}>
                         <h3 className={styles.heading}>
-                            {`Candidate Leads (${candidateLeads.length})`}
+                            {/* TODO: Translate string */}
+                            {`Processing ${candidateLeads.length} lead(s)`}
                         </h3>
                         <Button
                             className={styles.expandButton}

@@ -572,6 +572,71 @@ function LeadAdd(props) {
     // TODO: IMP calculate this value
     const saveEnabledForAll = false;
 
+    const leadConnectorChildren = connectors && connectors.length > 0 && (
+        <div className={styles.connectors}>
+            <h4 className={styles.connectorHeading}>
+                {/* FIXME: use strings */}
+                Browse
+            </h4>
+            {connectors.map(connector => (
+                <div
+                    key={connector.id}
+                    className={styles.connectorContainer}
+                >
+                    <LeadListItem
+                        key={connector.id}
+                        className={styles.connector}
+                        title={connector.title}
+                        // eslint-disable-next-line max-len
+                        active={connector.id === selectedConnector && !selectedConnectorSource}
+                        itemKey={connector.id}
+                        onItemSelect={() => {
+                            onSourceChange(undefined);
+                            setSelectedConnector(connector.id);
+                            setSelectedConnectorSource(undefined);
+                        }}
+                        count={connector.totalLeads}
+                        separator={false}
+                        actionButtons={(
+                            <PrimaryButton
+                                onClick={() => {
+                                    setConnectorToTrigger(connector.id);
+                                    connectorTriggerTrigger();
+                                }}
+                                disabled={connectorTriggerPending}
+                                // eslint-disable-next-line max-len
+                                pending={connectorToTrigger === connector.id && connectorTriggerPending}
+                            >
+                                <Icon name="refresh" />
+                            </PrimaryButton>
+                        )}
+                    />
+                    {connector.sources.map(source => (
+                        <LeadListItem
+                            className={styles.subConnector}
+                            key={source.id}
+                            itemKey={source.id}
+                            title={source.sourceDetail.title}
+                            type={LEAD_TYPE.connectors}
+                            // eslint-disable-next-line max-len
+                            active={connector.id === selectedConnector && source.id === selectedConnectorSource}
+                            onItemSelect={() => {
+                                onSourceChange(undefined);
+                                setSelectedConnector(connector.id);
+                                setSelectedConnectorSource(source.id);
+                            }}
+                            count={source.totalLeads}
+                            indent={1}
+                            separator={false}
+                            // eslint-disable-next-line max-len
+                            itemState={connectorStatusToLeadStatusMap[source.status]}
+                        />
+                    ))}
+                </div>
+            ))}
+        </div>
+    );
+
     return (
         <>
             <Prompt
@@ -619,68 +684,8 @@ function LeadAdd(props) {
                                                 setSelectedConnectorSource(undefined);
                                             }}
                                         />
-                                        {connectors && connectors.length > 0 && (
-                                            <h4 className={styles.connectorHeading}>
-                                                {/* FIXME: use strings */}
-                                                Connectors
-                                            </h4>
-                                        )}
-                                        {connectors?.map(connector => (
-                                            <div
-                                                key={connector.id}
-                                                className={styles.connectorContainer}
-                                            >
-                                                <LeadListItem
-                                                    key={connector.id}
-                                                    className={styles.connector}
-                                                    title={connector.title}
-                                                    // eslint-disable-next-line max-len
-                                                    active={connector.id === selectedConnector && !selectedConnectorSource}
-                                                    itemKey={connector.id}
-                                                    onItemSelect={() => {
-                                                        onSourceChange(undefined);
-                                                        setSelectedConnector(connector.id);
-                                                        setSelectedConnectorSource(undefined);
-                                                    }}
-                                                    count={connector.totalLeads}
-                                                    separator={false}
-                                                    actionButtons={(
-                                                        <PrimaryButton
-                                                            onClick={() => {
-                                                                setConnectorToTrigger(connector.id);
-                                                                connectorTriggerTrigger();
-                                                            }}
-                                                            disabled={connectorTriggerPending}
-                                                            // eslint-disable-next-line max-len
-                                                            pending={connectorToTrigger === connector.id && connectorTriggerPending}
-                                                        >
-                                                            <Icon name="refresh" />
-                                                        </PrimaryButton>
-                                                    )}
-                                                />
-                                                {connector.sources.map(source => (
-                                                    <LeadListItem
-                                                        className={styles.subConnector}
-                                                        key={source.id}
-                                                        itemKey={source.id}
-                                                        title={source.sourceDetail.title}
-                                                        type={LEAD_TYPE.connectors}
-                                                        // eslint-disable-next-line max-len
-                                                        active={connector.id === selectedConnector && source.id === selectedConnectorSource}
-                                                        onItemSelect={() => {
-                                                            onSourceChange(undefined);
-                                                            setSelectedConnector(connector.id);
-                                                            setSelectedConnectorSource(source.id);
-                                                        }}
-                                                        count={source.totalLeads}
-                                                        indent={1}
-                                                        separator={false}
-                                                        // eslint-disable-next-line max-len
-                                                        itemState={connectorStatusToLeadStatusMap[source.status]}
-                                                    />
-                                                ))}
-                                            </div>
-                                        ))}
+                                        {leadConnectorChildren}
+                                        <div className={styles.space} />
                                         <CandidateLeads
                                             className={styles.candidateLeadsBox}
                                             onLeadsAdd={handleLeadsAdd}

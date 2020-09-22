@@ -78,7 +78,7 @@ function CandidateLeadsModal(props) {
         >
             <ModalHeader
                 // TODO: Translate string
-                title={`Candidate Leads (${candidateLeads.length})`}
+                title={`Processing ${candidateLeads.length} lead(s)`}
                 rightComponent={(
                     <DangerButton
                         iconName="contractContent"
