@@ -55,7 +55,6 @@ export interface Connector {
     id: number;
     title: string;
     sources: UnifiedConnectorSourceInstance[];
-    updatedOn: string;
-    disabled: boolean;
+    isActive: boolean;
 }
 

@@ -16,6 +16,7 @@ import Faram, {
 import TextInput from '#rsci/TextInput';
 import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
+import Image from '#rscv/Image';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -54,6 +55,7 @@ interface ConnectorSourceButtonProps {
     onConnectorClick: (key: ConnectorSource['key']) => void;
     sourceKey: ConnectorSource['key'];
     active: boolean;
+    logo?: string;
 }
 
 function ConnectorSourceButton(props: ConnectorSourceButtonProps) {
@@ -62,6 +64,7 @@ function ConnectorSourceButton(props: ConnectorSourceButtonProps) {
         onConnectorClick,
         sourceKey,
         active,
+        logo,
     } = props;
 
     const handleConnectorClick = useCallback(() => {
@@ -73,6 +76,12 @@ function ConnectorSourceButton(props: ConnectorSourceButtonProps) {
             className={_cs(styles.button, active && styles.active)}
             onClick={handleConnectorClick}
         >
+            <Image
+                className={styles.imageContainer}
+                imageClassName={styles.image}
+                alt=""
+                src={logo}
+            />
             {title}
         </Button>
     );
@@ -183,16 +192,11 @@ function ProjectConnectorEditForm(props: OwnProps) {
     }, [setFaramErrors, setPristine]);
 
     const connectorUrl = useMemo(() => {
-        if (isNotDefined(bodyToSend)) {
-            return undefined;
-        }
-
         if (!isAddForm && connector) {
             return `server://projects/${projectId}/unified-connectors/${connector.id}/`;
         }
         return `server://projects/${projectId}/unified-connectors/`;
     }, [
-        bodyToSend,
         isAddForm,
         projectId,
         connector,
@@ -260,6 +264,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
         return ({
             title: data.title,
             sourceKey: data.key,
+            logo: data.logo,
             onConnectorClick: handleConnectorAdd,
             active,
         });

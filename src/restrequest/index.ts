@@ -295,10 +295,12 @@ function useRequest<T>(
 
     const trigger = useCallback(
         () => {
-            ReactDOM.unstable_batchedUpdates(() => {
-                setTimestamp(new Date().getTime());
-                setRequestOptionsFromState(requestOptionsRef.current);
-            });
+            setTimeout(() => {
+                ReactDOM.unstable_batchedUpdates(() => {
+                    setTimestamp(new Date().getTime());
+                    setRequestOptionsFromState(requestOptionsRef.current);
+                });
+            }, 0);
         },
         [],
     );

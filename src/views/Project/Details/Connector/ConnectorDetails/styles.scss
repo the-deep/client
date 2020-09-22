@@ -1,5 +1,6 @@
 .project-connector-detail {
     display: flex;
+    position: relative;
     flex-direction: column;
     margin: var(--spacing-medium);
     border: var(--width-separator-thin) solid var(--color-separator);

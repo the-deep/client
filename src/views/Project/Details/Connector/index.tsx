@@ -39,6 +39,7 @@ function ProjectConnector(props: OwnProps) {
         handleConnectorAdd,
         handleConnectorDelete,
         handleConnectorEdit,
+        handleConnectorPatch,
     ] = useArrayEdit(setConnectors, connectorKeySelector);
 
     const [pendingConnectors] = useRequest<MultiResponse<Connector>>({
@@ -54,7 +55,13 @@ function ProjectConnector(props: OwnProps) {
         details: data,
         onConnectorDelete: handleConnectorDelete,
         onConnectorEdit: handleConnectorEdit,
-    }), [projectId, handleConnectorDelete, handleConnectorEdit]);
+        onConnectorPatch: handleConnectorPatch,
+    }), [
+        projectId,
+        handleConnectorDelete,
+        handleConnectorEdit,
+        handleConnectorPatch,
+    ]);
 
     return (
         <div className={_cs(className, styles.projectConnectors)}>

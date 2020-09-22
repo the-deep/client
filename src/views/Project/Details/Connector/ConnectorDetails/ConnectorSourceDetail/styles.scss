@@ -12,10 +12,25 @@
             overflow: hidden;
 
             .image {
-                width: 120px;
-                height: 48px;
+                width: 56px;
+                height: 56px;
                 object-fit: contain;
+                object-position: center center;
             }
+        }
+
+        .heading {
+            margin: var(--spacing-extra-small) 0;
+        }
+
+        .stat-block {
+            margin: var(--spacing-extra-small) 0;
+        }
+
+        .date {
+            color: var(--color-text);
+            font-size: var(--font-size-normal);
+            font-weight: var(--font-weight-normal);
         }
     }
 

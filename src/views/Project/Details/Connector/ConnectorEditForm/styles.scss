@@ -51,6 +51,17 @@
                     margin: calc(var(--spacing-medium) / 2) calc(var(--spacing-medium) / 2);
                     padding: var(--spacing-small-alt);
 
+                    .image-container {
+                        overflow: hidden;
+
+                        .image {
+                            width: 56px;
+                            height: 56px;
+                            object-fit: contain;
+                            object-position: center center;
+                        }
+                    }
+
                     &.active {
                         border-color: var(--color-accent);
                         color: var(--color-accent);

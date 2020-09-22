@@ -1,9 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useState, useCallback, useMemo } from 'react';
+import {
+    _cs,
+    compareDate,
+} from '@togglecorp/fujs';
 import { Switch } from '@togglecorp/toggle-ui';
 
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';
@@ -28,6 +32,11 @@ interface OwnProps {
     details: Connector;
     onConnectorDelete: (id: number) => void;
     onConnectorEdit: (connector: Connector) => void;
+    onConnectorPatch: (connector: Connector) => void;
+}
+
+interface ActivePatchBody {
+    isActive: boolean;
 }
 
 const sourceKeySelector = (source: UnifiedConnectorSource) => source.source;
@@ -36,6 +45,7 @@ function ProjectConnectorDetail(props: OwnProps) {
     const {
         onConnectorDelete,
         onConnectorEdit,
+        onConnectorPatch,
         projectId,
         className,
         details,
@@ -44,10 +54,14 @@ function ProjectConnectorDetail(props: OwnProps) {
     const {
         id: connectorId,
         title,
-        updatedOn,
-        disabled,
+        isActive,
         sources,
     } = details;
+
+    const [
+        patchBodyToSend,
+        setPatchBodyToSend,
+    ] = useState<ActivePatchBody | undefined>(undefined);
 
     const [pendingConnectorDelete,,, deleteConnectorTrigger] = useRequest({
         url: `server://projects/${projectId}/unified-connectors/${connectorId}/`,
@@ -59,9 +73,21 @@ function ProjectConnectorDetail(props: OwnProps) {
         },
     });
 
+    const [pendingConnectorPatch,,, triggerConnectorPatch] = useRequest<Connector>({
+        url: `server://projects/${projectId}/unified-connectors/${connectorId}/`,
+        method: 'PATCH',
+        body: patchBodyToSend,
+        onSuccess: (response) => {
+            if (onConnectorPatch) {
+                onConnectorPatch(response);
+            }
+        },
+    });
+
     const handleConnectorActiveStatusChange = useCallback((value) => {
-        console.warn('changed value', value);
-    }, []);
+        setPatchBodyToSend({ isActive: value });
+        triggerConnectorPatch();
+    }, [triggerConnectorPatch, setPatchBodyToSend]);
 
     const connectorSourceRendererParams = useCallback((key, data) => ({
         title: data.sourceDetail?.title,
@@ -69,11 +95,21 @@ function ProjectConnectorDetail(props: OwnProps) {
         // NOTE: We get stats from server
         statistics: data.stats,
         totalLeads: data.totalLeads,
+        lastCalculatedAt: data.lastCalculatedAt,
         logo: data.sourceDetail?.logo,
     }), []);
 
+    const latestLastCalculated = useMemo(() => (
+        sources?.sort(
+            (a, b) => compareDate(a.lastCalculatedAt, b.lastCalculatedAt, -1)
+        )?.[0]?.lastCalculatedAt
+    ), [sources]);
+
+    const pending = pendingConnectorDelete || pendingConnectorPatch;
+
     return (
         <div className={_cs(className, styles.projectConnectorDetail)}>
+            {pending && <LoadingAnimation />}
             <header className={styles.header}>
                 <h3 className={styles.heading}>
                     {title}
@@ -83,12 +119,12 @@ function ProjectConnectorDetail(props: OwnProps) {
                         {_ts('project.connector', 'updatedOnLabel')}
                     </span>
                     <FormattedDate
-                        value={updatedOn}
+                        value={latestLastCalculated}
                         mode="dd-MM-yyyy"
                     />
                     <Switch
                         name="disableSwitch"
-                        value={disabled}
+                        value={isActive}
                         onChange={handleConnectorActiveStatusChange}
                     />
                     <ModalButton

@@ -11,6 +11,7 @@ import {
 import Message from '#rscv/Message';
 import TextOutput from '#components/general/TextOutput';
 import Image from '#rscv/Image';
+import FormattedDate from '#rscv/FormattedDate';
 
 import {
     ConnectorSourceStatistics,
@@ -25,6 +26,7 @@ interface OwnProps {
     statistics: ConnectorSourceStatistics;
     status: ConnectorSourceStatus;
     totalLeads: number;
+    lastCalculatedAt?: string;
     logo?: string;
 }
 
@@ -41,6 +43,7 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
         statistics,
         totalLeads,
         logo,
+        lastCalculatedAt,
     } = props;
 
     const convertedPublishedDates = useMemo(() => (
@@ -59,18 +62,33 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                     alt=""
                     src={logo}
                 />
-                <h3>{title}</h3>
+                <h3 className={styles.heading}>
+                    {title}
+                </h3>
                 <TextOutput
+                    className={styles.statBlock}
                     label="Leads"
                     value={totalLeads}
                     type="block"
                 />
+                <TextOutput
+                    className={styles.statBlock}
+                    label="Last updated on"
+                    valueClassName={styles.date}
+                    type="block"
+                    value={(
+                        <FormattedDate
+                            value={lastCalculatedAt}
+                            mode="dd-MM-yyyy"
+                        />
+                    )}
+                />
             </div>
             <div className={styles.chartContainer}>
-                {status === 'processing' ? (
+                {(status === 'processing' || convertedPublishedDates?.length < 1) ? (
                     <Message>
                         {/* FIXME: Use translation */ }
-                        Processing...
+                        Data not available
                     </Message>
                 ) : (
                     <AreaChart
