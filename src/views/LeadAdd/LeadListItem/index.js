@@ -139,6 +139,7 @@ function LeadListItem(props) {
                         styles.addLeadListItem,
                         active && styles.active,
                         separator && styles.separator,
+                        !!actionButtons && styles.hasHover,
                     )
                 }
                 onClick={handleClick}
@@ -183,9 +184,11 @@ function LeadListItem(props) {
                     />
                 )}
             </button>
-            <div className={styles.buttonContainer}>
-                {actionButtons}
-            </div>
+            {actionButtons && (
+                <div className={styles.buttonContainer}>
+                    {actionButtons}
+                </div>
+            )}
         </Jumper>
     );
 }

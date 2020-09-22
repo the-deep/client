@@ -118,20 +118,21 @@
 
     &:hover {
         .add-lead-list-item {
-            .status-icon {
-                display: none;
-            }
-            .badge {
-                display: none;
-            }
-            .progress {
-                display: none;
+            &.has-hover {
+                .status-icon {
+                    display: none;
+                }
+                .badge {
+                    display: none;
+                }
+                .progress {
+                    display: none;
+                }
             }
         }
 
         .button-container {
             display: initial;
-            opacity: 1;
         }
     }
 }

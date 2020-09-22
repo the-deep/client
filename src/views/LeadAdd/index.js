@@ -13,6 +13,8 @@ import {
 } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import Message from '#rscv/Message';
 import Confirm from '#rscv/Modal/Confirm';
@@ -81,7 +83,7 @@ import {
 import styles from './styles.scss';
 
 const connectorStatusToLeadStatusMap = {
-    not_: LEAD_STATUS.warning,
+    not_processed: LEAD_STATUS.warning,
     success: LEAD_STATUS.complete,
     failure: LEAD_STATUS.invalid,
     processing: LEAD_STATUS.requesting,
@@ -542,9 +544,14 @@ function LeadAdd(props) {
         autoTrigger: true,
     });
 
-    const [connectorTriggerPending] = useRequest({
-        url: `server://projects/${projectId}/unified-connectors/`,
-        autoTrigger: true,
+    const [connectorToTrigger, setConnectorToTrigger] = useState();
+    const [connectorTriggerPending,,, connectorTriggerTrigger] = useRequest({
+        url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
+        method: 'POST',
+        body: {},
+        onSuccess: () => {
+            console.warn('success');
+        },
     });
 
     const connectorMode = !!selectedConnector;
@@ -629,6 +636,7 @@ function LeadAdd(props) {
                                                     title={connector.title}
                                                     // eslint-disable-next-line max-len
                                                     active={connector.id === selectedConnector && !selectedConnectorSource}
+                                                    itemKey={connector.id}
                                                     onItemSelect={() => {
                                                         onSourceChange(undefined);
                                                         setSelectedConnector(connector.id);
@@ -636,11 +644,25 @@ function LeadAdd(props) {
                                                     }}
                                                     count={connector.totalLeads}
                                                     separator={false}
+                                                    actionButtons={(
+                                                        <PrimaryButton
+                                                            onClick={() => {
+                                                                setConnectorToTrigger(connector.id);
+                                                                connectorTriggerTrigger();
+                                                            }}
+                                                            disabled={connectorTriggerPending}
+                                                            // eslint-disable-next-line max-len
+                                                            pending={connectorToTrigger === connector.id && connectorTriggerPending}
+                                                        >
+                                                            <Icon name="refresh" />
+                                                        </PrimaryButton>
+                                                    )}
                                                 />
                                                 {connector.sources.map(source => (
                                                     <LeadListItem
                                                         className={styles.subConnector}
                                                         key={source.id}
+                                                        itemKey={source.id}
                                                         title={source.sourceDetail.title}
                                                         type={LEAD_TYPE.connectors}
                                                         // eslint-disable-next-line max-len
