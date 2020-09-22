@@ -127,6 +127,14 @@ export default class Entry extends React.PureComponent {
     static shouldHideEntryEdit = ({ entryPermissions }) => !entryPermissions.modify;
     static shouldHideEntryDelete = ({ entryPermissions }) => !entryPermissions.delete;
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            entryVerificationPending: false,
+        };
+    }
+
     getWidgets = memoize(widgets => (
         widgets.filter(
             w => hasWidgetViewComponent(w.widgetId, w.properties.addedFrom),
@@ -149,6 +157,10 @@ export default class Entry extends React.PureComponent {
         };
 
         setEntryCommentsCount({ entry, projectId, leadId });
+    }
+
+    handleEntryVerificationPendingChange = (entryVerificationPending) => {
+        this.setState({ entryVerificationPending });
     }
 
     handleEntryDelete = () => {
@@ -258,7 +270,7 @@ export default class Entry extends React.PureComponent {
             widgets,
             requests: {
                 deleteEntryRequest: {
-                    pending,
+                    pending: deletePending,
                 },
             },
             entry: {
@@ -274,6 +286,8 @@ export default class Entry extends React.PureComponent {
             leadId,
         } = this.props;
 
+        const { entryVerificationPending } = this.state;
+
         const filteredWidgets = this.getWidgets(widgets);
         const entriesPageLink = reverseRoute(
             pathNames.editEntries,
@@ -284,9 +298,10 @@ export default class Entry extends React.PureComponent {
         );
 
         const defaultAssignees = this.getDefaultAssignees(createdBy);
+        const pending = deletePending || entryVerificationPending;
 
         return (
-            <React.Fragment>
+            <div className={_cs(classNameFromProps, styles.entryContainer)}>
                 {pending && <LoadingAnimation />}
                 <header className={_cs('entry-container-header', styles.entryHeader)}>
                     <div className={styles.rightContainer}>
@@ -312,6 +327,7 @@ export default class Entry extends React.PureComponent {
                             entryId={entryId}
                             leadId={leadId}
                             hide={Entry.shouldHideEntryEdit}
+                            setEntryVerificationPending={this.handleEntryVerificationPendingChange}
                         />
                         <ButtonLikeLink
                             className={styles.editEntryLink}
@@ -363,7 +379,7 @@ export default class Entry extends React.PureComponent {
                     schema={emptySchema}
                 >
                     <GridViewLayout
-                        className={_cs(classNameFromProps, styles.entry)}
+                        className={styles.entry}
                         data={filteredWidgets}
                         itemClassName={styles.widget}
                         itemContentModifier={this.renderWidgetContent}
@@ -372,7 +388,7 @@ export default class Entry extends React.PureComponent {
                         layoutSelector={widgetLayoutSelector}
                     />
                 </Faram>
-            </React.Fragment>
+            </div>
         );
     }
 }

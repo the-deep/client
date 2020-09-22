@@ -5,7 +5,6 @@ import { _cs } from '@togglecorp/fujs';
 
 import Cloak from '#components/general/Cloak';
 import Icon from '#rscg/Icon';
-import Spinner from '#rscv/Spinner';
 import DropdownEdit from '#components/general/DropdownEdit';
 
 import {
@@ -37,6 +36,7 @@ interface ComponentProps {
     verified: boolean;
     hide: (entryPermission: {}) => boolean;
     className?: string;
+    setEntryVerificationPending?: (pending: boolean | undefined) => void;
     setEntryVerification: ({
         entryId,
         leadId,
@@ -112,7 +112,9 @@ function EntryVerify(props: Props) {
         verified: verifiedFromProps = false,
         requests,
         title,
+        setEntryVerificationPending,
     } = props;
+
     const {
         setEntryVerificationRequest,
     } = requests;
@@ -133,9 +135,18 @@ function EntryVerify(props: Props) {
     }, [setEntryVerificationRequest]);
 
     const { pending } = setEntryVerificationRequest;
+
+    useEffect(() => {
+        if (setEntryVerificationPending) {
+            setEntryVerificationPending(pending);
+        }
+    }, [
+        pending,
+        setEntryVerificationPending,
+    ]);
+
     return (
         <div className={_cs(className, styles.verifyContainer)}>
-            {pending && <Spinner />}
             <Cloak
                 hide={hide}
                 render={

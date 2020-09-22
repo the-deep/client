@@ -187,7 +187,6 @@ const deleteEntry = (state, action) => {
     const { activeProject: projectId } = state;
     const {
         entriesView: {
-            totalEntriesCount,
             [projectId]: {
                 entries: leadGroupedEntries = [],
             } = {},
