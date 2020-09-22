@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import DropdownMenu from '#rsca/DropdownMenu';
@@ -47,9 +47,11 @@ function DropdownItem(props: DropdownItemProps) {
 
 interface Props {
     className?: string;
-    currentSelection: number | string;
+    currentSelection: number | string | boolean;
     options?: Option[];
     onItemSelect: (optionKey: Option['key']) => void;
+    dropdownLeftComponent: JSX.Element | ReactElement | null;
+    dropdownIcon?: string;
 }
 
 const optionKeySelector = (d: Option) => d.key;

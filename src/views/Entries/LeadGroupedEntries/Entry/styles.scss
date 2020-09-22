@@ -1,88 +1,97 @@
 @import '~base-scss/widget';
 
-.entry-header {
-    display: flex;
-    justify-content: flex-end;
-    padding: var(--spacing-small) 0 0 0;
-    width: 100%;
+.entry-container {
+    position: relative;
 
-    .right-container {
+    .entry-header {
         display: flex;
-        position: sticky;
-        top: var(--spacing-small);
-        right: var(--spacing-medium);
-        align-items: center;
+        justify-content: flex-end;
+        padding: var(--spacing-small) 0 0 0;
+        width: 100%;
 
-        .entry-labels {
-            display: inline-flex;
+        .right-container {
+            display: flex;
+            position: sticky;
+            top: var(--spacing-small);
+            right: var(--spacing-medium);
             align-items: center;
 
-            .entry-label {
+            .entry-labels {
+                display: inline-flex;
+                align-items: center;
+
+                .entry-label {
+                    margin-right: var(--spacing-small);
+
+                    .title {
+                        text-transform: none;
+                    }
+                }
+            }
+
+            .edit-entry-link {
                 margin-right: var(--spacing-small);
+                padding: var(--spacing-extra-small) var(--spacing-small);
+            }
 
-                .title {
-                    text-transform: none;
+            .button {
+                display: flex;
+                align-items: center;
+                margin-right: var(--spacing-small);
+                padding: var(--spacing-extra-small) var(--spacing-small);
+
+                .comment-count {
+                    padding-left: var(--spacing-small);
                 }
-            }
-        }
 
-        .edit-entry-link {
-            margin-right: var(--spacing-small);
-            padding: var(--spacing-extra-small) var(--spacing-small);
-        }
-
-        .button {
-            display: flex;
-            align-items: center;
-            padding: var(--spacing-extra-small) var(--spacing-small);
-
-            .comment-count {
-                padding-left: var(--spacing-small);
-            }
-
-            &.accented {
-                border-color: var(--color-danger)!important;
-                color: var(--color-danger);
-            }
-        }
-    }
-}
-.entry {
-    padding: var(--spacing-small);
-    min-width: 100%;
-    overflow: hidden;
-
-    &:not(:last-child) {
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-    }
-
-    .widget {
-        @extend %widget;
-        padding: var(--spacing-extra-small);
-
-        .header {
-            display: flex;
-            align-items: center;
-
-            .heading {
-                flex-basis: 100%;
-                padding: 0 var(--spacing-small);
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-
-                &.excerpt-widget-heading {
-                    color: var(--color-text-on-primary);
+                &.accented {
+                    border-color: var(--color-danger)!important;
+                    color: var(--color-danger);
                 }
             }
 
-            &.excerpt-widget-header {
-                background-color: var(--color-primary);
+            .delete-button {
+                padding: var(--spacing-extra-small) var(--spacing-small);
             }
         }
+    }
+    .entry {
+        padding: var(--spacing-small);
+        min-width: 100%;
+        overflow: hidden;
 
-        .content {
-            background-color: var(--color-foreground);
+        &:not(:last-child) {
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        }
+
+        .widget {
+            @extend %widget;
+            padding: var(--spacing-extra-small);
+
+            .header {
+                display: flex;
+                align-items: center;
+
+                .heading {
+                    flex-basis: 100%;
+                    padding: 0 var(--spacing-small);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+
+                    &.excerpt-widget-heading {
+                        color: var(--color-text-on-primary);
+                    }
+                }
+
+                &.excerpt-widget-header {
+                    background-color: var(--color-primary);
+                }
+            }
+
+            .content {
+                background-color: var(--color-foreground);
+            }
         }
     }
 }

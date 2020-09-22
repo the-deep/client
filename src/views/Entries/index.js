@@ -375,6 +375,7 @@ export default class Entries extends React.PureComponent {
     renderListView = () => {
         const {
             leadGroupedEntriesList,
+            totalEntriesCount,
         } = this.props;
         const {
             pendingGeoOptions,
@@ -386,14 +387,13 @@ export default class Entries extends React.PureComponent {
         const nonBlockedLoading = pendingEntries;
 
         // FIXME: loading animation is messed up
-
         return (
             <React.Fragment>
                 { (blockedLoading || nonBlockedLoading) &&
                     <LoadingAnimation />
                 }
                 { !blockedLoading && (
-                    leadGroupedEntriesList.length > 0 ? (
+                    leadGroupedEntriesList.length > 0 && totalEntriesCount > 0 ? (
                         <List
                             className={styles.leadGroupedEntriesList}
                             data={leadGroupedEntriesList}
