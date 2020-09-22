@@ -83,6 +83,8 @@ const propTypes = {
 
     progress: PropTypes.number,
     count: PropTypes.number,
+    indent: PropTypes.number,
+    separator: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -94,6 +96,8 @@ const defaultProps = {
     itemState: undefined,
     actionButtons: undefined,
     onItemSelect: undefined,
+    indent: undefined,
+    separator: true,
 };
 
 function LeadListItem(props) {
@@ -108,6 +112,8 @@ function LeadListItem(props) {
         type,
         count,
         itemState,
+        indent,
+        separator,
     } = props;
 
     const handleClick = useCallback(() => {
@@ -132,18 +138,26 @@ function LeadListItem(props) {
                         className,
                         styles.addLeadListItem,
                         active && styles.active,
+                        separator && styles.separator,
                     )
                 }
                 onClick={handleClick}
                 type="button"
             >
-                {leadTypeToIconClassMap[type] ? (
+                {indent && (
+                    <span
+                        style={{
+                            width: `calc(${indent} * var(--width-icon-large))`,
+                            minHeight: '1px',
+                            flexShrink: 0,
+                        }}
+                    />
+                )}
+                {leadTypeToIconClassMap[type] && (
                     <Icon
                         className={styles.icon}
                         name={leadTypeToIconClassMap[type]}
                     />
-                ) : (
-                    <div className={styles.icon} />
                 )}
                 <span
                     className={styles.titleContainer}
@@ -151,7 +165,7 @@ function LeadListItem(props) {
                 >
                     {title}
                 </span>
-                {count && (
+                {isDefined(count) && count > 0 && (
                     <Badge
                         className={styles.badge}
                         title={count}

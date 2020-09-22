@@ -1,3 +1,12 @@
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
 .lead-list-item {
     position: relative;
 
@@ -7,22 +16,16 @@
         // flex-wrap: wrap;
         outline: none;
         border: 0;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
         border-left: var(--width-separator-thick) solid transparent;
         background-color: transparent;
         cursor: pointer;
-        padding: var(--spacing-small);
+        padding: var(--spacing-medium) var(--spacing-small);
         width: 100%;
         overflow: hidden;
         color: var(--color-text);
         font-family: inherit;
         font-size: inherit;
         user-select: none;
-
-        &.active {
-            border-left: var(--width-separator-thick) solid var(--color-accent);
-            background-color: var(--color-background-hover);
-        }
 
         .progress-bar {
             display: block;
@@ -46,15 +49,15 @@
             flex-shrink: 0;
             margin: 0 var(--spacing-small);
             padding: 0;
-            width: var(--width-icon-large);
+            // width: var(--width-icon-large);
             font-size: var(--font-size-large);
         }
 
         .title-container {
             align-items: center;
             flex-grow: 1;
-            margin: 0;
-            padding: var(--spacing-small) 0;
+            margin: 0 var(--spacing-small);
+            padding: 0;
             overflow: hidden;
             text-align: left;
             text-overflow: ellipsis;
@@ -73,6 +76,15 @@
             width: var(--width-icon-large);
             color: var(--color-text-label);
             font-size: var(--font-size-medium-alt);
+        }
+
+        &.separator {
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        }
+
+        &.active {
+            border-left: var(--width-separator-thick) solid var(--color-accent);
+            background-color: var(--color-background-hover);
         }
 
         .pending {
@@ -121,14 +133,5 @@
             display: initial;
             opacity: 1;
         }
-    }
-}
-
-@keyframes spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
     }
 }

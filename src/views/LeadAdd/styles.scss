@@ -28,13 +28,10 @@
                 flex-grow: 1;
             }
 
-            /*
-            .connector-container {
-                .sub-connector {
-                    margin-left: 24px;
-                }
+            .connector-heading {
+                margin: 0;
+                padding: var(--spacing-medium) var(--spacing-large);
             }
-            */
 
             .candidate-leads-box {
                 flex-shrink: 0;
@@ -43,20 +40,21 @@
 
         .main {
             display: flex;
-            flex-direction: co;
+            flex-direction: column;
             flex-shrink: 0;
             background-color: var(--color-foreground);
             width: 85%;
 
             .bar {
                 display: flex;
+                flex-shrink: 0;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
                 background-color: var(--color-foreground-alt);
 
                 .filter {
                     display: flex;
                     flex-grow: 1;
                     flex-wrap: wrap;
-                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
                     padding: var(--spacing-small);
                 }
 
@@ -68,6 +66,7 @@
 
             .content {
                 display: flex;
+                flex-grow: 1;
 
                 .list {
                     display: flex;

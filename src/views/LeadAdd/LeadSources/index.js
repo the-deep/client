@@ -362,6 +362,7 @@ function LeadSources(props) {
                         <Icon name="add" />
                     </FileInput>
                 )}
+                separator={false}
             />
             <LeadListItem
                 itemKey={LEAD_TYPE.website}
@@ -378,6 +379,7 @@ function LeadSources(props) {
                         <Icon name="add" />
                     </PrimaryButton>
                 )}
+                separator={false}
             />
             {websiteModalVisible && (
                 <WebsiteLeadModal
@@ -400,6 +402,7 @@ function LeadSources(props) {
                         <Icon name="add" />
                     </PrimaryButton>
                 )}
+                separator={false}
             />
             <LeadListItem
                 itemKey={LEAD_TYPE.drive}
@@ -424,6 +427,7 @@ function LeadSources(props) {
                         <Icon name="add" />
                     </GooglePicker>
                 )}
+                separator={false}
             />
             <LeadListItem
                 itemKey={LEAD_TYPE.dropbox}
@@ -448,6 +452,7 @@ function LeadSources(props) {
                         <Icon name="add" />
                     </DropboxChooser>
                 )}
+                separator={false}
             />
             <LeadListItem
                 itemKey={LEAD_TYPE.connectors}
@@ -457,6 +462,7 @@ function LeadSources(props) {
                 onItemSelect={onSourceChange}
                 count={counts[LEAD_TYPE.connectors]}
                 itemState={sourceStates[LEAD_TYPE.connectors]}
+                separator={false}
             />
         </div>
     );
