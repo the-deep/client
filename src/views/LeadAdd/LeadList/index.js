@@ -37,7 +37,7 @@ import {
 } from '../utils';
 
 import DroppableDiv from './DroppableDiv';
-import LeadListItem from '../LeadListItem';
+import ListStatusItem from '../ListStatusItem';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -155,7 +155,7 @@ function LeadList(props) {
                 className={styles.leadList}
                 data={filteredLeads}
                 keySelector={leadKeySelector}
-                renderer={LeadListItem}
+                renderer={ListStatusItem}
                 rendererParams={rendererParams}
             />
             <div className={styles.movementButtons}>

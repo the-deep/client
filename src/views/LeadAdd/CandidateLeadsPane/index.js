@@ -10,7 +10,7 @@ import {
     LEAD_STATUS,
     LEAD_TYPE,
 } from '../utils';
-import { LeadProcessorContext } from '../LeadProcessor';
+import { CandidateLeadsManagerContext } from '../CandidateLeadsManager';
 import CandidateLeadsModal from './CandidateLeadsModal';
 
 import styles from './styles.scss';
@@ -19,7 +19,7 @@ import styles from './styles.scss';
 function getSourceKey(data) {
     const { sourceType, url, attachment } = data;
     if (sourceType === LEAD_TYPE.website) {
-        return data.url;
+        return url;
     }
     if ([LEAD_TYPE.dropbox, LEAD_TYPE.drive, LEAD_TYPE.file].includes(sourceType)) {
         return attachment?.s3 ? `s3::${attachment.s3}` : undefined;
@@ -30,7 +30,7 @@ function getSourceKey(data) {
 function getSource(data) {
     const { sourceType, url, attachment } = data;
     if (sourceType === LEAD_TYPE.website) {
-        return data.url ? { url: data.url } : undefined;
+        return url ? { url } : undefined;
     }
     if ([LEAD_TYPE.dropbox, LEAD_TYPE.drive, LEAD_TYPE.file].includes(sourceType)) {
         return attachment?.s3 ? { s3: attachment.s3 } : undefined;
@@ -48,7 +48,7 @@ const defaultProps = {
     className: undefined,
 };
 
-function CandidateLeads(props) {
+function CandidateLeadsPane(props) {
     const {
         className,
         onLeadsAdd,
@@ -60,7 +60,7 @@ function CandidateLeads(props) {
         showProcessingModal,
         setProcessingModalVisibility,
         clearCompletedCandidateLeads,
-    } = useContext(LeadProcessorContext);
+    } = useContext(CandidateLeadsManagerContext);
 
     const handleProcessingModalShow = useCallback(() => {
         setProcessingModalVisibility(true);
@@ -300,7 +300,7 @@ function CandidateLeads(props) {
     );
 }
 
-CandidateLeads.propTypes = propTypes;
-CandidateLeads.defaultProps = defaultProps;
+CandidateLeadsPane.propTypes = propTypes;
+CandidateLeadsPane.defaultProps = defaultProps;
 
-export default CandidateLeads;
+export default CandidateLeadsPane;

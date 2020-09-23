@@ -22,7 +22,7 @@ import {
     leadKeySelector,
 } from '../utils';
 
-export const LeadProcessorContext = React.createContext({
+export const CandidateLeadsManagerContext = React.createContext({
     showProcessingModal: false,
     setProcessingModalVisibility: (processingModalVisibility) => {
         console.warn('setting processing modal visibility', processingModalVisibility);
@@ -42,7 +42,7 @@ export const LeadProcessorContext = React.createContext({
     },
 });
 
-function LeadProcessor(props) {
+function CandidateLeadsManager(props) {
     const {
         children,
     } = props;
@@ -333,16 +333,16 @@ function LeadProcessor(props) {
     ]);
 
     return (
-        <LeadProcessorContext.Provider
+        <CandidateLeadsManagerContext.Provider
             value={contextValue}
         >
             {children}
-        </LeadProcessorContext.Provider>
+        </CandidateLeadsManagerContext.Provider>
     );
 }
 
-LeadProcessor.propTypes = {
+CandidateLeadsManager.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export default LeadProcessor;
+export default CandidateLeadsManager;

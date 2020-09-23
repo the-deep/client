@@ -10,7 +10,7 @@ import {
     getNewLeadKey,
 } from '../utils';
 
-import { LeadProcessorContext } from '../LeadProcessor';
+import { CandidateLeadsManagerContext } from '../CandidateLeadsManager';
 
 const propTypes = {
     className: PropTypes.string,
@@ -27,7 +27,7 @@ function DroppableDiv(p) {
         children,
     } = p;
 
-    const { addCandidateLeads } = useContext(LeadProcessorContext);
+    const { addCandidateLeads } = useContext(CandidateLeadsManagerContext);
 
     const {
         acceptedFiles,

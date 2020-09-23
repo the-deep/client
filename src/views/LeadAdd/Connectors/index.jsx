@@ -5,7 +5,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import List from '#rscv/List';
 import Icon from '#rscg/Icon';
 
-import LeadListItem from '../LeadListItem';
+import ListStatusItem from '../ListStatusItem';
 import { LEAD_TYPE, LEAD_STATUS } from '../utils';
 
 import styles from './styles.scss';
@@ -71,7 +71,7 @@ function ConnectorItem(props) {
 
     return (
         <div>
-            <LeadListItem
+            <ListStatusItem
                 itemKey={id}
                 title={title}
                 count={totalLeads}
@@ -90,7 +90,7 @@ function ConnectorItem(props) {
             />
             <List
                 data={sources}
-                renderer={LeadListItem}
+                renderer={ListStatusItem}
                 rendererParams={sourceRendererParams}
                 keySelector={entityKeySelector}
             />

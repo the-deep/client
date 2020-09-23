@@ -56,14 +56,14 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
-import LeadSources from './LeadSources';
+import Sources from './Sources';
 import LeadPreview from './LeadPreview';
 import LeadActions from './LeadActions';
 import LeadList from './LeadList';
 import LeadFilter from './LeadFilter';
 import LeadDetail from './LeadDetail';
-import LeadProcessor from './LeadProcessor';
-import CandidateLeads from './CandidateLeads';
+import CandidateLeadsManager from './CandidateLeadsManager';
+import CandidateLeadsPane from './CandidateLeadsPane';
 import Connectors from './Connectors';
 import schema from './LeadDetail/faramSchema';
 
@@ -647,8 +647,8 @@ function LeadAdd(props) {
                         hide={shouldHideButtons}
                         render={(
                             <div className={styles.leftPane}>
-                                <LeadProcessor>
-                                    <LeadSources
+                                <CandidateLeadsManager>
+                                    <Sources
                                         className={styles.leadButtons}
                                         onLeadsAdd={handleLeadsAdd}
                                         leadStates={leadStates}
@@ -668,12 +668,12 @@ function LeadAdd(props) {
                                         />
                                     )}
                                     <div className={styles.space} />
-                                    <CandidateLeads
+                                    <CandidateLeadsPane
                                         className={styles.candidateLeadsBox}
                                         onLeadsAdd={handleLeadsAdd}
                                         onOrganizationsAdd={mergeOrganizations}
                                     />
-                                </LeadProcessor>
+                                </CandidateLeadsManager>
                             </div>
                         )}
                     />

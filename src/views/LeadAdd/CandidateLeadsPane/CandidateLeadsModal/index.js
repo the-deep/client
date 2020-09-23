@@ -13,9 +13,9 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 
-import { LeadProcessorContext } from '../../LeadProcessor';
+import { CandidateLeadsManagerContext } from '../../CandidateLeadsManager';
 import { leadKeySelector } from '../../utils';
-import LeadListItem from '../../LeadListItem';
+import ListStatusItem from '../../ListStatusItem';
 
 import styles from './styles.scss';
 
@@ -47,7 +47,7 @@ function CandidateLeadsModal(props) {
         clearCandidateLeads,
         candidateLeads,
         removeCandidateLead,
-    } = useContext(LeadProcessorContext);
+    } = useContext(CandidateLeadsManagerContext);
 
     const candidateLeadsRendererParams = useCallback((key, candidateLead) => {
         const handleLeadRemove = () => removeCandidateLead(key);
@@ -94,7 +94,7 @@ function CandidateLeadsModal(props) {
                     className={styles.candidateLeadsList}
                     keySelector={leadKeySelector}
                     // TODO: show states (upload, extraction, etc) with better progress
-                    renderer={LeadListItem}
+                    renderer={ListStatusItem}
                     rendererParams={candidateLeadsRendererParams}
                 />
             </ModalBody>

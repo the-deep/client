@@ -100,7 +100,7 @@ const defaultProps = {
     separator: true,
 };
 
-function LeadListItem(props) {
+function ListStatusItem(props) {
     const {
         itemKey,
         title,
@@ -193,7 +193,7 @@ function LeadListItem(props) {
     );
 }
 
-LeadListItem.propTypes = propTypes;
-LeadListItem.defaultProps = defaultProps;
+ListStatusItem.propTypes = propTypes;
+ListStatusItem.defaultProps = defaultProps;
 
-export default LeadListItem;
+export default ListStatusItem;

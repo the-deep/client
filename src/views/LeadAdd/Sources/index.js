@@ -46,9 +46,9 @@ import {
     leadSourceTypeSelector,
     getNewLeadKey,
 } from '../utils';
-import { LeadProcessorContext } from '../LeadProcessor';
+import { CandidateLeadsManagerContext } from '../CandidateLeadsManager';
 
-import LeadListItem from '../LeadListItem';
+import ListStatusItem from '../ListStatusItem';
 import styles from './styles.scss';
 
 const schema = {
@@ -135,7 +135,7 @@ WebsiteLeadModal.propTypes = {
     onSubmit: PropTypes.func.isRequired,
 };
 
-function LeadSources(props) {
+function Sources(props) {
     const {
         className,
         onSourceChange,
@@ -201,7 +201,7 @@ function LeadSources(props) {
 
     const {
         addCandidateLeads,
-    } = useContext(LeadProcessorContext);
+    } = useContext(CandidateLeadsManagerContext);
 
     const handleGoogleDriveOnAuthenticated = useCallback((accessToken) => {
         if (accessToken) {
@@ -343,7 +343,7 @@ function LeadSources(props) {
             <h4 className={styles.heading}>
                 {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
             </h4>
-            <LeadListItem
+            <ListStatusItem
                 count={counts[LEAD_TYPE.file]}
                 itemKey={LEAD_TYPE.file}
                 type={LEAD_TYPE.file}
@@ -364,7 +364,7 @@ function LeadSources(props) {
                 )}
                 separator={false}
             />
-            <LeadListItem
+            <ListStatusItem
                 itemKey={LEAD_TYPE.website}
                 type={LEAD_TYPE.website}
                 active={activeSource === LEAD_TYPE.website}
@@ -387,7 +387,7 @@ function LeadSources(props) {
                     onClose={setWebsiteModalHidden}
                 />
             )}
-            <LeadListItem
+            <ListStatusItem
                 itemKey={LEAD_TYPE.text}
                 type={LEAD_TYPE.text}
                 active={activeSource === LEAD_TYPE.text}
@@ -404,7 +404,7 @@ function LeadSources(props) {
                 )}
                 separator={false}
             />
-            <LeadListItem
+            <ListStatusItem
                 itemKey={LEAD_TYPE.drive}
                 type={LEAD_TYPE.drive}
                 active={activeSource === LEAD_TYPE.drive}
@@ -429,7 +429,7 @@ function LeadSources(props) {
                 )}
                 separator={false}
             />
-            <LeadListItem
+            <ListStatusItem
                 itemKey={LEAD_TYPE.dropbox}
                 type={LEAD_TYPE.dropbox}
                 active={activeSource === LEAD_TYPE.dropbox}
@@ -454,7 +454,7 @@ function LeadSources(props) {
                 )}
                 separator={false}
             />
-            <LeadListItem
+            <ListStatusItem
                 itemKey={LEAD_TYPE.connectors}
                 type={LEAD_TYPE.connectors}
                 active={activeSource === LEAD_TYPE.connectors}
@@ -468,7 +468,7 @@ function LeadSources(props) {
     );
 }
 
-LeadSources.propTypes = {
+Sources.propTypes = {
     onSourceChange: PropTypes.func.isRequired,
     onLeadsAdd: PropTypes.func.isRequired,
     className: PropTypes.string,
@@ -479,7 +479,7 @@ LeadSources.propTypes = {
     leads: PropTypes.array.isRequired,
 };
 
-LeadSources.defaultProps = {
+Sources.defaultProps = {
     className: undefined,
 };
 
@@ -496,5 +496,5 @@ const mapDispatchToProps = dispatch => ({
 
 // export default connect(mapStateToProps, mapDispatchToProps)(
 export default connect(mapStateToProps)(
-    LeadSources,
+    Sources,
 );
