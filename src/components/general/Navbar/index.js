@@ -206,7 +206,6 @@ export default class Navbar extends React.PureComponent {
             'userProfile',
             'projects',
             'countries',
-            'connectors',
 
             'apiDocs',
             'visualization',

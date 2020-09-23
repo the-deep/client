@@ -108,14 +108,6 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'workshop');
 
-    connectors: {
-        order: 22,
-        type: ROUTE.private,
-        path: '/connectors/:connectorId?/',
-        loader: () => import('../views/Connector'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'connectors');
-
     leadsViz: {
         order: 31,
         type: ROUTE.private,

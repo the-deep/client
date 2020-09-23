@@ -69,7 +69,6 @@ const acl = {
     projects: { hide: notLoggedIn },
     dashboard: { hide: notProjectMember },
     workshop: { hide: notDevAndAdmin },
-    connectors: { hide: notLoggedIn },
 
     leadsViz: { hide: notLeadVizViewable },
     clusterViz: { hide: notClusteringViewable },

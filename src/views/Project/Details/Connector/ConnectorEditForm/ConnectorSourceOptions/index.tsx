@@ -50,7 +50,7 @@ function ConnectorSourceOptions(props: ComponentProps) {
         connectorSourceValues,
     } = props;
 
-    const feedUrl = connectorSourceValues?.params?.['feed-url'] as string;
+    const feedUrl = String(connectorSourceValues?.params?.['feed-url'] ?? '');
 
     const [
         pendingXmlOptions,

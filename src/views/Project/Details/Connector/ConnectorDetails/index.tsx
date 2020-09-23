@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
     _cs,
+    isDefined,
     compareDate,
 } from '@togglecorp/fujs';
 import { Switch } from '@togglecorp/toggle-ui';
@@ -31,8 +32,10 @@ interface OwnProps {
     projectId: number;
     details: Connector;
     onConnectorDelete: (id: number) => void;
-    onConnectorEdit: (connector: Connector) => void;
-    onConnectorPatch: (connector: Connector) => void;
+    onConnectorEdit: (
+        key: number,
+        connector: Connector | ((oldVal: Connector) => Connector),
+    ) => void;
 }
 
 interface ActivePatchBody {
@@ -45,7 +48,6 @@ function ProjectConnectorDetail(props: OwnProps) {
     const {
         onConnectorDelete,
         onConnectorEdit,
-        onConnectorPatch,
         projectId,
         className,
         details,
@@ -78,8 +80,14 @@ function ProjectConnectorDetail(props: OwnProps) {
         method: 'PATCH',
         body: patchBodyToSend,
         onSuccess: (response) => {
-            if (onConnectorPatch) {
-                onConnectorPatch(response);
+            if (onConnectorEdit) {
+                onConnectorEdit(
+                    connectorId,
+                    oldValues => ({
+                        ...oldValues,
+                        ...response,
+                    }),
+                );
             }
         },
     });
@@ -99,11 +107,23 @@ function ProjectConnectorDetail(props: OwnProps) {
         logo: data.sourceDetail?.logo,
     }), []);
 
-    const latestLastCalculated = useMemo(() => (
-        sources?.sort(
-            (a, b) => compareDate(a.lastCalculatedAt, b.lastCalculatedAt, -1)
-        )?.[0]?.lastCalculatedAt
-    ), [sources]);
+    const latestLastCalculated = useMemo(() => {
+        const lastCalculatedDates = sources.map((s) => {
+            if (!s.lastCalculatedAt) {
+                return undefined;
+            }
+            const date = new Date(s.lastCalculatedAt);
+            return date.getTime();
+        }).filter(isDefined);
+
+        return lastCalculatedDates.length > 0
+            ? Math.max(...(lastCalculatedDates.filter(isDefined)))
+            : undefined;
+    }, [sources]);
+
+    const handleConnectorEdit = useCallback((connector: Connector) => {
+        onConnectorEdit(connectorId, connector);
+    }, [onConnectorEdit, connectorId]);
 
     const pending = pendingConnectorDelete || pendingConnectorPatch;
 
@@ -135,7 +155,7 @@ function ProjectConnectorDetail(props: OwnProps) {
                             <ConnectorEditForm
                                 projectId={projectId}
                                 connector={details}
-                                onSuccess={onConnectorEdit}
+                                onSuccess={handleConnectorEdit}
                             />
                         )}
                         title={_ts('project.connector', 'editButtonTitle')}

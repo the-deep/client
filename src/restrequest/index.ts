@@ -295,6 +295,8 @@ function useRequest<T>(
 
     const trigger = useCallback(
         () => {
+            // NOTE: This is done to prevent race condition where request body
+            // is not modified before request is triggered
             setTimeout(() => {
                 ReactDOM.unstable_batchedUpdates(() => {
                     setTimestamp(new Date().getTime());

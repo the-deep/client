@@ -1,13 +1,16 @@
 import React, { useState, useCallback } from 'react';
 
+function isCallable<T>(val: T | ((oldVal: T) => T)): val is (oldVal: T) => T {
+    return typeof val === 'function';
+}
+
 export function useArrayEdit<T, K extends string | number>(
     setValues: React.Dispatch<React.SetStateAction<T[]>>,
     keySelector: (value: T) => K,
 ): [
     (item: T) => void,
     (key: K) => void,
-    (item: T) => void,
-    (item: T) => void,
+    (key: K, item: T) => void,
 ] {
     const addItem = (newItem: T) => {
         setValues((oldValues: T[]) => ([
@@ -26,35 +29,21 @@ export function useArrayEdit<T, K extends string | number>(
             return newValues;
         });
     };
-    const modifyItem = (modifiedItem: T) => {
+    const modifyItem = (modifiedItemKey: K, modifiedItem: (T | ((oldVal: T) => T))) => {
         setValues((oldValues) => {
-            const key = keySelector(modifiedItem);
-            const index = oldValues.findIndex(item => keySelector(item) === key);
+            const index = oldValues.findIndex(item => keySelector(item) === modifiedItemKey);
             if (index === -1) {
                 return oldValues;
             }
+            const finalModifiedItem = isCallable(modifiedItem)
+                ? modifiedItem(oldValues[index]) : modifiedItem;
+
             const newValues = [...oldValues];
-            newValues.splice(index, 1, modifiedItem);
+            newValues.splice(index, 1, finalModifiedItem);
             return newValues;
         });
     };
-    const patchItem = (modifiedItem: T) => {
-        setValues((oldValues) => {
-            const key = keySelector(modifiedItem);
-            const index = oldValues.findIndex(item => keySelector(item) === key);
-            if (index === -1) {
-                return oldValues;
-            }
-            const newValues = [...oldValues];
-            const mergedItem = {
-                ...oldValues[index],
-                ...modifiedItem,
-            };
-            newValues.splice(index, 1, mergedItem);
-            return newValues;
-        });
-    };
-    return [addItem, removeItem, modifyItem, patchItem];
+    return [addItem, removeItem, modifyItem];
 }
 
 export function useModalState(initialValue: boolean): [
