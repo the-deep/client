@@ -1,0 +1,9 @@
+.connectors {
+    display: flex;
+    flex-direction: column;
+
+    .connector-heading {
+        margin: 0;
+        padding: var(--spacing-medium) var(--spacing-large);
+    }
+}

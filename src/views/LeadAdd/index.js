@@ -13,9 +13,6 @@ import {
 } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Icon from '#rscg/Icon';
-import Button from '#rsca/Button';
 import Message from '#rscv/Message';
 import Confirm from '#rscv/Modal/Confirm';
 import Page from '#rscv/Page';
@@ -59,7 +56,6 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
-import LeadListItem from './LeadListItem';
 import LeadSources from './LeadSources';
 import LeadPreview from './LeadPreview';
 import LeadActions from './LeadActions';
@@ -68,11 +64,11 @@ import LeadFilter from './LeadFilter';
 import LeadDetail from './LeadDetail';
 import LeadProcessor from './LeadProcessor';
 import CandidateLeads from './CandidateLeads';
+import Connectors from './Connectors';
 import schema from './LeadDetail/faramSchema';
 
 import {
     LEAD_TYPE,
-    LEAD_STATUS,
     getLeadState,
     leadFaramValuesSelector,
     leadIdSelector,
@@ -82,19 +78,14 @@ import {
 } from './utils';
 import styles from './styles.scss';
 
-const connectorStatusToLeadStatusMap = {
-    not_processed: LEAD_STATUS.warning,
-    success: LEAD_STATUS.complete,
-    failure: LEAD_STATUS.invalid,
-    processing: LEAD_STATUS.requesting,
-};
-
 function mergeEntities(foo = [], bar = []) {
     return unique(
         [...foo, ...bar],
         item => item.id,
     );
 }
+
+const shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
 
 const mapStateToProps = state => ({
     routeUrl: routeUrlSelector(state),
@@ -118,8 +109,6 @@ const mapDispatchToProps = dispatch => ({
     saveLead: params => dispatch(leadAddSaveLeadAction(params)),
 });
 
-const shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
-
 const propTypes = {
     routeUrl: PropTypes.string.isRequired,
     projectId: PropTypes.number,
@@ -137,7 +126,7 @@ const propTypes = {
     saveLead: PropTypes.func.isRequired,
 
     onSourceChange: PropTypes.func.isRequired,
-    activeSource: PropTypes.string.isRequired,
+    activeSource: PropTypes.string,
 };
 
 const defaultProps = {
@@ -145,6 +134,7 @@ const defaultProps = {
     leads: [],
     activeLead: undefined,
     leadPreviewHidden: false,
+    activeSource: undefined,
 };
 
 function LeadAdd(props) {
@@ -516,7 +506,6 @@ function LeadAdd(props) {
         [handleLeadsToRemoveSet],
     );
 
-
     const [connectorsPending, connectorsResponse] = useRequest({
         url: `server://projects/${projectId}/unified-connectors/`,
         autoTrigger: true,
@@ -557,6 +546,41 @@ function LeadAdd(props) {
     const connectorMode = !!selectedConnector;
     const hasActiveConnectorLead = !!selectedConnectorLead;
 
+    const handleSourceSelect = useCallback(
+        (source) => {
+            onSourceChange(source);
+            setSelectedConnector(undefined);
+            setSelectedConnectorSource(undefined);
+        },
+        [onSourceChange],
+    );
+
+    const handleCollectorSelect = useCallback(
+        (id) => {
+            onSourceChange(undefined);
+            setSelectedConnector(id);
+            setSelectedConnectorSource(undefined);
+        },
+        [onSourceChange],
+    );
+
+    const handleConnectorSourceSelect = useCallback(
+        (connectorId, id) => {
+            onSourceChange(undefined);
+            setSelectedConnector(connectorId);
+            setSelectedConnectorSource(id);
+        },
+        [onSourceChange],
+    );
+
+    const handleConnectorTrigger = useCallback(
+        (id) => {
+            setConnectorToTrigger(id);
+            connectorTriggerTrigger();
+        },
+        [connectorTriggerTrigger],
+    );
+
     const hasActiveLead = isDefined(activeLead);
     const leadIsTextType = hasActiveLead && (
         leadSourceTypeSelector(activeLead) === LEAD_TYPE.text
@@ -572,240 +596,180 @@ function LeadAdd(props) {
     // TODO: IMP calculate this value
     const saveEnabledForAll = false;
 
-    const leadConnectorChildren = connectors && connectors.length > 0 && (
-        <div className={styles.connectors}>
-            <h4 className={styles.connectorHeading}>
-                {/* FIXME: use strings */}
-                Browse
-            </h4>
-            {connectors.map(connector => (
-                <div
-                    key={connector.id}
-                    className={styles.connectorContainer}
-                >
-                    <LeadListItem
-                        key={connector.id}
-                        className={styles.connector}
-                        title={connector.title}
-                        // eslint-disable-next-line max-len
-                        active={connector.id === selectedConnector && !selectedConnectorSource}
-                        itemKey={connector.id}
-                        onItemSelect={() => {
-                            onSourceChange(undefined);
-                            setSelectedConnector(connector.id);
-                            setSelectedConnectorSource(undefined);
-                        }}
-                        count={connector.totalLeads}
-                        separator={false}
-                        actionButtons={(
-                            <PrimaryButton
-                                onClick={() => {
-                                    setConnectorToTrigger(connector.id);
-                                    connectorTriggerTrigger();
-                                }}
-                                disabled={connectorTriggerPending}
-                                // eslint-disable-next-line max-len
-                                pending={connectorToTrigger === connector.id && connectorTriggerPending}
-                            >
-                                <Icon name="refresh" />
-                            </PrimaryButton>
+    return (
+        <Page
+            className={styles.addLead}
+            headerClassName={styles.header}
+            header={(
+                <>
+                    <BackLink
+                        defaultLink={reverseRoute(pathNames.leads, { projectId })}
+                    />
+                    <h4 className={styles.heading}>
+                        {/* TODO: translate this */}
+                        Add Leads
+                    </h4>
+                    <Prompt
+                        message={
+                            (location) => {
+                                if (location.pathname === routeUrl) {
+                                    return true;
+                                } else if (!saveEnabledForAll) {
+                                    return true;
+                                }
+                                return _ts('common', 'youHaveUnsavedChanges');
+                            }
+                        }
+                    />
+                    {leadExportModalShown && (
+                        <LeadCopyModal
+                            leads={leadsToExport}
+                            closeModal={handleLeadsExportCancel}
+                        />
+                    )}
+                    {leadRemoveConfirmShown && (
+                        <Confirm
+                            onClose={handleLeadRemoveConfirmClose}
+                            show
+                        >
+                            <p>
+                                {/* TODO: different message for delete modes */}
+                                {_ts('addLeads.actions', 'deleteLeadConfirmText')}
+                            </p>
+                        </Confirm>
+                    )}
+                </>
+            )}
+            mainContentClassName={styles.mainContent}
+            mainContent={(
+                <>
+                    <Cloak
+                        hide={shouldHideButtons}
+                        render={(
+                            <div className={styles.leftPane}>
+                                <LeadProcessor>
+                                    <LeadSources
+                                        className={styles.leadButtons}
+                                        onLeadsAdd={handleLeadsAdd}
+                                        leadStates={leadStates}
+                                        activeSource={activeSource}
+                                        onSourceChange={handleSourceSelect}
+                                    />
+                                    {connectors && connectors.length > 0 && (
+                                        <Connectors
+                                            connectors={connectors}
+                                            selectedConnector={selectedConnector}
+                                            selectedConnectorSource={selectedConnectorSource}
+                                            onConnectorTrigger={handleConnectorTrigger}
+                                            onConnectorSelect={handleCollectorSelect}
+                                            onConnectorSourceSelect={handleConnectorSourceSelect}
+                                            connectorToTrigger={connectorToTrigger}
+                                            connectorTriggering={connectorTriggerPending}
+                                        />
+                                    )}
+                                    <div className={styles.space} />
+                                    <CandidateLeads
+                                        className={styles.candidateLeadsBox}
+                                        onLeadsAdd={handleLeadsAdd}
+                                        onOrganizationsAdd={mergeOrganizations}
+                                    />
+                                </LeadProcessor>
+                            </div>
                         )}
                     />
-                    {connector.sources.map(source => (
-                        <LeadListItem
-                            className={styles.subConnector}
-                            key={source.id}
-                            itemKey={source.id}
-                            title={source.sourceDetail.title}
-                            type={LEAD_TYPE.connectors}
-                            // eslint-disable-next-line max-len
-                            active={connector.id === selectedConnector && source.id === selectedConnectorSource}
-                            onItemSelect={() => {
-                                onSourceChange(undefined);
-                                setSelectedConnector(connector.id);
-                                setSelectedConnectorSource(source.id);
-                            }}
-                            count={source.totalLeads}
-                            indent={1}
-                            separator={false}
-                            // eslint-disable-next-line max-len
-                            itemState={connectorStatusToLeadStatusMap[source.status]}
-                        />
-                    ))}
-                </div>
-            ))}
-        </div>
-    );
+                    <div className={styles.main}>
+                        {!connectorMode && (
+                            <>
+                                <div className={styles.bar}>
+                                    <LeadFilter
+                                        className={styles.filter}
+                                    />
+                                    <LeadActions
+                                        className={styles.actions}
+                                        disabled={submitAllPending}
+                                        leadStates={leadStates}
 
-    return (
-        <>
-            <Prompt
-                message={
-                    (location) => {
-                        if (location.pathname === routeUrl) {
-                            return true;
-                        } else if (!saveEnabledForAll) {
-                            return true;
-                        }
-                        return _ts('common', 'youHaveUnsavedChanges');
-                    }
-                }
-            />
-            <Page
-                className={styles.addLead}
-                headerClassName={styles.header}
-                header={(
-                    <>
-                        <BackLink
-                            defaultLink={reverseRoute(pathNames.leads, { projectId })}
-                        />
-                        <h4 className={styles.heading}>
-                            {/* TODO: translate this */}
-                            Add Leads
-                        </h4>
-                    </>
-                )}
-                mainContentClassName={styles.mainContent}
-                mainContent={(
-                    <>
-                        <Cloak
-                            hide={shouldHideButtons}
-                            render={(
-                                <div className={styles.leftPane}>
-                                    <LeadProcessor>
-                                        <LeadSources
-                                            className={styles.leadButtons}
-                                            onLeadsAdd={handleLeadsAdd}
-                                            leadStates={leadStates}
-                                            activeSource={activeSource}
-                                            onSourceChange={(source) => {
-                                                onSourceChange(source);
-                                                setSelectedConnector(undefined);
-                                                setSelectedConnectorSource(undefined);
-                                            }}
-                                        />
-                                        {leadConnectorChildren}
-                                        <div className={styles.space} />
-                                        <CandidateLeads
-                                            className={styles.candidateLeadsBox}
-                                            onLeadsAdd={handleLeadsAdd}
-                                            onOrganizationsAdd={mergeOrganizations}
-                                        />
-                                    </LeadProcessor>
+                                        onLeadsSave={handleLeadsSave}
+                                        onLeadsRemove={handleLeadsToRemoveSet}
+                                        onLeadsExport={handleLeadsExport}
+                                    />
                                 </div>
-                            )}
-                        />
-                        <div className={styles.main}>
-                            {!connectorMode && (
-                                <>
-                                    <div className={styles.bar}>
-                                        <LeadFilter
-                                            className={styles.filter}
-                                        />
-                                        <LeadActions
-                                            className={styles.actions}
-                                            disabled={submitAllPending}
-                                            leadStates={leadStates}
-
-                                            onLeadsSave={handleLeadsSave}
-                                            onLeadsRemove={handleLeadsToRemoveSet}
-                                            onLeadsExport={handleLeadsExport}
-                                        />
-                                    </div>
-                                    <div className={styles.content}>
-                                        <LeadList
-                                            className={styles.list}
-                                            leadStates={leadStates}
-                                            onLeadRemove={handleLeadToRemoveSet}
-                                            onLeadExport={handleLeadExport}
-                                            onLeadSave={handleLeadSave}
-                                        />
-                                        {hasActiveLead ? (
-                                            <ResizableV
-                                                className={_cs(
-                                                    styles.leadDetail,
-                                                    leadPreviewMinimized && styles.textLead,
-                                                )}
-                                                topContainerClassName={styles.top}
-                                                bottomContainerClassName={styles.bottom}
-                                                disabled={leadPreviewMinimized}
-                                                topChild={(
-                                                    <LeadDetail
-                                                        key={activeLeadKey}
-                                                        leadState={activeLeadState}
-                                                        bulkActionDisabled={submitAllPending}
-
-                                                        pending={pending}
-
-                                                        priorityOptions={leadOptions?.priority}
-                                                        confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
-                                                        assignees={leadOptions?.members}
-
-                                                        leadGroups={leadGroups}
-                                                        onLeadGroupsAdd={handleLeadGroupsAdd}
-
-                                                        organizations={organizations}
-                                                        onOrganizationsAdd={handleOrganizationsAdd}
-                                                    />
-                                                )}
-                                                bottomChild={!leadPreviewMinimized && (
-                                                    <LeadPreview
-                                                        // NOTE: need to dismount
-                                                        // LeadPreview because the
-                                                        // children cannot handle
-                                                        // change gracefully
-                                                        key={activeLeadKey}
-                                                        className={styles.leadPreview}
-                                                    />
-                                                )}
-                                            />
-                                        ) : (
-                                            <Message>
-                                                { _ts('addLeads', 'noLeadsText') }
-                                            </Message>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                            {connectorMode && (
                                 <div className={styles.content}>
-                                    {/* TODO: add actions */}
-                                    <div className={styles.list}>
-                                        <div> Lead list goes here </div>
-                                    </div>
-                                    {hasActiveConnectorLead ? (
-                                        <div className={styles.leadDetail}>
-                                            Lead preview goes here
-                                        </div>
+                                    <LeadList
+                                        className={styles.list}
+                                        leadStates={leadStates}
+                                        onLeadRemove={handleLeadToRemoveSet}
+                                        onLeadExport={handleLeadExport}
+                                        onLeadSave={handleLeadSave}
+                                    />
+                                    {hasActiveLead ? (
+                                        <ResizableV
+                                            className={_cs(
+                                                styles.leadDetail,
+                                                leadPreviewMinimized && styles.textLead,
+                                            )}
+                                            topContainerClassName={styles.top}
+                                            bottomContainerClassName={styles.bottom}
+                                            disabled={leadPreviewMinimized}
+                                            topChild={(
+                                                <LeadDetail
+                                                    key={activeLeadKey}
+                                                    leadState={activeLeadState}
+                                                    bulkActionDisabled={submitAllPending}
+
+                                                    pending={pending}
+
+                                                    priorityOptions={leadOptions?.priority}
+                                                    confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
+                                                    assignees={leadOptions?.members}
+
+                                                    leadGroups={leadGroups}
+                                                    onLeadGroupsAdd={handleLeadGroupsAdd}
+
+                                                    organizations={organizations}
+                                                    onOrganizationsAdd={handleOrganizationsAdd}
+                                                />
+                                            )}
+                                            bottomChild={!leadPreviewMinimized && (
+                                                <LeadPreview
+                                                    // NOTE: need to dismount
+                                                    // LeadPreview because the
+                                                    // children cannot handle
+                                                    // change gracefully
+                                                    key={activeLeadKey}
+                                                    className={styles.leadPreview}
+                                                />
+                                            )}
+                                        />
                                     ) : (
                                         <Message>
                                             { _ts('addLeads', 'noLeadsText') }
                                         </Message>
                                     )}
                                 </div>
-                            )}
-                        </div>
-                    </>
-                )}
-            />
-            {leadExportModalShown && (
-                <LeadCopyModal
-                    leads={leadsToExport}
-                    closeModal={handleLeadsExportCancel}
-                />
+                            </>
+                        )}
+                        {connectorMode && (
+                            <div className={styles.content}>
+                                {/* TODO: add actions */}
+                                <div className={styles.list}>
+                                    <div> Lead list goes here </div>
+                                </div>
+                                {hasActiveConnectorLead ? (
+                                    <div className={styles.leadDetail}>
+                                        Lead preview goes here
+                                    </div>
+                                ) : (
+                                    <Message>
+                                        { _ts('addLeads', 'noLeadsText') }
+                                    </Message>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </>
             )}
-            {leadRemoveConfirmShown && (
-                <Confirm
-                    onClose={handleLeadRemoveConfirmClose}
-                    show
-                >
-                    <p>
-                        {/* TODO: different message for delete modes */}
-                        {_ts('addLeads.actions', 'deleteLeadConfirmText')}
-                    </p>
-                </Confirm>
-            )}
-        </>
+        />
     );
 }
 LeadAdd.propTypes = propTypes;

@@ -33,14 +33,7 @@
             */
 
             .connectors {
-                display: flex;
-                flex-direction: column;
                 flex-shrink: 0;
-
-                .connector-heading {
-                    margin: 0;
-                    padding: var(--spacing-medium) var(--spacing-large);
-                }
             }
 
             .space {
