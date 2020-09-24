@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas';
 import {
     _cs,
     reverseRoute,
+    isDefined,
 } from '@togglecorp/fujs';
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
@@ -152,25 +153,33 @@ function saveAs(uri, filename) {
 }
 
 const getFrameworkSize = (framework) => {
+    const listGridLayouts = framework.widgets
+        .map(w => w.properties.listGridLayout)
+        .filter(isDefined);
+
+    const overviewGridLayouts = framework.widgets
+        .map(w => w.properties.overviewGridLayout)
+        .filter(isDefined);
+
     const width = Math.max(
         0,
-        ...framework.widgets.map(w => (
-            w.properties.listGridLayout.left + w.properties.listGridLayout.width
+        ...listGridLayouts.map(listGridLayout => (
+            listGridLayout.left + listGridLayout.width
         )),
-        ...framework.widgets.map(w => (
-            w.properties.overviewGridLayout.left + w.properties.overviewGridLayout.width
+        ...overviewGridLayouts.map(overviewGridLayout => (
+            overviewGridLayout.left + overviewGridLayout.width
         )),
     );
 
     const height = Math.max(
         0,
-        ...framework.widgets.map(w => (
-            w.properties.listGridLayout.top + w.properties.listGridLayout.height
+        ...listGridLayouts.map(listGridLayout => (
+            listGridLayout.top + listGridLayout.height
         )),
     ) + Math.max(
         0,
-        ...framework.widgets.map(w => (
-            w.properties.overviewGridLayout.top + w.properties.overviewGridLayout.height
+        ...overviewGridLayouts.map(overviewGridLayout => (
+            overviewGridLayout.top + overviewGridLayout.height
         )),
     );
 

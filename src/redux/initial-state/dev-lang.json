@@ -1168,8 +1168,7 @@
         "-88808908": "Pen color",
         "-63730365": "Pen size",
         "-31875190": "Draw over screenshot",
-        "-5492927": "Export to image",
-        "-40736057": "Export framework"
+        "-5492927": "Export to image"
     },
     "links": {
         "browserExtension": {
@@ -2167,7 +2166,7 @@
             "entryQuestionTitle": -39116082,
             "exportButtonTitle": -5492927,
             "exportModalTitle": 600,
-            "exportModalExportTitle": -40736057,
+            "exportModalExportTitle": -5492927,
             "listTabTitle": 780,
             "overviewTabTitle": 781
         },
