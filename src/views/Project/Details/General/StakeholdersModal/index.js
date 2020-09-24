@@ -61,7 +61,9 @@ const requestOptions = {
 };
 
 const transformOrganizationToOptions = (organizations = []) => (
-    organizations.map(({ organization, ...others }) => ({ ...others, id: organization }))
+    organizations.map(({ id, organization, ...others }) => (
+        { ...others, id: organization, projectOrganizationId: id }
+    ))
 );
 
 const transformOrganizationToFaramValues = (organizations = []) => (
@@ -74,7 +76,12 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
         const organizationList = values
             .map(v => options.find(o => o.id === v))
             .filter(isDefined)
-            .map(({ id, title }) => ({ organization: id, title, type: key }));
+            .map(({ id, title, projectOrganizationId }) => ({
+                organization: id,
+                type: key,
+                title,
+                id: projectOrganizationId,
+            }));
 
         organizations = [...organizations, ...organizationList];
     });
