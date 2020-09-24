@@ -9,6 +9,7 @@ import {
 import AccentButton from '#rsca/Button/AccentButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import Button from '#rsca/Button';
 import TextInput from '#rsci/TextInput';
 import Message from '#rscv/Message';
 import urlRegex from '#rsu/regexForWeburl';
@@ -18,6 +19,7 @@ import { galleryMapping, galleryType } from '#config/deepMimeTypes';
 import notify from '#notify';
 import _ts from '#ts';
 
+import CanvasDrawModal from '#components/general/CanvasDrawModal';
 import Screenshot from './Screenshot';
 import GalleryImage from './GalleryImage';
 import GalleryDocs from './GalleryDocs';
@@ -162,6 +164,7 @@ export default class GalleryViewer extends React.PureComponent {
             isFullscreen: false,
             screenshotMode: false,
             currentScreenshot: undefined,
+            showCanvasDrawModal: false,
         };
 
         this.viewerRef = React.createRef();
@@ -240,6 +243,27 @@ export default class GalleryViewer extends React.PureComponent {
         this.handleScreenshotClose();
     }
 
+    handlePaintBrushButtonClick = () => {
+        this.setState({
+            showCanvasDrawModal: true,
+        });
+    }
+
+    handleCanvasDrawDone = (screenshot) => {
+        this.setState({
+            currentScreenshot: screenshot,
+            showCanvasDrawModal: false,
+        }, () => {
+            this.handleScreenshotDone();
+        });
+    }
+
+    handleCanvasDrawCancel = () => {
+        this.setState({
+            showCanvasDrawModal: false,
+        });
+    }
+
     renderScreenshotButton = () => {
         const {
             screenshotMode,
@@ -267,6 +291,14 @@ export default class GalleryViewer extends React.PureComponent {
                         transparent
                     />
                 }
+                { currentScreenshot && (
+                    <Button
+                        iconName="paintBrush"
+                        transparent
+                        onClick={this.handlePaintBrushButtonClick}
+                        title={_ts('components.galleryViewer', 'drawOverScreenshotButtonTitle')} // draw over screenshot
+                    />
+                )}
                 <DangerButton
                     iconName="close"
                     onClick={this.handleScreenshotClose}
@@ -293,6 +325,8 @@ export default class GalleryViewer extends React.PureComponent {
         const {
             screenshotMode,
             isFullscreen,
+            showCanvasDrawModal,
+            currentScreenshot,
         } = this.state;
 
         const isHttps = !!(url || '').match(/^https:\/\//) || window.location.protocol === 'http:';
@@ -349,6 +383,13 @@ export default class GalleryViewer extends React.PureComponent {
                         {...otherProps}
                     />
                 </div>
+                { showCanvasDrawModal && (
+                    <CanvasDrawModal
+                        imgSrc={currentScreenshot}
+                        onDone={this.handleCanvasDrawDone}
+                        onCancel={this.handleCanvasDrawCancel}
+                    />
+                )}
             </div>
         );
     }

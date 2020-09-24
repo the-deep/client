@@ -32,8 +32,10 @@
             .focus-trap {
                 .floating-container:not([data-last-modal="true"]),
                 .modal:not([data-last-modal="true"]) {
-                    filter: brightness(50%);
-                    pointer-events: none;
+                    &:not(.floating-util) {
+                        filter: brightness(50%);
+                        pointer-events: none;
+                    }
                 }
             }
         }
