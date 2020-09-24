@@ -19,7 +19,7 @@ import {
     leadSourceTypeSelector,
     LEAD_TYPE,
 } from '#views/LeadAdd/utils';
-import schema from '#views/LeadAdd/LeadDetail/faramSchema';
+import schema from '#views/LeadAdd/LeadForm/faramSchema';
 
 export const LA__SET_LEAD_PREVIEW_HIDDEN = 'siloDomainData/LA__SET_LEAD_PREVIEW_HIDDEN';
 export const LA__SET_LEAD_FILTERS = 'siloDomainData/LA__SET_LEAD_FILTERS';

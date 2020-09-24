@@ -11,8 +11,8 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import LeadDetail from '#views/LeadAdd/LeadDetail';
-import schema from '#views/LeadAdd/LeadDetail/faramSchema';
+import LeadForm from '#views/LeadAdd/LeadForm';
+import schema from '#views/LeadAdd/LeadForm/faramSchema';
 
 import { patchLeadAction } from '#redux';
 import {
@@ -163,7 +163,9 @@ function LeadEditModal(props: Props) {
             />
             <ModalBody className={styles.modalBody}>
                 {pending && <LoadingAnimation />}
-                <LeadDetail
+                <LeadForm
+                    // FIXME: onChange is injected by redux
+                    // FIXME: LeadForm needs a lot of new props
                     onChange={handleLeadDetailChange}
                     lead={lead}
                     disableLeadUrlChange

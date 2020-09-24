@@ -17,7 +17,6 @@ import _ts from '#ts';
 
 import {
     leadAddSetLeadTabularBookAction,
-    leadAddPageActiveLeadSelector,
 } from '#redux';
 
 import {
@@ -171,13 +170,9 @@ function LeadPreview(props) {
 LeadPreview.propTypes = propTypes;
 LeadPreview.defaultProps = defaultProps;
 
-const mapStateToProps = state => ({
-    lead: leadAddPageActiveLeadSelector(state),
-});
-
 const mapDispatchToProps = dispatch => ({
     onTabularBookSet: params => dispatch(leadAddSetLeadTabularBookAction(params)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(null, mapDispatchToProps)(
     LeadPreview,
 );

@@ -1,0 +1,35 @@
+.lead-list-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+
+    .movement-buttons {
+        display: flex;
+        flex-shrink: 0;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small);
+
+        .stats {
+            flex-grow: 1;
+            padding: var(--spacing-small);
+        }
+
+        .actions {
+            flex-shrink: 0;
+            >* {
+                margin: 0 var(--spacing-extra-small);
+            }
+        }
+    }
+
+    .lead-list {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+}
+
+
+.button {
+    margin-left: var(--spacing-small);
+}

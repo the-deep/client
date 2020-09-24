@@ -84,54 +84,10 @@
                 }
 
                 .lead-detail {
-                    display: flex;
-                    position: relative;
                     flex-basis: 70%;
-                    flex-direction: column;
                     flex-shrink: 0;
-                    background-color: var(--color-foreground-alt);
-                    overflow: auto;
-
-                    .top {
-                        background-color: var(--color-foreground);
-                        height: 40%;
-                        min-height: 108px;
-                        overflow: auto;
-                    }
-
-                    .bottom {
-                        display: flex;
-                        flex-direction: column;
-                        height: 60%;
-                        min-height: 196px;
-
-                        &:empty {
-                            display: none;
-                        }
-
-                        .lead-preview {
-                            display: flex;
-                            flex-direction: column;
-                            flex-grow: 1;
-                            border-top: var(--width-separator-thin) solid var(--color-separator);
-                            overflow: auto;
-
-                        }
-                    }
-
-                    &.text-lead {
-                        .top {
-                            /* Using important because we need to override style set using js */
-                            height: 100% !important;
-                        }
-
-                        .bottom {
-                            display: none;
-                        }
-                    }
                 }
             }
-
         }
     }
 }

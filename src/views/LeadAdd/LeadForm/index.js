@@ -45,7 +45,6 @@ import {
     leadAddChangeLeadAction,
     leadAddApplyLeadsAllBelowAction,
     leadAddApplyLeadsAllAction,
-    leadAddPageActiveLeadSelector,
 } from '#redux';
 
 import _ts from '#ts';
@@ -148,7 +147,7 @@ const defaultProps = {
     organizations: [],
 };
 
-function LeadDetail(props) {
+function LeadForm(props) {
     const {
         activeProject,
         assignees,
@@ -701,12 +700,11 @@ function LeadDetail(props) {
         </div>
     );
 }
-LeadDetail.propTypes = propTypes;
-LeadDetail.defaultProps = defaultProps;
+LeadForm.propTypes = propTypes;
+LeadForm.defaultProps = defaultProps;
 
 const mapStateToProps = state => ({
     activeProject: currentUserActiveProjectSelector(state),
-    lead: leadAddPageActiveLeadSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -716,5 +714,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    LeadDetail,
+    LeadForm,
 );

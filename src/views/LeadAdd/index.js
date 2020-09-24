@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 import {
-    _cs,
     formatDateToString,
     isDefined,
     listToMap,
@@ -16,7 +15,6 @@ import { detachedFaram } from '@togglecorp/faram';
 import Message from '#rscv/Message';
 import Confirm from '#rscv/Modal/Confirm';
 import Page from '#rscv/Page';
-import ResizableV from '#rscv/Resizable/ResizableV';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
 
@@ -56,24 +54,22 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
-import Sources from './Sources';
-import LeadPreview from './LeadPreview';
-import LeadActions from './LeadActions';
-import LeadList from './LeadList';
-import LeadFilter from './LeadFilter';
-import LeadDetail from './LeadDetail';
 import CandidateLeadsManager from './CandidateLeadsManager';
 import CandidateLeadsPane from './CandidateLeadsPane';
 import Connectors from './Connectors';
-import schema from './LeadDetail/faramSchema';
+import ConnectorLeadList from './ConnectorLeadList';
+import LeadActions from './LeadActions';
+import LeadDetail from './LeadDetail';
+import LeadFilter from './LeadFilter';
+import LeadList from './LeadList';
+import Sources from './Sources';
+import schema from './LeadForm/faramSchema';
 
 import {
-    LEAD_TYPE,
     getLeadState,
     leadFaramValuesSelector,
     leadIdSelector,
     leadKeySelector,
-    leadSourceTypeSelector,
     getNewLeadKey,
 } from './utils';
 import styles from './styles.scss';
@@ -523,7 +519,6 @@ function LeadAdd(props) {
     } else if (selectedConnector) {
         connectorLeadUrl = `server://projects/${projectId}/unified-connectors/${selectedConnector}/leads/`;
     }
-
     const [connectorLeadsPending, connectorLeadsResponse] = useRequest({
         url: connectorLeadUrl,
         query: {
@@ -543,14 +538,12 @@ function LeadAdd(props) {
         },
     });
 
-    const connectorMode = !!selectedConnector;
-    const hasActiveConnectorLead = !!selectedConnectorLead;
-
     const handleSourceSelect = useCallback(
         (source) => {
             onSourceChange(source);
             setSelectedConnector(undefined);
             setSelectedConnectorSource(undefined);
+            setSelectedConnectorLead(undefined);
         },
         [onSourceChange],
     );
@@ -560,6 +553,7 @@ function LeadAdd(props) {
             onSourceChange(undefined);
             setSelectedConnector(id);
             setSelectedConnectorSource(undefined);
+            setSelectedConnectorLead(undefined);
         },
         [onSourceChange],
     );
@@ -569,6 +563,7 @@ function LeadAdd(props) {
             onSourceChange(undefined);
             setSelectedConnector(connectorId);
             setSelectedConnectorSource(id);
+            setSelectedConnectorLead(undefined);
         },
         [onSourceChange],
     );
@@ -581,17 +576,9 @@ function LeadAdd(props) {
         [connectorTriggerTrigger],
     );
 
-    const hasActiveLead = isDefined(activeLead);
-    const leadIsTextType = hasActiveLead && (
-        leadSourceTypeSelector(activeLead) === LEAD_TYPE.text
-    );
-    const activeLeadKey = activeLead
-        ? leadKeySelector(activeLead)
-        : undefined;
-    const activeLeadState = activeLeadKey
-        ? leadStates[activeLeadKey]
-        : undefined;
-    const leadPreviewMinimized = leadPreviewHidden || leadIsTextType;
+    const hasActiveConnector = !!selectedConnector;
+
+    const hasActiveConnectorLead = !!selectedConnectorLead;
 
     // TODO: IMP calculate this value
     const saveEnabledForAll = false;
@@ -678,7 +665,7 @@ function LeadAdd(props) {
                         )}
                     />
                     <div className={styles.main}>
-                        {!connectorMode && (
+                        {!hasActiveConnector && (
                             <>
                                 <div className={styles.bar}>
                                     <LeadFilter
@@ -702,44 +689,18 @@ function LeadAdd(props) {
                                         onLeadExport={handleLeadExport}
                                         onLeadSave={handleLeadSave}
                                     />
-                                    {hasActiveLead ? (
-                                        <ResizableV
-                                            className={_cs(
-                                                styles.leadDetail,
-                                                leadPreviewMinimized && styles.textLead,
-                                            )}
-                                            topContainerClassName={styles.top}
-                                            bottomContainerClassName={styles.bottom}
-                                            disabled={leadPreviewMinimized}
-                                            topChild={(
-                                                <LeadDetail
-                                                    key={activeLeadKey}
-                                                    leadState={activeLeadState}
-                                                    bulkActionDisabled={submitAllPending}
-
-                                                    pending={pending}
-
-                                                    priorityOptions={leadOptions?.priority}
-                                                    confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
-                                                    assignees={leadOptions?.members}
-
-                                                    leadGroups={leadGroups}
-                                                    onLeadGroupsAdd={handleLeadGroupsAdd}
-
-                                                    organizations={organizations}
-                                                    onOrganizationsAdd={handleOrganizationsAdd}
-                                                />
-                                            )}
-                                            bottomChild={!leadPreviewMinimized && (
-                                                <LeadPreview
-                                                    // NOTE: need to dismount
-                                                    // LeadPreview because the
-                                                    // children cannot handle
-                                                    // change gracefully
-                                                    key={activeLeadKey}
-                                                    className={styles.leadPreview}
-                                                />
-                                            )}
+                                    {isDefined(activeLead) ? (
+                                        <LeadDetail
+                                            activeLead={activeLead}
+                                            leadPreviewHidden={leadPreviewHidden}
+                                            leadStates={leadStates}
+                                            bulkActionDisabled={submitAllPending}
+                                            pending={pending}
+                                            leadOptions={leadOptions}
+                                            onLeadGroupsAdd={handleLeadGroupsAdd}
+                                            onOrganizationsAdd={handleOrganizationsAdd}
+                                            leadGroups={leadGroups}
+                                            organizations={organizations}
                                         />
                                     ) : (
                                         <Message>
@@ -749,12 +710,15 @@ function LeadAdd(props) {
                                 </div>
                             </>
                         )}
-                        {connectorMode && (
+                        {hasActiveConnector && (
                             <div className={styles.content}>
-                                {/* TODO: add actions */}
-                                <div className={styles.list}>
-                                    <div> Lead list goes here </div>
-                                </div>
+                                <ConnectorLeadList
+                                    className={styles.list}
+                                    activeLeadKey={selectedConnectorLead}
+                                    onLeadSelect={setSelectedConnectorLead}
+                                    leads={connectorLeadsResponse?.results}
+                                    pending={connectorLeadsPending}
+                                />
                                 {hasActiveConnectorLead ? (
                                     <div className={styles.leadDetail}>
                                         Lead preview goes here
