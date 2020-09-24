@@ -56,6 +56,7 @@ const styleProperties = {
         widthProjectDetailLeftPane: '280px',
         widthQuestionIcon: '48px',
         heightQuestionIcon: '48px',
+        heightNagbar: '64px',
     },
 };
 

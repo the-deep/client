@@ -1,19 +1,11 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import {
     Switch,
     Route,
     withRouter,
 } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-/*
-import {
-    addClassName,
-    removeClassName,
-} from '@togglecorp/fujs';
-*/
-// import _ts from '#ts';
 
 import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
 import PrivateRoute from '#rscg/PrivateRoute';
@@ -23,6 +15,7 @@ import RouteSynchronizer from '#components/general/RouteSynchronizer';
 import Navbar from '#components/general/Navbar';
 
 import { mapObjectToObject } from '#utils/common';
+import BrowserWarning from '#components/general/BrowserWarning';
 
 import {
     pathNames,
@@ -37,8 +30,6 @@ import {
     lastNotifySelector,
     notifyHideAction,
     currentThemeIdSelector,
-    // tabsByCurrentUrlSelector,
-    // removeSelfTabStatusAction,
 } from '#redux';
 
 import styles from './styles.scss';
@@ -59,19 +50,12 @@ const mapStateToProps = state => ({
     currentThemeId: currentThemeIdSelector(state),
     authenticated: authenticatedSelector(state),
     lastNotify: lastNotifySelector(state),
-    // tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     notifyHide: params => dispatch(notifyHideAction(params)),
-    // removeSelfTabStatus: params => dispatch(removeSelfTabStatusAction(params)),
 });
 
-/*
-const Nagbar = ({ children }) => (
-    <div className="nagbar">{ children }</div>
-);
-*/
 
 const views = mapObjectToObject(
     routes,
@@ -155,19 +139,11 @@ export default class Multiplexer extends React.PureComponent {
     render() {
         const {
             lastNotify,
-            // tabsByCurrentUrl,
         } = this.props;
 
-        /*
-        if (tabsByCurrentUrl.length > 1) {
-            addClassName(document.body, 'nagbar-shown');
-        } else {
-            removeClassName(document.body, 'nagbar-shown');
-        }
-        */
-
         return (
-            <Fragment>
+            <>
+                <BrowserWarning />
                 <Navbar className="navbar" />
                 <Toast
                     notification={lastNotify}
@@ -178,12 +154,7 @@ export default class Multiplexer extends React.PureComponent {
                         { routesOrder.map(this.renderRoute) }
                     </Switch>
                 </div>
-                {/* tabsByCurrentUrl.length > 1 &&
-                    <Nagbar>
-                        {_ts('nagbar', 'duplicateWarningText')}
-                    </Nagbar>
-                */}
-            </Fragment>
+            </>
         );
     }
 }

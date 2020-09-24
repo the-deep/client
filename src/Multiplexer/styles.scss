@@ -121,16 +121,6 @@ body {
             padding: 0;
             height: 100vh;
         }
-
-        .nagbar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--color-warning);
-            height: var(--height-nagbar);
-            color: var(--color-text-on-warning);
-            font-weight: var(--font-weight-bold);
-        }
     }
 }
 
