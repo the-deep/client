@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import html2canvas from 'html2canvas';
 import {
     _cs,
     reverseRoute,
+    isDefined,
 } from '@togglecorp/fujs';
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 
-import Cloak from '#components/general/Cloak';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -16,7 +17,15 @@ import ListView from '#rscv/List/ListView';
 import List from '#rscv/List';
 import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import modalize from '#rscg/Modalize';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalBody from '#rscv/Modal/Body';
+
+import Cloak from '#components/general/Cloak';
 import Badge from '#components/viewer/Badge';
 import EntityLink from '#components/viewer/EntityLink';
 
@@ -127,6 +136,60 @@ const projectRendererParams = (_, p) => ({
 
 const hideQuestionnaire = ({ accessQuestionnaire }) => !accessQuestionnaire;
 
+function saveAs(uri, filename) {
+    const link = document.createElement('a');
+    if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+    } else {
+        window.open(uri);
+    }
+}
+
+const getFrameworkSize = (framework) => {
+    const listGridLayouts = framework.widgets
+        .map(w => w.properties.listGridLayout)
+        .filter(isDefined);
+
+    const overviewGridLayouts = framework.widgets
+        .map(w => w.properties.overviewGridLayout)
+        .filter(isDefined);
+
+    const width = Math.max(
+        0,
+        ...listGridLayouts.map(listGridLayout => (
+            listGridLayout.left + listGridLayout.width
+        )),
+        ...overviewGridLayouts.map(overviewGridLayout => (
+            overviewGridLayout.left + overviewGridLayout.width
+        )),
+    );
+
+    const height = Math.max(
+        0,
+        ...listGridLayouts.map(listGridLayout => (
+            listGridLayout.top + listGridLayout.height
+        )),
+    ) + Math.max(
+        0,
+        ...overviewGridLayouts.map(overviewGridLayout => (
+            overviewGridLayout.top + overviewGridLayout.height
+        )),
+    );
+
+    return {
+        width: `${width}px`,
+        height: `${height}px`,
+    };
+};
+
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class FrameworkDetail extends React.PureComponent {
@@ -143,7 +206,10 @@ export default class FrameworkDetail extends React.PureComponent {
                 title: '',
                 description: '',
             },
+            isExporting: false,
         };
+
+        this.exportSectionRef = React.createRef();
 
         this.tabs = {
             overview: _ts('project.framework', 'entryOverviewTitle'),
@@ -184,6 +250,29 @@ export default class FrameworkDetail extends React.PureComponent {
                 patchAnalysisFramework({ analysisFramework });
             }
         });
+    }
+
+    handleExportPreviewButtonClick = () => {
+        this.setState({ isExporting: true });
+    }
+
+    handleExportModalClose = () => {
+        this.setState({ isExporting: false });
+    }
+
+    handleExportButtonClick = () => {
+        const {
+            requests: {
+                frameworkGetRequest: { response: framework },
+            },
+        } = this.props;
+
+        if (this.exportSectionRef.current) {
+            html2canvas(this.exportSectionRef.current).then((canvas) => {
+                saveAs(canvas.toDataURL(), `export-${framework.title}.png`);
+                this.setState({ isExporting: false });
+            });
+        }
     }
 
     renderHeader = ({ framework }) => {
@@ -319,23 +408,6 @@ export default class FrameworkDetail extends React.PureComponent {
                                     { frameworkDescription }
                                 </div>
                             )}
-                            {canEditFramework &&
-                                <ModalButton
-                                    className={styles.editDetailsButton}
-                                    disabled={pending}
-                                    modal={
-                                        <EditFrameworkModal
-                                            frameworkId={analysisFrameworkId}
-                                            frameworkDetails={editFrameworkDetails}
-                                            isPrivate={isPrivate}
-                                            onFrameworkDetailsChange={this.handleDetailsChange}
-                                            canEditMemberships={canAddUser}
-                                        />
-                                    }
-                                >
-                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
-                                </ModalButton>
-                            }
                         </div>
                         {usersWithAddPermission.length > 0 && (
                             <div className={styles.labelValuesPair}>
@@ -381,6 +453,32 @@ export default class FrameworkDetail extends React.PureComponent {
                                 </div>
                             </div>
                         )}
+                        <div className={styles.buttonContainer}>
+                            {canEditFramework &&
+                                <ModalButton
+                                    className={styles.editDetailsButton}
+                                    iconName="edit"
+                                    disabled={pending}
+                                    modal={
+                                        <EditFrameworkModal
+                                            frameworkId={analysisFrameworkId}
+                                            frameworkDetails={editFrameworkDetails}
+                                            isPrivate={isPrivate}
+                                            onFrameworkDetailsChange={this.handleDetailsChange}
+                                            canEditMemberships={canAddUser}
+                                        />
+                                    }
+                                >
+                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
+                                </ModalButton>
+                            }
+                            <Button
+                                iconName="archive"
+                                onClick={this.handleExportPreviewButtonClick}
+                            >
+                                { _ts('project.framework', 'exportButtonTitle') }
+                            </Button>
+                        </div>
                     </>
                 )}
                 <div className={styles.widgetPreviewBar}>
@@ -470,6 +568,8 @@ export default class FrameworkDetail extends React.PureComponent {
             },
         } = this.props;
 
+        const { isExporting } = this.state;
+
         const Header = this.renderHeader;
 
         return (
@@ -480,6 +580,51 @@ export default class FrameworkDetail extends React.PureComponent {
                     className={styles.preview}
                     framework={framework}
                 />
+                { isExporting && (
+                    <Modal className={styles.exportModal}>
+                        <ModalHeader
+                            title={_ts('project.framework', 'exportModalTitle')}
+                            rightComponent={
+                                <DangerButton
+                                    onClick={this.handleExportModalClose}
+                                    transparent
+                                    iconName="close"
+                                />
+                            }
+                        />
+                        <ModalBody className={styles.modalBody}>
+                            <div
+                                ref={this.exportSectionRef}
+                                style={{
+                                    ...getFrameworkSize(framework),
+                                }}
+                            >
+                                <h3 className={styles.tabHeading}>
+                                    {_ts('project.framework', 'overviewTabTitle')}
+                                </h3>
+                                <Preview
+                                    activeView="overview"
+                                    framework={framework}
+                                />
+                                <h3 className={styles.tabHeading}>
+                                    {_ts('project.framework', 'listTabTitle')}
+                                </h3>
+                                <Preview
+                                    activeView="list"
+                                    framework={framework}
+                                />
+                            </div>
+                        </ModalBody>
+                        <ModalFooter>
+                            <PrimaryButton
+                                onClick={this.handleExportButtonClick}
+                                transparent
+                            >
+                                {_ts('project.framework', 'exportModalExportTitle')}
+                            </PrimaryButton>
+                        </ModalFooter>
+                    </Modal>
+                )}
             </div>
         );
     }

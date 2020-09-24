@@ -70,9 +70,13 @@
                 color: var(--color-text-label);
                 font-size: var(--font-size-large);
             }
+        }
+
+        .button-container {
+            padding: var(--spacing-small) var(--spacing-medium) 0;
 
             .edit-details-button {
-                flex-shrink: 0;
+                margin-right: var(--spacing-small);
             }
         }
 
@@ -148,5 +152,25 @@
     .preview {
         flex-grow: 1;
         overflow: auto;
+    }
+}
+
+.export-modal {
+    display: flex;
+    flex-direction: column;
+    width: 96vw;
+    height: 96vw;
+    overflow: auto;
+
+    .modal-body {
+        flex-grow: 1;
+        padding: 0;
+        overflow-y: auto;
+
+        .tab-heading {
+            border-top: var(--width-separator-thin) solid var(--color-separator);
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small) var(--spacing-medium);
+        }
     }
 }

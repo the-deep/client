@@ -1167,7 +1167,8 @@
         "-25166641": "Done",
         "-88808908": "Pen color",
         "-63730365": "Pen size",
-        "-31875190": "Draw over screenshot"
+        "-31875190": "Draw over screenshot",
+        "-5492927": "Export to image"
     },
     "links": {
         "browserExtension": {
@@ -2162,7 +2163,12 @@
             "editFrameworkModalTitle": -59086768,
             "editWidgetsButtonTitle": -49370702,
             "frameworkUseNotifyTitle": -17456167,
-            "entryQuestionTitle": -39116082
+            "entryQuestionTitle": -39116082,
+            "exportButtonTitle": -5492927,
+            "exportModalTitle": 600,
+            "exportModalExportTitle": -5492927,
+            "listTabTitle": 780,
+            "overviewTabTitle": 781
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,
