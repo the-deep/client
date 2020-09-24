@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isDefined } from '@togglecorp/fujs';
+import {
+    listToGroupList,
+    isDefined,
+    isFalsyString,
+    unique,
+} from '@togglecorp/fujs';
 import Faram, { FaramInputElement } from '@togglecorp/faram';
 
 import Modal from '#rscv/Modal';
@@ -9,7 +14,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
-import MultiSelectInput from '#rsci/MultiSelectInput';
+import ListView from '#rscv/List/ListView';
 
 import {
     RequestCoordinator,
@@ -19,30 +24,61 @@ import {
 
 import _ts from '#ts';
 
+import SearchOrganization from './SearchOrganization';
+import OrganizationField from './OrganizationField';
 import styles from './styles.scss';
 
-const keySelector = d => d.id;
-const labelSelector = d => d.title;
 
-const rendererParams = (key, data) => ({
-    id: data.id,
-    title: data.title,
-});
+const organizationKeySelector = d => d.id;
+const organizationLabelSelector = d => d.title;
+const fieldKeySelector = d => d.faramElementName;
 
 const propTypes = {
     closeModal: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    fields: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    value: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const requestOptions = {
-    organizationGetRequest: {
+    organizationsGetRequest: {
         url: '/organizations/',
-        query: { fields: ['id', 'title'] },
+        query: ({ params }) => ({
+            search: params && params.searchText,
+        }),
         method: methods.GET,
-        onMount: true,
+        onSuccess: ({ response: { results = [] }, params }) => {
+            if (params && params.handleSuccess) {
+                const { handleSuccess } = params;
+                handleSuccess(results);
+            }
+        },
+        options: {
+            delay: 300,
+        },
     },
+};
+
+const transformOrganizationToOptions = (organizations = []) => (
+    organizations.map(({ organization, ...others }) => ({ ...others, id: organization }))
+);
+
+const transformOrganizationToFaramValues = (organizations = []) => (
+    listToGroupList(organizations, o => o.type, o => o.organization)
+);
+
+const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
+    let organizations = [];
+    Object.entries(faramValues).forEach(([key, values]) => {
+        const organizationList = values
+            .map(v => options.find(o => o.id === v))
+            .filter(isDefined)
+            .map(({ id, title }) => ({ organization: id, title, type: key }));
+
+        organizations = [...organizations, ...organizationList];
+    });
+    return organizations;
 };
 
 @RequestCoordinator
@@ -54,29 +90,56 @@ export default class StakeholdersModal extends React.PureComponent {
         super(props);
 
         const {
-            requests: {
-                organizationGetRequest,
-            },
             value,
-            onChange,
         } = this.props;
 
         this.schema = {
             fields: {
-                leadOrganization: [],
-                internationalPartners: [],
-                donors: [],
-                nationalPartners: [],
+                lead_organization: [],
+                international_partner: [],
+                national_partner: [],
+                donor: [],
                 government: [],
             },
         };
 
         this.state = {
-            faramValues: value,
+            searchOptions: [],
+            organizationOptions: transformOrganizationToOptions(value),
+            faramValues: transformOrganizationToFaramValues(value),
             faramErrors: {},
         };
     }
 
+    setOrganizationList = (newOptions) => {
+        const { organizationOptions } = this.state;
+        const uniqueOptions = unique(
+            [
+                ...newOptions,
+                ...organizationOptions,
+
+            ].filter(isDefined),
+            option => option.id,
+        );
+        this.setState({
+            searchOptions: newOptions,
+            organizationOptions: uniqueOptions,
+        });
+    }
+
+    organizationFieldRenderParams = (_, data) => {
+        const { organizationOptions } = this.state;
+        return {
+            ...data,
+            options: organizationOptions,
+            keySelector: organizationKeySelector,
+            labelSelector: organizationLabelSelector,
+            containerClassName: styles.widgetContainer,
+            className: styles.widget,
+            itemClassName: styles.widgetItem,
+            showHintAndError: false,
+        };
+    }
 
     handleChange = (faramValues, faramErrors) => {
         this.setState({
@@ -90,8 +153,14 @@ export default class StakeholdersModal extends React.PureComponent {
             onChange,
             closeModal,
         } = this.props;
+        const { organizationOptions } = this.state;
+        const transformedValues = transformFaramValuesToOrganization(
+            faramValues,
+            organizationOptions,
+        );
+
         if (isDefined(onChange)) {
-            onChange(faramValues);
+            onChange(transformedValues);
         }
         if (isDefined(closeModal)) {
             closeModal();
@@ -104,25 +173,41 @@ export default class StakeholdersModal extends React.PureComponent {
         });
     }
 
+    handleSearch = (searchText) => {
+        const {
+            requests: {
+                organizationsGetRequest,
+            },
+        } = this.props;
+        if (isFalsyString(searchText)) {
+            organizationsGetRequest.abort();
+            this.setState({
+                searchOptions: [],
+            });
+        } else {
+            organizationsGetRequest.do({
+                searchText,
+                handleSuccess: this.setOrganizationList,
+            });
+        }
+    }
+
     render() {
         const {
             closeModal,
             requests: {
-                organizationGetRequest: {
-                    response,
+                organizationsGetRequest: {
+                    pending,
                 },
             },
+            fields,
         } = this.props;
 
         const {
             faramValues,
             faramErrors,
+            searchOptions,
         } = this.state;
-
-        const organizationResponse = response;
-        const organizationList = organizationResponse
-            ? organizationResponse.results
-            : [];
 
         return (
             <Modal
@@ -130,8 +215,11 @@ export default class StakeholdersModal extends React.PureComponent {
                 closeOnEscape
                 className={styles.modal}
             >
+                <ModalHeader
+                    title={_ts('project.detail.stakeholders', 'stakeholdersModalTitle')}
+                />
                 <Faram
-                    className={styles.form}
+                    className={styles.faram}
                     onChange={this.handleChange}
                     onValidationFailure={this.handleValidationFailure}
                     onValidationSuccess={this.handleValidationSuccess}
@@ -139,60 +227,22 @@ export default class StakeholdersModal extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    <ModalHeader
-                        className={styles.modalHeader}
-                        title={_ts('project.details.stakeholders', 'stakeholdersModalTitle')}
-                        rightComponent={(
-                            <DangerButton
-                                transparent
-                                onClick={closeModal}
-                                iconName="close"
-                            />
-                        )}
-                    />
                     <ModalBody className={styles.modalBody}>
-                        <MultiSelectInput
-                            faramElementName="leadOrganization"
-                            label={_ts('project.detail.stakeholders', 'leadOrganization')}
-                            options={organizationList}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            rendererParams={rendererParams}
-                            autoFocus
-                            showLabel
+                        <SearchOrganization
+                            className={styles.organizationList}
+                            organizationList={searchOptions}
+                            handleSearch={this.handleSearch}
+                            pending={pending}
                         />
-                        <MultiSelectInput
-                            faramElementName="internationalPartners"
-                            label={_ts('project.detail.stakeholders', 'internationalPartners')}
-                            options={organizationList}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            rendererParams={rendererParams}
-                        />
-                        <MultiSelectInput
-                            faramElementName="donors"
-                            label={_ts('project.detail.stakeholders', 'donors')}
-                            options={organizationList}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            rendererParams={rendererParams}
-                        />
-                        <MultiSelectInput
-                            faramElementName="nationalPartners"
-                            label={_ts('project.detail.stakeholders', 'nationalPartners')}
-                            options={organizationList}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            rendererParams={rendererParams}
-                        />
-                        <MultiSelectInput
-                            faramElementName="government"
-                            label={_ts('project.detail.stakeholders', 'government')}
-                            options={organizationList}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            rendererParams={rendererParams}
-                        />
+                        <div className={styles.right}>
+                            <ListView
+                                className={styles.widgetList}
+                                data={fields}
+                                keySelector={fieldKeySelector}
+                                renderer={OrganizationField}
+                                rendererParams={this.organizationFieldRenderParams}
+                            />
+                        </div>
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton

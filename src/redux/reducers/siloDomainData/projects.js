@@ -134,6 +134,7 @@ export const setProjectDetails = (state, action) => {
         regions,
         userGroups: usergroupList,
         memberships: membershipList,
+        organizations,
     } = faramValues;
 
     const memberships = listToMap(membershipList, m => m.id) || emptyObject;
@@ -149,6 +150,7 @@ export const setProjectDetails = (state, action) => {
                         startDate,
                         endDate,
                         regions,
+                        organizations,
                     } },
                     faramErrors: { $set: {} },
                     pristine: { $set: true },

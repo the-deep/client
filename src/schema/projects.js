@@ -12,6 +12,7 @@ const projectSchema = [];
             data: { type: 'object' },
             memberships: { type: 'array.projectMembership' },
             regions: { type: 'array.object' },
+            organizations: { type: 'array.object' },
             title: { type: 'string', required: true },
             description: { type: 'string', required: false },
             analysisFramework: { type: 'uint', required: false },

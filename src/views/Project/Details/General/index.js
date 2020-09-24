@@ -6,8 +6,13 @@ import Faram, {
     requiredCondition,
     dateCondition,
 } from '@togglecorp/faram';
-import { decodeDate } from '@togglecorp/fujs';
+import {
+    decodeDate,
+    listToGroupList,
+} from '@togglecorp/fujs';
 
+import ListView from '#rscv/List/ListView';
+import SimpleListInput from '#rsci/SimpleListInput';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import Button from '#rsu/../v2/Action/Button';
@@ -57,8 +62,6 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
-    unsetProject: PropTypes.func.isRequired,
-
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -90,6 +93,33 @@ const mapDispatchToProps = dispatch => ({
     changeProjectDetails: params => dispatch(changeProjectDetailsAction(params)),
     setErrorProjectDetails: params => dispatch(setErrorProjectDetailsAction(params)),
 });
+
+const organizationKeySelector = d => d.organization;
+const organizationLabelSelector = d => d.title;
+const organizationFieldKeySelector = d => d.faramElementName;
+
+const fields = [
+    {
+        label: _ts('project.detail.stakeholders', 'leadOrganization'),
+        faramElementName: 'lead_organization',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'internationalPartner'),
+        faramElementName: 'international_partner',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'nationalPartner'),
+        faramElementName: 'national_partner',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'donor'),
+        faramElementName: 'donor',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'government'),
+        faramElementName: 'government',
+    },
+];
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
@@ -160,16 +190,21 @@ export default class ProjectDetailsGeneral extends PureComponent {
                 projectPutRequest,
             },
         } = this.props;
-        const organizations = projectDetails.organizations || {};
-        const newProjectDetails = {
-            ...projectDetails,
-            leadOrganizations: organizations.leadOrganizations,
-            internationalPartners: organizations.internationalPartners,
-            donors: organizations.donors,
-            nationalPartners: organizations.nationalPartners,
-            government: organizations.government,
-        };
-        projectPutRequest.do({ newProjectDetails });
+        projectPutRequest.do({ projectDetails });
+    }
+
+    fieldRendererParams = (key, data) => {
+        const { projectLocalData: { faramValues: { organizations = [] } } } = this.props;
+        const values = listToGroupList(organizations, o => o.type, o => o.organization);
+        const value = values[key] || [];
+        return ({
+            ...data,
+            value,
+            options: organizations,
+            keySelector: organizationKeySelector,
+            labelSelector: organizationLabelSelector,
+            readOnly: true,
+        });
     }
 
     renderUnsavedChangesPrompt = () => (
@@ -288,16 +323,26 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                 rows={7}
                                 resize="vertical"
                             />
-                            <ModalButton
-                                className={styles.modalButton}
-                                modal={
-                                    <StakeholdersModal
-                                        faramElementName="organizations"
-                                    />
-                                }
-                            >
-                                {_ts('project.detail.general', 'stakeholder')}
-                            </ModalButton>
+                            <div>
+                                <ModalButton
+                                    className={styles.modalButton}
+                                    modal={
+                                        <StakeholdersModal
+                                            faramElementName="organizations"
+                                            fields={fields}
+                                        />
+                                    }
+                                >
+                                    {_ts('project.detail.general', 'stakeholder')}
+                                </ModalButton>
+                                <ListView
+                                    className={styles.content}
+                                    data={fields}
+                                    rendererParams={this.fieldRendererParams}
+                                    renderer={SimpleListInput}
+                                    keySelector={organizationFieldKeySelector}
+                                />
+                            </div>
                         </div>
                     </div>
                 </Faram>

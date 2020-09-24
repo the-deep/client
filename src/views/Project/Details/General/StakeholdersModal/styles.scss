@@ -1,0 +1,61 @@
+.modal {
+    width: 80vw;
+    height: 80vh;
+
+    .faram {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .modal-body {
+            display: flex;
+            padding: var(--spacing-small);
+            padding: 0;
+            overflow: auto;
+
+            .organization-list {
+                flex-shrink: 0;
+                width: 320px;
+            }
+
+            .right {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                overflow: auto;
+
+                .widget-list {
+                    display: flex;
+                    align-content: flex-start;
+                    flex-grow: 1;
+                    flex-wrap: wrap;
+                    padding: var(--spacing-small);
+                    overflow: auto;
+
+                    .widget-container {
+                        display: flex;
+                        flex-basis: calc(calc(100% / 3) - calc(var(--spacing-small) * 2));
+                        flex-direction: column;
+                        flex-grow: 0;
+                        margin: var(--spacing-small);
+                        border: var(--width-separator-thin) solid var(--color-separator);
+                        border-radius: 5px;
+                        min-width: 200px;
+                        overflow: auto;
+
+                        .widget {
+                            flex-grow: 1;
+                            padding: var(--spacing-medium);
+                            height: 240px;
+
+                            .widget-item {
+                                padding: var(--spacing-small) var(--spacing-small) var(--spacing-small) 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
