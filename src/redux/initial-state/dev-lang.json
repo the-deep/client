@@ -3332,11 +3332,10 @@
             "errorNotify": -17130420,
             "successMessageIfEmpty": -51126708
         },
-<<<<<<< HEAD
         "multiplexer": {
             "unsupportedBrowserMessage": -6144826,
             "hereLabel": -40128868
-=======
+        },
         "canvasDrawModal": {},
         "components.canvasDrawModal": {
             "cancelButtonLabel": 61,
@@ -3346,8 +3345,9 @@
             "penSizeInputLabel": -63730365,
             "penSizeOptionLargeLabel": -22259584,
             "penSizeOptionMediumLabel": -65407480,
-            "penSizeOptionSmallLabel": -80573166
->>>>>>> 0b7c6f0b3... Add strings for canvas draw modal
+            "penSizeOptionSmallLabel": -80573166,
+            "penSizeOptionSmallLabel": -80573166,
+            "modalHeading": -31875190
         }
     }
 }
