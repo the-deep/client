@@ -152,38 +152,31 @@ function saveAs(uri, filename) {
 }
 
 const getFrameworkSize = (framework) => {
-    let width = 0;
-    let listHeight = 0;
-    let overviewHeight = 0;
+    const width = Math.max(
+        0,
+        ...framework.widgets.map(w => (
+            w.properties.listGridLayout.left + w.properties.listGridLayout.width
+        )),
+        ...framework.widgets.map(w => (
+            w.properties.overviewGridLayout.left + w.properties.overviewGridLayout.width
+        )),
+    );
 
-    framework.widgets.forEach((w) => {
-        const listRight = w.properties.listGridLayout.left + w.properties.listGridLayout.width;
-        const listBottom = w.properties.listGridLayout.top + w.properties.listGridLayout.height;
-        const overviewRight = w.properties.overviewGridLayout.left
-            + w.properties.overviewGridLayout.width;
-        const overviewBottom = w.properties.overviewGridLayout.top
-            + w.properties.overviewGridLayout.height;
-
-        if (listRight > width) {
-            width = listRight;
-        }
-
-        if (overviewRight > width) {
-            width = overviewRight;
-        }
-
-        if (listBottom > listHeight) {
-            listHeight = listBottom;
-        }
-
-        if (overviewBottom > overviewHeight) {
-            overviewHeight = overviewBottom;
-        }
-    });
+    const height = Math.max(
+        0,
+        ...framework.widgets.map(w => (
+            w.properties.listGridLayout.top + w.properties.listGridLayout.height
+        )),
+    ) + Math.max(
+        0,
+        ...framework.widgets.map(w => (
+            w.properties.overviewGridLayout.top + w.properties.overviewGridLayout.height
+        )),
+    );
 
     return {
         width: `${width}px`,
-        height: `${listHeight + overviewHeight}px`,
+        height: `${height}px`,
     };
 };
 
