@@ -32,10 +32,6 @@
             }
             */
 
-            .connectors {
-                flex-shrink: 0;
-            }
-
             .space {
                 flex-grow: 1;
             }
@@ -81,11 +77,6 @@
                     flex-direction: column;
                     flex-shrink: 0;
                     border-right: var(--width-separator-thin) solid var(--color-separator);
-                }
-
-                .lead-detail {
-                    flex-basis: 70%;
-                    flex-shrink: 0;
                 }
             }
         }

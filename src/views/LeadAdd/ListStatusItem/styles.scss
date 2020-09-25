@@ -12,20 +12,29 @@
 
     .add-lead-list-item {
         display: flex;
-        align-items: center;
         // flex-wrap: wrap;
-        outline: none;
-        border: 0;
         border-left: var(--width-separator-thick) solid transparent;
         background-color: transparent;
-        cursor: pointer;
-        padding: var(--spacing-medium) var(--spacing-small);
         width: 100%;
         overflow: hidden;
         color: var(--color-text);
-        font-family: inherit;
-        font-size: inherit;
-        user-select: none;
+
+        .title-container-button {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            outline: none;
+            border: 0;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 0;
+            padding: var(--spacing-medium) 0;
+            width: auto;
+            overflow: hidden;
+            font-family: inherit;
+            font-size: inherit;
+            user-select: none;
+        }
 
         .progress-bar {
             display: block;
@@ -48,15 +57,19 @@
         .icon {
             flex-shrink: 0;
             margin: 0 var(--spacing-small);
-            padding: 0;
-            // width: var(--width-icon-large);
+            padding: var(--spacing-medium) var(--spacing-small);
+            width: calc(20px + 2 * var(--spacing-small));
             font-size: var(--font-size-large);
+
+            &.check-button {
+                color: var(--color-accent);
+            }
         }
 
         .title-container {
             align-items: center;
             flex-grow: 1;
-            margin: 0 var(--spacing-small);
+            margin: 0 var(--spacing-small) 0 0;
             padding: 0;
             overflow: hidden;
             text-align: left;
