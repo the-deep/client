@@ -133,7 +133,6 @@ function InternalGalleryWithTabular(props) {
 
     const handleAttachmentMimeTypeGet = useCallback(
         (res) => {
-            console.warn('here');
             const { title = '' } = res;
             // FIXME: move this to common utils
             const fileType = title.toLowerCase().match(/(?:\.([^.]+))?$/)[1];

@@ -7,10 +7,7 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _ts from '#ts';
 
-import {
-    leadKeySelector,
-    LEAD_TYPE,
-} from '../utils';
+import { LEAD_TYPE } from '../utils';
 
 import ListStatusItem from '../ListStatusItem';
 import styles from './styles.scss';
@@ -65,7 +62,8 @@ function LeadList(props) {
                 itemKey: key,
                 active: key === activeLeadKey,
                 // FIXME: check if this is always available
-                title: data.lead.data.title,
+                // FIXME: use lead.data.url or lead.url
+                title: data.lead.data.title ?? data.lead.url,
                 type: LEAD_TYPE.connectors,
                 onItemSelect: onLeadSelect,
                 // FIXME: identify bad states

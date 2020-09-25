@@ -22,6 +22,7 @@ import LeadCopyModal from '#components/general/LeadCopyModal';
 import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
+import LeadPreview from '#components/leftpanel/LeadPreview';
 
 import useRequest from '#restrequest';
 import { RequestCoordinator } from '#request';
@@ -71,6 +72,7 @@ import {
     leadIdSelector,
     leadKeySelector,
     getNewLeadKey,
+    LEAD_TYPE,
 } from './utils';
 import styles from './styles.scss';
 
@@ -527,6 +529,7 @@ function LeadAdd(props) {
         },
         autoTrigger: true,
     });
+    const connectorLeads = connectorLeadsResponse?.results;
 
     const [connectorToTrigger, setConnectorToTrigger] = useState();
     const [connectorTriggerPending,,, connectorTriggerTrigger] = useRequest({
@@ -578,7 +581,27 @@ function LeadAdd(props) {
 
     const hasActiveConnector = !!selectedConnector;
 
-    const hasActiveConnectorLead = !!selectedConnectorLead;
+    const activeConnectorLead = useMemo(
+        () => {
+            if (!selectedConnectorLead) {
+                return undefined;
+            }
+            const connectorLead = connectorLeads?.find(
+                item => item.id === selectedConnectorLead
+            );
+            if (!connectorLead) {
+                return undefined;
+            }
+
+            return {
+                sourceType: LEAD_TYPE.website,
+                // FIXME: use lead.data.url or lead.url
+                url: connectorLead.lead.url,
+                // attachment: connectorLead.lead.data.attachment,
+            };
+        },
+        [connectorLeads, selectedConnectorLead],
+    );
 
     // TODO: IMP calculate this value
     const saveEnabledForAll = false;
@@ -716,13 +739,14 @@ function LeadAdd(props) {
                                     className={styles.list}
                                     activeLeadKey={selectedConnectorLead}
                                     onLeadSelect={setSelectedConnectorLead}
-                                    leads={connectorLeadsResponse?.results}
+                                    leads={connectorLeads}
                                     pending={connectorLeadsPending}
                                 />
-                                {hasActiveConnectorLead ? (
-                                    <div className={styles.leadDetail}>
-                                        Lead preview goes here
-                                    </div>
+                                {activeConnectorLead ? (
+                                    <LeadPreview
+                                        className={styles.leadDetail}
+                                        lead={activeConnectorLead}
+                                    />
                                 ) : (
                                     <Message>
                                         { _ts('addLeads', 'noLeadsText') }

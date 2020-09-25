@@ -55,8 +55,6 @@ function LeadPreview(props) {
         handleScreenshot,
     } = props;
 
-    console.warn(props.lead);
-
     if (isTypeWithUrl(type) && url) {
         return (
             <ExternalGallery
