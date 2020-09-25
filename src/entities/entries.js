@@ -94,11 +94,11 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
 
             result.push([
                 `${filterKey}__gte`,
-                getDateWithTimezone(startDate),
+                startDate,
             ]);
             result.push([
                 `${filterKey}__lt`,
-                getDateWithTimezone(encodeDate(endDate)),
+                encodeDate(endDate),
             ]);
         } else if (widgetId === 'timeWidget') {
             const { startTime, endTime } = filterOptions;

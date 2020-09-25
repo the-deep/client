@@ -312,6 +312,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     showHintAndError={false}
                     options={leadStatus}
                     placeholder={_ts('entries', 'leadStatusFilterPlaceholder')}
+                    disabled={pending}
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
@@ -323,6 +324,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     showHintAndError={false}
                     options={leadPriority}
                     placeholder={_ts('entries', 'leadPriorityFilterPlaceholder')}
+                    disabled={pending}
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
@@ -334,13 +336,14 @@ export default class FilterEntriesForm extends React.PureComponent {
                     showHintAndError={false}
                     options={leadConfidentiality}
                     placeholder={_ts('entries', 'leadConfidentialityFilterPlaceholder')}
+                    disabled={pending}
                 />
                 <DateFilter
                     className={styles.entriesFilter}
                     label={_ts('entries', 'leadPublishedOnFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('lead__published_on', value); }}
+                    onChange={(value) => { this.handleFilterChange('lead_published_on', value); }}
                     showHintAndError={false}
-                    value={filters.lead__published_on}
+                    value={filters.lead_published_on}
                     disabled={pending}
                     placeholder={_ts('entries', 'leadPublishedOnPlaceholder')}
                 />
