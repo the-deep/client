@@ -1,4 +1,3 @@
-
 .tabs-container {
     display: flex;
     flex-direction: column;
@@ -10,5 +9,9 @@
         .tabular-button {
             margin: 0 var(--spacing-small);
         }
+    }
+
+    .gallery {
+        flex-grow: 1;
     }
 }

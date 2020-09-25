@@ -11,7 +11,7 @@ import Modal from '#rscv/Modal';
 
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import TabularBook from '#components/other/TabularBook';
-import Attachment from '#components/viewer/Attachment';
+import InternalGalleryWithTabular from '#components/viewer/InternalGalleryWithTabular';
 
 import _ts from '#ts';
 
@@ -120,14 +120,17 @@ function LeadPreview(props) {
             return (
                 <div className={className} >
                     {isDefined(attachment) ? (
-                        <Attachment
+                        <InternalGalleryWithTabular
                             key={tabularChangeKey}
-                            attachment={attachment}
-                            title={title}
-                            tabularBook={tabularBook}
                             className={styles.galleryFile}
+                            title={title}
+                            galleryId={attachment.id}
+                            showUrl
+
+                            tabularBook={tabularBook}
                             projectId={projectId}
                             onTabularButtonClick={handleTabularButtonClick}
+                            tabularBookExtractionDisabled={false}
                         />
                     ) : (
                         <Message>

@@ -1,0 +1,33 @@
+@import '~base-scss/utils';
+
+.urlbar {
+    display: flex;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-background-header);
+    padding: var(--spacing-small);
+
+    .url {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+
+        :global .input {
+            border: var(--width-separator-thin) solid var(--color-separator);
+            border-radius: 3px;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small) var(--spacing-small);
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        margin-left: var(--spacing-small);
+
+        .open-link {
+            @extend %transparent-button-like-link;
+            color: var(--color-accent);
+        }
+    }
+}

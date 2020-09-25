@@ -4,7 +4,7 @@ import React from 'react';
 import Modal from '#rscv/Modal';
 import Button from '#rsca/Button';
 import ExternalGallery from '#components/viewer/ExternalGallery';
-import Attachment from '#components/viewer/Attachment';
+import InternalGalleryWithTabular from '#components/viewer/InternalGalleryWithTabular';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
@@ -62,12 +62,13 @@ function LeadPreview(props) {
                     />
                 )}
                 {!url && attachment && (
-                    <Attachment
-                        attachment={attachment}
-                        tabularBook={tabularBook}
+                    <InternalGalleryWithTabular
                         className={styles.galleryFile}
+                        galleryId={attachment.id}
+                        showUrl
+
                         projectId={projectId}
-                        viewOnly
+                        tabularBook={tabularBook}
                     />
                 )}
                 {!url && !attachment && (

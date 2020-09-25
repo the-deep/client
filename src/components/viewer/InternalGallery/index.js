@@ -13,7 +13,7 @@ import GalleryFileRequest from './requests/GalleryFileRequest';
 
 import styles from './styles.scss';
 
-const PreviewNothing = ({
+const PreviewLink = ({
     pending, pendingLabel, className, notFound, notFoundMessage, fileUrl, fileName,
 }) => {
     if (pending) {
@@ -48,7 +48,7 @@ const PreviewNothing = ({
         </a>
     );
 };
-PreviewNothing.propTypes = {
+PreviewLink.propTypes = {
     className: PropTypes.string,
     pendingLabel: PropTypes.string,
     notFoundMessage: PropTypes.string,
@@ -57,7 +57,7 @@ PreviewNothing.propTypes = {
     fileUrl: PropTypes.string,
     fileName: PropTypes.string,
 };
-PreviewNothing.defaultProps = {
+PreviewLink.defaultProps = {
     className: '',
     pendingLabel: undefined,
     notFoundMessage: undefined,
@@ -68,7 +68,7 @@ PreviewNothing.defaultProps = {
 };
 
 const PreviewGallery = ({
-    pending, className, notFound, notFoundMessage, fileUrl, mimeType, ...otherProps
+    pending, className, notFound, notFoundMessage, fileUrl, mimeType, ...galleryProps
 }) => {
     if (pending) {
         return (
@@ -93,7 +93,7 @@ const PreviewGallery = ({
     // use supported file viewer component
     return (
         <GalleryViewer
-            {...otherProps}
+            {...galleryProps}
             className={className}
             url={fileUrl}
             mimeType={mimeType}
@@ -117,7 +117,6 @@ PreviewGallery.defaultProps = {
     fileUrl: '',
     mimeType: undefined,
 };
-
 
 const propTypes = {
     galleryId: PropTypes.number,
@@ -195,19 +194,20 @@ export default class InternalGallery extends React.PureComponent {
 
         const {
             galleryId, // eslint-disable-line no-unused-vars
+            onMimeTypeGet, // eslint-disable-line no-unused-vars
             onlyFileName,
             renderer,
-            ...otherProps
+            ...previewProps
         } = this.props;
 
-        let Preview = onlyFileName ? PreviewNothing : PreviewGallery;
+        let Preview = onlyFileName ? PreviewLink : PreviewGallery;
         if (renderer) {
             Preview = renderer;
         }
 
         return (
             <Preview
-                {...otherProps}
+                {...previewProps}
                 pending={pending}
                 notFound={notFound}
 

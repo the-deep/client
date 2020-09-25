@@ -10,70 +10,69 @@ import _cs from '#cs';
 
 import styles from './styles.scss';
 
-const noop = () => {};
-
 const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
+
     handleScreenshot: PropTypes.func,
     showScreenshot: PropTypes.bool,
-    className: PropTypes.string,
 };
 
 const defaultProps = {
-    showScreenshot: false,
-    handleScreenshot: noop,
     className: '',
+
+    showScreenshot: false,
+    handleScreenshot: undefined,
 };
 
-export default class LeadPreview extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+const isTypeWithUrl = t => (t === LEAD_TYPE.website);
+const isTypeWithAttachment = t => (
+    [LEAD_TYPE.file, LEAD_TYPE.dropbox, LEAD_TYPE.drive].indexOf(t) !== -1
+);
 
-    static isTypeWithUrl = t => t === LEAD_TYPE.website;
+function LeadPreview(props) {
+    const {
+        lead: {
+            sourceType: type,
+            url,
+            attachment,
+        },
+        className,
+        showScreenshot,
+        handleScreenshot,
+    } = props;
 
-    static isTypeWithAttachment = t => (
-        [LEAD_TYPE.file, LEAD_TYPE.dropbox, LEAD_TYPE.drive].indexOf(t) !== -1
-    );
-
-    render() {
-        const {
-            lead: {
-                sourceType: type,
-                url,
-                attachment,
-            },
-            className,
-            showScreenshot,
-        } = this.props;
-
-        if (LeadPreview.isTypeWithUrl(type) && url) {
-            return (
-                <ExternalGallery
-                    className={_cs(styles.preview, className)}
-                    url={url}
-                    showUrl
-                    onScreenshotCapture={this.props.handleScreenshot}
-                    showScreenshot={showScreenshot}
-                />
-            );
-        } else if (LeadPreview.isTypeWithAttachment(type) && attachment) {
-            return (
-                <InternalGallery
-                    className={_cs(styles.preview, className)}
-                    galleryId={attachment.id}
-                    onScreenshotCapture={this.props.handleScreenshot}
-                    showScreenshot={showScreenshot}
-                    showUrl
-                />
-            );
-        }
-
+    if (isTypeWithUrl(type) && url) {
         return (
-            <div className={className}>
-                <Message>
-                    {_ts('components.leadPreview', 'previewNotAvailableText')}
-                </Message>
-            </div>
+            <ExternalGallery
+                className={_cs(styles.preview, className)}
+                url={url}
+                showUrl
+                onScreenshotCapture={handleScreenshot}
+                showScreenshot={showScreenshot}
+            />
+        );
+    } else if (isTypeWithAttachment(type) && attachment) {
+        return (
+            <InternalGallery
+                className={_cs(styles.preview, className)}
+                galleryId={attachment.id}
+                onScreenshotCapture={handleScreenshot}
+                showScreenshot={showScreenshot}
+                showUrl
+            />
         );
     }
+
+    return (
+        <div className={className}>
+            <Message>
+                {_ts('components.leadPreview', 'previewNotAvailableText')}
+            </Message>
+        </div>
+    );
 }
+LeadPreview.propTypes = propTypes;
+LeadPreview.defaultProps = defaultProps;
+
+export default LeadPreview;

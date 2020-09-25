@@ -4,7 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import InternalGallery from '#components/viewer/InternalGallery';
-import GalleryImage from '#components/viewer/GalleryViewer/GalleryImage';
+import GalleryImage from '#components/viewer/GalleryViewer/Preview/GalleryImage';
 import styles from './styles.scss';
 
 const propTypes = {
