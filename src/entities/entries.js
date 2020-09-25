@@ -87,6 +87,19 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
                 `${filterKey}__lt`,
                 getDateWithTimezone(encodeDate(endDate)),
             ]);
+        } else if (filterKey === 'lead_published_on') {
+            const { startDate, endDate: oldEndDate } = filterOptions;
+            const endDate = new Date(oldEndDate);
+            endDate.setDate(endDate.getDate() + 1);
+
+            result.push([
+                `${filterKey}__gte`,
+                getDateWithTimezone(startDate),
+            ]);
+            result.push([
+                `${filterKey}__lt`,
+                getDateWithTimezone(encodeDate(endDate)),
+            ]);
         } else if (widgetId === 'timeWidget') {
             const { startTime, endTime } = filterOptions;
             result.push([
