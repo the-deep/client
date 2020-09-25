@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
 
@@ -7,7 +7,12 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _ts from '#ts';
 
-import { LEAD_TYPE } from '../utils';
+import { useArraySelection } from '#hooks/stateManagement';
+
+import {
+    leadKeySelector,
+    LEAD_TYPE,
+} from '../utils';
 
 import ListStatusItem from '../ListStatusItem';
 import styles from './styles.scss';
@@ -37,6 +42,15 @@ function LeadList(props) {
         pending,
     } = props;
 
+    const [selectedLeads,, isItemPresent, clickOnItem] = useArraySelection(
+        leadKeySelector,
+        [],
+    );
+
+    const isSelectionModeEnabled = useMemo(() => (
+        selectedLeads.length > 0
+    ), [selectedLeads]);
+
     const rendererParams = useCallback(
         (key, data) => {
             const actionButtons = (
@@ -57,10 +71,14 @@ function LeadList(props) {
                     />
                 </>
             );
+            const onItemClick = () => { clickOnItem(data); };
 
             return {
                 itemKey: key,
                 active: key === activeLeadKey,
+                isItemClicked: isItemPresent(key),
+                selectionMode: isSelectionModeEnabled,
+                onItemClick,
                 // FIXME: check if this is always available
                 // FIXME: use lead.data.url or lead.url
                 title: data.lead.data.title ?? data.lead.url,
@@ -71,7 +89,13 @@ function LeadList(props) {
                 actionButtons,
             };
         },
-        [activeLeadKey, onLeadSelect],
+        [
+            isSelectionModeEnabled,
+            activeLeadKey,
+            onLeadSelect,
+            clickOnItem,
+            isItemPresent,
+        ],
     );
 
     return (
@@ -79,7 +103,7 @@ function LeadList(props) {
             <ListView
                 className={styles.leadList}
                 data={leads}
-                keySelector={item => item.id}
+                keySelector={leadKeySelector}
                 renderer={ListStatusItem}
                 rendererParams={rendererParams}
                 pending={pending}

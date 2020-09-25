@@ -22,7 +22,6 @@ import LeadCopyModal from '#components/general/LeadCopyModal';
 import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
-import LeadPreview from '#components/leftpanel/LeadPreview';
 
 import useRequest from '#restrequest';
 import { RequestCoordinator } from '#request';
@@ -58,7 +57,7 @@ import _ts from '#ts';
 import CandidateLeadsManager from './CandidateLeadsManager';
 import CandidateLeadsPane from './CandidateLeadsPane';
 import Connectors from './Connectors';
-import ConnectorLeadList from './ConnectorLeadList';
+import ConnectorDetail from './ConnectorDetail';
 import LeadActions from './LeadActions';
 import LeadDetail from './LeadDetail';
 import LeadFilter from './LeadFilter';
@@ -72,7 +71,6 @@ import {
     leadIdSelector,
     leadKeySelector,
     getNewLeadKey,
-    LEAD_TYPE,
 } from './utils';
 import styles from './styles.scss';
 
@@ -511,8 +509,6 @@ function LeadAdd(props) {
     const [selectedConnector, setSelectedConnector] = useState(undefined);
     // TODO: validate this selected connector source
     const [selectedConnectorSource, setSelectedConnectorSource] = useState(undefined);
-    // TODO: validate this selected connector lead
-    const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
     const connectors = connectorsResponse?.results;
 
     let connectorLeadUrl;
@@ -546,7 +542,6 @@ function LeadAdd(props) {
             onSourceChange(source);
             setSelectedConnector(undefined);
             setSelectedConnectorSource(undefined);
-            setSelectedConnectorLead(undefined);
         },
         [onSourceChange],
     );
@@ -556,7 +551,6 @@ function LeadAdd(props) {
             onSourceChange(undefined);
             setSelectedConnector(id);
             setSelectedConnectorSource(undefined);
-            setSelectedConnectorLead(undefined);
         },
         [onSourceChange],
     );
@@ -566,7 +560,6 @@ function LeadAdd(props) {
             onSourceChange(undefined);
             setSelectedConnector(connectorId);
             setSelectedConnectorSource(id);
-            setSelectedConnectorLead(undefined);
         },
         [onSourceChange],
     );
@@ -580,28 +573,6 @@ function LeadAdd(props) {
     );
 
     const hasActiveConnector = !!selectedConnector;
-
-    const activeConnectorLead = useMemo(
-        () => {
-            if (!selectedConnectorLead) {
-                return undefined;
-            }
-            const connectorLead = connectorLeads?.find(
-                item => item.id === selectedConnectorLead
-            );
-            if (!connectorLead) {
-                return undefined;
-            }
-
-            return {
-                sourceType: LEAD_TYPE.website,
-                // FIXME: use lead.data.url or lead.url
-                url: connectorLead.lead.url,
-                // attachment: connectorLead.lead.data.attachment,
-            };
-        },
-        [connectorLeads, selectedConnectorLead],
-    );
 
     // TODO: IMP calculate this value
     const saveEnabledForAll = false;
@@ -734,25 +705,12 @@ function LeadAdd(props) {
                             </>
                         )}
                         {hasActiveConnector && (
-                            <div className={styles.content}>
-                                <ConnectorLeadList
-                                    className={styles.list}
-                                    activeLeadKey={selectedConnectorLead}
-                                    onLeadSelect={setSelectedConnectorLead}
-                                    leads={connectorLeads}
-                                    pending={connectorLeadsPending}
-                                />
-                                {activeConnectorLead ? (
-                                    <LeadPreview
-                                        className={styles.leadDetail}
-                                        lead={activeConnectorLead}
-                                    />
-                                ) : (
-                                    <Message>
-                                        { _ts('addLeads', 'noLeadsText') }
-                                    </Message>
-                                )}
-                            </div>
+                            <ConnectorDetail
+                                key={selectedConnector}
+                                className={styles.content}
+                                leads={connectorLeads}
+                                pending={connectorLeadsPending}
+                            />
                         )}
                     </div>
                 </>

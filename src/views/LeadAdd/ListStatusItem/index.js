@@ -1,8 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { isDefined, bound } from '@togglecorp/fujs';
+import {
+    isNotDefined,
+    isDefined,
+    bound,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
+import Button from '#rsca/Button';
 
 import Jumper from '#components/general/Jumper';
 import Badge from '#components/viewer/Badge';
@@ -81,6 +86,10 @@ const propTypes = {
     active: PropTypes.bool,
     actionButtons: PropTypes.node,
 
+    onItemClick: PropTypes.func,
+    isItemClicked: PropTypes.bool,
+    selectionMode: PropTypes.bool,
+
     progress: PropTypes.number,
     count: PropTypes.number,
     indent: PropTypes.number,
@@ -97,7 +106,10 @@ const defaultProps = {
     actionButtons: undefined,
     onItemSelect: undefined,
     indent: undefined,
+    onItemClick: undefined,
+    isItemClicked: false,
     separator: true,
+    selectionMode: false,
 };
 
 function ListStatusItem(props) {
@@ -114,6 +126,9 @@ function ListStatusItem(props) {
         itemState,
         indent,
         separator,
+        onItemClick,
+        isItemClicked,
+        selectionMode,
     } = props;
 
     const handleClick = useCallback(() => {
@@ -127,12 +142,23 @@ function ListStatusItem(props) {
         styleMap[itemState],
     );
 
+    const iconForSelectionButton = useMemo(() => {
+        if (!selectionMode && !isItemClicked && leadTypeToIconClassMap[type]) {
+            return leadTypeToIconClassMap[type];
+        }
+        return isItemClicked ? 'checkCircle' : 'circleOutline';
+    }, [
+        type,
+        isItemClicked,
+        selectionMode,
+    ]);
+
     return (
         <Jumper
             active={active}
             className={styles.leadListItem}
         >
-            <button
+            <div
                 className={
                     _cs(
                         className,
@@ -142,8 +168,6 @@ function ListStatusItem(props) {
                         !!actionButtons && styles.hasHover,
                     )
                 }
-                onClick={handleClick}
-                type="button"
             >
                 {indent && (
                     <span
@@ -154,36 +178,53 @@ function ListStatusItem(props) {
                         }}
                     />
                 )}
-                {leadTypeToIconClassMap[type] && (
+                {leadTypeToIconClassMap[type] && isNotDefined(onItemClick) && (
                     <Icon
                         className={styles.icon}
                         name={leadTypeToIconClassMap[type]}
                     />
                 )}
-                <span
-                    className={styles.titleContainer}
-                    title={title}
+                {isDefined(onItemClick) && (
+                    <Button
+                        className={_cs(
+                            styles.icon,
+                            isItemClicked && styles.checkButton,
+                        )}
+                        onClick={onItemClick}
+                        iconName={iconForSelectionButton}
+                        transparent
+                    />
+                )}
+                <button
+                    className={styles.titleContainerButton}
+                    onClick={handleClick}
+                    type="button"
                 >
-                    {title}
-                </span>
-                {isDefined(count) && count > 0 && (
-                    <Badge
-                        className={styles.badge}
-                        title={count}
-                    />
-                )}
-                {isDefined(progress) && progress > 0 && progress < 100 ? (
-                    <UploadProgress
-                        className={styles.progress}
-                        progress={progress}
-                    />
-                ) : (
-                    <Icon
-                        className={stateIconClassName}
-                        name={iconMap[itemState]}
-                    />
-                )}
-            </button>
+                    <span
+                        className={styles.titleContainer}
+                        title={title}
+                    >
+                        {title}
+                    </span>
+                    {isDefined(count) && count > 0 && (
+                        <Badge
+                            className={styles.badge}
+                            title={count}
+                        />
+                    )}
+                    {isDefined(progress) && progress > 0 && progress < 100 ? (
+                        <UploadProgress
+                            className={styles.progress}
+                            progress={progress}
+                        />
+                    ) : (
+                        <Icon
+                            className={stateIconClassName}
+                            name={iconMap[itemState]}
+                        />
+                    )}
+                </button>
+            </div>
             {actionButtons && (
                 <div className={styles.buttonContainer}>
                     {actionButtons}

@@ -8,6 +8,7 @@ const iconNames = {
     apps: 'ion-android-apps',
     back: 'ion-android-arrow-back',
     circle: 'ion-record',
+    circleOutline: 'ion-ios-circle-outline',
     calculator: 'ion-ios-calculator',
     calendar: 'ion-ios-calendar-outline',
     camera: 'ion-camera',
