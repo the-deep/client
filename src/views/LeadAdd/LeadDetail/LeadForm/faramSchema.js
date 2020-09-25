@@ -5,7 +5,7 @@ import {
 } from '@togglecorp/faram';
 import {
     LEAD_TYPE,
-} from '../utils';
+} from '../../utils';
 
 const commonFields = {
     title: [requiredCondition],

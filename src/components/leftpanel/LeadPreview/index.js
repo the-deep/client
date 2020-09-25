@@ -3,7 +3,7 @@ import React from 'react';
 
 import Message from '#rscv/Message';
 import { LEAD_TYPE } from '#entities/lead';
-import InternalGallery from '#components/viewer/InternalGallery';
+import InternalGalleryWithTabular from '#components/viewer/InternalGalleryWithTabular';
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -16,6 +16,9 @@ const propTypes = {
 
     handleScreenshot: PropTypes.func,
     showScreenshot: PropTypes.bool,
+
+    onTabularButtonClick: PropTypes.func,
+    tabularBookExtractionDisabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -23,6 +26,9 @@ const defaultProps = {
 
     showScreenshot: false,
     handleScreenshot: undefined,
+
+    tabularBookExtractionDisabled: undefined,
+    onTabularButtonClick: undefined,
 };
 
 const isTypeWithUrl = t => (t === LEAD_TYPE.website);
@@ -36,11 +42,20 @@ function LeadPreview(props) {
             sourceType: type,
             url,
             attachment,
+
+            tabularBook,
+            project: projectId,
         },
+
+        onTabularButtonClick,
+        tabularBookExtractionDisabled,
+
         className,
         showScreenshot,
         handleScreenshot,
     } = props;
+
+    console.warn(props.lead);
 
     if (isTypeWithUrl(type) && url) {
         return (
@@ -48,18 +63,25 @@ function LeadPreview(props) {
                 className={_cs(styles.preview, className)}
                 url={url}
                 showUrl
+
                 onScreenshotCapture={handleScreenshot}
                 showScreenshot={showScreenshot}
             />
         );
     } else if (isTypeWithAttachment(type) && attachment) {
         return (
-            <InternalGallery
+            <InternalGalleryWithTabular
                 className={_cs(styles.preview, className)}
                 galleryId={attachment.id}
+                showUrl
+
                 onScreenshotCapture={handleScreenshot}
                 showScreenshot={showScreenshot}
-                showUrl
+
+                tabularBook={tabularBook}
+                projectId={projectId}
+                onTabularButtonClick={onTabularButtonClick}
+                tabularBookExtractionDisabled={tabularBookExtractionDisabled}
             />
         );
     }

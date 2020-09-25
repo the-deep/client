@@ -11,8 +11,8 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import LeadForm from '#views/LeadAdd/LeadForm';
-import schema from '#views/LeadAdd/LeadForm/faramSchema';
+import LeadForm from '#views/LeadAdd/LeadDetail/LeadForm';
+import schema from '#views/LeadAdd/LeadDetail/LeadForm/faramSchema';
 
 import { patchLeadAction } from '#redux';
 import {

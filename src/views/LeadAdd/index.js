@@ -63,7 +63,7 @@ import LeadDetail from './LeadDetail';
 import LeadFilter from './LeadFilter';
 import LeadList from './LeadList';
 import Sources from './Sources';
-import schema from './LeadForm/faramSchema';
+import schema from './LeadDetail/LeadForm/faramSchema';
 
 import {
     getLeadState,

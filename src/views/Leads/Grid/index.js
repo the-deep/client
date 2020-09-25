@@ -8,7 +8,7 @@ import {
     leadsForProjectGridViewSelector,
 } from '#redux';
 import LeadItem from '../GridItem';
-import LeadPreview from '../LeadPreview';
+import LeadPreviewModal from '../LeadPreviewModal';
 
 import styles from './styles.scss';
 
@@ -149,8 +149,8 @@ export default class LeadGrid extends React.Component {
                     </div>
                     {
                         this.state.showPreview &&
-                            <LeadPreview
-                                value={previewLead}
+                            <LeadPreviewModal
+                                lead={previewLead}
                                 closeModal={this.hideLeadDetailPreview}
                             />
                     }

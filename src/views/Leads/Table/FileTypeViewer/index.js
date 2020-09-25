@@ -6,7 +6,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import { mimeTypeToIconMap } from '#entities/lead';
 import modalize from '#rscg/Modalize';
 
-import LeadPreview from '../../LeadPreview';
+import LeadPreviewModal from '../../LeadPreviewModal';
 
 const AccentModalButton = modalize(AccentButton);
 
@@ -31,7 +31,7 @@ const FileTypeViewer = ({ lead }) => {
                     iconName={icon}
                     transparent
                     modal={
-                        <LeadPreview value={lead} />
+                        <LeadPreviewModal lead={lead} />
                     }
                 />
             ) : (

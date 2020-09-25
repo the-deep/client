@@ -1,0 +1,20 @@
+.tabular-modal {
+    transition: .2s all ease-in-out;
+    width: auto;
+    overflow: auto;
+
+    :global {
+        .page-1 {
+            width: 50vw;
+            min-width: 320px;
+            height: auto;
+            min-height: 200px;
+            max-height: 60vh;
+        }
+    }
+
+    .tabular-book {
+        width: 96vw;
+        height: 92vh;
+    }
+}

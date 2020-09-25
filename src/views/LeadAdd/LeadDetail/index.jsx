@@ -4,9 +4,8 @@ import { _cs } from '@togglecorp/fujs';
 
 import ResizableV from '#rscv/Resizable/ResizableV';
 
-
-import LeadForm from '../LeadForm';
-import LeadPreview from '../LeadPreview';
+import LeadForm from './LeadForm';
+import LeadPreviewWithTabular from './LeadPreviewWithTabular';
 
 import {
     LEAD_TYPE,
@@ -68,7 +67,7 @@ function LeadDetail(props) {
                 />
             )}
             bottomChild={!leadPreviewMinimized && (
-                <LeadPreview
+                <LeadPreviewWithTabular
                     // NOTE: need to dismount
                     // LeadPreview because the
                     // children cannot handle

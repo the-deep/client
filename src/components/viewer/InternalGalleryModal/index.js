@@ -21,7 +21,8 @@ const defaultProps = {
     className: undefined,
 };
 
-export default class Selection extends React.PureComponent {
+// FIXME: it's only used once
+export default class InternalGalleryModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

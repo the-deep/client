@@ -63,7 +63,7 @@ import {
     leadFaramValuesSelector,
     leadKeySelector,
     leadSourceTypeSelector,
-} from '../utils';
+} from '../../utils';
 
 import AddLeadGroup from './AddLeadGroup';
 import ApplyAll from './ApplyAll';

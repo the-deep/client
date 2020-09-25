@@ -14,7 +14,7 @@ import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';
 import EntityLink from '#components/viewer/EntityLink';
-import LeadPreview from '#views/Leads/LeadPreview';
+import LeadPreviewModal from '#views/Leads/LeadPreviewModal';
 import {
     pathNames,
     viewsAcl,
@@ -110,7 +110,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
                                     className={styles.leadTitleButton}
                                     transparent
                                     modal={
-                                        <LeadPreview value={lead} />
+                                        <LeadPreviewModal lead={lead} />
                                     }
                                 >
                                     {leadTitle}
