@@ -1167,8 +1167,9 @@
         "-25166641": "Done",
         "-88808908": "Pen color",
         "-63730365": "Pen size",
-        "-31875190": "Draw over screenshot",
-        "-5492927": "Export to image"
+        "-31875190": "Screenshot touchup",
+        "-5492927": "Download image",
+        "-7637573": "Draw tools"
     },
     "links": {
         "browserExtension": {
@@ -3352,8 +3353,8 @@
             "penSizeOptionLargeLabel": -22259584,
             "penSizeOptionMediumLabel": -65407480,
             "penSizeOptionSmallLabel": -80573166,
-            "penSizeOptionSmallLabel": -80573166,
-            "modalHeading": -31875190
+            "modalHeading": -31875190,
+            "drawToolsTitle": -7637573
         }
     }
 }

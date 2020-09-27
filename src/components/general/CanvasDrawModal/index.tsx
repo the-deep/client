@@ -123,6 +123,7 @@ function CanvasDraw(props: Props) {
         onDone,
         onCancel,
     } = props;
+
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = React.useRef<HTMLDivElement>(null);
     const [color, setColor] = React.useState(
@@ -218,10 +219,19 @@ function CanvasDraw(props: Props) {
         <Modal className={styles.canvasDrawModal}>
             <ModalHeader title={_ts('components.canvasDrawModal', 'modalHeading')} />
             <ModalBody className={_cs(className, styles.canvasDraw)}>
+                <div
+                    ref={canvasContainerRef}
+                    className={styles.canvasContainer}
+                >
+                    <canvas
+                        ref={canvasRef}
+                        className={styles.canvas}
+                    />
+                </div>
                 <div className={styles.toolbar}>
                     <div className={styles.drawTools}>
                         <h4 className={styles.heading}>
-                            Draw tools
+                            {_ts('components.canvasDrawModal', 'drawToolsTitle')}
                         </h4>
                         <div className={styles.content}>
                             <ColorInput
@@ -239,19 +249,10 @@ function CanvasDraw(props: Props) {
                                 onClick={handleClearButtonClick}
                                 iconName="trash"
                             >
-                                {_ts('components.canvasDrawModal', 'clearButtonLabel')}
+                                {/* _ts('components.canvasDrawModal', 'clearButtonLabel') */}
                             </Button>
                         </div>
                     </div>
-                </div>
-                <div
-                    ref={canvasContainerRef}
-                    className={styles.canvasContainer}
-                >
-                    <canvas
-                        ref={canvasRef}
-                        className={styles.canvas}
-                    />
                 </div>
             </ModalBody>
             <ModalFooter>
