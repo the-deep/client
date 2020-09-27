@@ -228,6 +228,8 @@ export default class GalleryViewer extends React.PureComponent {
                 ) {
                     document.exitFullscreen();
                 }
+
+                this.setState({ currentScreenshot: undefined });
             },
         );
     }
