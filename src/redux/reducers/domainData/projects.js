@@ -134,10 +134,16 @@ const setProjectRoles = (state, action) => {
                     (obj, key) => {
                         // Convert every element with key matching *Permissions from array to dict
                         if (key.endsWith('Permissions') && Array.isArray(obj)) {
-                            const permission = listToMap(obj, elem => elem, () => true);
+                            const permission = listToMap(
+                                obj,
+                                elem => elem,
+                                () => true,
+                            );
                             if (key === 'setupPermissions') {
                                 permission.view = true;
                             }
+                            // view and view_only_unprotected are same for client
+                            permission.view = permission.view || permission.view_only_unprotected;
                             return permission;
                         }
                         return obj;
