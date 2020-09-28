@@ -269,7 +269,7 @@ export default class FrameworkDetail extends React.PureComponent {
 
         if (this.exportSectionRef.current) {
             html2canvas(this.exportSectionRef.current).then((canvas) => {
-                saveAs(canvas.toDataURL(), `export-${framework.title}.png`);
+                saveAs(canvas.toDataURL(), `DEEP Framework - ${framework.title}.png`);
                 this.setState({ isExporting: false });
             });
         }

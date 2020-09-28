@@ -181,6 +181,17 @@ export default class GalleryViewer extends React.PureComponent {
         document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
     }
 
+    closeScreenshot = () => {
+        const { current: viewerContainer } = this.viewerRef;
+        if (
+            isDefined(document.fullscreenElement)
+            && isDefined(viewerContainer)
+            && isDefined(document.exitFullscreen)
+        ) {
+            document.exitFullscreen();
+        }
+    }
+
     handleFullscreenChange = () => {
         this.setState({ isFullscreen: isDefined(document.fullscreenElement) });
     }
@@ -220,14 +231,9 @@ export default class GalleryViewer extends React.PureComponent {
                 if (onScreenshotCapture) {
                     onScreenshotCapture(currentScreenshot);
                 }
-                const { current: viewerContainer } = this.viewerRef;
-                if (
-                    isDefined(document.fullscreenElement)
-                    && isDefined(viewerContainer)
-                    && isDefined(document.exitFullscreen)
-                ) {
-                    document.exitFullscreen();
-                }
+                this.closeScreenshot();
+
+                this.setState({ currentScreenshot: undefined });
             },
         );
     }
@@ -244,6 +250,7 @@ export default class GalleryViewer extends React.PureComponent {
     }
 
     handlePaintBrushButtonClick = () => {
+        this.closeScreenshot();
         this.setState({
             showCanvasDrawModal: true,
         });

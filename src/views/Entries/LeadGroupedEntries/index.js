@@ -96,6 +96,10 @@ export default class LeadGroupedEntries extends React.PureComponent {
 
         const leadUrl = (attachment && attachment.file) || leadUrlFromProps;
         // {_ts('entries', 'editEntryButtonLabel')}
+        if (entries.length < 1) {
+            return null;
+        }
+
         return (
             <div className={_cs(classNameFromProps, styles.leadGroupedEntries)}>
                 <header className={_cs(headerClassNameFromProps, styles.header)}>
