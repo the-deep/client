@@ -26,6 +26,7 @@ interface Organization {
     shortName: string;
     longName: string;
     url: string;
+    logo: string;
 }
 
 const organizationKeySelector = (d: Organization) => d.id;
@@ -70,12 +71,14 @@ function SearchOrganization(props: Props) {
         const {
             id,
             title,
+            logo,
             shortName,
             longName,
         } = data;
 
         return ({
             itemKey: id,
+            logo,
             shortName,
             longName,
             name: title,

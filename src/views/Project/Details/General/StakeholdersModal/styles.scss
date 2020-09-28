@@ -1,21 +1,24 @@
 .modal {
     width: 80vw;
-    height: 80vh;
+    height: 90vh;
 
     .faram {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         overflow: auto;
 
         .modal-body {
             display: flex;
+            flex-grow: 1;
             padding: var(--spacing-small);
             padding: 0;
             overflow: auto;
 
             .organization-list {
                 flex-shrink: 0;
-                width: 320px;
+                width: calc(160px + 10vw);
+                overflow: auto;
             }
 
             .right {
@@ -26,7 +29,7 @@
 
                 .widget-list {
                     display: flex;
-                    align-content: flex-start;
+                    align-items: stretch;
                     flex-grow: 1;
                     flex-wrap: wrap;
                     padding: var(--spacing-small);
@@ -41,12 +44,21 @@
                         border: var(--width-separator-thin) solid var(--color-separator);
                         border-radius: 5px;
                         min-width: 200px;
+                        min-height: 240px;
                         overflow: auto;
 
                         .widget {
                             flex-grow: 1;
-                            padding: var(--spacing-medium);
+                            padding: var(--spacing-medium) var(--spacing-large);
                             height: 240px;
+
+                            :global {
+                                .input-label {
+                                    text-transform: none;
+                                    color: var(--color-accent);
+                                    font-size: var(--font-size-large);
+                                }
+                            }
 
                             .widget-item {
                                 padding: var(--spacing-small) var(--spacing-small) var(--spacing-small) 0;

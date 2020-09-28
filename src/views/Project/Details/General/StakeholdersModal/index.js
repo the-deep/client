@@ -30,7 +30,7 @@ import styles from './styles.scss';
 
 
 const organizationKeySelector = d => d.id;
-const organizationLabelSelector = d => d.title;
+const organizationLabelSelector = d => d.organizationDetails.title;
 const fieldKeySelector = d => d.faramElementName;
 
 const propTypes = {
@@ -67,7 +67,7 @@ const transformOrganizationToOptions = (organizations = []) => (
 );
 
 const transformOrganizationToFaramValues = (organizations = []) => (
-    listToGroupList(organizations, o => o.type, o => o.organization)
+    listToGroupList(organizations, o => o.organizationType, o => o.organization)
 );
 
 const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
@@ -76,11 +76,17 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
         const organizationList = values
             .map(v => options.find(o => o.id === v))
             .filter(isDefined)
-            .map(({ id, title, projectOrganizationId }) => ({
-                organization: id,
-                type: key,
-                title,
+            .map(({
+                id,
+                projectOrganizationId,
+                organizationDetails,
+                organizationTypeDisplay,
+            }) => ({
                 id: projectOrganizationId,
+                organization: id,
+                organizationType: key,
+                organizationDetails,
+                organizationTypeDisplay,
             }));
 
         organizations = [...organizations, ...organizationList];
@@ -120,22 +126,38 @@ export default class StakeholdersModal extends React.PureComponent {
 
     setOrganizationList = (newOptions) => {
         const { organizationOptions } = this.state;
+        const transformedOptions = newOptions.map(o => ({
+            id: o.id,
+            organizationDetails: {
+                id: o.id,
+                title: o.title,
+                logo: o.logoUrl,
+            },
+        }));
+
+        const searchOptions = newOptions.map(o => ({
+            ...o,
+            logo: o.logoUrl,
+        }));
+
         const uniqueOptions = unique(
             [
-                ...newOptions,
+                ...transformedOptions,
                 ...organizationOptions,
 
             ].filter(isDefined),
             option => option.id,
         );
+
         this.setState({
-            searchOptions: newOptions,
+            searchOptions,
             organizationOptions: uniqueOptions,
         });
     }
 
     organizationFieldRenderParams = (_, data) => {
         const { organizationOptions } = this.state;
+
         return {
             ...data,
             options: organizationOptions,
@@ -161,6 +183,7 @@ export default class StakeholdersModal extends React.PureComponent {
             closeModal,
         } = this.props;
         const { organizationOptions } = this.state;
+
         const transformedValues = transformFaramValuesToOrganization(
             faramValues,
             organizationOptions,
@@ -255,12 +278,12 @@ export default class StakeholdersModal extends React.PureComponent {
                         <DangerButton
                             onClick={closeModal}
                         >
-                            {_ts('project.detail.stakeholders', 'cancel')}
+                            {_ts('project.detail.stakeholders', 'cancelButtonLabel')}
                         </DangerButton>
                         <SuccessButton
                             type="submit"
                         >
-                            {_ts('project.detail.stakeholders', 'save')}
+                            {_ts('project.detail.stakeholders', 'doneButtonLabel')}
                         </SuccessButton>
                     </ModalFooter>
                 </Faram>

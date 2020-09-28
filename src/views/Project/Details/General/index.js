@@ -11,8 +11,8 @@ import {
     listToGroupList,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
-import SimpleListInput from '#rsci/SimpleListInput';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import Button from '#rsu/../v2/Action/Button';
@@ -67,8 +67,6 @@ const propTypes = {
 
 const StakeholderButton = props => (
     <Button
-        buttonType="button-accent"
-        iconName="people"
         transparent
         {...props}
     />
@@ -94,8 +92,6 @@ const mapDispatchToProps = dispatch => ({
     setErrorProjectDetails: params => dispatch(setErrorProjectDetailsAction(params)),
 });
 
-const organizationKeySelector = d => d.organization;
-const organizationLabelSelector = d => d.title;
 const organizationFieldKeySelector = d => d.faramElementName;
 
 const fields = [
@@ -120,6 +116,64 @@ const fields = [
         faramElementName: 'government',
     },
 ];
+
+function OrganizationDetails({
+    logo,
+    title,
+}) {
+    return (
+        <div className={styles.organizationDetails}>
+            <div className={styles.logoContainer}>
+                { logo ? (
+                    <img
+                        className={styles.img}
+                        alt={title}
+                        src={logo}
+                    />
+                ) : (
+                    <Icon
+                        className={styles.icon}
+                        name="userGroup"
+                    />
+                )}
+            </div>
+            <div className={styles.title}>
+                { title }
+            </div>
+        </div>
+    );
+}
+
+const organizationDetailsKeySelector = d => d.id;
+const organizationDetailsRendererParams = (_, d) => ({
+    logo: d.organizationDetails.logo,
+    title: d.organizationDetails.title,
+});
+
+function OrganizationList(p) {
+    const { data } = p;
+
+    if (data.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className={styles.organizationList}>
+            <header className={styles.header}>
+                <h4 className={styles.heading}>
+                    { data[0].organizationTypeDisplay }
+                </h4>
+            </header>
+            <ListView
+                className={styles.content}
+                data={data}
+                renderer={OrganizationDetails}
+                keySelector={organizationDetailsKeySelector}
+                rendererParams={organizationDetailsRendererParams}
+            />
+        </div>
+    );
+}
 
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
@@ -193,18 +247,17 @@ export default class ProjectDetailsGeneral extends PureComponent {
         projectPutRequest.do({ projectDetails });
     }
 
-    fieldRendererParams = (key, data) => {
+    organizationListRendererParams = (key, data) => {
         const { projectLocalData: { faramValues: { organizations = [] } } } = this.props;
-        const values = listToGroupList(organizations, o => o.type, o => o.organization);
+        const values = listToGroupList(
+            organizations,
+            o => o.organizationType,
+            o => o,
+        );
+
         const value = values[key] || [];
-        return ({
-            ...data,
-            value,
-            options: organizations,
-            keySelector: organizationKeySelector,
-            labelSelector: organizationLabelSelector,
-            readOnly: true,
-        });
+
+        return { data: value };
     }
 
     renderUnsavedChangesPrompt = () => (
@@ -297,49 +350,59 @@ export default class ProjectDetailsGeneral extends PureComponent {
                             </div>
                         </header>
                         <div className={styles.content}>
-                            <TextInput
-                                label={_ts('project.general', 'projectNameLabel')}
-                                faramElementName="title"
-                                placeholder={_ts('project.general', 'projectNamePlaceholder')}
-                                className={styles.name}
-                            />
-                            <DateInput
-                                label={_ts('project.general', 'projectStartDateLabel')}
-                                faramElementName="startDate"
-                                placeholder={_ts('project.general', 'projectStartDatePlaceholder')}
-                                className={styles.startDate}
-                            />
-                            <DateInput
-                                label={_ts('project.general', 'projectEndDateLabel')}
-                                faramElementName="endDate"
-                                placeholder={_ts('project.general', 'projectEndDatePlaceholder')}
-                                className={styles.endDate}
-                            />
-                            <TextArea
-                                label={_ts('project.general', 'projectDescriptionLabel')}
-                                faramElementName="description"
-                                placeholder={_ts('project.general', 'projectDescriptionPlaceholder')}
-                                className={styles.description}
-                                rows={7}
-                                resize="vertical"
-                            />
-                            <div>
-                                <ModalButton
-                                    className={styles.modalButton}
-                                    modal={
-                                        <StakeholdersModal
-                                            faramElementName="organizations"
-                                            fields={fields}
+                            <div className={styles.generalInputs}>
+                                <TextInput
+                                    label={_ts('project.general', 'projectNameLabel')}
+                                    faramElementName="title"
+                                    placeholder={_ts('project.general', 'projectNamePlaceholder')}
+                                    className={styles.name}
+                                />
+                                <div className={styles.dateInput}>
+                                    <DateInput
+                                        label={_ts('project.general', 'projectStartDateLabel')}
+                                        faramElementName="startDate"
+                                        placeholder={_ts('project.general', 'projectStartDatePlaceholder')}
+                                        className={styles.startDate}
+                                    />
+                                    <DateInput
+                                        label={_ts('project.general', 'projectEndDateLabel')}
+                                        faramElementName="endDate"
+                                        placeholder={_ts('project.general', 'projectEndDatePlaceholder')}
+                                        className={styles.endDate}
+                                    />
+                                </div>
+                                <TextArea
+                                    label={_ts('project.general', 'projectDescriptionLabel')}
+                                    faramElementName="description"
+                                    placeholder={_ts('project.general', 'projectDescriptionPlaceholder')}
+                                    className={styles.description}
+                                    rows={5}
+                                    resize="vertical"
+                                />
+                            </div>
+                            <div className={styles.stakeholders}>
+                                <header className={styles.header}>
+                                    <h3 className={styles.heading}>
+                                        {_ts('project.detail.general', 'projectStakeholdersHeading')}
+                                    </h3>
+                                    <div className={styles.actions}>
+                                        <ModalButton
+                                            className={styles.editStakeholdersButton}
+                                            iconName="edit"
+                                            modal={
+                                                <StakeholdersModal
+                                                    faramElementName="organizations"
+                                                    fields={fields}
+                                                />
+                                            }
                                         />
-                                    }
-                                >
-                                    {_ts('project.detail.general', 'stakeholder')}
-                                </ModalButton>
+                                    </div>
+                                </header>
                                 <ListView
                                     className={styles.content}
                                     data={fields}
-                                    rendererParams={this.fieldRendererParams}
-                                    renderer={SimpleListInput}
+                                    rendererParams={this.organizationListRendererParams}
+                                    renderer={OrganizationList}
                                     keySelector={organizationFieldKeySelector}
                                 />
                             </div>

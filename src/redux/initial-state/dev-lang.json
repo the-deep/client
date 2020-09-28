@@ -1172,25 +1172,18 @@
         "-7637573": "Draw tools",
         "-31875190": "Draw over screenshot",
         "-5492927": "Export to image",
-<<<<<<< HEAD
-<<<<<<< HEAD
         "-16575221": "Lead confidentiality",
         "-78757252": "Lead priority",
-        "-15193425": "Lead published on"
-=======
+        "-15193425": "Lead published on",
         "-26861463": "Donors",
-=======
         "-26861463": "Donor",
->>>>>>> 3dfcaee35... Add organization to project
         "-86018902": "Government",
         "-30025571": "International Partners",
         "-54364746": "Lead Organization",
         "-49224651": "National Partners",
-<<<<<<< HEAD
->>>>>>> 296106ed1... Add organization on project page
-=======
-        "-78808098": "Lead Organization"
->>>>>>> 3dfcaee35... Add organization to project
+        "-78808098": "Lead Organization",
+        "-78808098": "Lead Organization",
+        "-41977678": "Project stakeholders"
     },
     "links": {
         "browserExtension": {
@@ -3386,11 +3379,9 @@
             "modalHeading": -31875190
         },
         "project.detail.general": {
-            "stakeholder": -35334807
+            "projectStakeholdersHeading": -41977678
         },
         "project.detail.stakeholders": {
-            "cancel": 61,
-            "save": 25,
             "stakeholdersModalTitle": -35334807,
             "organizationsTitle": 154,
             "addNewOrganizationTitle": 301,
@@ -3402,7 +3393,9 @@
             "internationalPartner": -30025571,
             "nationalPartner": -49224651,
             "donor": -26861463,
-            "government": -86018902
+            "government": -86018902,
+            "cancelButtonLabel": 61,
+            "doneButtonLabel": -25166641
         }
     }
 }
