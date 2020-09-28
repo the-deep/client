@@ -12,10 +12,10 @@ import Faram, {
     Schema,
 } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import TextInput from '#rsci/TextInput';
 import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
-import Image from '#rscv/Image';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -72,16 +72,32 @@ function ConnectorSourceButton(props: ConnectorSourceButtonProps) {
 
     return (
         <Button
-            className={_cs(styles.button, active && styles.active)}
+            className={_cs(styles.sourceButton, active && styles.active)}
             onClick={handleConnectorClick}
         >
-            <Image
-                className={styles.imageContainer}
-                imageClassName={styles.image}
-                alt=""
-                src={logo}
-            />
-            {title}
+            <div className={styles.imgContainer}>
+                { logo ? (
+                    <img
+                        className={styles.img}
+                        alt={title}
+                        src={logo}
+                    />
+                ) : (
+                    <Icon
+                        name="link"
+                        className={styles.icon}
+                    />
+                )}
+            </div>
+            <div className={styles.title}>
+                {title}
+            </div>
+            { active && (
+                <Icon
+                    className={styles.checkIcon}
+                    name="checkCircle"
+                />
+            )}
         </Button>
     );
 }
@@ -298,7 +314,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
                 <ModalBody className={styles.modalBody}>
                     {(pending || pendingConnectorSourcesList) && <LoadingAnimation />}
                     <TextInput
-                        className={styles.title}
+                        className={styles.titleInput}
                         faramElementName="title"
                         label={_ts('project.connector.editForm', 'connectorTitleLabel')}
                     />
@@ -306,26 +322,37 @@ function ProjectConnectorEditForm(props: OwnProps) {
                         faramElementName="sources"
                         keySelector={unifiedConnectorSourceKeySelector}
                     >
-                        <header className={styles.sourcesSelectionHeader}>
-                            <span className={styles.label}>
-                                {_ts('project.connector.editForm', 'connectorSourcesSelection')}
-                            </span>
-                        </header>
-                        <ListView
-                            className={styles.sourcesSelectionButtons}
-                            data={connectorSourcesList && connectorSourcesList.results}
-                            renderer={ConnectorSourceButton}
-                            rendererParams={connectorSourceButtonRendererParams}
-                            keySelector={connectorSourceButtonKeySelector}
-                        />
-                        <ListView
-                            className={styles.sourceOptions}
-                            faramElement
-                            renderer={ConnectorSourceOptions}
-                            rendererParams={connectorSourceOptionsRendererParams}
-                            keySelector={unifiedConnectorSourceKeySelector}
-                            emptyComponent={SourceOptionsEmptyComponent}
-                        />
+                        <div className={styles.sources}>
+                            <div className={styles.sourceList}>
+                                <header className={styles.header}>
+                                    <h4 className={styles.heading}>
+                                        {_ts('project.connector.editForm', 'connectorSourcesListHeading')}
+                                    </h4>
+                                </header>
+                                <ListView
+                                    className={styles.content}
+                                    data={connectorSourcesList && connectorSourcesList.results}
+                                    renderer={ConnectorSourceButton}
+                                    rendererParams={connectorSourceButtonRendererParams}
+                                    keySelector={connectorSourceButtonKeySelector}
+                                />
+                            </div>
+                            <div className={styles.sourceOptionList}>
+                                <header className={styles.header}>
+                                    <h4 className={styles.heading}>
+                                        {_ts('project.connector.editForm', 'connectorSourcesOptionHeading')}
+                                    </h4>
+                                </header>
+                                <ListView
+                                    className={styles.content}
+                                    faramElement
+                                    renderer={ConnectorSourceOptions}
+                                    rendererParams={connectorSourceOptionsRendererParams}
+                                    keySelector={unifiedConnectorSourceKeySelector}
+                                    emptyComponent={SourceOptionsEmptyComponent}
+                                />
+                            </div>
+                        </div>
                     </FaramList>
                 </ModalBody>
                 <ModalFooter className={styles.modalFooter}>

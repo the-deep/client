@@ -56,6 +56,8 @@ const styleProperties = {
         widthProjectDetailLeftPane: '280px',
         widthQuestionIcon: '48px',
         heightQuestionIcon: '48px',
+
+        fontSizeUltraLarge: '48px',
     },
 };
 

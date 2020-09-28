@@ -43,7 +43,10 @@ function ProjectConnector(props: OwnProps) {
 
     const [pendingConnectors] = useRequest<MultiResponse<Connector>>({
         autoTrigger: true,
-        url: `server://projects/${projectId}/unified-connectors/with-trending-stats/`,
+        url: `server://projects/${projectId}/unified-connectors/`,
+        query: {
+            withTrendingStats: true,
+        },
         onSuccess: (response) => {
             setConnectors(response.results);
         },
@@ -64,11 +67,10 @@ function ProjectConnector(props: OwnProps) {
         <div className={_cs(className, styles.projectConnectors)}>
             {pendingConnectors && <LoadingAnimation />}
             <header className={styles.header}>
-                <h3 className={styles.heading}>
-                    {_ts('project.connector', 'connectorHeaderTitle')}
-                </h3>
+                <div className={styles.heading} />
                 <ModalButton
                     iconName="add"
+                    variant="primary"
                     modal={(
                         <ConnectorEditForm
                             projectId={projectId}
@@ -81,6 +83,7 @@ function ProjectConnector(props: OwnProps) {
                 </ModalButton>
             </header>
             <ListView
+                className={styles.content}
                 data={connectors}
                 keySelector={connectorKeySelector}
                 renderer={ConnectorDetails}

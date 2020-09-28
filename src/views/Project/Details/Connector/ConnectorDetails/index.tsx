@@ -105,6 +105,7 @@ function ProjectConnectorDetail(props: OwnProps) {
         totalLeads: data.totalLeads,
         lastCalculatedAt: data.lastCalculatedAt,
         logo: data.sourceDetail?.logo,
+        className: styles.connectorSourceDetails,
     }), []);
 
     const latestLastCalculated = useMemo(() => {
@@ -131,21 +132,27 @@ function ProjectConnectorDetail(props: OwnProps) {
         <div className={_cs(className, styles.projectConnectorDetail)}>
             {pending && <LoadingAnimation />}
             <header className={styles.header}>
-                <h3 className={styles.heading}>
+                <h4 className={styles.heading}>
                     {title}
-                </h3>
-                <div className={styles.rightComponent}>
-                    <span className={styles.label}>
-                        {_ts('project.connector', 'updatedOnLabel')}
-                    </span>
-                    <FormattedDate
-                        value={latestLastCalculated}
-                        mode="dd-MM-yyyy"
-                    />
+                </h4>
+                <div className={styles.status}>
+                    <div className={styles.updatedOn}>
+                        <div className={styles.label}>
+                            {_ts('project.connector', 'updatedOnLabel')}
+                        </div>
+                        <FormattedDate
+                            className={styles.date}
+                            value={latestLastCalculated}
+                            mode="dd-MM-yyyy"
+                        />
+                    </div>
+                </div>
+                <div className={styles.actions}>
                     <Switch
                         name="disableSwitch"
                         value={isActive}
                         onChange={handleConnectorActiveStatusChange}
+                        label={_ts('project.connector', 'disableLabel')}
                     />
                     <ModalButton
                         iconName="edit"
@@ -174,7 +181,7 @@ function ProjectConnectorDetail(props: OwnProps) {
                 </div>
             </header>
             <ListView
-                className={styles.connectorSources}
+                className={styles.content}
                 data={sources}
                 keySelector={sourceKeySelector}
                 renderer={ConnectorSourceDetail}

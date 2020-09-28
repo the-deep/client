@@ -1,20 +1,21 @@
 .connector-source-options {
     display: flex;
     flex-direction: column;
-    margin: var(--spacing-medium);
-    border: var(--width-separator-thin) solid var(--color-separator);
-    padding: var(--spacing-small);
-    overflow-y: auto;
+    padding: calc(var(--spacing-medium) - var(--spacing-small)) calc(var(--spacing-large) - var(--spacing-medium));
 
     .header {
         flex-shrink: 0;
-        padding-bottom: var(--spacing-small);
+
+        .heading {
+            padding: var(--spacing-small) var(--spacing-medium);
+        }
     }
 
-    .fields-container {
+    .content {
         display: flex;
         flex-grow: 1;
         flex-wrap: wrap;
+        padding: calc(var(--spacing-small) - var(--spacing-extra-small)) calc(var(--spacing-medium) - var(--spacing-small));
 
         .input-element {
             margin: var(--spacing-extra-small) var(--spacing-small);

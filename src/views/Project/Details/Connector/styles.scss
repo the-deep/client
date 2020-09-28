@@ -8,11 +8,16 @@
     .header {
         display: flex;
         align-items: center;
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-        padding: var(--spacing-small) var(--spacing-medium);
+        flex-shrink: 0;
+        padding: var(--spacing-medium) var(--spacing-large);
 
         .heading {
             flex-grow: 1;
         }
+    }
+
+    .content {
+        flex-grow: 1;
+        overflow: auto;
     }
 }

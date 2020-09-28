@@ -87,11 +87,13 @@ function ConnectorSourceOptions(props: ComponentProps) {
         <div className={_cs(styles.connectorSourceOptions, className)}>
             <FaramGroup faramElementName={String(index)}>
                 <header className={styles.header}>
-                    <h3>{title}</h3>
+                    <h5 className={styles.heading}>
+                        {title}
+                    </h5>
                 </header>
                 <FaramGroup faramElementName="params">
                     <ListView
-                        className={styles.fieldsContainer}
+                        className={styles.content}
                         data={options}
                         renderer={FieldInput}
                         rendererParams={sourceOptionRendererParams}

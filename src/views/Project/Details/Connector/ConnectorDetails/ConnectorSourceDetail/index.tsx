@@ -6,11 +6,11 @@ import {
     YAxis,
     Tooltip,
     Area,
+    ResponsiveContainer,
 } from 'recharts';
 
+import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
-import TextOutput from '#components/general/TextOutput';
-import Image from '#rscv/Image';
 import FormattedDate from '#rscv/FormattedDate';
 
 import {
@@ -55,74 +55,88 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
 
     return (
         <div className={_cs(styles.sourceDetail, className)}>
-            <div className={styles.detailsContainer}>
-                <Image
-                    className={styles.imageContainer}
-                    imageClassName={styles.image}
-                    alt=""
-                    src={logo}
-                />
-                <h3 className={styles.heading}>
+            <header className={styles.header}>
+                <div className={styles.imgContainer}>
+                    { logo ? (
+                        <img
+                            className={styles.img}
+                            alt={title}
+                            src={logo}
+                        />
+                    ) : (
+                        <Icon
+                            className={styles.icon}
+                            name="link"
+                        />
+                    )}
+                </div>
+                <h5 className={styles.heading}>
                     {title}
-                </h3>
-                <TextOutput
-                    className={styles.statBlock}
-                    label="Leads"
-                    value={totalLeads}
-                    type="block"
-                />
-                <TextOutput
-                    className={styles.statBlock}
-                    label="Last updated on"
-                    valueClassName={styles.date}
-                    type="block"
-                    value={(
+                </h5>
+            </header>
+            <div className={styles.content}>
+                <div className={styles.detailsContainer}>
+                    <div className={styles.updatedOn}>
+                        <div className={styles.label}>
+                            Last updated on
+                        </div>
                         <FormattedDate
+                            className={styles.date}
                             value={lastCalculatedAt}
                             mode="dd-MM-yyyy"
                         />
+                    </div>
+                    <div className={styles.leadStatus}>
+                        <div className={styles.value}>
+                            { totalLeads }
+                        </div>
+                        <div className={styles.label}>
+                            Leads
+                        </div>
+                    </div>
+                </div>
+                <div className={styles.chartContainer}>
+                    {(status === 'processing' || !convertedPublishedDates || convertedPublishedDates.length === 0) ? (
+                        <Message className={styles.emptyMessage}>
+                            <Icon
+                                name="barChart"
+                                className={styles.icon}
+                            />
+                            {/* FIXME: Use translation */ }
+                            Data not available for charts
+                        </Message>
+                    ) : (
+                        <ResponsiveContainer className={styles.responsiveContainer}>
+                            <AreaChart data={convertedPublishedDates} >
+                                <defs>
+                                    <linearGradient id="red" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--color-danger)" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="var(--color-danger)" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--color-success)" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="var(--color-success)" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis
+                                    dataKey="date"
+                                    type="number"
+                                    domain={['dataMin', 'dataMax']}
+                                    tick={false}
+                                />
+                                <YAxis />
+                                <Tooltip labelFormatter={tickFormatter} />
+                                <Area
+                                    type="monotone"
+                                    dataKey="count"
+                                    stroke={status === 'failure' ? 'var(--color-danger)' : 'var(--color-success)'}
+                                    fillOpacity={1}
+                                    fill={status === 'failure' ? 'url(#red)' : 'url(#green)'}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
                     )}
-                />
-            </div>
-            <div className={styles.chartContainer}>
-                {(status === 'processing' || convertedPublishedDates?.length < 1) ? (
-                    <Message>
-                        {/* FIXME: Use translation */ }
-                        Data not available
-                    </Message>
-                ) : (
-                    <AreaChart
-                        width={240}
-                        height={160}
-                        data={convertedPublishedDates}
-                    >
-                        <defs>
-                            <linearGradient id="red" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="var(--color-danger)" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="var(--color-danger)" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="var(--color-success)" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="var(--color-success)" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <XAxis
-                            dataKey="date"
-                            type="number"
-                            domain={['dataMin', 'dataMax']}
-                            tick={false}
-                        />
-                        <YAxis />
-                        <Tooltip labelFormatter={tickFormatter} />
-                        <Area
-                            type="monotone"
-                            dataKey="count"
-                            stroke={status === 'failure' ? 'var(--color-danger)' : 'var(--color-success)'}
-                            fillOpacity={1}
-                            fill={status === 'failure' ? 'url(#red)' : 'url(#green)'}
-                        />
-                    </AreaChart>
-                )}
+                </div>
             </div>
         </div>
     );
