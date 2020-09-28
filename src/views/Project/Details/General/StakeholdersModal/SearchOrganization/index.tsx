@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
@@ -7,6 +7,7 @@ import OrganizationItem from '#components/other/OrganizationItem';
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modalize from '#rscg/Modalize';
+import Message from '#rscv/Message';
 
 import _ts from '#ts';
 
@@ -18,6 +19,7 @@ interface Props {
     className?: string;
     organizationList: Organization[];
     handleSearch: (searchText?: string) => void;
+    pending: boolean;
 }
 
 interface Organization {
@@ -30,38 +32,50 @@ interface Organization {
 }
 
 const organizationKeySelector = (d: Organization) => d.id;
-// eslint-disable-next-line
 
 function SearchOrganization(props: Props) {
     const {
         className,
         organizationList,
         handleSearch,
+        pending,
     } = props;
 
-    const [searchText, setSearchValue] = useState<string|undefined>(undefined);
+    const [searchText, setSearchValue] = useState<string>('');
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {}, 1000);
-        return () => clearTimeout(timeoutId);
-    }, [searchText]);
-
-    const handleChange = useCallback((value?: string) => {
+    const handleChange = useCallback((value: string) => {
         setSearchValue(value);
         if (handleSearch) {
             handleSearch(value);
         }
     }, [setSearchValue, handleSearch]);
 
-    const renderEmpty = () => (
-        <div className={styles.emptyComponent}>
-            { organizationList.length === 0 && !searchText ? (
-                _ts('assessment.metadata.stakeholder', 'typeToSearchOrganizationMessage')
-            ) : (
-                _ts('assessment.metadata.stakeholder', 'noResultsFoundMessage')
-            )}
-        </div>
-    );
+    const renderEmpty = useCallback(() => {
+        if (pending) {
+            return (
+                <div className={styles.emptyComponent}>
+                    <Message>
+                        {_ts('assessment.metadata.stakeholder', 'searching')}
+                    </Message>
+                </div>
+            );
+        }
+        return (
+            <div className={styles.emptyComponent}>
+                { organizationList.length === 0 && !searchText ?
+                    (
+                        <Message>
+                            {_ts('assessment.metadata.stakeholder', 'typeToSearchOrganizationMessage')}
+                        </Message>
+                    ) : (
+                        <Message>
+                            {_ts('assessment.metadata.stakeholder', 'noResultsFoundMessage')}
+                        </Message>
+
+                    )}
+            </div>
+        );
+    }, [organizationList, pending, searchText]);
 
     const handleOrganizationAdd = useCallback((organization: Organization) => {
         handleChange(organization.title);

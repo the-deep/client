@@ -4,6 +4,8 @@ import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 import Confirm from '#rscv/Modal/Confirm';
 import SimpleListInput from '#rsci/SimpleListInput';
+import useDropHandler from '#hooks/useDropHandler';
+
 
 import _ts from '#ts';
 
@@ -11,42 +13,22 @@ import styles from './styles.scss';
 
 interface Props {
     containerClassName?: string;
-    onChange: (values: (number | undefined)[]) => void;
+    onChange: (values: (number[] | undefined)) => void;
     value: number[];
 }
 
 function OrganizationField(props: Props) {
     const { containerClassName, onChange, value, ...otherProps } = props;
 
-    const [droppedOrganizationId, setDroppedOrganizationId] = useState(undefined);
+    const [droppedOrganizationId, setDroppedOrganizationId] = useState<number|undefined>(undefined);
     const [showConfirmation, setShowConfirmation] = useState(false);
-    const [isBeingDraggedOver, setIsBeingDraggedOver] = useState(false);
-    const [dragEnterCount, setDragEnterCount] = useState(0);
 
     const handleDragEnter = useCallback(() => {
-        if (dragEnterCount === 0) {
-            setIsBeingDraggedOver(true);
-        }
-        const newDraEnterCount = dragEnterCount + 1;
-        setDragEnterCount(newDraEnterCount);
-    }, [dragEnterCount, setIsBeingDraggedOver, setDragEnterCount]);
+    }, []);
 
-    const handleDragLeave = useCallback(() => {
-        const newDraEnterCount = dragEnterCount - 1;
-        setDragEnterCount(newDraEnterCount);
-
-        if (newDraEnterCount === 0) {
-            setIsBeingDraggedOver(false);
-        }
-    }, [dragEnterCount, setDragEnterCount, setIsBeingDraggedOver]);
-
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
     const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        const data = e.dataTransfer.getData('text');
         try {
+            const data = e.dataTransfer.getData('text');
             const parsedData = JSON.parse(data);
             if (parsedData && parsedData.organizationId) {
                 const { organizationId } = parsedData;
@@ -67,23 +49,21 @@ function OrganizationField(props: Props) {
         } catch (ex) {
             console.warn('Only organizations supported');
         }
-        setDragEnterCount(0);
-        setIsBeingDraggedOver(false);
     }, [
         value,
         onChange,
-        setDragEnterCount,
-        setIsBeingDraggedOver,
         setShowConfirmation,
         setDroppedOrganizationId,
     ]);
 
     const handleConfirmation = useCallback((confirm: boolean) => {
         if (confirm) {
-            onChange([
-                ...value,
-                droppedOrganizationId,
-            ]);
+            if (droppedOrganizationId) {
+                onChange([
+                    ...value,
+                    droppedOrganizationId,
+                ]);
+            }
         }
         setDroppedOrganizationId(undefined);
         setShowConfirmation(false);
@@ -95,17 +75,25 @@ function OrganizationField(props: Props) {
         setShowConfirmation,
     ]);
 
+    const {
+        dropping,
+        onDragOver,
+        onDragEnter,
+        onDragLeave,
+        onDrop,
+    } = useDropHandler(handleDragEnter, handleDrop);
+
     return (
         <div
             className={_cs(
                 styles.widget,
                 containerClassName,
-                isBeingDraggedOver && styles.draggedOver,
+                dropping && styles.draggedOver,
             )}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
+            onDragEnter={onDragEnter}
+            onDragLeave={onDragLeave}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
         >
             <div className={styles.dropMessage}>
                 {_ts('project.detail.stakeholders', 'dropHereMessage')}

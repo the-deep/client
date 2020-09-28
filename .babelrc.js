@@ -68,6 +68,7 @@ module.exports = {
                     '#widgets': './src/widgets',
                     '#typings': './src/typings',
                     '#qbc': './src/components/questionnaire-builder',
+                    '#hooks': './src/hooks',
                 },
             },
         ],

@@ -94,6 +94,7 @@ const mapDispatchToProps = dispatch => ({
 
 const organizationFieldKeySelector = d => d.faramElementName;
 
+const emptyList = [];
 const fields = [
     {
         label: _ts('project.detail.stakeholders', 'leadOrganization'),
@@ -157,11 +158,13 @@ function OrganizationList(p) {
         return null;
     }
 
+    const organizationType = fields.find(v => v.faramElementName === data[0].organizationType);
+
     return (
         <div className={styles.organizationList}>
             <header className={styles.header}>
                 <h4 className={styles.heading}>
-                    { data[0].organizationTypeDisplay }
+                    { organizationType.label }
                 </h4>
             </header>
             <ListView
@@ -255,7 +258,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
             o => o,
         );
 
-        const value = values[key] || [];
+        const value = values[key] || emptyList;
 
         return { data: value };
     }

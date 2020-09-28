@@ -80,13 +80,11 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
                 id,
                 projectOrganizationId,
                 organizationDetails,
-                organizationTypeDisplay,
             }) => ({
                 id: projectOrganizationId,
                 organization: id,
                 organizationType: key,
                 organizationDetails,
-                organizationTypeDisplay,
             }));
 
         organizations = [...organizations, ...organizationList];
