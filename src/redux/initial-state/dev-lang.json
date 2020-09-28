@@ -1169,7 +1169,12 @@
         "-63730365": "Pen size",
         "-31875190": "Screenshot touchup",
         "-5492927": "Download image",
-        "-7637573": "Draw tools"
+        "-7637573": "Draw tools",
+        "-31875190": "Draw over screenshot",
+        "-5492927": "Export to image",
+        "-16575221": "Lead confidentiality",
+        "-78757252": "Lead priority",
+        "-15193425": "Lead published on"
     },
     "links": {
         "browserExtension": {
@@ -1651,7 +1656,13 @@
             "deleteConfirmTitle": -12312312,
             "deleteEntrySuccessTitle": -12312313,
             "deleteEntrySuccessMessage": -12435324,
-            "deleteEntryFailure": -90809809
+            "deleteEntryFailure": -90809809,
+            "leadConfidentialityFilterLabel": -16575221,
+            "leadConfidentialityFilterPlaceholder": -16575221,
+            "leadPriorityFilterLabel": -78757252,
+            "leadPriorityFilterPlaceholder": -78757252,
+            "leadPublishedOnFilterLabel": -15193425,
+            "leadPublishedOnPlaceholder": -15193425
         },
         "export": {
             "headerExport": 600,
@@ -3354,7 +3365,8 @@
             "penSizeOptionMediumLabel": -65407480,
             "penSizeOptionSmallLabel": -80573166,
             "modalHeading": -31875190,
-            "drawToolsTitle": -7637573
+            "drawToolsTitle": -7637573,
+            "modalHeading": -31875190
         }
     }
 }
