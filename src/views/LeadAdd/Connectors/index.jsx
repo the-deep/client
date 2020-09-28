@@ -60,7 +60,7 @@ function ConnectorItem(props) {
             title: source.sourceDetail.title,
             type: LEAD_TYPE.connectors,
             active: id === selectedConnector && key === selectedConnectorSource,
-            onItemSelect: handleConnectorSourceSelect,
+            onItemClick: handleConnectorSourceSelect,
             count: source.totalLeads,
             indent: 1,
             separator: false,
@@ -77,7 +77,7 @@ function ConnectorItem(props) {
                 count={totalLeads}
                 active={id === selectedConnector && !selectedConnectorSource}
                 separator={false}
-                onItemSelect={onConnectorSelect}
+                onItemClick={onConnectorSelect}
                 actionButtons={(
                     <PrimaryButton
                         onClick={handleConnectorTrigger}

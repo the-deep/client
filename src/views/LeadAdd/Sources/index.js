@@ -349,7 +349,7 @@ function Sources(props) {
                 type={LEAD_TYPE.file}
                 active={activeSource === LEAD_TYPE.file}
                 title={_ts('addLeads.sourceButtons', 'localDiskLabel')}
-                onItemSelect={onSourceChange}
+                onItemClick={onSourceChange}
                 itemState={sourceStates[LEAD_TYPE.file]}
                 actionButtons={(
                     <FileInput
@@ -369,7 +369,7 @@ function Sources(props) {
                 type={LEAD_TYPE.website}
                 active={activeSource === LEAD_TYPE.website}
                 title={_ts('addLeads.sourceButtons', 'websiteLabel')}
-                onItemSelect={onSourceChange}
+                onItemClick={onSourceChange}
                 count={counts[LEAD_TYPE.website]}
                 itemState={sourceStates[LEAD_TYPE.website]}
                 actionButtons={(
@@ -392,7 +392,7 @@ function Sources(props) {
                 type={LEAD_TYPE.text}
                 active={activeSource === LEAD_TYPE.text}
                 title={_ts('addLeads.sourceButtons', 'textLabel')}
-                onItemSelect={onSourceChange}
+                onItemClick={onSourceChange}
                 count={counts[LEAD_TYPE.text]}
                 itemState={sourceStates[LEAD_TYPE.text]}
                 actionButtons={(
@@ -409,7 +409,7 @@ function Sources(props) {
                 type={LEAD_TYPE.drive}
                 active={activeSource === LEAD_TYPE.drive}
                 title={_ts('addLeads.sourceButtons', 'googleDriveLabel')}
-                onItemSelect={onSourceChange}
+                onItemClick={onSourceChange}
                 count={counts[LEAD_TYPE.drive]}
                 itemState={sourceStates[LEAD_TYPE.drive]}
                 actionButtons={(
@@ -434,7 +434,7 @@ function Sources(props) {
                 type={LEAD_TYPE.dropbox}
                 active={activeSource === LEAD_TYPE.dropbox}
                 title={_ts('addLeads.sourceButtons', 'dropboxLabel')}
-                onItemSelect={onSourceChange}
+                onItemClick={onSourceChange}
                 count={counts[LEAD_TYPE.dropbox]}
                 itemState={sourceStates[LEAD_TYPE.dropbox]}
                 actionButtons={(
@@ -459,7 +459,7 @@ function Sources(props) {
                 type={LEAD_TYPE.connectors}
                 active={activeSource === LEAD_TYPE.connectors}
                 title={_ts('addLeads.sourceButtons', 'connectorsLabel')}
-                onItemSelect={onSourceChange}
+                onItemClick={onSourceChange}
                 count={counts[LEAD_TYPE.connectors]}
                 itemState={sourceStates[LEAD_TYPE.connectors]}
                 separator={false}
