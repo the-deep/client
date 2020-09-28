@@ -63,7 +63,7 @@ function ConnectorDetail(props) {
             <ConnectorLeadList
                 className={styles.list}
                 activeLeadKey={selectedConnectorLead}
-                onLeadSelect={setSelectedConnectorLead}
+                onLeadClick={setSelectedConnectorLead}
                 leads={leads}
                 pending={pending}
             />

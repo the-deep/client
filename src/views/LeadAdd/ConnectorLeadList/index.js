@@ -21,7 +21,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     leads: PropTypes.array,
     activeLeadKey: PropTypes.number,
-    onLeadSelect: PropTypes.func.isRequired,
+    onLeadClick: PropTypes.func.isRequired,
     className: PropTypes.string,
     pending: PropTypes.bool,
 };
@@ -37,7 +37,7 @@ function LeadList(props) {
     const {
         activeLeadKey,
         leads,
-        onLeadSelect,
+        onLeadClick,
         className,
         pending,
     } = props;
@@ -71,19 +71,19 @@ function LeadList(props) {
                     />
                 </>
             );
-            const onItemClick = () => { clickOnItem(data); };
+            const onItemSelect = () => { clickOnItem(data); };
 
             return {
                 itemKey: key,
                 active: key === activeLeadKey,
-                isItemClicked: isItemPresent(key),
+                isItemSelected: isItemPresent(key),
                 selectionMode: isSelectionModeEnabled,
-                onItemClick,
+                onItemSelect,
                 // FIXME: check if this is always available
                 // FIXME: use lead.data.url or lead.url
                 title: data.lead.data.title ?? data.lead.url,
                 type: LEAD_TYPE.connectors,
-                onItemSelect: onLeadSelect,
+                onItemClick: onLeadClick,
                 // FIXME: identify bad states
                 // itemState: leadStates[key],
                 actionButtons,
@@ -92,7 +92,7 @@ function LeadList(props) {
         [
             isSelectionModeEnabled,
             activeLeadKey,
-            onLeadSelect,
+            onLeadClick,
             clickOnItem,
             isItemPresent,
         ],

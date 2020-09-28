@@ -82,12 +82,12 @@ const propTypes = {
     type: PropTypes.string,
     itemKey: PropTypes.string.isRequired,
 
-    onItemSelect: PropTypes.func,
+    onItemClick: PropTypes.func,
     active: PropTypes.bool,
     actionButtons: PropTypes.node,
 
-    onItemClick: PropTypes.func,
-    isItemClicked: PropTypes.bool,
+    onItemSelect: PropTypes.func,
+    isItemSelected: PropTypes.bool,
     selectionMode: PropTypes.bool,
 
     progress: PropTypes.number,
@@ -104,10 +104,10 @@ const defaultProps = {
     className: undefined,
     itemState: undefined,
     actionButtons: undefined,
-    onItemSelect: undefined,
-    indent: undefined,
     onItemClick: undefined,
-    isItemClicked: false,
+    indent: undefined,
+    onItemSelect: undefined,
+    isItemSelected: false,
     separator: true,
     selectionMode: false,
 };
@@ -116,7 +116,7 @@ function ListStatusItem(props) {
     const {
         itemKey,
         title,
-        onItemSelect,
+        onItemClick,
         actionButtons,
         active,
         className,
@@ -126,16 +126,16 @@ function ListStatusItem(props) {
         itemState,
         indent,
         separator,
-        onItemClick,
-        isItemClicked,
+        onItemSelect,
+        isItemSelected,
         selectionMode,
     } = props;
 
     const handleClick = useCallback(() => {
-        if (onItemSelect) {
-            onItemSelect(itemKey);
+        if (onItemClick) {
+            onItemClick(itemKey);
         }
-    }, [onItemSelect, itemKey]);
+    }, [onItemClick, itemKey]);
 
     const stateIconClassName = _cs(
         styles.statusIcon,
@@ -143,13 +143,13 @@ function ListStatusItem(props) {
     );
 
     const iconForSelectionButton = useMemo(() => {
-        if (!selectionMode && !isItemClicked && leadTypeToIconClassMap[type]) {
+        if (!selectionMode && !isItemSelected && leadTypeToIconClassMap[type]) {
             return leadTypeToIconClassMap[type];
         }
-        return isItemClicked ? 'checkCircle' : 'circleOutline';
+        return isItemSelected ? 'checkCircle' : 'circleOutline';
     }, [
         type,
-        isItemClicked,
+        isItemSelected,
         selectionMode,
     ]);
 
@@ -178,19 +178,19 @@ function ListStatusItem(props) {
                         }}
                     />
                 )}
-                {leadTypeToIconClassMap[type] && isNotDefined(onItemClick) && (
+                {leadTypeToIconClassMap[type] && isNotDefined(onItemSelect) && (
                     <Icon
                         className={styles.icon}
                         name={leadTypeToIconClassMap[type]}
                     />
                 )}
-                {isDefined(onItemClick) && (
+                {isDefined(onItemSelect) && (
                     <Button
                         className={_cs(
                             styles.icon,
-                            isItemClicked && styles.checkButton,
+                            isItemSelected && styles.checkButton,
                         )}
-                        onClick={onItemClick}
+                        onClick={onItemSelect}
                         iconName={iconForSelectionButton}
                         transparent
                     />

@@ -139,7 +139,7 @@ function LeadList(props) {
                 active: key === activeLeadKey,
                 title: leadFaramValuesSelector(lead)?.title,
                 type: leadSourceTypeSelector(lead),
-                onItemSelect: onLeadSelect,
+                onItemClick: onLeadSelect,
                 itemState: leadStates[key],
                 actionButtons,
             };
