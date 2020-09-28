@@ -1157,7 +1157,11 @@
         "-23121024": "Edit connector",
         "-3611094": "Are you sure you want to delete the connector {title}?",
         "-31701107": "Updated On",
-        "-48401335": "Please select one or more connector sources."
+        "-48401335": "Please select one or more connector sources.",
+        "-20165077": "Select connector sources",
+        "-90542170": "Configure connector sources",
+        "-79582562": "Add new connector",
+        "-30766440": "Disable connector"
     },
     "links": {
         "browserExtension": {
@@ -3229,14 +3233,17 @@
             "saveButtonLabel": 25,
             "editConnectorTitle": -23121024,
             "connectorSourcesSelection": 1109,
-            "sourceOptionsEmptyText": -48401335
+            "sourceOptionsEmptyText": -48401335,
+            "connectorSourcesListHeading": -20165077,
+            "connectorSourcesOptionHeading": -90542170
         },
         "project.connector": {
-            "addButtonTitle": 301,
+            "addButtonTitle": -79582562,
             "connectorHeaderTitle": 1100,
             "connectorDeleteMessage": -3611094,
             "editButtonTitle": -23121024,
-            "updatedOnLabel": -31701107
+            "updatedOnLabel": -31701107,
+            "disableLabel": -30766440
         }
     }
 }

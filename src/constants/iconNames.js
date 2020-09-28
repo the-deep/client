@@ -140,6 +140,7 @@ const iconNames = {
     colorPalette: 'ion-android-color-palette',
     down: 'ion-ios-arrow-down',
     up: 'ion-ios-arrow-up',
+    barChart: 'ion-stats-bars',
 };
 
 export default iconNames;
