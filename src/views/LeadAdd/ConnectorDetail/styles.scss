@@ -1,5 +1,6 @@
 .connector-detail {
     display: flex;
+    overflow-y: auto;
 
     .list-container {
         display: flex;
@@ -7,30 +8,43 @@
         flex-direction: column;
         flex-shrink: 0;
         border-right: var(--width-separator-thin) solid var(--color-separator);
-        overflow: auto;
+        overflow-y: auto;
 
-        .movement-buttons {
+        .header {
             display: flex;
+            align-items: center;
             flex-shrink: 0;
-            border-top: var(--width-separator-thin) solid var(--color-separator);
-            padding: var(--spacing-small);
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small) var(--spacing-small-alt);
 
-            .stats {
-                flex-grow: 1;
-                padding: var(--spacing-small);
+            .checkbox {
+                flex-shrink: 0;
             }
 
-            .actions {
-                flex-shrink: 0;
-                >* {
-                    margin: 0 var(--spacing-extra-small);
+            .right-component {
+                display: flex;
+                align-items: center;
+                flex-grow: 1;
+                justify-content: flex-end;
+
+                .button {
+                    margin-left: var(--spacing-small);
                 }
             }
+        }
+
+        .footer {
+            display: flex;
+            flex-shrink: 0;
+            justify-content: flex-end;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small);
         }
 
         .list {
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
     }
 

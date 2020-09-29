@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
+import { Checkbox } from '@togglecorp/toggle-ui';
 
 import ListView from '#rscv/List/ListView';
 import LeadPreview from '#components/leftpanel/LeadPreview';
@@ -8,7 +9,9 @@ import Message from '#rscv/Message';
 
 import useRequest from '#restrequest';
 import Button from '#rsca/Button';
+import Pager from '#rscv/Pager';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import { useArraySelection } from '#hooks/stateManagement';
 import _ts from '#ts';
 
@@ -43,6 +46,9 @@ function ConnectorDetail(props) {
 
     // TODO: validate this selected connector lead
     const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
+    const [activePage, setActivePage] = useState(1);
+    const [totalLeadsCount, setTotalLeadsCount] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(25);
 
     let connectorLeadUrl;
     if (selectedConnectorSource) {
@@ -53,10 +59,13 @@ function ConnectorDetail(props) {
     const [connectorLeadsPending, connectorLeadsResponse] = useRequest({
         url: connectorLeadUrl,
         query: {
-            offset: 1,
-            limit: 20,
+            offset: (activePage - 1) * itemsPerPage,
+            limit: itemsPerPage,
         },
         autoTrigger: true,
+        onSuccess: (response) => {
+            setTotalLeadsCount(response?.count);
+        },
     });
     const leads = connectorLeadsResponse?.results;
 
@@ -82,7 +91,14 @@ function ConnectorDetail(props) {
         [leads, selectedConnectorLead],
     );
 
-    const [selectedLeads,, isItemPresent, clickOnItem] = useArraySelection(
+    const {
+        values: selectedLeads,
+        isItemPresent,
+        clickOnItem,
+        addItems,
+        removeItems,
+        clearSelection,
+    } = useArraySelection(
         leadKeySelector,
         [],
     );
@@ -138,9 +154,75 @@ function ConnectorDetail(props) {
         ],
     );
 
+    const handleSelectAllCheckboxClick = useCallback((newValue) => {
+        if (newValue) {
+            addItems(leads);
+        } else {
+            removeItems(leads);
+        }
+    }, [leads, addItems, removeItems]);
+
+    const handleBulkBlockLeadsClick = useCallback(() => {
+        console.warn('bulk block clicked');
+    }, []);
+
+    const handleBulkSaveLeadsClick = useCallback(() => {
+        console.warn('bulk save clicked');
+    }, []);
+
+    const {
+        areAllChecked,
+        areSomeChecked,
+    } = useMemo(() => {
+        if (!leads || leads.length === 0) {
+            return false;
+        }
+        const filteredLeads = leads.filter(l => isItemPresent(leadKeySelector(l)));
+        return {
+            areAllChecked: filteredLeads.length === leads.length,
+            areSomeChecked: filteredLeads.length < leads.length && filteredLeads.length > 0,
+        };
+    }, [leads, isItemPresent]);
+
     return (
         <div className={_cs(styles.connectorDetail, className)}>
             <div className={styles.listContainer}>
+                <header className={styles.header}>
+                    <Checkbox
+                        className={styles.checkbox}
+                        name="selectAll"
+                        label=""
+                        value={areAllChecked}
+                        indeterminate={areSomeChecked}
+                        onChange={handleSelectAllCheckboxClick}
+                    />
+                    {`${selectedLeads.length} selected`}
+                    {selectedLeads.length > 0 && (
+                        <div className={styles.rightComponent}>
+                            <Button
+                                className={styles.button}
+                                iconName="delete"
+                                onClick={handleBulkBlockLeadsClick}
+                                // FIXME: use strings
+                                title="block/unblock"
+                            />
+                            <PrimaryButton
+                                className={styles.button}
+                                iconName="save"
+                                onClick={handleBulkSaveLeadsClick}
+                                // FIXME: use strings
+                                title="load"
+                            />
+                            <DangerButton
+                                className={styles.button}
+                                iconName="trash"
+                                onClick={clearSelection}
+                                // FIXME: use strings
+                                title="Clear selection"
+                            />
+                        </div>
+                    )}
+                </header>
                 <ListView
                     className={_cs(styles.list, className)}
                     data={leads}
@@ -149,24 +231,15 @@ function ConnectorDetail(props) {
                     rendererParams={rendererParams}
                     pending={connectorLeadsPending}
                 />
-                <div className={styles.movementButtons}>
-                    <div className={styles.stats}>
-                        {/* FIXME: use strings */}
-                        {`${leads?.length} leads`}
-                    </div>
-                    <div className={styles.actions}>
-                        <Button
-                            disabled
-                            iconName="prev"
-                            title={_ts('addLeads.actions', 'previousButtonLabel')}
-                        />
-                        <Button
-                            disabled
-                            iconName="next"
-                            title={_ts('addLeads.actions', 'nextButtonLabel')}
-                        />
-                    </div>
-                </div>
+                <footer className={styles.footer}>
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={totalLeadsCount}
+                        maxItemsPerPage={itemsPerPage}
+                        onPageClick={setActivePage}
+                        onItemsPerPageChange={setItemsPerPage}
+                    />
+                </footer>
             </div>
             {activeConnectorLead ? (
                 <LeadPreview

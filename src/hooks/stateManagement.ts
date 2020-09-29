@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import {
     isDefined,
+    isNotDefined,
     listToMap,
 } from '@togglecorp/fujs';
 
@@ -78,13 +79,15 @@ export function useModalState(initialValue: boolean): [
 export function useArraySelection<T, K extends string | number>(
     keySelector: (value: T) => K,
     defaultValue: T[] = [],
-): [
-    T[],
-    React.Dispatch<React.SetStateAction<T[]>>,
-    (itemKey: K) => void,
-    (item: T) => void,
-    () => void,
-] {
+): {
+    values: T[],
+    setValues: React.Dispatch<React.SetStateAction<T[]>>,
+    isItemPresent: (itemKey: K) => void,
+    addItems: (items: T[]) => void,
+    removeItems: (items: T[]) => void,
+    clickOnItem: (item: T) => void,
+    clearSelection: () => void,
+} {
     const [values, setValues] = useState(defaultValue);
 
     const clickOnItem = useCallback((clickedItem: T) => {
@@ -122,6 +125,43 @@ export function useArraySelection<T, K extends string | number>(
         isDefined(valuesMap[key])
     ), [valuesMap]);
 
-    return [values, setValues, isItemPresent, clickOnItem, clearSelection];
+    const addItems = useCallback((itemsToAdd: T[]) => {
+        setValues((oldValues) => {
+            const oldValuesMap = listToMap(oldValues, keySelector, d => d);
+            const newItemsToAdd = itemsToAdd.filter(
+                item => isNotDefined(oldValuesMap[keySelector(item)]),
+            );
+            return ([
+                ...oldValues,
+                ...newItemsToAdd,
+            ]);
+        });
+    }, [
+        keySelector,
+        setValues,
+    ]);
+
+    const removeItems = useCallback((itemsToRemove: T[]) => {
+        setValues((oldValues) => {
+            const itemsToRemoveMap = listToMap(itemsToRemove, keySelector, d => d);
+            const newItems = oldValues.filter(
+                item => isNotDefined(itemsToRemoveMap[keySelector(item)]),
+            );
+            return newItems;
+        });
+    }, [
+        keySelector,
+        setValues,
+    ]);
+
+    return ({
+        values,
+        setValues,
+        isItemPresent,
+        clickOnItem,
+        clearSelection,
+        removeItems,
+        addItems,
+    });
 }
 
