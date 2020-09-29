@@ -79,6 +79,9 @@ function ProjectConnectorDetail(props: OwnProps) {
         url: `server://projects/${projectId}/unified-connectors/${connectorId}/`,
         method: 'PATCH',
         body: patchBodyToSend,
+        query: {
+            with_trending_stats: true,
+        },
         onSuccess: (response) => {
             if (onConnectorEdit) {
                 onConnectorEdit(
@@ -129,7 +132,7 @@ function ProjectConnectorDetail(props: OwnProps) {
     const pending = pendingConnectorDelete || pendingConnectorPatch;
 
     return (
-        <div className={_cs(className, styles.projectConnectorDetail)}>
+        <div className={_cs(className, styles.projectConnectorDetail, isActive && styles.active)}>
             {pending && <LoadingAnimation />}
             <header className={styles.header}>
                 <h4 className={styles.heading}>
@@ -149,10 +152,10 @@ function ProjectConnectorDetail(props: OwnProps) {
                 </div>
                 <div className={styles.actions}>
                     <Switch
-                        name="disableSwitch"
+                        name="activateSwitch"
                         value={isActive}
                         onChange={handleConnectorActiveStatusChange}
-                        label={_ts('project.connector', 'disableLabel')}
+                        label={_ts('project.connector', 'activeSwitchLabel')}
                     />
                     <ModalButton
                         iconName="edit"

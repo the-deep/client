@@ -220,6 +220,9 @@ function ProjectConnectorEditForm(props: OwnProps) {
     const [pending,,, triggerConnectorSave] = useRequest<Connector>({
         url: connectorUrl,
         method: isAddForm ? 'POST' : 'PATCH',
+        query: {
+            with_trending_stats: true,
+        },
         body: bodyToSend,
         onSuccess: (response) => {
             if (onSuccess) {
@@ -270,7 +273,8 @@ function ProjectConnectorEditForm(props: OwnProps) {
             });
             return newFaramValues;
         });
-    }, [setFaramValues]);
+        setPristine(false);
+    }, [setFaramValues, setPristine]);
 
     const connectorSourceButtonRendererParams = useCallback((key, data) => {
         const active = isDefined(faramValues.sources)
@@ -361,6 +365,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
                     </DangerButton>
                     <PrimaryButton
                         disabled={pristine}
+                        pending={pending}
                         type="submit"
                     >
                         {_ts('project.connector.editForm', 'saveButtonLabel')}

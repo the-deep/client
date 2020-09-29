@@ -38,13 +38,14 @@
     .content {
         display: flex;
         flex-grow: 1;
-        padding: calc(var(--spacing-large) - var(--spacing-medium));
+        padding: calc(var(--spacing-large) - var(--spacing-small));
+        overflow: auto;
 
         .details-container {
             flex-shrink: 0;
 
             .updated-on {
-                padding: calc(var(--spacing-medium) - var(--spacing-extra-small));
+                padding: calc(var(--spacing-small) - var(--spacing-extra-small));
 
                 .label {
                     padding: var(--spacing-extra-small);
@@ -58,11 +59,11 @@
             }
 
             .lead-status {
-                padding: calc(var(--spacing-medium) - var(--spacing-extra-small));
+                padding: calc(var(--spacing-small) - var(--spacing-extra-small));
 
                 .value {
                     padding: var(--spacing-extra-small);
-                    font-size: var(--font-size-ultra-large);
+                    font-size: var(--font-size-super-large);
                 }
 
                 .label {
@@ -77,18 +78,22 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+            overflow: auto;
 
             .empty-message {
                 display: flex;
                 flex-direction: column;
+                overflow: hidden;
 
                 .icon {
-                    font-size: 5em;
+                    font-size: 4em;
                 }
             }
 
             .responsive-container {
                 flex-grow: 1;
+                width: unset!important;
+                height: unset!important;
             }
         }
     }

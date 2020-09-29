@@ -5,6 +5,9 @@
     padding: calc(var(--spacing-large) - var(--spacing-medium)) 0;
     overflow-y: auto;
 
+    --inactive-opacity: 0.5;
+    --active-opacity: 1;
+
     .header {
         display: flex;
         align-items: center;
@@ -13,15 +16,16 @@
 
         .heading {
             flex-grow: 1;
+            opacity: var(--inactive-opacity);
             padding: 0 var(--spacing-small);
-            color: var(--color-text);
-            color: var(--color-accent);
+            color: var(--color-text-label);
             font-size: var(--font-size-extra-large);
             font-weight: var(--font-weight-bold);
         }
 
         .status {
             flex-shrink: 0;
+            opacity: var(--inactive-opacity);
             padding: 0 var(--spacing-small);
 
             .updated-on {
@@ -45,6 +49,7 @@
             padding: 0 var(--spacing-small);
 
             .button {
+                opacity: var(--inactive-opacity);
                 font-size: var(--font-size-large);
 
                 &:not(:first-child) {
@@ -63,8 +68,38 @@
 
         .connector-source-details {
             flex-basis: calc(100% / 3 - var(--spacing-extra-small-alt) * 2);
+            flex-grow: 0;
+            opacity: var(--inactive-opacity);
             margin: var(--spacing-extra-small-alt);
+            border: var(--width-separator-thin) solid var(--color-separator-light);
+            border-radius: 5px;
             background-color: var(--color-background);
+            max-width: calc(100% / 3 - var(--spacing-extra-small-alt) * 2);
+        }
+    }
+
+    &.active {
+        .content {
+            .connector-source-details {
+                opacity: var(--active-opacity);
+            }
+        }
+
+        .header {
+            .heading {
+                opacity: var(--active-opacity);
+                color: var(--color-accent);
+            }
+
+            .status {
+                opacity: var(--active-opacity);
+            }
+
+            .actions {
+                .button {
+                    opacity: var(--active-opacity);
+                }
+            }
         }
     }
 }
