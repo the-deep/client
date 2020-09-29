@@ -40,7 +40,7 @@ const iconNames = {
     docx: 'fa fa-file-word-o',
     download: 'fa fa-download',
     dropbox: 'ion-social-dropbox',
-    edit: 'ion-edit',
+    edit: 'fa fa-pencil-square-o',
     email: 'fa fa-envelope',
     error: 'ion-android-alert',
     expand: 'ion-arrow-expand',
