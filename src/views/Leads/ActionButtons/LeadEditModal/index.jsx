@@ -215,7 +215,6 @@ function LeadEditModal(props) {
                     bulkActionDisabled
                     pending={pending || pendingLeadOptions}
                     onChange={handleLeadDetailChange}
-                    disableLeadUrlChange
 
                     priorityOptions={leadOptions?.priority}
                     confidentialityOptions={leadOptions?.confidentiality} // eslint-disable-line max-len
