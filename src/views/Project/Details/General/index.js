@@ -9,6 +9,7 @@ import Faram, {
 import {
     decodeDate,
     listToGroupList,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -118,6 +119,8 @@ const fields = [
     },
 ];
 
+const fieldsMap = listToMap(fields, d => d.faramElementName, d => d.label);
+
 function OrganizationDetails({
     logo,
     title,
@@ -145,7 +148,7 @@ function OrganizationDetails({
     );
 }
 
-const organizationDetailsKeySelector = d => d.id;
+const organizationDetailsKeySelector = d => d.organization;
 const organizationDetailsRendererParams = (_, d) => ({
     logo: d.organizationDetails.logo,
     title: d.organizationDetails.title,
@@ -158,13 +161,11 @@ function OrganizationList(p) {
         return null;
     }
 
-    const organizationType = fields.find(v => v.faramElementName === data[0].organizationType);
-
     return (
         <div className={styles.organizationList}>
             <header className={styles.header}>
                 <h4 className={styles.heading}>
-                    { organizationType.label }
+                    { fieldsMap[data[0].organizationType] }
                 </h4>
             </header>
             <ListView
@@ -250,7 +251,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
         projectPutRequest.do({ projectDetails });
     }
 
-    organizationListRendererParams = (key, data) => {
+    organizationListRendererParams = (key) => {
         const { projectLocalData: { faramValues: { organizations = [] } } } = this.props;
         const values = listToGroupList(
             organizations,

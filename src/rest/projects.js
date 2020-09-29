@@ -71,6 +71,7 @@ export const createParamsForProjectCreate = ({
     title,
     userGroups,
     isPrivate,
+    organizations,
 }) => ({
     method: POST,
     headers: commonHeaderForPost,
@@ -78,6 +79,7 @@ export const createParamsForProjectCreate = ({
         title,
         userGroups,
         isPrivate,
+        organizations,
     }),
 });
 

@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
     listToGroupList,
+    listToMap,
     isDefined,
     isFalsyString,
-    unique,
 } from '@togglecorp/fujs';
 import Faram, { FaramInputElement } from '@togglecorp/faram';
 
@@ -80,8 +80,9 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
                 id,
                 projectOrganizationId,
                 organizationDetails,
+                organizationType,
             }) => ({
-                id: projectOrganizationId,
+                id: organizationType === key ? projectOrganizationId : undefined,
                 organization: id,
                 organizationType: key,
                 organizationDetails,
@@ -91,6 +92,16 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
     });
     return organizations;
 };
+
+function uniqueAppend(list, elements, keySelector) {
+    const map = listToMap(list, keySelector);
+    elements.forEach((el) => {
+        if (!isDefined(map[keySelector(el)])) {
+            list.push(el);
+        }
+    });
+}
+
 
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -138,6 +149,9 @@ export default class StakeholdersModal extends React.PureComponent {
             logo: o.logoUrl,
         }));
 
+        const uniqueOptions = [...organizationOptions];
+        uniqueAppend(uniqueOptions, transformedOptions, o => o.id);
+        /*
         const uniqueOptions = unique(
             [
                 ...transformedOptions,
@@ -146,6 +160,7 @@ export default class StakeholdersModal extends React.PureComponent {
             ].filter(isDefined),
             option => option.id,
         );
+        */
 
         this.setState({
             searchOptions,
@@ -181,6 +196,7 @@ export default class StakeholdersModal extends React.PureComponent {
             closeModal,
         } = this.props;
         const { organizationOptions } = this.state;
+
 
         const transformedValues = transformFaramValuesToOrganization(
             faramValues,
