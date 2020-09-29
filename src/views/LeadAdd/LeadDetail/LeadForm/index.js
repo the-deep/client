@@ -130,7 +130,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     organizations: PropTypes.array,
 
-    leadState: PropTypes.string.isRequired,
+    leadState: PropTypes.string,
 };
 
 const defaultProps = {
@@ -147,7 +147,7 @@ const defaultProps = {
     organizations: [],
 };
 
-function LeadForm(props) {
+function LeadFormRaw(props) {
     const {
         activeProject,
         assignees,
@@ -700,8 +700,8 @@ function LeadForm(props) {
         </div>
     );
 }
-LeadForm.propTypes = propTypes;
-LeadForm.defaultProps = defaultProps;
+LeadFormRaw.propTypes = propTypes;
+LeadFormRaw.defaultProps = defaultProps;
 
 const mapStateToProps = state => ({
     activeProject: currentUserActiveProjectSelector(state),
@@ -713,6 +713,8 @@ const mapDispatchToProps = dispatch => ({
     onApplyAllClick: params => dispatch(leadAddApplyLeadsAllAction(params)),
 });
 
+export { LeadFormRaw };
+
 export default connect(mapStateToProps, mapDispatchToProps)(
-    LeadForm,
+    LeadFormRaw,
 );
