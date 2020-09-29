@@ -62,6 +62,7 @@ import {
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
     leadKeySelector,
+    leadIdSelector,
     leadSourceTypeSelector,
 } from '../../utils';
 
@@ -108,11 +109,10 @@ const propTypes = {
     activeProject: PropTypes.object.isRequired,
 
     bulkActionDisabled: PropTypes.bool,
-    disableLeadUrlChange: PropTypes.bool,
 
     onChange: PropTypes.func.isRequired,
-    onApplyAllClick: PropTypes.func.isRequired,
-    onApplyAllBelowClick: PropTypes.func.isRequired,
+    onApplyAllClick: PropTypes.func,
+    onApplyAllBelowClick: PropTypes.func,
 
     onOrganizationsAdd: PropTypes.func.isRequired,
     onLeadGroupsAdd: PropTypes.func.isRequired,
@@ -136,8 +136,6 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
-    // TODO: IMP this should always be true
-    disableLeadUrlChange: false,
 
     pending: false,
     priorityOptions: [],
@@ -145,6 +143,9 @@ const defaultProps = {
     assignees: [],
     leadGroups: [],
     organizations: [],
+
+    onApplyAllClick: undefined,
+    onApplyAllBelowClick: undefined,
 };
 
 function LeadFormRaw(props) {
@@ -154,7 +155,6 @@ function LeadFormRaw(props) {
         bulkActionDisabled,
         className: classNameFromProps,
         confidentialityOptions,
-        disableLeadUrlChange,
         lead,
         leadGroups,
         leadState,
@@ -189,6 +189,7 @@ function LeadFormRaw(props) {
     const [suggestedTitleFromExtraction, setSuggestedTitleFromExtraction] = useState('');
 
     const key = leadKeySelector(lead);
+    const serverId = leadIdSelector(lead);
     const values = leadFaramValuesSelector(lead);
     const type = leadSourceTypeSelector(lead);
     const errors = leadFaramErrorsSelector(lead);
@@ -269,7 +270,9 @@ function LeadFormRaw(props) {
     const handleApplyAllClick = useCallback(
         (attrName) => {
             const attrValue = values[attrName];
-            onApplyAllClick({ leadKey: key, values, attrName, attrValue });
+            if (onApplyAllClick) {
+                onApplyAllClick({ leadKey: key, values, attrName, attrValue });
+            }
         },
         [key, values, onApplyAllClick],
     );
@@ -277,7 +280,9 @@ function LeadFormRaw(props) {
     const handleApplyAllBelowClick = useCallback(
         (attrName) => {
             const attrValue = values[attrName];
-            onApplyAllBelowClick({ leadKey: key, values, attrName, attrValue });
+            if (onApplyAllBelowClick) {
+                onApplyAllBelowClick({ leadKey: key, values, attrName, attrValue });
+            }
         },
         [key, values, onApplyAllBelowClick],
     );
@@ -426,7 +431,7 @@ function LeadFormRaw(props) {
                             label={_ts('addLeads', 'urlLabel')}
                             placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                             autoFocus
-                            disabled={disableLeadUrlChange}
+                            disabled
                         />
                         <ApplyAll
                             className={styles.website}
@@ -452,7 +457,7 @@ function LeadFormRaw(props) {
                         rows="3"
                         className={styles.text}
                         autoFocus
-                        disabled={disableLeadUrlChange}
+                        disabled={!!serverId}
                     />
                 )}
                 <ExtraFunctionsOnHover
