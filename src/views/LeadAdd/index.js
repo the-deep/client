@@ -511,22 +511,6 @@ function LeadAdd(props) {
     const [selectedConnectorSource, setSelectedConnectorSource] = useState(undefined);
     const connectors = connectorsResponse?.results;
 
-    let connectorLeadUrl;
-    if (selectedConnectorSource) {
-        connectorLeadUrl = `server://projects/${projectId}/unified-connector-sources/${selectedConnectorSource}/leads/`;
-    } else if (selectedConnector) {
-        connectorLeadUrl = `server://projects/${projectId}/unified-connectors/${selectedConnector}/leads/`;
-    }
-    const [connectorLeadsPending, connectorLeadsResponse] = useRequest({
-        url: connectorLeadUrl,
-        query: {
-            offset: 1,
-            limit: 20,
-        },
-        autoTrigger: true,
-    });
-    const connectorLeads = connectorLeadsResponse?.results;
-
     const [connectorToTrigger, setConnectorToTrigger] = useState();
     const [connectorTriggerPending,,, connectorTriggerTrigger] = useRequest({
         url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
@@ -629,26 +613,29 @@ function LeadAdd(props) {
                         render={(
                             <div className={styles.leftPane}>
                                 <CandidateLeadsManager>
-                                    <Sources
-                                        className={styles.leadButtons}
-                                        onLeadsAdd={handleLeadsAdd}
-                                        leadStates={leadStates}
-                                        activeSource={activeSource}
-                                        onSourceChange={handleSourceSelect}
-                                    />
-                                    {connectors && connectors.length > 0 && (
-                                        <Connectors
-                                            connectors={connectors}
-                                            selectedConnector={selectedConnector}
-                                            selectedConnectorSource={selectedConnectorSource}
-                                            onConnectorTrigger={handleConnectorTrigger}
-                                            onConnectorSelect={handleCollectorSelect}
-                                            onConnectorSourceSelect={handleConnectorSourceSelect}
-                                            connectorToTrigger={connectorToTrigger}
-                                            connectorTriggering={connectorTriggerPending}
+                                    <div className={styles.selectionItems}>
+                                        <Sources
+                                            className={styles.leadButtons}
+                                            onLeadsAdd={handleLeadsAdd}
+                                            leadStates={leadStates}
+                                            activeSource={activeSource}
+                                            onSourceChange={handleSourceSelect}
                                         />
-                                    )}
-                                    <div className={styles.space} />
+                                        {connectors && connectors.length > 0 && (
+                                            <Connectors
+                                                connectors={connectors}
+                                                selectedConnector={selectedConnector}
+                                                selectedConnectorSource={selectedConnectorSource}
+                                                onConnectorTrigger={handleConnectorTrigger}
+                                                onConnectorSelect={handleCollectorSelect}
+                                                onConnectorSourceSelect={
+                                                    handleConnectorSourceSelect
+                                                }
+                                                connectorToTrigger={connectorToTrigger}
+                                                connectorTriggering={connectorTriggerPending}
+                                            />
+                                        )}
+                                    </div>
                                     <CandidateLeadsPane
                                         className={styles.candidateLeadsBox}
                                         onLeadsAdd={handleLeadsAdd}
@@ -708,8 +695,9 @@ function LeadAdd(props) {
                             <ConnectorDetail
                                 key={selectedConnector}
                                 className={styles.content}
-                                leads={connectorLeads}
-                                pending={connectorLeadsPending}
+                                projectId={projectId}
+                                selectedConnector={selectedConnector}
+                                selectedConnectorSource={selectedConnectorSource}
                             />
                         )}
                     </div>
