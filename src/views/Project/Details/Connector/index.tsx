@@ -45,7 +45,7 @@ function ProjectConnector(props: OwnProps) {
         autoTrigger: true,
         url: `server://projects/${projectId}/unified-connectors/`,
         query: {
-            withTrendingStats: true,
+            with_trending_stats: true,
         },
         onSuccess: (response) => {
             setConnectors(response.results);

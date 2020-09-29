@@ -78,6 +78,7 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                 <div className={styles.detailsContainer}>
                     <div className={styles.updatedOn}>
                         <div className={styles.label}>
+                            {/* FIXME: Use translation */}
                             Last updated on
                         </div>
                         <FormattedDate
@@ -122,9 +123,10 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                                     dataKey="date"
                                     type="number"
                                     domain={['dataMin', 'dataMax']}
+                                    hide
                                     tick={false}
                                 />
-                                <YAxis />
+                                <YAxis hide />
                                 <Tooltip labelFormatter={tickFormatter} />
                                 <Area
                                     type="monotone"
