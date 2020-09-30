@@ -48,7 +48,8 @@ interface RequestOptions<T> {
     schemaName?: string;
     delay?: number;
     preserveResponse?: boolean;
-    shouldPoll?: (val: T, run: number) => number;
+    shouldRetry?: (val: T, run: number) => number;
+    shouldPoll?: (val: T) => number;
     onSuccess?: (val: T) => void;
     onFailure?: (val: Err) => void;
 }
@@ -91,14 +92,14 @@ async function fetchResource<T>(
         if (!signal.aborted) {
             console.error(`An error occurred while fetching ${myUrl}`, e);
         }
+        const message = {
+            reason: 'network',
+            exception: e,
+            value: { nonFieldErrors: ['Network error'] },
+        };
         ReactDOM.unstable_batchedUpdates(() => {
             setPendingSafe(false, clientId);
             setResponseSafe(undefined, clientId);
-            const message = {
-                reason: 'network',
-                exception: e,
-                value: { nonFieldErrors: ['Network error'] },
-            };
             setErrorSafe(message, clientId);
         });
         const { onFailure } = requestOptionsRef.current;
@@ -117,15 +118,15 @@ async function fetchResource<T>(
             resBody = JSON.parse(resText);
         }
     } catch (e) {
+        const message = {
+            reason: 'parse',
+            exception: e,
+            value: { nonFieldErrors: ['JSON parse error'] },
+        };
         ReactDOM.unstable_batchedUpdates(() => {
             setResponseSafe(undefined, clientId);
             setPendingSafe(false, clientId);
             console.error(`An error occurred while parsing data from ${myUrl}`, e);
-            const message = {
-                reason: 'parse',
-                exception: e,
-                value: { nonFieldErrors: ['JSON parse error'] },
-            };
             setErrorSafe(message, clientId);
         });
         const { onFailure } = requestOptionsRef.current;
@@ -138,7 +139,7 @@ async function fetchResource<T>(
     }
 
     if (res.ok) {
-        const { schemaName, shouldPoll } = requestOptionsRef.current;
+        const { schemaName, shouldRetry, shouldPoll } = requestOptionsRef.current;
         if (schemaName && myOptions.method !== 'DELETE') {
             try {
                 schema.validate(resBody, schemaName);
@@ -147,10 +148,9 @@ async function fetchResource<T>(
             }
         }
 
-        const pollTime = shouldPoll ? shouldPoll(resBody as T, run) : -1;
-
-        if (pollTime >= 0) {
-            await sleep(pollTime, { signal });
+        const retryTime = shouldRetry ? shouldRetry(resBody as T, run) : -1;
+        if (retryTime >= 0) {
+            await sleep(retryTime, { signal });
             await fetchResource(
                 myUrl,
                 myOptions,
@@ -170,26 +170,50 @@ async function fetchResource<T>(
             return;
         }
 
+        const pollTime = shouldPoll ? shouldPoll(resBody as T) : -1;
+
         ReactDOM.unstable_batchedUpdates(() => {
-            setPendingSafe(false, clientId);
+            setPendingSafe(pollTime > -1, clientId);
             setErrorSafe(undefined, clientId);
             setResponseSafe(resBody as T, clientId);
         });
+
         const { onSuccess } = requestOptionsRef.current;
         if (onSuccess) {
             callSideEffectSafe(() => {
                 onSuccess(resBody as T);
             }, clientId);
         }
+
+        if (pollTime >= 0) {
+            await sleep(pollTime, { signal });
+
+            await fetchResource(
+                myUrl,
+                myOptions,
+                delay,
+
+                requestOptionsRef,
+
+                setPendingSafe,
+                setResponseSafe,
+                setErrorSafe,
+                callSideEffectSafe,
+
+                myController,
+                clientId, // NOTE: may not need to increase clientId
+                1, // NOTE: run should be reset
+            );
+        }
     } else {
+        const message = {
+            reason: 'other',
+            exception: undefined,
+            value: (resBody as { errors: Err }).errors,
+        };
         ReactDOM.unstable_batchedUpdates(() => {
             setPendingSafe(false, clientId);
             setResponseSafe(undefined, clientId);
-            const message = {
-                reason: 'other',
-                exception: undefined,
-                value: (resBody as { errors: Err }).errors,
-            };
             setErrorSafe(
                 message,
                 clientId,

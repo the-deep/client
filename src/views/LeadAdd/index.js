@@ -505,6 +505,8 @@ function LeadAdd(props) {
     const [connectorsPending, connectorsResponse] = useRequest({
         url: `server://projects/${projectId}/unified-connectors/`,
         autoTrigger: true,
+        shouldPoll: () => 10 * 1000,
+        // FIXME: add error handling
     });
     const [selectedConnector, setSelectedConnector] = useState(undefined);
     // TODO: validate this selected connector source
@@ -516,9 +518,7 @@ function LeadAdd(props) {
         url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
         method: 'POST',
         body: {},
-        onSuccess: () => {
-            console.warn('success');
-        },
+        // FIXME: add error handling
     });
 
     const handleSourceSelect = useCallback(

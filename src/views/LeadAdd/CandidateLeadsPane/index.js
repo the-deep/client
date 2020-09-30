@@ -225,7 +225,7 @@ function CandidateLeadsPane(props) {
         url: 'serverless://source-extract/',
         method: 'POST',
         body: { asyncJobUuid },
-        shouldPoll: (response, run) => {
+        shouldRetry: (response, run) => {
             if (response.status === 'pending' || response.status === 'started') {
                 const wait = 1000 * Math.min(2 ** run, 64);
                 return wait;
