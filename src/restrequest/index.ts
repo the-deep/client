@@ -428,7 +428,6 @@ function useRequest<T>(
         },
         [
             extendedUrl, method, body, other,
-            transformOptions,
             setPendingSafe, setResponseSafe, setErrorSafe, callSideEffectSafe,
             timestamp,
         ],

@@ -14,7 +14,8 @@ const entityKeySelector = item => item.id;
 
 const connectorStatusToLeadStatusMap = {
     not_processed: LEAD_STATUS.warning,
-    success: LEAD_STATUS.complete,
+    // success: LEAD_STATUS.complete,
+    success: undefined,
     failure: LEAD_STATUS.invalid,
     processing: LEAD_STATUS.requesting,
 };

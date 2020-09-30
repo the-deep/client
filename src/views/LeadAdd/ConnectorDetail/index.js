@@ -19,9 +19,18 @@ import ListStatusItem from '../ListStatusItem';
 import {
     leadKeySelector,
     LEAD_TYPE,
+    LEAD_STATUS,
 } from '../utils';
 
 import styles from './styles.scss';
+
+const connectorLeadStatusToLeadStatusMap = {
+    // not_processed: LEAD_STATUS.warning,
+    // success: LEAD_STATUS.complete,
+    success: undefined,
+    failure: LEAD_STATUS.invalid,
+    processing: LEAD_STATUS.warning,
+};
 
 const propTypes = {
     className: PropTypes.string,
@@ -142,6 +151,7 @@ function ConnectorDetail(props) {
                 onItemClick: setSelectedConnectorLead,
                 // FIXME: identify bad states
                 // itemState: leadStates[key],
+                itemState: connectorLeadStatusToLeadStatusMap[data.lead.status ?? 'processing'],
                 actionButtons,
             };
         },
