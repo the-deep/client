@@ -160,36 +160,33 @@ function ConnectorDetail(props) {
             const newLeads = leadsToProcess.map((item) => {
                 const {
                     url,
-                    // status,
                     data,
                 } = item;
 
                 const {
-                    /*
-                    authorDetail,
-                    authorsDetail,
-                    sourceDetail,
-                    key,
-                    url: ignoredUrl,
-                    existing,
-                    sourceType,
-                    */
                     title,
                     website,
                     authors,
                     source,
                     sourceRaw,
                     authorRaw,
+
+                    emmEntities,
+                    emmTriggers,
                 } = data || {};
 
                 return {
                     faramValues: {
-                        url,
                         title,
-                        website,
                         authors,
                         source,
+
+                        url,
+                        website,
+
                         sourceType: LEAD_TYPE.connectors,
+                        emmEntities,
+                        emmTriggers,
 
                         authorSuggestion: authors && authors.length > 0 ? authorRaw : undefined,
                         sourceSuggestion: source ? sourceRaw : undefined,
