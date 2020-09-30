@@ -300,6 +300,7 @@ export default class GalleryViewer extends React.PureComponent {
                 }
                 { currentScreenshot && (
                     <Button
+                        className={styles.paintBrushButton}
                         iconName="paintBrush"
                         transparent
                         onClick={this.handlePaintBrushButtonClick}
