@@ -49,7 +49,7 @@ const styleProperties = {
         widthTableDateTime: '120px',
         widthTableIcon: '56px',
 
-        widthScrollbar: '6px',
+        widthScrollbar: '8px',
 
         heightMatrixHeader: '20px',
 
