@@ -37,6 +37,13 @@ const schema = {
             ...commonFields,
             attachment: [requiredCondition],
         },
+        [LEAD_TYPE.connectors]: {
+            ...commonFields,
+            url: [requiredCondition, urlCondition],
+            website: [requiredCondition],
+            emmEntities: [],
+            emmTriggers: [],
+        },
         [LEAD_TYPE.website]: {
             ...commonFields,
             url: [requiredCondition, urlCondition],

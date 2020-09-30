@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { _cs, isTruthy } from '@togglecorp/fujs';
+import { _cs, isTruthy, isDefined } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
 import { Checkbox } from '@togglecorp/toggle-ui';
 
@@ -41,6 +41,8 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     selectedConnectorSource: PropTypes.number,
     selectedConnector: PropTypes.number,
+    onLeadsAdd: PropTypes.func.isRequired,
+    onOrganizationsAdd: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -55,6 +57,8 @@ function ConnectorDetail(props) {
         projectId,
         selectedConnectorSource,
         selectedConnector,
+        onLeadsAdd,
+        onOrganizationsAdd,
     } = props;
 
     // TODO: validate this selected connector lead
@@ -112,9 +116,7 @@ function ConnectorDetail(props) {
 
             return {
                 sourceType: LEAD_TYPE.website,
-                // FIXME: use lead.data.url or lead.url
                 url: connectorLead.lead.url,
-                // attachment: connectorLead.lead.data.attachment,
             };
         },
         [leads, selectedConnectorLead],
@@ -136,9 +138,108 @@ function ConnectorDetail(props) {
         selectedLeads.length > 0
     ), [selectedLeads]);
 
-    const handleConnectorLeadLoad = useCallback(() => {
-        console.warn('here load');
-    }, []);
+    const handleSelectAllCheckboxClick = useCallback((newValue) => {
+        if (newValue) {
+            addItems(leads);
+        } else {
+            removeItems(leads);
+        }
+    }, [leads, addItems, removeItems]);
+
+    const handleLeadLoad = useCallback(
+        (leadsToProcess) => {
+            const authorOrgs = leadsToProcess
+                .map(item => item.data?.authorsDetail)
+                .filter(isDefined)
+                .flat();
+            const sourceOrgs = leadsToProcess
+                .map(item => item.data?.sourceDetail)
+                .filter(isDefined);
+            const orgs = [...authorOrgs, ...sourceOrgs];
+
+            const newLeads = leadsToProcess.map((item) => {
+                const {
+                    url,
+                    // status,
+                    data,
+                } = item;
+
+                const {
+                    /*
+                    authorDetail,
+                    authorsDetail,
+                    sourceDetail,
+                    key,
+                    url: ignoredUrl,
+                    existing,
+                    sourceType,
+                    */
+                    title,
+                    website,
+                    authors,
+                    source,
+                    sourceRaw,
+                    authorRaw,
+                } = data || {};
+
+                return {
+                    faramValues: {
+                        url,
+                        title,
+                        website,
+                        authors,
+                        source,
+                        sourceType: LEAD_TYPE.connectors,
+
+                        authorSuggestion: authors && authors.length > 0 ? authorRaw : undefined,
+                        sourceSuggestion: source ? sourceRaw : undefined,
+                    },
+                };
+            });
+
+            onOrganizationsAdd(orgs);
+            onLeadsAdd(newLeads);
+        },
+        [onLeadsAdd, onOrganizationsAdd],
+    );
+
+    const handleBulkSaveLeadsClick = useCallback(() => {
+        const leadsToProcess = selectedLeads.map(item => item.lead);
+        handleLeadLoad(leadsToProcess);
+        clearSelection();
+    }, [selectedLeads, handleLeadLoad, clearSelection]);
+
+    const handleConnectorLeadLoad = useCallback((lead) => {
+        console.log(lead);
+        handleLeadLoad([lead]);
+    }, [handleLeadLoad]);
+
+    const handleFilterClear = useCallback(() => {
+        setFilters({});
+        clearSelection();
+    }, [clearSelection]);
+
+    const handleFilterApply = useCallback((filterValues) => {
+        setFilters(filterValues);
+        clearSelection();
+    }, [clearSelection]);
+
+    const {
+        areAllChecked,
+        areSomeChecked,
+    } = useMemo(() => {
+        if (!leads || leads.length === 0) {
+            return {
+                areAllChecked: false,
+                areSomeChecked: false,
+            };
+        }
+        const filteredLeads = leads.filter(l => isItemPresent(leadKeySelector(l)));
+        return {
+            areAllChecked: filteredLeads.length === leads.length,
+            areSomeChecked: filteredLeads.length < leads.length && filteredLeads.length > 0,
+        };
+    }, [leads, isItemPresent]);
 
     const rendererParams = useCallback(
         (key, data) => ({
@@ -175,49 +276,6 @@ function ConnectorDetail(props) {
         ],
     );
 
-    const handleSelectAllCheckboxClick = useCallback((newValue) => {
-        if (newValue) {
-            addItems(leads);
-        } else {
-            removeItems(leads);
-        }
-    }, [leads, addItems, removeItems]);
-
-    const handleBulkBlockLeadsClick = useCallback(() => {
-        console.warn('bulk block clicked');
-    }, []);
-
-    const handleBulkSaveLeadsClick = useCallback(() => {
-        console.warn('bulk save clicked');
-    }, []);
-
-    const handleFilterClear = useCallback(() => {
-        setFilters({});
-        clearSelection();
-    }, [clearSelection]);
-
-    const handleFilterApply = useCallback((filterValues) => {
-        setFilters(filterValues);
-        clearSelection();
-    }, [clearSelection]);
-
-    const {
-        areAllChecked,
-        areSomeChecked,
-    } = useMemo(() => {
-        if (!leads || leads.length === 0) {
-            return {
-                areAllChecked: false,
-                areSomeChecked: false,
-            };
-        }
-        const filteredLeads = leads.filter(l => isItemPresent(leadKeySelector(l)));
-        return {
-            areAllChecked: filteredLeads.length === leads.length,
-            areSomeChecked: filteredLeads.length < leads.length && filteredLeads.length > 0,
-        };
-    }, [leads, isItemPresent]);
-
     return (
         <div className={_cs(styles.connectorDetail, className)}>
             <div className={styles.bar}>
@@ -229,16 +287,17 @@ function ConnectorDetail(props) {
                 />
                 {selectedLeads.length > 0 && (
                     <div className={styles.actions}>
-                        <Button
-                            className={styles.button}
-                            iconName="delete"
-                            onClick={handleBulkBlockLeadsClick}
-                            // FIXME: use strings
-                            title="block/unblock"
-                        >
-                            {/* FIXME: use strings */}
-                            Block
-                        </Button>
+                        {/*
+                            <Button
+                                className={styles.button}
+                                iconName="delete"
+                                onClick={handleBulkBlockLeadsClick}
+                                // FIXME: use strings
+                                title="block/unblock"
+                            >
+                                Block
+                            </Button>
+                        */}
                         <PrimaryButton
                             className={styles.button}
                             iconName="save"
