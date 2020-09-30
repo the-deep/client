@@ -18,8 +18,8 @@ import {
 } from '#hooks/stateManagement';
 import _ts from '#ts';
 
-import ListStatusItem from '../ListStatusItem';
 import ConnectorLeadsFilter from './ConnectorLeadsFilter';
+import ConnectorLeadItem from './ConnectorLeadItem';
 import {
     leadKeySelector,
     LEAD_TYPE,
@@ -64,9 +64,10 @@ function ConnectorDetail(props) {
     const [activePage, setActivePage] = useState(1);
     const [totalLeadsCount, setTotalLeadsCount] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(25);
-    const [leadToChangeStatus, setLeadToChangeStatus] = useState(undefined);
 
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({
+        blocked: false,
+    });
 
     let connectorLeadUrl;
     if (selectedConnectorSource) {
@@ -85,17 +86,6 @@ function ConnectorDetail(props) {
         onSuccess: (response) => {
             setTotalLeadsCount(response?.count);
             setLeads(response?.results);
-        },
-    });
-
-    const [connectorLeadStatusChangePending,,, connectorLeadStatusChangeTrigger] = useRequest({
-        url: `${connectorLeadUrl}${leadToChangeStatus?.leadKey}/`,
-        method: 'PATCH',
-        body: {
-            blocked: leadToChangeStatus?.newStatus,
-        },
-        onSuccess: (response) => {
-            modifyLead(leadToChangeStatus?.leadKey, response);
         },
     });
 
@@ -137,73 +127,37 @@ function ConnectorDetail(props) {
         selectedLeads.length > 0
     ), [selectedLeads]);
 
-    const handleConnectorLeadBlockStatusChange = useCallback((leadKey, newStatus) => {
-        setLeadToChangeStatus({
-            leadKey,
-            newStatus,
-        });
-        connectorLeadStatusChangeTrigger();
-    }, [setLeadToChangeStatus, connectorLeadStatusChangeTrigger]);
-
     const handleConnectorLeadLoad = useCallback(() => {
         console.warn('here load');
     }, []);
 
     const rendererParams = useCallback(
-        (key, data) => {
-            const {
-                blocked,
-                lead,
-            } = data;
+        (key, data) => ({
+            itemKey: key,
+            active: key === selectedConnectorLead,
+            isItemSelected: isItemPresent(key),
+            selectionMode: isSelectionModeEnabled,
+            clickOnItem,
+            leadData: data,
+            type: LEAD_TYPE.connectors,
+            onItemClick: setSelectedConnectorLead,
+            // FIXME: identify bad states
+            // itemState: leadStates[key],
+            itemState: connectorLeadStatusToLeadStatusMap[data.lead.status ?? 'processing'],
 
-            console.warn('i am here', data);
-            const onBlockStatusChangeClick = () => {
-                handleConnectorLeadBlockStatusChange(key, !blocked);
-            };
-            const onConnectorLeadLoad = () => {
-                handleConnectorLeadLoad(lead);
-            };
+            onLoadClick: handleConnectorLeadLoad,
+            modifyLead,
 
-            const actionButtons = (
-                <>
-                    <Button
-                        className={styles.button}
-                        iconName="delete"
-                        onClick={onBlockStatusChangeClick}
-                        // FIXME: use strings
-                        title="block/unblock"
-                    />
-                    <PrimaryButton
-                        className={styles.button}
-                        iconName="save"
-                        onClick={onConnectorLeadLoad}
-                        // FIXME: use strings
-                        title="load"
-                    />
-                </>
-            );
-            const onItemSelect = () => { clickOnItem(data); };
-
-            return {
-                itemKey: key,
-                active: key === selectedConnectorLead,
-                isItemSelected: isItemPresent(key),
-                selectionMode: isSelectionModeEnabled,
-                onItemSelect,
-                // FIXME: check if this is always available
-                // FIXME: use lead.data.url or lead.url
-                title: data.lead.data.title ?? data.lead.url,
-                type: LEAD_TYPE.connectors,
-                onItemClick: setSelectedConnectorLead,
-                // FIXME: identify bad states
-                // itemState: leadStates[key],
-                itemState: connectorLeadStatusToLeadStatusMap[data.lead.status ?? 'processing'],
-                actionButtons,
-            };
-        },
+            projectId,
+            selectedConnectorSource,
+            selectedConnector,
+        }),
         [
+            projectId,
+            selectedConnectorSource,
+            selectedConnector,
             handleConnectorLeadLoad,
-            handleConnectorLeadBlockStatusChange,
+            modifyLead,
             isSelectionModeEnabled,
             selectedConnectorLead,
             setSelectedConnectorLead,
@@ -243,7 +197,10 @@ function ConnectorDetail(props) {
         areSomeChecked,
     } = useMemo(() => {
         if (!leads || leads.length === 0) {
-            return false;
+            return {
+                areAllChecked: false,
+                areSomeChecked: false,
+            };
         }
         const filteredLeads = leads.filter(l => isItemPresent(leadKeySelector(l)));
         return {
@@ -314,7 +271,7 @@ function ConnectorDetail(props) {
                         className={_cs(styles.list, className)}
                         data={leads}
                         keySelector={leadKeySelector}
-                        renderer={ListStatusItem}
+                        renderer={ConnectorLeadItem}
                         rendererParams={rendererParams}
                         pending={connectorLeadsPending}
                     />
