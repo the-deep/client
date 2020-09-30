@@ -1,6 +1,5 @@
 @import '~base-scss/utils';
 
-
 .gallery-viewer {
     width: 100%;
     height: 100%;
@@ -33,6 +32,15 @@
             .open-link {
                 @extend %transparent-button-like-link;
                 color: var(--color-accent);
+                font-size: var(--font-size-large);
+            }
+
+            button {
+                font-size: var(--font-size-large);
+            }
+
+            .paint-brush-button {
+                color: var(--color-primary);
             }
         }
     }

@@ -11,7 +11,8 @@ import _ts from '#ts';
 import ColorInput from '#rsci/ColorInput';
 import SegmentInput from '#rsci/SegmentInput';
 import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import styles from './styles.scss';
 
@@ -217,7 +218,16 @@ function CanvasDraw(props: Props) {
 
     return (
         <Modal className={styles.canvasDrawModal}>
-            <ModalHeader title={_ts('components.canvasDrawModal', 'modalHeading')} />
+            <ModalHeader
+                title={_ts('components.canvasDrawModal', 'modalHeading')}
+                rightComponent={(
+                    <DangerButton
+                        iconName="close"
+                        onClick={onCancel}
+                        transparent
+                    />
+                )}
+            />
             <ModalBody className={_cs(className, styles.canvasDraw)}>
                 <div
                     ref={canvasContainerRef}
@@ -256,14 +266,14 @@ function CanvasDraw(props: Props) {
                 </div>
             </ModalBody>
             <ModalFooter>
-                <Button
+                <DangerButton
                     onClick={onCancel}
                 >
                     {_ts('components.canvasDrawModal', 'cancelButtonLabel')}
-                </Button>
-                <PrimaryButton onClick={handleDoneButtonClick}>
+                </DangerButton>
+                <SuccessButton onClick={handleDoneButtonClick}>
                     {_ts('components.canvasDrawModal', 'doneButtonLabel')}
-                </PrimaryButton>
+                </SuccessButton>
             </ModalFooter>
         </Modal>
     );

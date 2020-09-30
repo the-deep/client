@@ -139,7 +139,7 @@ const iconNames = {
     colorPalette: 'ion-android-color-palette',
     down: 'ion-ios-arrow-down',
     up: 'ion-ios-arrow-up',
-    paintBrush: 'ion-paintbrush',
+    paintBrush: 'fa fa-paint-brush',
 };
 
 export default iconNames;
