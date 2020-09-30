@@ -423,7 +423,7 @@ function LeadFormRaw(props) {
                 <header className={styles.header}>
                     <NonFieldErrors faramElement />
                 </header>
-                {type === LEAD_TYPE.website && (
+                {(type === LEAD_TYPE.website || type === LEAD_TYPE.connectors) && (
                     <>
                         <TextInput
                             className={styles.url}

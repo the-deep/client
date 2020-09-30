@@ -104,9 +104,7 @@ function ConnectorLeadItem(props) {
             onItemClick={onItemClick}
             type={type}
             itemState={itemState}
-            // FIXME: check if this is always available
-            // FIXME: use lead.data.url or lead.url
-            title={leadData.lead.data.title ?? leadData.lead.url}
+            title={leadData.lead?.data.title ?? leadData.lead.url}
             actionButtons={(
                 <>
                     <Button

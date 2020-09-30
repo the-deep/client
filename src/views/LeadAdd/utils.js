@@ -59,7 +59,7 @@ export const getLeadState = (
 
     const noAttachment = !attachment;
 
-    // FIXME: IMP warning state should not be here
+    // FIXME: IMP warning state should not be here after the unified connector refactor
     if (
         noAttachment && (
             type === LEAD_TYPE.file ||
@@ -237,61 +237,4 @@ export function leadFilterMethod(lead, filters, leadState) {
         return false;
     }
     return true;
-}
-
-
-export function getFaramValuesFromLead(lead) {
-    return {
-        title: lead.title,
-        sourceType: lead.sourceType,
-        emmTriggers: lead.emmTriggers,
-        emmEntities: lead.emmEntities,
-        source: lead.sourceDetail ? lead.sourceDetail.id : undefined,
-        authors: lead.authorsDetail ? lead.authorsDetail.map(item => item.id) : undefined,
-        publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
-        // Website type
-        website: lead.website,
-        url: lead.url,
-        // File type
-        attachment: lead.attachment,
-        // Text tye
-        text: lead.text,
-        priority: lead.priority,
-
-        // fields exclusive to lead (not on leadCandidate)
-        leadGroup: lead.leadGroup,
-        tabularBook: lead.tabularBook,
-        project: lead.project,
-        confidentiality: lead.confidentiality,
-        assignee: lead.assignee,
-        sourceRaw: !lead.sourceDetail ? lead.sourceRaw : undefined,
-        authorRaw: !lead.authorsDetail || lead.authorsDetail.length <= 0
-            ? lead.authorRaw
-            : undefined,
-    };
-}
-
-// We get lead candidate from connectors
-export function getFaramValuesFromLeadCandidate(leadCandidate) {
-    const lead = leadCandidate;
-    return {
-        title: lead.title,
-        sourceType: LEAD_TYPE.website,
-        emmEntities: lead.emmEntities,
-        emmTriggers: lead.emmTriggers,
-        source: lead.sourceDetail ? lead.sourceDetail.id : undefined,
-        authors: lead.authorsDetail ? lead.authorsDetail.map(item => item.id) : undefined,
-        publishedOn: formatDateToString(new Date(lead.publishedOn), 'yyyy-MM-dd'),
-        // Website
-        website: lead.website,
-        url: lead.url,
-
-        // fields only on connectors
-        sourceSuggestion: !lead.sourceDetail ? lead.sourceRaw : undefined,
-        authorSuggestion: !lead.authorsDetail || lead.authorsDetail.length <= 0
-            ? lead.authorRaw
-            : undefined,
-        // NOTE: organizations are created for connectors, so we may drop
-        // organization suggestion
-    };
 }

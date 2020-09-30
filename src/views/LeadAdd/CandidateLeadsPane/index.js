@@ -137,7 +137,7 @@ function CandidateLeadsPane(props) {
     );
 
     const [organizationPending,,, organizationTrigger] = useRequest({
-        url: 'server://organizations/search',
+        url: 'server://organizations/search/',
         method: 'POST',
         body: { organizations: organizationsRaw },
         // TODO: use real api
@@ -183,6 +183,7 @@ function CandidateLeadsPane(props) {
                         authorRaw,
                         ...other
                     } = extractions[sourceKey].extraMeta;
+                    // FIXME: undefined value from other should not replace valid values from data
                     data = { ...data, ...other };
 
                     if (sourceRaw) {
@@ -196,7 +197,8 @@ function CandidateLeadsPane(props) {
                     if (authorRaw) {
                         const organization = organizationMapping[authorRaw];
                         if (organization) {
-                            data.author = organization;
+                            // NOTE: author is multiple selection
+                            data.author = [organization];
                         } else {
                             data.authorSuggestion = authorRaw;
                         }

@@ -71,6 +71,7 @@ import {
     leadIdSelector,
     leadKeySelector,
     getNewLeadKey,
+    LEAD_TYPE,
 } from './utils';
 import styles from './styles.scss';
 
@@ -291,8 +292,10 @@ function LeadAdd(props) {
             const newLeads = leadsInfo.map((leadInfo) => {
                 const {
                     faramValues,
+
                     // FIXME: IMP serverId is no longer the case
                     serverId,
+                    leadConnectorId,
                 } = leadInfo;
 
                 const key = getNewLeadKey();
@@ -300,6 +303,7 @@ function LeadAdd(props) {
                 const newLead = {
                     id: key,
                     serverId,
+                    leadConnectorId,
                     faramValues: {
                         title,
                         project: projectId,
@@ -308,6 +312,8 @@ function LeadAdd(props) {
                         confidentiality: defaultConfidentiality,
                         priority: defaultPriority,
 
+                        // FIXME: undefined values from faramValues should not
+                        // clear out default values
                         ...faramValues,
 
                         // NOTE: Server expects a value for authors
@@ -355,12 +361,19 @@ function LeadAdd(props) {
                         const onValidationSuccess = (faramValues) => {
                             let url;
                             let params;
+                            const modifiedFaramValues = {
+                                ...faramValues,
+                            };
+                            if (modifiedFaramValues.sourceType === LEAD_TYPE.connectors) {
+                                modifiedFaramValues.sourceType = LEAD_TYPE.website;
+                            }
+
                             if (serverId) {
                                 url = createUrlForLeadEdit(serverId);
-                                params = () => createParamsForLeadEdit(faramValues);
+                                params = () => createParamsForLeadEdit(modifiedFaramValues);
                             } else {
                                 url = urlForLead;
-                                params = () => createParamsForLeadCreate(faramValues);
+                                params = () => createParamsForLeadCreate(modifiedFaramValues);
                             }
 
                             const request = new FgRestBuilder()
@@ -698,6 +711,8 @@ function LeadAdd(props) {
                                 projectId={projectId}
                                 selectedConnector={selectedConnector}
                                 selectedConnectorSource={selectedConnectorSource}
+                                onLeadsAdd={handleLeadsAdd}
+                                onOrganizationsAdd={mergeOrganizations}
                             />
                         )}
                     </div>
