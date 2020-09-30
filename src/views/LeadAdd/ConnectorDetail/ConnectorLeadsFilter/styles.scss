@@ -1,0 +1,8 @@
+.container {
+    display: flex;
+    align-items: center;
+
+    >* {
+        margin: var(--spacing-small);
+    }
+}

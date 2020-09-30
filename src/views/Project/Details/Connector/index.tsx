@@ -47,6 +47,7 @@ function ProjectConnector(props: OwnProps) {
         query: {
             with_trending_stats: true,
         },
+        shouldPoll: () => 10 * 1000,
         onSuccess: (response) => {
             setConnectors(response.results);
         },

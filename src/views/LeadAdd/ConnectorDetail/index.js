@@ -60,6 +60,8 @@ function ConnectorDetail(props) {
     const [totalLeadsCount, setTotalLeadsCount] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(25);
 
+    const [filters, setFilters] = useState({});
+
     let connectorLeadUrl;
     if (selectedConnectorSource) {
         connectorLeadUrl = `server://projects/${projectId}/unified-connector-sources/${selectedConnectorSource}/leads/`;
@@ -71,6 +73,7 @@ function ConnectorDetail(props) {
         query: {
             offset: (activePage - 1) * itemsPerPage,
             limit: itemsPerPage,
+            ...filters,
         },
         autoTrigger: true,
         onSuccess: (response) => {
@@ -119,6 +122,7 @@ function ConnectorDetail(props) {
 
     const rendererParams = useCallback(
         (key, data) => {
+            // FIXME: move this into separate component
             const actionButtons = (
                 <>
                     <Button
@@ -181,9 +185,15 @@ function ConnectorDetail(props) {
         console.warn('bulk save clicked');
     }, []);
 
+    const handleFilterClear = useCallback(() => {
+        setFilters({});
+        clearSelection();
+    }, [clearSelection]);
+
     const handleFilterApply = useCallback((filterValues) => {
-        console.warn('filter values', filterValues);
-    }, []);
+        setFilters(filterValues);
+        clearSelection();
+    }, [clearSelection]);
 
     const {
         areAllChecked,
@@ -204,6 +214,8 @@ function ConnectorDetail(props) {
             <div className={styles.bar}>
                 <ConnectorLeadsFilter
                     className={styles.filter}
+                    filters={filters}
+                    onFilterClear={handleFilterClear}
                     onFilterApply={handleFilterApply}
                 />
                 {selectedLeads.length > 0 && (
