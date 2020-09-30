@@ -12,7 +12,10 @@ import Button from '#rsca/Button';
 import Pager from '#rscv/Pager';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import { useArraySelection } from '#hooks/stateManagement';
+import {
+    useArraySelection,
+    useArrayEdit,
+} from '#hooks/stateManagement';
 import _ts from '#ts';
 
 import ListStatusItem from '../ListStatusItem';
@@ -56,9 +59,12 @@ function ConnectorDetail(props) {
 
     // TODO: validate this selected connector lead
     const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
+    const [leads, setLeads] = useState(undefined);
+    const [,, modifyLead] = useArrayEdit(setLeads, leadKeySelector);
     const [activePage, setActivePage] = useState(1);
     const [totalLeadsCount, setTotalLeadsCount] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(25);
+    const [leadToChangeStatus, setLeadToChangeStatus] = useState(undefined);
 
     const [filters, setFilters] = useState({});
 
@@ -68,7 +74,7 @@ function ConnectorDetail(props) {
     } else if (selectedConnector) {
         connectorLeadUrl = `server://projects/${projectId}/unified-connectors/${selectedConnector}/leads/`;
     }
-    const [connectorLeadsPending, connectorLeadsResponse] = useRequest({
+    const [connectorLeadsPending] = useRequest({
         url: connectorLeadUrl,
         query: {
             offset: (activePage - 1) * itemsPerPage,
@@ -78,9 +84,20 @@ function ConnectorDetail(props) {
         autoTrigger: true,
         onSuccess: (response) => {
             setTotalLeadsCount(response?.count);
+            setLeads(response?.results);
         },
     });
-    const leads = connectorLeadsResponse?.results;
+
+    const [connectorLeadStatusChangePending,,, connectorLeadStatusChangeTrigger] = useRequest({
+        url: `${connectorLeadUrl}${leadToChangeStatus?.leadKey}/`,
+        method: 'PATCH',
+        body: {
+            blocked: leadToChangeStatus?.newStatus,
+        },
+        onSuccess: (response) => {
+            modifyLead(leadToChangeStatus?.leadKey, response);
+        },
+    });
 
     const activeConnectorLead = useMemo(
         () => {
@@ -120,22 +137,46 @@ function ConnectorDetail(props) {
         selectedLeads.length > 0
     ), [selectedLeads]);
 
+    const handleConnectorLeadBlockStatusChange = useCallback((leadKey, newStatus) => {
+        setLeadToChangeStatus({
+            leadKey,
+            newStatus,
+        });
+        connectorLeadStatusChangeTrigger();
+    }, [setLeadToChangeStatus, connectorLeadStatusChangeTrigger]);
+
+    const handleConnectorLeadLoad = useCallback(() => {
+        console.warn('here load');
+    }, []);
+
     const rendererParams = useCallback(
         (key, data) => {
-            // FIXME: move this into separate component
+            const {
+                blocked,
+                lead,
+            } = data;
+
+            console.warn('i am here', data);
+            const onBlockStatusChangeClick = () => {
+                handleConnectorLeadBlockStatusChange(key, !blocked);
+            };
+            const onConnectorLeadLoad = () => {
+                handleConnectorLeadLoad(lead);
+            };
+
             const actionButtons = (
                 <>
                     <Button
                         className={styles.button}
-                        disabled
                         iconName="delete"
+                        onClick={onBlockStatusChangeClick}
                         // FIXME: use strings
                         title="block/unblock"
                     />
                     <PrimaryButton
                         className={styles.button}
-                        disabled
                         iconName="save"
+                        onClick={onConnectorLeadLoad}
                         // FIXME: use strings
                         title="load"
                     />
@@ -161,6 +202,8 @@ function ConnectorDetail(props) {
             };
         },
         [
+            handleConnectorLeadLoad,
+            handleConnectorLeadBlockStatusChange,
             isSelectionModeEnabled,
             selectedConnectorLead,
             setSelectedConnectorLead,
