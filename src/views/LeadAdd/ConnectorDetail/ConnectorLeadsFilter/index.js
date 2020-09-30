@@ -42,8 +42,8 @@ function ConnectorLeadsFilter(props) {
     const [filters, setFilters] = useState(filtersFromProps);
     const [errors, setErrors] = useState({});
 
-    const filterIsEmpty = doesObjectHaveNoData(filters, ['']);
-    const filterFromPropsIsEmpty = doesObjectHaveNoData(filtersFromProps, ['']);
+    const filterIsEmpty = doesObjectHaveNoData(filters, ['', false]);
+    const filterFromPropsIsEmpty = doesObjectHaveNoData(filtersFromProps, ['', false]);
 
     const handleFaramChange = useCallback(
         (values, err) => {

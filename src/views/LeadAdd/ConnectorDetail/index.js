@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isTruthy } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
 import { Checkbox } from '@togglecorp/toggle-ui';
 
@@ -59,7 +59,7 @@ function ConnectorDetail(props) {
 
     // TODO: validate this selected connector lead
     const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
-    const [leads, setLeads] = useState(undefined);
+    const [leadsUnfiltered, setLeads] = useState(undefined);
     const [,, modifyLead] = useArrayEdit(setLeads, leadKeySelector);
     const [activePage, setActivePage] = useState(1);
     const [totalLeadsCount, setTotalLeadsCount] = useState(0);
@@ -68,6 +68,12 @@ function ConnectorDetail(props) {
     const [filters, setFilters] = useState({
         blocked: false,
     });
+
+    // Filter out blocked/unblocked leads wrt to filter applied
+    const leads = useMemo(
+        () => leadsUnfiltered?.filter(item => isTruthy(item.blocked) === isTruthy(filters.blocked)),
+        [filters.blocked, leadsUnfiltered],
+    );
 
     let connectorLeadUrl;
     if (selectedConnectorSource) {
@@ -80,7 +86,10 @@ function ConnectorDetail(props) {
         query: {
             offset: (activePage - 1) * itemsPerPage,
             limit: itemsPerPage,
-            ...filters,
+            alreadyAdded: false,
+            search: filters.search,
+            // NOTE: sending false / undefined is different in this case
+            blocked: filters.blocked ?? false,
         },
         autoTrigger: true,
         onSuccess: (response) => {
