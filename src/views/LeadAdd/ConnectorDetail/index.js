@@ -16,6 +16,7 @@ import { useArraySelection } from '#hooks/stateManagement';
 import _ts from '#ts';
 
 import ListStatusItem from '../ListStatusItem';
+import ConnectorLeadsFilter from './ConnectorLeadsFilter';
 import {
     leadKeySelector,
     LEAD_TYPE,
@@ -180,6 +181,10 @@ function ConnectorDetail(props) {
         console.warn('bulk save clicked');
     }, []);
 
+    const handleFilterApply = useCallback((filterValues) => {
+        console.warn('filter values', filterValues);
+    }, []);
+
     const {
         areAllChecked,
         areSomeChecked,
@@ -196,71 +201,89 @@ function ConnectorDetail(props) {
 
     return (
         <div className={_cs(styles.connectorDetail, className)}>
-            <div className={styles.listContainer}>
-                <header className={styles.header}>
-                    <Checkbox
-                        className={styles.checkbox}
-                        name="selectAll"
-                        label=""
-                        value={areAllChecked}
-                        indeterminate={areSomeChecked}
-                        onChange={handleSelectAllCheckboxClick}
-                    />
-                    {`${selectedLeads.length} selected`}
-                    {selectedLeads.length > 0 && (
-                        <div className={styles.rightComponent}>
-                            <Button
-                                className={styles.button}
-                                iconName="delete"
-                                onClick={handleBulkBlockLeadsClick}
-                                // FIXME: use strings
-                                title="block/unblock"
-                            />
-                            <PrimaryButton
-                                className={styles.button}
-                                iconName="save"
-                                onClick={handleBulkSaveLeadsClick}
-                                // FIXME: use strings
-                                title="load"
-                            />
-                            <DangerButton
-                                className={styles.button}
-                                iconName="trash"
-                                onClick={clearSelection}
-                                // FIXME: use strings
-                                title="Clear selection"
-                            />
-                        </div>
-                    )}
-                </header>
-                <ListView
-                    className={_cs(styles.list, className)}
-                    data={leads}
-                    keySelector={leadKeySelector}
-                    renderer={ListStatusItem}
-                    rendererParams={rendererParams}
-                    pending={connectorLeadsPending}
+            <div className={styles.bar}>
+                <ConnectorLeadsFilter
+                    className={styles.filter}
+                    onFilterApply={handleFilterApply}
                 />
-                <footer className={styles.footer}>
-                    <Pager
-                        activePage={activePage}
-                        itemsCount={totalLeadsCount}
-                        maxItemsPerPage={itemsPerPage}
-                        onPageClick={setActivePage}
-                        onItemsPerPageChange={setItemsPerPage}
-                    />
-                </footer>
+                {selectedLeads.length > 0 && (
+                    <div className={styles.actions}>
+                        <Button
+                            className={styles.button}
+                            iconName="delete"
+                            onClick={handleBulkBlockLeadsClick}
+                            // FIXME: use strings
+                            title="block/unblock"
+                        >
+                            {/* FIXME: use strings */}
+                            Block
+                        </Button>
+                        <PrimaryButton
+                            className={styles.button}
+                            iconName="save"
+                            onClick={handleBulkSaveLeadsClick}
+                            // FIXME: use strings
+                            title="load"
+                        >
+                            {/* FIXME: use strings */}
+                            Load
+                        </PrimaryButton>
+                    </div>
+                )}
             </div>
-            {activeConnectorLead ? (
-                <LeadPreview
-                    className={styles.leadDetail}
-                    lead={activeConnectorLead}
-                />
-            ) : (
-                <Message>
-                    { _ts('addLeads', 'noLeadsText') }
-                </Message>
-            )}
+            <div className={styles.bottomContainer}>
+                <div className={styles.listContainer}>
+                    <header className={styles.header}>
+                        <Checkbox
+                            className={styles.checkbox}
+                            name="selectAll"
+                            label=""
+                            value={areAllChecked}
+                            indeterminate={areSomeChecked}
+                            onChange={handleSelectAllCheckboxClick}
+                        />
+                        {`${selectedLeads.length} selected`}
+                        {selectedLeads.length > 0 && (
+                            <div className={styles.rightComponent}>
+                                <DangerButton
+                                    className={styles.button}
+                                    iconName="trash"
+                                    onClick={clearSelection}
+                                    // FIXME: use strings
+                                    title="Clear selection"
+                                />
+                            </div>
+                        )}
+                    </header>
+                    <ListView
+                        className={_cs(styles.list, className)}
+                        data={leads}
+                        keySelector={leadKeySelector}
+                        renderer={ListStatusItem}
+                        rendererParams={rendererParams}
+                        pending={connectorLeadsPending}
+                    />
+                    <footer className={styles.footer}>
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={totalLeadsCount}
+                            maxItemsPerPage={itemsPerPage}
+                            onPageClick={setActivePage}
+                            onItemsPerPageChange={setItemsPerPage}
+                        />
+                    </footer>
+                </div>
+                {activeConnectorLead ? (
+                    <LeadPreview
+                        className={styles.leadDetail}
+                        lead={activeConnectorLead}
+                    />
+                ) : (
+                    <Message>
+                        { _ts('addLeads', 'noLeadsText') }
+                    </Message>
+                )}
+            </div>
         </div>
     );
 }
