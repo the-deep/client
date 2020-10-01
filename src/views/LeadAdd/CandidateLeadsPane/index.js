@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { _cs, listToMap, isDefined, union, isTruthyString } from '@togglecorp/fujs';
+import { clearEmptyValues } from '#utils/common';
 
 import Button from '#rsca/Button';
 
@@ -183,8 +184,7 @@ function CandidateLeadsPane(props) {
                         authorRaw,
                         ...other
                     } = extractions[sourceKey].extraMeta;
-                    // FIXME: undefined value from other should not replace valid values from data
-                    data = { ...data, ...other };
+                    data = { ...data, ...clearEmptyValues(other) };
 
                     if (sourceRaw) {
                         const organization = organizationMapping[sourceRaw];

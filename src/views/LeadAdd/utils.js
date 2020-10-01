@@ -59,7 +59,8 @@ export const getLeadState = (
 
     const noAttachment = !attachment;
 
-    // FIXME: IMP warning state should not be here after the unified connector refactor
+    // FIXME: IMP warning state should not be here after the unified connector re-factor
+    // Or, maybe check if url is set when LEAD_TYPE.website and LEAD_TYPE.connectors
     if (
         noAttachment && (
             type === LEAD_TYPE.file ||

@@ -1,3 +1,4 @@
+import produce from 'immer';
 import {
     padStart,
     isDefined,
@@ -222,4 +223,19 @@ export function capitalizeOnlyFirstLetter(string) {
     return string
         .toLowerCase()
         .replace(/[a-z]/, val => val.toUpperCase());
+}
+
+// Remove keys with undefined, null, NaN, etc.
+export function clearEmptyValues(obj) {
+    if (isNotDefined(obj)) {
+        return undefined;
+    }
+    return produce(obj, (safeObj) => {
+        Object.keys(safeObj).forEach((key) => {
+            if (isNotDefined(safeObj[key])) {
+                // eslint-disable-next-line no-param-reassign
+                delete safeObj[key];
+            }
+        });
+    });
 }

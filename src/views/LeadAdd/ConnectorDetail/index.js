@@ -248,8 +248,6 @@ function ConnectorDetail(props) {
             leadData: data,
             type: LEAD_TYPE.connectors,
             onItemClick: setSelectedConnectorLead,
-            // FIXME: identify bad states
-            // itemState: leadStates[key],
             itemState: connectorLeadStatusToLeadStatusMap[data.lead.status ?? 'processing'],
 
             onLoadClick: handleConnectorLeadLoad,

@@ -54,6 +54,8 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
+import { clearEmptyValues } from '#utils/common';
+
 import CandidateLeadsManager from './CandidateLeadsManager';
 import CandidateLeadsPane from './CandidateLeadsPane';
 import Connectors from './Connectors';
@@ -312,9 +314,7 @@ function LeadAdd(props) {
                         confidentiality: defaultConfidentiality,
                         priority: defaultPriority,
 
-                        // FIXME: undefined values from faramValues should not
-                        // clear out default values
-                        ...faramValues,
+                        ...clearEmptyValues(faramValues),
 
                         // NOTE: Server expects a value for authors
                         authors: faramValues.authors ?? [],
