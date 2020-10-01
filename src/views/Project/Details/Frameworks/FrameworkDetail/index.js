@@ -152,44 +152,6 @@ function saveAs(uri, filename) {
     }
 }
 
-const getFrameworkSize = (framework) => {
-    const listGridLayouts = framework.widgets
-        .map(w => w.properties.listGridLayout)
-        .filter(isDefined);
-
-    const overviewGridLayouts = framework.widgets
-        .map(w => w.properties.overviewGridLayout)
-        .filter(isDefined);
-
-    const width = Math.max(
-        0,
-        ...listGridLayouts.map(listGridLayout => (
-            listGridLayout.left + listGridLayout.width
-        )),
-        ...overviewGridLayouts.map(overviewGridLayout => (
-            overviewGridLayout.left + overviewGridLayout.width
-        )),
-    );
-
-    const height = Math.max(
-        0,
-        ...listGridLayouts.map(listGridLayout => (
-            listGridLayout.top + listGridLayout.height
-        )),
-    ) + Math.max(
-        0,
-        ...overviewGridLayouts.map(overviewGridLayout => (
-            overviewGridLayout.top + overviewGridLayout.height
-        )),
-    );
-
-    return {
-        width: `${width}px`,
-        height: `${height}px`,
-    };
-};
-
-
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class FrameworkDetail extends React.PureComponent {
@@ -593,16 +555,12 @@ export default class FrameworkDetail extends React.PureComponent {
                             }
                         />
                         <ModalBody className={styles.modalBody}>
-                            <div
-                                ref={this.exportSectionRef}
-                                style={{
-                                    ...getFrameworkSize(framework),
-                                }}
-                            >
+                            <div ref={this.exportSectionRef}>
                                 <h3 className={styles.tabHeading}>
                                     {_ts('project.framework', 'overviewTabTitle')}
                                 </h3>
                                 <Preview
+                                    className={styles.printPreview}
                                     activeView="overview"
                                     framework={framework}
                                 />
@@ -610,6 +568,7 @@ export default class FrameworkDetail extends React.PureComponent {
                                     {_ts('project.framework', 'listTabTitle')}
                                 </h3>
                                 <Preview
+                                    className={styles.printPreview}
                                     activeView="list"
                                     framework={framework}
                                 />
