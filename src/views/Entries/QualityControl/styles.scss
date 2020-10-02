@@ -1,0 +1,31 @@
+.quality-control {
+    display: flex;
+    flex-direction: column;
+    --width-left-initial: 320px;
+    --width-left-min: 160px;
+    --width-right-min: 320px;
+
+    .resizable-container {
+        display: flex;
+        flex-grow: 1;
+        
+        .left {
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            width: var(--width-left-initial);
+            min-width: var(--width-left-min);
+
+            .framework-selection {
+                padding: var(--spacing-medium);
+            }
+        }
+
+        .right {
+            flex-grow: 1;
+            min-width: var(--width-right-min);
+
+            .entry-list {
+                padding: var(--spacing-medium);
+            }
+        }
+    }
+}

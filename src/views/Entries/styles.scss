@@ -15,7 +15,6 @@
         .tabs {
             align-self: flex-end;
             flex-shrink: 0;
-            margin-right: var(--spacing-extra-large);
             background-color: transparent;
 
             .tab {
@@ -42,7 +41,7 @@
         }
     }
 
-    .lead-grouped-entries-list {
+    .main-content {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
@@ -53,6 +52,11 @@
             flex-direction: column;
             flex-grow: 1;
             overflow-y: auto;
+        }
+        
+        .qc {
+            flex-grow: 1;
+            overflow: auto;
         }
 
         .lead-grouped-header {

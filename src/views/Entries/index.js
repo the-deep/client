@@ -21,6 +21,7 @@ import Page from '#rscv/Page';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
 
+import { isDev, isAlpha } from '#config/env';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
@@ -48,6 +49,7 @@ import EntriesRequest from './requests/EntriesRequest';
 import FrameworkRequest from './requests/FrameworkRequest';
 import GeoOptionsRequest from './requests/GeoOptionsRequest';
 
+import QualityControl from './QualityControl';
 import EntriesViz from './EntriesViz';
 import FilterEntriesForm from './FilterEntriesForm';
 import LeadGroupedEntries from './LeadGroupedEntries';
@@ -56,10 +58,12 @@ import styles from './styles.scss';
 
 const LIST_VIEW = 'list';
 const VIZ_VIEW = 'viz';
+const QC_VIEW = 'qc';
 
 const tabsIcons = {
     [LIST_VIEW]: 'list',
     [VIZ_VIEW]: 'visualization',
+    [QC_VIEW]: 'apps',
 };
 
 
@@ -177,6 +181,13 @@ export default class Entries extends React.PureComponent {
                     projectId: this.props.projectId,
                 }),
             },
+            [QC_VIEW]: {
+                component: QualityControl,
+                rendererParams: () => ({
+                    projectId: this.props.projectId,
+                    className: styles.qc,
+                }),
+            },
         };
 
         this.entriesRequest = new EntriesRequest({
@@ -271,19 +282,26 @@ export default class Entries extends React.PureComponent {
 
     getTabs = memoize((framework, isVisualizationEnabled) => {
         if (isVisualizationEnabled && isVisualizationEnabled.entry) {
+            const tabs = (isDev || isAlpha) ? {
+                [LIST_VIEW]: LIST_VIEW,
+                [VIZ_VIEW]: VIZ_VIEW,
+                [QC_VIEW]: QC_VIEW, // always show QC view on dev
+            } : {
+                [LIST_VIEW]: LIST_VIEW,
+                [VIZ_VIEW]: VIZ_VIEW,
+            };
             return {
-                tabs: {
-                    [LIST_VIEW]: LIST_VIEW,
-                    [VIZ_VIEW]: VIZ_VIEW,
-                },
+                tabs,
                 showTabs: true,
             };
         }
+
         return {
             tabs: {
                 [LIST_VIEW]: LIST_VIEW,
+                [QC_VIEW]: QC_VIEW,
             },
-            showTabs: false,
+            showTabs: (isDev || isAlpha),
         };
     })
 
@@ -433,7 +451,7 @@ export default class Entries extends React.PureComponent {
                 header={
                     <React.Fragment>
                         {
-                            view === LIST_VIEW &&
+                            (view === LIST_VIEW || view === QC_VIEW) &&
                                 <FilterEntriesForm
                                     className={styles.filters}
                                     pending={pendingFramework}
@@ -455,7 +473,7 @@ export default class Entries extends React.PureComponent {
                         />
                     </React.Fragment>
                 }
-                mainContentClassName={styles.leadGroupedEntriesList}
+                mainContentClassName={styles.mainContent}
                 mainContent={
                     <MultiViewContainer
                         views={this.views}
