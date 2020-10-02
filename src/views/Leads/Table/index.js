@@ -16,6 +16,7 @@ import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Checkbox from '#rsci/Checkbox';
+import Icon from '#rscg/Icon';
 
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
@@ -165,15 +166,16 @@ function Table(props) {
                         <Checkbox
                             onChange={() => handleClickItem(row)}
                             value={!!itemSelected}
+                            className={styles.checkbox}
                         />
                     );
                 },
                 label: areAllChecked ? (
-                    <Button
+                    <Icon
                         onClick={clearSelection} // TODO: styling of button
-                        iconName="substract"
-                        type="button"
+                        name="minusOutline"
                         transparent
+                        className={styles.clearIcon}
                     />
                 )
                     : (
@@ -182,6 +184,7 @@ function Table(props) {
                             value={areAllChecked}
                             indeterminate={areSomeChecked}
                             name="selectAll"
+                            className={styles.selectAllCheckbox}
                         />
                     ),
             },

@@ -30,7 +30,7 @@
 
                 >div {
                     border-top: 0;
-                }
+                }  
             }
 
             .row {
@@ -164,3 +164,26 @@
     }
 }
 
+.clear-icon {
+    border-radius: 50%;
+    padding: 0;
+    flex-shrink: 0;
+    font-size: var(--font-size-extra-large);
+    margin-left: var(--spacing-small);
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.select-all-checkbox {
+    flex-shrink: 0;
+    font-size: var(--font-size-extra-large);
+    margin-left: var(--spacing-small);
+}
+
+.checkbox {
+    font-size: var(--font-size-large);
+    width: 100%;
+    margin-left: var(--spacing-small);
+}
