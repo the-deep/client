@@ -1,5 +1,6 @@
+/* eslint-disable indent */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -45,27 +46,6 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 const emptyObject = {};
 
-const propTypes = {
-    className: PropTypes.string,
-    activeSort: PropTypes.string.isRequired,
-    leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    headersMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    loading: PropTypes.bool.isRequired,
-    emptyComponent: PropTypes.func.isRequired,
-    setLeadPageActiveSort: PropTypes.func.isRequired,
-    isFilterEmpty: PropTypes.bool,
-    onSearchSimilarLead: PropTypes.func.isRequired,
-    onRemoveLead: PropTypes.func.isRequired,
-    activeProject: PropTypes.number,
-};
-
-const defaultProps = {
-    className: undefined,
-    activeProject: undefined,
-    isFilterEmpty: false,
-};
-
 const mapStateToProps = state => ({
     leads: leadsForProjectTableViewSelector(state),
 });
@@ -108,19 +88,26 @@ const requestOptions = {
 
 const shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.modify;
 
-@connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requestOptions)
-export default class Table extends React.Component {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-    static leadKeyExtractor = lead => String(lead.id)
+const leadKeyExtractor = lead => String(lead.id);
 
-    constructor(props) {
-        super(props);
+function Table(props) {
+    const {
+        headersMap,
+        leads,
+        emptyComponent,
+        loading,
+        isFilterEmpty,
+        className,
+        requests: {
+            leadPatchRequest: { pending },
+        },
+        onSearchSimilarLead,
+        onRemoveLead,
+        activeProject,
+    } = props;
 
-        const { headersMap } = this.props;
-
-        const headers = [
+    const headers = useMemo(
+        () => [
             {
                 key: 'attachment_mime_type',
                 order: 1,
@@ -199,11 +186,9 @@ export default class Table extends React.Component {
                 modifier: ({
                     authorsDetail,
                     authorRaw,
-                }) => (
-                    (authorsDetail && authorsDetail.length > 0)
-                        ? authorsDetail.map(organizationTitleSelector).join(', ')
-                        : authorRaw
-                ),
+                }) => ((authorsDetail && authorsDetail.length > 0)
+                    ? authorsDetail.map(organizationTitleSelector).join(', ')
+                    : authorRaw),
             },
             {
                 key: 'published_on',
@@ -266,7 +251,7 @@ export default class Table extends React.Component {
                             } = emptyObject,
                             leadPatchRequest,
                         },
-                    } = this.props;
+                    } = props;
 
                     return (
                         <div className={styles.inlineEditContainer}>
@@ -304,7 +289,7 @@ export default class Table extends React.Component {
                             } = emptyObject,
                             leadPatchRequest,
                         },
-                    } = this.props;
+                    } = props;
 
                     return (
                         <div className={styles.inlineEditContainer}>
@@ -342,7 +327,7 @@ export default class Table extends React.Component {
                             } = emptyObject,
                             leadPatchRequest,
                         },
-                    } = this.props;
+                    } = props;
 
                     return (
                         <div className={styles.inlineEditContainer}>
@@ -376,107 +361,117 @@ export default class Table extends React.Component {
             {
                 key: 'actions',
                 order: 14,
-                modifier: (row) => {
-                    const {
-                        onSearchSimilarLead,
-                        onRemoveLead,
-                        activeProject,
-                    } = this.props;
-
-                    return (
-                        <ActionButtons
-                            row={row}
-                            onSearchSimilarLead={onSearchSimilarLead}
-                            onRemoveLead={onRemoveLead}
-                            activeProject={activeProject}
-                        />
-                    );
-                },
+                modifier: row => (
+                    <ActionButtons
+                        row={row}
+                        onSearchSimilarLead={onSearchSimilarLead}
+                        onRemoveLead={onRemoveLead}
+                        activeProject={activeProject}
+                    />
+                ),
             },
-        ];
-
-        this.headers = headers.map(h => ({
+        ].map(h => ({
             ...h,
             ...headersMap[h.key],
-        }));
-    }
+        })),
+        [activeProject, headersMap, onRemoveLead, onSearchSimilarLead, props],
+    );
 
-    leadModifier = (lead, columnKey) => {
-        const header = this.headers.find(d => d.key === columnKey);
-        if (header.modifier) {
-            return header.modifier(lead);
-        }
-        return lead[columnKey];
-    }
+    const leadModifier = useCallback(
+        (lead, columnKey) => {
+            const header = headers.find(d => d.key === columnKey);
+            if (header.modifier) {
+                return header.modifier(lead);
+            }
+            return lead[columnKey];
+        }, [headers],
+    );
 
-    headerModifier = (headerData) => {
-        const { activeSort } = this.props;
-
-        let sortOrder = '';
-        if (activeSort === headerData.key) {
-            sortOrder = 'asc';
-        } else if (activeSort === `-${headerData.key}`) {
-            sortOrder = 'dsc';
-        }
-        return (
-            <TableHeader
-                label={headerData.label}
-                sortOrder={sortOrder}
-                sortable={headerData.sortable}
-            />
-        );
-    }
-
-    handleTableHeaderClick = (key) => {
-        const headerData = this.headers.find(h => h.key === key);
-        // prevent click on 'actions' column
-        if (!headerData.sortable) {
-            return;
-        }
-
-        let { activeSort = '' } = this.props;
-        const isAsc = activeSort.charAt(0) !== '-';
-
-        const isCurrentHeaderSorted = activeSort === key
-            || (activeSort.substr(1) === key && !isAsc);
-
-        if (isCurrentHeaderSorted) {
-            activeSort = isAsc ? `-${key}` : key;
-        } else {
-            activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
-        }
-
-        this.props.setLeadPageActiveSort({ activeSort });
-    }
-
-    render() {
-        const {
-            leads,
-            emptyComponent,
-            loading,
-            isFilterEmpty,
-            className,
-            requests: {
-                leadPatchRequest: { pending },
-            },
-        } = this.props;
-
-        return (
-            <div className={_cs(className, styles.tableContainer)}>
-                {pending && <LoadingAnimation />}
-                <RawTable
-                    data={leads}
-                    dataModifier={this.leadModifier}
-                    headerModifier={this.headerModifier}
-                    headers={this.headers}
-                    onHeaderClick={this.handleTableHeaderClick}
-                    keySelector={Table.leadKeyExtractor}
-                    className={styles.leadsTable}
-                    emptyComponent={emptyComponent}
-                    pending={loading}
-                    isFiltered={!isFilterEmpty}
+    const headerModifier = useCallback(
+        (headerData) => {
+            let sortOrder = '';
+            if (props.activeSort === headerData.key) {
+                sortOrder = 'asc';
+            } else if (props.activeSort === `-${headerData.key}`) {
+                sortOrder = 'dsc';
+            }
+            return (
+                <TableHeader
+                    label={headerData.label}
+                    sortOrder={sortOrder}
+                    sortable={headerData.sortable}
                 />
-            </div>
-        );
-    }
+            );
+        }, [props.activeSort],
+    );
+
+    const handleTableHeaderClick = useCallback(
+        (key) => {
+            const headerData = headers.find(h => h.key === key);
+            // prevent click on 'actions' column
+            if (!headerData || !headerData.sortable) {
+                return;
+            }
+
+            let {
+                activeSort = '',
+            } = props;
+
+            const isAsc = activeSort.charAt(0) !== '-';
+
+            const isCurrentHeaderSorted = activeSort === key
+                || (activeSort.substr(1) === key && !isAsc);
+
+            if (isCurrentHeaderSorted) {
+                activeSort = isAsc ? `-${key}` : key;
+            } else {
+                activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
+            }
+            props.setLeadPageActiveSort({ activeSort });
+        }, [headers, props],
+    );
+
+    return (
+        <div className={_cs(className, styles.tableContainer)}>
+            {pending && <LoadingAnimation />}
+            <RawTable
+                data={leads}
+                dataModifier={leadModifier}
+                headerModifier={headerModifier}
+                headers={headers}
+                onHeaderClick={handleTableHeaderClick}
+                keySelector={leadKeyExtractor}
+                className={styles.leadsTable}
+                emptyComponent={emptyComponent}
+                pending={loading}
+                isFiltered={!isFilterEmpty}
+            />
+        </div>
+    );
 }
+export default connect(mapStateToProps, mapDispatchToProps)(
+    RequestClient(requestOptions)(
+        Table,
+    ),
+);
+
+Table.propTypes = {
+    className: PropTypes.string,
+    activeSort: PropTypes.string.isRequired,
+    leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    headersMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    loading: PropTypes.bool.isRequired,
+    emptyComponent: PropTypes.func.isRequired,
+    setLeadPageActiveSort: PropTypes.func.isRequired,
+    isFilterEmpty: PropTypes.bool,
+    onSearchSimilarLead: PropTypes.func.isRequired,
+    onRemoveLead: PropTypes.func.isRequired,
+    activeProject: PropTypes.number,
+};
+
+Table.defaultProps = {
+    className: undefined,
+    activeProject: undefined,
+    isFilterEmpty: false,
+};
