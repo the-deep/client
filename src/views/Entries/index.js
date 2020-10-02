@@ -21,7 +21,7 @@ import Page from '#rscv/Page';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
 
-import { isDev } from '#config/env';
+import { isDev, isAlpha } from '#config/env';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
@@ -282,7 +282,7 @@ export default class Entries extends React.PureComponent {
 
     getTabs = memoize((framework, isVisualizationEnabled) => {
         if (isVisualizationEnabled && isVisualizationEnabled.entry) {
-            const tabs = isDev ? {
+            const tabs = (isDev || isAlpha) ? {
                 [LIST_VIEW]: LIST_VIEW,
                 [VIZ_VIEW]: VIZ_VIEW,
                 [QC_VIEW]: QC_VIEW, // always show QC view on dev
@@ -301,7 +301,7 @@ export default class Entries extends React.PureComponent {
                 [LIST_VIEW]: LIST_VIEW,
                 [QC_VIEW]: QC_VIEW,
             },
-            showTabs: isDev,
+            showTabs: (isDev || isAlpha),
         };
     })
 
