@@ -1176,15 +1176,17 @@
         "-78757252": "Lead priority",
         "-15193425": "Lead published on",
         "-26861463": "Donors",
-        "-26861463": "Donor",
         "-86018902": "Government",
         "-30025571": "International Partners",
         "-54364746": "Lead Organization",
         "-49224651": "National Partners",
         "-78808098": "Lead Organization",
-        "-78808098": "Lead Organization",
         "-41977678": "Project stakeholders",
-        "-435034987": "Searching"
+        "-435034987": "Searching",
+        "-45435121": "Excerpt",
+        "-79879798": "Image",
+        "-43423222": "Data Series",
+        "-42342342": "Entry Type"
     },
     "links": {
         "browserExtension": {
@@ -1672,7 +1674,11 @@
             "leadPriorityFilterLabel": -78757252,
             "leadPriorityFilterPlaceholder": -78757252,
             "leadPublishedOnFilterLabel": -15193425,
-            "leadPublishedOnPlaceholder": -15193425
+            "excerpt": -45435121,
+            "image": -79879798,
+            "dataSeries": -43423222,
+            "entryTypePlaceholder": 14,
+            "entryTypeFilterLabel": -42342342
         },
         "export": {
             "headerExport": 600,

@@ -96,6 +96,21 @@ const verificationStatusOptions = [
     },
 ];
 
+const entryTypeOptions = [
+    {
+        key: 'excerpt',
+        value: _ts('entries', 'excerpt'),
+    },
+    {
+        key: 'image',
+        value: _ts('entries', 'image'),
+    },
+    {
+        key: 'dataSeries',
+        value: _ts('entries', 'dataSeries'),
+    },
+];
+
 const requestOptions = {
     entryFilterOptionsRequest: {
         url: '/entry-options/',
@@ -445,6 +460,18 @@ export default class FilterEntriesForm extends React.PureComponent {
                     value={(selectedVerification ? selectedVerification.key : undefined)}
                     disabled={pending}
                     placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                />
+                <MultiSelectInput
+                    className={styles.entriesFilter}
+                    keySelector={FilterEntriesForm.optionKeySelector}
+                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    options={entryTypeOptions}
+                    label={_ts('entries', 'entryTypeFilterLabel')}
+                    onChange={(value) => { this.handleFilterChange('entry_type', value); }}
+                    showHintAndError={false}
+                    value={filters.entry_type || emptyList}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'entryTypePlaceholder')}
                 />
                 { this.props.filters.map(this.renderFilter) }
                 {
