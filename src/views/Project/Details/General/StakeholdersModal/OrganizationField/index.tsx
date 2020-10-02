@@ -1,8 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
-import Confirm from '#rscv/Modal/Confirm';
 import SimpleListInput from '#rsci/SimpleListInput';
 import useDropHandler from '#hooks/useDropHandler';
 
@@ -20,9 +19,6 @@ interface Props {
 function OrganizationField(props: Props) {
     const { containerClassName, onChange, value, ...otherProps } = props;
 
-    const [droppedOrganizationId, setDroppedOrganizationId] = useState<number|undefined>(undefined);
-    const [showConfirmation, setShowConfirmation] = useState(false);
-
     const handleDragEnter = useCallback(() => {
     }, []);
 
@@ -39,14 +35,7 @@ function OrganizationField(props: Props) {
             if (!value) {
                 onChange([organizationId]);
             } else if (value.findIndex(v => v === organizationId) === -1) {
-                const intercept = false;
-
-                if (intercept) {
-                    setShowConfirmation(true);
-                    setDroppedOrganizationId(organizationId);
-                } else {
-                    onChange([...value, organizationId]);
-                }
+                onChange([...value, organizationId]);
             }
         } catch (ex) {
             console.warn('Only organizations supported');
@@ -54,25 +43,6 @@ function OrganizationField(props: Props) {
     }, [
         value,
         onChange,
-        setShowConfirmation,
-        setDroppedOrganizationId,
-    ]);
-
-    const handleConfirmation = useCallback((confirm: boolean) => {
-        if (confirm && droppedOrganizationId) {
-            onChange([
-                ...value,
-                droppedOrganizationId,
-            ]);
-        }
-        setDroppedOrganizationId(undefined);
-        setShowConfirmation(false);
-    }, [
-        value,
-        droppedOrganizationId,
-        onChange,
-        setDroppedOrganizationId,
-        setShowConfirmation,
     ]);
 
     const {
@@ -103,14 +73,6 @@ function OrganizationField(props: Props) {
                 value={value}
                 onChange={onChange}
             />
-            <Confirm
-                show={showConfirmation}
-                onClose={handleConfirmation}
-            >
-                <p>
-                    {_ts('project.detail.stakeholders', 'dropConfirmation')}
-                </p>
-            </Confirm>
         </div>
     );
 }
