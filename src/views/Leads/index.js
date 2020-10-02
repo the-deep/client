@@ -135,6 +135,10 @@ const mapDispatchToProps = dispatch => ({
 // This map is required for Grid view page, previously all the headers were in this
 // page wich doesn't make sense and complicates the process
 const tableHeadersMap = {
+    multi_select: {
+        label: 'select',
+        sortable: false,
+    },
     attachment_mime_type: {
         label: _ts('leads', 'filterSourceType'),
         sortable: false,
@@ -594,7 +598,7 @@ export default class Leads extends React.PureComponent {
                     {hasEmmFields && (
                         <EmmStatusBar />
                     )}
-                    { view === TABLE_VIEW ?
+                    {view === TABLE_VIEW ?
                         (
                             <div className={styles.pagerContainer}>
                                 <Pager

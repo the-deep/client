@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import PropTypes from 'prop-types';
 import React, { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -16,6 +15,7 @@ import Button from '#rsca/Button';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Checkbox from '#rsci/Checkbox';
 
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
@@ -38,7 +38,7 @@ import {
     methods,
 } from '#request';
 import _ts from '#ts';
-
+import useArraySelection from '../../../hooks/multiSelection';
 import ActionButtons from '../ActionButtons';
 import FileTypeViewer from './FileTypeViewer';
 import styles from './styles.scss';
@@ -106,8 +106,85 @@ function Table(props) {
         activeProject,
     } = props;
 
+    const {
+        values: selectedLeads,
+        isItemPresent,
+        clickOnItem,
+        addItems,
+        removeItems,
+        clearSelection,
+    } = useArraySelection(
+        leadKeyExtractor,
+        [],
+    );
+
+    const handleClickItem = useCallback(
+        (newValue) => {
+            clickOnItem(newValue);
+        }, [clickOnItem],
+    );
+
+    const handleSelectAllCheckboxClick = useCallback(
+        (newValue) => {
+            if (newValue) {
+                addItems(leads);
+            } else {
+                removeItems(leads);
+            }
+        }, [leads, addItems, removeItems],
+    );
+
+    const {
+        areAllChecked,
+        areSomeChecked,
+    } = useMemo(() => {
+        if (!leads || leads.length === 0) {
+            return {
+                areAllChecked: false,
+                areSomeChecked: false,
+            };
+        }
+        const filteredLeads = leads.filter(l => isItemPresent(leadKeyExtractor(l)));
+        return {
+            areAllChecked: filteredLeads.length === leads.length,
+            areSomeChecked: filteredLeads.length < leads.length && filteredLeads.length > 0,
+        };
+    }, [leads, isItemPresent]);
+
     const headers = useMemo(
         () => [
+            {
+                key: 'multi_select',
+                order: 0,
+                modifier: (row) => {
+                    const itemSelected = selectedLeads.length > 0 && (
+                        selectedLeads.find(lead => lead.id === row.id)
+                    );
+
+                    return (
+                        <Checkbox
+                            onChange={() => handleClickItem(row)}
+                            value={!!itemSelected}
+                        />
+                    );
+                },
+                label: areAllChecked ? (
+                    <Button
+                        onClick={clearSelection} // TODO: styling of button
+                        iconName="substract"
+                        type="button"
+                        transparent
+                    />
+                )
+                    : (
+                        <Checkbox // TODO: styling of checkbox
+                            onChange={handleSelectAllCheckboxClick}
+                            value={areAllChecked}
+                            indeterminate={areSomeChecked}
+                            name="selectAll"
+                        />
+                    ),
+            },
             {
                 key: 'attachment_mime_type',
                 order: 1,
@@ -371,10 +448,22 @@ function Table(props) {
                 ),
             },
         ].map(h => ({
-            ...h,
             ...headersMap[h.key],
+            ...h,
         })),
-        [activeProject, headersMap, onRemoveLead, onSearchSimilarLead, props],
+        [
+            areAllChecked,
+            clearSelection,
+            handleSelectAllCheckboxClick,
+            areSomeChecked,
+            selectedLeads,
+            handleClickItem,
+            props,
+            onSearchSimilarLead,
+            onRemoveLead,
+            activeProject,
+            headersMap,
+        ],
     );
 
     const leadModifier = useCallback(
