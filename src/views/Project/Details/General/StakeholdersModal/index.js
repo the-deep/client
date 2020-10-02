@@ -71,25 +71,26 @@ const transformOrganizationToFaramValues = (organizations = []) => (
 );
 
 const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
-    let organizations = [];
-    Object.entries(faramValues).forEach(([key, values]) => {
-        const organizationList = values
-            .map(v => options.find(o => o.id === v))
-            .filter(isDefined)
-            .map(({
-                id,
-                projectOrganizationId,
-                organizationDetails,
-                organizationType,
-            }) => ({
-                id: organizationType === key ? projectOrganizationId : undefined,
-                organization: id,
-                organizationType: key,
-                organizationDetails,
-            }));
+    const organizations = Object.entries(faramValues)
+        .map(([key, values]) => {
+            const organizationList = values
+                .map(v => options.find(o => o.id === v))
+                .filter(isDefined)
+                .map(({
+                    id,
+                    projectOrganizationId,
+                    organizationDetails,
+                    organizationType,
+                }) => ({
+                    id: organizationType === key ? projectOrganizationId : undefined,
+                    organization: id,
+                    organizationType: key,
+                    organizationDetails,
+                }));
+            return organizationList;
+        })
+        .reduce((acc, val) => acc.concat(val), []);
 
-        organizations = [...organizations, ...organizationList];
-    });
     return organizations;
 };
 

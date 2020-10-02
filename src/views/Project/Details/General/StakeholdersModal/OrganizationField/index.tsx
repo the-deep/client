@@ -30,20 +30,22 @@ function OrganizationField(props: Props) {
         try {
             const data = e.dataTransfer.getData('text');
             const parsedData = JSON.parse(data);
-            if (parsedData && parsedData.organizationId) {
-                const { organizationId } = parsedData;
+            if (!parsedData && !parsedData.organizationId) {
+                throw new Error('Invalid data');
+            }
 
-                if (!value) {
-                    onChange([organizationId]);
-                } else if (value.findIndex(v => v === organizationId) === -1) {
-                    const intercept = false;
+            const { organizationId } = parsedData;
 
-                    if (intercept) {
-                        setShowConfirmation(true);
-                        setDroppedOrganizationId(organizationId);
-                    } else {
-                        onChange([...value, organizationId]);
-                    }
+            if (!value) {
+                onChange([organizationId]);
+            } else if (value.findIndex(v => v === organizationId) === -1) {
+                const intercept = false;
+
+                if (intercept) {
+                    setShowConfirmation(true);
+                    setDroppedOrganizationId(organizationId);
+                } else {
+                    onChange([...value, organizationId]);
                 }
             }
         } catch (ex) {
@@ -57,13 +59,11 @@ function OrganizationField(props: Props) {
     ]);
 
     const handleConfirmation = useCallback((confirm: boolean) => {
-        if (confirm) {
-            if (droppedOrganizationId) {
-                onChange([
-                    ...value,
-                    droppedOrganizationId,
-                ]);
-            }
+        if (confirm && droppedOrganizationId) {
+            onChange([
+                ...value,
+                droppedOrganizationId,
+            ]);
         }
         setDroppedOrganizationId(undefined);
         setShowConfirmation(false);
