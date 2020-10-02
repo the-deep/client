@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
     listToGroupList,
-    listToMap,
     isDefined,
     isFalsyString,
+    unique,
 } from '@togglecorp/fujs';
 import Faram, { FaramInputElement } from '@togglecorp/faram';
 
@@ -93,15 +93,6 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
     return organizations;
 };
 
-function uniqueAppend(list, elements, keySelector) {
-    const map = listToMap(list, keySelector);
-    elements.forEach((el) => {
-        if (!isDefined(map[keySelector(el)])) {
-            list.push(el);
-        }
-    });
-}
-
 
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -149,18 +140,14 @@ export default class StakeholdersModal extends React.PureComponent {
             logo: o.logoUrl,
         }));
 
-        const uniqueOptions = [...organizationOptions];
-        uniqueAppend(uniqueOptions, transformedOptions, o => o.id);
-        /*
         const uniqueOptions = unique(
             [
-                ...transformedOptions,
                 ...organizationOptions,
+                ...transformedOptions,
 
             ].filter(isDefined),
             option => option.id,
         );
-        */
 
         this.setState({
             searchOptions,
