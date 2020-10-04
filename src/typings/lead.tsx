@@ -1,18 +1,9 @@
+import { DatabaseEntityBase } from './common';
+
 export type Confidentiality = 'confidential' | 'unprotected';
 export type LeadStatus = 'pending' | 'processed';
 export type LeadSourceType = 'Text' | 'Disk' | 'Website' |
     'Dropbox' | 'Google Drive' | 'RSS Feed' | 'EMM' | 'Web API' | 'Unknown';
-
-export interface DatabaseEntityBase {
-    id: number;
-    createdAt: string;
-    createdBy: number;
-    createdByName: string;
-    modifiedAt: string;
-    modifiedBy: number;
-    modifiedByName: string;
-    versionId: number;
-}
 
 export interface UserDetails {
     id: number;

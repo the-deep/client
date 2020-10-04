@@ -23,6 +23,8 @@ export default class EntriesRequest extends Request {
             count: totalEntriesCount,
         } = response;
 
+        console.info(responseEntries);
+
         const uniqueLeadList = unique(
             responseEntries.map(entry => entry.lead),
             v => v,
