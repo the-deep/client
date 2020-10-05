@@ -13,6 +13,7 @@ import {
 
 import {
     leadIdSelector,
+    leadConnectorIdSelector,
     leadKeySelector,
     leadFaramErrorsSelector,
     leadFaramValuesSelector,
@@ -311,11 +312,20 @@ const appendLeads = (state, action) => {
         () => true,
     );
 
+    const leadConnectorIdMapping = listToMap(
+        oldLeads.filter(leadConnectorIdSelector),
+        leadConnectorIdSelector,
+        () => true,
+    );
+
     // NOTE: Do not add new lead if there is already a lead with same serverId
     const filteredLeads = leads.filter(
         (lead) => {
             const leadId = leadIdSelector(lead);
-            return !serverIdMapping[leadId];
+            const leadConnectorId = leadConnectorIdSelector(lead);
+            return !serverIdMapping[leadId] && !(
+                leadConnectorId && leadConnectorIdMapping[leadConnectorId]
+            );
         },
     );
 

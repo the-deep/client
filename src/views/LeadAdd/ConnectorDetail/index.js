@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { _cs, isTruthy, isDefined } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Checkbox } from '@togglecorp/toggle-ui';
 
 import ListView from '#rscv/List/ListView';
@@ -8,7 +9,6 @@ import LeadPreview from '#components/leftpanel/LeadPreview';
 import Message from '#rscv/Message';
 
 import useRequest from '#restrequest';
-import Button from '#rsca/Button';
 import Pager from '#rscv/Pager';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -17,6 +17,10 @@ import {
     useArrayEdit,
 } from '#hooks/stateManagement';
 import _ts from '#ts';
+
+import {
+    leadAddPageConnectorLeads,
+} from '#redux';
 
 import ConnectorLeadsFilter from './ConnectorLeadsFilter';
 import ConnectorLeadItem from './ConnectorLeadItem';
@@ -43,6 +47,9 @@ const propTypes = {
     selectedConnector: PropTypes.number,
     onLeadsAdd: PropTypes.func.isRequired,
     onOrganizationsAdd: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    connectorLeadsMapping: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -59,6 +66,7 @@ function ConnectorDetail(props) {
         selectedConnector,
         onLeadsAdd,
         onOrganizationsAdd,
+        connectorLeadsMapping,
     } = props;
 
     // TODO: validate this selected connector lead
@@ -161,6 +169,7 @@ function ConnectorDetail(props) {
                 const {
                     url,
                     data,
+                    id,
                 } = item;
 
                 const {
@@ -176,6 +185,7 @@ function ConnectorDetail(props) {
                 } = data || {};
 
                 return {
+                    leadConnectorId: id,
                     faramValues: {
                         title,
                         authors,
@@ -207,7 +217,6 @@ function ConnectorDetail(props) {
     }, [selectedLeads, handleLeadLoad, clearSelection]);
 
     const handleConnectorLeadLoad = useCallback((lead) => {
-        console.log(lead);
         handleLeadLoad([lead]);
     }, [handleLeadLoad]);
 
@@ -256,6 +265,8 @@ function ConnectorDetail(props) {
             projectId,
             selectedConnectorSource,
             selectedConnector,
+
+            alreadyAdded: connectorLeadsMapping[data.lead.id],
         }),
         [
             projectId,
@@ -268,6 +279,7 @@ function ConnectorDetail(props) {
             setSelectedConnectorLead,
             clickOnItem,
             isItemPresent,
+            connectorLeadsMapping,
         ],
     );
 
@@ -366,4 +378,10 @@ function ConnectorDetail(props) {
 ConnectorDetail.propTypes = propTypes;
 ConnectorDetail.defaultProps = defaultProps;
 
-export default ConnectorDetail;
+const mapStateToProps = state => ({
+    connectorLeadsMapping: leadAddPageConnectorLeads(state),
+});
+
+export default connect(mapStateToProps)(
+    ConnectorDetail,
+);

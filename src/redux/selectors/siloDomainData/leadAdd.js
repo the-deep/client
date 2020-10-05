@@ -1,10 +1,13 @@
 import { createSelector } from 'reselect';
-import { isDefined } from '@togglecorp/fujs';
+import {
+    listToMap,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import {
     leadKeySelector,
     leadSourceTypeSelector,
-    LEAD_TYPE,
+    leadConnectorIdSelector,
 } from '#views/LeadAdd/utils';
 
 import { projectIdFromRoute } from '../domainData';
@@ -62,5 +65,14 @@ export const leadAddPageActiveLeadSelector = createSelector(
         isDefined(activeLeadKey)
             ? leads.find(lead => leadKeySelector(lead) === activeLeadKey)
             : undefined
+    ),
+);
+
+export const leadAddPageConnectorLeads = createSelector(
+    leadAddPageLeadsSelector,
+    leads => listToMap(
+        leads.filter(leadConnectorIdSelector),
+        leadConnectorIdSelector,
+        () => true,
     ),
 );

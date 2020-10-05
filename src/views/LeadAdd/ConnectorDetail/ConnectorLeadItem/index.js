@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import useRequest from '#restrequest';
 import Button from '#rsca/Button';
@@ -25,6 +26,7 @@ const propTypes = {
     active: PropTypes.bool.isRequired,
     selectionMode: PropTypes.bool.isRequired,
     leadData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    alreadyAdded: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -32,6 +34,7 @@ const defaultProps = {
     type: undefined,
     selectedConnector: undefined,
     selectedConnectorSource: undefined,
+    alreadyAdded: false,
 };
 
 function ConnectorLeadItem(props) {
@@ -51,6 +54,7 @@ function ConnectorLeadItem(props) {
         clickOnItem,
         onLoadClick,
         modifyLead,
+        alreadyAdded,
     } = props;
 
     const [leadToChangeStatus, setLeadToChangeStatus] = useState(undefined);
@@ -95,7 +99,7 @@ function ConnectorLeadItem(props) {
 
     return (
         <ListStatusItem
-            classname={className}
+            className={_cs(className, alreadyAdded && styles.added)}
             itemKey={itemKey}
             active={active}
             isItemSelected={isItemSelected}
@@ -120,6 +124,7 @@ function ConnectorLeadItem(props) {
                             className={styles.button}
                             iconName="save"
                             onClick={onConnectorLeadLoad}
+                            disabled={alreadyAdded}
                             // FIXME: use strings
                             title="load"
                         />

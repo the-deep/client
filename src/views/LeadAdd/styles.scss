@@ -49,6 +49,7 @@
             flex-shrink: 0;
             background-color: var(--color-foreground);
             width: 85%;
+            overflow-y: auto;
 
             .bar {
                 display: flex;
@@ -72,6 +73,7 @@
             .content {
                 display: flex;
                 flex-grow: 1;
+                overflow-y: auto;
 
                 .list {
                     display: flex;

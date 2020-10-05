@@ -2,11 +2,11 @@ import {
     caseInsensitiveSubmatch,
     isNotDefined,
     randomString,
-    formatDateToString,
 } from '@togglecorp/fujs';
 
 export const leadKeySelector = lead => lead.id;
 export const leadIdSelector = lead => lead.serverId;
+export const leadConnectorIdSelector = lead => lead.leadConnectorId;
 export const leadFaramValuesSelector = lead => lead.faramValues;
 export const leadFaramErrorsSelector = lead => lead.faramErrors;
 export const leadFaramInfoSelector = lead => lead.faramInfo;
