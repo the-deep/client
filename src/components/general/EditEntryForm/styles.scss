@@ -1,3 +1,11 @@
-.edit-entry-form {
-    border: 1px solid blue;
+.edit-entry-modal {
+    width: 96vw;
+    height: 96vh;
+
+    .error {
+        flex-shrink: 0;
+        padding: var(--spacing-medium);
+        text-align: center;
+        color: var(--color-danger);
+    }
 }

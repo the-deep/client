@@ -1,36 +1,196 @@
 import React from 'react';
+import { detachedFaram } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ScrollTabs from '#rscv/ScrollTabs';
 import WidgetForm from '#components/general/WidgetForm';
+
 import {
     FrameworkFields,
     WidgetElement as WidgetFields,
 } from '#typings/framework';
 import { EntryFields } from '#typings/entry';
 
+import { FgRestBuilder } from '#rsu/rest';
+import {
+    createUrlForEntryEdit,
+    createParamsForEntryEdit,
+} from '#rest';
+
+import {
+    levelOneWidgets,
+    levelTwoWidgets,
+    getSchemaForWidget,
+    getComputeSchemaForWidget,
+} from '#utils/widget';
+import _ts from '#ts';
+
 import styles from './styles.scss';
+
+const tabs = {
+    overview: _ts('editEntry', 'overviewTabTitle'),
+    list: _ts('editEntry', 'listTabTitle'),
+};
 
 interface EditEntryFormProps {
     className?: string;
     framework: FrameworkFields;
-    mode: string;
     entry: EntryFields;
+    onClose: (newEntry?: EntryFields) => {};
 }
 
 function EditEntryForm(props: EditEntryFormProps) {
     const {
         className,
         framework,
-        mode,
         entry,
+        onClose,
     } = props;
 
+    const [value, setValue] = React.useState(entry);
+    const [faramErrors, setFaramErrors] = React.useState({});
+    const [activeTab, setActiveTab] = React.useState('overview');
+    const [entrySaveFailed, setEntrySaveFailed] = React.useState(false);
+    const [entrySavePending, setEntrySavePending] = React.useState(false);
+    const { widgets } = framework;
+
+    const [schema, computeSchema] = React.useMemo(() => {
+        const widgetComputeSchema = {
+            fields: {},
+        };
+
+        const widgetSchema = {
+            fields: {},
+        };
+
+        widgets.forEach((widget) => {
+            const computeSchemaForWidget = getComputeSchemaForWidget(widget, widgets);
+
+            if (computeSchemaForWidget) {
+                widgetComputeSchema.fields[widget.id] = {
+                    fields: {
+                        data: {
+                            fields: {
+                                value: computeSchemaForWidget,
+                            },
+                        },
+                    },
+                };
+            }
+
+            widgetSchema.fields[widget.id] = {
+                fields: {
+                    id: [],
+                    data: getSchemaForWidget(widget),
+                },
+            };
+        });
+
+        return [
+            widgetSchema,
+            widgetComputeSchema,
+        ];
+    }, [widgets]);
+
+
+    const handleSaveButtonClick = React.useCallback(() => {
+        detachedFaram({
+            value: value.attributes,
+            schema,
+            onValidationFailure: (errors) => { setFaramErrors(errors); },
+            onValidationSuccess: (values) => {
+                const request = new FgRestBuilder()
+                    .url(createUrlForEntryEdit(value.id))
+                    .params(() => createParamsForEntryEdit({
+                        ...value,
+                        attributes: values,
+                    }))
+                    .success((response: EntryFields) => {
+                        setEntrySaveFailed(false);
+                        onClose(response);
+                        setEntrySavePending(false);
+                    })
+                    .failure(() => {
+                        // TODO: show error message properly
+                        console.error('Entry save error');
+                        setEntrySaveFailed(true);
+                        setEntrySavePending(false);
+                    })
+                    .fatal(() => {
+                        // TODO: show error message properly
+                        console.error('Entry save error');
+                        setEntrySaveFailed(true);
+                        setEntrySavePending(false);
+                    })
+                    .build();
+                request.start();
+                setEntrySavePending(true);
+            },
+        });
+    }, [value, schema, onClose, setFaramErrors, setEntrySavePending]);
+
+    const handleCancelButtonClick = React.useCallback(() => {
+        onClose();
+    }, [onClose]);
+
+    const handleWidgetFormChange = React.useCallback((values, errors) => {
+        setValue(oldEntry => ({ ...oldEntry, attributes: values }));
+        setFaramErrors(errors);
+    }, [setValue, setFaramErrors]);
+
     return (
-        <WidgetForm
-            entry={entry}
-            framework={framework}
-            mode={mode}
-        />
+        <Modal className={_cs(className, styles.editEntryModal)}>
+            <ModalHeader
+                title={_ts('components.entryEditButton', 'editModalHeading')}
+                rightComponent={(
+                    <ScrollTabs
+                        className={styles.tabs}
+                        tabs={tabs}
+                        active={activeTab}
+                        onClick={setActiveTab}
+                    />
+                )}
+            />
+            { entrySaveFailed && (
+                /* FIXME: strings */
+                <div className={styles.error}>
+                    Failed to save entry
+                </div>
+            )}
+            <ModalBody>
+                <WidgetForm
+                    value={value}
+                    onChange={handleWidgetFormChange}
+                    framework={framework}
+                    mode={activeTab}
+                    schema={schema}
+                    error={faramErrors}
+                    computeSchema={computeSchema}
+                    disabled={entrySavePending}
+                />
+            </ModalBody>
+            <ModalFooter>
+                <Button
+                    onClick={handleCancelButtonClick}
+                    disabled={entrySavePending}
+                >
+                    {_ts('components.entryEditButton', 'cancelButtonLabel')}
+                </Button>
+                <PrimaryButton
+                    onClick={handleSaveButtonClick}
+                    disabled={entrySavePending}
+                    pending={entrySavePending}
+                >
+                    {_ts('components.entryEditButton', 'saveButtonLabel')}
+                </PrimaryButton>
+            </ModalFooter>
+        </Modal>
     );
 }
 

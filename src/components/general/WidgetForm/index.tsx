@@ -14,28 +14,16 @@ import {
 import {
     levelOneWidgets,
     levelTwoWidgets,
-    droppableOverviewWidgets,
-    droppableListWidgets,
-    getSchemaForWidget,
-    getComputeSchemaForWidget,
 } from '#utils/widget';
 
-import {
-    VIEW,
-    fetchWidgetTagComponent,
-} from '#widgets';
+import { fetchWidgetTagComponent } from '#widgets';
 
 import WidgetErrorWrapper from '#components/general/WidgetErrorWrapper';
 import WidgetContentWrapper from '#components/general/WidgetContentWrapper';
 
 import styles from './styles.scss';
 
-export interface WidgetFormProps {
-    className?: string;
-    entry: EntryFields;
-    framework: FrameworkFields;
-    mode: string;
-}
+const widgetKeySelector = (d: { id: string }) => d.id;
 
 interface WidgetHeaderProps {
     hasError: boolean;
@@ -73,20 +61,32 @@ function getWidgetHeaderComponent(isExcerptWidget: boolean, title: string) {
     };
 }
 
+export interface WidgetFormProps {
+    className?: string;
+    value: EntryFields;
+    framework: FrameworkFields;
+    mode: string;
+    onChange: (newValue: EntryFields) => {};
+    schema: object;
+    computeSchema: object;
+    error: object;
+    disabled?: boolean;
+}
+
 function WidgetForm(props: WidgetFormProps) {
     const {
-        entry: entryFromProps,
         className,
         framework,
         mode,
+        value,
+        onChange,
+        schema,
+        computeSchema,
+        error,
+        disabled,
     } = props;
 
     const { widgets } = framework;
-    const [entry, setEntry] = React.useState(entryFromProps);
-
-    const handleChange = React.useCallback((faramValues) => {
-        setEntry(oldEntry => ({ ...oldEntry, attributes: faramValues }));
-    }, [setEntry]);
 
     const layoutSelector = React.useCallback((widget) => {
         const {
@@ -112,7 +112,7 @@ function WidgetForm(props: WidgetFormProps) {
                     data,
                 } = {},
             },
-        } = entry;
+        } = value;
 
         const isExcerptWidget = widgetId === 'excerptWidget';
         const Header = getWidgetHeaderComponent(isExcerptWidget, title);
@@ -125,7 +125,7 @@ function WidgetForm(props: WidgetFormProps) {
                 />
             </FaramGroup>
         );
-    }, [entry]);
+    }, [value]);
 
     const onExcerptChange = React.useCallback(() => {}, []);
 
@@ -142,7 +142,7 @@ function WidgetForm(props: WidgetFormProps) {
             droppedExcerpt,
             image,
             tabularField,
-        } = entry;
+        } = value;
 
         let widgetProps: {
             [key: string]: unknown;
@@ -160,8 +160,9 @@ function WidgetForm(props: WidgetFormProps) {
                 droppedExcerpt,
                 image,
                 tabularField,
+                // TODO: implement tabular field
                 // tabularFieldData: tabularData,
-                entryKey: entry.id,
+                entryKey: value.id,
             };
         }
 
@@ -189,61 +190,25 @@ function WidgetForm(props: WidgetFormProps) {
                 </FaramGroup>
             </WidgetContentWrapper>
         );
-    }, [mode, entry, onExcerptChange]);
+    }, [mode, value, onExcerptChange]);
 
-    const [schema, computeSchema] = React.useMemo(() => {
-        const widgetComputeSchema = {
-            fields: {},
-        };
-
-        const widgetSchema = {
-            fields: {},
-        };
-
-        widgets.forEach((widget) => {
-            const computeSchemaForWidget = getComputeSchemaForWidget(widget, widgets);
-
-            if (computeSchemaForWidget) {
-                widgetComputeSchema.fields[widget.id] = {
-                    fields: {
-                        data: {
-                            fields: {
-                                value: computeSchemaForWidget,
-                            },
-                        },
-                    },
-                };
-            }
-
-            widgetSchema.fields[widget.id] = {
-                fields: {
-                    id: [],
-                    data: getSchemaForWidget(widget),
-                },
-            };
-        });
-
-        return [
-            widgetSchema,
-            widgetComputeSchema,
-        ];
-    }, [widgets]);
 
     return (
         <Faram
             className={className}
-            onChange={handleChange}
+            onChange={onChange}
             schema={schema}
             computeSchema={computeSchema}
-            value={entry.attributes}
-            error={{}}
+            value={value.attributes}
+            error={error}
+            disabled={disabled}
         >
             <GridViewLayout
                 data={widgets}
                 layoutSelector={layoutSelector}
                 itemHeaderModifier={getWidgetHeader}
                 itemContentModifier={getWidgetContent}
-                keySelector={d => d.key}
+                keySelector={widgetKeySelector}
                 itemClassName={styles.widget}
             />
         </Faram>
