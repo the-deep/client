@@ -24,7 +24,7 @@ import {
 import AddOrganizationModal from '#components/other/AddOrganizationModal';
 import _ts from '#ts';
 
-import OrganizationItem from './OrganizationItem';
+import OrganizationItem from '#components/other/OrganizationItem';
 import styles from './styles.scss';
 
 const propTypes = {

@@ -27,6 +27,7 @@ import Regions from './Regions';
 import Frameworks from './Frameworks';
 import WordCategories from './WordCategories';
 import EntriesConfig from './EntriesConfig';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -232,7 +233,6 @@ export default class ProjectDetails extends React.PureComponent {
 
     render() {
         const {
-            projectId,
             className,
             requests: {
                 projectDeleteRequest,

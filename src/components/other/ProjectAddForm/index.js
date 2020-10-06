@@ -72,6 +72,7 @@ export default class ProjectAddForm extends React.PureComponent {
             faramErrors: {},
             faramValues: {
                 isPrivate: false,
+                organizations: [],
             },
             pending: false,
             pristine: false,
@@ -81,6 +82,7 @@ export default class ProjectAddForm extends React.PureComponent {
             fields: {
                 title: [requiredCondition],
                 isPrivate: [],
+                organizations: [],
             },
         };
 
@@ -120,6 +122,7 @@ export default class ProjectAddForm extends React.PureComponent {
     successCallback = ({
         title,
         isPrivate,
+        organizations,
     }) => {
         const { userGroups, userId } = this.props;
         this.projectCreateRequest.init(
@@ -128,6 +131,7 @@ export default class ProjectAddForm extends React.PureComponent {
                 title,
                 userGroups,
                 isPrivate,
+                organizations,
             },
         ).start();
     };

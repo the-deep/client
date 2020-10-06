@@ -1174,7 +1174,17 @@
         "-5492927": "Export to image",
         "-16575221": "Lead confidentiality",
         "-78757252": "Lead priority",
-        "-15193425": "Lead published on"
+        "-15193425": "Lead published on",
+        "-26861463": "Donors",
+        "-26861463": "Donor",
+        "-86018902": "Government",
+        "-30025571": "International Partners",
+        "-54364746": "Lead Organization",
+        "-49224651": "National Partners",
+        "-78808098": "Lead Organization",
+        "-78808098": "Lead Organization",
+        "-41977678": "Project stakeholders",
+        "-435034987": "Searching"
     },
     "links": {
         "browserExtension": {
@@ -3105,7 +3115,8 @@
             "addNewOrganizationTitle": 301,
             "maxDisplayWarning": -43663158,
             "searchInputLabel": 9,
-            "searchInputPlaceholder": 154
+            "searchInputPlaceholder": 154,
+            "searching": -435034987
         },
         "components.viewer.fileImagePreview": {
             "notFoundTitle": 1301,
@@ -3366,7 +3377,27 @@
             "penSizeOptionSmallLabel": -80573166,
             "modalHeading": -31875190,
             "drawToolsTitle": -7637573,
+            "penSizeOptionSmallLabel": -80573166,
             "modalHeading": -31875190
+        },
+        "project.detail.general": {
+            "projectStakeholdersHeading": -41977678
+        },
+        "project.detail.stakeholders": {
+            "stakeholdersModalTitle": -35334807,
+            "organizationsTitle": 154,
+            "addNewOrganizationTitle": 301,
+            "searchInputLabel": 9,
+            "searchInputPlaceholder": 154,
+            "dropHereMessage": -13164537,
+            "dropConfirmation": -7326554,
+            "leadOrganization": -78808098,
+            "internationalPartner": -30025571,
+            "nationalPartner": -49224651,
+            "donor": -26861463,
+            "government": -86018902,
+            "cancelButtonLabel": 61,
+            "doneButtonLabel": -25166641
         }
     }
 }

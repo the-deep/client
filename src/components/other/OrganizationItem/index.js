@@ -39,11 +39,13 @@ export default class OrganizationItem extends React.PureComponent {
         const {
             name,
             itemKey,
+            logo,
         } = this.props;
 
         const data = JSON.stringify({
             organizationId: itemKey,
             organizationName: name,
+            organizationLogo: logo,
         });
 
         e.dataTransfer.setData('text/plain', data);
