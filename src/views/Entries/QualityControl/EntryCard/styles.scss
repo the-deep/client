@@ -16,18 +16,17 @@
 .entry-card {
     display: flex;
     flex-direction: column;
-    margin: var(--spacing-small);
     border: var(--width-separator-thin) solid var(--color-separator-light);
     border-top: var(--width-separator-thick) solid var(--color-info);
     box-shadow: 0 3px 9px -5px rgba(0, 0, 0, .5);
     background-color: var(--color-foreground);
     padding: calc(var(--spacing-large) - var(--spacing-medium));
-    width: 374px;
+    width: 346px;
     height: 320px;
     overflow: auto;
 
-    &.confidential {
-        border-top-color: var(--color-danger);
+    &.verified {
+        border-top-color: var(--color-success);
     }
 
     .top {
@@ -127,21 +126,22 @@
             align-items: center;
 
             .created-by {
-                flex-grow: 1;
                 padding: var(--spacing-small);
             }
 
             .created-at {
                 flex-shrink: 0;
             }
+        }
 
-            .actions {
-                flex-shrink: 0;
-                padding: 0 calc(var(--spacing-small) - var(--spacing-extra-small));
+        .actions {
+            display: flex;
+            flex-shrink: 0;
+            justify-content: flex-end;
+            padding: var(--spacing-small) calc(var(--spacing-small) - var(--spacing-extra-small));
 
-                button {
-                    margin: 0 var(--spacing-extra-small);
-                }
+            button {
+                margin: 0 var(--spacing-extra-small);
             }
         }
     }

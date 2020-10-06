@@ -8,11 +8,14 @@ import EntryCommentButton from '#components/general/EntryCommentButton';
 import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
+import EntryVerify from '#components/general/EntryVerify';
+
 import {
     EntryFields,
     OrganizationFields,
     LeadWithGroupedEntriesFields,
 } from '#typings/entry';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -57,7 +60,7 @@ function EntryCard(props: EntryCardProps) {
     } = props;
 
     return (
-        <div className={_cs(className, styles.entryCard, lead.confidentiality === 'confidential' && styles.confidential)}>
+        <div className={_cs(className, styles.entryCard, entry.verified && styles.verified)}>
             <section className={styles.top}>
                 <div className={styles.row}>
                     <AuthorListOutput
@@ -123,24 +126,41 @@ function EntryCard(props: EntryCardProps) {
                         className={styles.createdAt}
                         value={entry.createdAt}
                     />
-                    <div className={styles.actions}>
-                        <EntryOpenLink
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                        />
-                        <EntryCommentButton
-                            entryId={entry.id}
-                            commentCount={entry.unresolvedCommentCount}
-                            assignee={lead.assigneeDetails.id}
-                        />
-                        <EntryEditButton
-                            entryId={entry.id}
-                        />
-                        <EntryDeleteButton
-                            entryId={entry.id}
-                        />
-                    </div>
+                </div>
+                <div className={styles.actions}>
+                    <EntryDeleteButton
+                        entryId={entry.id}
+                    />
+                    <EntryOpenLink
+                        entryId={entry.id}
+                        leadId={entry.lead}
+                        projectId={entry.project}
+                    />
+                    <EntryCommentButton
+                        entryId={entry.id}
+                        commentCount={entry.unresolvedCommentCount}
+                        assignee={lead.assigneeDetails.id}
+                    />
+                    <EntryEditButton
+                        entryId={entry.id}
+                    />
+                    {/* FIXME: this component cannot be used, since it changes value in redux */}
+                    <EntryVerify
+                        title={entry.verificationLastChangedByDetails ? (
+                            _ts(
+                                'entries',
+                                'verificationLastChangedBy',
+                                {
+                                    userName: entry
+                                        .verificationLastChangedByDetails.displayName,
+                                },
+                            )
+                        ) : undefined}
+                        value={entry.verified}
+                        entryId={entry.id}
+                        leadId={entry.lead}
+                        // onPendingChange={}
+                    />
                 </div>
             </section>
         </div>
