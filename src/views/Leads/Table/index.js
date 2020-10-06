@@ -16,7 +16,6 @@ import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Checkbox from '#rsci/Checkbox';
-import Icon from '#rscg/Icon';
 
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
@@ -105,6 +104,8 @@ function Table(props) {
         onSearchSimilarLead,
         onRemoveLead,
         activeProject,
+        activeSort,
+        setLeadPageActiveSort,
     } = props;
 
     const {
@@ -113,7 +114,6 @@ function Table(props) {
         clickOnItem,
         addItems,
         removeItems,
-        clearSelection,
     } = useArraySelection(
         leadKeyExtractor,
         [],
@@ -170,23 +170,15 @@ function Table(props) {
                         />
                     );
                 },
-                label: areAllChecked ? (
-                    <Icon
-                        onClick={clearSelection} // TODO: styling of button
-                        name="minusOutline"
-                        transparent
-                        className={styles.clearIcon}
+                label: (
+                    <Checkbox
+                        onChange={handleSelectAllCheckboxClick}
+                        value={areAllChecked}
+                        indeterminate={areSomeChecked}
+                        name="selectAll"
+                        className={styles.selectAllCheckbox}
                     />
-                )
-                    : (
-                        <Checkbox // TODO: styling of checkbox
-                            onChange={handleSelectAllCheckboxClick}
-                            value={areAllChecked}
-                            indeterminate={areSomeChecked}
-                            name="selectAll"
-                            className={styles.selectAllCheckbox}
-                        />
-                    ),
+                ),
             },
             {
                 key: 'attachment_mime_type',
@@ -323,15 +315,13 @@ function Table(props) {
                 order: 10,
                 modifier: (row) => {
                     const {
-                        requests: {
-                            leadOptionsRequest: {
-                                response: {
-                                    confidentiality: confidentialityOptions,
-                                } = emptyObject,
+                        leadOptionsRequest: {
+                            response: {
+                                confidentiality: confidentialityOptions,
                             } = emptyObject,
-                            leadPatchRequest,
-                        },
-                    } = props;
+                        } = emptyObject,
+                        leadPatchRequest,
+                    } = props.requests;
 
                     return (
                         <div className={styles.inlineEditContainer}>
@@ -361,15 +351,13 @@ function Table(props) {
                 order: 11,
                 modifier: (row) => {
                     const {
-                        requests: {
-                            leadOptionsRequest: {
-                                response: {
-                                    status: statusOptions,
-                                } = emptyObject,
+                        leadOptionsRequest: {
+                            response: {
+                                status: statusOptions,
                             } = emptyObject,
-                            leadPatchRequest,
-                        },
-                    } = props;
+                        } = emptyObject,
+                        leadPatchRequest,
+                    } = props.requests;
 
                     return (
                         <div className={styles.inlineEditContainer}>
@@ -399,15 +387,13 @@ function Table(props) {
                 order: 12,
                 modifier: (row) => {
                     const {
-                        requests: {
-                            leadOptionsRequest: {
-                                response: {
-                                    priority,
-                                } = emptyObject,
+                        leadOptionsRequest: {
+                            response: {
+                                priority,
                             } = emptyObject,
-                            leadPatchRequest,
-                        },
-                    } = props;
+                        } = emptyObject,
+                        leadPatchRequest,
+                    } = props.requests;
 
                     return (
                         <div className={styles.inlineEditContainer}>
@@ -456,12 +442,11 @@ function Table(props) {
         })),
         [
             areAllChecked,
-            clearSelection,
             handleSelectAllCheckboxClick,
             areSomeChecked,
             selectedLeads,
             handleClickItem,
-            props,
+            props.requests,
             onSearchSimilarLead,
             onRemoveLead,
             activeProject,
@@ -482,9 +467,9 @@ function Table(props) {
     const headerModifier = useCallback(
         (headerData) => {
             let sortOrder = '';
-            if (props.activeSort === headerData.key) {
+            if (activeSort === headerData.key) {
                 sortOrder = 'asc';
-            } else if (props.activeSort === `-${headerData.key}`) {
+            } else if (activeSort === `-${headerData.key}`) {
                 sortOrder = 'dsc';
             }
             return (
@@ -494,7 +479,7 @@ function Table(props) {
                     sortable={headerData.sortable}
                 />
             );
-        }, [props.activeSort],
+        }, [activeSort],
     );
 
     const handleTableHeaderClick = useCallback(
@@ -505,22 +490,21 @@ function Table(props) {
                 return;
             }
 
-            let {
-                activeSort = '',
-            } = props;
+            let tmpActiveSort = activeSort;
 
-            const isAsc = activeSort.charAt(0) !== '-';
+            const isAsc = tmpActiveSort.charAt(0) !== '-';
 
-            const isCurrentHeaderSorted = activeSort === key
-                || (activeSort.substr(1) === key && !isAsc);
+            const isCurrentHeaderSorted = tmpActiveSort === key
+                || (tmpActiveSort.substr(1) === key && !isAsc);
 
             if (isCurrentHeaderSorted) {
-                activeSort = isAsc ? `-${key}` : key;
+                tmpActiveSort = isAsc ? `-${key}` : key;
             } else {
-                activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
+                tmpActiveSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
             }
-            props.setLeadPageActiveSort({ activeSort });
-        }, [headers, props],
+
+            setLeadPageActiveSort({ activeSort: tmpActiveSort });
+        }, [headers, activeSort, setLeadPageActiveSort],
     );
 
     return (
