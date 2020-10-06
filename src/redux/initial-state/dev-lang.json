@@ -1168,6 +1168,8 @@
         "-63730365": "Pen size",
         "-31875190": "Screenshot touchup",
         "-5492927": "Download image",
+        "-31875190": "Draw over screenshot",
+        "-5492927": "Export to image",
         "-7637573": "Draw tools",
         "-16575221": "Lead confidentiality",
         "-78757252": "Lead priority",
@@ -3394,6 +3396,11 @@
             "government": -86018902,
             "cancelButtonLabel": 61,
             "doneButtonLabel": -25166641
+        },
+        "components.entryEditButton": {
+            "cancelButtonLabel": 61,
+            "editModalHeading": -85998802,
+            "saveButtonLabel": 25
         }
     }
 }

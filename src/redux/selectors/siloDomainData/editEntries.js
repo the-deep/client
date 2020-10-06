@@ -12,13 +12,16 @@ import {
 } from '#entities/editEntries';
 
 import {
+    getSchemaForWidget,
+    getComputeSchemaForWidget,
+} from '#utils/widget';
+
+import {
     analysisFrameworksSelector,
     projectsSelector,
     leadIdFromRoute,
 } from '../domainData';
 
-import getSchemaForWidget from './editEntriesSchema';
-import getComputeSchemaForWidget from './editEntriesComputeSchema';
 
 const emptyObject = {};
 const emptyArray = [];

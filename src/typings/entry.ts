@@ -46,8 +46,12 @@ export interface EntryFields extends DatabaseEntityBase {
     image?: string;
     lead: number;
     projectLabel: ProjectLabelFields[];
+<<<<<<< HEAD
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
+=======
+    tabularField: unknown;
+>>>>>>> d6904df33... Add form to edit single entry
 }
 
 export interface LeadWithGroupedEntriesFields {

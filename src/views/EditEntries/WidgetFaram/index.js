@@ -27,12 +27,20 @@ import {
 } from '#widgets';
 
 import {
+    levelOneWidgets,
+    levelTwoWidgets,
+    droppableOverviewWidgets,
+    droppableListWidgets,
+} from '#utils/widget';
+
+import WidgetErrorWrapper from '#components/general/WidgetErrorWrapper';
+import WidgetContentWrapper from '#components/general/WidgetContentWrapper';
+
+import {
     calculateEntryColor,
     calculateFirstTimeAttributes,
 } from '../entryDataCalculator';
 
-import WidgetContentWrapper from './WidgetContentWrapper';
-import ErrorWrapper from './ErrorWrapper';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -410,7 +418,7 @@ export default class WidgetFaram extends React.PureComponent {
 
         return (
             <FaramGroup faramElementName={String(id)}>
-                <ErrorWrapper
+                <WidgetErrorWrapper
                     faramElementName="data"
                     renderer={Header}
                 />
@@ -447,13 +455,6 @@ export default class WidgetFaram extends React.PureComponent {
             widget,
         };
 
-        // Level one widgets can view excerpt information
-        const levelOneWidgets = [
-            'excerptWidget',
-            'geoWidget',
-            'organigramWidget',
-            'conditionalWidget',
-        ];
         if (levelOneWidgets.includes(widgetId)) {
             const entryKey = entryAccessor.key(this.props.entry);
 
@@ -471,8 +472,6 @@ export default class WidgetFaram extends React.PureComponent {
             };
         }
 
-        // Level two widgets can edit excerpt information
-        const levelTwoWidgets = ['excerptWidget'];
         if (levelTwoWidgets.includes(widgetId)) {
             widgetProps = {
                 ...widgetProps,
@@ -491,15 +490,9 @@ export default class WidgetFaram extends React.PureComponent {
         );
 
         // Widgets to allow drag and drop
-        const droppableWidgets = widgetType === VIEW.overview ? [
-            'excerptWidget',
-            'matrix1dWidget',
-            'matrix2dWidget',
-            'textWidget',
-        ] : [
-            'excerptWidget',
-        ];
-        const isDroppable = droppableWidgets.includes(widgetId);
+        const droppableWidgets = widgetType === VIEW.overview ?
+            droppableOverviewWidgets : droppableListWidgets;
+        const isDroppable = !!droppableWidgets[widgetId];
 
         return (
             <WidgetContentWrapper

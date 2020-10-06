@@ -15,6 +15,10 @@ import {
     OrganizationFields,
     LeadWithGroupedEntriesFields,
 } from '#typings/entry';
+import {
+    FrameworkFields,
+} from '#typings/framework';
+
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -50,6 +54,7 @@ interface EntryCardProps {
     className?: string;
     entry: EntryFields;
     lead: Omit<LeadWithGroupedEntriesFields, 'entries'>;
+    framework: FrameworkFields;
 }
 
 function EntryCard(props: EntryCardProps) {
@@ -57,6 +62,7 @@ function EntryCard(props: EntryCardProps) {
         className,
         entry,
         lead,
+        framework,
     } = props;
 
     return (
@@ -143,6 +149,7 @@ function EntryCard(props: EntryCardProps) {
                     />
                     <EntryEditButton
                         entryId={entry.id}
+                        framework={framework}
                     />
                     {/* FIXME: this component cannot be used, since it changes value in redux */}
                     <EntryVerify
