@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 
-import EditEntryForm from '#components/general/EditEntryForm';
+import EditEntryFormModal from '#components/general/EditEntryFormModal';
 
 import { EntryFields } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -41,7 +41,7 @@ function EntryEditButton(props: EntryEditButtonProps) {
                 onClick={handleEntryEdit}
             />
             {showModal && (
-                <EditEntryForm
+                <EditEntryFormModal
                     framework={framework}
                     entry={entry}
                     onClose={handleEditEntryModalClose}

@@ -11,10 +11,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ScrollTabs from '#rscv/ScrollTabs';
 import WidgetForm from '#components/general/WidgetForm';
 
-import {
-    FrameworkFields,
-    WidgetElement as WidgetFields,
-} from '#typings/framework';
+import { FrameworkFields } from '#typings/framework';
 import { EntryFields } from '#typings/entry';
 
 import { FgRestBuilder } from '#rsu/rest';
@@ -24,8 +21,6 @@ import {
 } from '#rest';
 
 import {
-    levelOneWidgets,
-    levelTwoWidgets,
     getSchemaForWidget,
     getComputeSchemaForWidget,
 } from '#utils/widget';
@@ -38,14 +33,14 @@ const tabs = {
     list: _ts('editEntry', 'listTabTitle'),
 };
 
-interface EditEntryFormProps {
+interface EditEntryFormModalProps {
     className?: string;
     framework: FrameworkFields;
     entry: EntryFields;
-    onClose: (newEntry?: EntryFields) => {};
+    onClose: (newEntry?: EntryFields) => void;
 }
 
-function EditEntryForm(props: EditEntryFormProps) {
+function EditEntryFormModal(props: EditEntryFormModalProps) {
     const {
         className,
         framework,
@@ -103,8 +98,8 @@ function EditEntryForm(props: EditEntryFormProps) {
         detachedFaram({
             value: value.attributes,
             schema,
-            onValidationFailure: (errors) => { setFaramErrors(errors); },
-            onValidationSuccess: (values) => {
+            onValidationFailure: (errors: object) => { setFaramErrors(errors); },
+            onValidationSuccess: (values: EntryFields['attributes']) => {
                 const request = new FgRestBuilder()
                     .url(createUrlForEntryEdit(value.id))
                     .params(() => createParamsForEntryEdit({
@@ -139,10 +134,28 @@ function EditEntryForm(props: EditEntryFormProps) {
         onClose();
     }, [onClose]);
 
-    const handleWidgetFormChange = React.useCallback((values, errors) => {
+    const handleAttributesChange = React.useCallback((values, errors) => {
         setValue(oldEntry => ({ ...oldEntry, attributes: values }));
         setFaramErrors(errors);
     }, [setValue, setFaramErrors]);
+
+    const handleExcerptChange = React.useCallback((excerptData) => {
+        const {
+            type,
+            value: excerptValue,
+        } = excerptData;
+
+        const excerpt = type === 'excerpt' ? excerptValue : undefined;
+        const image = type === 'image' ? excerptValue : undefined;
+        const tabularField = type === 'dataSeries' ? excerptValue : undefined;
+
+        setValue(oldEntry => ({
+            ...oldEntry,
+            excerpt,
+            image,
+            tabularField,
+        }));
+    }, [setValue]);
 
     return (
         <Modal className={_cs(className, styles.editEntryModal)}>
@@ -150,7 +163,6 @@ function EditEntryForm(props: EditEntryFormProps) {
                 title={_ts('components.entryEditButton', 'editModalHeading')}
                 rightComponent={(
                     <ScrollTabs
-                        className={styles.tabs}
                         tabs={tabs}
                         active={activeTab}
                         onClick={setActiveTab}
@@ -166,7 +178,8 @@ function EditEntryForm(props: EditEntryFormProps) {
             <ModalBody>
                 <WidgetForm
                     value={value}
-                    onChange={handleWidgetFormChange}
+                    onAttributesChange={handleAttributesChange}
+                    onExcerptChange={handleExcerptChange}
                     framework={framework}
                     mode={activeTab}
                     schema={schema}
@@ -194,4 +207,4 @@ function EditEntryForm(props: EditEntryFormProps) {
     );
 }
 
-export default EditEntryForm;
+export default EditEntryFormModal;

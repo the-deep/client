@@ -66,7 +66,8 @@ export interface WidgetFormProps {
     value: EntryFields;
     framework: FrameworkFields;
     mode: string;
-    onChange: (newValue: EntryFields) => {};
+    onAttributesChange: (newValue: EntryFields['attributes'], errors: object) => void;
+    onExcerptChange: (newExcerptData: object) => void;
     schema: object;
     computeSchema: object;
     error: object;
@@ -79,7 +80,8 @@ function WidgetForm(props: WidgetFormProps) {
         framework,
         mode,
         value,
-        onChange,
+        onAttributesChange,
+        onExcerptChange,
         schema,
         computeSchema,
         error,
@@ -126,8 +128,6 @@ function WidgetForm(props: WidgetFormProps) {
             </FaramGroup>
         );
     }, [value]);
-
-    const onExcerptChange = React.useCallback(() => {}, []);
 
     const getWidgetContent = React.useCallback((widget: WidgetFields<unknown>) => {
         const {
@@ -195,8 +195,8 @@ function WidgetForm(props: WidgetFormProps) {
 
     return (
         <Faram
-            className={className}
-            onChange={onChange}
+            className={_cs(styles.widgetForm, className)}
+            onChange={onAttributesChange}
             schema={schema}
             computeSchema={computeSchema}
             value={value.attributes}

@@ -2,6 +2,10 @@
     width: 96vw;
     height: 96vh;
 
+    .body {
+        background-color: var(--color-background);
+    }
+
     .error {
         flex-shrink: 0;
         padding: var(--spacing-medium);
