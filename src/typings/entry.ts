@@ -1,6 +1,6 @@
 import { DatabaseEntityBase } from './common';
 
-type EntryType = 'excerpt' | 'image';
+type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
 export interface ProjectLabelFields {
     count: number;
