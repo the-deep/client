@@ -847,7 +847,6 @@
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
         "-47892955": "Can't drop here!",
-        "-20173783": "The same page is open in another tab.",
         "-96507602": "Error while trying to reset password.",
         "-27376433": "Anyplace",
         "-21403453": "Something went wrong with loading this page.",
@@ -1170,22 +1169,17 @@
         "-31875190": "Screenshot touchup",
         "-5492927": "Download image",
         "-7637573": "Draw tools",
-        "-31875190": "Draw over screenshot",
-        "-5492927": "Export to image",
         "-16575221": "Lead confidentiality",
         "-78757252": "Lead priority",
         "-15193425": "Lead published on",
         "-26861463": "Donors",
         "-86018902": "Government",
         "-30025571": "International Partners",
-        "-54364746": "Lead Organization",
         "-49224651": "National Partners",
         "-78808098": "Lead Organization",
         "-41977678": "Project stakeholders",
         "-435034987": "Searching",
-        "-45435121": "Excerpt",
         "-79879798": "Image",
-        "-43423222": "Data Series",
         "-42342342": "Entry Type"
     },
     "links": {
@@ -1658,7 +1652,7 @@
             "entryGroupsHeaderTooltip": -47675119,
             "assigneeIconTitle": 6,
             "leadStatusFilterLabel": -54496992,
-            "leadStatusFilterPlaceholder": -54496992,
+            "leadStatusFilterPlaceholder": 14,
             "createdAtLabel": 163,
             "publishedOnLabel": -39063797,
             "verificationStatusOptionsFilterLabel": -90989808,
@@ -1670,15 +1664,16 @@
             "deleteEntrySuccessMessage": -12435324,
             "deleteEntryFailure": -90809809,
             "leadConfidentialityFilterLabel": -16575221,
-            "leadConfidentialityFilterPlaceholder": -16575221,
+            "leadConfidentialityFilterPlaceholder": 14,
             "leadPriorityFilterLabel": -78757252,
-            "leadPriorityFilterPlaceholder": -78757252,
+            "leadPriorityFilterPlaceholder": 14,
             "leadPublishedOnFilterLabel": -15193425,
-            "excerpt": -45435121,
+            "excerpt": 20,
             "image": -79879798,
-            "dataSeries": -43423222,
+            "dataSeries": 142,
             "entryTypePlaceholder": 14,
-            "entryTypeFilterLabel": -42342342
+            "entryTypeFilterLabel": -42342342,
+            "leadPublishedOnPlaceholder": 18
         },
         "export": {
             "headerExport": 600,
@@ -2996,9 +2991,7 @@
             "messageForAnd": -45914563,
             "messageForOr": -2861291
         },
-        "nagbar": {
-            "duplicateWarningText": -20173783
-        },
+        "nagbar": {},
         "components.geo.geoModal": {
             "adminLevelLabel": 123,
             "applyButtonLabel": 427,
@@ -3382,9 +3375,7 @@
             "penSizeOptionMediumLabel": -65407480,
             "penSizeOptionSmallLabel": -80573166,
             "modalHeading": -31875190,
-            "drawToolsTitle": -7637573,
-            "penSizeOptionSmallLabel": -80573166,
-            "modalHeading": -31875190
+            "drawToolsTitle": -7637573
         },
         "project.detail.general": {
             "projectStakeholdersHeading": -41977678
@@ -3396,7 +3387,6 @@
             "searchInputLabel": 9,
             "searchInputPlaceholder": 154,
             "dropHereMessage": -13164537,
-            "dropConfirmation": -7326554,
             "leadOrganization": -78808098,
             "internationalPartner": -30025571,
             "nationalPartner": -49224651,
