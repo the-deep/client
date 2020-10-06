@@ -75,18 +75,18 @@ function getWidgetHeaderComponent(isExcerptWidget: boolean, title: string) {
 
 function WidgetForm(props: WidgetFormProps) {
     const {
-        entry,
+        entry: entryFromProps,
         className,
         framework,
         mode,
     } = props;
 
     const { widgets } = framework;
-    const [attributes, setAttributes] = React.useState(entry.attributes);
+    const [entry, setEntry] = React.useState(entryFromProps);
 
     const handleChange = React.useCallback((faramValues) => {
-        setAttributes(faramValues);
-    }, [setAttributes]);
+        setEntry(oldEntry => ({ ...oldEntry, attributes: faramValues }));
+    }, [setEntry]);
 
     const layoutSelector = React.useCallback((widget) => {
         const {
@@ -111,7 +111,7 @@ function WidgetForm(props: WidgetFormProps) {
                 [id]: {
                     data,
                 } = {},
-            } = {},
+            },
         } = entry;
 
         const isExcerptWidget = widgetId === 'excerptWidget';
@@ -127,9 +127,7 @@ function WidgetForm(props: WidgetFormProps) {
         );
     }, [entry]);
 
-    const onExcerptCreate = React.useCallback(() => {}, []);
     const onExcerptChange = React.useCallback(() => {}, []);
-    const onExcerptReset = React.useCallback(() => {}, []);
 
     const getWidgetContent = React.useCallback((widget: WidgetFields<unknown>) => {
         const {
@@ -146,7 +144,9 @@ function WidgetForm(props: WidgetFormProps) {
             tabularField,
         } = entry;
 
-        let widgetProps = {
+        let widgetProps: {
+            [key: string]: unknown;
+        } = {
             widgetName: widgetId,
             widgetType: mode,
             widget,
@@ -168,9 +168,7 @@ function WidgetForm(props: WidgetFormProps) {
         if (levelTwoWidgets.includes(widgetId)) {
             widgetProps = {
                 ...widgetProps,
-                onExcerptCreate,
                 onExcerptChange,
-                onExcerptReset,
             };
         }
 
@@ -180,16 +178,8 @@ function WidgetForm(props: WidgetFormProps) {
             addedFrom,
         );
 
-        // Widgets to allow drag and drop
-        const droppableWidgets = mode === VIEW.overview ?
-            droppableOverviewWidgets : droppableListWidgets;
-        const isDroppable = !!droppableWidgets[widgetId];
-
         return (
-            <WidgetContentWrapper
-                className={styles.content}
-                blockDrop={!isDroppable}
-            >
+            <WidgetContentWrapper className={styles.content}>
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
                         <Widget
@@ -199,7 +189,7 @@ function WidgetForm(props: WidgetFormProps) {
                 </FaramGroup>
             </WidgetContentWrapper>
         );
-    }, [mode, entry, onExcerptCreate, onExcerptChange, onExcerptReset]);
+    }, [mode, entry, onExcerptChange]);
 
     const [schema, computeSchema] = React.useMemo(() => {
         const widgetComputeSchema = {
@@ -235,7 +225,7 @@ function WidgetForm(props: WidgetFormProps) {
 
         return [
             widgetSchema,
-            computeSchema,
+            widgetComputeSchema,
         ];
     }, [widgets]);
 
@@ -245,7 +235,7 @@ function WidgetForm(props: WidgetFormProps) {
             onChange={handleChange}
             schema={schema}
             computeSchema={computeSchema}
-            value={attributes}
+            value={entry.attributes}
             error={{}}
         >
             <GridViewLayout

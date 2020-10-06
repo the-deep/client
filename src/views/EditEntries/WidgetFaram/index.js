@@ -183,6 +183,7 @@ export default class WidgetFaram extends React.PureComponent {
             entry,
         } = this.props;
 
+
         const entryKey = entryAccessor.key(entry);
         const entryId = entryAccessor.serverId(entry);
 
@@ -250,6 +251,7 @@ export default class WidgetFaram extends React.PureComponent {
                 dropped: false,
             });
         } else {
+            console.info('yes changed weehaa');
             const color = calculateEntryColor(faramValues, analysisFramework);
             this.setEntryData({
                 leadId,
