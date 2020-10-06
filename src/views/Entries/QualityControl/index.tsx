@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import ResizableH from '#rscv/Resizable/ResizableH';
+import TableOfContents from '#components/TableOfContents';
 
 // import { Lead } from '#typings/lead';
 import { LeadWithGroupedEntriesFields } from '#typings/entry';
@@ -18,6 +19,39 @@ interface QualityControlProps {
     leadGroupedEntriesList: LeadWithGroupedEntriesFields[];
     framework: FrameworkFields;
 }
+interface Data {
+    id: number;
+    title: string;
+    children: Data[] | undefined;
+}
+
+const toc: Data[] = [
+    {
+        id: 1,
+        title: 'This is Heading',
+        children: undefined,
+    },
+    {
+        id: 2,
+        title: 'This is Second Heading',
+        children: [
+            {
+                id: 3,
+                title: 'This is inner',
+                children: undefined,
+            },
+            {
+                id: 4,
+                title: 'This is inner',
+                children: undefined,
+            },
+        ],
+    },
+];
+
+const keySelector = (d: Data) => d.id;
+const labelSelector = (d: Data) => d.title;
+const childrenSelector = (d: Data) => d.children;
 
 function QualityControl(props: QualityControlProps) {
     const {
@@ -33,6 +67,12 @@ function QualityControl(props: QualityControlProps) {
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries]);
 
+    const [selected, setSelection] = useState<number | string | undefined>(undefined);
+
+    const handleSelection = (id: number | string) => {
+        setSelection(id);
+    };
+
     return (
         <div className={_cs(className, styles.qualityControl)}>
             <ResizableH
@@ -40,7 +80,14 @@ function QualityControl(props: QualityControlProps) {
                 leftContainerClassName={styles.left}
                 leftChild={(
                     <div className={styles.frameworkSelection}>
-                        Framework selection
+                        <TableOfContents
+                            options={toc}
+                            keySelector={keySelector}
+                            labelSelector={labelSelector}
+                            childrenSelector={childrenSelector}
+                            onChange={handleSelection}
+                            value={selected}
+                        />
                     </div>
                 )}
                 rightContainerClassName={styles.right}
