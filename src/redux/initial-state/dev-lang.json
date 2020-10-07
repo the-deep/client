@@ -1179,10 +1179,11 @@
         "-30025571": "International Partners",
         "-49224651": "National Partners",
         "-78808098": "Lead Organization",
-        "-41977678": "Project stakeholders",
+        "-41977678": "Stakeholders",
         "-435034987": "Searching",
         "-79879798": "Image",
-        "-42342342": "Entry Type"
+        "-42342342": "Entry Type",
+        "-43286063": "Quantitative"
     },
     "links": {
         "browserExtension": {
@@ -1672,7 +1673,7 @@
             "leadPublishedOnFilterLabel": -15193425,
             "excerpt": 20,
             "image": -79879798,
-            "dataSeries": 142,
+            "dataSeries": -43286063,
             "entryTypePlaceholder": 14,
             "entryTypeFilterLabel": -42342342,
             "leadPublishedOnPlaceholder": 18
