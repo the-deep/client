@@ -393,6 +393,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                         <ModalButton
                                             className={styles.editStakeholdersButton}
                                             iconName="edit"
+                                            disabled={readOnly}
                                             modal={
                                                 <StakeholdersModal
                                                     faramElementName="organizations"
