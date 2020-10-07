@@ -27,7 +27,7 @@ export interface OrganizationFields {
 export interface UserFields {
     id: number;
     displayName: string;
-    emain: string;
+    email: string;
 }
 
 export interface EntryFields extends DatabaseEntityBase {
@@ -46,6 +46,8 @@ export interface EntryFields extends DatabaseEntityBase {
     image?: string;
     lead: number;
     projectLabel: ProjectLabelFields[];
+    verified: boolean;
+    verificationLastChangedByDetails: UserFields;
 }
 
 export interface LeadWithGroupedEntriesFields {

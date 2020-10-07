@@ -33,20 +33,11 @@ interface ComponentProps {
     title?: string;
     entryId: number;
     leadId: number;
-    verified: boolean;
-    hide: (entryPermission: {}) => boolean;
+    value: boolean;
     className?: string;
-    setEntryVerificationPending?: (pending: boolean | undefined) => void;
-    setEntryVerification: ({
-        entryId,
-        leadId,
-        status,
-    }: {
-        entryId: number;
-        leadId: number;
-        status: boolean;
-    }) => void;
+    onPendingChange?: (pending: boolean | undefined) => void;
 }
+
 interface PropsFromDispatch {
     setEntryVerification: typeof patchEntryVerificationAction;
 }
@@ -59,6 +50,12 @@ interface VerificationOption {
     key: boolean | string | number;
     value: string;
 }
+
+const shouldHideEntryEdit = ({ entryPermissions }: {
+    entryPermissions: {
+        modify: boolean;
+    };
+}) => !entryPermissions.modify;
 
 const verificationStatusOptions: VerificationOption[] = [
     {
@@ -73,13 +70,13 @@ const verificationStatusOptions: VerificationOption[] = [
 ];
 
 
-type Props = AddRequestProps<ComponentProps, Params>;
+type Props = AddRequestProps<ComponentProps & PropsFromDispatch, Params>;
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
 });
 
-const requestOptions: Requests<ComponentProps, Params> = {
+const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
     setEntryVerificationRequest: {
         url: ({
             props: { entryId },
@@ -108,23 +105,24 @@ const requestOptions: Requests<ComponentProps, Params> = {
 function EntryVerify(props: Props) {
     const {
         className,
-        hide,
-        verified: verifiedFromProps = false,
+        value = false,
         requests,
         title,
-        setEntryVerificationPending,
+        onPendingChange,
     } = props;
 
     const {
         setEntryVerificationRequest,
     } = requests;
 
-    const [verified, setVerificationStatus] = useState(verifiedFromProps);
+    // FIXME: we can remove verified and use value instead
+    const [verified, setVerificationStatus] = useState(value);
 
     useEffect(() => {
-        setVerificationStatus(verifiedFromProps);
-    }, [verifiedFromProps]);
+        setVerificationStatus(value);
+    }, [value]);
 
+    // FIXME: memoize this
     const selectedOption = verificationStatusOptions.find(v => v.key === verified) ||
                            verificationStatusOptions[1];
 
@@ -137,18 +135,18 @@ function EntryVerify(props: Props) {
     const { pending } = setEntryVerificationRequest;
 
     useEffect(() => {
-        if (setEntryVerificationPending) {
-            setEntryVerificationPending(pending);
+        if (onPendingChange) {
+            onPendingChange(pending);
         }
     }, [
         pending,
-        setEntryVerificationPending,
+        onPendingChange,
     ]);
 
     return (
         <div className={_cs(className, styles.verifyContainer)}>
             <Cloak
-                hide={hide}
+                hide={shouldHideEntryEdit}
                 render={
                     <DropdownEdit
                         currentSelection={selectedOption && selectedOption.key}

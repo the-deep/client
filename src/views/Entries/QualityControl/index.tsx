@@ -47,6 +47,7 @@ function QualityControl(props: QualityControlProps) {
 
                             return entries.map(e => (
                                 <EntryCard
+                                    className={styles.card}
                                     key={e.id}
                                     entry={e}
                                     lead={lead}

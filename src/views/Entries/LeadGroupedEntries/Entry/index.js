@@ -323,11 +323,10 @@ export default class Entry extends React.PureComponent {
                                     },
                                 )
                             ) : undefined}
-                            verified={verified}
+                            value={verified}
                             entryId={entryId}
                             leadId={leadId}
-                            hide={Entry.shouldHideEntryEdit}
-                            setEntryVerificationPending={this.handleEntryVerificationPendingChange}
+                            onPendingChange={this.handleEntryVerificationPendingChange}
                         />
                         <ButtonLikeLink
                             className={styles.editEntryLink}

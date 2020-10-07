@@ -26,7 +26,11 @@
             .entry-list {
                 display: flex;
                 flex-wrap: wrap;
-                padding: var(--spacing-medium);
+                padding: var(--spacing-large);
+
+                .card {
+                    margin: var(--spacing-large);
+                }
             }
         }
     }
