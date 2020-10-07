@@ -1,5 +1,5 @@
 import React from 'react';
-import { detachedFaram } from '@togglecorp/faram';
+import { detachedFaram, Schema, ComputeSchema } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -56,11 +56,11 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
     const { widgets } = framework;
 
     const [schema, computeSchema] = React.useMemo(() => {
-        const widgetComputeSchema = {
+        const widgetComputeSchema: ComputeSchema = {
             fields: {},
         };
 
-        const widgetSchema = {
+        const widgetSchema: Schema = {
             fields: {},
         };
 
@@ -68,7 +68,7 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
             const computeSchemaForWidget = getComputeSchemaForWidget(widget, widgets);
 
             if (computeSchemaForWidget) {
-                widgetComputeSchema.fields[widget.id] = {
+                const cs: ComputeSchema = {
                     fields: {
                         data: {
                             fields: {
@@ -77,6 +77,7 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
                         },
                     },
                 };
+                widgetComputeSchema.fields[widget.id] = cs;
             }
 
             widgetSchema.fields[widget.id] = {

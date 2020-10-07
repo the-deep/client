@@ -5,6 +5,7 @@ import ResizableH from '#rscv/Resizable/ResizableH';
 
 // import { Lead } from '#typings/lead';
 import { LeadWithGroupedEntriesFields } from '#typings/entry';
+import { FrameworkFields } from '#typings/framework';
 
 import EntryCard from './EntryCard';
 
@@ -15,7 +16,7 @@ interface QualityControlProps {
     className?: string;
     projectId: number;
     leadGroupedEntriesList: LeadWithGroupedEntriesFields[];
-    framework: unknown;
+    framework: FrameworkFields;
 }
 
 function QualityControl(props: QualityControlProps) {

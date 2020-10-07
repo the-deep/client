@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import Faram, { FaramGroup } from '@togglecorp/faram';
+import Faram, { FaramGroup, Schema, ComputeSchema } from '@togglecorp/faram';
 
 import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
@@ -16,7 +16,7 @@ import {
     levelTwoWidgets,
 } from '#utils/widget';
 
-import { fetchWidgetTagComponent } from '#widgets';
+import { fetchWidgetTagComponent, hasWidgetTagComponent } from '#widgets';
 
 import WidgetErrorWrapper from '#components/general/WidgetErrorWrapper';
 import WidgetContentWrapper from '#components/general/WidgetContentWrapper';
@@ -30,7 +30,7 @@ interface WidgetHeaderProps {
     error: string;
 }
 
-function getWidgetHeaderComponent(isExcerptWidget: boolean, title: string) {
+function getWidgetHeaderComponent(isExcerptWidget: boolean, title: string | undefined) {
     return (p: WidgetHeaderProps) => {
         const {
             hasError,
@@ -68,8 +68,8 @@ export interface WidgetFormProps {
     mode: string;
     onAttributesChange: (newValue: EntryFields['attributes'], errors: object) => void;
     onExcerptChange: (newExcerptData: object) => void;
-    schema: object;
-    computeSchema: object;
+    schema: Schema;
+    computeSchema: ComputeSchema;
     error: object;
     disabled?: boolean;
 }
@@ -90,7 +90,7 @@ function WidgetForm(props: WidgetFormProps) {
 
     const { widgets } = framework;
 
-    const layoutSelector = React.useCallback((widget) => {
+    const layoutSelector = useCallback((widget: WidgetFields<unknown>) => {
         const {
             properties: {
                 listGridLayout,
@@ -101,20 +101,12 @@ function WidgetForm(props: WidgetFormProps) {
         return (mode === 'list' ? listGridLayout : overviewGridLayout);
     }, [mode]);
 
-    const getWidgetHeader = React.useCallback((widget) => {
+    const getWidgetHeader = useCallback((widget: WidgetFields<unknown>) => {
         const {
             id,
             title,
             widgetId,
         } = widget;
-
-        const {
-            attributes: {
-                [id]: {
-                    data,
-                } = {},
-            },
-        } = value;
 
         const isExcerptWidget = widgetId === 'excerptWidget';
         const Header = getWidgetHeaderComponent(isExcerptWidget, title);
@@ -127,9 +119,9 @@ function WidgetForm(props: WidgetFormProps) {
                 />
             </FaramGroup>
         );
-    }, [value]);
+    }, []);
 
-    const getWidgetContent = React.useCallback((widget: WidgetFields<unknown>) => {
+    const getWidgetContent = useCallback((widget: WidgetFields<unknown>) => {
         const {
             id,
             widgetId,
@@ -193,6 +185,15 @@ function WidgetForm(props: WidgetFormProps) {
     }, [mode, value, onExcerptChange]);
 
 
+    const filteredWidgets = useMemo(
+        () => (
+            widgets.filter(
+                w => hasWidgetTagComponent(w.widgetId, mode, w.properties.addedFrom),
+            )
+        ),
+        [widgets, mode],
+    );
+
     return (
         <Faram
             className={_cs(styles.widgetForm, className)}
@@ -204,7 +205,7 @@ function WidgetForm(props: WidgetFormProps) {
             disabled={disabled}
         >
             <GridViewLayout
-                data={widgets}
+                data={filteredWidgets}
                 layoutSelector={layoutSelector}
                 itemHeaderModifier={getWidgetHeader}
                 itemContentModifier={getWidgetContent}

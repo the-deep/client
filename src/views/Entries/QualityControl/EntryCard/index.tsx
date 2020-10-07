@@ -148,7 +148,7 @@ function EntryCard(props: EntryCardProps) {
                         assignee={lead.assigneeDetails.id}
                     />
                     <EntryEditButton
-                        entryId={entry.id}
+                        entry={entry}
                         framework={framework}
                     />
                     {/* FIXME: this component cannot be used, since it changes value in redux */}

@@ -12,22 +12,51 @@ declare module '@togglecorp/faram' {
         member: ObjectSchema;
         keySelector: (value: any) => string | number;
     }
-
     export type Schema = ObjectSchema;
+
+    interface ObjectComputeSchema {
+        fields: {
+            [key: string]: ArrayComputeSchema
+            | ObjectComputeSchema
+            | ((attr: any, w: any, d: any, v?: any) => any);
+        };
+    }
+    interface ArrayComputeSchema {
+        member: ObjectComputeSchema;
+    }
+    export type ComputeSchema = ObjectComputeSchema;
+
+    const test: ComputeSchema = {
+        fields: {
+            data: {
+                fields: {
+                    value: () => {},
+                },
+            },
+        },
+    };
 
     interface FaramProps {
         className?: string;
         schema: Schema;
+        computeSchema?: ComputeSchema;
         value: any;
         error: any;
         onChange: (faramValues: any, faramErrors: any) => void;
-        onValidationSuccess?: (faramValues: any) => void;
+        onValidationSuccess?: (faramValues: any, faramValues: any) => void;
         onValidationFailure?: (faramErrors: any) => void;
         disabled?: boolean;
     }
 
     export default class Faram extends React.PureComponent<FaramProps> {
     }
+
+    export function detachedFaram(args: {
+        value: any;
+        schema: Schema;
+        onValidationSuccess?: (faramValues: any, faramValues: any) => void;
+        onValidationFailure?: (faramErrors: any) => void;
+    }): void;
 
     export function FaramList(props: {
         faramElementName: string;
