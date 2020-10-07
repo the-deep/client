@@ -52,7 +52,8 @@ export interface LeadWithGroupedEntriesFields {
     assigneeDetails: UserFields;
     authorsDetails: OrganizationFields[];
     createdByDetails: UserFields;
-    sourceDetails: OrganizationFields;
+    sourceRaw?: string;
+    sourceDetails?: OrganizationFields;
     title: string;
     pageCount: number;
     confidentialityDisplay: string;

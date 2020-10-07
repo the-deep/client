@@ -108,7 +108,7 @@ function EntryCard(props: EntryCardProps) {
                             className={styles.title}
                         />
                         <div className={styles.value}>
-                            { lead.sourceDetails.title }
+                            { lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw }
                         </div>
                     </div>
                     <div className={styles.confidentiality}>
