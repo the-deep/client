@@ -70,13 +70,13 @@ const verificationStatusOptions: VerificationOption[] = [
 ];
 
 
-type Props = AddRequestProps<ComponentProps, Params>;
+type Props = AddRequestProps<ComponentProps & PropsFromDispatch, Params>;
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
 });
 
-const requestOptions: Requests<ComponentProps, Params> = {
+const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
     setEntryVerificationRequest: {
         url: ({
             props: { entryId },
@@ -115,12 +115,14 @@ function EntryVerify(props: Props) {
         setEntryVerificationRequest,
     } = requests;
 
+    // FIXME: we can remove verified and use value instead
     const [verified, setVerificationStatus] = useState(value);
 
     useEffect(() => {
         setVerificationStatus(value);
     }, [value]);
 
+    // FIXME: memoize this
     const selectedOption = verificationStatusOptions.find(v => v.key === verified) ||
                            verificationStatusOptions[1];
 
