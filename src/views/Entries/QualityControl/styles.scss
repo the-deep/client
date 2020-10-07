@@ -20,10 +20,12 @@
         }
 
         .right {
-            flex-grow: 1;
+            width: calc(100% - var(--width-left-initial));
             min-width: var(--width-right-min);
 
             .entry-list {
+                display: flex;
+                flex-wrap: wrap;
                 padding: var(--spacing-medium);
             }
         }

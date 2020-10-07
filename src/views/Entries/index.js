@@ -186,6 +186,7 @@ export default class Entries extends React.PureComponent {
                 rendererParams: () => ({
                     projectId: this.props.projectId,
                     className: styles.qc,
+                    leadGroupedEntriesList: this.props.leadGroupedEntriesList,
                 }),
             },
         };
@@ -413,7 +414,6 @@ export default class Entries extends React.PureComponent {
                 { !blockedLoading && (
                     leadGroupedEntriesList.length > 0 && totalEntriesCount > 0 ? (
                         <List
-                            className={styles.leadGroupedEntriesList}
                             data={leadGroupedEntriesList}
                             renderer={LeadGroupedEntries}
                             keySelector={leadKeySelector}

@@ -140,6 +140,8 @@ const iconNames = {
     down: 'ion-ios-arrow-down',
     up: 'ion-ios-arrow-up',
     paintBrush: 'fa fa-paint-brush',
+    book: 'fa fa-book',
+    externalLink: 'fa fa-external-link',
 };
 
 export default iconNames;
