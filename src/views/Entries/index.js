@@ -10,7 +10,11 @@ import {
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
-import { RequestCoordinator } from '#request';
+import {
+    RequestCoordinator,
+    methods,
+    RequestClient,
+} from '#request';
 
 import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
@@ -20,8 +24,11 @@ import Pager from '#rscv/Pager';
 import Page from '#rscv/Page';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
+import { processEntryFilters } from '#entities/entries';
+import { unique } from '#rsu/common';
 
 import { isDev, isAlpha } from '#config/env';
+import notify from '#notify';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
@@ -44,10 +51,6 @@ import {
     setEntriesViewActivePageAction,
     geoOptionsForProjectSelector,
 } from '#redux';
-
-import EntriesRequest from './requests/EntriesRequest';
-import FrameworkRequest from './requests/FrameworkRequest';
-import GeoOptionsRequest from './requests/GeoOptionsRequest';
 
 import QualityControl from './QualityControl';
 import EntriesViz from './EntriesViz';
@@ -115,7 +118,7 @@ const mapDispatchToProps = dispatch => ({
 
 const propTypes = {
     activePage: PropTypes.number.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     entriesFilter: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     framework: PropTypes.object,
@@ -126,11 +129,12 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     totalEntriesCount: PropTypes.number,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-    setEntries: PropTypes.func.isRequired,
+    setEntries: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setEntriesViewActivePage: PropTypes.func.isRequired,
-    setFramework: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
+    setFramework: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     unsetEntriesViewFilter: PropTypes.func.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
@@ -145,8 +149,140 @@ const leadKeySelector = d => d.id;
 
 const MAX_ENTRIES_PER_REQUEST = 50;
 
+const requestOptions = {
+    geoOptionsRequest: {
+        url: '/geo-options/',
+        query: ({ props }) => ({
+            project: props.projectId,
+        }),
+        onMount: true,
+        onPropsChanged: ['projectId'],
+        onSuccess: ({ response, props, params }) => {
+            const {
+                setGeoOptions,
+                projectId,
+            } = props;
+
+            const {
+                onGeoOptionsSuccess,
+            } = params;
+
+            setGeoOptions({
+                projectId,
+                locations: response,
+            });
+
+            onGeoOptionsSuccess();
+        },
+        onFailure: ({ response }) => {
+            const message = response.$internal.join(' ');
+            notify.send({
+                title: _ts('entries', 'entriesTabLabel'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('entries', 'entriesTabLabel'),
+                type: notify.type.ERROR,
+                message: _ts('entries', 'geoOptionsFatalMessage'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        extras: {
+            schemaName: 'geoOptions',
+        },
+    },
+    projectFrameworkRequest: {
+        url: ({ props: { projectId } }) => `/projects/${projectId}/analysis-framework/`,
+        onMount: true,
+        onPropsChanged: ['projectId'],
+        onSuccess: ({ response, props, params }) => {
+            const { setFramework } = props;
+            const { onFrameworkGetSuccess } = params;
+
+            setFramework({
+                analysisFramework: response,
+            });
+
+            onFrameworkGetSuccess();
+        },
+        extras: {
+            schemaName: 'analysisFramework',
+        },
+    },
+    entriesRequest: {
+        url: '/entries/filter/',
+        query: ({ props }) => ({
+            offset: (props.activePage - 1) * MAX_ENTRIES_PER_REQUEST,
+            limit: MAX_ENTRIES_PER_REQUEST,
+        }),
+        method: methods.POST,
+        body: ({ props }) => {
+            const {
+                geoOptions,
+                framework,
+                projectId,
+                entriesFilters: widgetFilters,
+            } = props;
+
+            const otherFilters = {
+                project: projectId,
+            };
+
+            const processedFilters = processEntryFilters(
+                widgetFilters,
+                framework,
+                geoOptions,
+            );
+
+            return ({
+                filters: [
+                    ...processedFilters,
+                    ...Object.entries(otherFilters),
+                ],
+            });
+        },
+        onMount: false,
+        onPropsChanged: ['entriesFilter', 'activePage'],
+        onSuccess: ({ response, props }) => {
+            const {
+                setEntries,
+                projectId,
+            } = props;
+            const {
+                results: responseEntries,
+                count: totalEntriesCount,
+            } = response;
+
+            const uniqueLeadList = unique(
+                responseEntries.map(entry => entry.lead),
+                v => v,
+                v => v.id,
+            ).map(l => ({
+                ...l,
+                entries: responseEntries
+                    .filter(e => l.id === e.lead.id)
+                    .map(e => ({ ...e, lead: e.lead.id })),
+            }));
+
+            setEntries({
+                projectId,
+                entries: uniqueLeadList,
+                totalEntriesCount,
+            });
+        },
+        extras: {
+            schemaName: 'entriesGetResponse',
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
+@RequestClient(requestOptions)
 export default class Entries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -154,11 +290,22 @@ export default class Entries extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            pendingEntries: true,
-            pendingFramework: true,
-            pendingGeoOptions: true,
+        const {
+            requests: {
+                geoOptionsRequest,
+                projectFrameworkRequest,
+            },
+        } = props;
 
+        geoOptionsRequest.setDefaultParams({
+            onGeoOptionsSuccess: this.handleGeoOptionsGetSuccess,
+        });
+
+        projectFrameworkRequest.setDefaultParams({
+            onFrameworkGetSuccess: this.handleFrameworkGetSuccess,
+        });
+
+        this.state = {
             successFramework: false,
             successGeoOptions: false,
 
@@ -192,93 +339,37 @@ export default class Entries extends React.PureComponent {
             },
         };
 
-        this.entriesRequest = new EntriesRequest({
-            getFilters: () => this.props.entriesFilter,
-            getLimit: () => MAX_ENTRIES_PER_REQUEST,
-            getOffset: () => (this.props.activePage - 1) * MAX_ENTRIES_PER_REQUEST,
-            getProjectId: () => this.props.projectId,
-            setEntries: this.props.setEntries,
-            setState: params => this.setState(params),
-            getFramework: () => this.props.framework,
-            getGeoOptions: () => this.props.geoOptions,
-        });
-
-        this.geoOptionsRequest = new GeoOptionsRequest({
-            setState: params => this.setState(params),
-            getProjectId: () => this.props.projectId,
-            setGeoOptions: this.props.setGeoOptions,
-            setSuccess: () => this.setState({ successGeoOptions: true }, this.startEntriesRequest),
-        });
-
-        this.frameworkRequest = new FrameworkRequest({
-            setState: params => this.setState(params),
-            getProjectId: () => this.props.projectId,
-            setFramework: this.props.setFramework,
-            setSuccess: () => this.setState({ successFramework: true }, this.startEntriesRequest),
-        });
-
         this.leadEntries = React.createRef();
     }
 
     componentDidMount() {
-        this.geoOptionsRequest.init();
-        this.geoOptionsRequest.start();
-
-        this.frameworkRequest.init();
-        this.frameworkRequest.start();
-
         window.addEventListener('scroll', this.handleScroll, true);
     }
 
     componentWillReceiveProps(nextProps) {
         const {
-            projectId: oldProjectId,
             framework: oldAf,
-            entriesFilter: oldFilter,
-            activePage: oldActivePage,
+            projectId: oldProjectId,
         } = this.props;
         const {
-            projectId: newProjectId,
             framework: newAf,
-            entriesFilter: newFilter,
-            activePage: newActivePage,
+            projectId: newProjectId,
         } = nextProps;
 
         if (oldProjectId !== newProjectId) {
             this.setState({
-                pendingEntries: true,
-                pendingFramework: true,
-                pendingGeoOptions: true,
+                successFramework: false,
+                successGeoOptions: false,
             });
-
-            this.frameworkRequest.init();
-            this.frameworkRequest.start();
-
-            this.geoOptionsRequest.init();
-            this.geoOptionsRequest.start();
-
-            // this.entriesRequest.init();
-            // this.entriesRequest.start();
-            return;
         }
 
         if (oldAf !== newAf && (!oldAf || !newAf || oldAf.versionId !== newAf.versionId)) {
             // clear previous filters
             this.props.unsetEntriesViewFilter();
         }
-
-        if (oldFilter !== newFilter || oldActivePage !== newActivePage) {
-            // FIXME: only if not pending anything
-            this.entriesRequest.init();
-            this.entriesRequest.start();
-        }
     }
 
     componentWillUnmount() {
-        this.entriesRequest.stop();
-        this.geoOptionsRequest.stop();
-        this.frameworkRequest.stop();
-
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
@@ -307,17 +398,32 @@ export default class Entries extends React.PureComponent {
         };
     })
 
-
     tabRendererParams = key => ({
         view: key,
     });
 
     startEntriesRequest = () => {
         const { successFramework, successGeoOptions } = this.state;
+        const {
+            requests: {
+                entriesRequest,
+            },
+        } = this.props;
         if (successFramework && successGeoOptions) {
-            this.entriesRequest.init();
-            this.entriesRequest.start();
+            entriesRequest.do();
         }
+    }
+
+    handleGeoOptionsGetSuccess = () => {
+        this.setState({
+            successGeoOptions: true,
+        }, this.startEntriesRequest);
+    }
+
+    handleFrameworkGetSuccess = () => {
+        this.setState({
+            successFramework: true,
+        }, this.startEntriesRequest);
     }
 
     handleScroll = (e) => {
@@ -396,12 +502,12 @@ export default class Entries extends React.PureComponent {
         const {
             leadGroupedEntriesList,
             totalEntriesCount,
+            requests: {
+                geoOptionsRequest: { pending: pendingGeoOptions },
+                projectFrameworkRequest: { pending: pendingFramework },
+                entriesRequest: { pending: pendingEntries },
+            },
         } = this.props;
-        const {
-            pendingGeoOptions,
-            pendingEntries,
-            pendingFramework,
-        } = this.state;
 
         const blockedLoading = pendingGeoOptions || pendingFramework;
         const nonBlockedLoading = pendingEntries;
@@ -433,12 +539,12 @@ export default class Entries extends React.PureComponent {
             totalEntriesCount,
             geoOptions,
             currentUserActiveProject: { isVisualizationEnabled },
+            requests: {
+                projectFrameworkRequest: { pending: pendingFramework },
+            },
         } = this.props;
 
-        const {
-            pendingFramework,
-            view,
-        } = this.state;
+        const { view } = this.state;
 
         const {
             tabs,
