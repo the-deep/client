@@ -1,6 +1,6 @@
 import { DatabaseEntityBase } from './common';
 
-type EntryType = 'excerpt' | 'image' | 'dataSeries';
+export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
 export interface ProjectLabelFields {
     count: number;
@@ -30,6 +30,27 @@ export interface UserFields {
     email: string;
 }
 
+export interface TabularDataFields {
+    cache: {
+        healthStatus: {
+            empty: number;
+            total: number;
+            invalid: number;
+        };
+        imageStatus: string;
+        images: {
+            id: number;
+            format: string;
+            chartType: string;
+        }[];
+        status: string;
+        series: {
+            value: string | number;
+            count: number;
+        };
+    };
+}
+
 export interface EntryFields extends DatabaseEntityBase {
     attributes: AttributeFields[];
     analysisFramework: number;
@@ -44,11 +65,12 @@ export interface EntryFields extends DatabaseEntityBase {
     clientId: string;
     highlightHidden: boolean;
     image?: string;
+    tabularField: number;
+    tabularFieldData: TabularDataFields;
     lead: number;
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
-    tabularField: unknown;
 }
 
 export interface LeadWithGroupedEntriesFields {

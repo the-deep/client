@@ -1166,8 +1166,6 @@
         "-25166641": "Done",
         "-88808908": "Pen color",
         "-63730365": "Pen size",
-        "-31875190": "Screenshot touchup",
-        "-5492927": "Download image",
         "-31875190": "Draw over screenshot",
         "-5492927": "Export to image",
         "-7637573": "Draw tools",
@@ -1183,7 +1181,12 @@
         "-435034987": "Searching",
         "-79879798": "Image",
         "-42342342": "Entry Type",
-        "-43286063": "Quantitative"
+        "-43286063": "Quantitative",
+        "-68991934": "Author(s): {authors}",
+        "-45253596": "Number of pages in Lead document",
+        "-6895713": "Publishing organization: {leadSource}",
+        "-79339447": "Entry created on",
+        "-7036637": "Lead created by: {user}"
     },
     "links": {
         "browserExtension": {
@@ -3402,6 +3405,14 @@
             "cancelButtonLabel": 61,
             "editModalHeading": -85998802,
             "saveButtonLabel": 25
+        },
+        "entries.qualityControl": {
+            "authorListTooltip": -68991934,
+            "leadPublishedOnTooltip": -15193425,
+            "leadPageCountTooltip": -45253596,
+            "leadSourceTooltip": -6895713,
+            "entryCreatedOnTooltip": -79339447,
+            "leadCreatedByTooltip": -7036637
         }
     }
 }
