@@ -27,6 +27,7 @@
         "#redux/*": ["./src/redux/*"],
         "#request": ["./src/request"],
         "#resources/*": ["./src/resources/*"],
+        "#hooks/*": ["./src/hooks/*"],
         "#rest": ["./src/rest"],
         "#rest/*": ["./src/rest/*"],
         "#rsca/*": ["./src/vendor/react-store/components/Action/*"],
@@ -48,8 +49,7 @@
         "#widgets/*": ["./src/widgets/*"],
         "#typings": ["./src/typings"],
         "#typings/*": ["./src/typings/*"],
-        "#qbc/*": ["./src/components/questionnaire-builder/*"],
-        "#hooks/*": ["./src/hooks/*"]
+        "#qbc/*": ["./src/components/questionnaire-builder/*"]
     }
   },
   "include": [

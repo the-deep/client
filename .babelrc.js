@@ -35,6 +35,9 @@ module.exports = {
         ['@babel/plugin-proposal-class-properties', { 'loose': false }],
         '@babel/plugin-proposal-json-strings',
 
+        '@babel/plugin-proposal-optional-chaining',
+        '@babel/plugin-proposal-nullish-coalescing-operator',
+
         [
             'module-resolver',
             {
@@ -51,6 +54,7 @@ module.exports = {
                     '#request': './src/request',
                     '#resources': './src/resources',
                     '#rest': './src/rest',
+                    '#hooks': './src/hooks',
                     '#rsca': './src/vendor/react-store/components/Action',
                     '#rscg': './src/vendor/react-store/components/General',
                     '#rsci': './src/vendor/react-store/components/Input',
@@ -68,7 +72,6 @@ module.exports = {
                     '#widgets': './src/widgets',
                     '#typings': './src/typings',
                     '#qbc': './src/components/questionnaire-builder',
-                    '#hooks': './src/hooks',
                 },
             },
         ],
