@@ -48,6 +48,7 @@ export interface EntryFields extends DatabaseEntityBase {
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
+    tabularField: unknown;
 }
 
 export interface LeadWithGroupedEntriesFields {

@@ -2,27 +2,52 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 
+import EditEntryFormModal from '#components/general/EditEntryFormModal';
+
+import { EntryFields } from '#typings/entry';
+import { FrameworkFields } from '#typings/framework';
+import _ts from '#ts';
+
 import styles from './styles.scss';
 
 interface EntryEditButtonProps {
     className?: string;
-    entryId: number;
+    entry: EntryFields;
+    framework: FrameworkFields;
 }
 
-// TODO: implement this properly
 function EntryEditButton(props: EntryEditButtonProps) {
     const {
+        entry,
         className,
+        framework,
     } = props;
 
-    const handleEntryEdit = React.useCallback(() => {}, []);
+    const [showModal, setShowModal] = React.useState(false);
+
+    const handleEntryEdit = React.useCallback(() => {
+        setShowModal(true);
+    }, [setShowModal]);
+
+    const handleEditEntryModalClose = React.useCallback(() => {
+        setShowModal(false);
+    }, [setShowModal]);
 
     return (
-        <Button
-            className={className}
-            iconName="edit"
-            onClick={handleEntryEdit}
-        />
+        <>
+            <Button
+                className={className}
+                iconName="edit"
+                onClick={handleEntryEdit}
+            />
+            {showModal && (
+                <EditEntryFormModal
+                    framework={framework}
+                    entry={entry}
+                    onClose={handleEditEntryModalClose}
+                />
+            )}
+        </>
     );
 }
 

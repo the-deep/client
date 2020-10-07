@@ -1,6 +1,5 @@
-import {
-    FrameworkQuestionElement,
-} from './questionnaire';
+import { DatabaseEntityBase } from './common';
+import { FrameworkQuestionElement } from './questionnaire';
 
 type WidgetType = 'excerptWidget'
     | 'textWidget'
@@ -42,6 +41,7 @@ export interface WidgetElement<T> {
     properties: WidgetPropertiesElement<T>;
 }
 
+// FIXME: merge with FrameworkFields
 export interface FrameworkElement {
     id: number;
     widgets: WidgetElement<unknown>[];
@@ -90,3 +90,62 @@ export type Matrix2dWidgetElement = WidgetElement<{
     sectors: Matrix2dSectorElement[];
     dimensions: Matrix2dDimensionElement[];
 }>;
+
+export interface ExportableFields {
+    excel: {
+        // TODO; use actual enum
+        type: string;
+        title: string;
+        children: unknown[];
+    };
+    report: {
+        levels: unknown[];
+    };
+}
+
+export interface FilterFields {
+    filterType: string;
+    id: number;
+    key: string;
+    title: string;
+    widgetKey: string;
+    properties: {
+        // TODO: use actual enum
+        type: string;
+        options: unknown[];
+    };
+}
+
+export interface FrameworkFields extends DatabaseEntityBase {
+    allProjectsCount: number;
+    description: string;
+    entriesCount: number;
+    exportables: ExportableFields[];
+    filters: FilterFields[];
+    idAdmin: boolean;
+    isPrivate: boolean;
+    members: number[];
+    properties: unknown;
+    questions: unknown[];
+    role: {
+        id: number;
+        title: string;
+        isPrivateRole: boolean;
+        canAddUse: boolean;
+        canCloneFramework: boolean;
+        canEditFramework: boolean;
+        canUseInOtherProjects: boolean;
+    };
+    title: string;
+    usersWithAddPermission: {
+        id: number;
+        displayName: string;
+        email: string;
+    }[];
+    visibleProjects: {
+        id: number;
+        isPrivate: boolean;
+        title: string;
+    }[];
+    widgets: WidgetElement<unknown>[];
+}

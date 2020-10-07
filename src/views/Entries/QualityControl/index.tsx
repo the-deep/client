@@ -3,8 +3,9 @@ import { _cs } from '@togglecorp/fujs';
 
 import ResizableH from '#rscv/Resizable/ResizableH';
 
-import { Lead } from '#typings/lead';
+// import { Lead } from '#typings/lead';
 import { LeadWithGroupedEntriesFields } from '#typings/entry';
+import { FrameworkFields } from '#typings/framework';
 
 import EntryCard from './EntryCard';
 
@@ -15,12 +16,14 @@ interface QualityControlProps {
     className?: string;
     projectId: number;
     leadGroupedEntriesList: LeadWithGroupedEntriesFields[];
+    framework: FrameworkFields;
 }
 
 function QualityControl(props: QualityControlProps) {
     const {
         className,
         leadGroupedEntriesList,
+        framework,
         // projectId,
     } = props;
 
@@ -51,6 +54,7 @@ function QualityControl(props: QualityControlProps) {
                                     key={e.id}
                                     entry={e}
                                     lead={lead}
+                                    framework={framework}
                                 />
                             ));
                         })}
