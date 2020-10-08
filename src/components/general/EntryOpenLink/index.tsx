@@ -13,6 +13,7 @@ interface EntryOpenLinkProps {
     entryId: number;
     projectId: number;
     leadId: number;
+    disabled?: boolean;
 }
 
 // TODO: implement this properly
@@ -22,6 +23,7 @@ function EntryOpenLink(props: EntryOpenLinkProps) {
         projectId,
         leadId,
         entryId,
+        disabled,
     } = props;
 
     const route = React.useMemo(() => ({
@@ -36,6 +38,7 @@ function EntryOpenLink(props: EntryOpenLinkProps) {
         <ButtonLikeLink
             className={_cs(styles.entryOpenLink, className)}
             to={route}
+            disabled={disabled}
         >
             <Icon
                 name="externalLink"

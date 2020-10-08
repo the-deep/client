@@ -14,6 +14,7 @@ export interface EntryCommentButtonProps {
     commentCount: number;
     entryId: number;
     assignee: number;
+    disabled?: boolean;
 }
 
 function EntryCommentButton(props: EntryCommentButtonProps) {
