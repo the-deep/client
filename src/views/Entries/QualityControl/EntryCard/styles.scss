@@ -1,14 +1,18 @@
 .author-list-output {
     display: flex;
     align-items: center;
-    padding: 0 calc(var(--spacing-medium) - var(--spacing-small));
+    padding: calc(var(--spacing-small) - var(--spacing-extra-small)) calc(var(--spacing-medium) - var(--spacing-extra-small));
+    overflow: auto;
 
     .icon {
-        margin: var(--spacing-small);
+        margin: var(--spacing-extra-small);
     }
 
     .value {
-        padding: var(--spacing-small);
+        padding: var(--spacing-extra-small);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         font-size: var(--font-size-small);
     }
 }
@@ -22,7 +26,6 @@
     background-color: var(--color-foreground);
     padding: calc(var(--spacing-large) - var(--spacing-medium));
     width: 346px;
-    height: 320px;
     overflow: auto;
 
     &.verified {
@@ -72,6 +75,9 @@
 
             .title {
                 padding: var(--spacing-small);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
                 color: var(--color-accent);
                 font-weight: var(--font-weight-bold);
             }
@@ -80,14 +86,12 @@
 
     .middle {
         flex-grow: 1;
-        padding: calc(var(--spacing-medium) - var(--spacing-small));
+        padding: var(--spacing-small) var(--spacing-medium);
         overflow: auto;
 
-        .excerpt {
-            padding: var(--spacing-small);
-            text-align: justify;
-            color: var(--color-text-label);
-            font-size: var(--font-size-small);
+        .excerpt-output {
+            padding: 0;
+            height: 240px;
         }
     }
 
@@ -103,13 +107,19 @@
                 align-items: center;
                 flex-grow: 1;
                 padding: 0 calc(var(--spacing-medium) - var(--spacing-small));
+                overflow: auto;
 
                 .icon {
+                    flex-shrink: 0;
                     margin: var(--spacing-small);
                 }
 
                 .value {
+                    flex-grow: 1;
                     padding: var(--spacing-small);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                     font-size: var(--font-size-small);
                 }
             }
@@ -124,9 +134,14 @@
         .entry-details-row {
             display: flex;
             align-items: center;
+            overflow: auto;
 
             .created-by {
+                flex-grow: 1;
                 padding: var(--spacing-small);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             .created-at {

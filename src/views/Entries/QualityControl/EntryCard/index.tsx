@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 
+import ExcerptOutput from '#widgetComponents/ExcerptOutput';
 import DateOutput from '#components/viewer/DateOutput';
 import EntryCommentButton from '#components/general/EntryCommentButton';
 import EntryDeleteButton from '#components/general/EntryDeleteButton';
@@ -14,6 +15,7 @@ import {
     EntryFields,
     OrganizationFields,
     LeadWithGroupedEntriesFields,
+    EntryType,
 } from '#typings/entry';
 import {
     FrameworkFields,
@@ -23,11 +25,26 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-
 interface AuthorListOutputProps {
     className?: string;
     value: OrganizationFields[];
 }
+
+const entryTypeToValueMap: {
+    [key in EntryType]: keyof EntryFields;
+} = {
+    excerpt: 'excerpt',
+    image: 'image',
+    dataSeries: 'tabularFieldData',
+};
+
+const entryTypeToExcerptTypeMap: {
+    [key in EntryType]: 'text' | 'image' | 'dataSeries';
+} = {
+    excerpt: 'text',
+    image: 'image',
+    dataSeries: 'dataSeries',
+};
 
 function AuthorListOutput(props: AuthorListOutputProps) {
     const {
@@ -35,8 +52,13 @@ function AuthorListOutput(props: AuthorListOutputProps) {
         value = [],
     } = props;
 
+    const displayValue = value.map(o => o.title).join(', ');
+
     return (
-        <div className={_cs(styles.authorListOutput, className)}>
+        <div
+            className={_cs(styles.authorListOutput, className)}
+            title={_ts('entries.qualityControl', 'authorListTooltip', { authors: displayValue })}
+        >
             { value.length > 0 && (
                 <Icon
                     className={styles.icon}
@@ -44,7 +66,7 @@ function AuthorListOutput(props: AuthorListOutputProps) {
                 />
             )}
             <div className={styles.value}>
-                { value.map(o => o.title).join(', ') }
+                {displayValue}
             </div>
         </div>
     );
@@ -65,6 +87,8 @@ function EntryCard(props: EntryCardProps) {
         framework,
     } = props;
 
+    const leadSource = lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw;
+
     return (
         <div className={_cs(className, styles.entryCard, entry.verified && styles.verified)}>
             <section className={styles.top}>
@@ -76,9 +100,13 @@ function EntryCard(props: EntryCardProps) {
                     <DateOutput
                         className={styles.publishedOn}
                         value={lead.publishedOn}
+                        tooltip={_ts('entries.qualityControl', 'leadPublishedOnTooltip')}
                     />
                     {lead.pageCount && (
-                        <div className={styles.pageCount}>
+                        <div
+                            className={styles.pageCount}
+                            title={_ts('entries.qualityControl', 'leadPageCountTooltip')}
+                        >
                             <Icon
                                 className={styles.icon}
                                 name="book"
@@ -90,33 +118,36 @@ function EntryCard(props: EntryCardProps) {
                     )}
                 </div>
                 <div className={styles.titleRow}>
-                    <div className={styles.title}>
+                    <div
+                        className={styles.title}
+                        title={lead.title}
+                    >
                         { lead.title }
                     </div>
                 </div>
             </section>
             <section className={styles.middle}>
                 <div className={styles.row}>
-                    { entry.entryType === 'image' ? (
-                        <img
-                            src={entry.image}
-                            alt={entry.excerpt}
-                        />
-                    ) : (
-                        <div className={styles.excerpt}>
-                            { entry.excerpt }
-                        </div>
-                    )}
+                    <ExcerptOutput
+                        className={styles.excerptOutput}
+                        type={entryTypeToExcerptTypeMap[entry.entryType]}
+                        value={entry[entryTypeToValueMap[entry.entryType]]}
+                    />
                 </div>
             </section>
             <section className={styles.bottom}>
                 <div className={styles.row}>
                     <div className={styles.source}>
-                        <Icon
-                            name="world"
-                            className={styles.title}
-                        />
-                        <div className={styles.value}>
+                        { leadSource && (
+                            <Icon
+                                name="world"
+                                className={styles.title}
+                            />
+                        )}
+                        <div
+                            className={styles.value}
+                            title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
+                        >
                             { lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw }
                         </div>
                     </div>
@@ -125,12 +156,16 @@ function EntryCard(props: EntryCardProps) {
                     </div>
                 </div>
                 <div className={styles.entryDetailsRow}>
-                    <div className={styles.createdBy}>
+                    <div
+                        className={styles.createdBy}
+                        title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
+                    >
                         { entry.createdByName }
                     </div>
                     <DateOutput
                         className={styles.createdAt}
                         value={entry.createdAt}
+                        tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
                     />
                 </div>
                 <div className={styles.actions}>

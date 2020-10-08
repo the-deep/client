@@ -42,11 +42,7 @@ function EntryCommentButton(props: EntryCommentButtonProps) {
             iconName="chat"
             {...otherProps}
         >
-            {commentCount > 0 &&
-            <div className={styles.commentCount}>
-                {commentCount}
-            </div>
-            }
+            {commentCount !== 0 && commentCount}
         </ModalButton>
     );
 }
