@@ -41,6 +41,7 @@ import _ts from '#ts';
 import useArraySelection from '../../../hooks/multiSelection';
 import ActionButtons from '../ActionButtons';
 import FileTypeViewer from './FileTypeViewer';
+import BulkActions from './BulkActions';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -522,6 +523,12 @@ function Table(props) {
                 pending={loading}
                 isFiltered={!isFilterEmpty}
             />
+            {selectedLeads.length > 0 && (
+                <BulkActions
+                    selectedLeads={selectedLeads}
+                    activeProject={activeProject}
+                />
+            )}
         </div>
     );
 }

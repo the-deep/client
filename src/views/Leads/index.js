@@ -56,6 +56,8 @@ import {
 
     removeLeadAction,
     patchLeadAction,
+
+    removeBulkLeadAction,
 } from '#redux';
 import FilterLeadsForm from '#components/other/FilterLeadsForm';
 import _ts from '#ts';
@@ -102,6 +104,8 @@ const propTypes = {
     view: PropTypes.string.isRequired,
 
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    removeBulkLead: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -130,6 +134,8 @@ const mapDispatchToProps = dispatch => ({
     setLeadPageView: params => dispatch(setLeadPageViewAction(params)),
     setLeadPageFilter: params => dispatch(setLeadPageFilterAction(params)),
     setLeadsPerPage: params => dispatch(setLeadPageLeadsPerPageAction(params)),
+
+    removeBulkLead: params => dispatch(removeBulkLeadAction(params)),
 });
 
 // This map is required for Grid view page, previously all the headers were in this
