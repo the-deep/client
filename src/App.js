@@ -36,6 +36,9 @@ import {
 } from '#redux';
 import getUserConfirmation from '#utils/getUserConfirmation';
 
+import { RequestContext } from '#utils/request';
+import { processDeepUrls, processDeepOptions } from '#utils/request/utils';
+
 import schema from '#schema';
 
 import Multiplexer from './Multiplexer';
@@ -148,13 +151,25 @@ export default class App extends React.PureComponent {
     }
 
     render() {
-        if (!this.props.ready) {
+        const {
+            token: { access },
+            ready,
+        } = this.props;
+
+        if (!ready) {
             return <AppLoading />;
         }
 
+        const requestContextValue = {
+            transformUrl: processDeepUrls,
+            transformOptions: (url, options) => processDeepOptions(url, options, access),
+        };
+
         return (
             <BrowserRouter getUserConfirmation={getUserConfirmation}>
-                <Multiplexer />
+                <RequestContext.Provider value={requestContextValue}>
+                    <Multiplexer />
+                </RequestContext.Provider>
             </BrowserRouter>
         );
     }
