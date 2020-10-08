@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -6,27 +6,27 @@ import ListView from '#rsu/../v2/View/ListView';
 
 import styles from './styles.css';
 
-interface Props<T>{
-    keySelector: (datum: T) => string | number;
-    labelSelector: (datum: T) => string | number;
+interface Props<T, K extends string | number>{
+    keySelector: (datum: T) => K;
+    labelSelector: (datum: T) => K;
     childrenSelector: (datum: T) => T[] | undefined;
-    onChange: (key: string | number) => void;
+    onChange: (key: K) => void;
     options: T[];
-    value: string | number | undefined;
+    value: K | undefined;
 }
 
 
-type ToCListProps<T> = Omit<Props<T>, 'options'> & {
+type ToCListProps<T, K extends string | number> = Omit<Props<T, K>, 'options'> & {
     options: T[];
     level: number;
 };
 
-type ToCItemProps<T> = Omit<Props<T>, 'options'> & {
+type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
     options: T;
     level: number;
 };
 
-function ToCItem<T>(props: ToCItemProps<T>) {
+function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const {
         options,
         level,
@@ -41,17 +41,19 @@ function ToCItem<T>(props: ToCItemProps<T>) {
     const title = labelSelector(options);
     const children = childrenSelector(options);
 
-    const handleClick = () => {
-        onChange(id);
-    };
+    const handleClick = useCallback(
+        () => onChange(id),
+        [id, onChange],
+    );
 
     const [collapsed, setCollapsed] = useState<boolean>(false);
 
-    const handleCollapseToggle = () => {
-        setCollapsed(v => !v);
-    };
+    const handleCollapseToggle = useCallback(
+        () => setCollapsed(v => !v),
+        [],
+    );
 
-    const getClassName = () => {
+    const levelClassName = useMemo(() => {
         switch (level) {
             case 0: {
                 return styles.levelZero;
@@ -69,13 +71,11 @@ function ToCItem<T>(props: ToCItemProps<T>) {
                 return styles.leaf;
             }
         }
-    };
+    }, [level]);
 
     const isSelected = id === value;
 
-    const levelClassName = getClassName();
-
-    if (children) {
+    if (children && children.length > 0) {
         return (
             <div>
                 <div className={styles.container}>
@@ -124,7 +124,7 @@ function ToCItem<T>(props: ToCItemProps<T>) {
     );
 }
 
-function ToCList<T>(props: ToCListProps<T>) {
+function ToCList<T, K extends string | number>(props: ToCListProps<T, K>) {
     const { options, keySelector, ...otherProps } = props;
 
     const rendererParams = (_: string | number, v: T) => ({
@@ -144,7 +144,7 @@ function ToCList<T>(props: ToCListProps<T>) {
     );
 }
 
-function TableOfContents<T, K>(props: Props<T>) {
+function TableOfContents<T, K extends string | number>(props: Props<T, K>) {
     return (
         <ToCList
             {...props}

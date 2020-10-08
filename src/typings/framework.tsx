@@ -37,7 +37,7 @@ export interface WidgetElement<T> {
     id: number;
     key: string;
     widgetId: WidgetType;
-    title?: string;
+    title: string;
     properties: WidgetPropertiesElement<T>;
 }
 
@@ -54,7 +54,7 @@ export interface FrameworkElement {
 
 export interface Matrix2dCellElement {
     id: string;
-    title?: string;
+    title: string;
     tooltip?: string;
 }
 
@@ -90,6 +90,7 @@ export type Matrix2dWidgetElement = WidgetElement<{
     sectors: Matrix2dSectorElement[];
     dimensions: Matrix2dDimensionElement[];
 }>;
+
 
 export interface ExportableFields {
     excel: {
@@ -148,4 +149,26 @@ export interface FrameworkFields extends DatabaseEntityBase {
         title: string;
     }[];
     widgets: WidgetElement<unknown>[];
+}
+// Matrix 1d
+
+export interface Matrix1dCellElement {
+    key: string;
+    tooltip?: string;
+    value: string;
+}
+export interface Matrix1dRowElement {
+    key: string;
+    title: string;
+    tooltip: string;
+    color?: string;
+    cells: Matrix1dCellElement[];
+}
+
+export type Matrix1dWidgetElement = WidgetElement<{rows: Matrix1dRowElement[]}>
+
+export interface MatrixTocElement {
+    id: number | string;
+    title: string;
+    children?: MatrixTocElement[] | [];
 }
