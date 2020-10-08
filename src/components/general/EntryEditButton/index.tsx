@@ -14,6 +14,7 @@ interface EntryEditButtonProps {
     className?: string;
     entry: EntryFields;
     framework: FrameworkFields;
+    disabled?: boolean;
 }
 
 function EntryEditButton(props: EntryEditButtonProps) {
@@ -21,6 +22,7 @@ function EntryEditButton(props: EntryEditButtonProps) {
         entry,
         className,
         framework,
+        disabled,
     } = props;
 
     const [showModal, setShowModal] = React.useState(false);
@@ -39,6 +41,7 @@ function EntryEditButton(props: EntryEditButtonProps) {
                 className={className}
                 iconName="edit"
                 onClick={handleEntryEdit}
+                disabled={disabled}
             />
             {showModal && (
                 <EditEntryFormModal

@@ -27,6 +27,12 @@ function QualityControl(props: QualityControlProps) {
         // projectId,
     } = props;
 
+    const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
+
+    const handleEntryDelete = React.useCallback((entryId) => {
+        setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
+    }, [setDeletedEntries]);
+
     return (
         <div className={_cs(className, styles.qualityControl)}>
             <ResizableH
@@ -55,6 +61,8 @@ function QualityControl(props: QualityControlProps) {
                                     entry={e}
                                     lead={lead}
                                     framework={framework}
+                                    isDeleted={deletedEntries[e.id]}
+                                    onDelete={handleEntryDelete}
                                 />
                             ));
                         })}

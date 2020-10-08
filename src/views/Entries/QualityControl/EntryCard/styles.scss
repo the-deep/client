@@ -32,6 +32,11 @@
         border-top-color: var(--color-success);
     }
 
+    &.deleted {
+        opacity: 0.3;
+        border-top-color: var(--color-danger);
+    }
+
     .top {
         flex-shrink: 0;
 

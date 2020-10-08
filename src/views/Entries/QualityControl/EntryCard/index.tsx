@@ -77,6 +77,8 @@ interface EntryCardProps {
     entry: EntryFields;
     lead: Omit<LeadWithGroupedEntriesFields, 'entries'>;
     framework: FrameworkFields;
+    isDeleted?: boolean;
+    onDelete: (entryId: EntryFields['id']) => void;
 }
 
 function EntryCard(props: EntryCardProps) {
@@ -85,12 +87,29 @@ function EntryCard(props: EntryCardProps) {
         entry,
         lead,
         framework,
+        onDelete,
+        isDeleted,
     } = props;
 
     const leadSource = lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw;
 
+    const handleDeletePendingChange = React.useCallback((/* isPending: boolean */) => {
+        // TODO; disable all actions if pending
+    }, []);
+
+    const handleDeleteSuccess = React.useCallback(() => {
+        onDelete(entry.id);
+    }, [onDelete, entry]);
+
     return (
-        <div className={_cs(className, styles.entryCard, entry.verified && styles.verified)}>
+        <div className={
+            _cs(
+                className,
+                styles.entryCard,
+                entry.verified && styles.verified,
+                isDeleted && styles.deleted,
+            )}
+        >
             <section className={styles.top}>
                 <div className={styles.row}>
                     <AuthorListOutput
@@ -171,20 +190,26 @@ function EntryCard(props: EntryCardProps) {
                 <div className={styles.actions}>
                     <EntryDeleteButton
                         entryId={entry.id}
+                        onPendingChange={handleDeletePendingChange}
+                        onDeleteSuccess={handleDeleteSuccess}
+                        disabled={isDeleted}
                     />
                     <EntryOpenLink
                         entryId={entry.id}
                         leadId={entry.lead}
                         projectId={entry.project}
+                        disabled={isDeleted}
                     />
                     <EntryCommentButton
                         entryId={entry.id}
                         commentCount={entry.unresolvedCommentCount}
                         assignee={lead.assigneeDetails.id}
+                        disabled={isDeleted}
                     />
                     <EntryEditButton
                         entry={entry}
                         framework={framework}
+                        disabled={isDeleted}
                     />
                     {/* FIXME: this component cannot be used, since it changes value in redux */}
                     <EntryVerify
@@ -201,6 +226,7 @@ function EntryCard(props: EntryCardProps) {
                         value={entry.verified}
                         entryId={entry.id}
                         leadId={entry.lead}
+                        disabled={isDeleted}
                         // onPendingChange={}
                     />
                 </div>
