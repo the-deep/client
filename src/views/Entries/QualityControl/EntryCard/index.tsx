@@ -138,10 +138,12 @@ function EntryCard(props: EntryCardProps) {
             <section className={styles.bottom}>
                 <div className={styles.row}>
                     <div className={styles.source}>
-                        <Icon
-                            name="world"
-                            className={styles.title}
-                        />
+                        { leadSource && (
+                            <Icon
+                                name="world"
+                                className={styles.title}
+                            />
+                        )}
                         <div
                             className={styles.value}
                             title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
