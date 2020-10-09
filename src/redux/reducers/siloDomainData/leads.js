@@ -87,21 +87,15 @@ const leadViewSetFilter = (state, action) => {
     const { activeProject } = state;
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    table: {
-                        $auto: {
-                            activePage: { $set: 1 },
-                        },
-                    },
-                    grid: {
-                        $auto: {
-                            activePage: { $set: 1 },
-                        },
-                    },
-                    filter: { $set: filters },
-                },
-            },
+            [activeProject]: { $auto: {
+                table: { $auto: {
+                    activePage: { $set: 1 },
+                } },
+                grid: { $auto: {
+                    activePage: { $set: 1 },
+                } },
+                filter: { $set: filters },
+            } },
         },
     };
     return update(state, settings);
@@ -111,21 +105,15 @@ const leadViewUnsetFilter = (state) => {
     const { activeProject } = state;
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    filter: { $set: {} },
-                    table: {
-                        $auto: {
-                            activePage: { $set: 1 },
-                        },
-                    },
-                    grid: {
-                        $auto: {
-                            activePage: { $set: 1 },
-                        },
-                    },
-                },
-            },
+            [activeProject]: { $auto: {
+                filter: { $set: {} },
+                table: { $auto: {
+                    activePage: { $set: 1 },
+                } },
+                grid: { $auto: {
+                    activePage: { $set: 1 },
+                } },
+            } },
         },
     };
     return update(state, settings);
@@ -137,15 +125,11 @@ const leadViewSetActivePage = (state, action) => {
     const view = getView(state);
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    [view]: {
-                        $auto: {
-                            activePage: { $set: activePage },
-                        },
-                    },
-                },
-            },
+            [activeProject]: { $auto: {
+                [view]: { $auto: {
+                    activePage: { $set: activePage },
+                } },
+            } },
         },
     };
     return update(state, settings);
@@ -157,16 +141,12 @@ const leadViewSetActiveSort = (state, action) => {
     const view = getView(state);
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    [view]: {
-                        $auto: {
-                            activeSort: { $set: activeSort },
-                            activePage: { $set: 1 },
-                        },
-                    },
-                },
-            },
+            [activeProject]: { $auto: {
+                [view]: { $auto: {
+                    activeSort: { $set: activeSort },
+                    activePage: { $set: 1 },
+                } },
+            } },
         },
     };
     return update(state, settings);
@@ -188,16 +168,12 @@ const leadViewSetLeadsPerPage = (state, action) => {
     const view = getView(state);
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    [view]: {
-                        $auto: {
-                            leadsPerPage: { $set: leadsPerPage },
-                            activePage: { $set: 1 },
-                        },
-                    },
-                },
-            },
+            [activeProject]: { $auto: {
+                [view]: { $auto: {
+                    leadsPerPage: { $set: leadsPerPage },
+                    activePage: { $set: 1 },
+                } },
+            } },
         },
     };
     return update(state, settings);
@@ -209,19 +185,14 @@ const setLeads = (state, action) => {
     const view = getView(state);
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    [view]: {
-                        $auto: {
-                            leads: { $set: leads },
-                        },
-                    },
-                    totalLeadsCount: { $set: totalLeadsCount },
-                },
-            },
+            [activeProject]: { $auto: {
+                [view]: { $auto: {
+                    leads: { $set: leads },
+                } },
+                totalLeadsCount: { $set: totalLeadsCount },
+            } },
         },
     };
-
     return update(state, settings);
 };
 
@@ -232,16 +203,12 @@ const appendLeads = (state, action) => {
 
     const settings = {
         leadPage: {
-            [activeProject]: {
-                $auto: {
-                    [view]: {
-                        $auto: {
-                            leads: { $push: leads },
-                        },
-                    },
-                    totalLeadsCount: { $set: totalLeadsCount },
-                },
-            },
+            [activeProject]: { $auto: {
+                [view]: { $auto: {
+                    leads: { $push: leads },
+                } },
+                totalLeadsCount: { $set: totalLeadsCount },
+            } },
         },
     };
     return update(state, settings);
@@ -255,24 +222,16 @@ const removeLead = (state, action) => {
     const settings = {
         leadPage: {
             [activeProject]: {
-                table: {
-                    $auto: {
-                        leads: {
-                            $autoArray: {
-                                $filter: ld => ld.id !== lead.id,
-                            },
-                        },
-                    },
-                },
-                grid: {
-                    $auto: {
-                        leads: {
-                            $autoArray: {
-                                $filter: ld => ld.id !== lead.id,
-                            },
-                        },
-                    },
-                },
+                table: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => ld.id !== lead.id,
+                    } },
+                } },
+                grid: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => ld.id !== lead.id,
+                    } },
+                } },
                 totalLeadsCount: { $set: totalLeadsCount - 1 },
             },
         },
@@ -293,24 +252,16 @@ const patchLead = (state, action) => {
     const settings = {
         leadPage: {
             [activeProject]: {
-                table: {
-                    $auto: {
-                        leads: {
-                            $autoArray: {
-                                $splice: [[tableIndex, 1, lead]],
-                            },
-                        },
-                    },
-                },
-                grid: {
-                    $auto: {
-                        leads: {
-                            $autoArray: {
-                                $splice: [[gridIndex, 1, lead]],
-                            },
-                        },
-                    },
-                },
+                table: { $auto: {
+                    leads: { $autoArray: {
+                        $splice: [[tableIndex, 1, lead]],
+                    } },
+                } },
+                grid: { $auto: {
+                    leads: { $autoArray: {
+                        $splice: [[gridIndex, 1, lead]],
+                    } },
+                } },
             },
         },
     };
@@ -325,25 +276,17 @@ const removeBulkLead = (state, action) => {
     const settings = {
         leadPage: {
             [activeProject]: {
-                table: {
-                    $auto: {
-                        leads: {
-                            $autoArray: {
-                                $filter: ld => !leadIds.includes(ld.id),
-                            },
-                        },
-                    },
-                },
-                grid: {
-                    $auto: {
-                        leads: {
-                            $autoArray: {
-                                $filter: ld => !leadIds.includes(ld.id),
-                            },
-                        },
-                    },
-                },
-                totalLeadsCount: { $set: totalLeadsCount - 1 },
+                table: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => !leadIds.includes(ld.id),
+                    } },
+                } },
+                grid: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => !leadIds.includes(ld.id),
+                    } },
+                } },
+                totalLeadsCount: { $set: totalLeadsCount - leadIds.length },
             },
         },
     };
