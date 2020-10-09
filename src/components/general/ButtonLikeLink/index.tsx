@@ -10,6 +10,7 @@ interface Props {
     className?: string;
     type: ButtonType;
     to: string;
+    disabled?: boolean;
 }
 
 const styleTypeMap: {
@@ -26,6 +27,7 @@ const ButtonLikeLink = (props: Props) => {
     const {
         className,
         type,
+        disabled,
         ...otherProps
     } = props;
 
@@ -35,6 +37,7 @@ const ButtonLikeLink = (props: Props) => {
                 className,
                 styles.buttonLikeLink,
                 styleTypeMap[type],
+                disabled && styles.disabled,
             )}
             {...otherProps}
         />

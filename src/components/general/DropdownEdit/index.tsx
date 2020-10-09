@@ -52,6 +52,7 @@ interface Props {
     onItemSelect: (optionKey: Option['key']) => void;
     dropdownLeftComponent: JSX.Element | ReactElement | null;
     dropdownIcon?: string;
+    disabled?: boolean;
 }
 
 const optionKeySelector = (d: Option) => d.key;
@@ -65,6 +66,7 @@ function DropdownEdit(props: Props) {
         currentSelection,
         dropdownLeftComponent,
         dropdownIcon = 'edit',
+        disabled,
     } = props;
 
     const [showDropdown, setShowDropdown] = useState(false);
@@ -91,6 +93,7 @@ function DropdownEdit(props: Props) {
             dropdownIcon={dropdownIcon}
             onDropdownVisibilityChange={handleDropdownChange}
             closeOnClick
+            disabled={disabled}
         >
             <ListView
                 className={styles.items}
