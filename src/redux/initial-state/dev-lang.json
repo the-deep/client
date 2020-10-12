@@ -1187,7 +1187,9 @@
         "-6895713": "Publishing organization: {leadSource}",
         "-79339447": "Entry created on",
         "-7036637": "Lead created by: {user}",
-        "-66548496": "Assessment saved successfully."
+        "-66548496": "Assessment saved successfully.",
+        "-36063988": "Are you sure you want to remove the selected leads? The leads along with associated {entriesCount} entries and {assessmentsCount} assessment will be removed.",
+        "-91590870": "Bulk Delete Leads"
     },
     "links": {
         "browserExtension": {
@@ -1874,7 +1876,9 @@
             "cancelLeadEditButtonLabel": 61,
             "editLeadModalTitle": 136,
             "saveLeadEditButtonLabel": 25,
-            "leadEditedSuccessfullyMessage": -27768788
+            "leadEditedSuccessfullyMessage": -27768788,
+            "removeMultipleLeadsConfirm": -36063988,
+            "bulkDeleteTitle": -91590870
         },
         "leadsGrid": {
             "publisherLabel": 5,

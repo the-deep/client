@@ -38,7 +38,7 @@ import {
     methods,
 } from '#request';
 import _ts from '#ts';
-import useArraySelection from '../../../hooks/multiSelection';
+import useArraySelection from '#hooks/multiSelection';
 import ActionButtons from '../ActionButtons';
 import FileTypeViewer from './FileTypeViewer';
 import BulkActions from './BulkActions';
@@ -100,7 +100,12 @@ function Table(props) {
         isFilterEmpty,
         className,
         requests: {
-            leadPatchRequest: { pending },
+            leadOptionsRequest: {
+                confidentiality: confidentialityOptions,
+                status: statusOptions,
+                priority,
+            },
+            leadPatchRequest,
         },
         onSearchSimilarLead,
         onRemoveLead,
@@ -108,6 +113,8 @@ function Table(props) {
         activeSort,
         setLeadPageActiveSort,
     } = props;
+
+    const { pending } = leadPatchRequest;
 
     const {
         values: selectedLeads,
@@ -118,6 +125,11 @@ function Table(props) {
     } = useArraySelection(
         leadKeyExtractor,
         [],
+    );
+
+    const projectSelectedLeads = useMemo(
+        ()=> selectedLeads.filter(lead=>lead.project === activeProject),
+        [selectedLeads, activeProject],
     );
 
     const handleClickItem = useCallback(
@@ -159,8 +171,8 @@ function Table(props) {
                 key: 'multi_select',
                 order: 0,
                 modifier: (row) => {
-                    const itemSelected = selectedLeads.length > 0 && (
-                        selectedLeads.find(lead => lead.id === row.id)
+                    const itemSelected = projectSelectedLeads.length > 0 && (
+                        projectSelectedLeads.find(lead => lead.id === row.id)
                     );
 
                     return (
@@ -314,110 +326,77 @@ function Table(props) {
             {
                 key: 'confidentiality',
                 order: 10,
-                modifier: (row) => {
-                    const {
-                        leadOptionsRequest: {
-                            response: {
-                                confidentiality: confidentialityOptions,
-                            } = emptyObject,
-                        } = emptyObject,
-                        leadPatchRequest,
-                    } = props.requests;
-
-                    return (
-                        <div className={styles.inlineEditContainer}>
-                            <div className={styles.label}>
-                                {row.confidentiality}
-                            </div>
-                            <Cloak
-                                hide={shouldHideLeadEdit}
-                                render={
-                                    <DropdownEdit
-                                        currentSelection={row.confidentiality}
-                                        className={styles.dropdown}
-                                        options={confidentialityOptions}
-                                        onItemSelect={key => leadPatchRequest.do({
-                                            patchBody: { confidentiality: key },
-                                            leadId: row.id,
-                                        })}
-                                    />
-                                }
-                            />
+                modifier: row => (
+                    <div className={styles.inlineEditContainer}>
+                        <div className={styles.label}>
+                            {row.confidentiality}
                         </div>
-                    );
-                },
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <DropdownEdit
+                                    currentSelection={row.confidentiality}
+                                    className={styles.dropdown}
+                                    options={confidentialityOptions}
+                                    onItemSelect={key => leadPatchRequest.do({
+                                        patchBody: { confidentiality: key },
+                                        leadId: row.id,
+                                    })}
+                                />
+                            }
+                        />
+                    </div>
+                ),
             },
             {
                 key: 'status',
                 order: 11,
-                modifier: (row) => {
-                    const {
-                        leadOptionsRequest: {
-                            response: {
-                                status: statusOptions,
-                            } = emptyObject,
-                        } = emptyObject,
-                        leadPatchRequest,
-                    } = props.requests;
-
-                    return (
-                        <div className={styles.inlineEditContainer}>
-                            <div className={styles.label}>
-                                {row.status}
-                            </div>
-                            <Cloak
-                                hide={shouldHideLeadEdit}
-                                render={
-                                    <DropdownEdit
-                                        currentSelection={row.status}
-                                        className={styles.dropdown}
-                                        options={statusOptions}
-                                        onItemSelect={key => leadPatchRequest.do({
-                                            patchBody: { status: key },
-                                            leadId: row.id,
-                                        })}
-                                    />
-                                }
-                            />
+                modifier: row => (
+                    <div className={styles.inlineEditContainer}>
+                        <div className={styles.label}>
+                            {row.status}
                         </div>
-                    );
-                },
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <DropdownEdit
+                                    currentSelection={row.status}
+                                    className={styles.dropdown}
+                                    options={statusOptions}
+                                    onItemSelect={key => leadPatchRequest.do({
+                                        patchBody: { status: key },
+                                        leadId: row.id,
+                                    })}
+                                />
+                            }
+                        />
+                    </div>
+                ),
             },
             {
                 key: 'priority',
                 order: 12,
-                modifier: (row) => {
-                    const {
-                        leadOptionsRequest: {
-                            response: {
-                                priority,
-                            } = emptyObject,
-                        } = emptyObject,
-                        leadPatchRequest,
-                    } = props.requests;
-
-                    return (
-                        <div className={styles.inlineEditContainer}>
-                            <div className={styles.label}>
-                                {row.priorityDisplay}
-                            </div>
-                            <Cloak
-                                hide={shouldHideLeadEdit}
-                                render={
-                                    <DropdownEdit
-                                        currentSelection={row.priority}
-                                        className={styles.dropdown}
-                                        options={priority}
-                                        onItemSelect={key => leadPatchRequest.do({
-                                            patchBody: { priority: key },
-                                            leadId: row.id,
-                                        })}
-                                    />
-                                }
-                            />
+                modifier: row => (
+                    <div className={styles.inlineEditContainer}>
+                        <div className={styles.label}>
+                            {row.priorityDisplay}
                         </div>
-                    );
-                },
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <DropdownEdit
+                                    currentSelection={row.priority}
+                                    className={styles.dropdown}
+                                    options={priority}
+                                    onItemSelect={key => leadPatchRequest.do({
+                                        patchBody: { priority: key },
+                                        leadId: row.id,
+                                    })}
+                                />
+                            }
+                        />
+                    </div>
+                ),
             },
             {
                 key: 'no_of_entries',
@@ -442,12 +421,15 @@ function Table(props) {
             ...h,
         })),
         [
-            areAllChecked,
             handleSelectAllCheckboxClick,
+            areAllChecked,
             areSomeChecked,
-            selectedLeads,
+            projectSelectedLeads,
             handleClickItem,
-            props.requests,
+            confidentialityOptions,
+            leadPatchRequest,
+            statusOptions,
+            priority,
             onSearchSimilarLead,
             onRemoveLead,
             activeProject,
@@ -458,10 +440,7 @@ function Table(props) {
     const leadModifier = useCallback(
         (lead, columnKey) => {
             const header = headers.find(d => d.key === columnKey);
-            if (header.modifier) {
-                return header.modifier(lead);
-            }
-            return lead[columnKey];
+            return header.modifier(lead)??lead[columnKey];
         }, [headers],
     );
 
@@ -507,7 +486,7 @@ function Table(props) {
             setLeadPageActiveSort({ activeSort: tmpActiveSort });
         }, [headers, activeSort, setLeadPageActiveSort],
     );
-
+    
     return (
         <div className={_cs(className, styles.tableContainer)}>
             {pending && <LoadingAnimation />}
@@ -523,10 +502,11 @@ function Table(props) {
                 pending={loading}
                 isFiltered={!isFilterEmpty}
             />
-            {selectedLeads.length > 0 && (
+            {projectSelectedLeads.length > 0 && (
                 <BulkActions
-                    selectedLeads={selectedLeads}
+                    projectSelectedLeads={projectSelectedLeads}
                     activeProject={activeProject}
+                    onRemoveItems={removeItems}
                 />
             )}
         </div>

@@ -1,11 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { useMemo, useCallback } from 'react';
 import { connect } from 'react-redux';
+
+import modalize from '#rscg/Modalize';
+import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import _ts from '#ts';
 import {
     isDefined,
+    sum,
 } from '@togglecorp/fujs';
 
 import {
@@ -25,6 +29,9 @@ import {
 } from '#redux';
 
 import notify from '#notify';
+import LeadCopyModal from '#components/general/LeadCopyModal';
+
+const ModalButton = modalize(Button);
 
 const mapStateToProps = state => ({
     leads: leadsForProjectTableViewSelector(state),
@@ -52,17 +59,20 @@ const requestOptions = {
             },
             params: {
                 leadIds,
+                onRemoveItems,
+                projectSelectedLeads,
             },
         }) => {
             if (removeBulkLead) {
                 removeBulkLead(leadIds);
 
                 notify.send({
-                    title: 'Bulk Delete Leads',
+                    title: _ts('leads', 'bulkDeleteTitle'),
                     type: notify.type.SUCCESS,
                     message: 'Leads successfully deleted.',
                     duration: notify.duration.MEDIUM,
                 });
+                onRemoveItems(projectSelectedLeads);
             }
         },
         onFailure: notifyOnFailure(_ts('leads', 'leads')),
@@ -72,48 +82,55 @@ const requestOptions = {
 
 const BulkActions = (props) => {
     const {
-        selectedLeads,
+        projectSelectedLeads,
         requests: {
             bulkLeadDeleteRequest,
         },
         activeProject,
+        onRemoveItems,
     } = props;
 
     const entriesCount = useMemo(() => {
-        if (selectedLeads.length <= 0) {
+        if (projectSelectedLeads.length <= 0) {
             return 0;
         }
-        const totalNoOfEntries = selectedLeads.reduce((accum, lead) => accum + lead.noOfEntries, 0);
-        return totalNoOfEntries;
-    }, [selectedLeads]);
+
+        const entries = projectSelectedLeads.map(lead => lead.noOfEntries);
+        return sum(entries);
+    }, [projectSelectedLeads]);
 
     const assessmentsCount = useMemo(
         () => {
-            if (selectedLeads.length <= 0) {
+            if (projectSelectedLeads.length <= 0) {
                 return 0;
             }
-            const totalNoOfAssessments = selectedLeads.reduce(
-                (accum, lead) => accum + Number(isDefined(lead.assessmentId)), 0,
+
+            const assessments = projectSelectedLeads.map(
+                lead => Number(isDefined(lead.assessmentId)),
             );
-            return totalNoOfAssessments;
-        }, [selectedLeads],
+            return sum(assessments);
+        }, [projectSelectedLeads],
     );
 
-    const selectedLeadsIds = useMemo(
-        () => selectedLeads.map(lead => lead.id), [selectedLeads],
+    const projectSelectedLeadsIds = useMemo(
+        () => projectSelectedLeads.map(lead => lead.id),
+        [projectSelectedLeads],
     );
 
     const onRemoveBulkLead = useCallback(() => {
         bulkLeadDeleteRequest.do({
             project: activeProject,
-            leadIds: selectedLeadsIds,
+            leadIds: projectSelectedLeadsIds,
+            onRemoveItems,
+            projectSelectedLeads,
         });
-    }, [bulkLeadDeleteRequest, selectedLeadsIds, activeProject]);
-
-    const confirmationMessage = `
-        Are you sure you want to remove the selected leads?
-        The leads along with associated ${entriesCount} entries and 
-        ${assessmentsCount} assessment will be removed.`;
+    }, [
+        bulkLeadDeleteRequest,
+        projectSelectedLeadsIds,
+        activeProject,
+        onRemoveItems,
+        projectSelectedLeads,
+    ]);
 
     return (
         <div>
@@ -121,20 +138,30 @@ const BulkActions = (props) => {
                 tabIndex="-1"
                 title={_ts('leads', 'removeLeadLeadButtonTitle')}
                 onClick={onRemoveBulkLead}
-                confirmationMessage={confirmationMessage}
+                confirmationMessage={_ts('leads', 'removeMultipleLeadsConfirm', {
+                    entriesCount,
+                    assessmentsCount,
+                })}
             >
                 DELETE
             </DangerConfirmButton>
             <PrimaryButton
                 onClick={() => console.log('BULK UPDATE')}
             >
-                {/* FIXME: use strings */}
+                {/* TODO: Bulk update logic */}
                 BULK UPDATE
             </PrimaryButton>
-            <PrimaryButton onClick={() => console.log('EXPORT TO OTHER PROJECTS')} >
-                {/* FIXME: use strings */}
+
+            <ModalButton
+                tabIndex="-1"
+                title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                iconName="openLink"
+                modal={
+                    <LeadCopyModal leads={projectSelectedLeadsIds} />
+                }
+            >
                 EXPORT TO OTHER PROJECTS
-            </PrimaryButton>
+            </ModalButton>
         </div>
     );
 };
@@ -147,7 +174,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 
 
 BulkActions.propTypes = {
-    selectedLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectSelectedLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeProject: PropTypes.number.isRequired,
+    onRemoveItems: PropTypes.func.isRequired,
 };
