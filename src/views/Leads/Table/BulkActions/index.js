@@ -60,7 +60,7 @@ const requestOptions = {
             params: {
                 leadIds,
                 onRemoveItems,
-                projectSelectedLeads,
+                selectedLeads,
             },
         }) => {
             if (removeBulkLead) {
@@ -72,7 +72,7 @@ const requestOptions = {
                     message: 'Leads successfully deleted.',
                     duration: notify.duration.MEDIUM,
                 });
-                onRemoveItems(projectSelectedLeads);
+                onRemoveItems(selectedLeads);
             }
         },
         onFailure: notifyOnFailure(_ts('leads', 'leads')),
@@ -82,7 +82,7 @@ const requestOptions = {
 
 const BulkActions = (props) => {
     const {
-        projectSelectedLeads,
+        selectedLeads,
         requests: {
             bulkLeadDeleteRequest,
         },
@@ -91,45 +91,45 @@ const BulkActions = (props) => {
     } = props;
 
     const entriesCount = useMemo(() => {
-        if (projectSelectedLeads.length <= 0) {
+        if (selectedLeads.length <= 0) {
             return 0;
         }
 
-        const entries = projectSelectedLeads.map(lead => lead.noOfEntries);
+        const entries = selectedLeads.map(lead => lead.noOfEntries);
         return sum(entries);
-    }, [projectSelectedLeads]);
+    }, [selectedLeads]);
 
     const assessmentsCount = useMemo(
         () => {
-            if (projectSelectedLeads.length <= 0) {
+            if (selectedLeads.length <= 0) {
                 return 0;
             }
 
-            const assessments = projectSelectedLeads.map(
+            const assessments = selectedLeads.map(
                 lead => Number(isDefined(lead.assessmentId)),
             );
             return sum(assessments);
-        }, [projectSelectedLeads],
+        }, [selectedLeads],
     );
 
-    const projectSelectedLeadsIds = useMemo(
-        () => projectSelectedLeads.map(lead => lead.id),
-        [projectSelectedLeads],
+    const selectedLeadsIds = useMemo(
+        () => selectedLeads.map(lead => lead.id),
+        [selectedLeads],
     );
 
     const onRemoveBulkLead = useCallback(() => {
         bulkLeadDeleteRequest.do({
             project: activeProject,
-            leadIds: projectSelectedLeadsIds,
+            leadIds: selectedLeadsIds,
             onRemoveItems,
-            projectSelectedLeads,
+            selectedLeads,
         });
     }, [
         bulkLeadDeleteRequest,
-        projectSelectedLeadsIds,
+        selectedLeadsIds,
         activeProject,
         onRemoveItems,
-        projectSelectedLeads,
+        selectedLeads,
     ]);
 
     return (
@@ -157,7 +157,7 @@ const BulkActions = (props) => {
                 title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
                 iconName="openLink"
                 modal={
-                    <LeadCopyModal leads={projectSelectedLeadsIds} />
+                    <LeadCopyModal leads={selectedLeadsIds} />
                 }
             >
                 EXPORT TO OTHER PROJECTS
@@ -174,7 +174,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 
 
 BulkActions.propTypes = {
-    projectSelectedLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    selectedLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeProject: PropTypes.number.isRequired,
     onRemoveItems: PropTypes.func.isRequired,

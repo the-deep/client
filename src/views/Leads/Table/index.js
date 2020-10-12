@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -122,15 +122,15 @@ function Table(props) {
         clickOnItem,
         addItems,
         removeItems,
+        clearSelection,
     } = useArraySelection(
         leadKeyExtractor,
         [],
     );
 
-    const projectSelectedLeads = useMemo(
-        ()=> selectedLeads.filter(lead=>lead.project === activeProject),
-        [selectedLeads, activeProject],
-    );
+    useEffect(()=>{
+        clearSelection()
+    },[activeProject]);
 
     const handleClickItem = useCallback(
         (newValue) => {
@@ -171,8 +171,8 @@ function Table(props) {
                 key: 'multi_select',
                 order: 0,
                 modifier: (row) => {
-                    const itemSelected = projectSelectedLeads.length > 0 && (
-                        projectSelectedLeads.find(lead => lead.id === row.id)
+                    const itemSelected = selectedLeads.length > 0 && (
+                        selectedLeads.find(lead => lead.id === row.id)
                     );
 
                     return (
@@ -424,7 +424,7 @@ function Table(props) {
             handleSelectAllCheckboxClick,
             areAllChecked,
             areSomeChecked,
-            projectSelectedLeads,
+            selectedLeads,
             handleClickItem,
             confidentialityOptions,
             leadPatchRequest,
@@ -502,9 +502,9 @@ function Table(props) {
                 pending={loading}
                 isFiltered={!isFilterEmpty}
             />
-            {projectSelectedLeads.length > 0 && (
+            {selectedLeads.length > 0 && (
                 <BulkActions
-                    projectSelectedLeads={projectSelectedLeads}
+                    selectedLeads={selectedLeads}
                     activeProject={activeProject}
                     onRemoveItems={removeItems}
                 />
