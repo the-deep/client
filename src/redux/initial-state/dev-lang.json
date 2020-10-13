@@ -1878,7 +1878,8 @@
             "saveLeadEditButtonLabel": 25,
             "leadEditedSuccessfullyMessage": -27768788,
             "removeMultipleLeadsConfirm": -36063988,
-            "bulkDeleteTitle": -91590870
+            "bulkDeleteTitle": -91590870,
+            "bulkDeleteButtonText": -94736495
         },
         "leadsGrid": {
             "publisherLabel": 5,

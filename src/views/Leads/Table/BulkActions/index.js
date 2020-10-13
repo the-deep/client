@@ -143,14 +143,14 @@ const BulkActions = (props) => {
                     assessmentsCount,
                 })}
             >
-                DELETE
+                {_ts('leads', 'bulkDeleteButtonText')}
             </DangerConfirmButton>
+            {/* TODO: BULK UPDATE LOGIC
             <PrimaryButton
                 onClick={() => console.log('BULK UPDATE')}
             >
-                {/* TODO: Bulk update logic */}
                 BULK UPDATE
-            </PrimaryButton>
+            </PrimaryButton> */}
 
             <ModalButton
                 tabIndex="-1"
@@ -160,7 +160,7 @@ const BulkActions = (props) => {
                     <LeadCopyModal leads={selectedLeadsIds} />
                 }
             >
-                EXPORT TO OTHER PROJECTS
+                {_ts('leads', 'exportToOtherProjectsButtonTitle')}
             </ModalButton>
         </div>
     );
