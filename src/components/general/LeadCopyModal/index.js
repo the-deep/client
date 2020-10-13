@@ -38,6 +38,7 @@ const propTypes = {
         }),
     ),
     closeModal: PropTypes.func,
+    onSuccess: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
 };
 
 const defaultProps = {
@@ -45,6 +46,7 @@ const defaultProps = {
     leads: [],
     userProjects: [],
     closeModal: () => {},
+    onSuccess: undefined,
 };
 
 const mapStateToProps = state => ({
@@ -65,6 +67,7 @@ const requestOptions = {
             },
             props: {
                 closeModal,
+                onSuccess,
             },
         }) => {
             const projects = Object.keys(leadsByProjects);
@@ -86,6 +89,9 @@ const requestOptions = {
                 duration: notify.duration.MEDIUM,
             });
             closeModal();
+            if (onSuccess) {
+                onSuccess();
+            }
         },
         onFailure: () => {
             notify.send({

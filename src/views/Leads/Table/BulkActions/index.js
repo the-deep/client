@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import _ts from '#ts';
 import {
@@ -31,6 +30,8 @@ import {
 import notify from '#notify';
 import LeadCopyModal from '#components/general/LeadCopyModal';
 
+import styles from './styles.scss';
+
 const ModalButton = modalize(Button);
 
 const mapStateToProps = state => ({
@@ -44,24 +45,16 @@ const mapDispatchToProps = dispatch => ({
 
 const requestOptions = {
     bulkLeadDeleteRequest: {
-        url: '/leads/bulk-delete/',
+        url: ({ params: { project } }) => `/project/${project}/leads/bulk-delete/`,
         method: methods.POST,
-        body: ({ params: {
-            project,
-            leadIds,
-        } }) => ({
-            project,
-            ids: leadIds.join(','), // For comma separated ids
-        }),
+        body: ({ params: { leadIds } }) => ({ leads: leadIds }),
         onSuccess: ({
             props: {
-                removeBulkLead,
-            },
-            params: {
-                leadIds,
                 onRemoveItems,
                 selectedLeads,
+                removeBulkLead,
             },
+            params: { leadIds },
         }) => {
             if (removeBulkLead) {
                 removeBulkLead(leadIds);
@@ -83,11 +76,11 @@ const requestOptions = {
 const BulkActions = (props) => {
     const {
         selectedLeads,
+        onClearSelection,
         requests: {
             bulkLeadDeleteRequest,
         },
         activeProject,
-        onRemoveItems,
     } = props;
 
     const entriesCount = useMemo(() => {
@@ -121,47 +114,60 @@ const BulkActions = (props) => {
         bulkLeadDeleteRequest.do({
             project: activeProject,
             leadIds: selectedLeadsIds,
-            onRemoveItems,
-            selectedLeads,
         });
     }, [
         bulkLeadDeleteRequest,
         selectedLeadsIds,
         activeProject,
-        onRemoveItems,
-        selectedLeads,
     ]);
 
     return (
-        <div>
-            <DangerConfirmButton
-                tabIndex="-1"
-                title={_ts('leads', 'removeLeadLeadButtonTitle')}
-                onClick={onRemoveBulkLead}
-                confirmationMessage={_ts('leads', 'removeMultipleLeadsConfirm', {
-                    entriesCount,
-                    assessmentsCount,
-                })}
+        <div className={styles.bulkActionsBar}>
+            <span className={styles.text}>
+                {_ts('leads', 'selectedLeadsCount', { count: selectedLeads.length })}
+            </span>
+            <Button
+                title={_ts('leads', 'clearSelectedLeadsTitle')}
+                iconName="close"
+                onClick={onClearSelection}
+                className={styles.button}
             >
-                {_ts('leads', 'bulkDeleteButtonText')}
-            </DangerConfirmButton>
+                {_ts('leads', 'clearSelectionButtonTitle')}
+            </Button>
             {/* TODO: BULK UPDATE LOGIC
             <PrimaryButton
                 onClick={() => console.log('BULK UPDATE')}
             >
                 BULK UPDATE
             </PrimaryButton> */}
-
             <ModalButton
                 tabIndex="-1"
                 title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                className={styles.button}
                 iconName="openLink"
                 modal={
-                    <LeadCopyModal leads={selectedLeadsIds} />
+                    <LeadCopyModal
+                        leads={selectedLeadsIds}
+                        onSuccess={onClearSelection}
+                    />
                 }
             >
-                {_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                {_ts('leads', 'exportToOtherProjectsButtonLabel')}
             </ModalButton>
+            <DangerConfirmButton
+                tabIndex="-1"
+                title={_ts('leads', 'removeLeadLeadButtonTitle')}
+                onClick={onRemoveBulkLead}
+                iconName="delete"
+                className={styles.button}
+                confirmationMessage={_ts('leads', 'removeMultipleLeadsConfirm', {
+                    leadsCount: selectedLeads.length,
+                    entriesCount,
+                    assessmentsCount,
+                })}
+            >
+                {_ts('leads', 'bulkDeleteButtonText')}
+            </DangerConfirmButton>
         </div>
     );
 };
@@ -177,5 +183,6 @@ BulkActions.propTypes = {
     selectedLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeProject: PropTypes.number.isRequired,
-    onRemoveItems: PropTypes.func.isRequired,
+    onRemoveItems: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onClearSelection: PropTypes.func.isRequired,
 };

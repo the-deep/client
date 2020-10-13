@@ -12,6 +12,7 @@ const styleProperties = {
         colorLink: '#187bcd',
         colorTextSuccess: '#43a047',
         colorTextOnHightlight: defaultColors.colorTextOnLight,
+        colorTextOnDark: '#fff',
         colorShadowLight: 'rgba(0, 0, 0, .1)',
         colorSelectedGroup: '#f0f0f0',
         colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',

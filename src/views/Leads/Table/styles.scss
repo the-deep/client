@@ -164,26 +164,14 @@
     }
 }
 
-.clear-icon {
-    border-radius: 50%;
-    padding: 0;
-    flex-shrink: 0;
-    font-size: var(--font-size-extra-large);
-    margin-left: var(--spacing-small);
-
-    &:hover {
-        cursor: pointer;
-    }
-}
-
 .select-all-checkbox {
     flex-shrink: 0;
-    font-size: var(--font-size-extra-large);
     margin-left: var(--spacing-small);
+    font-size: var(--font-size-medium);
 }
 
 .checkbox {
-    font-size: var(--font-size-large);
-    width: 100%;
     margin-left: var(--spacing-small);
+    width: 100%;
+    font-size: var(--font-size-medium);
 }

@@ -132,12 +132,6 @@ function Table(props) {
         clearSelection()
     },[activeProject]);
 
-    const handleClickItem = useCallback(
-        (newValue) => {
-            clickOnItem(newValue);
-        }, [clickOnItem],
-    );
-
     const handleSelectAllCheckboxClick = useCallback(
         (newValue) => {
             if (newValue) {
@@ -177,7 +171,7 @@ function Table(props) {
 
                     return (
                         <Checkbox
-                            onChange={() => handleClickItem(row)}
+                            onChange={() => clickOnItem(row)}
                             value={!!itemSelected}
                             className={styles.checkbox}
                         />
@@ -338,6 +332,7 @@ function Table(props) {
                                     currentSelection={row.confidentiality}
                                     className={styles.dropdown}
                                     options={confidentialityOptions}
+                                    disabled={selectedLeads.length > 0}
                                     onItemSelect={key => leadPatchRequest.do({
                                         patchBody: { confidentiality: key },
                                         leadId: row.id,
@@ -363,6 +358,7 @@ function Table(props) {
                                     currentSelection={row.status}
                                     className={styles.dropdown}
                                     options={statusOptions}
+                                    disabled={selectedLeads.length > 0}
                                     onItemSelect={key => leadPatchRequest.do({
                                         patchBody: { status: key },
                                         leadId: row.id,
@@ -388,6 +384,7 @@ function Table(props) {
                                     currentSelection={row.priority}
                                     className={styles.dropdown}
                                     options={priority}
+                                    disabled={selectedLeads.length > 0}
                                     onItemSelect={key => leadPatchRequest.do({
                                         patchBody: { priority: key },
                                         leadId: row.id,
@@ -413,6 +410,7 @@ function Table(props) {
                         onSearchSimilarLead={onSearchSimilarLead}
                         onRemoveLead={onRemoveLead}
                         activeProject={activeProject}
+                        disabled={selectedLeads.length > 0}
                     />
                 ),
             },
@@ -425,7 +423,7 @@ function Table(props) {
             areAllChecked,
             areSomeChecked,
             selectedLeads,
-            handleClickItem,
+            clickOnItem,
             confidentialityOptions,
             leadPatchRequest,
             statusOptions,
@@ -486,7 +484,7 @@ function Table(props) {
             setLeadPageActiveSort({ activeSort: tmpActiveSort });
         }, [headers, activeSort, setLeadPageActiveSort],
     );
-    
+
     return (
         <div className={_cs(className, styles.tableContainer)}>
             {pending && <LoadingAnimation />}
@@ -507,6 +505,7 @@ function Table(props) {
                     selectedLeads={selectedLeads}
                     activeProject={activeProject}
                     onRemoveItems={removeItems}
+                    onClearSelection={clearSelection}
                 />
             )}
         </div>

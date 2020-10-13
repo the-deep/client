@@ -1188,8 +1188,10 @@
         "-79339447": "Entry created on",
         "-7036637": "Lead created by: {user}",
         "-66548496": "Assessment saved successfully.",
-        "-36063988": "Are you sure you want to remove the selected leads? The leads along with associated {entriesCount} entries and {assessmentsCount} assessment will be removed.",
-        "-91590870": "Bulk Delete Leads"
+        "-36063988": "Are you sure you want to remove the selected leads? {leadsCount} leads along with associated {entriesCount} entries and {assessmentsCount} assessments will be removed.",
+        "-91590870": "Bulk Delete Leads",
+        "-86276092": "{count} selected leads",
+        "-22337727": "Clear all selected items"
     },
     "links": {
         "browserExtension": {
@@ -1879,7 +1881,11 @@
             "leadEditedSuccessfullyMessage": -27768788,
             "removeMultipleLeadsConfirm": -36063988,
             "bulkDeleteTitle": -91590870,
-            "bulkDeleteButtonText": -94736495
+            "bulkDeleteButtonText": -94736495,
+            "selectedLeadsCount": -86276092,
+            "clearSelectedLeadsTitle": -22337727,
+            "clearSelectionButtonTitle": 528,
+            "exportToOtherProjectsButtonLabel": 600
         },
         "leadsGrid": {
             "publisherLabel": 5,
