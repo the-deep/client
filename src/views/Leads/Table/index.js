@@ -45,7 +45,6 @@ import BulkActions from './BulkActions';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
-const emptyObject = {};
 
 const mapStateToProps = state => ({
     leads: leadsForProjectTableViewSelector(state),
@@ -112,6 +111,7 @@ function Table(props) {
         activeProject,
         activeSort,
         setLeadPageActiveSort,
+        onLeadsRemoveSuccess,
         filters,
     } = props;
 
@@ -132,6 +132,11 @@ function Table(props) {
     useEffect(()=>{
         clearSelection()
     },[activeProject, filters]);
+
+    const handleLeadsRemove = useCallback((leadIds) => {
+        removeItems(leadIds);
+        onLeadsRemoveSuccess();
+    }, [removeItems, onLeadsRemoveSuccess]);
 
     const handleSelectAllCheckboxClick = useCallback(
         (newValue) => {
@@ -505,7 +510,7 @@ function Table(props) {
                 <BulkActions
                     selectedLeads={selectedLeads}
                     activeProject={activeProject}
-                    onRemoveItems={removeItems}
+                    onRemoveItems={handleLeadsRemove}
                     onClearSelection={clearSelection}
                 />
             )}

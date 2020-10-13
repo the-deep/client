@@ -1190,7 +1190,7 @@
         "-66548496": "Assessment saved successfully.",
         "-36063988": "Are you sure you want to remove the selected leads? {leadsCount} leads along with associated {entriesCount} entries and {assessmentsCount} assessments will be removed.",
         "-91590870": "Bulk Delete Leads",
-        "-86276092": "{count} selected leads",
+        "-86276092": "{count} leads selected",
         "-22337727": "Clear all selected items"
     },
     "links": {

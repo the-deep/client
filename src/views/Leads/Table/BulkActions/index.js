@@ -82,15 +82,17 @@ const BulkActions = (props) => {
         },
         activeProject,
     } = props;
+    const {
+        pending: bulkDeletePending,
+        do: bulkLeadDeleteTrigger,
+    } = bulkLeadDeleteRequest;
 
     const entriesCount = useMemo(() => (
         sum(selectedLeads.map(lead => lead?.noOfEntries).filter(isDefined))
     ), [selectedLeads]);
 
     const assessmentsCount = useMemo(() => (
-        sum(selectedLeads.map(
-            lead => Number(isDefined(lead.assessmentId)),
-        ))
+        selectedLeads.filter(lead => isDefined(lead.assessmentId)).length
     ), [selectedLeads]);
 
     const selectedLeadsIds = useMemo(
@@ -99,12 +101,12 @@ const BulkActions = (props) => {
     );
 
     const onRemoveBulkLead = useCallback(() => {
-        bulkLeadDeleteRequest.do({
+        bulkLeadDeleteTrigger({
             project: activeProject,
             leadIds: selectedLeadsIds,
         });
     }, [
-        bulkLeadDeleteRequest,
+        bulkLeadDeleteTrigger,
         selectedLeadsIds,
         activeProject,
     ]);
@@ -148,6 +150,7 @@ const BulkActions = (props) => {
                 onClick={onRemoveBulkLead}
                 iconName="delete"
                 className={styles.button}
+                pending={bulkDeletePending}
                 confirmationMessage={_ts('leads', 'removeMultipleLeadsConfirm', {
                     leadsCount: selectedLeads.length,
                     entriesCount,

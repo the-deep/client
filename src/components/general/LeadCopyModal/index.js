@@ -1,5 +1,5 @@
+import React, { useMemo, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 
 import Modal from '#rscv/Modal';
@@ -15,6 +15,7 @@ import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 
 import {
     currentUserAdminProjectsSelector,
+    projectIdFromRouteSelector,
 } from '#redux';
 import {
     RequestClient,
@@ -27,30 +28,9 @@ import _cs from '#cs';
 
 import styles from './styles.scss';
 
-const propTypes = {
-    className: PropTypes.string,
-    leads: PropTypes.arrayOf(PropTypes.number),
-    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    userProjects: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.number,
-            title: PropTypes.string,
-        }),
-    ),
-    closeModal: PropTypes.func,
-    onSuccess: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-};
-
-const defaultProps = {
-    className: '',
-    leads: [],
-    userProjects: [],
-    closeModal: () => {},
-    onSuccess: undefined,
-};
-
 const mapStateToProps = state => ({
     userProjects: currentUserAdminProjectsSelector(state),
+    currentProject: projectIdFromRouteSelector(state),
 });
 
 const listKeySelector = d => d.id;
@@ -115,130 +95,132 @@ const requestOptions = {
     },
 };
 
-@connect(mapStateToProps)
-@RequestClient(requestOptions)
-export default class LeadCopyModal extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            searchText: '',
-            selectedProjects: [],
-        };
-    }
-
-    handleClearSelection = () => {
-        this.setState({ selectedProjects: [] });
-    }
-
-    handleProjectListChange = (selectedProjects) => {
-        this.setState({ selectedProjects });
-    }
-
-    handleSearchTextChange = (searchText) => {
-        this.setState({ searchText });
-    }
-
-    handleExport = () => {
-        const {
-            leads,
-            requests: {
-                leadsCopyRequest,
+function LeadCopyModal(props) {
+    const {
+        className,
+        userProjects,
+        closeModal,
+        leads,
+        currentProject,
+        requests: {
+            leadsCopyRequest: {
+                pending: leadsCopyPending,
+                do: leadsCopyRequestTrigger,
             },
-        } = this.props;
+        },
+    } = props;
 
-        const { selectedProjects: projects } = this.state;
+    const [searchText, setSearchText] = useState('');
+    const [selectedProjects, setSelectedProjects] = useState([]);
+
+    const handleClearSelection = useCallback(() => {
+        setSelectedProjects([]);
+    }, [setSelectedProjects]);
+
+    const handleExport = useCallback(() => {
         const body = {
             leads,
-            projects,
-        };
-        leadsCopyRequest.do({ body });
-    }
-
-    render() {
-        const {
-            searchText,
             selectedProjects,
-        } = this.state;
+        };
+        leadsCopyRequestTrigger({ body });
+    }, [
+        leads,
+        leadsCopyRequestTrigger,
+        selectedProjects,
+    ]);
 
-        const {
-            className,
-            userProjects,
-            closeModal,
-            leads,
-            requests: {
-                leadsCopyRequest: { pending },
-            },
-        } = this.props;
+    const selectedProjectsNo = selectedProjects.length;
+    const totalProjectsNo = userProjects.length;
 
-        const selectedProjectsNo = selectedProjects.length;
-        const totalProjectsNo = userProjects.length;
+    const confirmMessage = _ts('leads.copyModal', 'successConfirmDetail', {
+        countProjects: selectedProjectsNo,
+        countLeads: leads.length,
+    });
 
-        const confirmMessage = _ts('leads.copyModal', 'successConfirmDetail', {
-            countProjects: selectedProjectsNo,
-            countLeads: leads.length,
-        });
+    const filteredProjects = useMemo(() => (
+        userProjects.filter(u => u.id !== currentProject)
+    ), [userProjects, currentProject]);
 
-        const heading = `${_ts('leads.copyModal', 'projectsLabel')} (${selectedProjectsNo}/${totalProjectsNo})`;
-        const notSelected = selectedProjectsNo === 0;
+    const heading = `${_ts('leads.copyModal', 'projectsLabel')} (${selectedProjectsNo}/${totalProjectsNo})`;
+    const notSelected = selectedProjectsNo === 0;
 
-        return (
-            <Modal className={_cs(className, styles.leadCopyModal)} >
-                <ModalHeader title={_ts('leads.copyModal', 'leadsCopyTitle')} />
-                <ModalBody className={styles.body} >
-                    {pending && <LoadingAnimation />}
-                    <header className={styles.header} >
-                        <div className={styles.inputs} >
-                            <SearchInput
-                                className={styles.searchInput}
-                                label={_ts('leads.copyModal', 'searchInputLabel')}
-                                placeholder={_ts('leads.copyModal', 'searchInputPlaceholder')}
-                                value={searchText}
-                                onChange={this.handleSearchTextChange}
-                                showHintAndError={false}
-                            />
-                            <DangerButton
-                                onClick={this.handleClearSelection}
-                                disabled={notSelected}
-                            >
-                                {_ts('leads.copyModal', 'clearSelectionButtonLabel')}
-                            </DangerButton>
-                        </div>
-                        <h4>
-                            {heading}
-                        </h4>
-                    </header>
-                    <ChecklistInput
-                        className={styles.projects}
-                        listClassName={styles.projectsList}
-                        value={selectedProjects}
-                        options={userProjects}
-                        searchText={searchText}
-                        onChange={this.handleProjectListChange}
-                        keySelector={listKeySelector}
-                        labelSelector={listLabelSelector}
-                    />
-                </ModalBody>
-                <ModalFooter className={styles.footer} >
-                    <DangerButton
-                        onClick={closeModal}
-                        disabled={pending}
-                    >
-                        {_ts('leads.copyModal', 'cancelButtonTitle')}
-                    </DangerButton>
-                    <PrimaryConfirmButton
-                        confirmationMessage={confirmMessage}
-                        disabled={notSelected}
-                        pending={pending}
-                        onClick={this.handleExport}
-                    >
-                        {_ts('leads.copyModal', 'exportButtonTitle')}
-                    </PrimaryConfirmButton>
-                </ModalFooter>
-            </Modal>
-        );
-    }
+    return (
+        <Modal className={_cs(className, styles.leadCopyModal)} >
+            <ModalHeader title={_ts('leads.copyModal', 'leadsCopyTitle')} />
+            <ModalBody className={styles.body} >
+                {leadsCopyPending && <LoadingAnimation />}
+                <header className={styles.header} >
+                    <div className={styles.inputs} >
+                        <SearchInput
+                            className={styles.searchInput}
+                            label={_ts('leads.copyModal', 'searchInputLabel')}
+                            placeholder={_ts('leads.copyModal', 'searchInputPlaceholder')}
+                            value={searchText}
+                            onChange={setSearchText}
+                            showHintAndError={false}
+                        />
+                        <DangerButton
+                            onClick={handleClearSelection}
+                            disabled={notSelected}
+                        >
+                            {_ts('leads.copyModal', 'clearSelectionButtonLabel')}
+                        </DangerButton>
+                    </div>
+                    <h4>
+                        {heading}
+                    </h4>
+                </header>
+                <ChecklistInput
+                    className={styles.projects}
+                    listClassName={styles.projectsList}
+                    value={selectedProjects}
+                    options={filteredProjects}
+                    searchText={searchText}
+                    onChange={setSelectedProjects}
+                    keySelector={listKeySelector}
+                    labelSelector={listLabelSelector}
+                />
+            </ModalBody>
+            <ModalFooter className={styles.footer} >
+                <DangerButton
+                    onClick={closeModal}
+                >
+                    {_ts('leads.copyModal', 'cancelButtonTitle')}
+                </DangerButton>
+                <PrimaryConfirmButton
+                    confirmationMessage={confirmMessage}
+                    disabled={notSelected}
+                    pending={leadsCopyPending}
+                    onClick={handleExport}
+                >
+                    {_ts('leads.copyModal', 'exportButtonTitle')}
+                </PrimaryConfirmButton>
+            </ModalFooter>
+        </Modal>
+    );
 }
+
+LeadCopyModal.propTypes = {
+    className: PropTypes.string,
+    currentProject: PropTypes.number.isRequired,
+    leads: PropTypes.arrayOf(PropTypes.number),
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    userProjects: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number,
+            title: PropTypes.string,
+        }),
+    ),
+    closeModal: PropTypes.func,
+    onSuccess: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+};
+
+LeadCopyModal.defaultProps = {
+    className: undefined,
+    leads: [],
+    userProjects: [],
+    closeModal: undefined,
+    onSuccess: undefined,
+};
+
+export default connect(mapStateToProps)(RequestClient(requestOptions)(LeadCopyModal));
