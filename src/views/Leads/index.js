@@ -466,6 +466,10 @@ export default class Leads extends React.PureComponent {
                 leadsGetRequest,
             },
         } = this.props;
+        // NOTE: Setting this to first page as if we remove a bunch of leads that
+        // might change the total count and current page might be non-existent
+        // If we are at the first page, then we only trigger the extraction,
+        // if not we set lead page to 1 and it will trigger the extraction
         if (activePage === 1) {
             leadsGetRequest.do({ setLeads });
         } else {

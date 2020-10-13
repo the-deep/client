@@ -151,10 +151,11 @@ const BulkActions = (props) => {
                 iconName="delete"
                 className={styles.button}
                 pending={bulkDeletePending}
+                // FIXME: Find and use new way to bold strings
                 confirmationMessage={_ts('leads', 'removeMultipleLeadsConfirm', {
-                    leadsCount: selectedLeads.length,
-                    entriesCount,
-                    assessmentsCount,
+                    leadsCount: (<b>{selectedLeads.length} Leads</b>),
+                    entriesCount: (<b>{entriesCount} Entries</b>),
+                    assessmentsCount: (<b>{assessmentsCount} Assessments</b>),
                 })}
             >
                 {_ts('leads', 'bulkDeleteButtonText')}
