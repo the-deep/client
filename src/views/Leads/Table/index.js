@@ -112,6 +112,7 @@ function Table(props) {
         activeProject,
         activeSort,
         setLeadPageActiveSort,
+        filters,
     } = props;
 
     const { pending } = leadPatchRequest;
@@ -130,7 +131,7 @@ function Table(props) {
 
     useEffect(()=>{
         clearSelection()
-    },[activeProject]);
+    },[activeProject, filters]);
 
     const handleSelectAllCheckboxClick = useCallback(
         (newValue) => {

@@ -646,7 +646,6 @@ export default class Leads extends React.PureComponent {
     }
 
     renderTableView = () => {
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
         const {
             activeSort,
             setLeadPageActiveSort,
@@ -654,7 +653,9 @@ export default class Leads extends React.PureComponent {
             requests: {
                 leadsGetRequest: { pending },
             },
+            filters,
         } = this.props;
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (
             <Table
@@ -665,6 +666,7 @@ export default class Leads extends React.PureComponent {
                 setLeadPageActiveSort={setLeadPageActiveSort}
                 emptyComponent={EmptyComponent}
                 isFilterEmpty={isFilterEmpty}
+                filters={filters}
 
                 onSearchSimilarLead={this.handleSearchSimilarLead}
 

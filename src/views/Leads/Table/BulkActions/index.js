@@ -83,27 +83,15 @@ const BulkActions = (props) => {
         activeProject,
     } = props;
 
-    const entriesCount = useMemo(() => {
-        if (selectedLeads.length <= 0) {
-            return 0;
-        }
+    const entriesCount = useMemo(() => (
+        sum(selectedLeads.map(lead => lead?.noOfEntries).filter(isDefined))
+    ), [selectedLeads]);
 
-        const entries = selectedLeads.map(lead => lead.noOfEntries);
-        return sum(entries);
-    }, [selectedLeads]);
-
-    const assessmentsCount = useMemo(
-        () => {
-            if (selectedLeads.length <= 0) {
-                return 0;
-            }
-
-            const assessments = selectedLeads.map(
-                lead => Number(isDefined(lead.assessmentId)),
-            );
-            return sum(assessments);
-        }, [selectedLeads],
-    );
+    const assessmentsCount = useMemo(() => (
+        sum(selectedLeads.map(
+            lead => Number(isDefined(lead.assessmentId)),
+        ))
+    ), [selectedLeads]);
 
     const selectedLeadsIds = useMemo(
         () => selectedLeads.map(lead => lead.id),

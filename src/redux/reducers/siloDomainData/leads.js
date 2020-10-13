@@ -271,7 +271,6 @@ const patchLead = (state, action) => {
 const removeBulkLead = (state, action) => {
     const { activeProject } = state;
     const { leadIds } = action;
-    const { totalLeadsCount } = state.leadPage[activeProject];
 
     const settings = {
         leadPage: {
@@ -286,7 +285,7 @@ const removeBulkLead = (state, action) => {
                         $filter: ld => !leadIds.includes(ld.id),
                     } },
                 } },
-                totalLeadsCount: { $set: totalLeadsCount - leadIds.length },
+                totalLeadsCount: { $apply: totalLeadsCount => totalLeadsCount - leadIds.length },
             },
         },
     };
