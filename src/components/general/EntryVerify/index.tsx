@@ -36,6 +36,7 @@ interface ComponentProps {
     value: boolean;
     className?: string;
     onPendingChange?: (pending: boolean | undefined) => void;
+    disabled?: boolean;
 }
 
 interface PropsFromDispatch {
@@ -109,6 +110,7 @@ function EntryVerify(props: Props) {
         requests,
         title,
         onPendingChange,
+        disabled,
     } = props;
 
     const {
@@ -154,6 +156,7 @@ function EntryVerify(props: Props) {
                         options={verificationStatusOptions}
                         onItemSelect={handleItemSelect}
                         dropdownIcon="arrowDropdown"
+                        disabled={disabled}
                         dropdownLeftComponent={(
                             <div
                                 title={title}

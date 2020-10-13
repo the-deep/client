@@ -1186,7 +1186,8 @@
         "-45253596": "Number of pages in Lead document",
         "-6895713": "Publishing organization: {leadSource}",
         "-79339447": "Entry created on",
-        "-7036637": "Lead created by: {user}"
+        "-7036637": "Lead created by: {user}",
+        "-66548496": "Assessment saved successfully."
     },
     "links": {
         "browserExtension": {
@@ -1763,7 +1764,9 @@
             "emptyLinkMessage": -52524002,
             "plannedAssessmentsButtonLabel": -41526057,
             "assessmentsNotifyTitle": -85659768,
-            "aryTitle": -85659768
+            "aryTitle": -85659768,
+            "assessmentTitle": 5562,
+            "assessmentSaveSuccessMessage": -66548496
         },
         "editAssessment.metadata": {
             "executiveSummaryTitle": 9022,

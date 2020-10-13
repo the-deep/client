@@ -251,8 +251,8 @@ const requestOptions = {
             // FIXME: use strings
             notify.send({
                 type: notify.type.SUCCESS,
-                title: 'Assessment',
-                message: 'Assessment save successful.',
+                title: _ts('assessments', 'assessmentTitle'),
+                message: _ts('assessments', 'assessmentSaveSuccessMessage'),
                 duration: notify.duration.MEDIUM,
             });
         },
