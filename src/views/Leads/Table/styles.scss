@@ -30,7 +30,7 @@
 
                 >div {
                     border-top: 0;
-                }
+                }  
             }
 
             .row {
@@ -164,3 +164,14 @@
     }
 }
 
+.select-all-checkbox {
+    flex-shrink: 0;
+    margin-left: var(--spacing-small);
+    font-size: var(--font-size-medium);
+}
+
+.checkbox {
+    margin-left: var(--spacing-small);
+    width: 100%;
+    font-size: var(--font-size-medium);
+}

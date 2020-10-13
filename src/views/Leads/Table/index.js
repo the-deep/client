@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -15,6 +15,7 @@ import Button from '#rsca/Button';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Checkbox from '#rsci/Checkbox';
 
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
@@ -37,34 +38,13 @@ import {
     methods,
 } from '#request';
 import _ts from '#ts';
-
+import useArraySelection from '#hooks/multiSelection';
 import ActionButtons from '../ActionButtons';
 import FileTypeViewer from './FileTypeViewer';
+import BulkActions from './BulkActions';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
-const emptyObject = {};
-
-const propTypes = {
-    className: PropTypes.string,
-    activeSort: PropTypes.string.isRequired,
-    leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    headersMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    loading: PropTypes.bool.isRequired,
-    emptyComponent: PropTypes.func.isRequired,
-    setLeadPageActiveSort: PropTypes.func.isRequired,
-    isFilterEmpty: PropTypes.bool,
-    onSearchSimilarLead: PropTypes.func.isRequired,
-    onRemoveLead: PropTypes.func.isRequired,
-    activeProject: PropTypes.number,
-};
-
-const defaultProps = {
-    className: undefined,
-    activeProject: undefined,
-    isFilterEmpty: false,
-};
 
 const mapStateToProps = state => ({
     leads: leadsForProjectTableViewSelector(state),
@@ -108,19 +88,111 @@ const requestOptions = {
 
 const shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.modify;
 
-@connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requestOptions)
-export default class Table extends React.Component {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-    static leadKeyExtractor = lead => String(lead.id)
+const leadKeyExtractor = lead => String(lead.id);
 
-    constructor(props) {
-        super(props);
+function Table(props) {
+    const {
+        headersMap,
+        leads,
+        emptyComponent,
+        loading,
+        isFilterEmpty,
+        className,
+        requests: {
+            leadOptionsRequest: {
+                confidentiality: confidentialityOptions,
+                status: statusOptions,
+                priority,
+            },
+            leadPatchRequest,
+        },
+        onSearchSimilarLead,
+        onRemoveLead,
+        activeProject,
+        activeSort,
+        setLeadPageActiveSort,
+        onLeadsRemoveSuccess,
+        filters,
+    } = props;
 
-        const { headersMap } = this.props;
+    const { pending } = leadPatchRequest;
 
-        const headers = [
+    const {
+        values: selectedLeads,
+        isItemPresent,
+        clickOnItem,
+        addItems,
+        removeItems,
+        clearSelection,
+    } = useArraySelection(
+        leadKeyExtractor,
+        [],
+    );
+
+    useEffect(()=>{
+        clearSelection()
+    },[activeProject, filters]);
+
+    const handleLeadsRemove = useCallback((leadIds) => {
+        removeItems(leadIds);
+        onLeadsRemoveSuccess();
+    }, [removeItems, onLeadsRemoveSuccess]);
+
+    const handleSelectAllCheckboxClick = useCallback(
+        (newValue) => {
+            if (newValue) {
+                addItems(leads);
+            } else {
+                removeItems(leads);
+            }
+        }, [leads, addItems, removeItems],
+    );
+
+    const {
+        areAllChecked,
+        areSomeChecked,
+    } = useMemo(() => {
+        if (!leads || leads.length === 0) {
+            return {
+                areAllChecked: false,
+                areSomeChecked: false,
+            };
+        }
+        const filteredLeads = leads.filter(l => isItemPresent(leadKeyExtractor(l)));
+        return {
+            areAllChecked: filteredLeads.length === leads.length,
+            areSomeChecked: filteredLeads.length < leads.length && filteredLeads.length > 0,
+        };
+    }, [leads, isItemPresent]);
+
+    const headers = useMemo(
+        () => [
+            {
+                key: 'multi_select',
+                order: 0,
+                modifier: (row) => {
+                    const itemSelected = selectedLeads.length > 0 && (
+                        selectedLeads.find(lead => lead.id === row.id)
+                    );
+
+                    return (
+                        <Checkbox
+                            onChange={() => clickOnItem(row)}
+                            value={!!itemSelected}
+                            className={styles.checkbox}
+                        />
+                    );
+                },
+                label: (
+                    <Checkbox
+                        onChange={handleSelectAllCheckboxClick}
+                        value={areAllChecked}
+                        indeterminate={areSomeChecked}
+                        name="selectAll"
+                        className={styles.selectAllCheckbox}
+                    />
+                ),
+            },
             {
                 key: 'attachment_mime_type',
                 order: 1,
@@ -199,11 +271,9 @@ export default class Table extends React.Component {
                 modifier: ({
                     authorsDetail,
                     authorRaw,
-                }) => (
-                    (authorsDetail && authorsDetail.length > 0)
-                        ? authorsDetail.map(organizationTitleSelector).join(', ')
-                        : authorRaw
-                ),
+                }) => ((authorsDetail && authorsDetail.length > 0)
+                    ? authorsDetail.map(organizationTitleSelector).join(', ')
+                    : authorRaw),
             },
             {
                 key: 'published_on',
@@ -256,116 +326,80 @@ export default class Table extends React.Component {
             {
                 key: 'confidentiality',
                 order: 10,
-                modifier: (row) => {
-                    const {
-                        requests: {
-                            leadOptionsRequest: {
-                                response: {
-                                    confidentiality: confidentialityOptions,
-                                } = emptyObject,
-                            } = emptyObject,
-                            leadPatchRequest,
-                        },
-                    } = this.props;
-
-                    return (
-                        <div className={styles.inlineEditContainer}>
-                            <div className={styles.label}>
-                                {row.confidentiality}
-                            </div>
-                            <Cloak
-                                hide={shouldHideLeadEdit}
-                                render={
-                                    <DropdownEdit
-                                        currentSelection={row.confidentiality}
-                                        className={styles.dropdown}
-                                        options={confidentialityOptions}
-                                        onItemSelect={key => leadPatchRequest.do({
-                                            patchBody: { confidentiality: key },
-                                            leadId: row.id,
-                                        })}
-                                    />
-                                }
-                            />
+                modifier: row => (
+                    <div className={styles.inlineEditContainer}>
+                        <div className={styles.label}>
+                            {row.confidentiality}
                         </div>
-                    );
-                },
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <DropdownEdit
+                                    currentSelection={row.confidentiality}
+                                    className={styles.dropdown}
+                                    options={confidentialityOptions}
+                                    disabled={selectedLeads.length > 0}
+                                    onItemSelect={key => leadPatchRequest.do({
+                                        patchBody: { confidentiality: key },
+                                        leadId: row.id,
+                                    })}
+                                />
+                            }
+                        />
+                    </div>
+                ),
             },
             {
                 key: 'status',
                 order: 11,
-                modifier: (row) => {
-                    const {
-                        requests: {
-                            leadOptionsRequest: {
-                                response: {
-                                    status: statusOptions,
-                                } = emptyObject,
-                            } = emptyObject,
-                            leadPatchRequest,
-                        },
-                    } = this.props;
-
-                    return (
-                        <div className={styles.inlineEditContainer}>
-                            <div className={styles.label}>
-                                {row.status}
-                            </div>
-                            <Cloak
-                                hide={shouldHideLeadEdit}
-                                render={
-                                    <DropdownEdit
-                                        currentSelection={row.status}
-                                        className={styles.dropdown}
-                                        options={statusOptions}
-                                        onItemSelect={key => leadPatchRequest.do({
-                                            patchBody: { status: key },
-                                            leadId: row.id,
-                                        })}
-                                    />
-                                }
-                            />
+                modifier: row => (
+                    <div className={styles.inlineEditContainer}>
+                        <div className={styles.label}>
+                            {row.status}
                         </div>
-                    );
-                },
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <DropdownEdit
+                                    currentSelection={row.status}
+                                    className={styles.dropdown}
+                                    options={statusOptions}
+                                    disabled={selectedLeads.length > 0}
+                                    onItemSelect={key => leadPatchRequest.do({
+                                        patchBody: { status: key },
+                                        leadId: row.id,
+                                    })}
+                                />
+                            }
+                        />
+                    </div>
+                ),
             },
             {
                 key: 'priority',
                 order: 12,
-                modifier: (row) => {
-                    const {
-                        requests: {
-                            leadOptionsRequest: {
-                                response: {
-                                    priority,
-                                } = emptyObject,
-                            } = emptyObject,
-                            leadPatchRequest,
-                        },
-                    } = this.props;
-
-                    return (
-                        <div className={styles.inlineEditContainer}>
-                            <div className={styles.label}>
-                                {row.priorityDisplay}
-                            </div>
-                            <Cloak
-                                hide={shouldHideLeadEdit}
-                                render={
-                                    <DropdownEdit
-                                        currentSelection={row.priority}
-                                        className={styles.dropdown}
-                                        options={priority}
-                                        onItemSelect={key => leadPatchRequest.do({
-                                            patchBody: { priority: key },
-                                            leadId: row.id,
-                                        })}
-                                    />
-                                }
-                            />
+                modifier: row => (
+                    <div className={styles.inlineEditContainer}>
+                        <div className={styles.label}>
+                            {row.priorityDisplay}
                         </div>
-                    );
-                },
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <DropdownEdit
+                                    currentSelection={row.priority}
+                                    className={styles.dropdown}
+                                    options={priority}
+                                    disabled={selectedLeads.length > 0}
+                                    onItemSelect={key => leadPatchRequest.do({
+                                        patchBody: { priority: key },
+                                        leadId: row.id,
+                                    })}
+                                />
+                            }
+                        />
+                    </div>
+                ),
             },
             {
                 key: 'no_of_entries',
@@ -376,107 +410,136 @@ export default class Table extends React.Component {
             {
                 key: 'actions',
                 order: 14,
-                modifier: (row) => {
-                    const {
-                        onSearchSimilarLead,
-                        onRemoveLead,
-                        activeProject,
-                    } = this.props;
-
-                    return (
-                        <ActionButtons
-                            row={row}
-                            onSearchSimilarLead={onSearchSimilarLead}
-                            onRemoveLead={onRemoveLead}
-                            activeProject={activeProject}
-                        />
-                    );
-                },
+                modifier: row => (
+                    <ActionButtons
+                        row={row}
+                        onSearchSimilarLead={onSearchSimilarLead}
+                        onRemoveLead={onRemoveLead}
+                        activeProject={activeProject}
+                        disabled={selectedLeads.length > 0}
+                    />
+                ),
             },
-        ];
-
-        this.headers = headers.map(h => ({
-            ...h,
+        ].map(h => ({
             ...headersMap[h.key],
-        }));
-    }
+            ...h,
+        })),
+        [
+            handleSelectAllCheckboxClick,
+            areAllChecked,
+            areSomeChecked,
+            selectedLeads,
+            clickOnItem,
+            confidentialityOptions,
+            leadPatchRequest,
+            statusOptions,
+            priority,
+            onSearchSimilarLead,
+            onRemoveLead,
+            activeProject,
+            headersMap,
+        ],
+    );
 
-    leadModifier = (lead, columnKey) => {
-        const header = this.headers.find(d => d.key === columnKey);
-        if (header.modifier) {
-            return header.modifier(lead);
-        }
-        return lead[columnKey];
-    }
+    const leadModifier = useCallback(
+        (lead, columnKey) => {
+            const header = headers.find(d => d.key === columnKey);
+            return header.modifier(lead)??lead[columnKey];
+        }, [headers],
+    );
 
-    headerModifier = (headerData) => {
-        const { activeSort } = this.props;
-
-        let sortOrder = '';
-        if (activeSort === headerData.key) {
-            sortOrder = 'asc';
-        } else if (activeSort === `-${headerData.key}`) {
-            sortOrder = 'dsc';
-        }
-        return (
-            <TableHeader
-                label={headerData.label}
-                sortOrder={sortOrder}
-                sortable={headerData.sortable}
-            />
-        );
-    }
-
-    handleTableHeaderClick = (key) => {
-        const headerData = this.headers.find(h => h.key === key);
-        // prevent click on 'actions' column
-        if (!headerData.sortable) {
-            return;
-        }
-
-        let { activeSort = '' } = this.props;
-        const isAsc = activeSort.charAt(0) !== '-';
-
-        const isCurrentHeaderSorted = activeSort === key
-            || (activeSort.substr(1) === key && !isAsc);
-
-        if (isCurrentHeaderSorted) {
-            activeSort = isAsc ? `-${key}` : key;
-        } else {
-            activeSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
-        }
-
-        this.props.setLeadPageActiveSort({ activeSort });
-    }
-
-    render() {
-        const {
-            leads,
-            emptyComponent,
-            loading,
-            isFilterEmpty,
-            className,
-            requests: {
-                leadPatchRequest: { pending },
-            },
-        } = this.props;
-
-        return (
-            <div className={_cs(className, styles.tableContainer)}>
-                {pending && <LoadingAnimation />}
-                <RawTable
-                    data={leads}
-                    dataModifier={this.leadModifier}
-                    headerModifier={this.headerModifier}
-                    headers={this.headers}
-                    onHeaderClick={this.handleTableHeaderClick}
-                    keySelector={Table.leadKeyExtractor}
-                    className={styles.leadsTable}
-                    emptyComponent={emptyComponent}
-                    pending={loading}
-                    isFiltered={!isFilterEmpty}
+    const headerModifier = useCallback(
+        (headerData) => {
+            let sortOrder = '';
+            if (activeSort === headerData.key) {
+                sortOrder = 'asc';
+            } else if (activeSort === `-${headerData.key}`) {
+                sortOrder = 'dsc';
+            }
+            return (
+                <TableHeader
+                    label={headerData.label}
+                    sortOrder={sortOrder}
+                    sortable={headerData.sortable}
                 />
-            </div>
-        );
-    }
+            );
+        }, [activeSort],
+    );
+
+    const handleTableHeaderClick = useCallback(
+        (key) => {
+            const headerData = headers.find(h => h.key === key);
+            // prevent click on 'actions' column
+            if (!headerData || !headerData.sortable) {
+                return;
+            }
+
+            let tmpActiveSort = activeSort;
+
+            const isAsc = tmpActiveSort.charAt(0) !== '-';
+
+            const isCurrentHeaderSorted = tmpActiveSort === key
+                || (tmpActiveSort.substr(1) === key && !isAsc);
+
+            if (isCurrentHeaderSorted) {
+                tmpActiveSort = isAsc ? `-${key}` : key;
+            } else {
+                tmpActiveSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
+            }
+
+            setLeadPageActiveSort({ activeSort: tmpActiveSort });
+        }, [headers, activeSort, setLeadPageActiveSort],
+    );
+
+    return (
+        <div className={_cs(className, styles.tableContainer)}>
+            {pending && <LoadingAnimation />}
+            <RawTable
+                data={leads}
+                dataModifier={leadModifier}
+                headerModifier={headerModifier}
+                headers={headers}
+                onHeaderClick={handleTableHeaderClick}
+                keySelector={leadKeyExtractor}
+                className={styles.leadsTable}
+                emptyComponent={emptyComponent}
+                pending={loading}
+                isFiltered={!isFilterEmpty}
+            />
+            {selectedLeads.length > 0 && (
+                <BulkActions
+                    selectedLeads={selectedLeads}
+                    activeProject={activeProject}
+                    onRemoveItems={handleLeadsRemove}
+                    onClearSelection={clearSelection}
+                />
+            )}
+        </div>
+    );
 }
+export default connect(mapStateToProps, mapDispatchToProps)(
+    RequestClient(requestOptions)(
+        Table,
+    ),
+);
+
+Table.propTypes = {
+    className: PropTypes.string,
+    activeSort: PropTypes.string.isRequired,
+    leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    headersMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    loading: PropTypes.bool.isRequired,
+    emptyComponent: PropTypes.func.isRequired,
+    setLeadPageActiveSort: PropTypes.func.isRequired,
+    isFilterEmpty: PropTypes.bool,
+    onSearchSimilarLead: PropTypes.func.isRequired,
+    onRemoveLead: PropTypes.func.isRequired,
+    activeProject: PropTypes.number,
+};
+
+Table.defaultProps = {
+    className: undefined,
+    activeProject: undefined,
+    isFilterEmpty: false,
+};

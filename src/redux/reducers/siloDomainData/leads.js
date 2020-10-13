@@ -7,6 +7,8 @@ export const L__APPEND_LEADS = 'siloDomainData/APPEND_LEADS';
 export const L__PATCH_LEAD = 'siloDomainData/PATCH_LEAD';
 export const L__REMOVE_LEAD = 'siloDomainData/REMOVE_LEAD';
 
+export const L__REMOVE_BULK_LEAD = 'siloDomainData/REMOVE_BULK_LEAD';
+
 export const L__SET_FILTER = 'siloDomainData/SET_FILTER';
 export const L__UNSET_FILTER = 'siloDomainData/UNSET_FILTER';
 
@@ -66,6 +68,11 @@ export const patchLeadAction = ({ lead }) => ({
 export const removeLeadAction = ({ lead }) => ({
     type: L__REMOVE_LEAD,
     lead,
+});
+
+export const removeBulkLeadAction = leadIds => ({
+    type: L__REMOVE_BULK_LEAD,
+    leadIds,
 });
 
 const getView = state => state.leadPage.view || 'table';
@@ -261,6 +268,30 @@ const patchLead = (state, action) => {
     return update(state, settings);
 };
 
+const removeBulkLead = (state, action) => {
+    const { activeProject } = state;
+    const { leadIds } = action;
+
+    const settings = {
+        leadPage: {
+            [activeProject]: {
+                table: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => !leadIds.includes(ld.id),
+                    } },
+                } },
+                grid: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => !leadIds.includes(ld.id),
+                    } },
+                } },
+                totalLeadsCount: { $apply: totalLeadsCount => totalLeadsCount - leadIds.length },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 // REDUCER MAP
 
 const reducers = {
@@ -275,6 +306,7 @@ const reducers = {
     [L__APPEND_LEADS]: appendLeads,
     [L__PATCH_LEAD]: patchLead,
     [L__REMOVE_LEAD]: removeLead,
+    [L__REMOVE_BULK_LEAD]: removeBulkLead,
 };
 
 export default reducers;

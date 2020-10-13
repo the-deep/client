@@ -29,10 +29,12 @@ const propTypes = {
     activeProject: PropTypes.number.isRequired,
     onSearchSimilarLead: PropTypes.func.isRequired,
     onRemoveLead: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
 export default class ActionButtons extends React.PureComponent {
@@ -105,6 +107,7 @@ export default class ActionButtons extends React.PureComponent {
             row,
             className,
             activeProject,
+            disabled,
         } = this.props;
 
         const containerClassName = _cs(
@@ -126,6 +129,7 @@ export default class ActionButtons extends React.PureComponent {
                                 title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
                                 transparent
                                 iconName="openLink"
+                                disabled={disabled}
                                 modal={
                                     <LeadCopyModal leads={leadIds} />
                                 }
@@ -138,6 +142,7 @@ export default class ActionButtons extends React.PureComponent {
                         onClick={() => onSearchSimilarLead(row)}
                         transparent
                         iconName="search"
+                        disabled={disabled}
                     />
                     <Cloak
                         hide={ActionButtons.shouldHideLeadDelete}
@@ -149,6 +154,7 @@ export default class ActionButtons extends React.PureComponent {
                                 transparent
                                 iconName="delete"
                                 confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                                disabled={disabled}
                             />
                         }
                     />
@@ -158,6 +164,7 @@ export default class ActionButtons extends React.PureComponent {
                             <ModalWarningButton
                                 iconName="edit"
                                 transparent
+                                disabled={disabled}
                                 modal={
                                     <LeadEditModal
                                         leadId={row.id}

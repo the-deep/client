@@ -135,6 +135,10 @@ const mapDispatchToProps = dispatch => ({
 // This map is required for Grid view page, previously all the headers were in this
 // page wich doesn't make sense and complicates the process
 const tableHeadersMap = {
+    multi_select: {
+        label: 'select',
+        sortable: false,
+    },
     attachment_mime_type: {
         label: _ts('leads', 'filterSourceType'),
         sortable: false,
@@ -453,6 +457,22 @@ export default class Leads extends React.PureComponent {
         this.props.setLeadPageActivePage({ activePage: page });
     }
 
+    handleLeadsRemoveSuccess = () => {
+        const {
+            activePage,
+            setLeadPageActivePage,
+            setLeads,
+            requests: {
+                leadsGetRequest,
+            },
+        } = this.props;
+        if (activePage === 1) {
+            leadsGetRequest.do({ setLeads });
+        } else {
+            setLeadPageActivePage({ activePage: 1 });
+        }
+    }
+
     handleLeadsPerPageChange = (pageCount) => {
         this.props.setLeadsPerPage({ leadsPerPage: pageCount });
     }
@@ -594,7 +614,7 @@ export default class Leads extends React.PureComponent {
                     {hasEmmFields && (
                         <EmmStatusBar />
                     )}
-                    { view === TABLE_VIEW ?
+                    {view === TABLE_VIEW ?
                         (
                             <div className={styles.pagerContainer}>
                                 <Pager
@@ -636,7 +656,6 @@ export default class Leads extends React.PureComponent {
     }
 
     renderTableView = () => {
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
         const {
             activeSort,
             setLeadPageActiveSort,
@@ -644,7 +663,9 @@ export default class Leads extends React.PureComponent {
             requests: {
                 leadsGetRequest: { pending },
             },
+            filters,
         } = this.props;
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (
             <Table
@@ -655,6 +676,8 @@ export default class Leads extends React.PureComponent {
                 setLeadPageActiveSort={setLeadPageActiveSort}
                 emptyComponent={EmptyComponent}
                 isFilterEmpty={isFilterEmpty}
+                filters={filters}
+                onLeadsRemoveSuccess={this.handleLeadsRemoveSuccess}
 
                 onSearchSimilarLead={this.handleSearchSimilarLead}
 
