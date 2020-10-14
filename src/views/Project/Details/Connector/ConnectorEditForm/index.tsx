@@ -181,6 +181,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [bodyToSend, setBodyToSend] = useState<BodyForRequest | undefined>(undefined);
     const [pristine, setPristine] = useState<boolean>(true);
+    const [connectorToTrigger, setConnectorToTrigger] = useState<number | undefined>(undefined);
 
     const [
         pendingConnectorSourcesList,
@@ -228,8 +229,16 @@ function ProjectConnectorEditForm(props: OwnProps) {
             if (onSuccess) {
                 onSuccess(response);
             }
+            setConnectorToTrigger(response.id);
             closeModal();
         },
+    });
+
+    const [,,, connectorTriggerTrigger] = useRequest({
+        url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
+        method: 'POST',
+        body: {},
+        // FIXME: add error handling
     });
 
     const handleFaramValidationSucces = useCallback((finalFaramValues) => {

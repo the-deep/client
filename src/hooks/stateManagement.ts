@@ -10,7 +10,7 @@ function isCallable<T>(val: T | ((oldVal: T) => T)): val is (oldVal: T) => T {
 }
 
 export function useArrayEdit<T, K extends string | number>(
-    setValues: React.Dispatch<React.SetStateAction<T[]>>,
+    setValues: React.Dispatch<React.SetStateAction<T[] | undefined>>,
     keySelector: (value: T) => K,
 ): [
     (item: T) => void,
@@ -18,14 +18,14 @@ export function useArrayEdit<T, K extends string | number>(
     (key: K, item: T) => void,
 ] {
     const addItem = useCallback((newItem: T) => {
-        setValues((oldValues: T[]) => ([
+        setValues((oldValues = []) => ([
             ...oldValues,
             newItem,
         ]));
     }, [setValues]);
 
     const removeItem = useCallback((key: K) => {
-        setValues((oldValues) => {
+        setValues((oldValues = []) => {
             const index = oldValues.findIndex(item => keySelector(item) === key);
             if (index === -1) {
                 return oldValues;
@@ -37,7 +37,7 @@ export function useArrayEdit<T, K extends string | number>(
     }, [setValues, keySelector]);
 
     const modifyItem = useCallback((modifiedItemKey: K, modifiedItem: (T | ((oldVal: T) => T))) => {
-        setValues((oldValues) => {
+        setValues((oldValues = []) => {
             const index = oldValues.findIndex(item => keySelector(item) === modifiedItemKey);
             if (index === -1) {
                 return oldValues;
