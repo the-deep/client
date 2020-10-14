@@ -89,6 +89,7 @@ const propTypes = {
     onItemSelect: PropTypes.func,
     isItemSelected: PropTypes.bool,
     selectionMode: PropTypes.bool,
+    logo: PropTypes.string,
 
     progress: PropTypes.number,
     count: PropTypes.number,
@@ -110,6 +111,7 @@ const defaultProps = {
     isItemSelected: false,
     separator: true,
     selectionMode: false,
+    logo: undefined,
 };
 
 function ListStatusItem(props) {
@@ -129,6 +131,7 @@ function ListStatusItem(props) {
         onItemSelect,
         isItemSelected,
         selectionMode,
+        logo,
     } = props;
 
     const handleClick = useCallback(() => {
@@ -178,12 +181,27 @@ function ListStatusItem(props) {
                         }}
                     />
                 )}
-                {leadTypeToIconClassMap[type] && isNotDefined(onItemSelect) && (
-                    <Icon
-                        className={styles.icon}
-                        name={leadTypeToIconClassMap[type]}
-                    />
-                )}
+                {leadTypeToIconClassMap[type]
+                        && isNotDefined(onItemSelect)
+                        && isNotDefined(logo)
+                    && (
+                        <Icon
+                            className={styles.icon}
+                            name={leadTypeToIconClassMap[type]}
+                        />
+                    )
+                }
+                {leadTypeToIconClassMap[type]
+                        && isNotDefined(onItemSelect)
+                        && isDefined(logo)
+                    && (
+                        <img
+                            className={styles.img}
+                            alt=""
+                            src={logo}
+                        />
+                    )
+                }
                 {isDefined(onItemSelect) && (
                     <Button
                         className={_cs(
