@@ -1,5 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
@@ -34,7 +37,7 @@ function ProjectConnector(props: OwnProps) {
         className,
     } = props;
 
-    const [connectors, setConnectors] = useState<Connector[]>([]);
+    const [connectors, setConnectors] = useState<Connector[] | undefined>(undefined);
     const [
         handleConnectorAdd,
         handleConnectorDelete,
@@ -66,7 +69,7 @@ function ProjectConnector(props: OwnProps) {
 
     return (
         <div className={_cs(className, styles.projectConnectors)}>
-            {pendingConnectors && <LoadingAnimation />}
+            {pendingConnectors && isNotDefined(connectors) && <LoadingAnimation />}
             <header className={styles.header}>
                 <div className={styles.heading} />
                 <ModalButton

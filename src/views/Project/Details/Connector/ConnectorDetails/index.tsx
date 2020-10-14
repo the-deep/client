@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react';
 import {
     _cs,
     isDefined,
-    compareDate,
 } from '@togglecorp/fujs';
 import { Switch } from '@togglecorp/toggle-ui';
 
