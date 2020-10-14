@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/member-delimiter-style */
-import React, { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import {
     isDefined,
     isNotDefined,
@@ -9,15 +8,7 @@ import {
 function useArraySelection<T, K extends string | number>(
     keySelector: (value: T) => K,
     defaultValue: T[] = [],
-): {
-    values: T[],
-    setValues: React.Dispatch<React.SetStateAction<T[]>>,
-    isItemPresent: (itemKey: K) => void,
-    addItems: (items: T[]) => void,
-    removeItems: (items: T[]) => void,
-    clickOnItem: (item: T) => void,
-    clearSelection: () => void,
-} {
+) {
     const [values, setValues] = useState(defaultValue);
 
     const clickOnItem = useCallback((clickedItem: T) => {
@@ -58,11 +49,22 @@ function useArraySelection<T, K extends string | number>(
     const addItems = useCallback((itemsToAdd: T[]) => {
         setValues((oldValues) => {
             const oldValuesMap = listToMap(oldValues, keySelector, d => d);
+
+            const itemsToReplace = itemsToAdd.filter(
+                item => isDefined(oldValuesMap[keySelector(item)]),
+            );
+            const itemsToReplaceMap = listToMap(itemsToReplace, keySelector, d => d);
+
             const newItemsToAdd = itemsToAdd.filter(
                 item => isNotDefined(oldValuesMap[keySelector(item)]),
             );
+            const remainingOldValues = oldValues.filter(
+                item => isNotDefined(itemsToReplaceMap[keySelector(item)]),
+            );
+
             return ([
-                ...oldValues,
+                ...remainingOldValues,
+                ...itemsToReplace,
                 ...newItemsToAdd,
             ]);
         });

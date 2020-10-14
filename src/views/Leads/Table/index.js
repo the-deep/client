@@ -16,6 +16,7 @@ import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Checkbox from '#rsci/Checkbox';
+import CheckboxWithIndeterminate from '#rsu/../v2/Input/Checkbox';
 
 import Cloak from '#components/general/Cloak';
 import EmmStatsModal from '#components/viewer/EmmStatsModal';
@@ -184,12 +185,12 @@ function Table(props) {
                     );
                 },
                 label: (
-                    <Checkbox
+                    <CheckboxWithIndeterminate
                         onChange={handleSelectAllCheckboxClick}
                         value={areAllChecked}
-                        indeterminate={areSomeChecked}
                         name="selectAll"
                         className={styles.selectAllCheckbox}
+                        indeterminate={areSomeChecked}
                     />
                 ),
             },
