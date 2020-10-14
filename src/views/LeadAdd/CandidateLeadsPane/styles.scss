@@ -1,5 +1,6 @@
 .candidate-leads {
-    border: var(--width-separator-thin) solid var(--color-separator);
+    // border: var(--width-separator-thin) solid var(--color-separator);
+    border: 3px solid blue!important;
     padding: var(--spacing-large);
 
     .header {

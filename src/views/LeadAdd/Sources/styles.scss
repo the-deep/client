@@ -4,10 +4,16 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    border: 1px solid red;
 
-    .heading {
-        margin: 0;
-        padding: var(--spacing-medium) var(--spacing-large);
+    .header {
+        display: flex;
+        align-items: center;
+
+        .heading {
+            margin: 0;
+            padding: var(--spacing-medium) var(--spacing-large);
+        }
     }
 
     .file-input {

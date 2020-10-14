@@ -1,0 +1,16 @@
+.upload-progress {
+    width: 32px;
+    height: 32px;
+    fill: transparent;
+
+    circle {
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dashoffset 0.35s;
+        stroke-width: 1px;
+        stroke: red;
+        r: 11px;
+        cx: 16px;
+        cy: 16px;
+    }
+}

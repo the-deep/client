@@ -1,4 +1,6 @@
 .add-lead {
+    overflow: auto;
+
     .header {
         display: flex;
         align-items: center;
@@ -23,7 +25,7 @@
             flex-shrink: 0;
             border-right: var(--width-separator-thin) solid var(--color-separator);
             background-color: var(--color-foreground);
-            width: 15%;
+            width: 270px;
             overflow-y: auto;
             color: var(--color-text-on-foreground);
 
@@ -46,14 +48,14 @@
         .main {
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
+            flex-grow: 1;
             background-color: var(--color-foreground);
-            width: 85%;
-            overflow-y: auto;
+            overflow: auto;
 
             .bar {
                 display: flex;
                 flex-shrink: 0;
+                border: 1px solid red;
                 border-bottom: var(--width-separator-thin) solid var(--color-separator);
                 background-color: var(--color-foreground-alt);
 

@@ -47,6 +47,7 @@ import {
     getNewLeadKey,
 } from '../utils';
 import { CandidateLeadsManagerContext } from '../CandidateLeadsManager';
+import LeadStatusButton from '../LeadStatusButton';
 
 import ListStatusItem from '../ListStatusItem';
 import styles from './styles.scss';
@@ -275,6 +276,7 @@ function Sources(props) {
             console.error('No files selected to upload');
             return;
         }
+
         const newLeads = files.map((file) => {
             const lead = {
                 key: getNewLeadKey(),
@@ -340,9 +342,12 @@ function Sources(props) {
 
     return (
         <div className={_cs(styles.addLeadSources, className)}>
-            <h4 className={styles.heading}>
-                {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
-            </h4>
+            <header className={styles.header}>
+                <h4 className={styles.heading}>
+                    {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
+                </h4>
+                <LeadStatusButton />
+            </header>
             <ListStatusItem
                 count={counts[LEAD_TYPE.file]}
                 itemKey={LEAD_TYPE.file}
