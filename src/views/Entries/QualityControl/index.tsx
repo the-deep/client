@@ -49,8 +49,13 @@ function QualityControl(props: QualityControlProps) {
         setSelection(id);
     }, []);
 
-    const matrix1dToc = useMemo(() => getMatrix1dToc(framework), [framework]);
-    const matrix2dToc = useMemo(() => getMatrix2dToc(framework), [framework]);
+    const matrixToc = useMemo(
+        () => [
+            ...getMatrix1dToc(framework),
+            ...getMatrix2dToc(framework),
+        ],
+        [framework],
+    );
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
@@ -59,27 +64,14 @@ function QualityControl(props: QualityControlProps) {
                 leftContainerClassName={styles.left}
                 leftChild={(
                     <div className={styles.frameworkSelection}>
-                        <div>
-                            {_ts('qualityControl', 'matrix1dTitle')}
-                        </div>
                         <TableOfContents
-                            options={matrix1dToc}
+                            options={matrixToc}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             childrenSelector={childrenSelector}
                             onChange={handleSelection}
                             value={selected}
-                        />
-                        <div>
-                            {_ts('qualityControl', 'matrix2dTitle')}
-                        </div>
-                        <TableOfContents
-                            options={matrix2dToc}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            childrenSelector={childrenSelector}
-                            onChange={handleSelection}
-                            value={selected}
+                            defaultCollapseLevel={1}
                         />
                     </div>
                 )}

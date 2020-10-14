@@ -15,36 +15,14 @@
     }
 
     .item {
-        padding-left: var(--spacing-small);
-        border-left: var(--spacing-extra-small) solid transparent;
         outline: none;
-
+        border-left: var(--spacing-extra-small) solid transparent;
+        padding-left: var(--spacing-small);
     }
 
     .selected {
         border-left: var(--spacing-extra-small) solid var(--color-accent);
         color: var(--color-accent)
-    }
-
-    .levelZero {
-        font-size: var(--font-size-extra-large-alt);
-        font-weight: var(--font-weight-bold);
-
-    }
-    .levelOne {
-        font-size: var(--font-size-extra-large);
-        font-weight: var(--font-weight-bold);
-
-    }
-    .levelTwo {
-        font-size: var(--font-size-large-alt);
-        font-weight: var(--font-weight-bold);
-
-    }
-    .levelThree {
-        font-size: var(--font-size-large);
-        font-weight: var(--font-weight-bold);
-
     }
 
     .leaf {

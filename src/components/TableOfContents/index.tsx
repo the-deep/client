@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isDefined } from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rsu/../v2/View/ListView';
@@ -13,65 +13,43 @@ interface Props<T, K extends string | number>{
     onChange: (key: K) => void;
     options: T[];
     value: K | undefined;
+    level?: number;
+    defaultCollapseLevel?: number;
 }
 
-
-type ToCListProps<T, K extends string | number> = Omit<Props<T, K>, 'options'> & {
-    options: T[];
-    level: number;
-};
-
 type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
-    options: T;
-    level: number;
+    option: T;
 };
 
 function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const {
-        options,
-        level,
+        option,
+        level = 0,
         value,
         onChange,
         keySelector,
         labelSelector,
         childrenSelector,
+        defaultCollapseLevel,
     } = props;
 
-    const id = keySelector(options);
-    const title = labelSelector(options);
-    const children = childrenSelector(options);
+    const id = keySelector(option);
+    const title = labelSelector(option);
+    const children = childrenSelector(option);
 
     const handleClick = useCallback(
         () => onChange(id),
         [id, onChange],
     );
 
-    const [collapsed, setCollapsed] = useState<boolean>(false);
+    const [collapsed, setCollapsed] = useState<boolean>(
+        isDefined(defaultCollapseLevel) && level >= defaultCollapseLevel,
+    );
 
     const handleCollapseToggle = useCallback(
         () => setCollapsed(v => !v),
         [],
     );
-
-    const levelClassName = useMemo(() => {
-        switch (level) {
-            case 0: {
-                return styles.levelZero;
-            }
-            case 1: {
-                return styles.levelOne;
-            }
-            case 2: {
-                return styles.levelTwo;
-            }
-            case 3: {
-                return styles.levelThree;
-            }
-            default: {
-                return styles.leaf;
-            }
-        }
-    }, [level]);
 
     const isSelected = id === value;
 
@@ -82,7 +60,6 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                     <div
                         className={_cs(
                             styles.item,
-                            levelClassName,
                             isSelected && styles.selected,
                         )}
                         onClick={handleClick}
@@ -99,21 +76,20 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                         iconName={collapsed ? 'down' : 'up'}
                     />
                 </div>
-                {
-                    !collapsed && (
-                        <ToCList
-                            {...props}
-                            options={children}
-                            level={level + 1}
-                        />
-                    )
-                }
+                {!collapsed && (
+                    <TableOfContents
+                        {...props}
+                        options={children}
+                        level={level + 1}
+                    />
+                )}
             </div>
         );
     }
+
     return (
         <div
-            className={_cs(styles.item, isSelected && styles.selected, levelClassName)}
+            className={_cs(styles.item, isSelected && styles.selected)}
             onClick={handleClick}
             onKeyDown={handleClick}
             role="button"
@@ -124,12 +100,21 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     );
 }
 
-function ToCList<T, K extends string | number>(props: ToCListProps<T, K>) {
-    const { options, keySelector, ...otherProps } = props;
+
+type ToCListProps<T, K extends string | number> = Props<T, K>;
+
+function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>) {
+    const {
+        options,
+        keySelector,
+        level = 0,
+        ...otherProps
+    } = props;
 
     const rendererParams = (_: string | number, v: T) => ({
-        options: v,
         ...otherProps,
+        option: v,
+        level,
         keySelector,
     });
 
@@ -140,15 +125,6 @@ function ToCList<T, K extends string | number>(props: ToCListProps<T, K>) {
             renderer={ToCItem}
             keySelector={keySelector}
             rendererParams={rendererParams}
-        />
-    );
-}
-
-function TableOfContents<T, K extends string | number>(props: Props<T, K>) {
-    return (
-        <ToCList
-            {...props}
-            level={0}
         />
     );
 }
