@@ -1,18 +1,27 @@
 declare module '@togglecorp/faram' {
     import * as React from 'react';
 
+    interface ObjectSchemaWithIdentifier {
+        identifier: (value: object) => string;
+        fields: {
+            [key: string]: {
+                [key: string]: unknown[] | ArraySchema | ObjectSchema | ObjectSchemaWithIdentifier;
+            };
+        };
+        validation?: (value: any) => string[];
+    }
     interface ObjectSchema {
         fields: {
-            [key: string]: unknown[] | ArraySchema | ObjectSchema;
+            [key: string]: unknown[] | ArraySchema | ObjectSchema | ObjectSchemaWithIdentifier;
         };
         validation?: (value: any) => string[];
     }
     export interface ArraySchema {
         validation?: (value: any) => string[];
-        member: ObjectSchema;
+        member: ObjectSchema | ObjectSchemaWithIdentifier;
         keySelector: (value: any) => string | number;
     }
-    export type Schema = ObjectSchema;
+    export type Schema = ObjectSchema | ObjectSchemaWithIdentifier;
 
     interface ObjectComputeSchema {
         fields: {
@@ -95,9 +104,10 @@ declare module '@togglecorp/faram' {
     export const timeCondition: (value: any) => ValidOp;
 
     /*
-    // NOTE: you need to explicitly pass faramElementName with this typing
     function FaramInputElement<T>(component: React.ComponentType<T>):
-        React.ComponentType<Omit<T, 'value' | 'onChange'> & { faramElementName: string; faramInfo?: any }>
+        (React.ComponentType<Omit<T, 'value' | 'onChange'> & { faramElementName: string; faramInfo?: any }>)
+        | React.ComponentType<T>;
+    // NOTE: you need to explicitly pass faramElementName with this typing
 
     // NOTE: you need to explicitly pass faramElementName with this typing
     function FaramOutputElement<T>(component: React.ComponentType<T>):

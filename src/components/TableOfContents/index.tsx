@@ -4,7 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rsu/../v2/View/ListView';
 
-import styles from './styles.css';
+import styles from './styles.scss';
 
 interface Props<T, K extends string | number>{
     keySelector: (datum: T) => K;

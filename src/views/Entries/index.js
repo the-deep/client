@@ -335,7 +335,6 @@ export default class Entries extends React.PureComponent {
                     framework: this.props.framework,
                     className: styles.qc,
                     leadGroupedEntriesList: this.props.leadGroupedEntriesList,
-                    framework: this.props.framework,
                 }),
             },
         };
