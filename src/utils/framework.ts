@@ -1,12 +1,15 @@
 import _ts from '#ts';
 import {
     FrameworkElement,
+    FrameworkFields,
     MiniFrameworkElement,
     Matrix2dWidgetElement,
     Matrix2dFlatSectorElement,
     Matrix2dFlatSubsectorElement,
     Matrix2dFlatDimensionElement,
     Matrix2dFlatSubdimensionElement,
+    Matrix1dWidgetElement,
+    MatrixTocElement,
 } from '#typings';
 
 export const SECTOR_FIRST = 'sectorFirst';
@@ -25,11 +28,6 @@ interface Matrix2dData {
             title: string;
         }[];
     }[];
-}
-
-interface IdTitle {
-    id: number | string;
-    title: string;
 }
 
 // NOTE: This function generates dimension first level
@@ -159,6 +157,8 @@ const emptyObject = {
     subdimensionList: [],
 };
 
+const emptyArray: MatrixTocElement[] = [];
+
 export const getMatrix2dStructures = (framework: MiniFrameworkElement | undefined) => {
     if (!framework) {
         return emptyObject;
@@ -255,4 +255,145 @@ export const getMatrix2dStructures = (framework: MiniFrameworkElement | undefine
         subsectorList,
         subdimensionList,
     };
+};
+
+export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
+    if (!framework) {
+        return emptyArray;
+    }
+
+    const {
+        widgets,
+    } = framework;
+
+    const matrix1dList = widgets.filter(d => d.widgetId === 'matrix1dWidget');
+
+    if (matrix1dList.length === 0) {
+        return emptyArray;
+    }
+
+    const toc = matrix1dList.map((widget) => {
+        const {
+            id,
+            title,
+            properties,
+        } = widget as Matrix1dWidgetElement;
+
+        const { data } = properties;
+        if (!data) {
+            return ({
+                id,
+                title,
+            });
+        }
+
+        const { rows } = data;
+        const transformedRows = rows.map((row) => {
+            const { key, title: rowTitle, cells } = row;
+
+            const transformedCells = cells.map(({
+                key: cellKey,
+                value,
+            }) => ({ id: cellKey, title: value }));
+
+            return ({
+                id: key,
+                title: rowTitle,
+                children: transformedCells,
+            });
+        });
+
+        return ({
+            id,
+            title,
+            children: transformedRows,
+        });
+    });
+
+    return toc;
+};
+
+export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
+    if (!framework) {
+        return emptyArray;
+    }
+
+    const {
+        widgets,
+    } = framework;
+
+    const matrix2dList = widgets.filter(d => d.widgetId === 'matrix2dWidget');
+
+    if (matrix2dList.length === 0) {
+        return emptyArray;
+    }
+
+    const toc = matrix2dList.map((widget) => {
+        const {
+            id,
+            title,
+            properties,
+        } = widget as Matrix2dWidgetElement;
+
+        const { data } = properties;
+        if (!data) {
+            return ({
+                id,
+                title,
+            });
+        }
+        const { dimensions, sectors } = data;
+        const transformedDimensions = dimensions.map((dimension) => {
+            const { id: dimensionId, title: dimensionTitle, subdimensions } = dimension;
+
+            const transformedSubDimensions = subdimensions.map(
+                ({
+                    id: subDimensionId,
+                    title: subDimensionTitle,
+                }) => ({ id: subDimensionId, title: subDimensionTitle }),
+            );
+
+            return ({
+                id: dimensionId,
+                title: dimensionTitle,
+                children: transformedSubDimensions,
+            });
+        });
+
+        const transformedSectors = sectors.map((sector) => {
+            const { id: sectorId, title: sectorTitle, subsectors } = sector;
+
+            const transformedSubSectors = subsectors.map(
+                ({
+                    id: subSectorId,
+                    title: subSectorTitle,
+                }) => ({ id: subSectorId, title: subSectorTitle }),
+            );
+
+            return ({
+                id: sectorId,
+                title: sectorTitle,
+                children: transformedSubSectors,
+            });
+        });
+
+        return {
+            id,
+            title,
+            children: [
+                {
+                    id: 'dimensions',
+                    title: 'Dimensions',
+                    children: transformedDimensions,
+                },
+                {
+                    id: 'sectors',
+                    title: 'Sectors',
+                    children: transformedSectors,
+                },
+            ],
+        };
+    });
+
+    return toc;
 };

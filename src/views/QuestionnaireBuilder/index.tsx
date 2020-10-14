@@ -11,7 +11,7 @@ import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import SearchInput from '#rsci/SearchInput';
-import Button from '#rsu/../v2/Action/Button';
+import Button, { Props as ButtonProps } from '#rsu/../v2/Action/Button';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import VerticalTabs from '#rscv/VerticalTabs';
@@ -65,7 +65,7 @@ import Diagnostics from './Diagnostics';
 
 import styles from './styles.scss';
 
-const ModalButton = modalize(Button);
+const ModalButton = modalize<ButtonProps<unknown>>(Button);
 
 type TabElement = 'active' | 'archived';
 

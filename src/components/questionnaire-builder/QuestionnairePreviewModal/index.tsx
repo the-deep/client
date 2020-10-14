@@ -166,7 +166,7 @@ class QuestionnairePreviewModal extends React.PureComponent<Props> {
         __html: xform.form,
     })
 
-    private form: unknown;
+    private form: Form | undefined;
 
     private handleValidate = () => {
         if (!this.form) {
@@ -175,7 +175,7 @@ class QuestionnairePreviewModal extends React.PureComponent<Props> {
         }
 
         this.form.validate()
-            .then((valid: unknown) => {
+            .then((valid) => {
                 if (valid) {
                     notify.send({
                         title: 'Enketo preview',

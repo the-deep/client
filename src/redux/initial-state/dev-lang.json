@@ -1191,7 +1191,12 @@
         "-36063988": "Are you sure you want to remove the selected leads? {leadsCount} along with their associated {entriesCount} and {assessmentsCount} will be removed.",
         "-91590870": "Bulk Delete Leads",
         "-86276092": "{count} leads selected",
-        "-22337727": "Clear all selected items"
+        "-22337727": "Clear all selected items",
+        "-78808098": "Lead Organization",
+        "-41977678": "Project stakeholders",
+        "-435034987": "Searching",
+        "-90901113": "Matrix 1D",
+        "-90901114": "Matrix 2D"
     },
     "links": {
         "browserExtension": {
@@ -3427,6 +3432,10 @@
             "leadSourceTooltip": -6895713,
             "entryCreatedOnTooltip": -79339447,
             "leadCreatedByTooltip": -7036637
+        },
+        "qualityControl": {
+            "matrix1dTitle": -90901113,
+            "matrix2dTitle": -90901114
         }
     }
 }

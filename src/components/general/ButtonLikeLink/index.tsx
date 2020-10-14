@@ -9,8 +9,9 @@ type ButtonType = 'default' | 'primary' | 'accent' | 'danger' | 'warning'
 interface Props {
     className?: string;
     type: ButtonType;
-    to: string;
+    to: string | { pathname: string; search: string };
     disabled?: boolean;
+    children: React.ReactNode;
 }
 
 const styleTypeMap: {

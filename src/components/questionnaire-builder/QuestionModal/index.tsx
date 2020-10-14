@@ -5,6 +5,7 @@ import Faram, {
     FaramList,
     FaramInputElement,
     Schema,
+    ObjectSchema,
     ArraySchema,
 } from '@togglecorp/faram';
 import {
@@ -259,54 +260,30 @@ function createSchema(
         () => [],
     );
 
-    const schema: Schema = {
+    const detailsSchema: ObjectSchema = {
         fields: {
-            detail: {
-                fields: {
-                    title: [requiredCondition],
-                    name: [requiredCondition],
-                    moreTitles: {
-                        validation: (moreTitles: LanguageTitle[]) => {
-                            const errors = [];
-                            const duplicates = getDuplicates(moreTitles, o => o.key);
-                            if (duplicates.length > 0) {
-                                errors.push(`Duplicate items are not allowed: ${duplicates.join(', ')}`);
-                            }
-                            return errors;
-                        },
-                        keySelector: languageKeySelector,
-                        member: {
-                            fields: {
-                                title: [requiredCondition],
-                                key: [requiredCondition],
-                            },
-                        },
+            title: [requiredCondition],
+            name: [requiredCondition],
+            moreTitles: {
+                validation: (moreTitles: LanguageTitle[]) => {
+                    const errors = [];
+                    const duplicates = getDuplicates(moreTitles, o => o.key);
+                    if (duplicates.length > 0) {
+                        errors.push(`Duplicate items are not allowed: ${duplicates.join(', ')}`);
+                    }
+                    return errors;
+                },
+                keySelector: languageKeySelector,
+                member: {
+                    fields: {
+                        title: [requiredCondition],
+                        key: [requiredCondition],
                     },
-                    type: [requiredCondition],
                 },
             },
-            metadata: {
-                fields: {
-                    crisisType: [],
-                    enumeratorSkill: [requiredCondition],
-                    dataCollectionTechnique: [requiredCondition],
-                    importance: [requiredCondition],
-                    requiredDuration: [],
-                    enumeratorInstruction: [],
-                    respondentInstruction: [],
-                    // FIXME: this should be dynamic, only available if type is 'select'
-                },
-            },
+            type: [requiredCondition],
         },
     };
-    if (framework) {
-        const analysisFrameworkSchema: Schema = {
-            fields: {
-                frameworkAttribute: [],
-            },
-        };
-        schema.fields.analysisFramework = analysisFrameworkSchema;
-    }
     if (hasResponseOptions) {
         const responseSchema: ArraySchema = {
             keySelector: responseOptionKeySelector,
@@ -329,7 +306,33 @@ function createSchema(
                 },
             },
         };
-        schema.fields.detail.fields.responseOptions = responseSchema;
+        detailsSchema.fields.responseOptions = responseSchema;
+    }
+
+    const schema: Schema = {
+        fields: {
+            detail: detailsSchema,
+            metadata: {
+                fields: {
+                    crisisType: [],
+                    enumeratorSkill: [requiredCondition],
+                    dataCollectionTechnique: [requiredCondition],
+                    importance: [requiredCondition],
+                    requiredDuration: [],
+                    enumeratorInstruction: [],
+                    respondentInstruction: [],
+                    // FIXME: this should be dynamic, only available if type is 'select'
+                },
+            },
+        },
+    };
+    if (framework) {
+        const analysisFrameworkSchema: Schema = {
+            fields: {
+                frameworkAttribute: [],
+            },
+        };
+        schema.fields.analysisFramework = analysisFrameworkSchema;
     }
     return schema;
 }

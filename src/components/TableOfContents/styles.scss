@@ -1,0 +1,35 @@
+.toc-list {
+    color: var(--color-text-label);
+
+    .container {
+        display: flex;
+
+        .expand-button {
+            flex-shrink: 0;
+            outline: none;
+            padding: var(--spacing-extra-small) var(--spacing-small);
+        }
+        &.collapsed {
+            transform: rotate(90deg);
+        }
+    }
+
+    .item {
+        outline: none;
+        border-left: var(--spacing-extra-small) solid transparent;
+        padding-left: var(--spacing-small);
+    }
+
+    .selected {
+        border-left: var(--spacing-extra-small) solid var(--color-accent);
+        color: var(--color-accent)
+    }
+
+    .leaf {
+        font-size: var(--font-size-medium);
+    }
+}
+
+.toc-list:not(:first-child) {
+    padding: 0 0 var(--spacing-medium) var(--spacing-large);
+}

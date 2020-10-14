@@ -128,8 +128,8 @@ const requestOptions: Requests<ComponentProps, Params> = {
     questionnaireDeleteRequest: {
         url: ({ params }) => `/questionnaires/${params && params.questionnaireId}/`,
         method: methods.DELETE,
-        onSuccess: ({ props, params: { donotReloadList } }) => {
-            if (!donotReloadList) {
+        onSuccess: ({ props, params }) => {
+            if (params && !params.donotReloadList) {
                 // NOTE: re-trigger questionnaire request
                 props.requests.questionnairesGetRequest.do();
                 props.onQuestionnaireMetaReload();
