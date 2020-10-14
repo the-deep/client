@@ -53,17 +53,29 @@
                 height: 100%;
             }
         }
+        --icon-size: calc(20px + 2 * var(--spacing-small));
 
         .icon {
             flex-shrink: 0;
             margin: 0 var(--spacing-small);
             padding: var(--spacing-medium) var(--spacing-small);
-            width: calc(20px + 2 * var(--spacing-small));
+            width: var(--icon-size);
+            text-align: center;
             font-size: var(--font-size-large);
 
             &.check-button {
                 color: var(--color-accent);
             }
+        }
+
+        .img {
+            margin: 0 var(--spacing-small);
+            padding: var(--spacing-small) var(--spacing-extra-small);
+            width: var(--icon-size);
+            height: var(--icon-size);
+
+            object-fit: contain;
+            object-position: center center;
         }
 
         .title-container {

@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    compareDate,
+} from '@togglecorp/fujs';
 import {
     AreaChart,
     XAxis,
@@ -50,7 +53,7 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
         statistics?.publishedDates?.map(pd => ({
             count: pd.count,
             date: (new Date(pd.date)).getTime(),
-        }))
+        })).sort((a, b) => compareDate(a.date, b.date))
     ), [statistics]);
 
     return (

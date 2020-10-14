@@ -66,6 +66,7 @@ function ConnectorItem(props) {
             indent: 1,
             separator: false,
             itemState: connectorStatusToLeadStatusMap[source.status],
+            logo: source.sourceDetail.logo,
         }),
         [id, handleConnectorSourceSelect, selectedConnector, selectedConnectorSource],
     );
