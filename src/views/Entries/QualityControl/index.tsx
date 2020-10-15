@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import Pager from '#rscv/Pager';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
 
@@ -23,6 +24,10 @@ interface QualityControlProps {
     projectId: number;
     leadGroupedEntriesList: LeadWithGroupedEntriesFields[];
     framework: FrameworkFields;
+    activePage: number;
+    totalEntriesCount: number;
+    maxItemsPerPage: number;
+    handlePageClick: (page: number) => void;
 }
 
 const keySelector = (d: MatrixTocElement) => d.id;
@@ -35,6 +40,10 @@ function QualityControl(props: QualityControlProps) {
         leadGroupedEntriesList,
         // projectId,
         framework,
+        activePage,
+        totalEntriesCount,
+        maxItemsPerPage,
+        handlePageClick,
     } = props;
 
     const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
@@ -101,6 +110,15 @@ function QualityControl(props: QualityControlProps) {
                     </div>
                 )}
             />
+            <footer className={styles.footer}>
+                <Pager
+                    activePage={activePage}
+                    itemsCount={totalEntriesCount}
+                    maxItemsPerPage={maxItemsPerPage}
+                    onPageClick={handlePageClick}
+                    showItemsPerPageChange={false}
+                />
+            </footer>
         </div>
     );
 }

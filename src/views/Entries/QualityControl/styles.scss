@@ -34,4 +34,15 @@
             }
         }
     }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: flex-end;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small) var(--spacing-medium);
+        color: var(--color-text-on-foreground);
+    }
 }
