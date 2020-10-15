@@ -54,3 +54,14 @@
         }
     }
 }
+
+.inline-container {
+    display: inline;
+
+    .arrow-icon {
+        display: inline;
+        opacity: .7;
+        margin: 0 var(--spacing-small);
+        color: var(--color-primary);
+    }
+}

@@ -12,6 +12,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import SegmentInput from '#rsci/SegmentInput';
+import Icon from '#rscg/Icon';
 
 import {
     RequestCoordinator,
@@ -211,7 +212,15 @@ const notificationGroupRendererParams = (groupKey) => {
 };
 
 const emptyNotifications = () => (
-    <Message>{_ts('notifications', 'noNotificationsText')}</Message>
+    <Message>
+        <div className={styles.inlineContainer}>
+            {_ts('notifications', 'noNotificationsText')}
+            <Icon
+                className={styles.arrowIcon}
+                name="upArrow"
+            />
+        </div>
+    </Message>
 );
 
 const emptyRequests = () => (

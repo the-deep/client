@@ -738,7 +738,7 @@
         "-45091634": "Failed to get project options.",
         "-44183195": "Warning: {count} number of entries will be affected if you've edited or removed widgets. Would you like to continue?",
         "-82545000": "Default",
-        "-70199668": "No notifications to display",
+        "-70199668": "No notifications to display. Have you tried a different date range?",
         "-53914293": "Are you sure you want to remove the connector {connector}?",
         "-94736495": "Delete",
         "-22187575": "Failed to delete connector.",
