@@ -1177,7 +1177,7 @@
         "-30025571": "International Partners",
         "-49224651": "National Partners",
         "-78808098": "Lead Organization",
-        "-41977678": "Stakeholders",
+        "-41977678": "Project stakeholders",
         "-435034987": "Searching",
         "-79879798": "Image",
         "-42342342": "Entry Type",
@@ -1192,11 +1192,11 @@
         "-91590870": "Bulk Delete Leads",
         "-86276092": "{count} leads selected",
         "-22337727": "Clear all selected items",
-        "-78808098": "Lead Organization",
-        "-41977678": "Project stakeholders",
-        "-435034987": "Searching",
         "-90901113": "Matrix 1D",
-        "-90901114": "Matrix 2D"
+        "-90901114": "Matrix 2D",
+        "-86792115": "Lead filters",
+        "-86210237": "Entry filters",
+        "-69483734": "Widget filters"
     },
     "links": {
         "browserExtension": {
@@ -1689,7 +1689,10 @@
             "dataSeries": -43286063,
             "entryTypePlaceholder": 14,
             "entryTypeFilterLabel": -42342342,
-            "leadPublishedOnPlaceholder": 18
+            "leadPublishedOnPlaceholder": 18,
+            "leadFiltersGroupTitle": -86792115,
+            "entriesFiltersGroupTitle": -86210237,
+            "widgetsFiltersGroupTitle": -69483734
         },
         "export": {
             "headerExport": 600,

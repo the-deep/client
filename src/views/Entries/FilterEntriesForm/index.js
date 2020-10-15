@@ -1,5 +1,5 @@
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -13,10 +13,9 @@ import {
 import SearchInput from '#rsci/SearchInput';
 import SelectInput from '#rsci/SelectInput';
 import DateFilter from '#rsci/DateFilter';
-import TimeFilter from '#rsci/TimeFilter';
-import RangeFilter from '#rsci/RangeFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Button from '#rsca/Button';
+import List from '#rscv/List';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import {
@@ -31,9 +30,11 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import GeoFilter from './GeoFilter';
+import FrameworkFilter from './FrameworkFilter';
 
 import styles from './styles.scss';
+
+const emptyList = [];
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
@@ -47,32 +48,6 @@ const mapDispatchToProps = dispatch => ({
     setEntryFilterOptions: params => dispatch(setEntryFilterOptionsAction(params)),
     unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
 });
-
-const propTypes = {
-    applyOnChange: PropTypes.bool,
-    filters: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool,
-    className: PropTypes.string,
-
-    activeProject: PropTypes.number.isRequired,
-    entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    entryFilterOptions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    setEntriesViewFilter: PropTypes.func.isRequired,
-    setEntryFilterOptions: PropTypes.func.isRequired,
-    unsetEntriesViewFilter: PropTypes.func.isRequired,
-};
-
-const defaultProps = {
-    pending: true,
-    className: undefined,
-    filters: [],
-    geoOptions: {},
-    applyOnChange: false,
-};
-
-const emptyList = [];
 
 const commentStatusOptions = [
     {
@@ -129,189 +104,154 @@ const requestOptions = {
     },
 };
 
-@connect(mapStateToProps, mapDispatchToProps)
-@RequestClient(requestOptions)
-export default class FilterEntriesForm extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+const filterKeySelector = (d = {}) => d.key;
 
-    static optionLabelSelector = (d = {}) => d.value;
-    static optionKeySelector = (d = {}) => d.key;
+const optionLabelSelector = (d = {}) => d.value;
+const optionKeySelector = (d = {}) => d.key;
+const optionTitleSelector = (d = {}) => d.title;
+const optionIdSelector = (d = {}) => d.id;
 
-    static optionTitleSelector = (d = {}) => d.title;
-    static optionIdSelector = (d = {}) => d.id;
+function FilterEntriesForm(props) {
+    const {
+        entriesFilters,
+        unsetEntriesViewFilter,
+        setEntriesViewFilter,
+        pending,
+        className,
+        entryFilterOptions,
+        applyOnChange,
+        hideLeadFilters,
+        filters: filtersFromProps,
+        geoOptions,
+        projectDetails,
+    } = props;
 
-    static identitySelector = d => d;
+    const [pristine, setPristine] = useState(true);
+    const [filters, setFilters] = useState(entriesFilters);
 
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+        setPristine(true);
+        setFilters(entriesFilters);
+    }, [entriesFilters]);
 
-        const { entriesFilters } = this.props;
+    const handleApplyFilter = useCallback(() => {
+        setEntriesViewFilter({ filters });
+    }, [filters, setEntriesViewFilter]);
 
-        this.state = {
-            pristine: true,
-            filters: entriesFilters,
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { entriesFilters: oldFilter } = this.props;
-        const { entriesFilters: newFilter } = nextProps;
-
-        if (oldFilter !== newFilter) {
-            this.setState({
-                pristine: true,
-                filters: newFilter,
-            });
-        }
-    }
-
-    handleApplyFilter = () => {
-        const { filters } = this.state;
-        this.props.setEntriesViewFilter({ filters });
-    }
-
-    handleClearFilter = () => {
-        const { pristine } = this.state;
-
+    const handleClearFilter = useCallback(() => {
         if (pristine) {
-            const { unsetEntriesViewFilter } = this.props;
             unsetEntriesViewFilter();
         } else {
-            this.setState({ filters: {} });
+            setFilters({});
         }
-    }
+    }, [pristine, unsetEntriesViewFilter, setFilters]);
 
-    handleFilterChange = (key, values) => {
-        const filters = {
-            ...this.state.filters,
+    const handleFilterChange = useCallback((key, values) => {
+        setPristine(false);
+        setFilters(oldFilters => ({
+            ...oldFilters,
             ...{ [key]: values },
-        };
+        }));
 
-        this.setState({
-            filters,
-            pristine: false,
-        }, () => {
-            if (this.props.applyOnChange) {
-                this.handleApplyFilter();
-            }
-        });
-    }
-
-    renderFilter = ({ title, key, properties: filter }) => {
-        const { filters } = this.state;
-        if (!filter || !filter.type) {
-            return null;
+        if (applyOnChange) {
+            handleApplyFilter();
         }
+    }, [setFilters, handleApplyFilter, applyOnChange]);
 
-        const props = {
-            key,
-            className: styles.entriesFilter,
-            label: title,
-            onChange: values => this.handleFilterChange(key, values),
-            value: filters[key],
-            disabled: this.props.pending,
-        };
+    const frameworkFilterRendererParams = useCallback((key, data) => ({
+        filterKey: key,
+        title: data.title,
+        filter: data.properties,
+        value: filters[key],
+        handleFilterChange,
+        disabled: pending,
+        regions: projectDetails.regions,
+        geoOptions,
+    }), [
+        geoOptions,
+        projectDetails,
+        pending,
+        filters,
+        handleFilterChange,
+    ]);
 
-        switch (filter.type) {
-            case 'geo': {
-                const {
-                    geoOptions,
-                    projectDetails,
-                } = this.props;
+    const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
-                return (
-                    <GeoFilter
-                        {...props}
-                        value={props.value}
-                        disabled={props.disabled}
-                        geoOptions={geoOptions}
-                        regions={projectDetails.regions}
-                    />
-                );
-            }
-            case 'multiselect':
-                return (
+    const {
+        createdBy,
+        projectEntryLabel,
+        leadStatus,
+        leadPriority,
+        leadConfidentiality,
+    } = entryFilterOptions;
+
+    const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
+    const selectedVerification = verificationStatusOptions.find(
+        v => v.key === filters.verified,
+    );
+
+    return (
+        <div className={_cs(styles.entriesFilters, className)} >
+            {!hideLeadFilters && (
+                <div className={styles.filtersGroup}>
+                    <h4 className={styles.heading}>
+                        {_ts('entries', 'leadFiltersGroupTitle')}
+                    </h4>
                     <MultiSelectInput
-                        {...props}
-                        value={props.value || emptyList}
-                        options={filter.options || emptyList}
+                        className={styles.entriesFilter}
+                        onChange={(value) => { handleFilterChange('lead_status', value); }}
+                        keySelector={optionKeySelector}
+                        label={_ts('entries', 'leadStatusFilterLabel')}
+                        labelSelector={optionLabelSelector}
+                        value={filters.lead_status}
                         showHintAndError={false}
-                        placeholder={_ts('entries', 'multiselectPlaceholder')}
+                        options={leadStatus}
+                        placeholder={_ts('entries', 'leadStatusFilterPlaceholder')}
+                        disabled={pending}
                     />
-                );
-            case 'multiselect-range':
-                return (
-                    <RangeFilter
-                        {...props}
-                        options={filter.options}
+                    <MultiSelectInput
+                        className={styles.entriesFilter}
+                        onChange={(value) => { handleFilterChange('lead_priority', value); }}
+                        keySelector={optionKeySelector}
+                        label={_ts('entries', 'leadPriorityFilterLabel')}
+                        labelSelector={optionLabelSelector}
+                        value={filters.lead_priority}
                         showHintAndError={false}
-                        placeholder={_ts('entries', 'multiselectRangePlaceholder')}
+                        options={leadPriority}
+                        placeholder={_ts('entries', 'leadPriorityFilterPlaceholder')}
+                        disabled={pending}
                     />
-                );
-            case 'date':
-                return (
+                    <MultiSelectInput
+                        className={styles.entriesFilter}
+                        onChange={(value) => { handleFilterChange('lead_confidentiality', value); }}
+                        keySelector={optionKeySelector}
+                        label={_ts('entries', 'leadConfidentialityFilterLabel')}
+                        labelSelector={optionLabelSelector}
+                        value={filters.lead_confidentiality}
+                        showHintAndError={false}
+                        options={leadConfidentiality}
+                        placeholder={_ts('entries', 'leadConfidentialityFilterPlaceholder')}
+                        disabled={pending}
+                    />
                     <DateFilter
-                        {...props}
+                        className={styles.entriesFilter}
+                        label={_ts('entries', 'leadPublishedOnFilterLabel')}
+                        onChange={(value) => { handleFilterChange('lead_published_on', value); }}
                         showHintAndError={false}
-                        placeholder={_ts('entries', 'datePlaceholder')}
+                        value={filters.lead_published_on}
+                        disabled={pending}
+                        placeholder={_ts('entries', 'leadPublishedOnPlaceholder')}
                     />
-                );
-            case 'time':
-                return (
-                    <TimeFilter
-                        {...props}
-                        showHintAndError={false}
-                        placeholder={_ts('entries', 'timePlaceholder')}
-                    />
-                );
-            case 'text':
-                return (
-                    <SearchInput
-                        {...props}
-                        showHintAndError={false}
-                        placeholder={_ts('entries', 'textSearchPlaceholder')}
-                    />
-                );
-            default:
-                return null;
-        }
-    }
-
-    render() {
-        const {
-            pending,
-            className,
-            entryFilterOptions,
-            applyOnChange,
-        } = this.props;
-
-        const {
-            pristine,
-            filters,
-        } = this.state;
-
-        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
-
-        const {
-            createdBy,
-            projectEntryLabel,
-            leadStatus,
-            leadPriority,
-            leadConfidentiality,
-        } = entryFilterOptions;
-
-        const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
-        const selectedVerification = verificationStatusOptions.find(
-            v => v.key === filters.verified,
-        );
-
-        return (
-            <div className={_cs(styles.entriesFilters, className)} >
+                </div>
+            )}
+            <div className={styles.filtersGroup}>
+                <h4 className={styles.heading}>
+                    {_ts('entries', 'entriesFiltersGroupTitle')}
+                </h4>
                 <SearchInput
                     className={styles.entriesFilter}
                     label={_ts('entries', 'searchFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('search', value); }}
+                    onChange={(value) => { handleFilterChange('search', value); }}
                     placeholder={_ts('entries', 'searchFilterPlaceholder')}
                     showHintAndError={false}
                     value={filters.search}
@@ -319,56 +259,11 @@ export default class FilterEntriesForm extends React.PureComponent {
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
-                    onChange={(value) => { this.handleFilterChange('lead_status', value); }}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    label={_ts('entries', 'leadStatusFilterLabel')}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
-                    value={filters.lead_status}
-                    showHintAndError={false}
-                    options={leadStatus}
-                    placeholder={_ts('entries', 'leadStatusFilterPlaceholder')}
-                    disabled={pending}
-                />
-                <MultiSelectInput
-                    className={styles.entriesFilter}
-                    onChange={(value) => { this.handleFilterChange('lead_priority', value); }}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    label={_ts('entries', 'leadPriorityFilterLabel')}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
-                    value={filters.lead_priority}
-                    showHintAndError={false}
-                    options={leadPriority}
-                    placeholder={_ts('entries', 'leadPriorityFilterPlaceholder')}
-                    disabled={pending}
-                />
-                <MultiSelectInput
-                    className={styles.entriesFilter}
-                    onChange={(value) => { this.handleFilterChange('lead_confidentiality', value); }}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    label={_ts('entries', 'leadConfidentialityFilterLabel')}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
-                    value={filters.lead_confidentiality}
-                    showHintAndError={false}
-                    options={leadConfidentiality}
-                    placeholder={_ts('entries', 'leadConfidentialityFilterPlaceholder')}
-                    disabled={pending}
-                />
-                <DateFilter
-                    className={styles.entriesFilter}
-                    label={_ts('entries', 'leadPublishedOnFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('lead_published_on', value); }}
-                    showHintAndError={false}
-                    value={filters.lead_published_on}
-                    disabled={pending}
-                    placeholder={_ts('entries', 'leadPublishedOnPlaceholder')}
-                />
-                <MultiSelectInput
-                    className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
                     options={createdBy}
                     label={_ts('entries', 'createdByFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('created_by', value); }}
+                    onChange={(value) => { handleFilterChange('created_by', value); }}
                     showHintAndError={false}
                     value={filters.created_by || emptyList}
                     disabled={pending}
@@ -377,7 +272,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                 <DateFilter
                     className={styles.entriesFilter}
                     label={_ts('entries', 'createdAtFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('created_at', value); }}
+                    onChange={(value) => { handleFilterChange('created_at', value); }}
                     showHintAndError={false}
                     value={filters.created_at}
                     disabled={pending}
@@ -385,48 +280,23 @@ export default class FilterEntriesForm extends React.PureComponent {
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
                     options={createdBy}
                     label={_ts('entries', 'commentAssignedToFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('comment_assignee', value); }}
+                    onChange={(value) => { handleFilterChange('comment_assignee', value); }}
                     showHintAndError={false}
                     value={filters.comment_assignee || emptyList}
                     disabled={pending}
                     placeholder={_ts('entries', 'createdByPlaceholder')}
                 />
-                {showEntryLabelFilters && (
-                    <>
-                        <MultiSelectInput
-                            className={styles.entriesFilter}
-                            keySelector={FilterEntriesForm.optionIdSelector}
-                            labelSelector={FilterEntriesForm.optionTitleSelector}
-                            options={projectEntryLabel}
-                            label={_ts('entries', 'entryLabelsFilterLabel')}
-                            onChange={(value) => { this.handleFilterChange('project_entry_labels', value); }}
-                            showHintAndError={false}
-                            value={filters.project_entry_labels || emptyList}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
-                        />
-                        <SearchInput
-                            className={styles.entriesFilter}
-                            label={_ts('entries', 'entryGroupsFilterLabel')}
-                            onChange={(value) => { this.handleFilterChange('lead_group_label', value); }}
-                            showHintAndError={false}
-                            disabled={pending}
-                            value={filters.lead_group_label}
-                            placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
-                        />
-                    </>
-                )}
                 <MultiSelectInput
                     className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
                     options={createdBy}
                     label={_ts('entries', 'commentCreatedByFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('comment_created_by', value); }}
+                    onChange={(value) => { handleFilterChange('comment_created_by', value); }}
                     showHintAndError={false}
                     value={filters.comment_created_by || emptyList}
                     disabled={pending}
@@ -434,11 +304,11 @@ export default class FilterEntriesForm extends React.PureComponent {
                 />
                 <SelectInput
                     className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
                     options={commentStatusOptions}
                     label={_ts('entries', 'commentStatusOptionsFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('comment_status', value); }}
+                    onChange={(value) => { handleFilterChange('comment_status', value); }}
                     showHintAndError={false}
                     value={filters.comment_status || undefined}
                     disabled={pending}
@@ -446,12 +316,12 @@ export default class FilterEntriesForm extends React.PureComponent {
                 />
                 <SelectInput
                     className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
                     options={verificationStatusOptions}
                     label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
                     onChange={(value) => {
-                        this.handleFilterChange(
+                        handleFilterChange(
                             'verified',
                             value,
                         );
@@ -463,22 +333,59 @@ export default class FilterEntriesForm extends React.PureComponent {
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
-                    keySelector={FilterEntriesForm.optionKeySelector}
-                    labelSelector={FilterEntriesForm.optionLabelSelector}
+                    keySelector={optionKeySelector}
+                    labelSelector={optionLabelSelector}
                     options={entryTypeOptions}
                     label={_ts('entries', 'entryTypeFilterLabel')}
-                    onChange={(value) => { this.handleFilterChange('entry_type', value); }}
+                    onChange={(value) => { handleFilterChange('entry_type', value); }}
                     showHintAndError={false}
                     value={filters.entry_type || emptyList}
                     disabled={pending}
                     placeholder={_ts('entries', 'entryTypePlaceholder')}
                 />
-                { this.props.filters.map(this.renderFilter) }
+                {showEntryLabelFilters && (
+                    <>
+                        <MultiSelectInput
+                            className={styles.entriesFilter}
+                            keySelector={optionIdSelector}
+                            labelSelector={optionTitleSelector}
+                            options={projectEntryLabel}
+                            label={_ts('entries', 'entryLabelsFilterLabel')}
+                            onChange={(value) => { handleFilterChange('project_entry_labels', value); }}
+                            showHintAndError={false}
+                            value={filters.project_entry_labels || emptyList}
+                            disabled={pending}
+                            placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
+                        />
+                        <SearchInput
+                            className={styles.entriesFilter}
+                            label={_ts('entries', 'entryGroupsFilterLabel')}
+                            onChange={(value) => { handleFilterChange('lead_group_label', value); }}
+                            showHintAndError={false}
+                            disabled={pending}
+                            value={filters.lead_group_label}
+                            placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
+                        />
+                    </>
+                )}
+            </div>
+            <div className={styles.filtersGroup}>
+                <h4 className={styles.heading}>
+                    {_ts('entries', 'widgetsFiltersGroupTitle')}
+                </h4>
+                <List
+                    data={filtersFromProps}
+                    keySelector={filterKeySelector}
+                    renderer={FrameworkFilter}
+                    rendererParams={frameworkFilterRendererParams}
+                />
+            </div>
+            <div className={styles.actionButtons}>
                 {
                     !applyOnChange && (
                         <Button
                             className={styles.button}
-                            onClick={this.handleApplyFilter}
+                            onClick={handleApplyFilter}
                             disabled={pending || pristine}
                         >
                             {_ts('entries', 'applyFilterButtonLabel')}
@@ -487,12 +394,43 @@ export default class FilterEntriesForm extends React.PureComponent {
                 }
                 <DangerButton
                     className={styles.button}
-                    onClick={this.handleClearFilter}
+                    onClick={handleClearFilter}
                     disabled={pending || isFilterEmpty}
                 >
                     {_ts('entries', 'clearFilterButtonLabel')}
                 </DangerButton>
             </div>
-        );
-    }
+        </div>
+    );
 }
+
+FilterEntriesForm.propTypes = {
+    applyOnChange: PropTypes.bool,
+    filters: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    pending: PropTypes.bool,
+    className: PropTypes.string,
+    hideLeadFilters: PropTypes.bool,
+
+    activeProject: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    entryFilterOptions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setEntriesViewFilter: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    setEntryFilterOptions: PropTypes.func.isRequired,
+    unsetEntriesViewFilter: PropTypes.func.isRequired,
+};
+
+FilterEntriesForm.defaultProps = {
+    pending: true,
+    hideLeadFilters: false,
+    className: undefined,
+    filters: [],
+    geoOptions: {},
+    applyOnChange: false,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+    RequestClient(requestOptions)(FilterEntriesForm),
+);
