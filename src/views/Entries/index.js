@@ -331,14 +331,12 @@ export default class Entries extends React.PureComponent {
             [QC_VIEW]: {
                 component: QualityControl,
                 rendererParams: () => ({
+                    className: styles.qc,
                     projectId: this.props.projectId,
                     framework: this.props.framework,
-                    className: styles.qc,
-                    leadGroupedEntriesList: this.props.leadGroupedEntriesList,
-                    activePage: this.props.activePage,
-                    totalEntriesCount: this.props.totalEntriesCount,
+                    entriesFilters: this.props.entriesFilters,
+                    geoOptions: this.props.geoOptions,
                     maxItemsPerPage: MAX_ENTRIES_PER_REQUEST,
-                    handlePageClick: this.handlePageClick,
                 }),
             },
         };

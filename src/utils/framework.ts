@@ -275,6 +275,7 @@ export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTo
     const toc = matrix1dList.map((widget) => {
         const {
             id,
+            key,
             title,
             properties,
         } = widget as Matrix1dWidgetElement;
@@ -283,21 +284,23 @@ export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTo
         if (!data) {
             return ({
                 id,
+                key,
                 title,
             });
         }
 
         const { rows } = data;
         const transformedRows = rows.map((row) => {
-            const { key, title: rowTitle, cells } = row;
+            const { key: rowKey, title: rowTitle, cells } = row;
 
             const transformedCells = cells.map(({
                 key: cellKey,
                 value,
-            }) => ({ id: cellKey, title: value }));
+            }) => ({ id: cellKey, key, title: value }));
 
             return ({
-                id: key,
+                id: rowKey,
+                key,
                 title: rowTitle,
                 children: transformedCells,
             });
@@ -331,6 +334,7 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
     const toc = matrix2dList.map((widget) => {
         const {
             id,
+            key,
             title,
             properties,
         } = widget as Matrix2dWidgetElement;
@@ -339,10 +343,13 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
         if (!data) {
             return ({
                 id,
+                key,
                 title,
             });
         }
         const { dimensions, sectors } = data;
+        const dimensionKey = `${key}-dimensions`;
+        const sectorKey = `${key}-sectors`;
         const transformedDimensions = dimensions.map((dimension) => {
             const { id: dimensionId, title: dimensionTitle, subdimensions } = dimension;
 
@@ -350,11 +357,12 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
                 ({
                     id: subDimensionId,
                     title: subDimensionTitle,
-                }) => ({ id: subDimensionId, title: subDimensionTitle }),
+                }) => ({ id: subDimensionId, key: dimensionKey, title: subDimensionTitle }),
             );
 
             return ({
                 id: dimensionId,
+                key: dimensionKey,
                 title: dimensionTitle,
                 children: transformedSubDimensions,
             });
@@ -367,11 +375,12 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
                 ({
                     id: subSectorId,
                     title: subSectorTitle,
-                }) => ({ id: subSectorId, title: subSectorTitle }),
+                }) => ({ id: subSectorId, key: sectorKey, title: subSectorTitle }),
             );
 
             return ({
                 id: sectorId,
+                key: sectorKey,
                 title: sectorTitle,
                 children: transformedSubSectors,
             });

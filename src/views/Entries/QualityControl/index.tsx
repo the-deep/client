@@ -1,62 +1,59 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import { isDefined, _cs } from '@togglecorp/fujs';
 
 import Pager from '#rscv/Pager';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
-// import { Lead } from '#typings/lead';
-import { LeadWithGroupedEntriesFields } from '#typings/entry';
+import { EntryFields } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
+import { MatrixTocElement, MultiResponse } from '#typings';
 
-import { MatrixTocElement } from '#typings';
+import { processEntryFilters } from '#entities/entries';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
-
-import _ts from '#ts';
+import useRequest from '#utils/request';
 
 import EntryCard from './EntryCard';
-
 import styles from './styles.scss';
-
 
 interface QualityControlProps {
     className?: string;
     projectId: number;
-    leadGroupedEntriesList: LeadWithGroupedEntriesFields[];
     framework: FrameworkFields;
-    activePage: number;
-    totalEntriesCount: number;
+    entriesFilters: {};
+    geoOptions: {};
     maxItemsPerPage: number;
-    handlePageClick: (page: number) => void;
 }
 
-const keySelector = (d: MatrixTocElement) => d.id;
+interface MatrixKeyId {
+    key: string;
+    id: string;
+}
+
+const keySelector = (d: MatrixTocElement) => d.key;
+const idSelector = (d: MatrixTocElement) => d.id;
 const labelSelector = (d: MatrixTocElement) => d.title;
 const childrenSelector = (d: MatrixTocElement) => d.children;
 
 function QualityControl(props: QualityControlProps) {
     const {
         className,
-        leadGroupedEntriesList,
-        // projectId,
         framework,
-        activePage,
-        totalEntriesCount,
+        projectId,
+        geoOptions,
+        entriesFilters,
         maxItemsPerPage,
-        handlePageClick,
     } = props;
 
-    const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
-
-    const handleEntryDelete = React.useCallback((entryId) => {
-        setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
-    }, [setDeletedEntries]);
-
-    const [selected, setSelection] = useState<number | string | undefined>(undefined);
-
-    const handleSelection = useCallback((id: number | string) => {
-        setSelection(id);
-    }, []);
+    const processedFilters = useMemo(
+        () => processEntryFilters(
+            entriesFilters,
+            framework,
+            geoOptions,
+        ),
+        [entriesFilters, framework, geoOptions],
+    );
 
     const matrixToc = useMemo(
         () => [
@@ -65,6 +62,60 @@ function QualityControl(props: QualityControlProps) {
         ],
         [framework],
     );
+
+    const [selected, setSelection] = useState<MatrixKeyId | undefined>(undefined);
+
+    const [activePage, setActivePage] = useState<number>(1);
+
+    const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
+
+    const [
+        pending,
+        response,
+        ,
+        getEntries,
+    ] = useRequest<MultiResponse<EntryFields>>({
+        url: 'server://entries/filter/',
+        query: {
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        },
+        body: {
+            filters: [
+                selected && Object.values(selected),
+                ...processedFilters,
+                ['project', projectId],
+            ].filter(isDefined),
+        },
+        method: 'POST',
+    });
+
+    useEffect(
+        () => getEntries(),
+        [
+            getEntries,
+            projectId,
+            processedFilters,
+            activePage,
+            selected,
+        ],
+    );
+
+    const handleEntryDelete = React.useCallback((entryId) => {
+        setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
+    }, [setDeletedEntries]);
+
+    const handleSelection = useCallback((value: MatrixKeyId) => {
+        if (selected && selected.id === value.id) {
+            setSelection(undefined);
+        } else {
+            setSelection(value);
+        }
+    }, [selected]);
+
+    const handlePageClick = useCallback((value: number) => {
+        setActivePage(value);
+    }, []);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
@@ -75,6 +126,7 @@ function QualityControl(props: QualityControlProps) {
                     <div className={styles.frameworkSelection}>
                         <TableOfContents
                             options={matrixToc}
+                            idSelector={idSelector}
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             childrenSelector={childrenSelector}
@@ -87,33 +139,25 @@ function QualityControl(props: QualityControlProps) {
                 rightContainerClassName={styles.right}
                 rightChild={(
                     <div className={styles.entryList}>
-                        { leadGroupedEntriesList.map((leadWithEntries) => {
-                            const {
-                                entries,
-                                ...leadProps
-                            } = leadWithEntries;
-
-                            const lead = { ...leadProps };
-
-                            return entries.map(e => (
-                                <EntryCard
-                                    className={styles.card}
-                                    key={e.id}
-                                    entry={e}
-                                    lead={lead}
-                                    framework={framework}
-                                    isDeleted={deletedEntries[e.id]}
-                                    onDelete={handleEntryDelete}
-                                />
-                            ));
-                        })}
+                        { pending && <LoadingAnimation /> }
+                        {response && response.results.map(e => (
+                            <EntryCard
+                                className={styles.card}
+                                key={e.id}
+                                entry={e}
+                                lead={e.lead}
+                                framework={framework}
+                                isDeleted={deletedEntries[e.id]}
+                                onDelete={handleEntryDelete}
+                            />
+                        ))}
                     </div>
                 )}
             />
             <footer className={styles.footer}>
                 <Pager
                     activePage={activePage}
-                    itemsCount={totalEntriesCount}
+                    itemsCount={response?.count}
                     maxItemsPerPage={maxItemsPerPage}
                     onPageClick={handlePageClick}
                     showItemsPerPageChange={false}
