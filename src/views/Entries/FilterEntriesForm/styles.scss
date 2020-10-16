@@ -26,7 +26,25 @@
 
     .action-buttons {
         display: flex;
+        align-items: center;
         justify-content: flex-end;
+
+        .left-container {
+            display: inline-flex;
+            align-items: center;
+            flex-grow: 1;
+
+            .applied-filters {
+                .label {
+                    padding: 0 var(--spacing-small);
+                    color: var(--color-text-label);
+                }
+
+                .applied-filters-text {
+                    font-weight: var(--font-weight-bold);
+                }
+            }
+        }
 
         .button {
             flex-shrink: 0;

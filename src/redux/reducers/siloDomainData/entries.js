@@ -5,6 +5,7 @@ import produce from 'immer';
 
 export const E__SET_ENTRIES = 'siloDomainData/E__SET_ENTRIES';
 export const E__SET_FILTER = 'siloDomainData/E__SET_FILTER';
+export const E__UPDATE_FILTER = 'siloDomainData/E__UPDATE_FILTER';
 export const E__UNSET_FILTER = 'siloDomainData/E__UNSET_FILTER';
 export const E__SET_ACTIVE_PAGE = 'siloDomainData/E__SET_ACTIVE_PAGE';
 export const E__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/E__SET_ENTRY_COMMENTS_COUNT';
@@ -16,6 +17,12 @@ export const E__DELETE_ENTRY = 'siloDomainData/E__DELETE_ENTRY';
 export const setEntriesViewFilterAction = ({ filters }) => ({
     type: E__SET_FILTER,
     filters,
+});
+
+export const updateEntriesViewFilterAction = ({ filterKey, newValue }) => ({
+    type: E__UPDATE_FILTER,
+    filterKey,
+    newValue,
 });
 
 export const entriesSetEntryCommentsCountAction = ({ entry, projectId, leadId }) => ({
@@ -245,6 +252,34 @@ const entryViewSetFilter = (state, action) => {
     return update(state, settings);
 };
 
+const entryViewUpdateFilter = (state, action) => {
+    const { filterKey, newValue } = action;
+    const { activeProject: projectId } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.entriesView) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView = {};
+        }
+        if (!safeState.entriesView[projectId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView[projectId] = {};
+        }
+        if (!safeState.entriesView[projectId].filter) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView[projectId].filter = {};
+        }
+        // eslint-disable-next-line no-param-reassign
+        safeState.entriesView[projectId].filter = {
+            ...safeState.entriesView[projectId].filter,
+            ...{ [filterKey]: newValue },
+        };
+        // eslint-disable-next-line no-param-reassign
+        safeState.entriesView[projectId].activePage = 1;
+    });
+    return newState;
+};
+
 const entryViewUnsetFilter = (state) => {
     const { activeProject } = state;
     const settings = {
@@ -275,6 +310,7 @@ const entriesViewSetActivePage = (state, action) => {
 
 const reducers = {
     [E__SET_FILTER]: entryViewSetFilter,
+    [E__UPDATE_FILTER]: entryViewUpdateFilter,
     [E__UNSET_FILTER]: entryViewUnsetFilter,
     [E__SET_ENTRIES]: setEntries,
     [E__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,

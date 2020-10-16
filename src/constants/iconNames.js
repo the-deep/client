@@ -45,6 +45,7 @@ const iconNames = {
     expand: 'ion-arrow-expand',
     expandContent: 'ion-android-expand',
     filter: 'ion-ios-color-filter-outline',
+    funnel: 'fa fa-filter',
     contractContent: 'ion-android-contract',
     eye: 'ion-eye',
     eyeDisabled: 'ion-eye-disabled',

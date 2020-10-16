@@ -382,6 +382,7 @@ export default class Export extends React.PureComponent {
                                     {_ts('export', 'entryAttributesLabel')}
                                 </h4>
                                 <FilterEntriesForm
+                                    className={styles.entriesFilter}
                                     applyOnChange
                                     pending={pendingAf || pendingGeoOptions}
                                     filters={filters}

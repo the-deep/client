@@ -15,51 +15,20 @@
         margin: var(--spacing-small-alt);
         border: var(--width-separator-thin) solid var(--color-separator-alt);
         padding-bottom: var(--spacing-extra-small);
-        overflow: auto;
+        overflow-y: auto;
 
         .filters {
             display: flex;
             flex-basis: 50%;
             flex-direction: column;
-            overflow: auto;
+            overflow-y: auto;
 
             .entry-filters {
                 @extend %filter-group;
                 border-top: var(--width-separator-thin) solid var(--color-separator);
 
-                :global {
-                    .entries-filters {
-                        display: flex;
-                        align-items: flex-end;
-                        flex-shrink: 0;
-                        flex-wrap: wrap;
-                        border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                        padding: var(--spacing-small);
-
-                        .entries-filter,
-                        .select-input {
-                            margin: var(--spacing-small);
-
-                            &.flat-select-input {
-                                margin: 0;
-                            }
-                        }
-
-                        .range-filter {
-                            display: flex;
-                            justify-content: space-between;
-                            margin: 0;
-
-                            .single-select-input {
-                                margin: var(--spacing-small);
-                            }
-                        }
-
-                        >.button {
-                            flex-shrink: 0;
-                            margin: var(--spacing-small);
-                        }
-                    }
+                .entries-filter {
+                    padding: var(--spacing-small);
                 }
             }
 

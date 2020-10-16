@@ -1196,7 +1196,10 @@
         "-90901114": "Matrix 2D",
         "-86792115": "Lead filters",
         "-86210237": "Entry filters",
-        "-69483734": "Widget filters"
+        "-69483734": "Widget filters",
+        "-71515950": "Filtered by:",
+        "-90290386": "Hide filters",
+        "-60218291": "Show filters"
     },
     "links": {
         "browserExtension": {
@@ -1692,7 +1695,10 @@
             "leadPublishedOnPlaceholder": 18,
             "leadFiltersGroupTitle": -86792115,
             "entriesFiltersGroupTitle": -86210237,
-            "widgetsFiltersGroupTitle": -69483734
+            "widgetsFiltersGroupTitle": -69483734,
+            "filteredByLabel": -71515950,
+            "showFiltersLabel": -60218291,
+            "hideFiltersLabel": -90290386
         },
         "export": {
             "headerExport": 600,
