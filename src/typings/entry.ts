@@ -2,7 +2,7 @@ import { DatabaseEntityBase } from './common';
 import { Lead } from './lead';
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
-export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality';
+export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality' | 'sourceRaw';
 
 export interface ProjectLabelFields {
     count: number;
@@ -69,7 +69,7 @@ export interface EntryFields extends DatabaseEntityBase {
     image?: string;
     tabularField: number;
     tabularFieldData: TabularDataFields;
-    lead: Extract<Lead, EntryLeadType> & {
+    lead: Pick<Lead, EntryLeadType> & {
         assingee: number[];
         authorsDetails: OrganizationFields[];
         sourceDetails: OrganizationFields;

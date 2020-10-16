@@ -14,7 +14,6 @@ import EntryVerify from '#components/general/EntryVerify';
 import {
     EntryFields,
     OrganizationFields,
-    LeadWithGroupedEntriesFields,
     EntryType,
 } from '#typings/entry';
 import {
@@ -75,7 +74,7 @@ function AuthorListOutput(props: AuthorListOutputProps) {
 interface EntryCardProps {
     className?: string;
     entry: EntryFields;
-    lead: Omit<LeadWithGroupedEntriesFields, 'entries'>;
+    lead: EntryFields['lead'];
     framework: FrameworkFields;
     isDeleted?: boolean;
     onDelete: (entryId: EntryFields['id']) => void;
@@ -97,6 +96,12 @@ function EntryCard(props: EntryCardProps) {
         // TODO; disable all actions if pending
     }, []);
 
+    const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
+
+    const handleEntryVerify = React.useCallback((status: boolean) => {
+        setVerificationStatus(status);
+    }, []);
+
     const handleDeleteSuccess = React.useCallback(() => {
         onDelete(entry.id);
     }, [onDelete, entry]);
@@ -106,7 +111,7 @@ function EntryCard(props: EntryCardProps) {
             _cs(
                 className,
                 styles.entryCard,
-                entry.verified && styles.verified,
+                isVerified && styles.verified,
                 isDeleted && styles.deleted,
             )}
         >
@@ -196,7 +201,7 @@ function EntryCard(props: EntryCardProps) {
                     />
                     <EntryOpenLink
                         entryId={entry.id}
-                        leadId={entry.lead}
+                        leadId={entry.lead.id}
                         projectId={entry.project}
                         disabled={isDeleted}
                     />
@@ -223,10 +228,11 @@ function EntryCard(props: EntryCardProps) {
                                 },
                             )
                         ) : undefined}
-                        value={entry.verified}
+                        value={isVerified}
                         entryId={entry.id}
-                        leadId={entry.lead}
+                        leadId={entry.lead.id}
                         disabled={isDeleted}
+                        handleEntryVerify={handleEntryVerify}
                         // onPendingChange={}
                     />
                 </div>
