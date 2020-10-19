@@ -30,6 +30,16 @@ export const entriesViewActivePageSelector = createSelector(
     entriesView => entriesView.activePage || 1,
 );
 
+export const qualityControlViewActivePageSelector = createSelector(
+    entriesViewForProjectSelector,
+    entriesView => entriesView.qcViewActivePage || 1,
+);
+
+export const qualityControlViewSelectedMatrixKeySelector = createSelector(
+    entriesViewForProjectSelector,
+    entriesView => entriesView.selectedMatrixKey,
+);
+
 export const totalEntriesCountForProjectSelector = createSelector(
     entriesViewForProjectSelector,
     entriesView => entriesView.totalEntriesCount || 0,

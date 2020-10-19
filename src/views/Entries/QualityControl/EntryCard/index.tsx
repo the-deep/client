@@ -98,10 +98,6 @@ function EntryCard(props: EntryCardProps) {
 
     const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
 
-    const handleEntryVerify = React.useCallback((status: boolean) => {
-        setVerificationStatus(status);
-    }, []);
-
     const handleDeleteSuccess = React.useCallback(() => {
         onDelete(entry.id);
     }, [onDelete, entry]);
@@ -232,7 +228,7 @@ function EntryCard(props: EntryCardProps) {
                         entryId={entry.id}
                         leadId={entry.lead.id}
                         disabled={isDeleted}
-                        handleEntryVerify={handleEntryVerify}
+                        handleEntryVerify={setVerificationStatus}
                         // onPendingChange={}
                     />
                 </div>

@@ -122,7 +122,7 @@ function EntryVerify(props: Props) {
     } = requests;
 
     const selectedOption = useMemo(
-        () => verificationStatusOptions.find(v => v.key === value) ||
+        () => verificationStatusOptions.find(v => v.key === value) ??
             verificationStatusOptions[1],
         [value],
     );

@@ -1,29 +1,42 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import { isDefined, _cs } from '@togglecorp/fujs';
+
 
 import Pager from '#rscv/Pager';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import List from '#rscv/List';
 
 import { EntryFields } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
-import { MatrixTocElement, MultiResponse } from '#typings';
+import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
 import { processEntryFilters } from '#entities/entries';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
 import useRequest from '#utils/request';
 
+import {
+    qualityControlViewActivePageSelector,
+    setQualityControlViewActivePageAction,
+    qualityControlViewSelectedMatrixKeySelector,
+    setQualityControlViewSelectedMatrixKeyAction,
+} from '#redux';
+
 import EntryCard from './EntryCard';
 import styles from './styles.scss';
 
-interface QualityControlProps {
+interface ComponentProps {
     className?: string;
     projectId: number;
     framework: FrameworkFields;
     entriesFilters: {};
     geoOptions: {};
     maxItemsPerPage: number;
+    activePage: number;
+    selected?: MatrixKeyId;
 }
 
 interface MatrixKeyId {
@@ -31,12 +44,30 @@ interface MatrixKeyId {
     id: string;
 }
 
+interface PropsFromDispatch {
+    setSelection: typeof setQualityControlViewSelectedMatrixKeyAction;
+    setActivePage: typeof setQualityControlViewActivePageAction;
+}
+
 const keySelector = (d: MatrixTocElement) => d.key;
 const idSelector = (d: MatrixTocElement) => d.id;
 const labelSelector = (d: MatrixTocElement) => d.title;
 const childrenSelector = (d: MatrixTocElement) => d.children;
+const entryKeySelector = (d: EntryFields) => d.id;
 
-function QualityControl(props: QualityControlProps) {
+const mapStateToProps = (state: AppState) => ({
+    activePage: qualityControlViewActivePageSelector(state),
+    selected: qualityControlViewSelectedMatrixKeySelector(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setActivePage: params => dispatch(setQualityControlViewActivePageAction(params)),
+    setSelection: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
+});
+
+type Props = ComponentProps & PropsFromDispatch;
+
+function QualityControl(props: Props) {
     const {
         className,
         framework,
@@ -44,6 +75,10 @@ function QualityControl(props: QualityControlProps) {
         geoOptions,
         entriesFilters,
         maxItemsPerPage,
+        activePage,
+        setActivePage,
+        selected,
+        setSelection,
     } = props;
 
     const processedFilters = useMemo(
@@ -62,10 +97,6 @@ function QualityControl(props: QualityControlProps) {
         ],
         [framework],
     );
-
-    const [selected, setSelection] = useState<MatrixKeyId | undefined>(undefined);
-
-    const [activePage, setActivePage] = useState<number>(1);
 
     const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
 
@@ -90,6 +121,7 @@ function QualityControl(props: QualityControlProps) {
         method: 'POST',
     });
 
+    console.warn('activePage', activePage, selected);
     useEffect(
         () => getEntries(),
         [
@@ -105,17 +137,31 @@ function QualityControl(props: QualityControlProps) {
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries]);
 
-    const handleSelection = useCallback((value: MatrixKeyId) => {
+    const handleSelection = useCallback((value) => {
         if (selected && selected.id === value.id) {
-            setSelection(undefined);
+            setSelection({ matrixKey: undefined });
         } else {
-            setSelection(value);
+            setSelection({ matrixKey: value });
         }
-    }, [selected]);
+    }, [selected, setSelection]);
 
-    const handlePageClick = useCallback((value: number) => {
-        setActivePage(value);
-    }, []);
+    const handlePageClick = useCallback((value) => {
+        setActivePage({ activePage: value });
+    }, [setActivePage]);
+
+    const entryCardRendererParams = useCallback((_, data) => ({
+        key: data.id,
+        entry: data,
+        lead: data.lead,
+        framework,
+        isDeleted: deletedEntries[data.id],
+        onDelete: handleEntryDelete,
+    }),
+    [
+        deletedEntries,
+        framework,
+        handleEntryDelete,
+    ]);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
@@ -140,17 +186,14 @@ function QualityControl(props: QualityControlProps) {
                 rightChild={(
                     <div className={styles.entryList}>
                         { pending && <LoadingAnimation /> }
-                        {response && response.results.map(e => (
-                            <EntryCard
-                                className={styles.card}
-                                key={e.id}
-                                entry={e}
-                                lead={e.lead}
-                                framework={framework}
-                                isDeleted={deletedEntries[e.id]}
-                                onDelete={handleEntryDelete}
+                        { response && (
+                            <List
+                                data={response.results}
+                                keySelector={entryKeySelector}
+                                renderer={EntryCard}
+                                rendererParams={entryCardRendererParams}
                             />
-                        ))}
+                        )}
                     </div>
                 )}
             />
@@ -167,4 +210,4 @@ function QualityControl(props: QualityControlProps) {
     );
 }
 
-export default QualityControl;
+export default connect(mapStateToProps, mapDispatchToProps)(QualityControl);
