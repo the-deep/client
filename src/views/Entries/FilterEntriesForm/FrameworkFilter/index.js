@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import SearchInput from '#rsci/SearchInput';
@@ -27,6 +27,10 @@ function FrameworkFilter(props) {
         geoOptions,
     } = props;
 
+    const onChange = useCallback((values) => {
+        handleFilterChange(filterKey, values);
+    }, [filterKey, handleFilterChange]);
+
     if (!filter || !filter.type) {
         return null;
     }
@@ -35,10 +39,11 @@ function FrameworkFilter(props) {
         key: filterKey,
         className: styles.entriesFilter,
         label: title,
-        onChange: values => handleFilterChange(filterKey, values),
+        onChange,
         value,
         disabled,
     };
+
     switch (filter.type) {
         case 'geo': {
             return (
@@ -55,8 +60,8 @@ function FrameworkFilter(props) {
             return (
                 <MultiSelectInput
                     {...propsForFilter}
-                    value={propsForFilter.value || emptyList}
-                    options={filter.options || emptyList}
+                    value={propsForFilter.value ?? emptyList}
+                    options={filter.options ?? emptyList}
                     showHintAndError={false}
                     placeholder={_ts('entries', 'multiselectPlaceholder')}
                 />

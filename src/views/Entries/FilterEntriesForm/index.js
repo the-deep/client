@@ -129,12 +129,12 @@ const requestOptions = {
     },
 };
 
-const filterKeySelector = (d = {}) => d.key;
+const filterKeySelector = d => d?.key;
 
-const optionLabelSelector = (d = {}) => d.value;
-const optionKeySelector = (d = {}) => d.key;
-const optionTitleSelector = (d = {}) => d.title;
-const optionIdSelector = (d = {}) => d.id;
+const optionLabelSelector = d => d?.value;
+const optionKeySelector = d => d?.key;
+const optionTitleSelector = d => d?.title;
+const optionIdSelector = d => d?.id;
 
 function FilterEntriesForm(props) {
     const {
@@ -183,7 +183,7 @@ function FilterEntriesForm(props) {
             setPristine(false);
             setFilters(oldFilters => ({
                 ...oldFilters,
-                ...{ [key]: values },
+                [key]: values,
             }));
         }
     }, [setFilters, applyOnChange, updateEntriesViewFilter]);
@@ -230,13 +230,11 @@ function FilterEntriesForm(props) {
             (d, k) => (doesObjectHaveNoData(d, ['']) ? undefined : k),
         ).filter(isDefined);
         const frameworkFiltersTitle = listToMap(filtersFromProps, d => d.key, d => d.title);
-        const staticFilters = appliedFiltersKeys
-            .map(f => staticFiltersLabelMap[f] || frameworkFiltersTitle[f])
+        const allFilters = appliedFiltersKeys
+            .map(f => staticFiltersLabelMap[f] ?? frameworkFiltersTitle[f])
             .filter(isDefined);
 
-        return ([
-            ...staticFilters,
-        ]);
+        return allFilters;
     }, [entriesFilters, filtersFromProps]);
 
     return (
@@ -316,7 +314,7 @@ function FilterEntriesForm(props) {
                             label={staticFiltersLabelMap.created_by}
                             onChange={(value) => { handleFilterChange('created_by', value); }}
                             showHintAndError={false}
-                            value={filters.created_by || emptyList}
+                            value={filters.created_by}
                             disabled={pending}
                             placeholder={_ts('entries', 'createdByPlaceholder')}
                         />
@@ -337,7 +335,7 @@ function FilterEntriesForm(props) {
                             label={staticFiltersLabelMap.comment_assignee}
                             onChange={(value) => { handleFilterChange('comment_assignee', value); }}
                             showHintAndError={false}
-                            value={filters.comment_assignee || emptyList}
+                            value={filters.comment_assignee}
                             disabled={pending}
                             placeholder={_ts('entries', 'createdByPlaceholder')}
                         />
@@ -349,7 +347,7 @@ function FilterEntriesForm(props) {
                             label={staticFiltersLabelMap.comment_created_by}
                             onChange={(value) => { handleFilterChange('comment_created_by', value); }}
                             showHintAndError={false}
-                            value={filters.comment_created_by || emptyList}
+                            value={filters.comment_created_by}
                             disabled={pending}
                             placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
                         />
@@ -361,7 +359,7 @@ function FilterEntriesForm(props) {
                             label={staticFiltersLabelMap.comment_status}
                             onChange={(value) => { handleFilterChange('comment_status', value); }}
                             showHintAndError={false}
-                            value={filters.comment_status || undefined}
+                            value={filters.comment_status}
                             disabled={pending}
                             placeholder={_ts('entries', 'commentStatusPlaceholder')}
                         />
@@ -390,7 +388,7 @@ function FilterEntriesForm(props) {
                             label={staticFiltersLabelMap.entry_type}
                             onChange={(value) => { handleFilterChange('entry_type', value); }}
                             showHintAndError={false}
-                            value={filters.entry_type || emptyList}
+                            value={filters.entry_type}
                             disabled={pending}
                             placeholder={_ts('entries', 'entryTypePlaceholder')}
                         />
@@ -404,7 +402,7 @@ function FilterEntriesForm(props) {
                                     label={staticFiltersLabelMap.project_entry_labels}
                                     onChange={(value) => { handleFilterChange('project_entry_labels', value); }}
                                     showHintAndError={false}
-                                    value={filters.project_entry_labels || emptyList}
+                                    value={filters.project_entry_labels}
                                     disabled={pending}
                                     placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
                                 />

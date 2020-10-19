@@ -272,7 +272,7 @@ const entryViewUpdateFilter = (state, action) => {
         // eslint-disable-next-line no-param-reassign
         safeState.entriesView[projectId].filter = {
             ...safeState.entriesView[projectId].filter,
-            ...{ [filterKey]: newValue },
+            [filterKey]: newValue,
         };
         // eslint-disable-next-line no-param-reassign
         safeState.entriesView[projectId].activePage = 1;
