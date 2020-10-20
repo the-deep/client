@@ -14,7 +14,7 @@ import FishesLarge from '#resources/404/fishes-large.svg';
 import OctopusSmall from '#resources/404/Octopus-small.svg';
 import OctopusLarge from '#resources/404/octopus.png';
 import Sharks from '#resources/404/sharks.svg';
-import Patrice from '#resources/404/patrice.png';
+import HiddenImage from '#resources/404/hidden-image.png';
 import Diver from '#resources/404/Diver.svg';
 
 import BackLink from '#components/general/BackLink';
@@ -66,8 +66,8 @@ export default class FourHundredFour extends React.PureComponent {
                                     src={OctopusLarge}
                                 />
                                 <Image
-                                    className={styles.patrice}
-                                    src={Patrice}
+                                    className={styles.hiddenImage}
+                                    src={HiddenImage}
                                 />
                             </div>
                             <div className={_cs(styles.seaLife, styles.positionBottom)}>
@@ -76,8 +76,8 @@ export default class FourHundredFour extends React.PureComponent {
                                     src={OctopusLarge}
                                 />
                                 <Image
-                                    className={styles.patrice}
-                                    src={Patrice}
+                                    className={styles.hiddenImage}
+                                    src={HiddenImage}
                                 />
                             </div>
                         </div>

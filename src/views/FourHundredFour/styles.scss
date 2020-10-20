@@ -94,7 +94,8 @@ main {
                 height: 100%;
                 overflow: hidden;
             }
-            .patrice {
+
+            .hidden-image {
                 display: block;
                 position: absolute;
                 opacity: 0;
@@ -104,10 +105,14 @@ main {
             }
 
             &:hover {
-                .patrice {
+                .hidden-image {
+                    transition: 0.2s opacity ease-in-out;
                     opacity: 1;
+                    animation: wiggle 0.3s infinite ease-in-out;
                 }
+
                 .octopus {
+                    transition: 0.2s opacity ease-in-out;
                     opacity: 0;
                 }
             }
@@ -143,9 +148,24 @@ main {
 
         .home-screen-link {
             border-radius: var(--radius-border-medium);
+            background-color: var(--color-separator);
             color: var(--color-foreground);
             font-size: var(--font-size-large);
-            background-color: var(--color-separator);
         }
+    }
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate(0deg);
     }
 }
