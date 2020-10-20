@@ -10,7 +10,10 @@ import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 import EntryVerify from '#components/general/EntryVerify';
+import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 
+import LeadPreview from '#views/Leads/LeadPreview';
 import {
     EntryFields,
     OrganizationFields,
@@ -23,6 +26,8 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 interface AuthorListOutputProps {
     className?: string;
@@ -90,6 +95,14 @@ function EntryCard(props: EntryCardProps) {
         isDeleted,
     } = props;
 
+    console.warn('here', lead);
+    const {
+        url: leadUrlFromProps,
+        attachment,
+    } = lead;
+
+    const leadUrl = (attachment && attachment.file) || leadUrlFromProps;
+
     const leadSource = lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw;
 
     const handleDeletePendingChange = React.useCallback((/* isPending: boolean */) => {
@@ -142,8 +155,18 @@ function EntryCard(props: EntryCardProps) {
                         className={styles.title}
                         title={lead.title}
                     >
-                        { lead.title }
+                        {lead.title}
                     </div>
+                    {leadUrl && (
+                        <ModalButton
+                            className={styles.leadTitleButton}
+                            transparent
+                            iconName="externalLink"
+                            modal={
+                                <LeadPreview value={lead} />
+                            }
+                        />
+                    )}
                 </div>
             </section>
             <section className={styles.middle}>

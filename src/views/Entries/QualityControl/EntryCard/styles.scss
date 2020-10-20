@@ -76,6 +76,8 @@
         }
 
         .title-row {
+            display: flex;
+            align-items: center;
             padding: calc(var(--spacing-medium) - var(--spacing-small));
 
             .title {
@@ -85,6 +87,15 @@
                 white-space: nowrap;
                 color: var(--color-accent);
                 font-weight: var(--font-weight-bold);
+            }
+
+            .lead-title-button {
+                flex-shrink: 0;
+                padding: 0 var(--spacing-extra-small);
+                text-transform: none;
+                color: var(--color-accent);
+                font-size: inherit;
+                font-weight: inherit;
             }
         }
     }
