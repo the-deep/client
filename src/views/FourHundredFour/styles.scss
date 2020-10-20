@@ -2,34 +2,170 @@
     --color-text-on-primary: get-text-color(var(--color-primary));
 }
 
+main {
+    margin: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+}
+
 .four-hundred-four {
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: center;
+    border: none !important;
+    background-image: url('../../resources/404/background.jpg');
+    background-position: bottom;
+    background-size: cover;
     line-height: 2;
 
-    .deep-logo {
-        margin-bottom: var(--spacing-large);
-        width: 256px;
-        height: 256px;
-        color: var(--color-text-disabled);
-    }
+    .content {
+        div{
+            display: flex;
+            position: absolute;
 
-    .heading {
-        color: var(--color-danger);
-        font-size: var(--font-size-super-large-alt);
-        font-weight: var(--font-weight-bold);
-    }
+            &.fishes {
+                top: 60vh;
+                right: 30vw;
+                width: 10vw;
+                height: auto;
+            }
 
-    .message {
-        margin: var(--spacing-large) 0;
+            &.fishes-dory {
+                top: 20vh;
+                left: 28vw;
+                width: 8vw;
+                height: auto;
+            }
+
+            &.fishes-dory-right {
+                top: 45vh;
+                right: 10vw;
+                width: 5vw;
+                height: auto;
+            }
+            &.sharks {
+                bottom: 25vh;
+                left: 17vw;
+                width: 10vw;
+                height: auto;
+            }
+            &.fishes-large {
+                bottom: 40vh;
+                left: 8vw;
+                width: 12vw;
+                height: auto;
+            }
+            &.octopus-small {
+                top: 35vh;
+                right: 24vw;
+                width: 5vw;
+                height: auto;
+            }
+            &.diver {
+                top: 15vh;
+                right: 15vw;
+                width: 7vw;
+                height: auto;
+            }
+        }
+
+        .sea-life {
+            position: absolute;
+            overflow: hidden;
+
+            &.position-bottom {
+                right: 10vw;
+                bottom: 20vh;
+                width: 7vw;
+                height: 7vw;
+            }
+
+            &.position-top {
+                top: 10vh;
+                left: 15vw;
+                width: 12vw;
+                height: 12vw;
+            }
+
+            .octopus {
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .hidden-image {
+                display: block;
+                position: absolute;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            &:hover {
+                .hidden-image {
+                    transition: 0.2s opacity ease-in-out;
+                    opacity: 1;
+                    animation: wiggle 0.3s infinite ease-in-out;
+                }
+
+                .octopus {
+                    transition: 0.2s opacity ease-in-out;
+                    opacity: 0;
+                }
+            }
+        }
+
+        img {
+            width: 100% !important;
+        }
+    }
+    .message-content {
+        z-index: 999;
+        margin-top: 20vh;
         text-align: center;
-        font-size: var(--font-size-large-alt);
-    }
 
-    .home-screen-link {
-        color: var(--color-accent);
-        font-size: var(--font-size-large);
+        .deep-logo {
+            margin-bottom: var(--spacing-large);
+            width: 125px;
+            height: 125px;
+            color: var(--color-text-disabled);
+        }
+
+        .heading {
+            color: #c22020;
+            font-size: var(--font-size-super-large-alt);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .message {
+            margin: var(--spacing-large) 0;
+            text-align: center;
+            font-size: var(--font-size-large-alt);
+        }
+
+        .home-screen-link {
+            border-radius: var(--radius-border-medium);
+            background-color: var(--color-separator);
+            color: var(--color-foreground);
+            font-size: var(--font-size-large);
+        }
+    }
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate(0deg);
     }
 }
