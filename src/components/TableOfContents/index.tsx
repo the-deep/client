@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import ListView from '#rsu/../v2/View/ListView';
 
 import styles from './styles.scss';
@@ -18,6 +18,7 @@ interface Props<T, K extends string | number>{
     value: {key: K; id: K } | undefined;
     level?: number;
     defaultCollapseLevel?: number;
+    className: string;
 }
 
 type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
@@ -62,52 +63,44 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     );
 
     const isSelected = id === value?.id;
-
-    if (children && children.length > 0) {
-        return (
-            <div>
-                <div className={styles.itemContainer}>
-                    <div
-                        className={_cs(
-                            styles.item,
-                            isSelected && styles.selected,
-                        )}
-                        onClick={handleClick}
-                        onKeyDown={noOp}
-                        role="button"
-                        tabIndex={0}
-                    >
-                        {title}
-                    </div>
-                    <PrimaryButton
-                        className={_cs(styles.expandButton)}
-                        onClick={handleCollapseToggle}
-                        transparent
-                        iconName={collapsed ? 'down' : 'up'}
-                    />
-                </div>
-                {!collapsed && (
-                    <TableOfContents
-                        {...props}
-                        options={children}
-                        level={level + 1}
-                    />
-                )}
-            </div>
-        );
-    }
+    const hasChildren = children && children.length > 0;
 
     return (
-        <div className={styles.itemContainer}>
-            <div
-                className={_cs(styles.item, isSelected && styles.selected)}
-                onClick={handleClick}
-                onKeyDown={noOp}
-                role="button"
-                tabIndex={-1}
-            >
-                {title}
+        <div className={_cs(
+            styles.tocItem,
+            isSelected && styles.active,
+            !collapsed && styles.expanded,
+        )}
+        >
+            <div className={styles.header}>
+                <div
+                    className={styles.heading}
+                    onClick={handleClick}
+                    onKeyDown={noOp}
+                    role="button"
+                    tabIndex={0}
+                >
+                    {title}
+                </div>
+                { hasChildren && (
+                    <div className={styles.actions}>
+                        <Button
+                            className={styles.expandButton}
+                            onClick={handleCollapseToggle}
+                            transparent
+                            iconName={collapsed ? 'chevronDown' : 'chevronUp'}
+                        />
+                    </div>
+                )}
             </div>
+            {hasChildren && !collapsed && (
+                <TableOfContents
+                    {...props}
+                    className={_cs(props.className, styles.children)}
+                    options={children}
+                    level={level + 1}
+                />
+            )}
         </div>
     );
 }
@@ -120,6 +113,7 @@ function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>
         options,
         idSelector,
         level = 0,
+        className,
         ...otherProps
     } = props;
 
@@ -132,7 +126,7 @@ function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>
 
     return (
         <ListView
-            className={styles.tocList}
+            className={_cs(className, styles.tableOfContents)}
             data={options}
             renderer={ToCItem}
             keySelector={idSelector}

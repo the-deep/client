@@ -3,7 +3,6 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { isDefined, _cs } from '@togglecorp/fujs';
 
-
 import Pager from '#rscv/Pager';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
@@ -27,6 +26,8 @@ import {
     setQualityControlViewSelectedMatrixKeyAction,
     setQualityControlViewEntriesCountAction,
 } from '#redux';
+
+import _ts from '#ts';
 
 import EntryCard from './EntryCard';
 import {
@@ -188,7 +189,13 @@ function QualityControl(props: Props) {
                 leftContainerClassName={styles.left}
                 leftChild={(
                     <div className={styles.frameworkSelection}>
+                        <header className={styles.header}>
+                            <h3 className={styles.heading}>
+                                {_ts('entries.qualityControl', 'tableOfContentHeading')}
+                            </h3>
+                        </header>
                         <TableOfContents
+                            className={styles.content}
                             options={matrixToc}
                             idSelector={idSelector}
                             keySelector={keySelector}

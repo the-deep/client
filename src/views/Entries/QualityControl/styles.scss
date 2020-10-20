@@ -12,13 +12,29 @@
         overflow-y: auto;
 
         .left {
+            display: flex;
+            flex-direction: column;
             border-right: var(--width-separator-thin) solid var(--color-separator);
             width: var(--width-left-initial);
             min-width: var(--width-left-min);
             overflow-y: auto;
 
             .framework-selection {
-                padding: var(--spacing-medium);
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                overflow: auto;
+
+                .header {
+                    .heading {
+                        padding: var(--spacing-medium);
+                    }
+                }
+
+                .content {
+                    flex-grow: 1;
+                    overflow: auto;
+                }
             }
         }
 
@@ -31,6 +47,7 @@
 
             .entry-list {
                 display: flex;
+                align-items: flex-start;
                 flex-grow: 1;
                 flex-wrap: wrap;
                 padding: var(--spacing-large);
