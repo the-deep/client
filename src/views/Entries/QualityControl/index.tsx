@@ -20,12 +20,19 @@ import useRequest from '#utils/request';
 
 import {
     qualityControlViewActivePageSelector,
-    setQualityControlViewActivePageAction,
+    qualityControlViewEntriesCountSelector,
     qualityControlViewSelectedMatrixKeySelector,
+
+    setQualityControlViewActivePageAction,
     setQualityControlViewSelectedMatrixKeyAction,
+    setQualityControlViewEntriesCountAction,
 } from '#redux';
 
 import EntryCard from './EntryCard';
+import {
+    FooterContainer,
+    EmptyEntries,
+} from '../index';
 import styles from './styles.scss';
 
 interface ComponentProps {
@@ -36,6 +43,7 @@ interface ComponentProps {
     geoOptions: {};
     maxItemsPerPage: number;
     activePage: number;
+    entriesCount: number;
     selected?: MatrixKeyId;
 }
 
@@ -47,6 +55,7 @@ interface MatrixKeyId {
 interface PropsFromDispatch {
     setSelection: typeof setQualityControlViewSelectedMatrixKeyAction;
     setActivePage: typeof setQualityControlViewActivePageAction;
+    setEntriesCount: typeof setQualityControlViewEntriesCountAction;
 }
 
 const keySelector = (d: MatrixTocElement) => d.key;
@@ -57,11 +66,13 @@ const entryKeySelector = (d: EntryFields) => d.id;
 
 const mapStateToProps = (state: AppState) => ({
     activePage: qualityControlViewActivePageSelector(state),
+    entriesCount: qualityControlViewEntriesCountSelector(state),
     selected: qualityControlViewSelectedMatrixKeySelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setActivePage: params => dispatch(setQualityControlViewActivePageAction(params)),
+    setEntriesCount: params => dispatch(setQualityControlViewEntriesCountAction(params)),
     setSelection: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
 });
 
@@ -79,6 +90,9 @@ function QualityControl(props: Props) {
         setActivePage,
         selected,
         setSelection,
+        entriesCount,
+        setEntriesCount,
+        parentFooterRef,
     } = props;
 
     const processedFilters = useMemo(
@@ -119,9 +133,12 @@ function QualityControl(props: Props) {
             ].filter(isDefined),
         },
         method: 'POST',
+        onSuccess: (successResponse) => {
+            console.warn('here', successResponse);
+            setEntriesCount({ count: successResponse.count });
+        },
     });
 
-    console.warn('activePage', activePage, selected);
     useEffect(
         () => getEntries(),
         [
@@ -156,6 +173,7 @@ function QualityControl(props: Props) {
         framework,
         isDeleted: deletedEntries[data.id],
         onDelete: handleEntryDelete,
+        className: styles.card,
     }),
     [
         deletedEntries,
@@ -178,7 +196,7 @@ function QualityControl(props: Props) {
                             childrenSelector={childrenSelector}
                             onChange={handleSelection}
                             value={selected}
-                            defaultCollapseLevel={1}
+                            defaultCollapseLevel={5}
                         />
                     </div>
                 )}
@@ -186,26 +204,32 @@ function QualityControl(props: Props) {
                 rightChild={(
                     <div className={styles.entryList}>
                         { pending && <LoadingAnimation /> }
-                        { response && (
+                        { (response?.results && response.results.length > 0) ? (
                             <List
                                 data={response.results}
                                 keySelector={entryKeySelector}
                                 renderer={EntryCard}
                                 rendererParams={entryCardRendererParams}
                             />
+                        ) : (
+                            <EmptyEntries
+                                projectId={projectId}
+                                entriesFilters={entriesFilters}
+                                selectedMatrix={selected}
+                            />
                         )}
                     </div>
                 )}
             />
-            <footer className={styles.footer}>
+            <FooterContainer parentFooterRef={parentFooterRef}>
                 <Pager
                     activePage={activePage}
-                    itemsCount={response?.count}
+                    itemsCount={entriesCount}
                     maxItemsPerPage={maxItemsPerPage}
                     onPageClick={handlePageClick}
                     showItemsPerPageChange={false}
                 />
-            </footer>
+            </FooterContainer>
         </div>
     );
 }

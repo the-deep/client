@@ -12,6 +12,7 @@ export const E__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/E__SET_ENTRY_COMMENTS
 export const E__PATCH_ENTRY_VERIFICATION = 'siloDomainData/E__PATCH_ENTRY_VERIFICATION';
 export const E__DELETE_ENTRY = 'siloDomainData/E__DELETE_ENTRY';
 export const E__QC__SET_ACTIVE_PAGE = 'siloDomainData/E__QC__SET_ACTIVE_PAGE';
+export const E__QC__SET_ENTRIES_COUNT = 'siloDomainData/E__QC__SET_ENTRIES_COUNT';
 export const E__QC__SET_SELECTED_MATRIX_KEY = 'siloDomainData/E__QC__SET_SELECTED_MATRIX_KEY';
 
 // ACTION-CREATOR
@@ -66,6 +67,11 @@ export const deleteEntryAction = ({ entryId, leadId }) => ({
 export const setQualityControlViewActivePageAction = ({ activePage }) => ({
     type: E__QC__SET_ACTIVE_PAGE,
     activePage,
+});
+
+export const setQualityControlViewEntriesCountAction = ({ count }) => ({
+    type: E__QC__SET_ENTRIES_COUNT,
+    count,
 });
 
 export const setQualityControlViewSelectedMatrixKeyAction = ({ matrixKey }) => ({
@@ -335,6 +341,19 @@ const qualityControlViewSetActivePage = (state, action) => {
     return update(state, settings);
 };
 
+const qualityControlViewSetEntriesCount = (state, action) => {
+    const { count } = action;
+    const { activeProject } = state;
+    const settings = {
+        entriesView: {
+            [activeProject]: { $auto: {
+                qcViewEntriesCount: { $set: count },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
 const qualityControlViewSetMatrixKey = (state, action) => {
     const { matrixKey } = action;
     const { activeProject } = state;
@@ -361,6 +380,7 @@ const reducers = {
     [E__PATCH_ENTRY_VERIFICATION]: patchEntryVerification,
     [E__DELETE_ENTRY]: deleteEntry,
     [E__QC__SET_ACTIVE_PAGE]: qualityControlViewSetActivePage,
+    [E__QC__SET_ENTRIES_COUNT]: qualityControlViewSetEntriesCount,
     [E__QC__SET_SELECTED_MATRIX_KEY]: qualityControlViewSetMatrixKey,
 };
 export default reducers;

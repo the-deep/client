@@ -6,6 +6,8 @@ import ListView from '#rsu/../v2/View/ListView';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 interface Props<T, K extends string | number>{
     idSelector: (datum: T) => K;
     keySelector: (datum: T) => K | undefined;
@@ -64,16 +66,16 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     if (children && children.length > 0) {
         return (
             <div>
-                <div className={styles.container}>
+                <div className={styles.itemContainer}>
                     <div
                         className={_cs(
                             styles.item,
                             isSelected && styles.selected,
                         )}
                         onClick={handleClick}
-                        onKeyDown={handleClick}
+                        onKeyDown={noOp}
                         role="button"
-                        tabIndex={-1}
+                        tabIndex={0}
                     >
                         {title}
                     </div>
@@ -96,14 +98,16 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     }
 
     return (
-        <div
-            className={_cs(styles.item, isSelected && styles.selected)}
-            onClick={handleClick}
-            onKeyDown={handleClick}
-            role="button"
-            tabIndex={-1}
-        >
-            {title}
+        <div className={styles.itemContainer}>
+            <div
+                className={_cs(styles.item, isSelected && styles.selected)}
+                onClick={handleClick}
+                onKeyDown={noOp}
+                role="button"
+                tabIndex={-1}
+            >
+                {title}
+            </div>
         </div>
     );
 }

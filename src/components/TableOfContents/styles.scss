@@ -1,28 +1,32 @@
 .toc-list {
     color: var(--color-text-label);
 
-    .container {
+    .item-container {
         display: flex;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        border-left: var(--spacing-extra-small) solid transparent;
+
+        .item {
+            flex-grow: 1;
+            outline: none;
+            cursor: pointer;
+            padding: var(--spacing-small) var(--spacing-medium);
+
+            &.selected {
+                border-left: var(--spacing-extra-small) solid var(--color-accent);
+                color: var(--color-accent)
+            }
+        }
 
         .expand-button {
             flex-shrink: 0;
             outline: none;
             padding: var(--spacing-extra-small) var(--spacing-small);
         }
+
         &.collapsed {
             transform: rotate(90deg);
         }
-    }
-
-    .item {
-        outline: none;
-        border-left: var(--spacing-extra-small) solid transparent;
-        padding-left: var(--spacing-small);
-    }
-
-    .selected {
-        border-left: var(--spacing-extra-small) solid var(--color-accent);
-        color: var(--color-accent)
     }
 
     .leaf {
@@ -31,5 +35,7 @@
 }
 
 .toc-list:not(:first-child) {
-    padding: 0 0 var(--spacing-medium) var(--spacing-large);
+    .item-container {
+        padding: 0 0 0 var(--spacing-medium);
+    }
 }
