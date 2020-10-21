@@ -34,7 +34,7 @@ interface RequestOptions<T> {
     url: string | undefined;
     query?: UrlParams;
 
-    body?: RequestInit['body'];
+    body?: RequestInit['body'] | object;
     method?: Methods;
     other?: RequestInit;
 
@@ -57,7 +57,7 @@ interface RequestOptions<T> {
 function isFetchable(
     url: string | undefined,
     method: Methods,
-    body: RequestInit['body'] | undefined,
+    body: RequestInit['body'] | object | undefined,
 ): url is string {
     return (
         isTruthyString(url)
