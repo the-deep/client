@@ -93,3 +93,7 @@ export interface LeadWithGroupedEntriesFields {
     publishedOn: string;
     entries: EntryFields[];
 }
+
+export type Entry = Omit<EntryFields, 'lead'> & {
+    lead: number;
+}

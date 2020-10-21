@@ -46,6 +46,7 @@ interface ComponentProps {
     activePage: number;
     entriesCount: number;
     selected?: MatrixKeyId;
+    parentFooterRef: React.RefObject<HTMLElement>;
 }
 
 interface MatrixKeyId {
@@ -135,13 +136,12 @@ function QualityControl(props: Props) {
         },
         method: 'POST',
         onSuccess: (successResponse) => {
-            console.warn('here', successResponse);
             setEntriesCount({ count: successResponse.count });
         },
     });
 
     useEffect(
-        () => getEntries(),
+        getEntries,
         [
             getEntries,
             projectId,
@@ -155,13 +155,10 @@ function QualityControl(props: Props) {
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries]);
 
-    const handleSelection = useCallback((value) => {
-        if (selected && selected.id === value.id) {
-            setSelection({ matrixKey: undefined });
-        } else {
-            setSelection({ matrixKey: value });
-        }
-    }, [selected, setSelection]);
+    const handleSelection = useCallback(value => (
+        selected && selected.id === value.id ?
+            setSelection({ matrixKey: undefined }) : setSelection({ matrixKey: value })
+    ), [selected, setSelection]);
 
     const handlePageClick = useCallback((value) => {
         setActivePage({ activePage: value });
@@ -169,7 +166,7 @@ function QualityControl(props: Props) {
 
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,
-        entry: data,
+        entry: { ...data, lead: data.lead.id },
         lead: data.lead,
         framework,
         isDeleted: deletedEntries[data.id],
@@ -222,7 +219,6 @@ function QualityControl(props: Props) {
                             <EmptyEntries
                                 projectId={projectId}
                                 entriesFilters={entriesFilters}
-                                selectedMatrix={selected}
                             />
                         )}
                     </div>

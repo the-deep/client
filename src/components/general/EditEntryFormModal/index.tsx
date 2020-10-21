@@ -12,7 +12,7 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import WidgetForm from '#components/general/WidgetForm';
 
 import { FrameworkFields } from '#typings/framework';
-import { EntryFields } from '#typings/entry';
+import { Entry } from '#typings/entry';
 
 import { FgRestBuilder } from '#rsu/rest';
 import {
@@ -36,9 +36,11 @@ const tabs = {
 interface EditEntryFormModalProps {
     className?: string;
     framework: FrameworkFields;
-    entry: EntryFields;
-    onClose: (newEntry?: EntryFields) => void;
+    entry: Entry;
+    onEditSuccess: (newEntry: Entry) => void;
+    onClose: () => void;
 }
+
 
 function EditEntryFormModal(props: EditEntryFormModalProps) {
     const {
@@ -46,6 +48,7 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
         framework,
         entry,
         onClose,
+        onEditSuccess,
     } = props;
 
     const [value, setValue] = React.useState(entry);
@@ -100,17 +103,18 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
             value: value.attributes,
             schema,
             onValidationFailure: (errors: object) => { setFaramErrors(errors); },
-            onValidationSuccess: (values: EntryFields['attributes']) => {
+            onValidationSuccess: (values: Entry['attributes']) => {
                 const request = new FgRestBuilder()
                     .url(createUrlForEntryEdit(value.id))
                     .params(() => createParamsForEntryEdit({
                         ...value,
                         attributes: values,
                     }))
-                    .success((response: EntryFields) => {
+                    .success((response: Entry) => {
                         setEntrySaveFailed(false);
-                        onClose(response);
+                        onEditSuccess(response);
                         setEntrySavePending(false);
+                        onClose();
                     })
                     .failure(() => {
                         // TODO: show error message properly
@@ -129,7 +133,7 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
                 setEntrySavePending(true);
             },
         });
-    }, [value, schema, onClose, setFaramErrors, setEntrySavePending]);
+    }, [value, schema, onClose, setFaramErrors, setEntrySavePending, onEditSuccess]);
 
     const handleCancelButtonClick = React.useCallback(() => {
         onClose();
@@ -170,13 +174,13 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
                     />
                 )}
             />
-            { entrySaveFailed && (
-                /* FIXME: strings */
-                <div className={styles.error}>
-                    Failed to save entry
-                </div>
-            )}
             <ModalBody>
+                { entrySaveFailed && (
+                    /* FIXME: strings */
+                    <div className={styles.error}>
+                        Failed to save entry
+                    </div>
+                )}
                 <WidgetForm
                     value={value}
                     onAttributesChange={handleAttributesChange}

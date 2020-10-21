@@ -18,6 +18,7 @@ import {
     EntryFields,
     OrganizationFields,
     EntryType,
+    Entry,
 } from '#typings/entry';
 import {
     FrameworkFields,
@@ -78,7 +79,7 @@ function AuthorListOutput(props: AuthorListOutputProps) {
 
 interface EntryCardProps {
     className?: string;
-    entry: EntryFields;
+    entry: Entry;
     lead: EntryFields['lead'];
     framework: FrameworkFields;
     isDeleted?: boolean;
@@ -88,20 +89,19 @@ interface EntryCardProps {
 function EntryCard(props: EntryCardProps) {
     const {
         className,
-        entry,
+        entry: entryFromProps,
         lead,
         framework,
         onDelete,
         isDeleted,
     } = props;
 
-    console.warn('here', lead);
     const {
         url: leadUrlFromProps,
         attachment,
     } = lead;
 
-    const leadUrl = (attachment && attachment.file) || leadUrlFromProps;
+    const leadUrl = (attachment && attachment.file) ?? leadUrlFromProps;
 
     const leadSource = lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw;
 
@@ -109,6 +109,7 @@ function EntryCard(props: EntryCardProps) {
         // TODO; disable all actions if pending
     }, []);
 
+    const [entry, setEntry] = React.useState<Entry>(entryFromProps);
     const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
 
     const handleDeleteSuccess = React.useCallback(() => {
@@ -117,12 +118,12 @@ function EntryCard(props: EntryCardProps) {
 
     return (
         <div className={
-            _cs(
-                className,
-                styles.entryCard,
-                isVerified && styles.verified,
-                isDeleted && styles.deleted,
-            )}
+        _cs(
+            className,
+            styles.entryCard,
+            isVerified && styles.verified,
+            isDeleted && styles.deleted,
+        )}
         >
             <section className={styles.top}>
                 <div className={styles.row}>
@@ -182,11 +183,11 @@ function EntryCard(props: EntryCardProps) {
                 <div className={styles.row}>
                     <div className={styles.source}>
                         { leadSource && (
-                            <Icon
-                                name="world"
-                                className={styles.title}
-                            />
-                        )}
+                              <Icon
+                                  name="world"
+                                  className={styles.title}
+                              />
+                          )}
                         <div
                             className={styles.value}
                             title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
@@ -220,7 +221,7 @@ function EntryCard(props: EntryCardProps) {
                     />
                     <EntryOpenLink
                         entryId={entry.id}
-                        leadId={entry.lead.id}
+                        leadId={entry.lead}
                         projectId={entry.project}
                         disabled={isDeleted}
                     />
@@ -234,8 +235,8 @@ function EntryCard(props: EntryCardProps) {
                         entry={entry}
                         framework={framework}
                         disabled={isDeleted}
+                        onEditSuccess={setEntry}
                     />
-                    {/* FIXME: this component cannot be used, since it changes value in redux */}
                     <EntryVerify
                         title={entry.verificationLastChangedByDetails ? (
                             _ts(
@@ -249,10 +250,10 @@ function EntryCard(props: EntryCardProps) {
                         ) : undefined}
                         value={isVerified}
                         entryId={entry.id}
-                        leadId={entry.lead.id}
+                        leadId={entry.lead}
                         disabled={isDeleted}
                         handleEntryVerify={setVerificationStatus}
-                        // onPendingChange={}
+                    // onPendingChange={}
                     />
                 </div>
             </section>
