@@ -78,6 +78,7 @@ main {
                 bottom: 20vh;
                 width: 7vw;
                 height: 7vw;
+                animation: wiggle-slow 5s infinite ease-in-out;
             }
 
             &.position-top {
@@ -85,6 +86,7 @@ main {
                 left: 15vw;
                 width: 12vw;
                 height: 12vw;
+                animation: wiggle-slow 4s infinite ease-in-out;
             }
 
             .octopus {
@@ -153,6 +155,15 @@ main {
             font-size: var(--font-size-large);
         }
     }
+}
+
+@keyframes wiggle-slow {
+    0% { transform: rotate(0deg); }
+    82% { transform: rotate(0deg); }
+    85% { transform: rotate(5deg); }
+    88% { transform: rotate(-5deg); }
+    90% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
 }
 
 @keyframes wiggle {
