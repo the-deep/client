@@ -46,9 +46,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const handleClick = useCallback(
         () => {
             if (isDefined(key)) {
-                return onChange({ key, id });
+                onChange({ key, id });
             }
-            return undefined;
         },
         [key, id, onChange],
     );

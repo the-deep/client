@@ -121,11 +121,14 @@ function EntryVerify(props: Props) {
         setEntryVerificationRequest,
     } = requests;
 
-    const selectedOption = useMemo(
-        () => verificationStatusOptions.find(v => v.key === value) ??
-            verificationStatusOptions[1],
+    const selectedOptionKey = useMemo(
+        () => verificationStatusOptions.find(v => v.key === value)?.key ?? false,
         [value],
     );
+
+    const selectedOptionValue = useMemo(() => (
+        verificationStatusOptions.find(v => v.key === selectedOptionKey)?.value
+    ), [selectedOptionKey]);
 
     const handleItemSelect = useCallback((optionKey: VerificationOption['key']) => {
         setEntryVerificationRequest.do({
@@ -150,7 +153,7 @@ function EntryVerify(props: Props) {
                 hide={shouldHideEntryEdit}
                 render={
                     <DropdownEdit
-                        currentSelection={selectedOption && selectedOption.key}
+                        currentSelection={selectedOptionKey}
                         className={styles.dropdown}
                         options={verificationStatusOptions}
                         onItemSelect={handleItemSelect}
@@ -168,7 +171,7 @@ function EntryVerify(props: Props) {
                                         : styles.unverifiedIcon
                                     }
                                 />
-                                {selectedOption && selectedOption.value}
+                                {selectedOptionValue}
                             </div>
                         )}
                     />
@@ -179,7 +182,7 @@ function EntryVerify(props: Props) {
                             name={(value ? 'checkOutlined' : 'help')}
                             className={value ? styles.verifiedIcon : styles.unverifiedIcon}
                         />
-                        {selectedOption && selectedOption.value}
+                        {selectedOptionValue}
                     </div>
                 )}
             />
