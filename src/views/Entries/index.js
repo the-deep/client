@@ -612,7 +612,9 @@ export default class Entries extends React.PureComponent {
                                 <FilterEntriesForm
                                     className={styles.filters}
                                     pending={pendingFramework}
+                                    widgets={framework.widgets}
                                     filters={framework.filters}
+                                    hideMatrixFilters={view === QC_VIEW}
                                     geoOptions={geoOptions}
                                 />
                         }

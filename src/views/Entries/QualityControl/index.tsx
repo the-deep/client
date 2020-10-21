@@ -97,11 +97,12 @@ function QualityControl(props: Props) {
         parentFooterRef,
     } = props;
 
-    const processedFilters = useMemo(
+    const processedFilters: [string, string | number | object][] = useMemo(
         () => processEntryFilters(
             entriesFilters,
             framework,
             geoOptions,
+            true,
         ),
         [entriesFilters, framework, geoOptions],
     );
@@ -116,6 +117,20 @@ function QualityControl(props: Props) {
 
     const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
 
+    const requestFilters = useMemo(() => {
+        const projectFilter: [string, number] = ['project', projectId];
+        const selectedMatrixValue: ([string, string] | undefined) = selected
+            && [selected.key, selected.id];
+        const filters: ([string, string | number | object] | undefined)[] = [
+            ...processedFilters,
+            selectedMatrixValue,
+            projectFilter,
+        ];
+        return ({
+            filters: filters.filter(isDefined),
+        });
+    }, [selected, projectId, processedFilters]);
+
     const [
         pending,
         response,
@@ -127,13 +142,7 @@ function QualityControl(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        body: {
-            filters: [
-                selected && Object.values(selected),
-                ...processedFilters,
-                ['project', projectId],
-            ].filter(isDefined),
-        },
+        body: requestFilters as object,
         method: 'POST',
         onSuccess: (successResponse) => {
             setEntriesCount({ count: successResponse.count });

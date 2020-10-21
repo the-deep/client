@@ -18,7 +18,7 @@ interface Props<T, K extends string | number>{
     value: {key: K; id: K } | undefined;
     level?: number;
     defaultCollapseLevel?: number;
-    className: string;
+    className?: string;
 }
 
 type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
@@ -36,6 +36,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         idSelector,
         childrenSelector,
         defaultCollapseLevel,
+        className,
     } = props;
 
     const key = keySelector(option);
@@ -62,10 +63,10 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     );
 
     const isSelected = id === value?.id;
-    const hasChildren = children && children.length > 0;
 
     return (
         <div className={_cs(
+            className,
             styles.tocItem,
             isSelected && styles.active,
             !collapsed && styles.expanded,
@@ -81,7 +82,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                 >
                     {title}
                 </div>
-                { hasChildren && (
+                { children && children.length && (
                     <div className={styles.actions}>
                         <Button
                             className={styles.expandButton}
@@ -92,7 +93,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                     </div>
                 )}
             </div>
-            {hasChildren && !collapsed && (
+            {children && children.length > 0 && !collapsed && (
                 <TableOfContents
                     {...props}
                     className={_cs(props.className, styles.children)}
