@@ -1,15 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-
-import { Link } from 'react-router-dom';
-import { pathNames } from '#constants/';
 import {
     _cs,
+    isDefined,
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
+
+import { Link } from 'react-router-dom';
+import { pathNames } from '#constants/';
 import {
     RequestCoordinator,
     methods,
@@ -58,6 +60,71 @@ import FilterEntriesForm from './FilterEntriesForm';
 import LeadGroupedEntries from './LeadGroupedEntries';
 
 import styles from './styles.scss';
+
+export const FooterContainer = ({
+    parentFooterRef,
+    children,
+}) => {
+    if (!parentFooterRef || !parentFooterRef.current) {
+        return null;
+    }
+    return ReactDOM.createPortal(children, parentFooterRef.current);
+};
+
+
+export const EmptyEntries = ({
+    projectId,
+    entriesFilters,
+    selectedMatrix,
+}) => {
+    const isFilterEmpty = doesObjectHaveNoData(entriesFilters, ['']);
+
+    if (!isFilterEmpty || isDefined(selectedMatrix)) {
+        return (
+            <Message
+                className={styles.emptyFilterMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noFilter}
+                    alt=""
+                />
+                <span>{ _ts('entries', 'emptyEntriesForFilterMessage') }</span>
+            </Message>
+        );
+    }
+    return (
+        <Message
+            className={styles.emptyMessage}
+        >
+            <img
+                className={styles.image}
+                src={noSearch}
+                alt=""
+            />
+            <span>{ _ts('entries', 'emptyEntriesMessage') }</span>
+            <Link
+                className={styles.emptyLinkMessage}
+                to={reverseRoute(pathNames.leads, { projectId })}
+            >
+                { _ts('entries', 'emptyEntriesLinkMessage') }
+            </Link>
+        </Message>
+    );
+};
+
+EmptyEntries.propTypes = {
+    projectId: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    entriesFilters: PropTypes.object.isRequired,
+    // NOTE: Required for QC mode
+    selectedMatrix: PropTypes.string,
+};
+
+EmptyEntries.defaultProps = {
+    selectedMatrix: undefined,
+};
+
 
 const LIST_VIEW = 'list';
 const VIZ_VIEW = 'viz';
@@ -316,6 +383,9 @@ export default class Entries extends React.PureComponent {
             [LIST_VIEW]: {
                 component: this.renderListView,
                 wrapContainer: true,
+                rendererParams: () => ({
+                    parentFooterRef: this.footerRef,
+                }),
                 // mount: true,
                 // lazyMount: true,
             },
@@ -331,15 +401,19 @@ export default class Entries extends React.PureComponent {
             [QC_VIEW]: {
                 component: QualityControl,
                 rendererParams: () => ({
+                    className: styles.qc,
                     projectId: this.props.projectId,
                     framework: this.props.framework,
-                    className: styles.qc,
-                    leadGroupedEntriesList: this.props.leadGroupedEntriesList,
+                    entriesFilters: this.props.entriesFilters,
+                    geoOptions: this.props.geoOptions,
+                    maxItemsPerPage: MAX_ENTRIES_PER_REQUEST,
+                    parentFooterRef: this.footerRef,
                 }),
             },
         };
 
         this.leadEntries = React.createRef();
+        this.footerRef = React.createRef();
     }
 
     componentDidMount() {
@@ -457,50 +531,12 @@ export default class Entries extends React.PureComponent {
         });
     }
 
-    renderEmptyEntriesMessage = () => {
-        const {
-            projectId,
-            entriesFilters,
-        } = this.props;
-        const isFilterEmpty = doesObjectHaveNoData(entriesFilters, ['']);
-
-        if (!isFilterEmpty) {
-            return (
-                <Message
-                    className={styles.emptyFilterMessage}
-                >
-                    <img
-                        className={styles.image}
-                        src={noFilter}
-                        alt=""
-                    />
-                    <span>{ _ts('entries', 'emptyEntriesForFilterMessage') }</span>
-                </Message>
-            );
-        }
-        return (
-            <Message
-                className={styles.emptyMessage}
-            >
-                <img
-                    className={styles.image}
-                    src={noSearch}
-                    alt=""
-                />
-                <span>{ _ts('entries', 'emptyEntriesMessage') }</span>
-                <Link
-                    className={styles.emptyLinkMessage}
-                    to={reverseRoute(pathNames.leads, { projectId })}
-                >
-                    { _ts('entries', 'emptyEntriesLinkMessage') }
-                </Link>
-            </Message>
-        );
-    }
-
     renderListView = () => {
         const {
             leadGroupedEntriesList,
+            activePage,
+            entriesFilters,
+            projectId,
             totalEntriesCount,
             requests: {
                 geoOptionsRequest: { pending: pendingGeoOptions },
@@ -526,7 +562,23 @@ export default class Entries extends React.PureComponent {
                             keySelector={leadKeySelector}
                             rendererParams={this.rendererParams}
                         />
-                    ) : this.renderEmptyEntriesMessage()
+                    ) : (
+                        <EmptyEntries
+                            projectId={projectId}
+                            entriesFilters={entriesFilters}
+                        />
+                    )
+                )}
+                {totalEntriesCount > 0 && (
+                    <FooterContainer parentFooterRef={this.footerRef}>
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={totalEntriesCount}
+                            maxItemsPerPage={MAX_ENTRIES_PER_REQUEST}
+                            onPageClick={this.handlePageClick}
+                            showItemsPerPageChange={false}
+                        />
+                    </FooterContainer>
                 )}
             </React.Fragment>
         );
@@ -535,8 +587,6 @@ export default class Entries extends React.PureComponent {
     render() {
         const {
             framework,
-            activePage,
-            totalEntriesCount,
             geoOptions,
             currentUserActiveProject: { isVisualizationEnabled },
             requests: {
@@ -562,7 +612,9 @@ export default class Entries extends React.PureComponent {
                                 <FilterEntriesForm
                                     className={styles.filters}
                                     pending={pendingFramework}
+                                    widgets={framework.widgets}
                                     filters={framework.filters}
+                                    hideMatrixFilters={view === QC_VIEW}
                                     geoOptions={geoOptions}
                                 />
                         }
@@ -589,16 +641,7 @@ export default class Entries extends React.PureComponent {
                     />
                 }
                 footerClassName={styles.footer}
-                footer={
-                    totalEntriesCount > 0 && view === LIST_VIEW &&
-                    <Pager
-                        activePage={activePage}
-                        itemsCount={totalEntriesCount}
-                        maxItemsPerPage={MAX_ENTRIES_PER_REQUEST}
-                        onPageClick={this.handlePageClick}
-                        showItemsPerPageChange={false}
-                    />
-                }
+                footer={<div ref={this.footerRef} />}
             />
         );
     }

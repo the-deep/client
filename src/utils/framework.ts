@@ -1,3 +1,4 @@
+import { isDefined } from '@togglecorp/fujs';
 import _ts from '#ts';
 import {
     FrameworkElement,
@@ -17,14 +18,14 @@ export const DIMENSION_FIRST = 'dimensionFirst';
 
 interface Matrix2dData {
     sectors: {
-        id: number | string;
+        id: number;
         title: string;
     }[];
     dimensions: {
-        id: number | string;
+        id: number;
         title: string;
         subdimensions: {
-            id: number | string;
+            id: string;
             title: string;
         }[];
     }[];
@@ -274,43 +275,42 @@ export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTo
 
     const toc = matrix1dList.map((widget) => {
         const {
-            id,
+            key,
             title,
             properties,
         } = widget as Matrix1dWidgetElement;
 
         const { data } = properties;
+
         if (!data) {
-            return ({
-                id,
-                title,
-            });
+            return undefined;
         }
 
         const { rows } = data;
         const transformedRows = rows.map((row) => {
-            const { key, title: rowTitle, cells } = row;
+            const { key: rowKey, title: rowTitle, cells } = row;
 
             const transformedCells = cells.map(({
                 key: cellKey,
                 value,
-            }) => ({ id: cellKey, title: value }));
+            }) => ({ id: cellKey, key, title: value }));
 
             return ({
-                id: key,
+                id: rowKey,
+                key,
                 title: rowTitle,
                 children: transformedCells,
             });
         });
 
         return ({
-            id,
+            id: key,
             title,
             children: transformedRows,
         });
     });
 
-    return toc;
+    return toc.filter(isDefined);
 };
 
 export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
@@ -331,18 +331,18 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
     const toc = matrix2dList.map((widget) => {
         const {
             id,
+            key,
             title,
             properties,
         } = widget as Matrix2dWidgetElement;
 
         const { data } = properties;
         if (!data) {
-            return ({
-                id,
-                title,
-            });
+            return undefined;
         }
         const { dimensions, sectors } = data;
+        const dimensionKey = `${key}-dimensions`;
+        const sectorKey = `${key}-sectors`;
         const transformedDimensions = dimensions.map((dimension) => {
             const { id: dimensionId, title: dimensionTitle, subdimensions } = dimension;
 
@@ -350,11 +350,12 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
                 ({
                     id: subDimensionId,
                     title: subDimensionTitle,
-                }) => ({ id: subDimensionId, title: subDimensionTitle }),
+                }) => ({ id: subDimensionId, key: dimensionKey, title: subDimensionTitle }),
             );
 
             return ({
                 id: dimensionId,
+                key: dimensionKey,
                 title: dimensionTitle,
                 children: transformedSubDimensions,
             });
@@ -367,18 +368,19 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
                 ({
                     id: subSectorId,
                     title: subSectorTitle,
-                }) => ({ id: subSectorId, title: subSectorTitle }),
+                }) => ({ id: subSectorId, key: sectorKey, title: subSectorTitle }),
             );
 
             return ({
                 id: sectorId,
+                key: sectorKey,
                 title: sectorTitle,
                 children: transformedSubSectors,
             });
         });
 
         return {
-            id,
+            id: key,
             title,
             children: [
                 {
@@ -395,5 +397,5 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
         };
     });
 
-    return toc;
+    return toc.filter(isDefined);
 };

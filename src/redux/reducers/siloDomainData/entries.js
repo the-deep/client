@@ -11,6 +11,9 @@ export const E__SET_ACTIVE_PAGE = 'siloDomainData/E__SET_ACTIVE_PAGE';
 export const E__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/E__SET_ENTRY_COMMENTS_COUNT';
 export const E__PATCH_ENTRY_VERIFICATION = 'siloDomainData/E__PATCH_ENTRY_VERIFICATION';
 export const E__DELETE_ENTRY = 'siloDomainData/E__DELETE_ENTRY';
+export const E__QC__SET_ACTIVE_PAGE = 'siloDomainData/E__QC__SET_ACTIVE_PAGE';
+export const E__QC__SET_ENTRIES_COUNT = 'siloDomainData/E__QC__SET_ENTRIES_COUNT';
+export const E__QC__SET_SELECTED_MATRIX_KEY = 'siloDomainData/E__QC__SET_SELECTED_MATRIX_KEY';
 
 // ACTION-CREATOR
 
@@ -59,6 +62,21 @@ export const deleteEntryAction = ({ entryId, leadId }) => ({
     type: E__DELETE_ENTRY,
     entryId,
     leadId,
+});
+
+export const setQualityControlViewActivePageAction = ({ activePage }) => ({
+    type: E__QC__SET_ACTIVE_PAGE,
+    activePage,
+});
+
+export const setQualityControlViewEntriesCountAction = ({ count }) => ({
+    type: E__QC__SET_ENTRIES_COUNT,
+    count,
+});
+
+export const setQualityControlViewSelectedMatrixKeyAction = ({ matrixKey }) => ({
+    type: E__QC__SET_SELECTED_MATRIX_KEY,
+    matrixKey,
 });
 
 // REDUCER
@@ -246,6 +264,7 @@ const entryViewSetFilter = (state, action) => {
             [activeProject]: { $auto: {
                 filter: { $auto: { $merge: filters } },
                 activePage: { $set: 1 },
+                qcViewActivePage: { $set: 1 },
             } },
         } },
     };
@@ -276,6 +295,8 @@ const entryViewUpdateFilter = (state, action) => {
         };
         // eslint-disable-next-line no-param-reassign
         safeState.entriesView[projectId].activePage = 1;
+        // eslint-disable-next-line no-param-reassign
+        safeState.entriesView[projectId].qcViewActivePage = 1;
     });
     return newState;
 };
@@ -287,6 +308,7 @@ const entryViewUnsetFilter = (state) => {
             [activeProject]: { $auto: {
                 filter: { $set: {} },
                 activePage: { $set: 1 },
+                qcViewActivePage: { $set: 1 },
             } },
         },
     };
@@ -306,6 +328,46 @@ const entriesViewSetActivePage = (state, action) => {
     return update(state, settings);
 };
 
+const qualityControlViewSetActivePage = (state, action) => {
+    const { activePage } = action;
+    const { activeProject } = state;
+    const settings = {
+        entriesView: {
+            [activeProject]: { $auto: {
+                qcViewActivePage: { $set: activePage },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
+const qualityControlViewSetEntriesCount = (state, action) => {
+    const { count } = action;
+    const { activeProject } = state;
+    const settings = {
+        entriesView: {
+            [activeProject]: { $auto: {
+                qcViewEntriesCount: { $set: count },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
+const qualityControlViewSetMatrixKey = (state, action) => {
+    const { matrixKey } = action;
+    const { activeProject } = state;
+    const settings = {
+        entriesView: {
+            [activeProject]: { $auto: {
+                qcViewActivePage: { $set: 1 },
+                selectedMatrixKey: { $set: matrixKey },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
 // REDUCER MAP
 
 const reducers = {
@@ -317,5 +379,8 @@ const reducers = {
     [E__SET_ACTIVE_PAGE]: entriesViewSetActivePage,
     [E__PATCH_ENTRY_VERIFICATION]: patchEntryVerification,
     [E__DELETE_ENTRY]: deleteEntry,
+    [E__QC__SET_ACTIVE_PAGE]: qualityControlViewSetActivePage,
+    [E__QC__SET_ENTRIES_COUNT]: qualityControlViewSetEntriesCount,
+    [E__QC__SET_SELECTED_MATRIX_KEY]: qualityControlViewSetMatrixKey,
 };
 export default reducers;

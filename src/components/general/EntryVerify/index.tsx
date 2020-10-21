@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
@@ -36,6 +36,7 @@ interface ComponentProps {
     value: boolean;
     className?: string;
     onPendingChange?: (pending: boolean | undefined) => void;
+    handleEntryVerify?: (status: boolean) => void;
     disabled?: boolean;
 }
 
@@ -48,7 +49,7 @@ interface Params {
 }
 
 interface VerificationOption {
-    key: boolean | string | number;
+    key: boolean;
     value: string;
 }
 
@@ -86,10 +87,13 @@ const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
         method: methods.POST,
         query: ({ params: { verify } = {} }) => ({ verify }),
         onSuccess: ({ props, params = {} }) => {
-            const { setEntryVerification, entryId, leadId } = props;
+            const { handleEntryVerify, setEntryVerification, entryId, leadId } = props;
             const { verify = false } = params;
             if (setEntryVerification) {
                 setEntryVerification({ entryId, leadId, status: verify });
+            }
+            if (handleEntryVerify) {
+                handleEntryVerify(verify);
             }
             notify.send({
                 title: _ts('editEntry', 'entryVerificationStatusChange'),
@@ -117,16 +121,14 @@ function EntryVerify(props: Props) {
         setEntryVerificationRequest,
     } = requests;
 
-    // FIXME: we can remove verified and use value instead
-    const [verified, setVerificationStatus] = useState(value);
+    const selectedOptionKey = useMemo(
+        () => verificationStatusOptions.find(v => v.key === value)?.key ?? false,
+        [value],
+    );
 
-    useEffect(() => {
-        setVerificationStatus(value);
-    }, [value]);
-
-    // FIXME: memoize this
-    const selectedOption = verificationStatusOptions.find(v => v.key === verified) ||
-                           verificationStatusOptions[1];
+    const selectedOptionValue = useMemo(() => (
+        verificationStatusOptions.find(v => v.key === selectedOptionKey)?.value
+    ), [selectedOptionKey]);
 
     const handleItemSelect = useCallback((optionKey: VerificationOption['key']) => {
         setEntryVerificationRequest.do({
@@ -151,7 +153,7 @@ function EntryVerify(props: Props) {
                 hide={shouldHideEntryEdit}
                 render={
                     <DropdownEdit
-                        currentSelection={selectedOption && selectedOption.key}
+                        currentSelection={selectedOptionKey}
                         className={styles.dropdown}
                         options={verificationStatusOptions}
                         onItemSelect={handleItemSelect}
@@ -163,13 +165,13 @@ function EntryVerify(props: Props) {
                                 className={styles.label}
                             >
                                 <Icon
-                                    name={verified ? 'checkOutlined' : 'help'}
-                                    className={verified
+                                    name={value ? 'checkOutlined' : 'help'}
+                                    className={value
                                         ? styles.verifiedIcon
                                         : styles.unverifiedIcon
                                     }
                                 />
-                                {selectedOption && selectedOption.value}
+                                {selectedOptionValue}
                             </div>
                         )}
                     />
@@ -177,10 +179,10 @@ function EntryVerify(props: Props) {
                 renderOnHide={(
                     <div className={styles.label}>
                         <Icon
-                            name={(verified ? 'checkOutlined' : 'help')}
-                            className={verified ? styles.verifiedIcon : styles.unverifiedIcon}
+                            name={(value ? 'checkOutlined' : 'help')}
+                            className={value ? styles.verifiedIcon : styles.unverifiedIcon}
                         />
-                        {selectedOption && selectedOption.value}
+                        {selectedOptionValue}
                     </div>
                 )}
             />

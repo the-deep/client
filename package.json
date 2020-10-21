@@ -122,7 +122,7 @@
         "@mapbox/mapbox-gl-draw": "^1.2.0",
         "@timilsinabishal/react-components": "https://github.com/the-deep/react-components",
         "@togglecorp/faram": "^1.2.1",
-        "@togglecorp/fujs": "^1.9.0-beta.0",
+        "@togglecorp/fujs": "^1.9.2-beta.1",
         "@togglecorp/ravl": "^1.2.3",
         "@togglecorp/re-map": "^0.0.2",
         "@togglecorp/react-rest-request": "^2.5.0-beta.6",

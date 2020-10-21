@@ -147,10 +147,26 @@ function FilterEntriesForm(props) {
         entryFilterOptions,
         applyOnChange,
         hideLeadFilters,
+        hideMatrixFilters,
         filters: filtersFromProps,
+        widgets,
         geoOptions,
         projectDetails,
     } = props;
+
+    const filteredFrameworkFilters = useMemo(() => {
+        const widgetsMap = listToMap(widgets, d => d.key, d => d.widgetId);
+        const filtersWithId = filtersFromProps.map(f => ({
+            ...f,
+            widgetId: widgetsMap[f.widgetKey],
+        }));
+        let finalFilters = [...filtersWithId];
+        if (hideMatrixFilters) {
+            finalFilters = finalFilters
+            .filter(f => f.widgetId !== 'matrix1dWidget' && f.widgetId !== 'matrix2dWidget');
+        }
+        return finalFilters;
+    }, [filtersFromProps, widgets, hideMatrixFilters]);
 
     const [showFilters, setShowFilters] = useState(false);
     const [pristine, setPristine] = useState(true);
@@ -229,13 +245,13 @@ function FilterEntriesForm(props) {
             entriesFilters,
             (d, k) => (doesObjectHaveNoData(d, ['']) ? undefined : k),
         ).filter(isDefined);
-        const frameworkFiltersTitle = listToMap(filtersFromProps, d => d.key, d => d.title);
+        const frameworkFiltersTitle = listToMap(filteredFrameworkFilters, d => d.key, d => d.title);
         const allFilters = appliedFiltersKeys
             .map(f => staticFiltersLabelMap[f] ?? frameworkFiltersTitle[f])
             .filter(isDefined);
 
         return allFilters;
-    }, [entriesFilters, filtersFromProps]);
+    }, [entriesFilters, filteredFrameworkFilters]);
 
     return (
         <div className={_cs(styles.entriesFilters, className)} >
@@ -423,7 +439,7 @@ function FilterEntriesForm(props) {
                             {_ts('entries', 'widgetsFiltersGroupTitle')}
                         </h4>
                         <List
-                            data={filtersFromProps}
+                            data={filteredFrameworkFilters}
                             keySelector={filterKeySelector}
                             renderer={FrameworkFilter}
                             rendererParams={frameworkFilterRendererParams}

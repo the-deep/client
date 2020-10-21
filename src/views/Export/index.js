@@ -334,7 +334,10 @@ export default class Export extends React.PureComponent {
             },
         } = this.props;
 
-        const { filters } = analysisFramework;
+        const {
+            filters,
+            widgets,
+        } = analysisFramework;
 
         return (
             <Page
@@ -386,6 +389,7 @@ export default class Export extends React.PureComponent {
                                     applyOnChange
                                     pending={pendingAf || pendingGeoOptions}
                                     filters={filters}
+                                    widgets={widgets}
                                     geoOptions={geoOptions}
                                 />
                             </div>

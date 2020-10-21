@@ -10,12 +10,15 @@ import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 import EntryVerify from '#components/general/EntryVerify';
+import Button from '#rsca/Button';
+import modalize from '#rscg/Modalize';
 
+import LeadPreview from '#views/Leads/LeadPreview';
 import {
     EntryFields,
     OrganizationFields,
-    LeadWithGroupedEntriesFields,
     EntryType,
+    Entry,
 } from '#typings/entry';
 import {
     FrameworkFields,
@@ -24,6 +27,8 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 interface AuthorListOutputProps {
     className?: string;
@@ -74,8 +79,8 @@ function AuthorListOutput(props: AuthorListOutputProps) {
 
 interface EntryCardProps {
     className?: string;
-    entry: EntryFields;
-    lead: Omit<LeadWithGroupedEntriesFields, 'entries'>;
+    entry: Entry;
+    lead: EntryFields['lead'];
     framework: FrameworkFields;
     isDeleted?: boolean;
     onDelete: (entryId: EntryFields['id']) => void;
@@ -84,12 +89,19 @@ interface EntryCardProps {
 function EntryCard(props: EntryCardProps) {
     const {
         className,
-        entry,
+        entry: entryFromProps,
         lead,
         framework,
         onDelete,
         isDeleted,
     } = props;
+
+    const {
+        url: leadUrlFromProps,
+        attachment,
+    } = lead;
+
+    const leadUrl = (attachment && attachment.file) ?? leadUrlFromProps;
 
     const leadSource = lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw;
 
@@ -97,18 +109,21 @@ function EntryCard(props: EntryCardProps) {
         // TODO; disable all actions if pending
     }, []);
 
+    const [entry, setEntry] = React.useState<Entry>(entryFromProps);
+    const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
+
     const handleDeleteSuccess = React.useCallback(() => {
         onDelete(entry.id);
     }, [onDelete, entry]);
 
     return (
         <div className={
-            _cs(
-                className,
-                styles.entryCard,
-                entry.verified && styles.verified,
-                isDeleted && styles.deleted,
-            )}
+        _cs(
+            className,
+            styles.entryCard,
+            isVerified && styles.verified,
+            isDeleted && styles.deleted,
+        )}
         >
             <section className={styles.top}>
                 <div className={styles.row}>
@@ -141,8 +156,18 @@ function EntryCard(props: EntryCardProps) {
                         className={styles.title}
                         title={lead.title}
                     >
-                        { lead.title }
+                        {lead.title}
                     </div>
+                    {leadUrl && (
+                        <ModalButton
+                            className={styles.leadTitleButton}
+                            transparent
+                            iconName="externalLink"
+                            modal={
+                                <LeadPreview value={lead} />
+                            }
+                        />
+                    )}
                 </div>
             </section>
             <section className={styles.middle}>
@@ -158,11 +183,11 @@ function EntryCard(props: EntryCardProps) {
                 <div className={styles.row}>
                     <div className={styles.source}>
                         { leadSource && (
-                            <Icon
-                                name="world"
-                                className={styles.title}
-                            />
-                        )}
+                              <Icon
+                                  name="world"
+                                  className={styles.title}
+                              />
+                          )}
                         <div
                             className={styles.value}
                             title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
@@ -210,8 +235,8 @@ function EntryCard(props: EntryCardProps) {
                         entry={entry}
                         framework={framework}
                         disabled={isDeleted}
+                        onEditSuccess={setEntry}
                     />
-                    {/* FIXME: this component cannot be used, since it changes value in redux */}
                     <EntryVerify
                         title={entry.verificationLastChangedByDetails ? (
                             _ts(
@@ -223,11 +248,12 @@ function EntryCard(props: EntryCardProps) {
                                 },
                             )
                         ) : undefined}
-                        value={entry.verified}
+                        value={isVerified}
                         entryId={entry.id}
                         leadId={entry.lead}
                         disabled={isDeleted}
-                        // onPendingChange={}
+                        handleEntryVerify={setVerificationStatus}
+                    // onPendingChange={}
                     />
                 </div>
             </section>

@@ -168,7 +168,8 @@ export interface Matrix1dRowElement {
 export type Matrix1dWidgetElement = WidgetElement<{rows: Matrix1dRowElement[]}>
 
 export interface MatrixTocElement {
-    id: number | string;
+    id: string;
+    key?: string;
     title: string;
     children?: MatrixTocElement[] | [];
 }

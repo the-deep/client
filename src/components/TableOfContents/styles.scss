@@ -1,35 +1,68 @@
-.toc-list {
-    color: var(--color-text-label);
+.table-of-contents {
+    .toc-item {
+        margin: 0 calc(var(--spacing-medium) - var(--spacing-small));
+        border-left: var(--width-separator-thin) solid transparent;
+        
+        .header {
+            display: flex;
+            align-items: center;
 
-    .container {
-        display: flex;
+            &:hover {
+                background-color: var(--color-background-hover);
+            }
+            
+            .heading {
+                flex-grow: 1;
+                outline: none;
+                cursor: pointer;
+                padding: var(--spacing-small);
+                padding-right: 0;
+            }
 
-        .expand-button {
-            flex-shrink: 0;
-            outline: none;
-            padding: var(--spacing-extra-small) var(--spacing-small);
+            .actions {
+                flex-shrink: 0;
+                padding: var(--spacing-small);
+
+                .expand-button {
+                    outline: none;
+
+                    &:hover {
+                        background-color: rgba(0, 0, 0, .1);
+                    }
+                }
+            }
         }
-        &.collapsed {
-            transform: rotate(90deg);
+
+        .children {
+            padding: var(--spacing-small);
+            padding-right: 0;
         }
-    }
 
-    .item {
-        outline: none;
-        border-left: var(--spacing-extra-small) solid transparent;
-        padding-left: var(--spacing-small);
-    }
+        .toc-item {
+            margin-right: 0;
+            border-left: var(--width-separator-thin) dotted var(--color-text-label);
 
-    .selected {
-        border-left: var(--spacing-extra-small) solid var(--color-accent);
-        color: var(--color-accent)
-    }
+            .header {
+                position: relative;
 
-    .leaf {
-        font-size: var(--font-size-medium);
-    }
-}
+                &:before {
+                    position: absolute;
+                    color: var(--color-text-label);
+                    content: '-';
+                }
+            }
+        }
 
-.toc-list:not(:first-child) {
-    padding: 0 0 var(--spacing-medium) var(--spacing-large);
+        &.active {
+            border-left: var(--width-separator-thin) solid var(--color-accent);
+            background-color: var(--color-background-accent-hint);
+
+            .header {
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+        }
+
+    }
 }

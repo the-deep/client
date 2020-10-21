@@ -1,20 +1,24 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { _cs, isDefined } from '@togglecorp/fujs';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import ListView from '#rsu/../v2/View/ListView';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 interface Props<T, K extends string | number>{
-    keySelector: (datum: T) => K;
+    idSelector: (datum: T) => K;
+    keySelector: (datum: T) => K | undefined;
     labelSelector: (datum: T) => K;
     childrenSelector: (datum: T) => T[] | undefined;
-    onChange: (key: K) => void;
+    onChange: (value: { key: K; id: K }) => void;
     options: T[];
-    value: K | undefined;
+    value: {key: K; id: K } | undefined;
     level?: number;
     defaultCollapseLevel?: number;
+    className?: string;
 }
 
 type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
@@ -29,17 +33,24 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         onChange,
         keySelector,
         labelSelector,
+        idSelector,
         childrenSelector,
         defaultCollapseLevel,
+        className,
     } = props;
 
-    const id = keySelector(option);
+    const key = keySelector(option);
+    const id = idSelector(option);
     const title = labelSelector(option);
     const children = childrenSelector(option);
 
     const handleClick = useCallback(
-        () => onChange(id),
-        [id, onChange],
+        () => {
+            if (isDefined(key)) {
+                onChange({ key, id });
+            }
+        },
+        [key, id, onChange],
     );
 
     const [collapsed, setCollapsed] = useState<boolean>(
@@ -51,51 +62,45 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         [],
     );
 
-    const isSelected = id === value;
-
-    if (children && children.length > 0) {
-        return (
-            <div>
-                <div className={styles.container}>
-                    <div
-                        className={_cs(
-                            styles.item,
-                            isSelected && styles.selected,
-                        )}
-                        onClick={handleClick}
-                        onKeyDown={handleClick}
-                        role="button"
-                        tabIndex={-1}
-                    >
-                        {title}
-                    </div>
-                    <PrimaryButton
-                        className={_cs(styles.expandButton)}
-                        onClick={handleCollapseToggle}
-                        transparent
-                        iconName={collapsed ? 'down' : 'up'}
-                    />
-                </div>
-                {!collapsed && (
-                    <TableOfContents
-                        {...props}
-                        options={children}
-                        level={level + 1}
-                    />
-                )}
-            </div>
-        );
-    }
+    const isSelected = id === value?.id;
 
     return (
-        <div
-            className={_cs(styles.item, isSelected && styles.selected)}
-            onClick={handleClick}
-            onKeyDown={handleClick}
-            role="button"
-            tabIndex={-1}
+        <div className={_cs(
+            className,
+            styles.tocItem,
+            isSelected && styles.active,
+            !collapsed && styles.expanded,
+        )}
         >
-            {title}
+            <div className={styles.header}>
+                <div
+                    className={styles.heading}
+                    onClick={handleClick}
+                    onKeyDown={noOp}
+                    role="button"
+                    tabIndex={0}
+                >
+                    {title}
+                </div>
+                { children && children.length && (
+                    <div className={styles.actions}>
+                        <Button
+                            className={styles.expandButton}
+                            onClick={handleCollapseToggle}
+                            transparent
+                            iconName={collapsed ? 'chevronDown' : 'chevronUp'}
+                        />
+                    </div>
+                )}
+            </div>
+            {children && children.length > 0 && !collapsed && (
+                <TableOfContents
+                    {...props}
+                    className={_cs(props.className, styles.children)}
+                    options={children}
+                    level={level + 1}
+                />
+            )}
         </div>
     );
 }
@@ -106,8 +111,9 @@ type ToCListProps<T, K extends string | number> = Props<T, K>;
 function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>) {
     const {
         options,
-        keySelector,
+        idSelector,
         level = 0,
+        className,
         ...otherProps
     } = props;
 
@@ -115,15 +121,15 @@ function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>
         ...otherProps,
         option: v,
         level,
-        keySelector,
+        idSelector,
     });
 
     return (
         <ListView
-            className={styles.tocList}
+            className={_cs(className, styles.tableOfContents)}
             data={options}
             renderer={ToCItem}
-            keySelector={keySelector}
+            keySelector={idSelector}
             rendererParams={rendererParams}
         />
     );

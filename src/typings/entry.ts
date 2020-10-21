@@ -1,6 +1,9 @@
 import { DatabaseEntityBase } from './common';
+import { Lead } from './lead';
 
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
+
+export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality' | 'sourceRaw';
 
 export interface ProjectLabelFields {
     count: number;
@@ -67,7 +70,12 @@ export interface EntryFields extends DatabaseEntityBase {
     image?: string;
     tabularField: number;
     tabularFieldData: TabularDataFields;
-    lead: number;
+    lead: Pick<Lead, EntryLeadType> & {
+        assignee: number[];
+        authorsDetails: OrganizationFields[];
+        sourceDetails: OrganizationFields;
+        confidentialityDisplay: string;
+    };
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
@@ -85,4 +93,8 @@ export interface LeadWithGroupedEntriesFields {
     confidentiality: 'confidential' | 'unprotected';
     publishedOn: string;
     entries: EntryFields[];
+}
+
+export type Entry = Omit<EntryFields, 'lead'> & {
+    lead: number;
 }

@@ -32,7 +32,7 @@ const totMinutes = (time) => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const processEntryFilters = (filters, framework, geoOptions) => {
+export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFilters = false) => {
     const { widgets } = framework;
 
     const widgetsMapping = listToMap(
@@ -127,6 +127,10 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
             }
 
             result.push([filterKey, options]);
+        } else if (widgetId === 'matrix1dWidget' || widgetId === 'matrix2dWidget') {
+            if (!hideMatrixFilters) {
+                result.push([filterKey, filterOptions]);
+            }
         } else {
             result.push([filterKey, filterOptions]);
         }

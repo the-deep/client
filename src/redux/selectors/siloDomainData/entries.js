@@ -27,12 +27,27 @@ export const entriesViewFilterSelector = createSelector(
 
 export const entriesViewActivePageSelector = createSelector(
     entriesViewForProjectSelector,
-    entriesView => entriesView.activePage || 1,
+    entriesView => entriesView.activePage ?? 1,
+);
+
+export const qualityControlViewActivePageSelector = createSelector(
+    entriesViewForProjectSelector,
+    entriesView => entriesView.qcViewActivePage ?? 1,
+);
+
+export const qualityControlViewEntriesCountSelector = createSelector(
+    entriesViewForProjectSelector,
+    entriesView => entriesView.qcViewEntriesCount ?? 0,
+);
+
+export const qualityControlViewSelectedMatrixKeySelector = createSelector(
+    entriesViewForProjectSelector,
+    entriesView => entriesView.selectedMatrixKey,
 );
 
 export const totalEntriesCountForProjectSelector = createSelector(
     entriesViewForProjectSelector,
-    entriesView => entriesView.totalEntriesCount || 0,
+    entriesView => entriesView.totalEntriesCount ?? 0,
 );
 
 export const entriesForProjectSelector = createSelector(

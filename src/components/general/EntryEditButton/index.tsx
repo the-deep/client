@@ -4,7 +4,7 @@ import Button from '#rsca/Button';
 
 import EditEntryFormModal from '#components/general/EditEntryFormModal';
 
-import { EntryFields } from '#typings/entry';
+import { Entry } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 import _ts from '#ts';
 
@@ -12,9 +12,10 @@ import styles from './styles.scss';
 
 interface EntryEditButtonProps {
     className?: string;
-    entry: EntryFields;
+    entry: Entry;
     framework: FrameworkFields;
     disabled?: boolean;
+    onEditSuccess: (newEntry: Entry) => void;
 }
 
 function EntryEditButton(props: EntryEditButtonProps) {
@@ -23,6 +24,7 @@ function EntryEditButton(props: EntryEditButtonProps) {
         className,
         framework,
         disabled,
+        onEditSuccess,
     } = props;
 
     const [showModal, setShowModal] = React.useState(false);
@@ -48,6 +50,7 @@ function EntryEditButton(props: EntryEditButtonProps) {
                     framework={framework}
                     entry={entry}
                     onClose={handleEditEntryModalClose}
+                    onEditSuccess={onEditSuccess}
                 />
             )}
         </>

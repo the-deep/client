@@ -5,7 +5,7 @@ import Faram, { FaramGroup, Schema, ComputeSchema } from '@togglecorp/faram';
 import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
 
-import { EntryFields } from '#typings/entry';
+import { Entry } from '#typings/entry';
 import {
     FrameworkFields,
     WidgetElement as WidgetFields,
@@ -63,10 +63,10 @@ function getWidgetHeaderComponent(isExcerptWidget: boolean, title: string | unde
 
 export interface WidgetFormProps {
     className?: string;
-    value: EntryFields;
+    value: Entry;
     framework: FrameworkFields;
     mode: string;
-    onAttributesChange: (newValue: EntryFields['attributes'], errors: object) => void;
+    onAttributesChange: (newValue: Entry['attributes'], errors: object) => void;
     onExcerptChange: (newExcerptData: object) => void;
     schema: Schema;
     computeSchema: ComputeSchema;

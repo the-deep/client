@@ -1199,7 +1199,8 @@
         "-69483734": "Widget filters",
         "-71515950": "Filtered by:",
         "-90290386": "Hide filters",
-        "-60218291": "Show filters"
+        "-60218291": "Show filters",
+        "-92777682": "Table of content"
     },
     "links": {
         "browserExtension": {
@@ -3440,7 +3441,8 @@
             "leadPageCountTooltip": -45253596,
             "leadSourceTooltip": -6895713,
             "entryCreatedOnTooltip": -79339447,
-            "leadCreatedByTooltip": -7036637
+            "leadCreatedByTooltip": -7036637,
+            "tableOfContentHeading": -92777682
         },
         "qualityControl": {
             "matrix1dTitle": -90901113,
