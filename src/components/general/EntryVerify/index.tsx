@@ -49,7 +49,7 @@ interface Params {
 }
 
 interface VerificationOption {
-    key: boolean | string | number;
+    key: boolean;
     value: string;
 }
 

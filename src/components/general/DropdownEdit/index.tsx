@@ -7,19 +7,19 @@ import Button from '#rsca/Button';
 
 import styles from './styles.scss';
 
-interface Option {
-    key: string | number | boolean;
+interface Option<T extends string | number | boolean> {
+    key: T;
     value: string;
 }
 
-interface DropdownItemProps {
-    itemKey: string | number | boolean;
+interface DropdownItemProps<T extends string | number | boolean> {
+    itemKey: T;
     label: string;
-    onItemSelect: (optionKey: Option['key']) => void;
+    onItemSelect: (optionKey: T) => void;
     isActive: boolean;
 }
 
-function DropdownItem(props: DropdownItemProps) {
+function DropdownItem<T extends string | number | boolean>(props: DropdownItemProps<T>) {
     const {
         itemKey,
         label,
@@ -45,20 +45,17 @@ function DropdownItem(props: DropdownItemProps) {
     );
 }
 
-interface Props {
+interface Props<T extends string | number | boolean> {
     className?: string;
-    currentSelection: number | string | boolean;
-    options?: Option[];
-    onItemSelect: (optionKey: Option['key']) => void;
+    currentSelection: T;
+    options?: Option<T>[];
+    onItemSelect: (optionKey: T) => void;
     dropdownLeftComponent: JSX.Element | ReactElement | null;
     dropdownIcon?: string;
     disabled?: boolean;
 }
 
-const optionKeySelector = (d: Option) => d.key;
-const optionLabelSelector = (d: Option) => d.value;
-
-function DropdownEdit(props: Props) {
+function DropdownEdit<T extends string | number | boolean>(props: Props<T>) {
     const {
         className,
         onItemSelect,
@@ -75,7 +72,10 @@ function DropdownEdit(props: Props) {
         setShowDropdown(value);
     }, [setShowDropdown]);
 
-    const optionRendererParams = useCallback((key, data) => ({
+    const optionKeySelector = (d: Option<T>) => d.key;
+    const optionLabelSelector = (d: Option<T>) => d.value;
+
+    const optionRendererParams = useCallback((key: T, data: Option<T>) => ({
         isActive: key === currentSelection,
         itemKey: key,
         label: optionLabelSelector(data),
@@ -95,7 +95,7 @@ function DropdownEdit(props: Props) {
             closeOnClick
             disabled={disabled}
         >
-            <ListView
+            <ListView<Option<T>, DropdownItemProps<T>, T>
                 className={styles.items}
                 data={options}
                 keySelector={optionKeySelector}
