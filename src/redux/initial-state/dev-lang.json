@@ -1200,7 +1200,9 @@
         "-71515950": "Filtered by:",
         "-90290386": "Hide filters",
         "-60218291": "Show filters",
-        "-92777682": "Table of content"
+        "-92777682": "Table of content",
+        "-10912171": "No stakeholders are selected.",
+        "-13101548": "Please add your stakeholders."
     },
     "links": {
         "browserExtension": {
@@ -3428,7 +3430,9 @@
             "donor": -26861463,
             "government": -86018902,
             "cancelButtonLabel": 61,
-            "doneButtonLabel": -25166641
+            "doneButtonLabel": 25,
+            "emptyListMessage": -13101548,
+            "emptyReadOnlyMessage": -10912171
         },
         "components.entryEditButton": {
             "cancelButtonLabel": 61,
