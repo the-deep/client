@@ -96,7 +96,7 @@
                         .actions {
                             padding: 0 var(--spacing-small);
                         }
-                    }   
+                    }
 
                     >.content {
                         flex-grow: 1;
@@ -152,6 +152,11 @@
                                 }
                             }
                         }
+                    }
+
+                    .empty-content {
+                        flex-grow: 1;
+                        min-height: 240px;
                     }
                 }
 

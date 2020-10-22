@@ -9,7 +9,7 @@ import {
 import Faram, { FaramInputElement } from '@togglecorp/faram';
 
 import Modal from '#rscv/Modal';
-import SuccessButton from '#rsca/Button/SuccessButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -282,11 +282,11 @@ export default class StakeholdersModal extends React.PureComponent {
                         >
                             {_ts('project.detail.stakeholders', 'cancelButtonLabel')}
                         </DangerButton>
-                        <SuccessButton
+                        <PrimaryButton
                             type="submit"
                         >
                             {_ts('project.detail.stakeholders', 'doneButtonLabel')}
-                        </SuccessButton>
+                        </PrimaryButton>
                     </ModalFooter>
                 </Faram>
             </Modal>

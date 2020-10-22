@@ -23,6 +23,7 @@ import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
 import modalize from '#rscg/Modalize';
+import Message from '#rscv/Message';
 
 import {
     RequestCoordinator,
@@ -46,6 +47,15 @@ import ActivityLog from './ActivityLog';
 import Dashboard from './Dashboard';
 import requestOptions from './requests';
 import styles from './styles.scss';
+
+const EmptyComponent = ({ readOnly }) => (
+    <Message>
+        {readOnly
+            ? _ts('project.detail.stakeholders', 'emptyReadOnlyMessage')
+            : _ts('project.detail.stakeholders', 'emptyListMessage')
+        }
+    </Message>
+);
 
 const propTypes = {
     className: PropTypes.string,
@@ -403,13 +413,21 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                         />
                                     </div>
                                 </header>
-                                <ListView
-                                    className={styles.content}
-                                    data={fields}
-                                    rendererParams={this.organizationListRendererParams}
-                                    renderer={OrganizationList}
-                                    keySelector={organizationFieldKeySelector}
-                                />
+                                {faramValues?.organizations?.length > 0 ? (
+                                    <ListView
+                                        className={styles.content}
+                                        data={fields}
+                                        rendererParams={this.organizationListRendererParams}
+                                        renderer={OrganizationList}
+                                        keySelector={organizationFieldKeySelector}
+                                    />
+                                ) : (
+                                    <div className={styles.emptyContent}>
+                                        <EmptyComponent
+                                            readOnly={readOnly}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
