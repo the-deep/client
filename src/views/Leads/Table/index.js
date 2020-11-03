@@ -45,6 +45,7 @@ import FileTypeViewer from './FileTypeViewer';
 import BulkActions from './BulkActions';
 import styles from './styles.scss';
 
+const emptyObject = {};
 const ModalButton = modalize(Button);
 
 const mapStateToProps = state => ({
@@ -101,9 +102,11 @@ function Table(props) {
         className,
         requests: {
             leadOptionsRequest: {
-                confidentiality: confidentialityOptions,
-                status: statusOptions,
-                priority,
+                response: {
+                    confidentiality: confidentialityOptions,
+                    status: statusOptions,
+                    priority,
+                } = emptyObject,
             },
             leadPatchRequest,
         },
