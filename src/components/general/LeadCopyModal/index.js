@@ -120,7 +120,7 @@ function LeadCopyModal(props) {
     const handleExport = useCallback(() => {
         const body = {
             leads,
-            selectedProjects,
+            projects: selectedProjects,
         };
         leadsCopyRequestTrigger({ body });
     }, [
