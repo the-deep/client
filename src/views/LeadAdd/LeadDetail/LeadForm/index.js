@@ -168,7 +168,6 @@ function LeadFormRaw(props) {
         priorityOptions,
     } = props;
 
-
     const [searchedText, setSearchedText] = useState(undefined);
 
     const [pendingSearchedOrganizations, searchedOrganizations] = useRequest({
