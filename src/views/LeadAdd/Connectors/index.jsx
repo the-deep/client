@@ -38,7 +38,6 @@ function ConnectorItem(props) {
         id,
         sources,
         title,
-        totalLeads,
     } = data;
 
     const handleConnectorSourceSelect = useCallback(
@@ -62,7 +61,7 @@ function ConnectorItem(props) {
             type: LEAD_TYPE.connectors,
             active: id === selectedConnector && key === selectedConnectorSource,
             onItemClick: handleConnectorSourceSelect,
-            count: source.totalLeads,
+            count: source.alreadyNotAddedAndNotBlockedLeads,
             indent: 1,
             separator: false,
             itemState: connectorStatusToLeadStatusMap[source.status],
@@ -76,7 +75,6 @@ function ConnectorItem(props) {
             <ListStatusItem
                 itemKey={id}
                 title={title}
-                count={totalLeads}
                 active={id === selectedConnector && !selectedConnectorSource}
                 separator={false}
                 onItemClick={onConnectorSelect}
