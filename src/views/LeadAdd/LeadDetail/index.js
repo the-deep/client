@@ -106,14 +106,14 @@ const propTypes = {
     disableLeadUrlChange: PropTypes.bool,
 
     onChange: PropTypes.func.isRequired,
-    onApplyAllClick: PropTypes.func.isRequired,
-    onApplyAllBelowClick: PropTypes.func.isRequired,
+    onApplyAllClick: PropTypes.func,
+    onApplyAllBelowClick: PropTypes.func,
 
     // onLeadSave: PropTypes.func.isRequired,
     // onLeadRemove: PropTypes.func.isRequired,
     // onLeadExport: PropTypes.func.isRequired,
 
-    leadState: PropTypes.string.isRequired,
+    leadState: PropTypes.string,
 
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
@@ -123,8 +123,10 @@ const defaultProps = {
     className: undefined,
     bulkActionDisabled: false,
     hideProjects: false,
+    onApplyAllClick: undefined,
+    onApplyAllBelowClick: undefined,
     disableLeadUrlChange: false,
-
+    leadState: undefined,
     projects: [],
 };
 

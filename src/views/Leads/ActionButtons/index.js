@@ -169,7 +169,6 @@ export default class ActionButtons extends React.PureComponent {
                                     <LeadEditModal
                                         leadId={row.id}
                                         lead={row}
-                                        projectId={activeProject}
                                     />
                                 }
                             />

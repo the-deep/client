@@ -48,13 +48,15 @@ export interface ViewComponent<T> {
     lazyMount?: boolean;
 }
 
+export interface Permission {
+    create?: boolean;
+    delete?: boolean;
+    view?: boolean;
+    modify?: boolean;
+}
+
 export interface Permissions {
-    setupPermissions: {
-        create?: boolean;
-        delete?: boolean;
-        view?: boolean;
-        modify?: boolean;
-    };
+    setupPermissions: Permission;
 }
 
 export type NullableField<T, K extends keyof T> = {

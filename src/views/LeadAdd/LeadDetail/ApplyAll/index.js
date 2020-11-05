@@ -54,7 +54,7 @@ const ApplyAll = ({
 ApplyAll.propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool.isRequired,
-    hidden: PropTypes.bool.isRequired,
+    hidden: PropTypes.bool,
     children: PropTypes.node.isRequired,
     identifierName: PropTypes.string.isRequired,
     onApplyAllClick: PropTypes.func.isRequired,
@@ -64,6 +64,7 @@ ApplyAll.propTypes = {
 
 ApplyAll.defaultProps = {
     className: '',
+    hidden: false,
     extraButtons: undefined,
 };
 

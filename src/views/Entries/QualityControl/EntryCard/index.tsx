@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -10,22 +10,31 @@ import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 import EntryVerify from '#components/general/EntryVerify';
+import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
+import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
-
+import useRequest from '#utils/request';
 import LeadPreview from '#views/Leads/LeadPreview';
 import {
     EntryFields,
     OrganizationFields,
     EntryType,
     Entry,
+    EntryLeadType,
 } from '#typings/entry';
+import {
+    Lead,
+} from '#typings/lead';
+import {
+    Permission,
+} from '#typings/common';
 import {
     FrameworkFields,
 } from '#typings/framework';
-
 import _ts from '#ts';
 
+import { LeadEditModal } from '../../../Leads/ActionButtons/LeadEditModal';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -90,11 +99,16 @@ function EntryCard(props: EntryCardProps) {
     const {
         className,
         entry: entryFromProps,
-        lead,
+        lead: leadFromProps,
         framework,
         onDelete,
         isDeleted,
     } = props;
+
+    const [lead, setLead] = React.useState<Pick<Lead, EntryLeadType>>(leadFromProps);
+    const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
+    const [entry, setEntry] = React.useState<Entry>(entryFromProps);
+    const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
 
     const {
         url: leadUrlFromProps,
@@ -103,18 +117,45 @@ function EntryCard(props: EntryCardProps) {
 
     const leadUrl = (attachment && attachment.file) ?? leadUrlFromProps;
 
-    const leadSource = lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw;
+    const leadSource = lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw;
 
-    const handleDeletePendingChange = React.useCallback((/* isPending: boolean */) => {
+    const [
+        pending,
+        leadFromRequest,
+        ,
+        getLead,
+    ] = useRequest<Lead>({
+        url: `server://v2/leads/${lead.id}`,
+        method: 'GET',
+    });
+
+    useEffect(() => {
+        if(leadFromRequest) {
+            showEditLeadModal(true);
+        }
+    },[leadFromRequest]);
+
+    const handleDeletePendingChange = useCallback((/* isPending: boolean */) => {
         // TODO; disable all actions if pending
     }, []);
 
-    const [entry, setEntry] = React.useState<Entry>(entryFromProps);
-    const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
-
-    const handleDeleteSuccess = React.useCallback(() => {
+    const handleDeleteSuccess = useCallback(() => {
         onDelete(entry.id);
     }, [onDelete, entry]);
+
+    const handleEditLeadButtonClick = () => {
+        getLead();
+    };
+
+    const handleEditLeadModalClose = () => {
+        showEditLeadModal(false);
+    };
+
+    const handleEntryEditSave = useCallback((lead: Lead) => {
+        setLead(lead);
+    },[]);
+
+    const shouldHideLeadEdit = ({ leadPermissions }: { leadPermissions: Permission }) => !leadPermissions.modify
 
     return (
         <div className={
@@ -129,7 +170,7 @@ function EntryCard(props: EntryCardProps) {
                 <div className={styles.row}>
                     <AuthorListOutput
                         className={styles.authorList}
-                        value={lead.authorsDetails}
+                        value={lead.authorsDetail}
                     />
                     <DateOutput
                         className={styles.publishedOn}
@@ -168,6 +209,27 @@ function EntryCard(props: EntryCardProps) {
                             }
                         />
                     )}
+                    <Cloak
+                        hide={shouldHideLeadEdit}
+                        render={
+                            <WarningButton
+                                iconName="edit"
+                                transparent
+                                disabled={pending}
+                                onClick={handleEditLeadButtonClick}
+                            />
+                        }
+                    />
+                    {
+                        isEditLeadModalShown && leadFromRequest && (
+                            <LeadEditModal
+                                leadId={leadFromRequest.id}
+                                lead={leadFromRequest}
+                                closeModal={handleEditLeadModalClose}
+                                onSave={handleEntryEditSave}
+                            />
+                        )
+                    }
                 </div>
             </section>
             <section className={styles.middle}>
@@ -192,7 +254,7 @@ function EntryCard(props: EntryCardProps) {
                             className={styles.value}
                             title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
                         >
-                            { lead.sourceDetails ? lead.sourceDetails.title : lead.sourceRaw }
+                            { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
                         </div>
                     </div>
                     <div className={styles.confidentiality}>

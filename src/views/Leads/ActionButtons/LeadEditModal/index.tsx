@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { doesObjectHaveNoData } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
@@ -38,16 +39,15 @@ import styles from './styles.scss';
 
 interface LeadFaramErrors {}
 
-interface LeadPatchParams {
-    lead: LeadFaramValues;
-}
-
 interface OwnProps {
     leadId: number;
-    activeProject?: number;
     lead: LeadFaramValues;
     closeModal: () => void;
-    patchLead: (leadPatchParams: LeadPatchParams) => void;
+    onSave?: (lead: LeadFaramValues) => void;
+}
+
+interface PropsFromDispatch {
+    patchLead?: typeof patchLeadAction;
 }
 
 interface Params {
@@ -55,7 +55,7 @@ interface Params {
     body?: LeadFaramValues;
 }
 
-const requestOptions: Requests<OwnProps, Params> = {
+const requestOptions: Requests<OwnProps & PropsFromDispatch, Params> = {
     leadEditRequest: {
         url: ({ params }) => `/v2/leads/${params && params.leadId}/`,
         body: ({ params }) => params && params.body,
@@ -65,9 +65,15 @@ const requestOptions: Requests<OwnProps, Params> = {
             const {
                 patchLead,
                 closeModal,
+                onSave,
             } = props;
 
-            patchLead({ lead });
+            if (onSave) {
+                onSave(lead);
+            }
+            if (patchLead) {
+                patchLead({ lead });
+            }
             notify.send({
                 type: notify.type.SUCCESS,
                 title: _ts('leads', 'leads'),
@@ -83,14 +89,13 @@ const requestOptions: Requests<OwnProps, Params> = {
     },
 };
 
-// TODO: Write typings for dispatch
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     patchLead: params => dispatch(patchLeadAction(params)),
 });
 
-type Props = AddRequestProps<OwnProps, Params>;
+type Props = AddRequestProps<OwnProps & PropsFromDispatch, Params>;
 
-function LeadEditModal(props: Props) {
+function LeadEdit(props: Props) {
     const {
         leadId,
         lead: leadFromProps,
@@ -105,7 +110,7 @@ function LeadEditModal(props: Props) {
 
     const [leadFaramValues, setLeadFaramValues] = useState<LeadFaramValues>(leadFromProps);
     const [leadFaramErrors, setLeadFaramErrors] = useState<LeadFaramErrors>({});
-    const [pristine, setPristine] = useState<LeadFaramErrors>({});
+    const [pristine, setPristine] = useState<LeadFaramErrors>(false);
 
     const handleLeadDetailChange = useCallback(({
         faramValues: newFaramValues,
@@ -190,5 +195,7 @@ function LeadEditModal(props: Props) {
 }
 
 export default connect(undefined, mapDispatchToProps)(
-    (RequestClient(requestOptions)(LeadEditModal)),
+    (RequestClient(requestOptions)(LeadEdit)),
 );
+
+export const LeadEditModal = RequestClient(requestOptions)(LeadEdit);
