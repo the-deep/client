@@ -138,32 +138,9 @@ function CandidateLeadsPane(props) {
     );
 
     const [organizationPending,,, organizationTrigger] = useRequest({
-        url: 'server://organizations/search/',
+        url: 'server://organizations/get-or-create/',
         method: 'POST',
         body: { organizations: organizationsRaw },
-        // TODO: use real api
-        mockResponse: {
-            count: 1,
-            next: null,
-            previous: null,
-            results: [
-                {
-                    key: 'Amnesty International',
-                    organization: {
-                        id: 3448,
-                        createdAt: '2019-05-28T11:49:49.109566Z',
-                        modifiedAt: '2019-05-28T11:49:49.481689Z',
-                        regionsDisplay: [],
-                        title: 'Amnesty International',
-                        shortName: 'Amnesty',
-                        longName: 'Amnesty International',
-                        url: 'http://www.amnesty.org/',
-                        verified: true,
-                        regions: [],
-                    },
-                },
-            ],
-        },
         onSuccess: (response) => {
             const orgs = response.results;
             const organizationMapping = listToMap(
@@ -198,7 +175,7 @@ function CandidateLeadsPane(props) {
                         const organization = organizationMapping[authorRaw];
                         if (organization) {
                             // NOTE: author is multiple selection
-                            data.author = [organization];
+                            data.authors = [organization];
                         } else {
                             data.authorSuggestion = authorRaw;
                         }
@@ -212,7 +189,7 @@ function CandidateLeadsPane(props) {
             });
 
             // NOTE: Adding organizations used on new leads
-            onOrganizationsAdd(orgs);
+            onOrganizationsAdd(orgs.map(org => org.organization));
             onLeadsAdd(newLeads);
 
             clearCompletedCandidateLeads();
