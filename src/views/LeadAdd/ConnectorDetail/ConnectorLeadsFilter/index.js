@@ -38,7 +38,6 @@ function ConnectorLeadsFilter(props) {
         onFilterClear,
     } = props;
 
-    const [pristine, setPristine] = useState(true);
     const [filters, setFilters] = useState(filtersFromProps);
     const [errors, setErrors] = useState({});
 
@@ -49,9 +48,9 @@ function ConnectorLeadsFilter(props) {
         (values, err) => {
             setFilters(values);
             setErrors(err);
-            setPristine(false);
+            onFilterApply(values);
         },
-        [],
+        [onFilterApply],
     );
 
     const handleFaramFailure = useCallback(
@@ -60,17 +59,9 @@ function ConnectorLeadsFilter(props) {
         },
         [],
     );
-    const handleFaramSuccess = useCallback(
-        (_, values) => {
-            onFilterApply(values);
-            setPristine(true);
-        },
-        [onFilterApply],
-    );
 
     const handleFilterClear = useCallback(
         () => {
-            setPristine(true);
             setFilters({});
             if (!filterFromPropsIsEmpty) {
                 onFilterClear();
@@ -84,7 +75,6 @@ function ConnectorLeadsFilter(props) {
             className={_cs(styles.container, className)}
             value={filters}
             errors={errors}
-            onValidationSuccess={handleFaramSuccess}
             onValidationFailure={handleFaramFailure}
             onChange={handleFaramChange}
             schema={faramSchema}
@@ -102,19 +92,12 @@ function ConnectorLeadsFilter(props) {
                 label="Blocked"
                 showHintAndError={false}
             />
-            <Button
-                type="submit"
-                disabled={pristine}
-            >
-                {/* FIXME: Use string */}
-                Apply Filter
-            </Button>
             <DangerButton
                 disabled={filterIsEmpty && filterFromPropsIsEmpty}
                 onClick={handleFilterClear}
             >
                 {/* FIXME: Use string */}
-                Clear Filter
+                Clear
             </DangerButton>
         </Faram>
     );

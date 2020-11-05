@@ -100,7 +100,7 @@ function ConnectorDetail(props) {
         query: {
             offset: (activePage - 1) * itemsPerPage,
             limit: itemsPerPage,
-            alreadyAdded: false,
+            already_added: false,
             search: filters.search,
             // NOTE: sending false / undefined is different in this case
             blocked: filters.blocked ?? false,
