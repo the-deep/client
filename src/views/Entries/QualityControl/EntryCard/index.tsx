@@ -205,7 +205,7 @@ function EntryCard(props: EntryCardProps) {
                         )}
                     </div>
                     <div className={styles.titleRow}>
-                        {leadUrl && (
+                        {leadUrl ? (
                             <ModalButton
                                 className={styles.leadTitleButton}
                                 transparent
@@ -216,6 +216,10 @@ function EntryCard(props: EntryCardProps) {
                             >
                                 {lead.title}
                             </ModalButton>
+                        ) : (
+                            <div className={styles.leadTitleButton}>
+                                {lead.title}
+                            </div>
                         )}
                         <Cloak
                             hide={shouldHideLeadEdit}

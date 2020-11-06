@@ -3,7 +3,7 @@
     height: 96vh;
 
     .body {
-        background-color: var(--color-background);
+        padding: 0;
     }
 
     .error {
@@ -11,5 +11,9 @@
         padding: var(--spacing-medium);
         text-align: center;
         color: var(--color-danger);
+    }
+
+    .list-widgets {
+        border-bottom: var(--width-separator-thick) solid var(--color-separator);
     }
 }

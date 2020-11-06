@@ -8,7 +8,6 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
-import ScrollTabs from '#rscv/ScrollTabs';
 import WidgetForm from '#components/general/WidgetForm';
 
 import { FrameworkFields } from '#typings/framework';
@@ -28,11 +27,6 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const tabs = {
-    overview: _ts('editEntry', 'overviewTabTitle'),
-    list: _ts('editEntry', 'listTabTitle'),
-};
-
 interface EditEntryFormModalProps {
     className?: string;
     framework: FrameworkFields;
@@ -40,7 +34,6 @@ interface EditEntryFormModalProps {
     onEditSuccess: (newEntry: Entry) => void;
     onClose: () => void;
 }
-
 
 function EditEntryFormModal(props: EditEntryFormModalProps) {
     const {
@@ -53,7 +46,6 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
 
     const [value, setValue] = React.useState(entry);
     const [faramErrors, setFaramErrors] = React.useState({});
-    const [activeTab, setActiveTab] = React.useState('overview');
     const [entrySaveFailed, setEntrySaveFailed] = React.useState(false);
     const [entrySavePending, setEntrySavePending] = React.useState(false);
     const { widgets } = framework;
@@ -164,17 +156,8 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
 
     return (
         <Modal className={_cs(className, styles.editEntryModal)}>
-            <ModalHeader
-                title={_ts('components.entryEditButton', 'editModalHeading')}
-                rightComponent={(
-                    <ScrollTabs
-                        tabs={tabs}
-                        active={activeTab}
-                        onClick={setActiveTab}
-                    />
-                )}
-            />
-            <ModalBody>
+            <ModalHeader title={_ts('components.entryEditButton', 'editModalHeading')} />
+            <ModalBody className={styles.body}>
                 { entrySaveFailed && (
                     /* FIXME: strings */
                     <div className={styles.error}>
@@ -186,7 +169,19 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
                     onAttributesChange={handleAttributesChange}
                     onExcerptChange={handleExcerptChange}
                     framework={framework}
-                    mode={activeTab}
+                    mode="list"
+                    schema={schema}
+                    error={faramErrors}
+                    computeSchema={computeSchema}
+                    disabled={entrySavePending}
+                    className={styles.listWidgets}
+                />
+                <WidgetForm
+                    value={value}
+                    onAttributesChange={handleAttributesChange}
+                    onExcerptChange={handleExcerptChange}
+                    framework={framework}
+                    mode="overview"
                     schema={schema}
                     error={faramErrors}
                     computeSchema={computeSchema}
