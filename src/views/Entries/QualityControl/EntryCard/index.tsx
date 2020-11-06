@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -15,6 +15,8 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import useRequest from '#utils/request';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+
 import LeadPreview from '#views/Leads/LeadPreview';
 import LeadEditModal from '#components/general/LeadEditModal';
 
@@ -117,6 +119,8 @@ function EntryCard(props: EntryCardProps) {
         attachment,
     } = lead;
 
+    const [verifiyChangePending, setVerifyChangePending] = useState(false);
+
     const leadUrl = (attachment && attachment.file) ?? leadUrlFromProps;
 
     const leadSource = lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw;
@@ -159,168 +163,172 @@ function EntryCard(props: EntryCardProps) {
 
     const shouldHideLeadEdit = ({ leadPermissions }: { leadPermissions: Permission }) => !leadPermissions.modify
 
+    const loading = verifiyChangePending;
+
     return (
-        <div className={
-        _cs(
-            className,
-            styles.entryCard,
-            isVerified && styles.verified,
-            isDeleted && styles.deleted,
-        )}
-        >
-            <section className={styles.top}>
-                <div className={styles.row}>
-                    <AuthorListOutput
-                        className={styles.authorList}
-                        value={lead.authorsDetail}
-                    />
-                    <DateOutput
-                        className={styles.publishedOn}
-                        value={lead.publishedOn}
-                        tooltip={_ts('entries.qualityControl', 'leadPublishedOnTooltip')}
-                    />
-                    {lead.pageCount && (
-                        <div
-                            className={styles.pageCount}
-                            title={_ts('entries.qualityControl', 'leadPageCountTooltip')}
-                        >
-                            <Icon
-                                className={styles.icon}
-                                name="book"
-                            />
-                            <div className={styles.value}>
-                                {lead.pageCount}
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className={styles.titleRow}>
-                    <div
-                        className={styles.title}
-                        title={lead.title}
-                    >
-                        {lead.title}
-                    </div>
-                    {leadUrl && (
-                        <ModalButton
-                            className={styles.leadTitleButton}
-                            transparent
-                            iconName="externalLink"
-                            modal={
-                                <LeadPreview value={lead} />
-                            }
+        <div className={_cs(className, styles.entryCardContainer)}>
+            {loading && <LoadingAnimation />}
+            <div
+                className={_cs(
+                    styles.entryCard,
+                    isVerified && styles.verified,
+                    isDeleted && styles.deleted,
+                )}
+            >
+                <section className={styles.top}>
+                    <div className={styles.row}>
+                        <AuthorListOutput
+                            className={styles.authorList}
+                            value={lead.authorsDetail}
                         />
-                    )}
-                    <Cloak
-                        hide={shouldHideLeadEdit}
-                        render={
-                            <WarningButton
+                        <DateOutput
+                            className={styles.publishedOn}
+                            value={lead.publishedOn}
+                            tooltip={_ts('entries.qualityControl', 'leadPublishedOnTooltip')}
+                        />
+                        {lead.pageCount && (
+                            <div
+                                className={styles.pageCount}
+                                title={_ts('entries.qualityControl', 'leadPageCountTooltip')}
+                            >
+                                <Icon
+                                    className={styles.icon}
+                                    name="book"
+                                />
+                                <div className={styles.value}>
+                                    {lead.pageCount}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className={styles.titleRow}>
+                        <div
+                            className={styles.title}
+                            title={lead.title}
+                        >
+                            {lead.title}
+                        </div>
+                        {leadUrl && (
+                            <ModalButton
+                                className={styles.leadTitleButton}
+                                transparent
+                                iconName="externalLink"
+                                modal={
+                                    <LeadPreview value={lead} />
+                                }
+                            />
+                        )}
+                        <Cloak
+                            hide={shouldHideLeadEdit}
+                            render={
+                                <WarningButton
                                 iconName="edit"
                                 transparent
                                 disabled={pending || isEditLeadModalShown}
                                 onClick={handleEditLeadButtonClick}
-                            />
+                                />
+                            }
+                        />
+                        {
+                            isEditLeadModalShown && leadFromRequest && (
+                                <LeadEditModal
+                                    leadId={leadFromRequest.id}
+                                    lead={leadFromRequest}
+                                    closeModal={handleEditLeadModalClose}
+                                    onSave={handleLeadEditSave}
+                                />
+                            )
                         }
-                    />
-                    {
-                        isEditLeadModalShown && leadFromRequest && (
-                            <LeadEditModal
-                                leadId={leadFromRequest.id}
-                                lead={leadFromRequest}
-                                closeModal={handleEditLeadModalClose}
-                                onSave={handleLeadEditSave}
-                            />
-                        )
-                    }
-                </div>
-            </section>
-            <section className={styles.middle}>
-                <div className={styles.row}>
-                    <ExcerptOutput
-                        className={styles.excerptOutput}
-                        type={entryTypeToExcerptTypeMap[entry.entryType]}
-                        value={entry[entryTypeToValueMap[entry.entryType]]}
-                    />
-                </div>
-            </section>
-            <section className={styles.bottom}>
-                <div className={styles.row}>
-                    <div className={styles.source}>
-                        { leadSource && (
-                              <Icon
-                                  name="world"
-                                  className={styles.title}
-                              />
-                          )}
-                        <div
-                            className={styles.value}
-                            title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
-                        >
-                            { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
+                    </div>
+                </section>
+                <section className={styles.middle}>
+                    <div className={styles.row}>
+                        <ExcerptOutput
+                            className={styles.excerptOutput}
+                            type={entryTypeToExcerptTypeMap[entry.entryType]}
+                            value={entry[entryTypeToValueMap[entry.entryType]]}
+                        />
+                    </div>
+                </section>
+                <section className={styles.bottom}>
+                    <div className={styles.row}>
+                        <div className={styles.source}>
+                            { leadSource && (
+                                  <Icon
+                                      name="world"
+                                      className={styles.title}
+                                  />
+                              )}
+                            <div
+                                className={styles.value}
+                                title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
+                            >
+                                { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
+                            </div>
+                        </div>
+                        <div className={styles.confidentiality}>
+                            { lead.confidentialityDisplay }
                         </div>
                     </div>
-                    <div className={styles.confidentiality}>
-                        { lead.confidentialityDisplay }
+                    <div className={styles.entryDetailsRow}>
+                        <div
+                            className={styles.createdBy}
+                            title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
+                        >
+                            { entry.createdByName }
+                        </div>
+                        <DateOutput
+                            className={styles.createdAt}
+                            value={entry.createdAt}
+                            tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                        />
                     </div>
-                </div>
-                <div className={styles.entryDetailsRow}>
-                    <div
-                        className={styles.createdBy}
-                        title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
-                    >
-                        { entry.createdByName }
+                    <div className={styles.actions}>
+                        <EntryDeleteButton
+                            entryId={entry.id}
+                            onPendingChange={handleDeletePendingChange}
+                            onDeleteSuccess={handleDeleteSuccess}
+                            disabled={isDeleted}
+                        />
+                        <EntryOpenLink
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            projectId={entry.project}
+                            disabled={isDeleted}
+                        />
+                        <EntryCommentButton
+                            entryId={entry.id}
+                            commentCount={entry.unresolvedCommentCount}
+                            assignee={lead.assigneeDetails.id}
+                            disabled={isDeleted}
+                        />
+                        <EntryEditButton
+                            entry={entry}
+                            framework={framework}
+                            disabled={isDeleted}
+                            onEditSuccess={setEntry}
+                        />
+                        <EntryVerify
+                            title={entry.verificationLastChangedByDetails ? (
+                                _ts(
+                                    'entries',
+                                    'verificationLastChangedBy',
+                                    {
+                                        userName: entry
+                                            .verificationLastChangedByDetails.displayName,
+                                    },
+                                )
+                            ) : undefined}
+                            value={isVerified}
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            disabled={isDeleted}
+                            handleEntryVerify={setVerificationStatus}
+                            onPendingChange={setVerifyChangePending}
+                        />
                     </div>
-                    <DateOutput
-                        className={styles.createdAt}
-                        value={entry.createdAt}
-                        tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
-                    />
-                </div>
-                <div className={styles.actions}>
-                    <EntryDeleteButton
-                        entryId={entry.id}
-                        onPendingChange={handleDeletePendingChange}
-                        onDeleteSuccess={handleDeleteSuccess}
-                        disabled={isDeleted}
-                    />
-                    <EntryOpenLink
-                        entryId={entry.id}
-                        leadId={entry.lead}
-                        projectId={entry.project}
-                        disabled={isDeleted}
-                    />
-                    <EntryCommentButton
-                        entryId={entry.id}
-                        commentCount={entry.unresolvedCommentCount}
-                        assignee={lead.assigneeDetails.id}
-                        disabled={isDeleted}
-                    />
-                    <EntryEditButton
-                        entry={entry}
-                        framework={framework}
-                        disabled={isDeleted}
-                        onEditSuccess={setEntry}
-                    />
-                    <EntryVerify
-                        title={entry.verificationLastChangedByDetails ? (
-                            _ts(
-                                'entries',
-                                'verificationLastChangedBy',
-                                {
-                                    userName: entry
-                                        .verificationLastChangedByDetails.displayName,
-                                },
-                            )
-                        ) : undefined}
-                        value={isVerified}
-                        entryId={entry.id}
-                        leadId={entry.lead}
-                        disabled={isDeleted}
-                        handleEntryVerify={setVerificationStatus}
-                    // onPendingChange={}
-                    />
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
     );
 }
