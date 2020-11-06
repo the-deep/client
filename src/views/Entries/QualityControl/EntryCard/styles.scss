@@ -36,6 +36,10 @@
         border-top-color: var(--color-success);
     }
 
+    &.confidential {
+        background-color: var(--color-background);
+    }
+
     &.deleted {
         opacity: 0.3;
         border-top-color: var(--color-danger);
@@ -84,22 +88,13 @@
             align-items: center;
             padding: calc(var(--spacing-medium) - var(--spacing-small));
 
-            .title {
-                padding: var(--spacing-small);
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                color: var(--color-accent);
-                font-weight: var(--font-weight-bold);
-            }
-
             .lead-title-button {
-                flex-shrink: 0;
                 padding: 0 var(--spacing-extra-small);
+                text-align: left;
                 text-transform: none;
-                color: var(--color-accent);
+                color: var(--color-primary);
                 font-size: inherit;
-                font-weight: inherit;
+                font-weight: var(--font-weight-bold);
             }
         }
     }

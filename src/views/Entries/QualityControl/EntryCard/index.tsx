@@ -69,12 +69,13 @@ function AuthorListOutput(props: AuthorListOutputProps) {
         value = [],
     } = props;
 
-    const displayValue = value.map(o => o.title).join(', ');
+    const tooltipValue = value.map(o => o.title).join(', ');
+    const displayValue = value.map(o => o.shortName ?? o.title).join(', ');
 
     return (
         <div
             className={_cs(styles.authorListOutput, className)}
-            title={_ts('entries.qualityControl', 'authorListTooltip', { authors: displayValue })}
+            title={_ts('entries.qualityControl', 'authorListTooltip', { authors: tooltipValue })}
         >
             { value.length > 0 && (
                 <Icon
@@ -162,6 +163,7 @@ function EntryCard(props: EntryCardProps) {
     },[onLeadChange]);
 
     const shouldHideLeadEdit = ({ leadPermissions }: { leadPermissions: Permission }) => !leadPermissions.modify
+    const isConfidential = lead.confidentiality === 'confidential';
 
     const loading = verifiyChangePending;
 
@@ -173,6 +175,7 @@ function EntryCard(props: EntryCardProps) {
                     styles.entryCard,
                     isVerified && styles.verified,
                     isDeleted && styles.deleted,
+                    isConfidential && styles.confidential,
                 )}
             >
                 <section className={styles.top}>
@@ -202,21 +205,17 @@ function EntryCard(props: EntryCardProps) {
                         )}
                     </div>
                     <div className={styles.titleRow}>
-                        <div
-                            className={styles.title}
-                            title={lead.title}
-                        >
-                            {lead.title}
-                        </div>
                         {leadUrl && (
                             <ModalButton
                                 className={styles.leadTitleButton}
                                 transparent
-                                iconName="externalLink"
+                                title={lead.title}
                                 modal={
                                     <LeadPreview value={lead} />
                                 }
-                            />
+                            >
+                                {lead.title}
+                            </ModalButton>
                         )}
                         <Cloak
                             hide={shouldHideLeadEdit}

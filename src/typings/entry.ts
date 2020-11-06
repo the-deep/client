@@ -25,6 +25,7 @@ export interface AttributeFields {
 export interface OrganizationFields {
     id: number;
     title: string;
+    shortName?: string;
 }
 
 export interface UserFields {

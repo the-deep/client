@@ -1184,7 +1184,7 @@
         "-43286063": "Quantitative",
         "-68991934": "Author(s): {authors}",
         "-45253596": "Number of pages in Lead document",
-        "-6895713": "Publishing organization: {leadSource}",
+        "-6895713": "Publisher: {leadSource}",
         "-79339447": "Entry created on",
         "-7036637": "Lead created by: {user}",
         "-66548496": "Assessment saved successfully.",
