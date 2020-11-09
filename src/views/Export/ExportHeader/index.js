@@ -51,8 +51,8 @@ const createReportStructureLevelForExport = (nodes = emptyList) => (
         }))
 );
 
-const createTextWidgetIds = textWidgets => (
-    textWidgets
+const createWidgetIds = widgets => (
+    widgets
         .filter(widget => widget.selected)
         .map((widget) => {
             if (widget.isConditional) {
@@ -82,6 +82,7 @@ const propTypes = {
     className: PropTypes.string,
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     textWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    contextualWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
     decoupledEntries: PropTypes.bool.isRequired,
     projectId: PropTypes.number.isRequired,
@@ -99,6 +100,7 @@ const defaultProps = {
     className: '',
     reportStructure: undefined,
     textWidgets: [],
+    contextualWidgets: [],
     selectedLeads: {},
     entriesFilters: {},
     geoOptions: {},
@@ -179,6 +181,7 @@ export default class ExportHeader extends React.PureComponent {
             analysisFramework,
             geoOptions,
             textWidgets,
+            contextualWidgets,
             showGroups,
             requests: {
                 exportRequest,
@@ -204,7 +207,11 @@ export default class ExportHeader extends React.PureComponent {
                 levels: node.sublevels,
             }));
         const reportStructure = createReportStructureForExport(struct);
-        const textWidgetIds = createTextWidgetIds(textWidgets);
+        const textWidgetIds = createWidgetIds(textWidgets);
+        let contextualWidgetIds;
+        if (isWord) {
+            contextualWidgetIds = createWidgetIds(contextualWidgets);
+        }
 
         const otherFilters = {
             project: projectId,
@@ -228,6 +235,9 @@ export default class ExportHeader extends React.PureComponent {
 
             // temporary or permanent
             is_preview: isPreview,
+
+            // for word
+            contextual_information: contextualWidgetIds,
         };
 
         const processedFilters = processEntryFilters(
