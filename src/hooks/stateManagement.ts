@@ -16,6 +16,7 @@ export function useArrayEdit<T, K extends string | number>(
     (item: T) => void,
     (key: K) => void,
     (key: K, item: T) => void,
+    (items: T[]) => void,
 ] {
     const addItem = useCallback((newItem: T) => {
         setValues((oldValues = []) => ([
@@ -50,7 +51,28 @@ export function useArrayEdit<T, K extends string | number>(
             return newValues;
         });
     }, [setValues, keySelector]);
-    return [addItem, removeItem, modifyItem];
+
+    const modifyItems = useCallback((modifiedItems: T[]) => {
+        setValues((oldValues = []) => {
+            const newValues = [...oldValues];
+            modifiedItems.forEach((modifiedItem) => {
+                const modifiedItemKey = keySelector(modifiedItem);
+                const index = oldValues.findIndex(item => keySelector(item) === modifiedItemKey);
+                if (index === -1) {
+                    return;
+                }
+
+                const finalModifiedItem = {
+                    ...oldValues[index],
+                    ...modifiedItem,
+                };
+
+                newValues.splice(index, 1, finalModifiedItem);
+            });
+            return newValues;
+        });
+    }, [setValues, keySelector]);
+    return [addItem, removeItem, modifyItem, modifyItems];
 }
 
 export function useModalState(initialValue: boolean): [

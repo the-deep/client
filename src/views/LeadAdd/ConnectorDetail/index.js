@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { _cs, isTruthy, isDefined } from '@togglecorp/fujs';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import Message from '#rscv/Message';
 import useRequest from '#restrequest';
 import Pager from '#rscv/Pager';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import {
     useArraySelection,
@@ -72,7 +73,7 @@ function ConnectorDetail(props) {
     // TODO: validate this selected connector lead
     const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
     const [leadsUnfiltered, setLeads] = useState(undefined);
-    const [,, modifyLead] = useArrayEdit(setLeads, leadKeySelector);
+    const [,, modifyLead, modifyLeads] = useArrayEdit(setLeads, leadKeySelector);
     const [activePage, setActivePage] = useState(1);
     const [totalLeadsCount, setTotalLeadsCount] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(25);
@@ -93,6 +94,7 @@ function ConnectorDetail(props) {
     } else if (selectedConnector) {
         connectorLeadUrl = `server://projects/${projectId}/unified-connectors/${selectedConnector}/leads/`;
     }
+
     const [connectorLeadsPending] = useRequest({
         url: connectorLeadUrl,
         query: {
@@ -141,6 +143,10 @@ function ConnectorDetail(props) {
         leadKeySelector,
         [],
     );
+
+    useEffect(() => {
+        clearSelection();
+    }, [clearSelection, selectedConnectorSource, selectedConnector]);
 
     const isSelectionModeEnabled = useMemo(() => (
         selectedLeads.length > 0
@@ -209,6 +215,36 @@ function ConnectorDetail(props) {
         },
         [onLeadsAdd, onOrganizationsAdd],
     );
+
+    const [connectorLeadStatusChangePending,,, connectorLeadStatusChangeTrigger] = useRequest({
+        url: `${connectorLeadUrl}bulk-update/`,
+        method: 'POST',
+        body: filters.blocked ? ({
+            unblock: selectedLeads.map(item => item.id),
+        }) : ({
+            block: selectedLeads.map(item => item.id),
+        }),
+        onSuccess: () => {
+            if (filters.blocked) {
+                const leadsToPatch = selectedLeads.map(item => ({
+                    id: item.id,
+                    blocked: false,
+                }));
+                modifyLeads(leadsToPatch);
+            } else {
+                const leadsToPatch = selectedLeads.map(item => ({
+                    id: item.id,
+                    blocked: true,
+                }));
+                modifyLeads(leadsToPatch);
+            }
+            clearSelection();
+        },
+    });
+
+    const handleBulkBlockLeadsClick = useCallback(() => {
+        connectorLeadStatusChangeTrigger();
+    }, [connectorLeadStatusChangeTrigger]);
 
     const handleBulkSaveLeadsClick = useCallback(() => {
         const leadsToProcess = selectedLeads.map(item => item.lead);
@@ -294,17 +330,17 @@ function ConnectorDetail(props) {
                 />
                 {selectedLeads.length > 0 && (
                     <div className={styles.actions}>
-                        {/*
-                            <Button
-                                className={styles.button}
-                                iconName="delete"
-                                onClick={handleBulkBlockLeadsClick}
-                                // FIXME: use strings
-                                title="block/unblock"
-                            >
-                                Block
-                            </Button>
-                        */}
+                        <Button
+                            className={styles.button}
+                            iconName={filters.blocked ? 'undo' : 'delete'}
+                            onClick={handleBulkBlockLeadsClick}
+                            // FIXME: use strings
+                            title="block/unblock"
+                            pending={connectorLeadStatusChangePending}
+                        >
+                            {/* FIXME: use strings */}
+                            {filters.blocked ? 'Unblock' : 'Block'}
+                        </Button>
                         <PrimaryButton
                             className={styles.button}
                             iconName="save"
@@ -348,7 +384,7 @@ function ConnectorDetail(props) {
                         keySelector={leadKeySelector}
                         renderer={ConnectorLeadItem}
                         rendererParams={rendererParams}
-                        pending={connectorLeadsPending}
+                        pending={connectorLeadsPending || connectorLeadStatusChangePending}
                     />
                     <footer className={styles.footer}>
                         <Pager
