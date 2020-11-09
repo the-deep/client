@@ -16,6 +16,8 @@ import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import useRequest from '#utils/request';
 import LeadPreview from '#views/Leads/LeadPreview';
+import LeadEditModal from '#components/general/LeadEditModal';
+
 import {
     EntryFields,
     OrganizationFields,
@@ -34,7 +36,6 @@ import {
 } from '#typings/framework';
 import _ts from '#ts';
 
-import { LeadEditModal } from '../../../Leads/ActionButtons/LeadEditModal';
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -125,7 +126,7 @@ function EntryCard(props: EntryCardProps) {
         ,
         getLead,
     ] = useRequest<Lead>({
-        url: `server://v2/leads/${lead.id}`,
+        url: `server://v2/leads/${lead.id}/`,
         method: 'GET',
     });
 
@@ -215,7 +216,7 @@ function EntryCard(props: EntryCardProps) {
                             <WarningButton
                                 iconName="edit"
                                 transparent
-                                disabled={pending}
+                                disabled={pending || isEditLeadModalShown}
                                 onClick={handleEditLeadButtonClick}
                             />
                         }
