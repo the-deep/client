@@ -94,19 +94,20 @@ interface EntryCardProps {
     framework: FrameworkFields;
     isDeleted?: boolean;
     onDelete: (entryId: EntryFields['id']) => void;
+    onLeadChange: (lead: Pick<Lead, EntryLeadType>) => void;
 }
 
 function EntryCard(props: EntryCardProps) {
     const {
         className,
         entry: entryFromProps,
-        lead: leadFromProps,
+        lead,
         framework,
         onDelete,
         isDeleted,
+        onLeadChange,
     } = props;
 
-    const [lead, setLead] = React.useState<Pick<Lead, EntryLeadType>>(leadFromProps);
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
     const [entry, setEntry] = React.useState<Entry>(entryFromProps);
     const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
@@ -152,9 +153,9 @@ function EntryCard(props: EntryCardProps) {
         showEditLeadModal(false);
     };
 
-    const handleEntryEditSave = useCallback((lead: Lead) => {
-        setLead(lead);
-    },[]);
+    const handleLeadEditSave = useCallback((lead: Lead) => {
+        onLeadChange(lead);
+    },[onLeadChange]);
 
     const shouldHideLeadEdit = ({ leadPermissions }: { leadPermissions: Permission }) => !leadPermissions.modify
 
@@ -227,7 +228,7 @@ function EntryCard(props: EntryCardProps) {
                                 leadId={leadFromRequest.id}
                                 lead={leadFromRequest}
                                 closeModal={handleEditLeadModalClose}
-                                onSave={handleEntryEditSave}
+                                onSave={handleLeadEditSave}
                             />
                         )
                     }

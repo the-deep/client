@@ -9,7 +9,8 @@ import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 
-import { EntryFields } from '#typings/entry';
+import { Lead } from '#typings/lead';
+import { EntryFields, EntryLeadType } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
@@ -115,6 +116,7 @@ function QualityControl(props: Props) {
         [framework],
     );
 
+    const [entries, setEntries] = React.useState<EntryFields[]>([]);
     const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
 
     const requestFilters = useMemo(() => {
@@ -133,7 +135,7 @@ function QualityControl(props: Props) {
 
     const [
         pending,
-        response,
+        ,
         ,
         getEntries,
     ] = useRequest<MultiResponse<EntryFields>>({
@@ -145,6 +147,7 @@ function QualityControl(props: Props) {
         body: requestFilters as object,
         method: 'POST',
         onSuccess: (successResponse) => {
+            setEntries(successResponse.results);
             setEntriesCount({ count: successResponse.count });
         },
     });
@@ -173,6 +176,16 @@ function QualityControl(props: Props) {
         setActivePage({ activePage: value });
     }, [setActivePage]);
 
+    const handleLeadEdit = useCallback((lead: Pick<Lead, EntryLeadType>) => {
+        const patchedEntries = entries.map((e) => {
+            if (e.lead.id === lead.id) {
+                return { ...e, lead };
+            }
+            return e;
+        });
+        setEntries(patchedEntries);
+    }, [entries]);
+
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,
         entry: { ...data, lead: data.lead.id },
@@ -180,9 +193,11 @@ function QualityControl(props: Props) {
         framework,
         isDeleted: deletedEntries[data.id],
         onDelete: handleEntryDelete,
+        onLeadChange: handleLeadEdit,
         className: styles.card,
     }),
     [
+        handleLeadEdit,
         deletedEntries,
         framework,
         handleEntryDelete,
@@ -217,9 +232,9 @@ function QualityControl(props: Props) {
                 rightChild={(
                     <div className={styles.entryList}>
                         { pending && <LoadingAnimation /> }
-                        { (response?.results && response.results.length > 0) ? (
+                        { (entries && entries.length > 0) ? (
                             <List
-                                data={response.results}
+                                data={entries}
                                 keySelector={entryKeySelector}
                                 renderer={EntryCard}
                                 rendererParams={entryCardRendererParams}

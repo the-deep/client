@@ -106,7 +106,6 @@ export default class ActionButtons extends React.PureComponent {
             onRemoveLead,
             row,
             className,
-            activeProject,
             disabled,
         } = this.props;
 
