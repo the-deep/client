@@ -85,8 +85,6 @@ export default class MultiDocumentUploader extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.dragEnterCount = 0;
-
         this.state = {
             pending: false,
             urlValue: undefined,
@@ -117,19 +115,11 @@ export default class MultiDocumentUploader extends React.PureComponent {
     }
 
     handleDragEnter = () => {
-        if (this.dragEnterCount === 0) {
-            this.setState({ isBeingDraggedOver: true });
-        }
-
-        this.dragEnterCount += 1;
+        this.setState({ isBeingDraggedOver: true });
     }
 
     handleDragLeave = () => {
-        this.dragEnterCount -= 1;
-
-        if (this.dragEnterCount === 0) {
-            this.setState({ isBeingDraggedOver: false });
-        }
+        this.setState({ isBeingDraggedOver: false });
     }
 
     handleUrlChange = (value) => {
@@ -151,7 +141,6 @@ export default class MultiDocumentUploader extends React.PureComponent {
     }
 
     handleFileAdd = (files) => {
-        this.dragEnterCount = 0;
         this.setState({ isBeingDraggedOver: false });
 
         files.forEach((file) => {
@@ -292,6 +281,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                 className={className}
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragLeave}
+                onDragEnd={this.handleDragLeave}
             >
                 <Label
                     className={_cs(styles.label, 'label')}
@@ -354,7 +344,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                     </div>
                 )}
                 <div className={styles.content}>
-                    { showDropZone && (
+                    { showDropZone ? (
                         <DropZone
                             className={styles.dropZone}
                             onDrop={this.handleFileAdd}
@@ -362,15 +352,16 @@ export default class MultiDocumentUploader extends React.PureComponent {
                         >
                             {_ts('components.multiDocumentUploader', 'dropFilesHereLabel')}
                         </DropZone>
+                    ) : (
+                        <ListView
+                            className={styles.selectionItems}
+                            data={value}
+                            keySelector={MultiDocumentUploader.keySelector}
+                            rendererParams={this.rendererParamsForSelection}
+                            renderer={SelectionItem}
+                            emptyComponent={emptyEmptyComponent}
+                        />
                     )}
-                    <ListView
-                        className={styles.selectionItems}
-                        data={value}
-                        keySelector={MultiDocumentUploader.keySelector}
-                        rendererParams={this.rendererParamsForSelection}
-                        renderer={SelectionItem}
-                        emptyComponent={emptyEmptyComponent}
-                    />
                 </div>
                 <HintAndError
                     className={styles.hintAndError}
