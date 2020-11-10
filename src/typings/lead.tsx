@@ -20,7 +20,7 @@ export interface OrganizationDetail {
 export interface Lead extends DatabaseEntityBase {
     title: string;
     assessmentId?: number;
-    assignee?: number;
+    assignee?: number | number[];
     assigneeDetails: UserDetails;
     confidentiality: Confidentiality;
     priority: number;
@@ -48,4 +48,5 @@ export interface Lead extends DatabaseEntityBase {
     noOfEntries: number;
     pageCount: number;
     wordCount?: number;
+    confidentialityDisplay?: string;
 }

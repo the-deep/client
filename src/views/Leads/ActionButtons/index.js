@@ -10,13 +10,13 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
-import { pathNames } from '#constants/';
+import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import LeadCopyModal from '#components/general/LeadCopyModal';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import LeadEditModal from './LeadEditModal';
+import LeadEditModal from '#components/general/LeadEditModal';
 
 import styles from './styles.scss';
 
@@ -106,7 +106,6 @@ export default class ActionButtons extends React.PureComponent {
             onRemoveLead,
             row,
             className,
-            activeProject,
             disabled,
         } = this.props;
 
@@ -169,7 +168,6 @@ export default class ActionButtons extends React.PureComponent {
                                     <LeadEditModal
                                         leadId={row.id}
                                         lead={row}
-                                        projectId={activeProject}
                                     />
                                 }
                             />

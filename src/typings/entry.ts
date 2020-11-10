@@ -3,7 +3,7 @@ import { Lead } from './lead';
 
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
 
-export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality' | 'sourceRaw';
+export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality' | 'sourceRaw' | 'authorsDetail' | 'sourceDetail' | 'confidentialityDisplay' | 'assignee';
 
 export interface ProjectLabelFields {
     count: number;
@@ -70,12 +70,7 @@ export interface EntryFields extends DatabaseEntityBase {
     image?: string;
     tabularField: number;
     tabularFieldData: TabularDataFields;
-    lead: Pick<Lead, EntryLeadType> & {
-        assignee: number[];
-        authorsDetails: OrganizationFields[];
-        sourceDetails: OrganizationFields;
-        confidentialityDisplay: string;
-    };
+    lead: Pick<Lead, EntryLeadType>;
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;

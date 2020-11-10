@@ -181,6 +181,7 @@ function Table(props) {
 
                     return (
                         <Checkbox
+                            label=""
                             onChange={() => clickOnItem(row)}
                             value={!!itemSelected}
                             className={styles.checkbox}
