@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { isDefined, _cs } from '@togglecorp/fujs';
@@ -10,7 +10,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 
 import { Lead } from '#typings/lead';
-import { EntryFields, EntryLeadType } from '#typings/entry';
+import { EntryFields, EntryLeadType, EntrySummary } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
@@ -31,6 +31,7 @@ import {
 import _ts from '#ts';
 
 import EntryCard from './EntryCard';
+import EntriesStats from './EntriesStats';
 import {
     FooterContainer,
     EmptyEntries,
@@ -59,6 +60,10 @@ interface PropsFromDispatch {
     setSelection: typeof setQualityControlViewSelectedMatrixKeyAction;
     setActivePage: typeof setQualityControlViewActivePageAction;
     setEntriesCount: typeof setQualityControlViewEntriesCountAction;
+}
+
+interface EntriesWithSummaryResponse<T> extends MultiResponse<T>{
+    summary: EntrySummary;
 }
 
 const keySelector = (d: MatrixTocElement) => d.key;
@@ -118,6 +123,7 @@ function QualityControl(props: Props) {
 
     const [entries, setEntries] = React.useState<EntryFields[]>([]);
     const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
+    const [stats, setStats] = useState<EntrySummary | undefined>();
 
     const requestFilters = useMemo(() => {
         const projectFilter: [string, number] = ['project', projectId];
@@ -138,9 +144,10 @@ function QualityControl(props: Props) {
         ,
         ,
         getEntries,
-    ] = useRequest<MultiResponse<EntryFields>>({
+    ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
         url: 'server://entries/filter/',
         query: {
+            calculate_summary: 1,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
@@ -148,6 +155,7 @@ function QualityControl(props: Props) {
         method: 'POST',
         onSuccess: (successResponse) => {
             setEntries(successResponse.results);
+            setStats(successResponse?.summary);
             setEntriesCount({ count: successResponse.count });
         },
     });
@@ -155,7 +163,6 @@ function QualityControl(props: Props) {
     useEffect(
         getEntries,
         [
-            getEntries,
             projectId,
             processedFilters,
             activePage,
@@ -164,8 +171,9 @@ function QualityControl(props: Props) {
     );
 
     const handleEntryDelete = React.useCallback((entryId) => {
+        getEntries();
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
-    }, [setDeletedEntries]);
+    }, [setDeletedEntries, getEntries]);
 
     const handleSelection = useCallback(value => (
         selected && selected.id === value.id ?
@@ -186,6 +194,10 @@ function QualityControl(props: Props) {
         setEntries(patchedEntries);
     }, [entries]);
 
+    const handleVerificationChange = useCallback(() => {
+        getEntries();
+    }, [getEntries]);
+
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,
         entry: { ...data, lead: data.lead.id },
@@ -194,6 +206,7 @@ function QualityControl(props: Props) {
         isDeleted: deletedEntries[data.id],
         onDelete: handleEntryDelete,
         onLeadChange: handleLeadEdit,
+        onVerificationChange: handleVerificationChange,
         className: styles.card,
     }),
     [
@@ -201,10 +214,16 @@ function QualityControl(props: Props) {
         deletedEntries,
         framework,
         handleEntryDelete,
+        handleVerificationChange,
     ]);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
+            <div>
+                <EntriesStats
+                    stats={stats}
+                />
+            </div>
             <ResizableH
                 className={styles.resizableContainer}
                 leftContainerClassName={styles.left}

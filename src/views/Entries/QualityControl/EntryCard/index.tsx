@@ -98,6 +98,7 @@ interface EntryCardProps {
     isDeleted?: boolean;
     onDelete: (entryId: EntryFields['id']) => void;
     onLeadChange: (lead: Pick<Lead, EntryLeadType>) => void;
+    onVerificationChange: () => void;
 }
 
 function EntryCard(props: EntryCardProps) {
@@ -107,6 +108,7 @@ function EntryCard(props: EntryCardProps) {
         lead,
         framework,
         onDelete,
+        onVerificationChange,
         isDeleted,
         onLeadChange,
     } = props;
@@ -145,6 +147,11 @@ function EntryCard(props: EntryCardProps) {
     const handleDeletePendingChange = useCallback((/* isPending: boolean */) => {
         // TODO; disable all actions if pending
     }, []);
+
+    const handleVerificationChange = React.useCallback((status: boolean) => {
+        onVerificationChange();
+        setVerificationStatus(status);
+    }, [onVerificationChange]);
 
     const handleDeleteSuccess = useCallback(() => {
         onDelete(entry.id);

@@ -1,0 +1,20 @@
+.stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+
+    .stat {
+        display: flex;
+        flex-grow: 1;
+        padding: var(--spacing-small);
+
+        .title {
+        }
+
+        .value {
+            padding-left: var(--spacing-small);
+        }
+
+    }
+}
