@@ -125,19 +125,23 @@ function QualityControl(props: Props) {
     const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary | undefined>();
 
-    const requestFilters = useMemo(() => {
-        const projectFilter: [string, number] = ['project', projectId];
+    const combinedFilters = useMemo(() => {
         const selectedMatrixValue: ([string, string] | undefined) = selected
             && [selected.key, selected.id];
         const filters: ([string, string | number | object] | undefined)[] = [
             ...processedFilters,
             selectedMatrixValue,
-            projectFilter,
         ];
+        return filters;
+    }, [selected, processedFilters]);
+
+    const requestFilters = useMemo(() => {
+        const projectFilter: [string, number] = ['project', projectId];
+        const filters = [...combinedFilters, projectFilter];
         return ({
             filters: filters.filter(isDefined),
         });
-    }, [selected, projectId, processedFilters]);
+    }, [projectId, combinedFilters]);
 
     const [
         pending,
@@ -160,6 +164,25 @@ function QualityControl(props: Props) {
         },
     });
 
+    const [
+        ,
+        ,
+        ,
+        getEntriesWithStats,
+    ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
+        url: 'server://entries/filter/',
+        query: {
+            calculate_summary: 1,
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        },
+        body: requestFilters as object,
+        method: 'POST',
+        onSuccess: (successResponse) => {
+            setStats(successResponse?.summary);
+        },
+    });
+
     useEffect(
         getEntries,
         [
@@ -171,9 +194,9 @@ function QualityControl(props: Props) {
     );
 
     const handleEntryDelete = React.useCallback((entryId) => {
-        getEntries();
+        getEntriesWithStats();
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
-    }, [setDeletedEntries, getEntries]);
+    }, [setDeletedEntries, getEntriesWithStats]);
 
     const handleSelection = useCallback(value => (
         selected && selected.id === value.id ?
@@ -185,6 +208,7 @@ function QualityControl(props: Props) {
     }, [setActivePage]);
 
     const handleLeadEdit = useCallback((lead: Pick<Lead, EntryLeadType>) => {
+        getEntriesWithStats();
         const patchedEntries = entries.map((e) => {
             if (e.lead.id === lead.id) {
                 return { ...e, lead };
@@ -192,11 +216,11 @@ function QualityControl(props: Props) {
             return e;
         });
         setEntries(patchedEntries);
-    }, [entries]);
+    }, [entries, getEntriesWithStats]);
 
     const handleVerificationChange = useCallback(() => {
-        getEntries();
-    }, [getEntries]);
+        getEntriesWithStats();
+    }, [getEntriesWithStats]);
 
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,
@@ -261,7 +285,7 @@ function QualityControl(props: Props) {
                         ) : (
                             <EmptyEntries
                                 projectId={projectId}
-                                entriesFilters={entriesFilters}
+                                entriesFilters={combinedFilters}
                             />
                         )}
                     </div>
