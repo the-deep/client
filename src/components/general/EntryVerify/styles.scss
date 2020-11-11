@@ -1,35 +1,5 @@
 .verify-container {
     display: flex;
     align-items: center;
-    margin-right: var(--spacing-small);
-    border: var(--width-separator-thin) solid var(--color-separator);
-
-    .label {
-        padding: 0 var(--spacing-small);
-        text-transform: capitalize;
-
-        .unverified-icon {
-            margin-right: var(--spacing-small);
-        }
-
-        .verified-icon {
-            margin-right: var(--spacing-small);
-            color: var(--color-accent);
-        }
-    }
-
-    .dropdown {
-        flex-shrink: 0;
-
-        :global {
-            .dropdown-button {
-                padding: 0;
-                padding-right: var(--spacing-small);
-
-                &:hover {
-                    background-color: transparent;
-                }
-            }
-        }
-    }
+    padding-left: var(--spacing-medium);
 }

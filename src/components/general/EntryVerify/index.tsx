@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 
 import Cloak from '#components/general/Cloak';
-import Icon from '#rscg/Icon';
-import DropdownEdit from '#components/general/DropdownEdit';
+import Checkbox from '#rsci/Checkbox';
 
 import {
     patchEntryVerificationAction,
@@ -35,7 +34,7 @@ interface ComponentProps {
     leadId: number;
     value: boolean;
     className?: string;
-    onPendingChange?: (pending: boolean | undefined) => void;
+    onPendingChange?: (pending: boolean) => void;
     handleEntryVerify?: (status: boolean) => void;
     disabled?: boolean;
 }
@@ -58,18 +57,6 @@ const shouldHideEntryEdit = ({ entryPermissions }: {
         modify: boolean;
     };
 }) => !entryPermissions.modify;
-
-const verificationStatusOptions: VerificationOption[] = [
-    {
-
-        key: true,
-        value: _ts('editEntry', 'verifiedLabel'),
-    },
-    {
-        key: false,
-        value: _ts('editEntry', 'unverifiedLabel'),
-    },
-];
 
 
 type Props = AddRequestProps<ComponentProps & PropsFromDispatch, Params>;
@@ -109,34 +96,24 @@ const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
 
 function EntryVerify(props: Props) {
     const {
+        title,
         className,
         value = false,
-        requests,
-        title,
+        requests: {
+            setEntryVerificationRequest: {
+                do: triggerEntryVerificationChange,
+                pending,
+            },
+        },
         onPendingChange,
         disabled,
     } = props;
 
-    const {
-        setEntryVerificationRequest,
-    } = requests;
-
-    const selectedOptionKey = useMemo(
-        () => verificationStatusOptions.find(v => v.key === value)?.key ?? false,
-        [value],
-    );
-
-    const selectedOptionValue = useMemo(() => (
-        verificationStatusOptions.find(v => v.key === selectedOptionKey)?.value
-    ), [selectedOptionKey]);
-
-    const handleItemSelect = useCallback((optionKey: VerificationOption['key']) => {
-        setEntryVerificationRequest.do({
-            verify: optionKey as boolean,
+    const handleItemSelect = useCallback((newValue: boolean) => {
+        triggerEntryVerificationChange({
+            verify: newValue,
         });
-    }, [setEntryVerificationRequest]);
-
-    const { pending } = setEntryVerificationRequest;
+    }, [triggerEntryVerificationChange]);
 
     useEffect(() => {
         if (onPendingChange) {
@@ -148,42 +125,29 @@ function EntryVerify(props: Props) {
     ]);
 
     return (
-        <div className={_cs(className, styles.verifyContainer)}>
+        <div
+            title={title}
+            className={_cs(className, styles.verifyContainer)}
+        >
             <Cloak
                 hide={shouldHideEntryEdit}
-                render={
-                    <DropdownEdit
-                        currentSelection={selectedOptionKey}
-                        className={styles.dropdown}
-                        options={verificationStatusOptions}
-                        onItemSelect={handleItemSelect}
-                        dropdownIcon="arrowDropdown"
+                render={(
+                    <Checkbox
+                        value={value}
+                        onChange={handleItemSelect}
+                        label={_ts('editEntry', 'verifiedLabel')}
                         disabled={disabled}
-                        dropdownLeftComponent={(
-                            <div
-                                title={title}
-                                className={styles.label}
-                            >
-                                <Icon
-                                    name={value ? 'checkOutlined' : 'help'}
-                                    className={value
-                                        ? styles.verifiedIcon
-                                        : styles.unverifiedIcon
-                                    }
-                                />
-                                {selectedOptionValue}
-                            </div>
-                        )}
+                        tooltip={title}
                     />
-                }
+                )}
                 renderOnHide={(
-                    <div className={styles.label}>
-                        <Icon
-                            name={(value ? 'checkOutlined' : 'help')}
-                            className={value ? styles.verifiedIcon : styles.unverifiedIcon}
-                        />
-                        {selectedOptionValue}
-                    </div>
+                    <Checkbox
+                        value={value}
+                        onChange={handleItemSelect}
+                        label={_ts('editEntry', 'verifiedLabel')}
+                        disabled
+                        tooltip={title}
+                    />
                 )}
             />
         </div>

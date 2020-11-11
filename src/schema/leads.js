@@ -1,6 +1,23 @@
 const leadSchema = [];
 
 {
+    const name = 'organizationSmall';
+    const schema = {
+        doc: {
+            name: 'organizationSmall',
+            description: 'Organization small',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+            shortName: { type: 'string' },
+            logo: { type: 'string' },
+        },
+    };
+    leadSchema.push({ name, schema });
+}
+
+{
     const name = 'lead';
     const schema = {
         doc: {
@@ -22,9 +39,9 @@ const leadSchema = [];
             priority: { type: 'number' },
             priorityDisplay: { type: 'string' },
             authorRaw: { type: 'string' },
-            sourceDetail: { type: 'idTitlePair' },
-            authorDetail: { type: 'idTitlePair' },
-            authorsDetail: { type: 'array.idTitlePair' },
+            sourceDetail: { type: 'organizationSmall' },
+            authorDetail: { type: 'organizationSmall' },
+            authorsDetail: { type: 'array.organizationSmall' },
             source: { type: 'uint' }, // url
             author: { type: 'uint' },
             assessmentId: { type: 'uint' },
