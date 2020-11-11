@@ -7,8 +7,7 @@ import ConfirmButton from '#rsca/ConfirmButton';
 import AccentButton from '#rsca/Button/AccentButton';
 
 import DataSeries from '#components/viz/DataSeries';
-import Cloak from '#components/general/Cloak';
-import Image from '#rscv/Image';
+import Image from '#rsu/../v2/View/Image';
 import _ts from '#ts';
 
 import DropContainer from './DropContainer';
@@ -58,8 +57,6 @@ const DATA_SERIES = 'dataSeries';
 export default class Excerpt extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static shouldHideZoomable = ({ accessZoomableImage }) => !accessZoomableImage;
 
     constructor(props) {
         super(props);
@@ -192,23 +189,12 @@ export default class Excerpt extends React.PureComponent {
         const { image } = this.props;
 
         return (
-            <Cloak
-                hide={Excerpt.shouldHideZoomable}
-                render={
-                    <Image
-                        className={_cs(styles.image, 'image')}
-                        src={image}
-                        alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
-                        zoomable
-                    />
-                }
-                renderOnHide={
-                    <img
-                        className={_cs(styles.imageAlt, styles.image, 'image')}
-                        src={image}
-                        alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
-                    />
-                }
+            <Image
+                className={_cs(styles.image, 'image')}
+                src={image}
+                alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
+                zoomable
+                expandable
             />
         );
     }

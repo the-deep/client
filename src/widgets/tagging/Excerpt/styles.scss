@@ -8,12 +8,6 @@
         height: 100%;
     }
 
-    .image-alt {
-        object-fit: contain;
-        object-position: center center;
-        pointer-events: none;
-    }
-
     .text-container {
         width: calc(100% - var(--spacing-small) * 2);
         height: calc(100% - var(--spacing-extra-small) * 2);
