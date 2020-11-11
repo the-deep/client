@@ -1203,7 +1203,12 @@
         "-92777682": "Table of contents",
         "-10912171": "No stakeholders are selected.",
         "-13101548": "Please add your stakeholders.",
-        "-79879777": "Looks like the framework in use doesn't have matrix1D and matrix2D widgets."
+        "-79879777": "Looks like the framework in use doesn't have matrix1D and matrix2D widgets.",
+        "-987979879": "Total Leads",
+        "-987979871": "Total Sources",
+        "-987979798": "Total Unique Authors",
+        "-879879798": "Total Unverified Entries",
+        "-897879798": "Total Verified Entries"
     },
     "links": {
         "browserExtension": {
@@ -3448,7 +3453,12 @@
             "entryCreatedOnTooltip": -79339447,
             "leadCreatedByTooltip": -7036637,
             "tableOfContentHeading": -92777682,
-            "tableOfContentEmpty": -79879777
+            "tableOfContentEmpty": -79879777,
+            "totalLeads": -987979879,
+            "totalSources": -987979871,
+            "totalUniqueAuthors": -987979798,
+            "totalUnverifiedEntries": -879879798,
+            "totalVerifiedEntries": -897879798
         },
         "qualityControl": {
             "matrix1dTitle": -90901113,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { EntrySummary } from '#typings/entry';
 import ListView from '#rscv/List/ListView';
+import _ts from '#ts';
 
 import styles from './styles.css';
 
@@ -15,11 +16,11 @@ interface Stats {
 }
 
 const entryStats: { [ key in (keyof EntrySummary)]: string } = {
-    totalLeads: 'Total Leads',
-    totalSources: 'Total Sources',
-    totalUniqueAuthors: 'Total Unique Authours',
-    totalUnverifiedEntries: 'Total Unverified Entries',
-    totalVerifiedEntries: 'Total Verified Entries',
+    totalLeads: _ts('entries.qualityControl', 'totalLeads'),
+    totalSources: _ts('entries.qualityControl', 'totalSources'),
+    totalUniqueAuthors: _ts('entries.qualityControl', 'totalUniqueAuthors'),
+    totalUnverifiedEntries: _ts('entries.qualityControl', 'totalUnverifiedEntries'),
+    totalVerifiedEntries: _ts('entries.qualityControl', 'totalVerifiedEntries'),
 };
 
 function EntryStat({ title, value }: Stats) {

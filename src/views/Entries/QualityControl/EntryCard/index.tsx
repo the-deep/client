@@ -334,7 +334,7 @@ function EntryCard(props: EntryCardProps) {
                             entryId={entry.id}
                             leadId={entry.lead}
                             disabled={isDeleted}
-                            handleEntryVerify={setVerificationStatus}
+                            handleEntryVerify={handleVerificationChange}
                             onPendingChange={setVerifyChangePending}
                         />
                     </div>

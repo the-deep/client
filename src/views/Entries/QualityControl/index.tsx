@@ -157,10 +157,10 @@ function QualityControl(props: Props) {
         },
         body: requestFilters as object,
         method: 'POST',
-        onSuccess: (successResponse) => {
-            setEntries(successResponse.results);
-            setStats(successResponse?.summary);
-            setEntriesCount({ count: successResponse.count });
+        onSuccess: (response) => {
+            setEntries(response.results);
+            setStats(response?.summary);
+            setEntriesCount({ count: response.count });
         },
     });
 
@@ -178,8 +178,8 @@ function QualityControl(props: Props) {
         },
         body: requestFilters as object,
         method: 'POST',
-        onSuccess: (successResponse) => {
-            setStats(successResponse?.summary);
+        onSuccess: (response) => {
+            setStats(response?.summary);
         },
     });
 
