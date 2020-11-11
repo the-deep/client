@@ -99,22 +99,23 @@ interface EntryCardProps {
     onDelete: (entryId: EntryFields['id']) => void;
     onLeadChange: (lead: Pick<Lead, EntryLeadType>) => void;
     onVerificationChange: () => void;
+    onEntryChange: (entry: Entry) => void;
 }
 
 function EntryCard(props: EntryCardProps) {
     const {
         className,
-        entry: entryFromProps,
+        entry,
         lead,
         framework,
         onDelete,
         onVerificationChange,
         isDeleted,
         onLeadChange,
+        onEntryChange,
     } = props;
 
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
-    const [entry, setEntry] = React.useState<Entry>(entryFromProps);
     const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
 
     const {
@@ -316,7 +317,7 @@ function EntryCard(props: EntryCardProps) {
                             entry={entry}
                             framework={framework}
                             disabled={isDeleted}
-                            onEditSuccess={setEntry}
+                            onEditSuccess={onEntryChange}
                         />
                         <EntryVerify
                             title={entry.verificationLastChangedByDetails ? (

@@ -9,8 +9,7 @@ import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 
-import { Lead } from '#typings/lead';
-import { EntryFields, EntryLeadType, EntrySummary } from '#typings/entry';
+import { EntryFields, EntrySummary } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
@@ -36,6 +35,7 @@ import {
     FooterContainer,
     EmptyEntries,
 } from '../index';
+
 import styles from './styles.scss';
 
 interface ComponentProps {
@@ -121,8 +121,8 @@ function QualityControl(props: Props) {
         [framework],
     );
 
-    const [entries, setEntries] = React.useState<EntryFields[]>([]);
-    const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
+    const [entries, setEntries] = useState<EntryFields[]>([]);
+    const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary | undefined>();
 
     const combinedFilters = useMemo(() => {
@@ -193,7 +193,11 @@ function QualityControl(props: Props) {
         ],
     );
 
-    const handleEntryDelete = React.useCallback((entryId) => {
+    const handleEntryEdit = useCallback(() => {
+        getEntries();
+    }, [getEntries]);
+
+    const handleEntryDelete = useCallback((entryId) => {
         getEntriesWithStats();
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries, getEntriesWithStats]);
@@ -207,20 +211,13 @@ function QualityControl(props: Props) {
         setActivePage({ activePage: value });
     }, [setActivePage]);
 
-    const handleLeadEdit = useCallback((lead: Pick<Lead, EntryLeadType>) => {
-        getEntriesWithStats();
-        const patchedEntries = entries.map((e) => {
-            if (e.lead.id === lead.id) {
-                return { ...e, lead };
-            }
-            return e;
-        });
-        setEntries(patchedEntries);
-    }, [entries, getEntriesWithStats]);
+    const handleLeadEdit = useCallback(() => {
+        getEntries();
+    }, [getEntries]);
 
     const handleVerificationChange = useCallback(() => {
-        getEntriesWithStats();
-    }, [getEntriesWithStats]);
+        getEntries();
+    }, [getEntries]);
 
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,
@@ -230,11 +227,13 @@ function QualityControl(props: Props) {
         isDeleted: deletedEntries[data.id],
         onDelete: handleEntryDelete,
         onLeadChange: handleLeadEdit,
+        onEntryChange: handleEntryEdit,
         onVerificationChange: handleVerificationChange,
         className: styles.card,
     }),
     [
         handleLeadEdit,
+        handleEntryEdit,
         deletedEntries,
         framework,
         handleEntryDelete,
