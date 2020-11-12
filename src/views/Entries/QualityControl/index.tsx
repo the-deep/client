@@ -159,7 +159,7 @@ function QualityControl(props: Props) {
         method: 'POST',
         onSuccess: (response) => {
             setEntries(response.results);
-            setStats(response?.summary);
+            setStats(response.summary);
             setEntriesCount({ count: response.count });
         },
     });
@@ -179,7 +179,7 @@ function QualityControl(props: Props) {
         body: requestFilters as object,
         method: 'POST',
         onSuccess: (response) => {
-            setStats(response?.summary);
+            setStats(response.summary);
         },
     });
 
@@ -193,9 +193,9 @@ function QualityControl(props: Props) {
         ],
     );
 
-    const handleEntryEdit = useCallback(() => {
-        getEntries();
-    }, [getEntries]);
+    const handleEntryEdit = getEntries;
+    const handleLeadEdit = getEntries;
+    const handleVerificationChange = getEntries;
 
     const handleEntryDelete = useCallback((entryId) => {
         getEntriesWithStats();
@@ -210,14 +210,6 @@ function QualityControl(props: Props) {
     const handlePageClick = useCallback((value) => {
         setActivePage({ activePage: value });
     }, [setActivePage]);
-
-    const handleLeadEdit = useCallback(() => {
-        getEntries();
-    }, [getEntries]);
-
-    const handleVerificationChange = useCallback(() => {
-        getEntries();
-    }, [getEntries]);
 
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,

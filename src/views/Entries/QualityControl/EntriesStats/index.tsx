@@ -37,29 +37,29 @@ function EntriesStats(props: ComponentProps) {
         stats,
     } = props;
 
-    if (stats) {
-        const statsList: Stats[] = Object.entries(stats).map(([k, v]) => ({
-            id: k,
-            title: entryStats[k as keyof EntrySummary],
-            value: v,
-        }));
-
-        const statsKeySelector = (d: Stats) => d.id;
-        const statsRendererParams = (_: string, d: Stats) => d;
-
-        return (
-            <div>
-                <ListView
-                    className={styles.stats}
-                    renderer={EntryStat}
-                    data={statsList}
-                    keySelector={statsKeySelector}
-                    rendererParams={statsRendererParams}
-                />
-            </div>
-        );
+    if (!stats) {
+        return null;
     }
-    return (null);
+    const statsList: Stats[] = Object.entries(stats).map(([k, v]) => ({
+        id: k,
+        title: entryStats[k as keyof EntrySummary],
+        value: v,
+    }));
+
+    const statsKeySelector = (d: Stats) => d.id;
+    const statsRendererParams = (_: string, d: Stats) => d;
+
+    return (
+        <div>
+            <ListView
+                className={styles.stats}
+                renderer={EntryStat}
+                data={statsList}
+                keySelector={statsKeySelector}
+                rendererParams={statsRendererParams}
+            />
+        </div>
+    );
 }
 
 export default EntriesStats;
