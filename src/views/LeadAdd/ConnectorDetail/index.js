@@ -73,7 +73,7 @@ function ConnectorDetail(props) {
     // TODO: validate this selected connector lead
     const [selectedConnectorLead, setSelectedConnectorLead] = useState(undefined);
     const [leadsUnfiltered, setLeads] = useState(undefined);
-    const [,, modifyLead, modifyLeads] = useArrayEdit(setLeads, leadKeySelector);
+    const [,, modifyLead, mergeLeads] = useArrayEdit(setLeads, leadKeySelector);
     const [activePage, setActivePage] = useState(1);
     const [totalLeadsCount, setTotalLeadsCount] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(25);
@@ -216,35 +216,37 @@ function ConnectorDetail(props) {
         [onLeadsAdd, onOrganizationsAdd],
     );
 
-    const [connectorLeadStatusChangePending,,, connectorLeadStatusChangeTrigger] = useRequest({
-        url: `${connectorLeadUrl}bulk-update/`,
-        method: 'POST',
-        body: filters.blocked ? ({
+    const connectorLeadStatusChangeBody = useMemo(() => (
+        filters.blocked ? ({
             unblock: selectedLeads.map(item => item.id),
         }) : ({
             block: selectedLeads.map(item => item.id),
-        }),
-        onSuccess: () => {
-            if (filters.blocked) {
-                const leadsToPatch = selectedLeads.map(item => ({
-                    id: item.id,
+        })
+    ), [filters, selectedLeads]);
+
+    const [connectorLeadStatusChangePending,,, connectorLeadStatusChangeTrigger] = useRequest({
+        url: `${connectorLeadUrl}bulk-update/`,
+        method: 'POST',
+        body: connectorLeadStatusChangeBody,
+        onSuccess: (response) => {
+            if (response?.blocked?.length > 0) {
+                const leadsToPatch = response.blocked.map(item => ({
+                    id: item,
                     blocked: false,
                 }));
-                modifyLeads(leadsToPatch);
-            } else {
-                const leadsToPatch = selectedLeads.map(item => ({
-                    id: item.id,
-                    blocked: true,
+                mergeLeads(leadsToPatch);
+            }
+
+            if (response?.unblocked?.length > 0) {
+                const leadsToPatch = response.unblocked.map(item => ({
+                    id: item,
+                    blocked: false,
                 }));
-                modifyLeads(leadsToPatch);
+                mergeLeads(leadsToPatch);
             }
             clearSelection();
         },
     });
-
-    const handleBulkBlockLeadsClick = useCallback(() => {
-        connectorLeadStatusChangeTrigger();
-    }, [connectorLeadStatusChangeTrigger]);
 
     const handleBulkSaveLeadsClick = useCallback(() => {
         const leadsToProcess = selectedLeads.map(item => item.lead);
@@ -333,7 +335,7 @@ function ConnectorDetail(props) {
                         <Button
                             className={styles.button}
                             iconName={filters.blocked ? 'undo' : 'delete'}
-                            onClick={handleBulkBlockLeadsClick}
+                            onClick={connectorLeadStatusChangeTrigger}
                             // FIXME: use strings
                             title="block/unblock"
                             pending={connectorLeadStatusChangePending}

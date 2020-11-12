@@ -363,6 +363,8 @@ function LeadAdd(props) {
                             let params;
                             const modifiedFaramValues = {
                                 ...faramValues,
+                                emmEntities: faramValues.emmEntities ?? [],
+                                emmTriggers: faramValues.emmTriggers ?? [],
                             };
                             if (modifiedFaramValues.sourceType === LEAD_TYPE.connectors) {
                                 modifiedFaramValues.sourceType = LEAD_TYPE.website;
