@@ -17,7 +17,7 @@ interface Props<T, K extends string | number>{
     childrenSelector: (datum: T) => T[] | undefined;
     onChange: (value: { key: K; id: K }) => void;
     options: T[];
-    value: {key: K; id: K } | undefined;
+    value: {key: K; id: K }[];
     level?: number;
     defaultCollapseLevel?: number;
     className?: string;
@@ -72,7 +72,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         [],
     );
 
-    const isSelected = id === value?.id;
+    const isSelected = value.some(v => v.id === id);
 
     return (
         <div className={_cs(

@@ -48,7 +48,7 @@ interface ComponentProps {
     maxItemsPerPage: number;
     activePage: number;
     entriesCount: number;
-    selected?: MatrixKeyId;
+    tocFilters: MatrixKeyId[];
     parentFooterRef: React.RefObject<HTMLElement>;
 }
 
@@ -58,7 +58,7 @@ interface MatrixKeyId {
 }
 
 interface PropsFromDispatch {
-    setSelection: typeof setQualityControlViewSelectedMatrixKeyAction;
+    setTocFilters: typeof setQualityControlViewSelectedMatrixKeyAction;
     setActivePage: typeof setQualityControlViewActivePageAction;
     setEntriesCount: typeof setQualityControlViewEntriesCountAction;
 }
@@ -76,13 +76,13 @@ const entryKeySelector = (d: EntryFields) => d.id;
 const mapStateToProps = (state: AppState) => ({
     activePage: qualityControlViewActivePageSelector(state),
     entriesCount: qualityControlViewEntriesCountSelector(state),
-    selected: qualityControlViewSelectedMatrixKeySelector(state),
+    tocFilters: qualityControlViewSelectedMatrixKeySelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setActivePage: params => dispatch(setQualityControlViewActivePageAction(params)),
     setEntriesCount: params => dispatch(setQualityControlViewEntriesCountAction(params)),
-    setSelection: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
+    setTocFilters: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
 });
 
 type Props = ComponentProps & PropsFromDispatch;
@@ -97,8 +97,8 @@ function QualityControl(props: Props) {
         maxItemsPerPage,
         activePage,
         setActivePage,
-        selected,
-        setSelection,
+        tocFilters,
+        setTocFilters,
         entriesCount,
         setEntriesCount,
         parentFooterRef,
@@ -126,23 +126,19 @@ function QualityControl(props: Props) {
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary | undefined>();
 
-    const combinedFilters = useMemo(() => {
-        const selectedMatrixValue: ([string, string] | undefined) = selected
-            && [selected.key, selected.id];
-        const filters: ([string, string | number | object] | undefined)[] = [
-            ...processedFilters,
-            selectedMatrixValue,
-        ];
-        return filters;
-    }, [selected, processedFilters]);
-
     const requestFilters = useMemo(() => {
-        const projectFilter: [string, number] = ['project', projectId];
-        const filters = [...combinedFilters, projectFilter];
+        const projectFilter = ['project', projectId];
+        const processedTocFilters = tocFilters.map(v => ([v.key, v.id]));
+        const filters = [
+            ...processedFilters,
+            ...processedTocFilters,
+            projectFilter,
+        ];
+
         return ({
             filters: filters.filter(isDefined),
         });
-    }, [projectId, combinedFilters]);
+    }, [tocFilters, projectId, processedFilters]);
 
     const [
         pending,
@@ -190,7 +186,7 @@ function QualityControl(props: Props) {
             projectId,
             processedFilters,
             activePage,
-            selected,
+            tocFilters,
         ],
     );
 
@@ -229,17 +225,21 @@ function QualityControl(props: Props) {
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries, getEntriesWithStats]);
 
-    const handleSelection = useCallback(value => (
-        selected && selected.id === value.id ?
-            setSelection({ matrixKey: undefined }) : setSelection({ matrixKey: value })
-    ), [selected, setSelection]);
+    const handleSelection = useCallback((value) => {
+        const isSelected = tocFilters.some(s => s.id === value.id);
+        if (isSelected) {
+            const newSelection = tocFilters.filter(s => s.id !== value.id);
+            setTocFilters({ tocFilters: newSelection });
+        } else {
+            setTocFilters({ tocFilters: [...tocFilters, value] });
+        }
+    }, [tocFilters, setTocFilters]);
 
     const handlePageClick = useCallback((value) => {
         setActivePage({ activePage: value });
     }, [setActivePage]);
 
     const entryCardRendererParams = useCallback((_, data) => ({
-        key: data.id,
         entry: { ...data, lead: data.lead.id },
         lead: data.lead,
         framework,
@@ -283,7 +283,7 @@ function QualityControl(props: Props) {
                             labelSelector={labelSelector}
                             childrenSelector={childrenSelector}
                             onChange={handleSelection}
-                            value={selected}
+                            value={tocFilters}
                             defaultCollapseLevel={5}
                         />
                     </div>
@@ -302,7 +302,7 @@ function QualityControl(props: Props) {
                         ) : (
                             <EmptyEntries
                                 projectId={projectId}
-                                entriesFilters={combinedFilters}
+                                entriesFilters={entriesFilters}
                             />
                         )}
                     </div>
