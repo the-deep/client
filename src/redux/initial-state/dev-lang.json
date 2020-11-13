@@ -1200,9 +1200,10 @@
         "-71515950": "Filtered by:",
         "-90290386": "Hide filters",
         "-60218291": "Show filters",
-        "-92777682": "Table of content",
+        "-92777682": "Table of contents",
         "-10912171": "No stakeholders are selected.",
-        "-13101548": "Please add your stakeholders."
+        "-13101548": "Please add your stakeholders.",
+        "-79879777": "Looks like the framework in use doesn't have matrix1D and matrix2D widgets."
     },
     "links": {
         "browserExtension": {
@@ -3446,7 +3447,8 @@
             "leadSourceTooltip": -6895713,
             "entryCreatedOnTooltip": -79339447,
             "leadCreatedByTooltip": -7036637,
-            "tableOfContentHeading": -92777682
+            "tableOfContentHeading": -92777682,
+            "tableOfContentEmpty": -79879777
         },
         "qualityControl": {
             "matrix1dTitle": -90901113,

@@ -1,4 +1,4 @@
-import { isDefined } from '@togglecorp/fujs';
+import { isDefined, doesObjectHaveNoData } from '@togglecorp/fujs';
 import _ts from '#ts';
 import {
     FrameworkElement,
@@ -259,7 +259,7 @@ export const getMatrix2dStructures = (framework: MiniFrameworkElement | undefine
 };
 
 export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
-    if (!framework) {
+    if (!framework || doesObjectHaveNoData(framework)) {
         return emptyArray;
     }
 
@@ -314,7 +314,7 @@ export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTo
 };
 
 export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
-    if (!framework) {
+    if (!framework || doesObjectHaveNoData(framework)) {
         return emptyArray;
     }
 
