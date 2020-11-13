@@ -53,6 +53,7 @@ import {
     geoOptionsForProjectSelector,
     activeUserSelector,
 } from '#redux';
+import featuresMapping from '#constants/features';
 
 import QualityControl from './QualityControl';
 import EntriesViz from './EntriesViz';
@@ -453,12 +454,9 @@ export default class Entries extends React.PureComponent {
     }
 
     getTabs = memoize((framework, isVisualizationEnabled, accessibleFeatures) => {
-        const accessQualityControl = true;
-        /*
         const accessQualityControl = isDefined(accessibleFeatures.find(
             f => f.key === featuresMapping.qualityControl,
         ));
-        */
         const tabs = { [LIST_VIEW]: LIST_VIEW };
         if (isVisualizationEnabled && isVisualizationEnabled.entry) {
             tabs[VIZ_VIEW] = VIZ_VIEW;
