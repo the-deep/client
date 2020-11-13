@@ -15,9 +15,9 @@ interface Props<T, K extends string | number>{
     keySelector: (datum: T) => K | undefined;
     labelSelector: (datum: T) => K;
     childrenSelector: (datum: T) => T[] | undefined;
-    onChange: (value: { key: K; id: K }) => void;
+    onChange: (value: T) => void;
     options: T[];
-    value: {key: K; id: K }[];
+    value: T[];
     level?: number;
     defaultCollapseLevel?: number;
     className?: string;
@@ -57,10 +57,10 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const handleClick = useCallback(
         () => {
             if (isDefined(key)) {
-                onChange({ key, id });
+                onChange(option);
             }
         },
-        [key, id, onChange],
+        [onChange, key, option],
     );
 
     const [collapsed, setCollapsed] = useState<boolean>(
@@ -72,7 +72,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         [],
     );
 
-    const isSelected = value.some(v => v.id === id);
+    const isSelected = value.some(v => idSelector(v) === id);
 
     return (
         <div className={_cs(
@@ -92,7 +92,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                 >
                     {title}
                 </div>
-                { children && children.length && (
+                { children && children.length > 0 && (
                     <div className={styles.actions}>
                         <Button
                             className={styles.expandButton}

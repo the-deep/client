@@ -55,6 +55,7 @@ interface ComponentProps {
 interface MatrixKeyId {
     key: string;
     id: string;
+    title: string;
 }
 
 interface PropsFromDispatch {
@@ -128,7 +129,7 @@ function QualityControl(props: Props) {
 
     const requestFilters = useMemo(() => {
         const projectFilter = ['project', projectId];
-        const processedTocFilters = tocFilters.map(v => ([v.key, v.id]));
+        const processedTocFilters = tocFilters.map(v => ([keySelector(v), idSelector(v)]));
         const filters = [
             ...processedFilters,
             ...processedTocFilters,
@@ -138,7 +139,12 @@ function QualityControl(props: Props) {
         return ({
             filters: filters.filter(isDefined),
         });
-    }, [tocFilters, projectId, processedFilters]);
+    },
+    [
+        tocFilters,
+        projectId,
+        processedFilters,
+    ]);
 
     const [
         pending,
@@ -226,9 +232,9 @@ function QualityControl(props: Props) {
     }, [setDeletedEntries, getEntriesWithStats]);
 
     const handleSelection = useCallback((value) => {
-        const isSelected = tocFilters.some(s => s.id === value.id);
+        const isSelected = tocFilters.some(s => idSelector(s) === idSelector(value));
         if (isSelected) {
-            const newSelection = tocFilters.filter(s => s.id !== value.id);
+            const newSelection = tocFilters.filter(s => idSelector(s) !== idSelector(value));
             setTocFilters({ tocFilters: newSelection });
         } else {
             setTocFilters({ tocFilters: [...tocFilters, value] });
