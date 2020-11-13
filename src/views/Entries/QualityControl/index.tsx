@@ -160,6 +160,7 @@ function QualityControl(props: Props) {
         onSuccess: (response) => {
             setEntries(response.results);
             setStats(response.summary);
+            console.info(response.summary);
             setEntriesCount({ count: response.count });
         },
     });

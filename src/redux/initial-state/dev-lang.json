@@ -1208,7 +1208,12 @@
         "-987979871": "Total Sources",
         "-987979798": "Total Unique Authors",
         "-879879798": "Total Unverified Entries",
-        "-897879798": "Total Verified Entries"
+        "-897879798": "Total Verified Entries",
+        "-987979879": "Leads",
+        "-987979871": "Sources",
+        "-987979798": "Authors",
+        "-879879798": "Unverified entries",
+        "-897879798": "Verified entries"
     },
     "links": {
         "browserExtension": {

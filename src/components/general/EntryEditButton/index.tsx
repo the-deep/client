@@ -6,7 +6,6 @@ import EditEntryFormModal from '#components/general/EditEntryFormModal';
 
 import { Entry } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
-import _ts from '#ts';
 
 import styles from './styles.scss';
 

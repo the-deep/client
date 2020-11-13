@@ -225,18 +225,19 @@ function EntryCard(props: EntryCardProps) {
                                 {lead.title}
                             </ModalButton>
                         ) : (
-                            <div className={styles.leadTitleButton}>
+                            <div className={styles.leadTitle}>
                                 {lead.title}
                             </div>
                         )}
                         <Cloak
                             hide={shouldHideLeadEdit}
                             render={
-                                <WarningButton
-                                iconName="edit"
-                                transparent
-                                disabled={pending || isEditLeadModalShown}
-                                onClick={handleEditLeadButtonClick}
+                                <Button
+                                    className={styles.leadEditButton}
+                                    iconName="edit"
+                                    transparent
+                                    disabled={pending || isEditLeadModalShown}
+                                    onClick={handleEditLeadButtonClick}
                                 />
                             }
                         />

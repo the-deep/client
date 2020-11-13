@@ -8,19 +8,21 @@
     flex-shrink: 0;
 
     .filters-group {
-        display: flex;
-        align-items: flex-end;
-        flex-wrap: wrap;
+        align-items: center;
+        padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
 
         .heading {
-            flex-basis: 100%;
-            flex-shrink: 0;
-            margin: var(--spacing-extra-small) var(--spacing-small);
+            padding: var(--spacing-small);
         }
 
-        .entries-filter {
-            margin: var(--spacing-small);
-            width: var(--width-filter-input);
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+
+            .entries-filter {
+                margin: var(--spacing-small);
+                width: var(--width-filter-input);
+            }
         }
     }
 

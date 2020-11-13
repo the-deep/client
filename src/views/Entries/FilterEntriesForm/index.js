@@ -262,188 +262,194 @@ function FilterEntriesForm(props) {
                             <h4 className={styles.heading}>
                                 {_ts('entries', 'leadFiltersGroupTitle')}
                             </h4>
-                            <MultiSelectInput
-                                className={styles.entriesFilter}
-                                onChange={(value) => { handleFilterChange('lead_status', value); }}
-                                keySelector={optionKeySelector}
-                                label={staticFiltersLabelMap.lead_status}
-                                labelSelector={optionLabelSelector}
-                                value={filters.lead_status}
-                                showHintAndError={false}
-                                options={leadStatus}
-                                placeholder={_ts('entries', 'leadStatusFilterPlaceholder')}
-                                disabled={pending}
-                            />
-                            <MultiSelectInput
-                                className={styles.entriesFilter}
-                                onChange={(value) => { handleFilterChange('lead_priority', value); }}
-                                keySelector={optionKeySelector}
-                                label={staticFiltersLabelMap.lead_priority}
-                                labelSelector={optionLabelSelector}
-                                value={filters.lead_priority}
-                                showHintAndError={false}
-                                options={leadPriority}
-                                placeholder={_ts('entries', 'leadPriorityFilterPlaceholder')}
-                                disabled={pending}
-                            />
-                            <MultiSelectInput
-                                className={styles.entriesFilter}
-                                onChange={(value) => { handleFilterChange('lead_confidentiality', value); }}
-                                keySelector={optionKeySelector}
-                                label={staticFiltersLabelMap.lead_confidentiality}
-                                labelSelector={optionLabelSelector}
-                                value={filters.lead_confidentiality}
-                                showHintAndError={false}
-                                options={leadConfidentiality}
-                                placeholder={_ts('entries', 'leadConfidentialityFilterPlaceholder')}
-                                disabled={pending}
-                            />
-                            <DateFilter
-                                className={styles.entriesFilter}
-                                onChange={(value) => { handleFilterChange('lead_published_on', value); }}
-                                label={staticFiltersLabelMap.lead_published_on}
-                                showHintAndError={false}
-                                value={filters.lead_published_on}
-                                disabled={pending}
-                                placeholder={_ts('entries', 'leadPublishedOnPlaceholder')}
-                            />
+                            <div className={styles.content}>
+                                <MultiSelectInput
+                                    className={styles.entriesFilter}
+                                    onChange={(value) => { handleFilterChange('lead_status', value); }}
+                                    keySelector={optionKeySelector}
+                                    label={staticFiltersLabelMap.lead_status}
+                                    labelSelector={optionLabelSelector}
+                                    value={filters.lead_status}
+                                    showHintAndError={false}
+                                    options={leadStatus}
+                                    placeholder={_ts('entries', 'leadStatusFilterPlaceholder')}
+                                    disabled={pending}
+                                />
+                                <MultiSelectInput
+                                    className={styles.entriesFilter}
+                                    onChange={(value) => { handleFilterChange('lead_priority', value); }}
+                                    keySelector={optionKeySelector}
+                                    label={staticFiltersLabelMap.lead_priority}
+                                    labelSelector={optionLabelSelector}
+                                    value={filters.lead_priority}
+                                    showHintAndError={false}
+                                    options={leadPriority}
+                                    placeholder={_ts('entries', 'leadPriorityFilterPlaceholder')}
+                                    disabled={pending}
+                                />
+                                <MultiSelectInput
+                                    className={styles.entriesFilter}
+                                    onChange={(value) => { handleFilterChange('lead_confidentiality', value); }}
+                                    keySelector={optionKeySelector}
+                                    label={staticFiltersLabelMap.lead_confidentiality}
+                                    labelSelector={optionLabelSelector}
+                                    value={filters.lead_confidentiality}
+                                    showHintAndError={false}
+                                    options={leadConfidentiality}
+                                    placeholder={_ts('entries', 'leadConfidentialityFilterPlaceholder')}
+                                    disabled={pending}
+                                />
+                                <DateFilter
+                                    className={styles.entriesFilter}
+                                    onChange={(value) => { handleFilterChange('lead_published_on', value); }}
+                                    label={staticFiltersLabelMap.lead_published_on}
+                                    showHintAndError={false}
+                                    value={filters.lead_published_on}
+                                    disabled={pending}
+                                    placeholder={_ts('entries', 'leadPublishedOnPlaceholder')}
+                                />
+                            </div>
                         </div>
                     )}
                     <div className={styles.filtersGroup}>
                         <h4 className={styles.heading}>
                             {_ts('entries', 'entriesFiltersGroupTitle')}
                         </h4>
-                        <SearchInput
-                            className={styles.entriesFilter}
-                            label={staticFiltersLabelMap.search}
-                            onChange={(value) => { handleFilterChange('search', value); }}
-                            placeholder={_ts('entries', 'searchFilterPlaceholder')}
-                            showHintAndError={false}
-                            value={filters.search}
-                            disabled={pending}
-                        />
-                        <MultiSelectInput
-                            className={styles.entriesFilter}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={createdBy}
-                            label={staticFiltersLabelMap.created_by}
-                            onChange={(value) => { handleFilterChange('created_by', value); }}
-                            showHintAndError={false}
-                            value={filters.created_by}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'createdByPlaceholder')}
-                        />
-                        <DateFilter
-                            className={styles.entriesFilter}
-                            label={staticFiltersLabelMap.created_at}
-                            onChange={(value) => { handleFilterChange('created_at', value); }}
-                            showHintAndError={false}
-                            value={filters.created_at}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'createdAtPlaceholder')}
-                        />
-                        <MultiSelectInput
-                            className={styles.entriesFilter}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={createdBy}
-                            label={staticFiltersLabelMap.comment_assignee}
-                            onChange={(value) => { handleFilterChange('comment_assignee', value); }}
-                            showHintAndError={false}
-                            value={filters.comment_assignee}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'createdByPlaceholder')}
-                        />
-                        <MultiSelectInput
-                            className={styles.entriesFilter}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={createdBy}
-                            label={staticFiltersLabelMap.comment_created_by}
-                            onChange={(value) => { handleFilterChange('comment_created_by', value); }}
-                            showHintAndError={false}
-                            value={filters.comment_created_by}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
-                        />
-                        <SelectInput
-                            className={styles.entriesFilter}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={commentStatusOptions}
-                            label={staticFiltersLabelMap.comment_status}
-                            onChange={(value) => { handleFilterChange('comment_status', value); }}
-                            showHintAndError={false}
-                            value={filters.comment_status}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'commentStatusPlaceholder')}
-                        />
-                        <SelectInput
-                            className={styles.entriesFilter}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={verificationStatusOptions}
-                            label={staticFiltersLabelMap.verified}
-                            onChange={(value) => {
-                                handleFilterChange(
-                                    'verified',
-                                    value,
-                                );
-                            }}
-                            showHintAndError={false}
-                            value={(selectedVerification ? selectedVerification.key : undefined)}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'verificationStatusPlaceholder')}
-                        />
-                        <MultiSelectInput
-                            className={styles.entriesFilter}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={entryTypeOptions}
-                            label={staticFiltersLabelMap.entry_type}
-                            onChange={(value) => { handleFilterChange('entry_type', value); }}
-                            showHintAndError={false}
-                            value={filters.entry_type}
-                            disabled={pending}
-                            placeholder={_ts('entries', 'entryTypePlaceholder')}
-                        />
-                        {showEntryLabelFilters && (
-                            <>
-                                <MultiSelectInput
-                                    className={styles.entriesFilter}
-                                    keySelector={optionIdSelector}
-                                    labelSelector={optionTitleSelector}
-                                    options={projectEntryLabel}
-                                    label={staticFiltersLabelMap.project_entry_labels}
-                                    onChange={(value) => { handleFilterChange('project_entry_labels', value); }}
-                                    showHintAndError={false}
-                                    value={filters.project_entry_labels}
-                                    disabled={pending}
-                                    placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
-                                />
-                                <SearchInput
-                                    className={styles.entriesFilter}
-                                    label={staticFiltersLabelMap.lead_group_label}
-                                    onChange={(value) => { handleFilterChange('lead_group_label', value); }}
-                                    showHintAndError={false}
-                                    disabled={pending}
-                                    value={filters.lead_group_label}
-                                    placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
-                                />
-                            </>
-                        )}
+                        <div className={styles.content}>
+                            <SearchInput
+                                className={styles.entriesFilter}
+                                label={staticFiltersLabelMap.search}
+                                onChange={(value) => { handleFilterChange('search', value); }}
+                                placeholder={_ts('entries', 'searchFilterPlaceholder')}
+                                showHintAndError={false}
+                                value={filters.search}
+                                disabled={pending}
+                            />
+                            <MultiSelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={createdBy}
+                                label={staticFiltersLabelMap.created_by}
+                                onChange={(value) => { handleFilterChange('created_by', value); }}
+                                showHintAndError={false}
+                                value={filters.created_by}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'createdByPlaceholder')}
+                            />
+                            <DateFilter
+                                className={styles.entriesFilter}
+                                label={staticFiltersLabelMap.created_at}
+                                onChange={(value) => { handleFilterChange('created_at', value); }}
+                                showHintAndError={false}
+                                value={filters.created_at}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'createdAtPlaceholder')}
+                            />
+                            <MultiSelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={createdBy}
+                                label={staticFiltersLabelMap.comment_assignee}
+                                onChange={(value) => { handleFilterChange('comment_assignee', value); }}
+                                showHintAndError={false}
+                                value={filters.comment_assignee}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'createdByPlaceholder')}
+                            />
+                            <MultiSelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={createdBy}
+                                label={staticFiltersLabelMap.comment_created_by}
+                                onChange={(value) => { handleFilterChange('comment_created_by', value); }}
+                                showHintAndError={false}
+                                value={filters.comment_created_by}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
+                            />
+                            <SelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={commentStatusOptions}
+                                label={staticFiltersLabelMap.comment_status}
+                                onChange={(value) => { handleFilterChange('comment_status', value); }}
+                                showHintAndError={false}
+                                value={filters.comment_status}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'commentStatusPlaceholder')}
+                            />
+                            <SelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={verificationStatusOptions}
+                                label={staticFiltersLabelMap.verified}
+                                onChange={(value) => {
+                                    handleFilterChange(
+                                        'verified',
+                                        value,
+                                    );
+                                }}
+                                showHintAndError={false}
+                                value={(selectedVerification ? selectedVerification.key : undefined)}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                            />
+                            <MultiSelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={entryTypeOptions}
+                                label={staticFiltersLabelMap.entry_type}
+                                onChange={(value) => { handleFilterChange('entry_type', value); }}
+                                showHintAndError={false}
+                                value={filters.entry_type}
+                                disabled={pending}
+                                placeholder={_ts('entries', 'entryTypePlaceholder')}
+                            />
+                            {showEntryLabelFilters && (
+                                <>
+                                    <MultiSelectInput
+                                        className={styles.entriesFilter}
+                                        keySelector={optionIdSelector}
+                                        labelSelector={optionTitleSelector}
+                                        options={projectEntryLabel}
+                                        label={staticFiltersLabelMap.project_entry_labels}
+                                        onChange={(value) => { handleFilterChange('project_entry_labels', value); }}
+                                        showHintAndError={false}
+                                        value={filters.project_entry_labels}
+                                        disabled={pending}
+                                        placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
+                                    />
+                                    <SearchInput
+                                        className={styles.entriesFilter}
+                                        label={staticFiltersLabelMap.lead_group_label}
+                                        onChange={(value) => { handleFilterChange('lead_group_label', value); }}
+                                        showHintAndError={false}
+                                        disabled={pending}
+                                        value={filters.lead_group_label}
+                                        placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
+                                    />
+                                </>
+                            )}
+                        </div>
                     </div>
                     <div className={styles.filtersGroup}>
                         <h4 className={styles.heading}>
                             {_ts('entries', 'widgetsFiltersGroupTitle')}
                         </h4>
-                        <List
-                            data={filteredFrameworkFilters}
-                            keySelector={filterKeySelector}
-                            renderer={FrameworkFilter}
-                            rendererParams={frameworkFilterRendererParams}
-                        />
+                        <div className={styles.content}>
+                            <List
+                                data={filteredFrameworkFilters}
+                                keySelector={filterKeySelector}
+                                renderer={FrameworkFilter}
+                                rendererParams={frameworkFilterRendererParams}
+                            />
+                        </div>
                     </div>
                 </>
             )}
