@@ -160,7 +160,6 @@ function QualityControl(props: Props) {
         onSuccess: (response) => {
             setEntries(response.results);
             setStats(response.summary);
-            console.info(response.summary);
             setEntriesCount({ count: response.count });
         },
     });
@@ -194,9 +193,9 @@ function QualityControl(props: Props) {
         ],
     );
 
-    const handleEntryEdit = getEntries;
-    const handleLeadEdit = getEntries;
-    const handleVerificationChange = getEntries;
+    const handleEntryEdit = getEntriesWithStats;
+    const handleLeadEdit = getEntriesWithStats;
+    const handleVerificationChange = getEntriesWithStats;
 
     const handleEntryDelete = useCallback((entryId) => {
         getEntriesWithStats();
@@ -235,11 +234,10 @@ function QualityControl(props: Props) {
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
-            <div>
-                <EntriesStats
-                    stats={stats}
-                />
-            </div>
+            <EntriesStats
+                className={styles.stats}
+                stats={stats}
+            />
             <ResizableH
                 className={styles.resizableContainer}
                 leftContainerClassName={styles.left}
