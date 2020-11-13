@@ -3,6 +3,8 @@ import { _cs, isDefined } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import ListView from '#rsu/../v2/View/ListView';
+import Message from '#rscv/Message';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -24,6 +26,14 @@ interface Props<T, K extends string | number>{
 type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
     option: T;
 };
+
+function EmptyComponent() {
+    return (
+        <Message>
+            {_ts('entries.qualityControl', 'tableOfContentEmpty')}
+        </Message>
+    );
+}
 
 function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const {
@@ -131,6 +141,7 @@ function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>
             renderer={ToCItem}
             keySelector={idSelector}
             rendererParams={rendererParams}
+            emptyComponent={EmptyComponent}
         />
     );
 }
