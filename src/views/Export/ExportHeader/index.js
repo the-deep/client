@@ -237,7 +237,7 @@ export default class ExportHeader extends React.PureComponent {
             is_preview: isPreview,
 
             // for word
-            contextual_information: contextualWidgetIds,
+            exporting_widgets: contextualWidgetIds,
         };
 
         const processedFilters = processEntryFilters(
