@@ -29,7 +29,7 @@
     }
 }
 
-
 .button {
-    margin-left: var(--spacing-small);
+    padding: var(--spacing-extra-small) var(--spacing-small);
+    font-size: var(--font-size-medium-alt);
 }

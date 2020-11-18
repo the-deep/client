@@ -375,6 +375,7 @@ function Sources(props) {
                 actionButtons={(
                     <PrimaryButton
                         onClick={setWebsiteModalVisible}
+                        className={styles.addButton}
                     >
                         <Icon name="add" />
                     </PrimaryButton>
@@ -397,6 +398,7 @@ function Sources(props) {
                 itemState={sourceStates[LEAD_TYPE.text]}
                 actionButtons={(
                     <PrimaryButton
+                        className={styles.addButton}
                         onClick={handleLeadAddFromText}
                     >
                         <Icon name="add" />
@@ -414,6 +416,7 @@ function Sources(props) {
                 itemState={sourceStates[LEAD_TYPE.drive]}
                 actionButtons={(
                     <GooglePicker
+                        className={styles.addButton}
                         clientId={googleDriveClientId}
                         developerKey={googleDriveDeveloperKey}
                         onAuthenticate={handleGoogleDriveOnAuthenticated}
@@ -439,6 +442,7 @@ function Sources(props) {
                 itemState={sourceStates[LEAD_TYPE.dropbox]}
                 actionButtons={(
                     <DropboxChooser
+                        className={styles.addButton}
                         appKey={dropboxAppKey}
                         multiselect
                         extensions={supportedDropboxExtension}

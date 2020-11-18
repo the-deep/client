@@ -11,10 +11,18 @@
     }
 
     .file-input {
+        padding: var(--spacing-extra-small) var(--spacing-small);
+        font-size: var(--font-size-medium-alt);
+        
         :global {
             label {
                 @include button-like-link(var(--color-primary));
             }
         }
+    }
+
+    .add-button {
+        padding: var(--spacing-extra-small) var(--spacing-small);
+        font-size: var(--font-size-medium-alt);
     }
 }
