@@ -19,6 +19,7 @@ function LeadDetail(props) {
         activeLead,
         leadPreviewHidden,
         leadStates,
+        leadDuplicates,
         bulkActionDisabled, // subitAllPending
         pending,
         leadOptions,
@@ -34,6 +35,9 @@ function LeadDetail(props) {
         : undefined;
     const activeLeadState = activeLeadKey
         ? leadStates[activeLeadKey]
+        : undefined;
+    const activeLeadDuplicate = activeLeadKey
+        ? leadDuplicates[activeLeadKey]
         : undefined;
     const leadPreviewMinimized = leadPreviewHidden || leadIsTextType;
 
@@ -51,6 +55,7 @@ function LeadDetail(props) {
                     key={activeLeadKey}
                     lead={activeLead}
                     leadState={activeLeadState}
+                    leadDuplicate={activeLeadDuplicate}
                     bulkActionDisabled={bulkActionDisabled}
 
                     pending={pending}

@@ -152,6 +152,7 @@ function LeadAdd(props) {
         activeSource,
     } = props;
 
+    const [leadDuplicates, setLeadDuplicates] = useState({});
     const [leadSaveStatuses, setLeadSaveStatuses] = useState({});
     const [submitAllPending, setSubmitAllPending] = useState(false);
 
@@ -397,10 +398,26 @@ function LeadAdd(props) {
                                     const faramErrors = alterResponseErrorToFaramError(
                                         response.errors,
                                     );
+                                    const stringErrors = faramErrors.$internal?.map(item => (
+                                        typeof item === 'object' ? item.message : item
+                                    ));
+
+                                    const objectErrors = faramErrors.$internal?.filter(item => typeof item !== 'string');
+
+                                    if (objectErrors && objectErrors.length > 0) {
+                                        const { leads: leadErrors } = objectErrors[0];
+                                        setLeadDuplicates(oldLeads => ({
+                                            ...oldLeads,
+                                            [leadKey]: leadErrors,
+                                        }));
+                                    }
 
                                     changeLead({
                                         leadKey,
-                                        faramErrors,
+                                        faramErrors: {
+                                            ...faramErrors,
+                                            $internal: stringErrors,
+                                        },
                                     });
 
                                     handleLeadSavePendingChange(leadKey, false);
@@ -690,7 +707,9 @@ function LeadAdd(props) {
                                             activeLead={activeLead}
                                             leadPreviewHidden={leadPreviewHidden}
                                             leadStates={leadStates}
+                                            leadDuplicates={leadDuplicates}
                                             bulkActionDisabled={submitAllPending}
+
                                             pending={pending}
                                             leadOptions={leadOptions}
                                             onLeadGroupsAdd={handleLeadGroupsAdd}

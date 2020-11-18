@@ -117,7 +117,7 @@ function ConnectorLeadItem(props) {
                         pending={connectorLeadStatusChangePending}
                         onClick={handleBlockStatusChangeClick}
                         // FIXME: use strings
-                        title={blocked ? 'unblock' : 'block'}
+                        title={blocked ? 'Un-block' : 'Block'}
                     />
                     {!blocked && (
                         <PrimaryButton
@@ -126,7 +126,7 @@ function ConnectorLeadItem(props) {
                             onClick={onConnectorLeadLoad}
                             disabled={alreadyAdded}
                             // FIXME: use strings
-                            title="load"
+                            title="Load"
                         />
                     )}
                 </>
