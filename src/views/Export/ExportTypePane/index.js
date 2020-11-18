@@ -145,8 +145,11 @@ export default class ExportTypePane extends React.PureComponent {
 
         const showTextWidgetSelection = textWidgets.length > 0;
         const showEntryGroupsSelection = projectEntryLabel && projectEntryLabel.length > 0;
-        const showContentSettings = showTextWidgetSelection || showEntryGroupsSelection;
         const showContextualWidgetSelection = contextualWidgets.length > 0;
+        const showContentSettings =
+            showTextWidgetSelection
+            || showEntryGroupsSelection
+            || showContextualWidgetSelection;
 
         return (
             <div className={styles.reportOptions}>

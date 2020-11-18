@@ -209,7 +209,7 @@ export default class ExportHeader extends React.PureComponent {
         const reportStructure = createReportStructureForExport(struct);
         const textWidgetIds = createWidgetIds(textWidgets);
         let contextualWidgetIds;
-        if (isWord) {
+        if (isWord || isPdf) {
             contextualWidgetIds = createWidgetIds(contextualWidgets);
         }
 
