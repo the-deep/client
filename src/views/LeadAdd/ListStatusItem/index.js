@@ -173,13 +173,7 @@ function ListStatusItem(props) {
                 }
             >
                 {indent && (
-                    <span
-                        style={{
-                            width: `calc(${indent} * var(--width-icon-large))`,
-                            minHeight: '1px',
-                            flexShrink: 0,
-                        }}
-                    />
+                    <div className={styles.indent} />
                 )}
                 {leadTypeToIconClassMap[type]
                         && isNotDefined(onItemSelect)
@@ -218,12 +212,12 @@ function ListStatusItem(props) {
                     onClick={handleClick}
                     type="button"
                 >
-                    <span
+                    <div
                         className={styles.titleContainer}
                         title={title}
                     >
                         {title}
-                    </span>
+                    </div>
                     {isDefined(count) && count > 0 && (
                         <Badge
                             className={styles.badge}
@@ -244,7 +238,7 @@ function ListStatusItem(props) {
                 </button>
             </div>
             {actionButtons && (
-                <div className={styles.buttonContainer}>
+                <div className={styles.actionContainer}>
                     {actionButtons}
                 </div>
             )}
