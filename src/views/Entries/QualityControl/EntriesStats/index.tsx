@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import { EntrySummary } from '#typings/entry';
+import Numeral from '#rscv/Numeral';
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
 
@@ -45,7 +46,10 @@ function EntryStat({
             }}
         >
             <div className={styles.value}>
-                {value}
+                <Numeral
+                    value={value}
+                    precision={0}
+                />
             </div>
             <div className={styles.title}>
                 {title}
@@ -79,21 +83,27 @@ function EntriesStats(props: ComponentProps) {
         ...staticStats
     } = stats;
 
-    const statsList: Stats[] = Object.entries({ ...staticStats }).map(([k, v]) => ({
-        id: k,
-        title: staticEntryStatTitles[k as keyof StaticEntrySummary],
-        value: v,
-    }));
-
-    orgTypeCount.forEach((orgType) => {
-        statsList.push({
+    const statsList: Stats[] = useMemo(() => {
+        const statsList = Object.entries({ ...staticStats }).map(([k, v]) => ({
+            id: k,
+            title: staticEntryStatTitles[k as keyof StaticEntrySummary],
+            value: v,
+        }));
+        const orgTypeItems = orgTypeCount.map(orgType => ({
             id: String(orgType.org.id),
             title: orgType.org.shortName ?? orgType.org.title,
             value: orgType.count,
-        });
-    });
+        }));
+        return [
+            ...statsList,
+            ...orgTypeItems,
+        ];
+    }, [staticStats, orgTypeCount]);
 
-    const max = Math.max(...statsList.map(d => d.value || 0));
+    const max = useMemo(() => (
+        Math.max(0, ...statsList.map(d => d.value ?? 0))
+    ), [statsList]);
+
     const statsRendererParams = (_: string, d: Stats) => ({
         ...d,
         max,

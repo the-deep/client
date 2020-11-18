@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import produce from 'immer';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { isDefined, _cs } from '@togglecorp/fujs';
@@ -193,9 +194,35 @@ function QualityControl(props: Props) {
         ],
     );
 
-    const handleEntryEdit = getEntriesWithStats;
-    const handleLeadEdit = getEntriesWithStats;
+    const handleEntryEdit = useCallback((updatedEntry) => {
+        setEntries(oldEntries => (
+            produce(oldEntries, (safeEntries) => {
+                const selectedIndex = safeEntries.findIndex(entry => entry.id === updatedEntry.id);
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeEntries[selectedIndex] = {
+                        ...updatedEntry,
+                        lead: safeEntries[selectedIndex].lead,
+                    };
+                }
+            })
+        ));
+        getEntriesWithStats();
+    }, [getEntriesWithStats, setEntries]);
     const handleVerificationChange = getEntriesWithStats;
+    const handleLeadEdit = useCallback((updatedLead) => {
+        getEntriesWithStats();
+        setEntries(oldEntries => (
+            produce(oldEntries, (safeEntries) => {
+                safeEntries.forEach((entry) => {
+                    if (entry.lead?.id === updatedLead.id) {
+                        // eslint-disable-next-line no-param-reassign
+                        entry.lead = updatedLead;
+                    }
+                });
+            })
+        ));
+    }, [getEntriesWithStats, setEntries]);
 
     const handleEntryDelete = useCallback((entryId) => {
         getEntriesWithStats();
