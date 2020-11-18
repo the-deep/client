@@ -1,5 +1,3 @@
-// NOTE: This component has also been used in Leads Table to quick edit leads
-
 import PropTypes from 'prop-types';
 import React, { useMemo, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
@@ -131,6 +129,8 @@ const propTypes = {
     organizations: PropTypes.array,
 
     leadState: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
+    leadDuplicate: PropTypes.array,
 };
 
 const defaultProps = {
@@ -146,6 +146,9 @@ const defaultProps = {
 
     onApplyAllClick: undefined,
     onApplyAllBelowClick: undefined,
+
+    leadDuplicate: [],
+    leadState: undefined,
 };
 
 function LeadFormRaw(props) {
@@ -158,6 +161,7 @@ function LeadFormRaw(props) {
         lead,
         leadGroups,
         leadState,
+        leadDuplicate,
         onApplyAllBelowClick,
         onApplyAllClick,
         onChange,
@@ -421,6 +425,15 @@ function LeadFormRaw(props) {
             >
                 <header className={styles.header}>
                     <NonFieldErrors faramElement />
+                    {leadDuplicate && leadDuplicate.length > 0 && (
+                        <div>
+                            {leadDuplicate.map(item => (
+                                <div key={item.id}>
+                                    {item.title}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </header>
                 {(type === LEAD_TYPE.website || type === LEAD_TYPE.connectors) && (
                     <>
@@ -430,7 +443,7 @@ function LeadFormRaw(props) {
                             label={_ts('addLeads', 'urlLabel')}
                             placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                             autoFocus
-                            disabled
+                            readOnly
                         />
                         <ApplyAll
                             className={styles.website}
