@@ -84,16 +84,18 @@ function EntriesStats(props: ComponentProps) {
     } = stats;
 
     const statsList: Stats[] = useMemo(() => {
-        const statsList = Object.entries({ ...staticStats }).map(([k, v]) => ({
+        const statsList = Object.keys(staticEntryStatTitles).map((k) => ({
             id: k,
             title: staticEntryStatTitles[k as keyof StaticEntrySummary],
-            value: v,
+            value: staticStats[k as keyof StaticEntrySummary],
         }));
+
         const orgTypeItems = orgTypeCount.map(orgType => ({
             id: String(orgType.org.id),
             title: orgType.org.shortName ?? orgType.org.title,
             value: orgType.count,
         }));
+
         return [
             ...statsList,
             ...orgTypeItems,

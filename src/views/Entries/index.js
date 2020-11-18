@@ -347,9 +347,11 @@ const requestOptions = {
                 totalEntriesCount,
             });
         },
+        /*
         extras: {
             schemaName: 'entriesGetResponse',
         },
+        */
     },
 };
 

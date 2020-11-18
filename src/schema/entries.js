@@ -170,14 +170,16 @@ const entrySchema = [];
                                     attachment: { type: 'object' },
                                     authorDetails: { type: 'object' },
                                     sourceDetails: { type: 'object' },
-                                    confidentialityDisplay: 'string',
+                                    confidentialityDisplay: { type: 'string' },
                                     pageCount: 'uint',
                                     confidentiality: 'string',
                                 },
                             },
                             required: true,
                         },
-                        tabularFieldData: { type: 'object' }, // FIXME: change here
+                        tabularFieldData: {
+                            type: 'object',
+                        }, // FIXME: change here
                     },
                 },
                 // type: 'array.entry',
