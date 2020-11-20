@@ -314,6 +314,7 @@ export default class Entry extends React.PureComponent {
                             emptyComponent={null}
                         />
                         <EntryVerify
+                            className={styles.entryVerify}
                             title={verificationLastChangedByDetails ? (
                                 _ts(
                                     'entries',

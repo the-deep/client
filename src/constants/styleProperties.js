@@ -17,6 +17,7 @@ const styleProperties = {
         colorSelectedGroup: '#f0f0f0',
         colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
         colorBackgroundReadNotification: '#f5f5f5',
+        colorBackgroundDangerHint: '#fffafa',
     },
 
     dimens: {

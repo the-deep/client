@@ -29,7 +29,6 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import { processEntryFilters } from '#entities/entries';
 import { unique } from '#rsu/common';
 
-import { isDev, isAlpha } from '#config/env';
 import notify from '#notify';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
@@ -348,9 +347,11 @@ const requestOptions = {
                 totalEntriesCount,
             });
         },
+        /*
         extras: {
             schemaName: 'entriesGetResponse',
         },
+        */
     },
 };
 

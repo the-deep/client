@@ -37,7 +37,7 @@
     }
 
     &.confidential {
-        background-color: var(--color-background);
+        background-color: var(--color-background-danger-hint);
     }
 
     &.deleted {
@@ -86,15 +86,25 @@
         .title-row {
             display: flex;
             align-items: center;
-            padding: calc(var(--spacing-medium) - var(--spacing-small));
+            padding: calc(var(--spacing-medium) - var(--spacing-extra-small));
 
             .lead-title-button {
                 padding: 0 var(--spacing-extra-small);
                 text-align: left;
                 text-transform: none;
                 color: var(--color-primary);
-                font-size: inherit;
+                font-size: var(--font-size-large);
                 font-weight: var(--font-weight-bold);
+            }
+
+            .lead-title {
+                padding: 0 var(--spacing-extra-small);
+                font-size: var(--font-size-large);
+                font-weight: var(--font-weight-bold);
+            }
+
+            .lead-edit-button {
+                margin: 0 var(--spacing-extra-small);
             }
         }
     }

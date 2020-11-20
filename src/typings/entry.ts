@@ -94,3 +94,18 @@ export interface LeadWithGroupedEntriesFields {
 export type Entry = Omit<EntryFields, 'lead'> & {
     lead: number;
 }
+
+export interface EntrySummary {
+    totalLeads: number;
+    totalSources: number;
+    totalUnverifiedEntries: number;
+    totalVerifiedEntries: number;
+    orgTypeCount: {
+        count: number;
+        org: {
+            id: number;
+            title: string;
+            shortName?: string;
+        };
+    }[];
+}

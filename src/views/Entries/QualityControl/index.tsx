@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import produce from 'immer';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { isDefined, _cs } from '@togglecorp/fujs';
@@ -9,8 +10,7 @@ import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 
-import { Lead } from '#typings/lead';
-import { EntryFields, EntryLeadType } from '#typings/entry';
+import { EntryFields, EntrySummary } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
@@ -31,10 +31,12 @@ import {
 import _ts from '#ts';
 
 import EntryCard from './EntryCard';
+import EntriesStats from './EntriesStats';
 import {
     FooterContainer,
     EmptyEntries,
 } from '../index';
+
 import styles from './styles.scss';
 
 interface ComponentProps {
@@ -59,6 +61,10 @@ interface PropsFromDispatch {
     setSelection: typeof setQualityControlViewSelectedMatrixKeyAction;
     setActivePage: typeof setQualityControlViewActivePageAction;
     setEntriesCount: typeof setQualityControlViewEntriesCountAction;
+}
+
+interface EntriesWithSummaryResponse<T> extends MultiResponse<T>{
+    summary: EntrySummary;
 }
 
 const keySelector = (d: MatrixTocElement) => d.key;
@@ -116,46 +122,71 @@ function QualityControl(props: Props) {
         [framework],
     );
 
-    const [entries, setEntries] = React.useState<EntryFields[]>([]);
-    const [deletedEntries, setDeletedEntries] = React.useState<{[key: string]: boolean}>({});
+    const [entries, setEntries] = useState<EntryFields[]>([]);
+    const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
+    const [stats, setStats] = useState<EntrySummary | undefined>();
 
-    const requestFilters = useMemo(() => {
-        const projectFilter: [string, number] = ['project', projectId];
+    const combinedFilters = useMemo(() => {
         const selectedMatrixValue: ([string, string] | undefined) = selected
             && [selected.key, selected.id];
         const filters: ([string, string | number | object] | undefined)[] = [
             ...processedFilters,
             selectedMatrixValue,
-            projectFilter,
         ];
+        return filters;
+    }, [selected, processedFilters]);
+
+    const requestFilters = useMemo(() => {
+        const projectFilter: [string, number] = ['project', projectId];
+        const filters = [...combinedFilters, projectFilter];
         return ({
             filters: filters.filter(isDefined),
         });
-    }, [selected, projectId, processedFilters]);
+    }, [projectId, combinedFilters]);
 
     const [
         pending,
         ,
         ,
         getEntries,
-    ] = useRequest<MultiResponse<EntryFields>>({
+    ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
         url: 'server://entries/filter/',
         query: {
+            calculate_summary: 1,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
         body: requestFilters as object,
         method: 'POST',
-        onSuccess: (successResponse) => {
-            setEntries(successResponse.results);
-            setEntriesCount({ count: successResponse.count });
+        onSuccess: (response) => {
+            setEntries(response.results);
+            setStats(response.summary);
+            setEntriesCount({ count: response.count });
+        },
+    });
+
+    const [
+        ,
+        ,
+        ,
+        getEntriesWithStats,
+    ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
+        url: 'server://entries/filter/',
+        query: {
+            calculate_summary: 1,
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        },
+        body: requestFilters as object,
+        method: 'POST',
+        onSuccess: (response) => {
+            setStats(response.summary);
         },
     });
 
     useEffect(
         getEntries,
         [
-            getEntries,
             projectId,
             processedFilters,
             activePage,
@@ -163,9 +194,40 @@ function QualityControl(props: Props) {
         ],
     );
 
-    const handleEntryDelete = React.useCallback((entryId) => {
+    const handleEntryEdit = useCallback((updatedEntry) => {
+        setEntries(oldEntries => (
+            produce(oldEntries, (safeEntries) => {
+                const selectedIndex = safeEntries.findIndex(entry => entry.id === updatedEntry.id);
+                if (selectedIndex !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeEntries[selectedIndex] = {
+                        ...updatedEntry,
+                        lead: safeEntries[selectedIndex].lead,
+                    };
+                }
+            })
+        ));
+        getEntriesWithStats();
+    }, [getEntriesWithStats, setEntries]);
+    const handleVerificationChange = getEntriesWithStats;
+    const handleLeadEdit = useCallback((updatedLead) => {
+        getEntriesWithStats();
+        setEntries(oldEntries => (
+            produce(oldEntries, (safeEntries) => {
+                safeEntries.forEach((entry) => {
+                    if (entry.lead?.id === updatedLead.id) {
+                        // eslint-disable-next-line no-param-reassign
+                        entry.lead = updatedLead;
+                    }
+                });
+            })
+        ));
+    }, [getEntriesWithStats, setEntries]);
+
+    const handleEntryDelete = useCallback((entryId) => {
+        getEntriesWithStats();
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
-    }, [setDeletedEntries]);
+    }, [setDeletedEntries, getEntriesWithStats]);
 
     const handleSelection = useCallback(value => (
         selected && selected.id === value.id ?
@@ -176,16 +238,6 @@ function QualityControl(props: Props) {
         setActivePage({ activePage: value });
     }, [setActivePage]);
 
-    const handleLeadEdit = useCallback((lead: Pick<Lead, EntryLeadType>) => {
-        const patchedEntries = entries.map((e) => {
-            if (e.lead.id === lead.id) {
-                return { ...e, lead };
-            }
-            return e;
-        });
-        setEntries(patchedEntries);
-    }, [entries]);
-
     const entryCardRendererParams = useCallback((_, data) => ({
         key: data.id,
         entry: { ...data, lead: data.lead.id },
@@ -194,17 +246,25 @@ function QualityControl(props: Props) {
         isDeleted: deletedEntries[data.id],
         onDelete: handleEntryDelete,
         onLeadChange: handleLeadEdit,
+        onEntryChange: handleEntryEdit,
+        onVerificationChange: handleVerificationChange,
         className: styles.card,
     }),
     [
         handleLeadEdit,
+        handleEntryEdit,
         deletedEntries,
         framework,
         handleEntryDelete,
+        handleVerificationChange,
     ]);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
+            <EntriesStats
+                className={styles.stats}
+                stats={stats}
+            />
             <ResizableH
                 className={styles.resizableContainer}
                 leftContainerClassName={styles.left}
@@ -242,7 +302,7 @@ function QualityControl(props: Props) {
                         ) : (
                             <EmptyEntries
                                 projectId={projectId}
-                                entriesFilters={entriesFilters}
+                                entriesFilters={combinedFilters}
                             />
                         )}
                     </div>

@@ -98,21 +98,24 @@ interface EntryCardProps {
     isDeleted?: boolean;
     onDelete: (entryId: EntryFields['id']) => void;
     onLeadChange: (lead: Pick<Lead, EntryLeadType>) => void;
+    onVerificationChange: () => void;
+    onEntryChange: (entry: Entry) => void;
 }
 
 function EntryCard(props: EntryCardProps) {
     const {
         className,
-        entry: entryFromProps,
+        entry,
         lead,
         framework,
         onDelete,
+        onVerificationChange,
         isDeleted,
         onLeadChange,
+        onEntryChange,
     } = props;
 
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
-    const [entry, setEntry] = React.useState<Entry>(entryFromProps);
     const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
 
     const {
@@ -145,6 +148,11 @@ function EntryCard(props: EntryCardProps) {
     const handleDeletePendingChange = useCallback((/* isPending: boolean */) => {
         // TODO; disable all actions if pending
     }, []);
+
+    const handleVerificationChange = React.useCallback((status: boolean) => {
+        onVerificationChange();
+        setVerificationStatus(status);
+    }, [onVerificationChange]);
 
     const handleDeleteSuccess = useCallback(() => {
         onDelete(entry.id);
@@ -217,18 +225,19 @@ function EntryCard(props: EntryCardProps) {
                                 {lead.title}
                             </ModalButton>
                         ) : (
-                            <div className={styles.leadTitleButton}>
+                            <div className={styles.leadTitle}>
                                 {lead.title}
                             </div>
                         )}
                         <Cloak
                             hide={shouldHideLeadEdit}
                             render={
-                                <WarningButton
-                                iconName="edit"
-                                transparent
-                                disabled={pending || isEditLeadModalShown}
-                                onClick={handleEditLeadButtonClick}
+                                <Button
+                                    className={styles.leadEditButton}
+                                    iconName="edit"
+                                    transparent
+                                    disabled={pending || isEditLeadModalShown}
+                                    onClick={handleEditLeadButtonClick}
                                 />
                             }
                         />
@@ -309,7 +318,7 @@ function EntryCard(props: EntryCardProps) {
                             entry={entry}
                             framework={framework}
                             disabled={isDeleted}
-                            onEditSuccess={setEntry}
+                            onEditSuccess={onEntryChange}
                         />
                         <EntryVerify
                             title={entry.verificationLastChangedByDetails ? (
@@ -326,7 +335,7 @@ function EntryCard(props: EntryCardProps) {
                             entryId={entry.id}
                             leadId={entry.lead}
                             disabled={isDeleted}
-                            handleEntryVerify={setVerificationStatus}
+                            handleEntryVerify={handleVerificationChange}
                             onPendingChange={setVerifyChangePending}
                         />
                     </div>

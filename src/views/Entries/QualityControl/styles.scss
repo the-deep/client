@@ -5,6 +5,10 @@
     --width-left-min: 160px;
     --width-right-min: 320px;
 
+    .stats {
+        flex-shrink: 0;
+    }
+    
     .resizable-container {
         display: flex;
         flex-grow: 1;

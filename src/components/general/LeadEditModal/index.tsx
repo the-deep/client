@@ -110,7 +110,7 @@ function LeadEdit(props: Props) {
 
     const [leadFaramValues, setLeadFaramValues] = useState<LeadFaramValues>(leadFromProps);
     const [leadFaramErrors, setLeadFaramErrors] = useState<LeadFaramErrors>({});
-    const [pristine, setPristine] = useState<LeadFaramErrors>(false);
+    const [pristine, setPristine] = useState<LeadFaramErrors>(true);
 
     const handleLeadDetailChange = useCallback(({
         faramValues: newFaramValues,
