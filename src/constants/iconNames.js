@@ -61,6 +61,7 @@ const iconNames = {
     grid: 'ion-grid',
     hamburger: 'ion-android-menu',
     help: 'ion-help-circled',
+    helpOutlined: 'ion-ios-help-outline',
     histogram: 'ion-arrow-graph-up-right',
     horizontalBar: 'ion-navicon',
     info: 'ion-ios-information',
