@@ -57,6 +57,17 @@
                 padding: var(--spacing-large);
                 overflow-y: auto;
 
+                .toc-filter-list {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+
+                    .toc-filter-names {
+                        display: flex;
+                        flex-wrap: wrap;
+                    }
+                }
+
                 .card {
                     margin: var(--spacing-large);
                 }

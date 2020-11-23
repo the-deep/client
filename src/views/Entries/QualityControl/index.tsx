@@ -9,6 +9,8 @@ import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
+import ListItem from '#rscv/ListItem';
 
 import { EntryFields, EntrySummary } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -265,6 +267,10 @@ function QualityControl(props: Props) {
         handleVerificationChange,
     ]);
 
+    const tocFilterRendererParams = (_: string, data: MatrixKeyId) => ({
+        value: labelSelector(data),
+    });
+
     return (
         <div className={_cs(className, styles.qualityControl)}>
             <EntriesStats
@@ -298,6 +304,18 @@ function QualityControl(props: Props) {
                 rightChild={(
                     <div className={styles.entryList}>
                         { pending && <LoadingAnimation /> }
+                        { tocFilters && tocFilters.length > 0 && (
+                            <div className={styles.tocFilterList}>
+                                <div>{_ts('entries.qualityControl', 'selectedTocFilters')}</div>
+                                <ListView
+                                    className={styles.tocFilterNames}
+                                    data={tocFilters}
+                                    keySelector={idSelector}
+                                    renderer={ListItem}
+                                    rendererParams={tocFilterRendererParams}
+                                />
+                            </div>
+                        )}
                         { (entries && entries.length > 0) ? (
                             <List
                                 data={entries}
@@ -309,6 +327,7 @@ function QualityControl(props: Props) {
                             <EmptyEntries
                                 projectId={projectId}
                                 entriesFilters={entriesFilters}
+                                tocFilters={tocFilters}
                             />
                         )}
                     </div>
