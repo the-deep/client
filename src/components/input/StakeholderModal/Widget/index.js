@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
+import { organizationTitleSelector } from '#entities/organization';
 import Confirm from '#rscv/Modal/Confirm';
 
 import BaseWidget from '#entities/editAry/BaseWidget';
@@ -133,6 +134,7 @@ class Widget extends React.PureComponent {
 
         const widget = (
             <BaseWidget
+                labelSelector={organizationTitleSelector}
                 {...otherProps}
             />
         );

@@ -8,6 +8,7 @@ import StakeholderModal from '#components/input/StakeholderModal';
 
 import { getProps } from '#entities/editAry';
 import BaseWidget from '#entities/editAry/BaseWidget';
+import { organizationTitleSelector } from '#entities/organization';
 import styles from './styles.scss';
 
 const StakeholderButton = props => (
@@ -49,8 +50,14 @@ export default class Column extends React.PureComponent {
             ? 'listInput'
             : fieldType;
 
+        const otherProps = {};
+        if (isStakeholder) {
+            otherProps.labelSelector = organizationTitleSelector;
+        }
+
         return {
             ...widgetProps,
+            ...otherProps,
             fieldType: newFieldType,
             readOnly: isStakeholder,
         };

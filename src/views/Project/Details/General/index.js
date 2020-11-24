@@ -29,6 +29,7 @@ import {
     RequestCoordinator,
     RequestClient,
 } from '#request';
+import { organizationTitleSelector } from '#entities/organization';
 
 import {
     projectActivityLogSelector,
@@ -161,7 +162,7 @@ function OrganizationDetails({
 const organizationDetailsKeySelector = d => d.organization;
 const organizationDetailsRendererParams = (_, d) => ({
     logo: d.organizationDetails.logo,
-    title: d.organizationDetails.title,
+    title: organizationTitleSelector(d.organizationDetails),
 });
 
 function OrganizationList(p) {
