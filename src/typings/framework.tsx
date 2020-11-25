@@ -173,3 +173,27 @@ export interface MatrixTocElement {
     title: string;
     children?: MatrixTocElement[] | [];
 }
+
+export interface ScaleWidget {
+    scaleUnits: {
+        key: string;
+        color?: string;
+        label: string;
+    }[];
+}
+
+export interface ConditionalWidget {
+    defaultWidget: string;
+    widgets: {
+        conditions: unknown;
+        widget: {
+            id: number;
+            title: string;
+            key: string;
+            widgetId: string;
+            properties: {
+                data: unknown;
+            };
+        };
+    }[];
+}

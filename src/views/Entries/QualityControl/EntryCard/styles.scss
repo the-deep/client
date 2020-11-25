@@ -83,6 +83,14 @@
             }
         }
 
+        .scale-widgets {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding-right: calc(var(--spacing-medium) - var(--spacing-extra-small));
+            padding-left: calc(var(--spacing-medium) - var(--spacing-extra-small));
+        }
+
         .title-row {
             display: flex;
             align-items: center;

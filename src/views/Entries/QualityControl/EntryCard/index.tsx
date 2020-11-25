@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -12,10 +12,13 @@ import EntryOpenLink from '#components/general/EntryOpenLink';
 import EntryVerify from '#components/general/EntryVerify';
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
-import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
-import useRequest from '#utils/request';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
+import ListItem, { DefaultIcon } from '#rscv/ListItem';
+
+import useRequest from '#utils/request';
+import { getScaleWidgetsData } from '#utils/framework';
 
 import LeadPreview from '#views/Leads/LeadPreview';
 import LeadEditModal from '#components/general/LeadEditModal';
@@ -48,7 +51,7 @@ interface AuthorListOutputProps {
 }
 
 const entryTypeToValueMap: {
-    [key in EntryType]: keyof EntryFields;
+    [key in EntryType]: 'excerpt' | 'image' | 'tabularFieldData';
 } = {
     excerpt: 'excerpt',
     image: 'image',
@@ -62,6 +65,14 @@ const entryTypeToExcerptTypeMap: {
     image: 'image',
     dataSeries: 'dataSeries',
 };
+
+interface ScaleWidget {
+    key: string;
+    color?: string;
+    label: string;
+}
+
+const widgetKeySelector = (d: ScaleWidget) => d.key;
 
 function AuthorListOutput(props: AuthorListOutputProps) {
     const {
@@ -175,9 +186,19 @@ function EntryCard(props: EntryCardProps) {
 
     const loading = verifiyChangePending;
 
+    const scaleWidgets = useMemo(() => getScaleWidgetsData(framework, entry), [framework, entry]);
+
+    const scaleWidgetRendererParams = (_: string, d: ScaleWidget) => {
+        const icons = <DefaultIcon color={d.color} title={d.label} />
+        return {
+            icons,
+            value: d.label,
+        }
+    };
+
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
-            {loading && <LoadingAnimation />}
+        {loading && <LoadingAnimation />}
             <div
                 className={_cs(
                     styles.entryCard,
@@ -211,6 +232,15 @@ function EntryCard(props: EntryCardProps) {
                                 </div>
                             </div>
                         )}
+                    </div>
+                    <div>
+                        <ListView
+                            className={styles.scaleWidgets}
+                            data={scaleWidgets}
+                            renderer={ListItem}
+                            rendererParams={scaleWidgetRendererParams}
+                            keySelector={widgetKeySelector}
+                        />
                     </div>
                     <div className={styles.titleRow}>
                         {leadUrl ? (

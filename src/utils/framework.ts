@@ -11,6 +11,10 @@ import {
     Matrix2dFlatSubdimensionElement,
     Matrix1dWidgetElement,
     MatrixTocElement,
+    ScaleWidget,
+    WidgetElement,
+    ConditionalWidget,
+    Entry,
 } from '#typings';
 
 export const SECTOR_FIRST = 'sectorFirst';
@@ -73,6 +77,20 @@ interface LevelOutput {
     selected: boolean;
     draggable: boolean;
     nodes?: LevelOutput[];
+}
+
+interface WidgetData {
+    data: {
+        value: string;
+    };
+}
+interface ConditionalAttribute {
+    selectedWidgetKey?: string;
+    [key: string]: WidgetData | string | undefined;
+}
+
+function isWidgetData(arg: any): arg is WidgetData {
+    return arg?.data?.value !== undefined;
 }
 
 export function mapReportLevelsToNodes(levels: Level[]): LevelOutput[] {
@@ -330,7 +348,6 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
 
     const toc = matrix2dList.map((widget) => {
         const {
-            id,
             key,
             title,
             properties,
@@ -399,3 +416,69 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
 
     return toc.filter(isDefined);
 };
+
+export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
+    if (!framework || !framework.widgets) {
+        return [];
+    }
+
+    const { widgets } = framework;
+
+    const scaleWidgets = widgets
+        .filter(w => w.widgetId === 'scaleWidget')
+        .map((w) => {
+            const attributeData = entry.attributes[w.id];
+            const { properties: { data: { scaleUnits } } } = w as WidgetElement<ScaleWidget>;
+            if (isWidgetData(attributeData)) {
+                const value = scaleUnits.find(v => v.key === attributeData.data.value);
+                return value;
+            }
+            return undefined;
+        })
+        .filter(isDefined);
+
+    const scaleWidgetsInsideConditionals = widgets
+        .filter(w => w.widgetId === 'conditionalWidget')
+        .map((conditional) => {
+            const {
+                id,
+                properties: {
+                    data: {
+                        widgets: widgetsInsideConditional = [],
+                    } = {},
+                } = {},
+            } = conditional as WidgetElement<ConditionalWidget>;
+
+            return widgetsInsideConditional
+                .filter(w => w.widget && w.widget.widgetId === 'scaleWidget')
+                .map(({ widget }) => {
+                    const widgetAttributeData = entry
+                        .attributes[id]?.data?.value as ConditionalAttribute;
+
+                    if (widgetAttributeData?.selectedWidgetKey) {
+                        const { selectedWidgetKey } = widgetAttributeData;
+
+                        if (selectedWidgetKey) {
+                            const attributeData = widgetAttributeData[selectedWidgetKey];
+
+                            if (attributeData && isWidgetData(attributeData)) {
+                                const {
+                                    properties: {
+                                        data: {
+                                            scaleUnits,
+                                        },
+                                    },
+                                } = widget as WidgetElement<ScaleWidget>;
+
+                                return scaleUnits.find(v => v.key === attributeData.data.value);
+                            }
+                        }
+                    }
+                    return undefined;
+                });
+        }).flat().filter(isDefined);
+    return [
+        ...scaleWidgets,
+        ...scaleWidgetsInsideConditionals,
+    ];
+}
