@@ -76,11 +76,11 @@ export const FooterContainer = ({
 export const EmptyEntries = ({
     projectId,
     entriesFilters,
-    selectedMatrix,
+    tocFilters,
 }) => {
     const isFilterEmpty = doesObjectHaveNoData(entriesFilters, ['']);
 
-    if (!isFilterEmpty || isDefined(selectedMatrix)) {
+    if (!isFilterEmpty || tocFilters?.length > 0) {
         return (
             <Message
                 className={styles.emptyFilterMessage}
@@ -119,11 +119,11 @@ EmptyEntries.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     entriesFilters: PropTypes.object.isRequired,
     // NOTE: Required for QC mode
-    selectedMatrix: PropTypes.string,
+    tocFilters: PropTypes.arrayOf([PropTypes.string]),
 };
 
 EmptyEntries.defaultProps = {
-    selectedMatrix: undefined,
+    tocFilters: undefined,
 };
 
 

@@ -1,5 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { _cs, isDefined } from '@togglecorp/fujs';
+import React, { useMemo, useState, useCallback } from 'react';
+import {
+    _cs,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import ListView from '#rsu/../v2/View/ListView';
@@ -15,12 +19,13 @@ interface Props<T, K extends string | number>{
     keySelector: (datum: T) => K | undefined;
     labelSelector: (datum: T) => K;
     childrenSelector: (datum: T) => T[] | undefined;
-    onChange: (value: { key: K; id: K }) => void;
+    onChange: (value: T[]) => void;
     options: T[];
-    value: {key: K; id: K } | undefined;
+    value: T[];
     level?: number;
     defaultCollapseLevel?: number;
     className?: string;
+    multiple?: boolean;
 }
 
 type ToCItemProps<T, K extends string | number > = Omit<Props<T, K>, 'options'> & {
@@ -47,6 +52,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         childrenSelector,
         defaultCollapseLevel,
         className,
+        multiple = false,
     } = props;
 
     const key = keySelector(option);
@@ -56,11 +62,22 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
 
     const handleClick = useCallback(
         () => {
-            if (isDefined(key)) {
-                onChange({ key, id });
+            if (isNotDefined(key)) {
+                return;
+            }
+            const isSelected = value.some(s => idSelector(s) === idSelector(option));
+            if (isSelected) {
+                if (multiple) {
+                    const newSelection = value.filter(s => idSelector(s) !== idSelector(option));
+                    onChange(newSelection);
+                } else {
+                    onChange([]);
+                }
+            } else {
+                onChange(multiple ? [...value, option] : [option]);
             }
         },
-        [key, id, onChange],
+        [onChange, key, option, multiple, idSelector, value],
     );
 
     const [collapsed, setCollapsed] = useState<boolean>(
@@ -72,7 +89,9 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         [],
     );
 
-    const isSelected = id === value?.id;
+    const isSelected = useMemo(() => (
+        value.some(v => idSelector(v) === id)
+    ), [value, idSelector, id]);
 
     return (
         <div className={_cs(
@@ -92,7 +111,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                 >
                     {title}
                 </div>
-                { children && children.length && (
+                { children && children.length > 0 && (
                     <div className={styles.actions}>
                         <Button
                             className={styles.expandButton}
@@ -132,6 +151,7 @@ function TableOfContents<T, K extends string | number>(props: ToCListProps<T, K>
         option: v,
         level,
         idSelector,
+        options,
     });
 
     return (

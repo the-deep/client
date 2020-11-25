@@ -74,9 +74,9 @@ export const setQualityControlViewEntriesCountAction = ({ count }) => ({
     count,
 });
 
-export const setQualityControlViewSelectedMatrixKeyAction = ({ matrixKey }) => ({
+export const setQualityControlViewSelectedMatrixKeyAction = ({ tocFilters }) => ({
     type: E__QC__SET_SELECTED_MATRIX_KEY,
-    matrixKey,
+    tocFilters,
 });
 
 // REDUCER
@@ -355,13 +355,13 @@ const qualityControlViewSetEntriesCount = (state, action) => {
 };
 
 const qualityControlViewSetMatrixKey = (state, action) => {
-    const { matrixKey } = action;
+    const { tocFilters } = action;
     const { activeProject } = state;
     const settings = {
         entriesView: {
             [activeProject]: { $auto: {
                 qcViewActivePage: { $set: 1 },
-                selectedMatrixKey: { $set: matrixKey },
+                tocFilters: { $set: tocFilters },
             } },
         },
     };

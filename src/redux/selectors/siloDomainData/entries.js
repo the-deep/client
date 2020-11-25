@@ -42,7 +42,7 @@ export const qualityControlViewEntriesCountSelector = createSelector(
 
 export const qualityControlViewSelectedMatrixKeySelector = createSelector(
     entriesViewForProjectSelector,
-    entriesView => entriesView.selectedMatrixKey,
+    entriesView => entriesView.tocFilters || emptyList,
 );
 
 export const totalEntriesCountForProjectSelector = createSelector(

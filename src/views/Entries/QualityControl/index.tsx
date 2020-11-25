@@ -2,13 +2,21 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import produce from 'immer';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { isDefined, _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    listToGroupList,
+    mapToList,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import Pager from '#rscv/Pager';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
+import ListItem from '#rscv/ListItem';
+import Icon from '#rscg/Icon';
 
 import { EntryFields, EntrySummary } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -48,17 +56,18 @@ interface ComponentProps {
     maxItemsPerPage: number;
     activePage: number;
     entriesCount: number;
-    selected?: MatrixKeyId;
+    tocFilters: MatrixKeyId[];
     parentFooterRef: React.RefObject<HTMLElement>;
 }
 
 interface MatrixKeyId {
     key: string;
     id: string;
+    title: string;
 }
 
 interface PropsFromDispatch {
-    setSelection: typeof setQualityControlViewSelectedMatrixKeyAction;
+    setTocFilters: typeof setQualityControlViewSelectedMatrixKeyAction;
     setActivePage: typeof setQualityControlViewActivePageAction;
     setEntriesCount: typeof setQualityControlViewEntriesCountAction;
 }
@@ -76,13 +85,13 @@ const entryKeySelector = (d: EntryFields) => d.id;
 const mapStateToProps = (state: AppState) => ({
     activePage: qualityControlViewActivePageSelector(state),
     entriesCount: qualityControlViewEntriesCountSelector(state),
-    selected: qualityControlViewSelectedMatrixKeySelector(state),
+    tocFilters: qualityControlViewSelectedMatrixKeySelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setActivePage: params => dispatch(setQualityControlViewActivePageAction(params)),
     setEntriesCount: params => dispatch(setQualityControlViewEntriesCountAction(params)),
-    setSelection: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
+    setTocFilters: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
 });
 
 type Props = ComponentProps & PropsFromDispatch;
@@ -97,22 +106,12 @@ function QualityControl(props: Props) {
         maxItemsPerPage,
         activePage,
         setActivePage,
-        selected,
-        setSelection,
+        tocFilters,
+        setTocFilters,
         entriesCount,
         setEntriesCount,
         parentFooterRef,
     } = props;
-
-    const processedFilters: [string, string | number | object][] = useMemo(
-        () => processEntryFilters(
-            entriesFilters,
-            framework,
-            geoOptions,
-            true,
-        ),
-        [entriesFilters, framework, geoOptions],
-    );
 
     const matrixToc = useMemo(
         () => [
@@ -126,23 +125,44 @@ function QualityControl(props: Props) {
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary | undefined>();
 
-    const combinedFilters = useMemo(() => {
-        const selectedMatrixValue: ([string, string] | undefined) = selected
-            && [selected.key, selected.id];
-        const filters: ([string, string | number | object] | undefined)[] = [
-            ...processedFilters,
-            selectedMatrixValue,
-        ];
-        return filters;
-    }, [selected, processedFilters]);
-
     const requestFilters = useMemo(() => {
-        const projectFilter: [string, number] = ['project', projectId];
-        const filters = [...combinedFilters, projectFilter];
+        const projectFilter = ['project', projectId];
+        const processedFilters = processEntryFilters(
+            entriesFilters,
+            framework,
+            geoOptions,
+            true,
+        );
+        const groupedSelections = listToGroupList(
+            tocFilters,
+            v => keySelector(v),
+            v => idSelector(v),
+        );
+        const processedTocFilters = mapToList(
+            groupedSelections,
+            (d, k) => ([
+                `${k}__and`,
+                d,
+            ]),
+        );
+
+        const filters = [
+            ...processedFilters,
+            ...processedTocFilters,
+            projectFilter,
+        ];
+
         return ({
             filters: filters.filter(isDefined),
         });
-    }, [projectId, combinedFilters]);
+    },
+    [
+        entriesFilters,
+        framework,
+        geoOptions,
+        tocFilters,
+        projectId,
+    ]);
 
     const [
         pending,
@@ -188,9 +208,8 @@ function QualityControl(props: Props) {
         getEntries,
         [
             projectId,
-            processedFilters,
             activePage,
-            selected,
+            requestFilters,
         ],
     );
 
@@ -229,17 +248,15 @@ function QualityControl(props: Props) {
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries, getEntriesWithStats]);
 
-    const handleSelection = useCallback(value => (
-        selected && selected.id === value.id ?
-            setSelection({ matrixKey: undefined }) : setSelection({ matrixKey: value })
-    ), [selected, setSelection]);
+    const handleSelection = useCallback((value) => {
+        setTocFilters({ tocFilters: value });
+    }, [setTocFilters]);
 
     const handlePageClick = useCallback((value) => {
         setActivePage({ activePage: value });
     }, [setActivePage]);
 
     const entryCardRendererParams = useCallback((_, data) => ({
-        key: data.id,
         entry: { ...data, lead: data.lead.id },
         lead: data.lead,
         framework,
@@ -258,6 +275,10 @@ function QualityControl(props: Props) {
         handleEntryDelete,
         handleVerificationChange,
     ]);
+
+    const tocFilterRendererParams = useCallback((_: string, data: MatrixKeyId) => ({
+        value: labelSelector(data),
+    }), []);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
@@ -283,29 +304,52 @@ function QualityControl(props: Props) {
                             labelSelector={labelSelector}
                             childrenSelector={childrenSelector}
                             onChange={handleSelection}
-                            value={selected}
+                            value={tocFilters}
                             defaultCollapseLevel={5}
+                            multiple
                         />
                     </div>
                 )}
                 rightContainerClassName={styles.right}
                 rightChild={(
-                    <div className={styles.entryList}>
+                    <>
                         { pending && <LoadingAnimation /> }
-                        { (entries && entries.length > 0) ? (
-                            <List
-                                data={entries}
-                                keySelector={entryKeySelector}
-                                renderer={EntryCard}
-                                rendererParams={entryCardRendererParams}
+                        <h3 className={styles.tocFilterList}>
+                            <Icon
+                                className={styles.infoIcon}
+                                name="info"
                             />
-                        ) : (
-                            <EmptyEntries
-                                projectId={projectId}
-                                entriesFilters={combinedFilters}
-                            />
-                        )}
-                    </div>
+                            {tocFilters.length > 0
+                                ? _ts('entries.qualityControl', 'selectedTocFilters')
+                                : _ts('entries.qualityControl', 'noSelectedTocFilters')
+                            }
+                            {tocFilters.length > 0 && (
+                                <ListView
+                                    className={styles.tocFilterNames}
+                                    data={tocFilters}
+                                    keySelector={idSelector}
+                                    renderer={ListItem}
+                                    rendererParams={tocFilterRendererParams}
+                                />
+                            )}
+                        </h3>
+                        <div className={styles.entryList}>
+                            { (entries && entries.length > 0) ? (
+                                <List
+                                    data={entries}
+                                    keySelector={entryKeySelector}
+                                    renderer={EntryCard}
+                                    rendererParams={entryCardRendererParams}
+                                />
+                            ) : (
+                                <EmptyEntries
+                                    projectId={projectId}
+                                    entriesFilters={entriesFilters}
+                                    tocFilters={tocFilters}
+                                />
+                            )}
+                        </div>
+                    </>
                 )}
             />
             <FooterContainer parentFooterRef={parentFooterRef}>
