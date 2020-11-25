@@ -325,6 +325,14 @@ export const routes = {
         links: allLinks,
     },
 
+    entryEditRedirect: {
+        order: 810,
+        type: ROUTE.private,
+        path: '/permalink/projects/:projectId/leads/:leadId/entries/:entryId/',
+        loader: () => import('../redirects/EntryEdit.js'),
+        links: allLinks,
+    },
+
     projectDenied: {
         order: 970,
         type: ROUTE.public,
