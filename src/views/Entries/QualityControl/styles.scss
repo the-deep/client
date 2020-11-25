@@ -8,7 +8,7 @@
     .stats {
         flex-shrink: 0;
     }
-    
+
     .resizable-container {
         display: flex;
         flex-grow: 1;
@@ -49,6 +49,26 @@
             min-width: var(--width-right-min);
             overflow-y: auto;
 
+            .toc-filter-list {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                border-bottom:  var(--width-separator-thin) solid var(--color-separator);
+                padding: var(--spacing-medium);
+                text-transform: unset;
+                color: var(--color-text);
+
+                .info-icon {
+                    margin: 0 var(--spacing-small);
+                    color: var(--color-primary);
+                }
+
+                .toc-filter-names {
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+            }
+
             .entry-list {
                 display: flex;
                 align-items: flex-start;
@@ -56,17 +76,6 @@
                 flex-wrap: wrap;
                 padding: var(--spacing-large);
                 overflow-y: auto;
-
-                .toc-filter-list {
-                    display: flex;
-                    align-items: center;
-                    flex-wrap: wrap;
-
-                    .toc-filter-names {
-                        display: flex;
-                        flex-wrap: wrap;
-                    }
-                }
 
                 .card {
                     margin: var(--spacing-large);

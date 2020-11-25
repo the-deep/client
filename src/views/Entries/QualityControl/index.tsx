@@ -2,7 +2,12 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import produce from 'immer';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { isDefined, _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    listToGroupList,
+    mapToList,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import Pager from '#rscv/Pager';
 import ResizableH from '#rscv/Resizable/ResizableH';
@@ -11,6 +16,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/ListItem';
+import Icon from '#rscg/Icon';
 
 import { EntryFields, EntrySummary } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -107,16 +113,6 @@ function QualityControl(props: Props) {
         parentFooterRef,
     } = props;
 
-    const processedFilters: [string, string | number | object][] = useMemo(
-        () => processEntryFilters(
-            entriesFilters,
-            framework,
-            geoOptions,
-            true,
-        ),
-        [entriesFilters, framework, geoOptions],
-    );
-
     const matrixToc = useMemo(
         () => [
             ...getMatrix1dToc(framework),
@@ -131,7 +127,25 @@ function QualityControl(props: Props) {
 
     const requestFilters = useMemo(() => {
         const projectFilter = ['project', projectId];
-        const processedTocFilters = tocFilters.map(v => ([keySelector(v), idSelector(v)]));
+        const processedFilters = processEntryFilters(
+            entriesFilters,
+            framework,
+            geoOptions,
+            true,
+        );
+        const groupedSelections = listToGroupList(
+            tocFilters,
+            v => keySelector(v),
+            v => idSelector(v),
+        );
+        const processedTocFilters = mapToList(
+            groupedSelections,
+            (d, k) => ([
+                `${k}__and`,
+                d,
+            ]),
+        );
+
         const filters = [
             ...processedFilters,
             ...processedTocFilters,
@@ -143,9 +157,11 @@ function QualityControl(props: Props) {
         });
     },
     [
+        entriesFilters,
+        framework,
+        geoOptions,
         tocFilters,
         projectId,
-        processedFilters,
     ]);
 
     const [
@@ -192,9 +208,8 @@ function QualityControl(props: Props) {
         getEntries,
         [
             projectId,
-            processedFilters,
             activePage,
-            tocFilters,
+            requestFilters,
         ],
     );
 
@@ -302,11 +317,18 @@ function QualityControl(props: Props) {
                 )}
                 rightContainerClassName={styles.right}
                 rightChild={(
-                    <div className={styles.entryList}>
+                    <>
                         { pending && <LoadingAnimation /> }
-                        { tocFilters && tocFilters.length > 0 && (
-                            <div className={styles.tocFilterList}>
-                                <div>{_ts('entries.qualityControl', 'selectedTocFilters')}</div>
+                        <h3 className={styles.tocFilterList}>
+                            <Icon
+                                className={styles.infoIcon}
+                                name="info"
+                            />
+                            {tocFilters.length > 0
+                                ? _ts('entries.qualityControl', 'selectedTocFilters')
+                                : _ts('entries.qualityControl', 'noSelectedTocFilters')
+                            }
+                            {tocFilters.length > 0 && (
                                 <ListView
                                     className={styles.tocFilterNames}
                                     data={tocFilters}
@@ -314,23 +336,25 @@ function QualityControl(props: Props) {
                                     renderer={ListItem}
                                     rendererParams={tocFilterRendererParams}
                                 />
-                            </div>
-                        )}
-                        { (entries && entries.length > 0) ? (
-                            <List
-                                data={entries}
-                                keySelector={entryKeySelector}
-                                renderer={EntryCard}
-                                rendererParams={entryCardRendererParams}
-                            />
-                        ) : (
-                            <EmptyEntries
-                                projectId={projectId}
-                                entriesFilters={entriesFilters}
-                                tocFilters={tocFilters}
-                            />
-                        )}
-                    </div>
+                            )}
+                        </h3>
+                        <div className={styles.entryList}>
+                            { (entries && entries.length > 0) ? (
+                                <List
+                                    data={entries}
+                                    keySelector={entryKeySelector}
+                                    renderer={EntryCard}
+                                    rendererParams={entryCardRendererParams}
+                                />
+                            ) : (
+                                <EmptyEntries
+                                    projectId={projectId}
+                                    entriesFilters={entriesFilters}
+                                    tocFilters={tocFilters}
+                                />
+                            )}
+                        </div>
+                    </>
                 )}
             />
             <FooterContainer parentFooterRef={parentFooterRef}>
