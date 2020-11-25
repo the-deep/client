@@ -249,14 +249,8 @@ function QualityControl(props: Props) {
     }, [setDeletedEntries, getEntriesWithStats]);
 
     const handleSelection = useCallback((value) => {
-        const isSelected = tocFilters.some(s => idSelector(s) === idSelector(value));
-        if (isSelected) {
-            const newSelection = tocFilters.filter(s => idSelector(s) !== idSelector(value));
-            setTocFilters({ tocFilters: newSelection });
-        } else {
-            setTocFilters({ tocFilters: [...tocFilters, value] });
-        }
-    }, [tocFilters, setTocFilters]);
+        setTocFilters({ tocFilters: value });
+    }, [setTocFilters]);
 
     const handlePageClick = useCallback((value) => {
         setActivePage({ activePage: value });
@@ -282,9 +276,9 @@ function QualityControl(props: Props) {
         handleVerificationChange,
     ]);
 
-    const tocFilterRendererParams = (_: string, data: MatrixKeyId) => ({
+    const tocFilterRendererParams = useCallback((_: string, data: MatrixKeyId) => ({
         value: labelSelector(data),
-    });
+    }), []);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
@@ -312,6 +306,7 @@ function QualityControl(props: Props) {
                             onChange={handleSelection}
                             value={tocFilters}
                             defaultCollapseLevel={5}
+                            multiple
                         />
                     </div>
                 )}
