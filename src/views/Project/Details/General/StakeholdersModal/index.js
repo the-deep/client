@@ -15,6 +15,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
+import { organizationTitleSelector } from '#entities/organization';
 
 import {
     RequestCoordinator,
@@ -30,7 +31,7 @@ import styles from './styles.scss';
 
 
 const organizationKeySelector = d => d.id;
-const organizationLabelSelector = d => d.organizationDetails.title;
+const organizationLabelSelector = org => organizationTitleSelector(org.organizationDetails);
 const fieldKeySelector = d => d.faramElementName;
 
 const propTypes = {

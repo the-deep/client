@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import {
     _cs,
     caseInsensitiveSubmatch,
+    isNotDefined,
     compareStringSearch,
     listToMap,
 } from '@togglecorp/fujs';
@@ -111,6 +112,7 @@ export default class OrganizationList extends React.PureComponent {
         }
 
         const newOptions = options
+            .filter(option => isNotDefined(option.mergedAs))
             .filter(option => (
                 value === undefined
                     || caseInsensitiveSubmatch(organizationLabelSelector(option), value)
