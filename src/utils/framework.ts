@@ -440,14 +440,10 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
     const scaleWidgetsInsideConditionals = widgets
         .filter(w => w.widgetId === 'conditionalWidget')
         .map((conditional) => {
+            const { id } = conditional;
             const {
-                id,
-                properties: {
-                    data: {
-                        widgets: widgetsInsideConditional = [],
-                    } = {},
-                } = {},
-            } = conditional as WidgetElement<ConditionalWidget>;
+                widgets: widgetsInsideConditional = [],
+            } = (conditional as WidgetElement<ConditionalWidget>).properties.data;
 
             return widgetsInsideConditional
                 .filter(w => w.widget && w.widget.widgetId === 'scaleWidget')

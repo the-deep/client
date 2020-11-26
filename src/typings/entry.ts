@@ -57,7 +57,7 @@ export interface TabularDataFields {
 
 export interface EntryFields extends DatabaseEntityBase {
     attributes: {
-        [key: string] : AttributeFields;
+        [key: string]: AttributeFields;
     };
     analysisFramework: number;
     entryType: EntryType;

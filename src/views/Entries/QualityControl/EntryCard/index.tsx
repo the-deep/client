@@ -45,6 +45,8 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
+const EmptyComponent = () => (<div className={styles.emptyComponent} />);
+
 interface AuthorListOutputProps {
     className?: string;
     value: OrganizationFields[];
@@ -188,13 +190,13 @@ function EntryCard(props: EntryCardProps) {
 
     const scaleWidgets = useMemo(() => getScaleWidgetsData(framework, entry), [framework, entry]);
 
-    const scaleWidgetRendererParams = (_: string, d: ScaleWidget) => {
+    const scaleWidgetRendererParams = useCallback((_: string, d: ScaleWidget) => {
         const icons = <DefaultIcon color={d.color} title={d.label} />
         return {
             icons,
             value: d.label,
         }
-    };
+    }, []);
 
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
@@ -232,15 +234,6 @@ function EntryCard(props: EntryCardProps) {
                                 </div>
                             </div>
                         )}
-                    </div>
-                    <div>
-                        <ListView
-                            className={styles.scaleWidgets}
-                            data={scaleWidgets}
-                            renderer={ListItem}
-                            rendererParams={scaleWidgetRendererParams}
-                            keySelector={widgetKeySelector}
-                        />
                     </div>
                     <div className={styles.titleRow}>
                         {leadUrl ? (
@@ -325,51 +318,59 @@ function EntryCard(props: EntryCardProps) {
                             tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
                         />
                     </div>
-                    <div className={styles.actions}>
-                        <EntryDeleteButton
-                            entryId={entry.id}
-                            onPendingChange={handleDeletePendingChange}
-                            onDeleteSuccess={handleDeleteSuccess}
-                            disabled={isDeleted}
-                        />
-                        <EntryOpenLink
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                            disabled={isDeleted}
-                        />
-                        <EntryCommentButton
-                            entryId={entry.id}
-                            commentCount={entry.unresolvedCommentCount}
-                            assignee={lead.assigneeDetails.id}
-                            disabled={isDeleted}
-                        />
-                        <EntryEditButton
-                            entry={entry}
-                            framework={framework}
-                            disabled={isDeleted}
-                            onEditSuccess={onEntryChange}
-                        />
-                        <EntryVerify
-                            title={entry.verificationLastChangedByDetails ? (
-                                _ts(
-                                    'entries',
-                                    'verificationLastChangedBy',
-                                    {
-                                        userName: entry
-                                            .verificationLastChangedByDetails.displayName,
-                                    },
-                                )
-                            ) : undefined}
-                            value={isVerified}
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            disabled={isDeleted}
-                            handleEntryVerify={handleVerificationChange}
-                            onPendingChange={setVerifyChangePending}
-                        />
-                    </div>
+                    <ListView
+                        className={styles.scaleWidgets}
+                        data={scaleWidgets}
+                        renderer={ListItem}
+                        rendererParams={scaleWidgetRendererParams}
+                        keySelector={widgetKeySelector}
+                        emptyComponent={EmptyComponent}
+                    />
                 </section>
+                <div className={styles.actions}>
+                    <EntryDeleteButton
+                        entryId={entry.id}
+                        onPendingChange={handleDeletePendingChange}
+                        onDeleteSuccess={handleDeleteSuccess}
+                        disabled={isDeleted}
+                    />
+                    <EntryOpenLink
+                        entryId={entry.id}
+                        leadId={entry.lead}
+                        projectId={entry.project}
+                        disabled={isDeleted}
+                    />
+                    <EntryCommentButton
+                        entryId={entry.id}
+                        commentCount={entry.unresolvedCommentCount}
+                        assignee={lead.assigneeDetails.id}
+                        disabled={isDeleted}
+                    />
+                    <EntryEditButton
+                        entry={entry}
+                        framework={framework}
+                        disabled={isDeleted}
+                        onEditSuccess={onEntryChange}
+                    />
+                    <EntryVerify
+                        title={entry.verificationLastChangedByDetails ? (
+                            _ts(
+                                'entries',
+                                'verificationLastChangedBy',
+                                {
+                                    userName: entry
+                                    .verificationLastChangedByDetails.displayName,
+                                },
+                            )
+                        ) : undefined}
+                        value={isVerified}
+                        entryId={entry.id}
+                        leadId={entry.lead}
+                        disabled={isDeleted}
+                        handleEntryVerify={handleVerificationChange}
+                        onPendingChange={setVerifyChangePending}
+                    />
+                </div>
             </div>
         </div>
     );

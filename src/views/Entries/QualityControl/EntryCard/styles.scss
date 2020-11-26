@@ -18,19 +18,23 @@
 }
 
 .entry-card-container {
+    display: flex;
     position: relative;
+    flex-direction: column;
 }
 
 .entry-card {
     display: flex;
+    position: relative;
     flex-direction: column;
+    flex-grow: 1;
     border: var(--width-separator-thin) solid var(--color-separator-light);
     border-top: var(--width-separator-thick) solid var(--color-info);
     box-shadow: 0 3px 9px -5px rgba(0, 0, 0, .5);
     background-color: var(--color-foreground);
     padding: calc(var(--spacing-large) - var(--spacing-medium));
     width: 346px;
-    overflow: auto;
+    overflow: hidden;
 
     &.verified {
         border-top-color: var(--color-success);
@@ -83,14 +87,6 @@
             }
         }
 
-        .scale-widgets {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            padding-right: calc(var(--spacing-medium) - var(--spacing-extra-small));
-            padding-left: calc(var(--spacing-medium) - var(--spacing-extra-small));
-        }
-
         .title-row {
             display: flex;
             align-items: center;
@@ -129,11 +125,14 @@
     }
 
     .bottom {
+        display: flex;
+        flex-direction: column;
         flex-shrink: 0;
         padding: calc(var(--spacing-medium) - var(--spacing-small)) 0;
 
         .row {
             display: flex;
+            flex-shrink: 0;
 
             .source {
                 display: flex;
@@ -164,9 +163,19 @@
             }
         }
 
+        .scale-widgets {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+
+            --width-marker-radius: 10px;
+        }
+
         .entry-details-row {
             display: flex;
             align-items: center;
+            flex-shrink: 0;
             overflow: auto;
 
             .created-by {
@@ -181,16 +190,33 @@
                 flex-shrink: 0;
             }
         }
+    }
 
-        .actions {
-            display: flex;
-            flex-shrink: 0;
-            justify-content: flex-end;
-            padding: var(--spacing-small) calc(var(--spacing-small) - var(--spacing-extra-small));
+    .actions {
+        display: flex;
+        position: absolute;
+        right: -100%;
+        bottom: 0;
+        flex-shrink: 0;
+        justify-content: flex-end;
+        transition: 0.2s all ease-in-out;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        border-left: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small) calc(var(--spacing-small) - var(--spacing-extra-small));
 
-            button {
-                margin: 0 var(--spacing-extra-small);
-            }
+        button {
+            margin: 0 var(--spacing-extra-small);
         }
     }
+
+    &:hover {
+        .actions {
+            right: 0;
+        }
+    }
+}
+
+.empty-component {
+    height: calc(var(--font-size-medium) + 4 * var(--spacing-extra-small));
 }
