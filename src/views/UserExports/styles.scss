@@ -88,6 +88,11 @@
                         justify-content: center;
                     }
 
+                    .to-be-started {
+                        display: flex;
+                        justify-content: center;
+                    }
+
                     .file-error {
                         display: flex;
                         justify-content: center;
@@ -103,6 +108,15 @@
             flex-shrink: 0;
             border-left: var(--width-separator-thin) solid var(--color-separator);
             background-color: var(--color-foreground-alt);
+        }
+    }
+
+    .footer {
+        display: flex;
+        justify-content: flex-end;
+
+        .pager {
+            padding: var(--spacing-extra-small) 0;
         }
     }
 }

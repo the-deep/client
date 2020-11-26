@@ -43,7 +43,6 @@ export * from './reducers/domainData/leadFilter';
 export * from './reducers/domainData/entryFilter';
 export * from './reducers/domainData/projects';
 export * from './reducers/domainData/regions';
-export * from './reducers/domainData/userExports';
 export * from './reducers/domainData/userGroups';
 export * from './reducers/domainData/users';
 export * from './reducers/domainData/categoryEditors';

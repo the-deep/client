@@ -63,6 +63,7 @@ const iconNames = {
     help: 'ion-help-circled',
     helpOutlined: 'ion-ios-help-outline',
     histogram: 'ion-arrow-graph-up-right',
+    history: 'fa fa-history',
     horizontalBar: 'ion-navicon',
     info: 'ion-ios-information',
     infoOutline: 'ion-ios-information-outline',
