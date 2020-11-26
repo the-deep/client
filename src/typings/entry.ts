@@ -1,4 +1,3 @@
-import { Attributes } from 'react';
 import { DatabaseEntityBase } from './common';
 import { Lead } from './lead';
 

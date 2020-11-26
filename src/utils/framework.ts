@@ -455,24 +455,22 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
                     const widgetAttributeData = entry
                         .attributes[id]?.data?.value as ConditionalAttribute;
 
-                    if (widgetAttributeData?.selectedWidgetKey) {
-                        const { selectedWidgetKey } = widgetAttributeData;
+                    if (!widgetAttributeData?.selectedWidgetKey) {
+                        return undefined;
+                    }
+                    const { selectedWidgetKey } = widgetAttributeData;
+                    const attributeData = widgetAttributeData[selectedWidgetKey];
 
-                        if (selectedWidgetKey) {
-                            const attributeData = widgetAttributeData[selectedWidgetKey];
+                    if (attributeData && isWidgetData(attributeData)) {
+                        const {
+                            properties: {
+                                data: {
+                                    scaleUnits,
+                                },
+                            },
+                        } = widget as WidgetElement<ScaleWidget>;
 
-                            if (attributeData && isWidgetData(attributeData)) {
-                                const {
-                                    properties: {
-                                        data: {
-                                            scaleUnits,
-                                        },
-                                    },
-                                } = widget as WidgetElement<ScaleWidget>;
-
-                                return scaleUnits.find(v => v.key === attributeData.data.value);
-                            }
-                        }
+                        return scaleUnits.find(v => v.key === attributeData.data.value);
                     }
                     return undefined;
                 });
