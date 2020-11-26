@@ -24,6 +24,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     reportStructure: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    contextualWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     textWidgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     entryFilterOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeExportTypeKey: PropTypes.string.isRequired,
@@ -33,6 +34,7 @@ const propTypes = {
     onShowGroupsChange: PropTypes.bool.isRequired,
     onExportTypeChange: PropTypes.func.isRequired,
     onReportStructureChange: PropTypes.func.isRequired,
+    onContextualWidgetsChange: PropTypes.func.isRequired,
     onTextWidgetsChange: PropTypes.func.isRequired,
     onReportStructureVariantChange: PropTypes.func.isRequired,
     onDecoupledEntriesChange: PropTypes.func.isRequired,
@@ -40,6 +42,7 @@ const propTypes = {
 
 const defaultProps = {
     reportStructure: undefined,
+    contextualWidgets: [],
     textWidgets: [],
     entryFilterOptions: {},
 };
@@ -120,8 +123,10 @@ export default class ExportTypePane extends React.PureComponent {
             reportStructure,
             reportStructureVariant,
             onReportStructureChange,
+            onContextualWidgetsChange,
             onTextWidgetsChange,
             onReportStructureVariantChange,
+            contextualWidgets,
             textWidgets,
             showGroups,
             onShowGroupsChange,
@@ -140,7 +145,11 @@ export default class ExportTypePane extends React.PureComponent {
 
         const showTextWidgetSelection = textWidgets.length > 0;
         const showEntryGroupsSelection = projectEntryLabel && projectEntryLabel.length > 0;
-        const showContentSettings = showTextWidgetSelection || showEntryGroupsSelection;
+        const showContextualWidgetSelection = contextualWidgets.length > 0;
+        const showContentSettings =
+            showTextWidgetSelection
+            || showEntryGroupsSelection
+            || showContextualWidgetSelection;
 
         return (
             <div className={styles.reportOptions}>
@@ -181,6 +190,13 @@ export default class ExportTypePane extends React.PureComponent {
                                     label={_ts('export', 'textWidgetLabel')}
                                     value={textWidgets}
                                     onChange={onTextWidgetsChange}
+                                />
+                            )}
+                            {showContextualWidgetSelection && (
+                                <TreeSelection
+                                    label={_ts('export', 'contextualWidgetLabel')}
+                                    value={contextualWidgets}
+                                    onChange={onContextualWidgetsChange}
                                 />
                             )}
                         </div>

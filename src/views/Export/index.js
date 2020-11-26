@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
-import { listToMap } from '@togglecorp/fujs';
+import { listToMap, compareString } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import update from '#rsu/immutable-update';
@@ -78,6 +78,18 @@ const defaultProps = {
     entryFilterOptions: {},
 };
 
+const contextualWidgetTypes = [
+    'selectWidget',
+    'multiselectWidget',
+    'scaleWidget',
+    'geoWidget',
+    'timeWidget',
+    'dateWidget',
+    'organigramWidget',
+    'dateRangeWidget',
+    'timeRangeWidget',
+];
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -107,12 +119,15 @@ export default class Export extends React.PureComponent {
 
         const textWidgets = this.getTextWidgetsFromFramework(analysisFramework);
 
+        const contextualWidgets = this.getContextualWidgetsFromFramwork(analysisFramework);
+
         this.state = {
             activeExportTypeKey: 'word',
             previewId: undefined,
             decoupledEntries: true,
 
             textWidgets,
+            contextualWidgets,
             showGroups: true,
             reportStructure,
             reportStructureVariant: SECTOR_FIRST,
@@ -184,6 +199,7 @@ export default class Export extends React.PureComponent {
                     .filter(w => w.widget && w.widget.widgetId === 'textWidget')
                     .map(({ widget }) => (
                         {
+                            key: widget.key,
                             id: widget.key,
                             title: `${title} › ${widget.title}`,
                             actualTitle: widget.title,
@@ -196,6 +212,57 @@ export default class Export extends React.PureComponent {
             }).flat();
 
         return [...textWidgets, ...textWidgetsInsideConditionals];
+    }
+
+    getContextualWidgetsFromFramwork = ({ widgets } = {}) => {
+        if (!widgets) {
+            return [];
+        }
+
+        const isContextualWidget = id => contextualWidgetTypes.some(w => w === id);
+
+        const contextualWidgets = widgets
+            .filter(({ widgetId }) => isContextualWidget(widgetId))
+            .sort((a, b) => compareString(a.widgetId, b.widgetId))
+            .map(w => ({
+                title: w.title,
+                key: w.key,
+                id: w.id,
+                selected: true,
+                draggable: true,
+            }));
+
+        const contextualWidgetsInsideConditionals = widgets
+            .filter(w => w.widgetId === 'conditionalWidget')
+            .map((conditional) => {
+                const {
+                    title,
+                    id,
+                    properties: {
+                        data: {
+                            widgets: widgetsInsideConditional = [],
+                        } = {},
+                    } = {},
+                } = conditional;
+
+                return widgetsInsideConditional
+                    .filter(w => w.widget && isContextualWidget(w.widget.widgetId))
+                    .sort((a, b) => compareString(a.widgetId, b.widgetId))
+                    .map(({ widget }) => (
+                        {
+                            key: widget.key,
+                            id: widget.key,
+                            title: `${title} › ${widget.title}`,
+                            actualTitle: widget.title,
+                            conditionalId: id,
+                            isConditional: true,
+                            selected: true,
+                            draggable: true,
+                        }
+                    ));
+            }).flat();
+
+        return [...contextualWidgets, ...contextualWidgetsInsideConditionals];
     }
 
     handleSelectedLeadsSet = (response) => {
@@ -279,6 +346,10 @@ export default class Export extends React.PureComponent {
         this.setState({ textWidgets });
     }
 
+    handleContextualWidgetsSelection = (contextualWidgets) => {
+        this.setState({ contextualWidgets });
+    }
+
     handleReportStructureVariantChange = (value) => {
         const { analysisFramework } = this.props;
 
@@ -312,6 +383,7 @@ export default class Export extends React.PureComponent {
             decoupledEntries,
             selectedLeads,
             textWidgets,
+            contextualWidgets,
             showGroups,
             leads = [],
         } = this.state;
@@ -356,6 +428,7 @@ export default class Export extends React.PureComponent {
                         analysisFramework={analysisFramework}
                         geoOptions={geoOptions}
                         textWidgets={textWidgets}
+                        contextualWidgets={contextualWidgets}
                     />
                 }
                 mainContentClassName={styles.mainContent}
@@ -398,10 +471,12 @@ export default class Export extends React.PureComponent {
                             activeExportTypeKey={activeExportTypeKey}
                             reportStructure={reportStructure}
                             textWidgets={textWidgets}
+                            contextualWidgets={contextualWidgets}
                             reportStructureVariant={reportStructureVariant}
                             decoupledEntries={decoupledEntries}
                             onExportTypeChange={this.handleExportTypeSelectButtonClick}
                             onReportStructureChange={this.handleReportStructureChange}
+                            onContextualWidgetsChange={this.handleContextualWidgetsSelection}
                             onTextWidgetsChange={this.handleTextWidgetsSelection}
                             entryFilterOptions={entryFilterOptions}
                             showGroups={showGroups}
