@@ -27,7 +27,6 @@ import {
     categoryEditorsSelector,
     aryTemplatesSelector,
     regionsListSelector,
-    userExportsSelector,
 
     projectRolesSelector,
 } from './state';
@@ -43,17 +42,6 @@ const currentUserSelector = createSelector(
     usersSelector,
     (activeUser, users) => (users[activeUser.userId] || emptyObject),
 );
-
-export const userExportsListSelector = createSelector(
-    userExportsSelector,
-    projectIdFromRoute,
-    (userExports, projectId) => (
-        (userExports[projectId] && Object.values(userExports[projectId]).filter(
-            userExport => userExport,
-        )) || emptyList
-    ),
-);
-// OTHERS
 
 // countryIdFromRoute
 export const countryDetailSelector = createSelector(

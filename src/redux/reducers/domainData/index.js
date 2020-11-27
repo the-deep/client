@@ -9,7 +9,6 @@ import projectsReducers from './projects';
 import regionsReducers from './regions';
 import userGroupsReducers from './userGroups';
 import usersReducers from './users';
-import userExportsReducers from './userExports';
 import connectorReducers from './connectors';
 import commonReducers from './common';
 import pagesInfo from './pagesInfo';
@@ -28,7 +27,6 @@ const reducers = {
     ...regionsReducers,
     ...userGroupsReducers,
     ...usersReducers,
-    ...userExportsReducers,
     ...commonReducers,
     ...connectorReducers,
     ...pagesInfo,

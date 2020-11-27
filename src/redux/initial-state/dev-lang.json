@@ -963,7 +963,7 @@
         "-56943688": "Edit details",
         "-59011405": "No. of Pages",
         "-86287086": "No framework is currently selected.",
-        "-28816005": "To be started",
+        "-28816005": "Processing",
         "-31511044": "Authoring Organization",
         "-30790313": "Same as publishing organization",
         "-67237579": "Focus",
@@ -1211,7 +1211,8 @@
         "-879879798": "Unverified entries",
         "-897879798": "Verified entries",
         "-978987098": "Showing entries based on ",
-        "-72741271": "Showing all entries"
+        "-72741271": "Showing all entries",
+        "-55557162": "This export is currently in queue to be exported and has not been started."
     },
     "links": {
         "browserExtension": {
@@ -1725,14 +1726,13 @@
             "leadAttributesLabel": 610,
             "createdAtLabel": 163,
             "userExportsTitle": 621,
-            "userExportsFataMessage": 622,
             "documentTypeHeaderLabel": 623,
             "exportedAtHeaderLabel": 624,
             "exportTitleHeaderLabel": 13,
             "statusHeaderLabel": 8,
             "exportTypeHeaderLabel": 627,
             "exportDownloadHeaderLabel": 628,
-            "pendingStatusLabel": -28816005,
+            "pendingStatusLabel": 629,
             "errorStatusLabel": 630,
             "completedStatusLabel": 631,
             "userExportsHeader": 632,
@@ -1752,7 +1752,7 @@
             "startPlannedAssessmentExportButtonLabel": -8007367,
             "geoLabel": -80682543,
             "cantLoadGeo": 534,
-            "startedStatusLabel": 629,
+            "startedStatusLabel": -28816005,
             "dimensionFirstExportTypeLabel": -51656640,
             "sectorFirstExportTypeLabel": -74878255,
             "orderMatrix2D": -49902146,
@@ -1760,8 +1760,11 @@
             "contextualWidgetLabel": -1797083,
             "contentSettingsText": -66927638,
             "showEntryGroupsLabel": -99420745,
-            "structureLabel": -96285781
-        },        "fourHundredFour": {
+            "structureLabel": -96285781,
+            "userExportsFailure": 622,
+            "toBeStartedTitle": -55557162
+        },
+        "fourHundredFour": {
             "errorFourHundredFour": 870,
             "message1": 871,
             "message2": 872,

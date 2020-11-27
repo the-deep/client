@@ -11,10 +11,6 @@ export const pagesInfoSelector = ({ domainData }) => (
     domainData.pagesInfo || emptyObject
 );
 
-export const userExportsSelector = ({ domainData }) => (
-    domainData.userExports || emptyObject
-);
-
 export const leadsSelector = ({ domainData }) => (
     domainData.leads || emptyObject
 );
