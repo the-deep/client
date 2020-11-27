@@ -58,7 +58,9 @@ export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFi
             return;
         }
 
-        const widget = widgetsMapping[filterKey];
+        // NOTE: Filter keys are suffixed with -dimensions and -sectors for matrix1D & 2D
+        const modifiedFilterKey = filterKey.replace(/-(dimensions|sectors)$/, '');
+        const widget = widgetsMapping[modifiedFilterKey];
         const { widgetId } = widget || {};
 
         // TODO: handle static filters
