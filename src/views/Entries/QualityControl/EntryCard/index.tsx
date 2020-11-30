@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -12,10 +12,13 @@ import EntryOpenLink from '#components/general/EntryOpenLink';
 import EntryVerify from '#components/general/EntryVerify';
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
-import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
-import useRequest from '#utils/request';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
+import ListItem, { DefaultIcon } from '#rscv/ListItem';
+
+import useRequest from '#utils/request';
+import { getScaleWidgetsData } from '#utils/framework';
 
 import LeadPreview from '#views/Leads/LeadPreview';
 import LeadEditModal from '#components/general/LeadEditModal';
@@ -42,13 +45,15 @@ import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
 
+const EmptyComponent = () => (<div className={styles.emptyComponent} />);
+
 interface AuthorListOutputProps {
     className?: string;
     value: OrganizationFields[];
 }
 
 const entryTypeToValueMap: {
-    [key in EntryType]: keyof EntryFields;
+    [key in EntryType]: 'excerpt' | 'image' | 'tabularFieldData';
 } = {
     excerpt: 'excerpt',
     image: 'image',
@@ -62,6 +67,14 @@ const entryTypeToExcerptTypeMap: {
     image: 'image',
     dataSeries: 'dataSeries',
 };
+
+interface ScaleWidget {
+    key: string;
+    color?: string;
+    label: string;
+}
+
+const widgetKeySelector = (d: ScaleWidget) => d.key;
 
 function AuthorListOutput(props: AuthorListOutputProps) {
     const {
@@ -175,9 +188,19 @@ function EntryCard(props: EntryCardProps) {
 
     const loading = verifiyChangePending;
 
+    const scaleWidgets = useMemo(() => getScaleWidgetsData(framework, entry), [framework, entry]);
+
+    const scaleWidgetRendererParams = useCallback((_: string, d: ScaleWidget) => {
+        const icons = <DefaultIcon color={d.color} title={d.label} />
+        return {
+            icons,
+            value: d.label,
+        }
+    }, []);
+
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
-            {loading && <LoadingAnimation />}
+        {loading && <LoadingAnimation />}
             <div
                 className={_cs(
                     styles.entryCard,
@@ -295,51 +318,59 @@ function EntryCard(props: EntryCardProps) {
                             tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
                         />
                     </div>
-                    <div className={styles.actions}>
-                        <EntryDeleteButton
-                            entryId={entry.id}
-                            onPendingChange={handleDeletePendingChange}
-                            onDeleteSuccess={handleDeleteSuccess}
-                            disabled={isDeleted}
-                        />
-                        <EntryOpenLink
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                            disabled={isDeleted}
-                        />
-                        <EntryCommentButton
-                            entryId={entry.id}
-                            commentCount={entry.unresolvedCommentCount}
-                            assignee={lead.assigneeDetails.id}
-                            disabled={isDeleted}
-                        />
-                        <EntryEditButton
-                            entry={entry}
-                            framework={framework}
-                            disabled={isDeleted}
-                            onEditSuccess={onEntryChange}
-                        />
-                        <EntryVerify
-                            title={entry.verificationLastChangedByDetails ? (
-                                _ts(
-                                    'entries',
-                                    'verificationLastChangedBy',
-                                    {
-                                        userName: entry
-                                            .verificationLastChangedByDetails.displayName,
-                                    },
-                                )
-                            ) : undefined}
-                            value={isVerified}
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            disabled={isDeleted}
-                            handleEntryVerify={handleVerificationChange}
-                            onPendingChange={setVerifyChangePending}
-                        />
-                    </div>
+                    <ListView
+                        className={styles.scaleWidgets}
+                        data={scaleWidgets}
+                        renderer={ListItem}
+                        rendererParams={scaleWidgetRendererParams}
+                        keySelector={widgetKeySelector}
+                        emptyComponent={EmptyComponent}
+                    />
                 </section>
+                <div className={styles.actions}>
+                    <EntryDeleteButton
+                        entryId={entry.id}
+                        onPendingChange={handleDeletePendingChange}
+                        onDeleteSuccess={handleDeleteSuccess}
+                        disabled={isDeleted}
+                    />
+                    <EntryOpenLink
+                        entryId={entry.id}
+                        leadId={entry.lead}
+                        projectId={entry.project}
+                        disabled={isDeleted}
+                    />
+                    <EntryCommentButton
+                        entryId={entry.id}
+                        commentCount={entry.unresolvedCommentCount}
+                        assignee={lead.assigneeDetails.id}
+                        disabled={isDeleted}
+                    />
+                    <EntryEditButton
+                        entry={entry}
+                        framework={framework}
+                        disabled={isDeleted}
+                        onEditSuccess={onEntryChange}
+                    />
+                    <EntryVerify
+                        title={entry.verificationLastChangedByDetails ? (
+                            _ts(
+                                'entries',
+                                'verificationLastChangedBy',
+                                {
+                                    userName: entry
+                                    .verificationLastChangedByDetails.displayName,
+                                },
+                            )
+                        ) : undefined}
+                        value={isVerified}
+                        entryId={entry.id}
+                        leadId={entry.lead}
+                        disabled={isDeleted}
+                        handleEntryVerify={handleVerificationChange}
+                        onPendingChange={setVerifyChangePending}
+                    />
+                </div>
             </div>
         </div>
     );

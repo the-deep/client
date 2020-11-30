@@ -16,9 +16,9 @@ export interface ProjectLabelFields {
 export interface AttributeFields {
     id: number;
     data?: {
-        value: {
+        value?: {
             [index: string]: unknown;
-        };
+        } | string;
     };
 }
 
@@ -56,7 +56,9 @@ export interface TabularDataFields {
 }
 
 export interface EntryFields extends DatabaseEntityBase {
-    attributes: AttributeFields[];
+    attributes: {
+        [key: string]: AttributeFields;
+    };
     analysisFramework: number;
     entryType: EntryType;
     project: number;
