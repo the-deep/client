@@ -97,7 +97,15 @@ export type Entry = Omit<EntryFields, 'lead'> & {
     lead: number;
 }
 
+export interface TocItemCount {
+    labelKey: string;
+    widgetKey: string;
+    unverifiedCount: number;
+    verifiedCount: number;
+}
+
 export interface EntrySummary {
+    countPerTocItem?: TocItemCount[];
     totalLeads: number;
     totalSources: number;
     totalUnverifiedEntries: number;
@@ -110,4 +118,10 @@ export interface EntrySummary {
             shortName?: string;
         };
     }[];
+}
+
+export interface TocCountMap {
+    [key: string]: {
+        [key: string]: TocItemCount;
+    };
 }

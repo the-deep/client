@@ -18,6 +18,8 @@ interface Props<T, K extends string | number>{
     idSelector: (datum: T) => K;
     keySelector: (datum: T) => K | undefined;
     labelSelector: (datum: T) => K;
+    verifiedCountSelector: (datum: T) => number | undefined;
+    unverifiedCountSelector: (datum: T) => number | undefined;
     childrenSelector: (datum: T) => T[] | undefined;
     onChange: (value: T[]) => void;
     options: T[];
@@ -52,6 +54,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         childrenSelector,
         defaultCollapseLevel,
         className,
+        verifiedCountSelector,
+        unverifiedCountSelector,
         multiple = false,
     } = props;
 
@@ -59,6 +63,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const id = idSelector(option);
     const title = labelSelector(option);
     const children = childrenSelector(option);
+    const verifiedCount = verifiedCountSelector(option);
+    const unverifiedCount = unverifiedCountSelector(option);
 
     const handleClick = useCallback(
         () => {
@@ -109,7 +115,15 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                     role="button"
                     tabIndex={0}
                 >
-                    {title}
+                    <div className={styles.title}>{title}</div>
+                    <div className={styles.count}>
+                        { isDefined(verifiedCount) && (
+                            <div className={styles.item}>verified: {verifiedCount}</div>
+                        )}
+                        { isDefined(unverifiedCount) && (
+                            <div className={styles.item}>unverified: {unverifiedCount}</div>
+                        )}
+                    </div>
                 </div>
                 { children && children.length > 0 && (
                     <div className={styles.actions}>

@@ -4,9 +4,11 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {
     _cs,
-    listToGroupList,
     mapToList,
     isDefined,
+    listToGroupList,
+    mapToMap,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import Pager from '#rscv/Pager';
@@ -18,7 +20,7 @@ import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/ListItem';
 import Icon from '#rscg/Icon';
 
-import { EntryFields, EntrySummary } from '#typings/entry';
+import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
@@ -76,9 +78,13 @@ interface EntriesWithSummaryResponse<T> extends MultiResponse<T>{
     summary: EntrySummary;
 }
 
+const tocFilterKeySelector = (d: MatrixKeyId) => d.key;
+const tocFilterIdSelector = (d: MatrixKeyId) => d.id;
 const keySelector = (d: MatrixTocElement) => d.key;
 const idSelector = (d: MatrixTocElement) => d.id;
 const labelSelector = (d: MatrixTocElement) => d.title;
+const verifiedCountSelector = (d: MatrixTocElement) => d.verified;
+const unverifiedCountSelector = (d: MatrixTocElement) => d.unverified;
 const childrenSelector = (d: MatrixTocElement) => d.children;
 const entryKeySelector = (d: EntryFields) => d.id;
 
@@ -113,17 +119,18 @@ function QualityControl(props: Props) {
         parentFooterRef,
     } = props;
 
-    const matrixToc = useMemo(
-        () => [
-            ...getMatrix1dToc(framework),
-            ...getMatrix2dToc(framework),
-        ],
-        [framework],
-    );
-
     const [entries, setEntries] = useState<EntryFields[]>([]);
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary | undefined>();
+    const [tocCount, setTocCount] = useState<TocCountMap>({});
+
+    const matrixToc = useMemo(
+        () => [
+            ...getMatrix1dToc(framework, tocCount),
+            ...getMatrix2dToc(framework, tocCount),
+        ],
+        [framework, tocCount],
+    );
 
     const requestFilters = useMemo(() => {
         const projectFilter = ['project', projectId];
@@ -135,8 +142,8 @@ function QualityControl(props: Props) {
         );
         const groupedSelections = listToGroupList(
             tocFilters,
-            v => keySelector(v),
-            v => idSelector(v),
+            v => tocFilterKeySelector(v),
+            v => tocFilterIdSelector(v),
         );
         const processedTocFilters = mapToList(
             groupedSelections,
@@ -172,6 +179,7 @@ function QualityControl(props: Props) {
     ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
         url: 'server://entries/filter/',
         query: {
+            calculate_count_per_toc_item: 1,
             calculate_summary: 1,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
@@ -179,6 +187,12 @@ function QualityControl(props: Props) {
         body: requestFilters as object,
         method: 'POST',
         onSuccess: (response) => {
+            const tocCount = mapToMap(
+                listToGroupList(response.summary?.countPerTocItem?? [], d => d.widgetKey),
+                k => k,
+                e => listToMap(e, i => i.labelKey),
+            );
+            setTocCount(tocCount);
             setEntries(response.results);
             setStats(response.summary);
             setEntriesCount({ count: response.count });
@@ -193,6 +207,7 @@ function QualityControl(props: Props) {
     ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
         url: 'server://entries/filter/',
         query: {
+            calculate_count_per_toc_item: 1,
             calculate_summary: 1,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
@@ -200,6 +215,12 @@ function QualityControl(props: Props) {
         body: requestFilters as object,
         method: 'POST',
         onSuccess: (response) => {
+            const tocCount = mapToMap(
+                listToGroupList(response.summary?.countPerTocItem?? [], d => d.widgetKey),
+                k => k,
+                e => listToMap(e, i => i.labelKey),
+            );
+            setTocCount(tocCount);
             setStats(response.summary);
         },
     });
@@ -303,6 +324,8 @@ function QualityControl(props: Props) {
                             keySelector={keySelector}
                             labelSelector={labelSelector}
                             childrenSelector={childrenSelector}
+                            verifiedCountSelector={verifiedCountSelector}
+                            unverifiedCountSelector={unverifiedCountSelector}
                             onChange={handleSelection}
                             value={tocFilters}
                             defaultCollapseLevel={5}
@@ -327,7 +350,7 @@ function QualityControl(props: Props) {
                                 <ListView
                                     className={styles.tocFilterNames}
                                     data={tocFilters}
-                                    keySelector={idSelector}
+                                    keySelector={tocFilterIdSelector}
                                     renderer={ListItem}
                                     rendererParams={tocFilterRendererParams}
                                 />

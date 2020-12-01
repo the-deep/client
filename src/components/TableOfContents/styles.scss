@@ -2,7 +2,7 @@
     .toc-item {
         margin: 0 calc(var(--spacing-medium) - var(--spacing-small));
         border-left: var(--width-separator-thin) solid transparent;
-        
+
         .header {
             display: flex;
             align-items: center;
@@ -10,13 +10,29 @@
             &:hover {
                 background-color: var(--color-background-hover);
             }
-            
+
             .heading {
+                display: flex;
+                align-content: space-between;
                 flex-grow: 1;
                 outline: none;
                 cursor: pointer;
                 padding: var(--spacing-small);
                 padding-right: 0;
+
+                .title {
+                    flex-grow: 1;
+                    padding-right: var(--spacing-small);
+                }
+                .count {
+                    display: flex;
+                    align-content: space-between;
+
+                    .item {
+                        padding-right: var(--spacing-small);
+                        padding-left: var(--spacing-small);
+                    }
+                }
             }
 
             .actions {
