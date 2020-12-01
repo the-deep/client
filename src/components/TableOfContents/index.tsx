@@ -8,6 +8,7 @@ import {
 import Button from '#rsca/Button';
 import ListView from '#rsu/../v2/View/ListView';
 import Message from '#rscv/Message';
+import Badge from '#components/viewer/Badge';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -99,6 +100,10 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         value.some(v => idSelector(v) === id)
     ), [value, idSelector, id]);
 
+    const totalEntries = useMemo(() => (
+        (verifiedCount ?? 0) + (unverifiedCount ?? 0)
+    ), [verifiedCount, unverifiedCount]);
+
     return (
         <div className={_cs(
             className,
@@ -116,14 +121,21 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                     tabIndex={0}
                 >
                     <div className={styles.title}>{title}</div>
-                    <div className={styles.count}>
-                        { isDefined(verifiedCount) && (
-                            <div className={styles.item}>verified: {verifiedCount}</div>
-                        )}
-                        { isDefined(unverifiedCount) && (
-                            <div className={styles.item}>unverified: {unverifiedCount}</div>
-                        )}
-                    </div>
+                    {totalEntries > 0 && (
+                        <Badge
+                            className={styles.count}
+                            title={`${verifiedCount ?? 0} of ${totalEntries}`}
+                            tooltip={_ts(
+                            'entries.qualityControl',
+                            'verifiedCountTooltip',
+                                {
+                                    verified: verifiedCount ?? 0,
+                                    total: totalEntries,
+                                },
+                            )}
+                            titleClassName={styles.title}
+                        />
+                    )}
                 </div>
                 { children && children.length > 0 && (
                     <div className={styles.actions}>

@@ -1212,7 +1212,8 @@
         "-897879798": "Verified entries",
         "-978987098": "Showing entries based on ",
         "-72741271": "Showing all entries",
-        "-55557162": "This export is currently in queue to be exported and has not been started."
+        "-55557162": "This export is currently in queue to be exported and has not been started.",
+        "-11119478": "{verified} out of {total} entries are verified in this category."
     },
     "links": {
         "browserExtension": {
@@ -3466,7 +3467,8 @@
             "totalUnverifiedEntries": -879879798,
             "totalVerifiedEntries": -897879798,
             "selectedTocFilters": -978987098,
-            "noSelectedTocFilters": -72741271
+            "noSelectedTocFilters": -72741271,
+            "verifiedCountTooltip": -11119478
         },
         "qualityControl": {
             "matrix1dTitle": -90901113,

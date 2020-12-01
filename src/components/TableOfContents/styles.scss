@@ -17,20 +17,17 @@
                 flex-grow: 1;
                 outline: none;
                 cursor: pointer;
-                padding: var(--spacing-small);
+                padding: var(--spacing-small) var(--spacing-medium);
                 padding-right: 0;
 
                 .title {
                     flex-grow: 1;
                     padding-right: var(--spacing-small);
                 }
-                .count {
-                    display: flex;
-                    align-content: space-between;
 
-                    .item {
-                        padding-right: var(--spacing-small);
-                        padding-left: var(--spacing-small);
+                .count {
+                    .title {
+                        text-transform: unset;
                     }
                 }
             }
@@ -56,16 +53,10 @@
 
         .toc-item {
             margin-right: 0;
-            border-left: var(--width-separator-thin) dotted var(--color-text-label);
+            border-left: var(--width-separator-thin) solid var(--color-separator);
 
             .header {
                 position: relative;
-
-                &:before {
-                    position: absolute;
-                    color: var(--color-text-label);
-                    content: '-';
-                }
             }
         }
 
