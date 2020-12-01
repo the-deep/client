@@ -15,6 +15,7 @@ import {
     WidgetElement,
     ConditionalWidget,
     Entry,
+    TocCountMap,
 } from '#typings';
 
 export const SECTOR_FIRST = 'sectorFirst';
@@ -276,7 +277,10 @@ export const getMatrix2dStructures = (framework: MiniFrameworkElement | undefine
     };
 };
 
-export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
+export const getMatrix1dToc = (
+    framework: FrameworkFields | undefined,
+    tocCount: TocCountMap,
+): MatrixTocElement[] => {
     if (!framework || doesObjectHaveNoData(framework)) {
         return emptyArray;
     }
@@ -311,12 +315,26 @@ export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTo
             const transformedCells = cells.map(({
                 key: cellKey,
                 value,
-            }) => ({ id: cellKey, key, title: value }));
+            }) => {
+                const count = tocCount?.[key]?.[cellKey];
+
+                return ({
+                    id: cellKey,
+                    key,
+                    title: value,
+                    verified: count?.verifiedCount,
+                    unverified: count?.unverifiedCount,
+                });
+            });
+
+            const count = tocCount?.[key]?.[rowKey];
 
             return ({
                 id: rowKey,
                 key,
                 title: rowTitle,
+                verified: count?.verifiedCount,
+                unverified: count?.unverifiedCount,
                 children: transformedCells,
             });
         });
@@ -331,7 +349,11 @@ export const getMatrix1dToc = (framework: FrameworkFields | undefined): MatrixTo
     return toc.filter(isDefined);
 };
 
-export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTocElement[] => {
+export const getMatrix2dToc = (
+    framework: FrameworkFields | undefined,
+    tocCount: TocCountMap,
+
+): MatrixTocElement[] => {
     if (!framework || doesObjectHaveNoData(framework)) {
         return emptyArray;
     }
@@ -367,13 +389,27 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
                 ({
                     id: subDimensionId,
                     title: subDimensionTitle,
-                }) => ({ id: subDimensionId, key: dimensionKey, title: subDimensionTitle }),
+                }) => {
+                    const count = tocCount?.[key]?.[subDimensionId];
+
+                    return {
+                        id: subDimensionId,
+                        key: dimensionKey,
+                        title: subDimensionTitle,
+                        verified: count?.verifiedCount,
+                        unverified: count?.unverifiedCount,
+                    };
+                },
             );
+
+            const count = tocCount?.[key]?.[dimensionId];
 
             return ({
                 id: dimensionId,
                 key: dimensionKey,
                 title: dimensionTitle,
+                verified: count?.verifiedCount,
+                unverified: count?.unverifiedCount,
                 children: transformedSubDimensions,
             });
         });
@@ -385,13 +421,27 @@ export const getMatrix2dToc = (framework: FrameworkFields | undefined): MatrixTo
                 ({
                     id: subSectorId,
                     title: subSectorTitle,
-                }) => ({ id: subSectorId, key: sectorKey, title: subSectorTitle }),
+                }) => {
+                    const count = tocCount?.[key]?.[subSectorId];
+
+                    return {
+                        id: subSectorId,
+                        key: sectorKey,
+                        title: subSectorTitle,
+                        verified: count?.verifiedCount,
+                        unverified: count?.unverifiedCount,
+                    };
+                },
             );
+
+            const count = tocCount?.[key]?.[sectorId];
 
             return ({
                 id: sectorId,
                 key: sectorKey,
                 title: sectorTitle,
+                verified: count?.verifiedCount,
+                unverified: count?.unverifiedCount,
                 children: transformedSubSectors,
             });
         });

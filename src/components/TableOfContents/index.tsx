@@ -8,6 +8,7 @@ import {
 import Button from '#rsca/Button';
 import ListView from '#rsu/../v2/View/ListView';
 import Message from '#rscv/Message';
+import Badge from '#components/viewer/Badge';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -18,6 +19,8 @@ interface Props<T, K extends string | number>{
     idSelector: (datum: T) => K;
     keySelector: (datum: T) => K | undefined;
     labelSelector: (datum: T) => K;
+    verifiedCountSelector: (datum: T) => number | undefined;
+    unverifiedCountSelector: (datum: T) => number | undefined;
     childrenSelector: (datum: T) => T[] | undefined;
     onChange: (value: T[]) => void;
     options: T[];
@@ -52,6 +55,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         childrenSelector,
         defaultCollapseLevel,
         className,
+        verifiedCountSelector,
+        unverifiedCountSelector,
         multiple = false,
     } = props;
 
@@ -59,6 +64,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const id = idSelector(option);
     const title = labelSelector(option);
     const children = childrenSelector(option);
+    const verifiedCount = verifiedCountSelector(option);
+    const unverifiedCount = unverifiedCountSelector(option);
 
     const handleClick = useCallback(
         () => {
@@ -93,6 +100,10 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         value.some(v => idSelector(v) === id)
     ), [value, idSelector, id]);
 
+    const totalEntries = useMemo(() => (
+        (verifiedCount ?? 0) + (unverifiedCount ?? 0)
+    ), [verifiedCount, unverifiedCount]);
+
     return (
         <div className={_cs(
             className,
@@ -109,7 +120,22 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                     role="button"
                     tabIndex={0}
                 >
-                    {title}
+                    <div className={styles.title}>{title}</div>
+                    {totalEntries > 0 && (
+                        <Badge
+                            className={styles.count}
+                            title={`${verifiedCount ?? 0} of ${totalEntries}`}
+                            tooltip={_ts(
+                            'entries.qualityControl',
+                            'verifiedCountTooltip',
+                                {
+                                    verified: verifiedCount ?? 0,
+                                    total: totalEntries,
+                                },
+                            )}
+                            titleClassName={styles.title}
+                        />
+                    )}
                 </div>
                 { children && children.length > 0 && (
                     <div className={styles.actions}>

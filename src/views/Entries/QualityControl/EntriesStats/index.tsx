@@ -14,7 +14,7 @@ interface Stats {
     value?: number;
 }
 
-type StaticEntrySummary = Omit<EntrySummary, 'orgTypeCount'>;
+type StaticEntrySummary = Omit<EntrySummary, 'orgTypeCount' | 'countPerTocItem'>;
 
 const staticEntryStatTitles: { [ key in (keyof StaticEntrySummary)]: string } = {
     totalLeads: _ts('entries.qualityControl', 'totalLeads'),
