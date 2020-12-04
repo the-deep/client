@@ -396,7 +396,9 @@ function FilterEntriesForm(props) {
                                     );
                                 }}
                                 showHintAndError={false}
-                                value={selectedVerification ? selectedVerification.key : undefined}
+                                value={(
+                                    selectedVerification ? selectedVerification.key : undefined
+                                )}
                                 disabled={pending}
                                 placeholder={_ts('entries', 'verificationStatusPlaceholder')}
                             />
