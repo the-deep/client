@@ -5,6 +5,7 @@ import {
     isObject,
     isList,
     isFalsyString,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import {
     requiredCondition,
@@ -222,4 +223,26 @@ export function capitalizeOnlyFirstLetter(string) {
     return string
         .toLowerCase()
         .replace(/[a-z]/, val => val.toUpperCase());
+}
+
+export function flatten(a, childSelector) {
+    if (Array.isArray(a)) {
+        return [].concat(...a.map(v => flatten(v, childSelector)));
+    } else if (Array.isArray(childSelector(a))) {
+        return [].concat(a, ...childSelector(a).map(v => flatten(v, childSelector)));
+    }
+    return a;
+}
+
+export function hasKey(data, key, keySelector, childrenSelector) {
+    if (!key || doesObjectHaveNoData(data)) {
+        return false;
+    }
+    const children = childrenSelector(data);
+    if (keySelector(data) === key) {
+        return true;
+    } else if (children && Array.isArray(children)) {
+        return children.some(v => hasKey(v, key, keySelector, childrenSelector));
+    }
+    return false;
 }

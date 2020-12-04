@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import {
     _cs,
     isDefined,
@@ -10,6 +10,7 @@ import ListView from '#rsu/../v2/View/ListView';
 import Message from '#rscv/Message';
 import Badge from '#components/viewer/Badge';
 import _ts from '#ts';
+import { hasKey } from '#utils/common';
 
 import styles from './styles.scss';
 
@@ -25,6 +26,7 @@ interface Props<T, K extends string | number>{
     onChange: (value: T[]) => void;
     options: T[];
     value: T[];
+    searchValue: T | undefined;
     level?: number;
     defaultCollapseLevel?: number;
     className?: string;
@@ -58,6 +60,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         verifiedCountSelector,
         unverifiedCountSelector,
         multiple = false,
+        searchValue,
     } = props;
 
     const key = keySelector(option);
@@ -66,6 +69,14 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const children = childrenSelector(option);
     const verifiedCount = verifiedCountSelector(option);
     const unverifiedCount = unverifiedCountSelector(option);
+    const searchKey = searchValue && idSelector(searchValue);
+
+    const tocElementRef = useRef<HTMLDivElement>(null);
+
+    const isParent = useMemo(() =>
+        hasKey(option, searchKey, idSelector, childrenSelector),
+        [option, searchKey],
+    );
 
     const handleClick = useCallback(
         () => {
@@ -104,13 +115,30 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         (verifiedCount ?? 0) + (unverifiedCount ?? 0)
     ), [verifiedCount, unverifiedCount]);
 
+    const isIdSearched = isDefined(searchValue) ? id === idSelector(searchValue) : false;
+
+    useEffect(() => {
+        if (isParent) {
+            setCollapsed(false);
+        }
+        if (isIdSearched) {
+            tocElementRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            })
+        }
+    }, [isParent, isIdSearched]);
+
     return (
-        <div className={_cs(
-            className,
-            styles.tocItem,
-            isSelected && styles.active,
-            !collapsed && styles.expanded,
-        )}
+        <div
+            className={_cs(
+                className,
+                styles.tocItem,
+                isIdSearched && styles.searched,
+                isSelected && styles.active,
+                !collapsed && styles.expanded,
+            )}
+            ref={tocElementRef}
         >
             <div className={styles.header}>
                 <div
