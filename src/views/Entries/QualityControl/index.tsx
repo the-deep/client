@@ -306,6 +306,7 @@ function QualityControl(props: Props) {
             <EntriesStats
                 className={styles.stats}
                 stats={stats}
+                entriesFilters={entriesFilters}
             />
             <ResizableH
                 className={styles.resizableContainer}
