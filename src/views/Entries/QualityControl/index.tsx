@@ -19,6 +19,7 @@ import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/ListItem';
 import Icon from '#rscg/Icon';
+import SearchSelectInput from '#rsci/SearchSelectInput';
 
 import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -26,6 +27,7 @@ import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 
 import { processEntryFilters } from '#entities/entries';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
+import { flatten } from '#utils/common';
 import useRequest from '#utils/request';
 
 import {
@@ -123,6 +125,7 @@ function QualityControl(props: Props) {
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary | undefined>();
     const [tocCount, setTocCount] = useState<TocCountMap>({});
+    const [searchValue, setSearchValue] = useState<MatrixTocElement | undefined>();
 
     const matrixToc = useMemo(
         () => [
@@ -301,6 +304,14 @@ function QualityControl(props: Props) {
         value: labelSelector(data),
     }), []);
 
+    const searchValues = useMemo(() =>
+        flatten(matrixToc, childrenSelector).filter((v: MatrixTocElement) => v.key),
+        [matrixToc]);
+
+    const handleSearchValueChange = useCallback((value: string) =>
+        setSearchValue(searchValues.find((v: MatrixTocElement) => idSelector(v) === value)),
+        []);
+
     return (
         <div className={_cs(className, styles.qualityControl)}>
             <EntriesStats
@@ -316,6 +327,17 @@ function QualityControl(props: Props) {
                             <h3 className={styles.heading}>
                                 {_ts('entries.qualityControl', 'tableOfContentHeading')}
                             </h3>
+                            <SearchSelectInput
+                                options={searchValues}
+                                value={searchValue?.id}
+                                className={styles.searchInput}
+                                onChange={handleSearchValueChange}
+                                placeholder="Search"
+                                keySelector={idSelector}
+                                labelSelector={labelSelector}
+                                showLabel={true}
+                                showHintAndError={false}
+                                />
                         </header>
                         <TableOfContents
                             className={styles.content}
@@ -327,6 +349,7 @@ function QualityControl(props: Props) {
                             verifiedCountSelector={verifiedCountSelector}
                             unverifiedCountSelector={unverifiedCountSelector}
                             onChange={handleSelection}
+                            searchValue={searchValue}
                             value={tocFilters}
                             defaultCollapseLevel={5}
                             multiple

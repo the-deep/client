@@ -59,7 +59,9 @@
                 position: relative;
             }
         }
-
+        &.searched {
+            background-color: var(--color-background-alt);
+        }
         &.active {
             border-left: var(--width-separator-thin) solid var(--color-accent);
             background-color: var(--color-background-accent-hint);
@@ -70,6 +72,5 @@
                 }
             }
         }
-
     }
 }
