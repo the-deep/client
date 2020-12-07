@@ -30,7 +30,25 @@
                 overflow: auto;
 
                 .header {
-                    padding: var(--spacing-medium);
+                    padding: var(--spacing-small) var(--spacing-medium);
+
+                    .top {
+                        display: flex;
+                        align-items: center;
+
+                        .heading {
+                            flex-grow: 1;
+                        }
+
+                        .toggle-expand-button {
+                            flex-shrink: 0;
+                            outline: none;
+
+                            &:hover {
+                                background-color: rgba(0, 0, 0, .1);
+                            }
+                        }
+                    }
                 }
 
                 .content {

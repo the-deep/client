@@ -20,6 +20,7 @@ import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/ListItem';
 import Icon from '#rscg/Icon';
 import SearchSelectInput from '#rsci/SearchSelectInput';
+import Button from '#rsca/Button';
 
 import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -102,6 +103,16 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setTocFilters: params => dispatch(setQualityControlViewSelectedMatrixKeyAction(params)),
 });
 
+interface CollapseLevel {
+    min: number;
+    max: number;
+}
+
+const collapseLevel: CollapseLevel = {
+    min: 0,
+    max: 5,
+}
+
 type Props = ComponentProps & PropsFromDispatch;
 
 function QualityControl(props: Props) {
@@ -126,6 +137,7 @@ function QualityControl(props: Props) {
     const [stats, setStats] = useState<EntrySummary | undefined>();
     const [tocCount, setTocCount] = useState<TocCountMap>({});
     const [searchValue, setSearchValue] = useState<MatrixTocElement | undefined>();
+    const [defaultCollapseLevel, setDefaultCollapseLevel] = useState(collapseLevel.max);
 
     const matrixToc = useMemo(
         () => [
@@ -310,7 +322,14 @@ function QualityControl(props: Props) {
 
     const handleSearchValueChange = useCallback((value: string) =>
         setSearchValue(searchValues.find((v: MatrixTocElement) => idSelector(v) === value)),
-        []);
+    []);
+    const handleToggleExpand = useCallback(() => {
+        if (defaultCollapseLevel === collapseLevel.max) {
+            setDefaultCollapseLevel(collapseLevel.min);
+        } else {
+            setDefaultCollapseLevel(collapseLevel.max);
+        }
+    }, [defaultCollapseLevel]);
 
     return (
         <div className={_cs(className, styles.qualityControl)}>
@@ -324,20 +343,32 @@ function QualityControl(props: Props) {
                 leftChild={(
                     <div className={styles.frameworkSelection}>
                         <header className={styles.header}>
-                            <h3 className={styles.heading}>
-                                {_ts('entries.qualityControl', 'tableOfContentHeading')}
-                            </h3>
+                            <div className={styles.top}>
+                                <h3 className={styles.heading}>
+                                    {_ts('entries.qualityControl', 'tableOfContentHeading')}
+                                </h3>
+                                <Button
+                                    className={styles.toggleExpandButton}
+                                    onClick={handleToggleExpand}
+                                    transparent
+                                    iconName={defaultCollapseLevel === collapseLevel.min ? 'chevronDown' : 'chevronUp'}
+                                    title={defaultCollapseLevel === collapseLevel.min ?
+                                        _ts('entries.qualityControl', 'expandAll')
+                                        : _ts('entries.qualityControl', 'collapseAll')
+                                    }
+                                />
+                            </div>
                             <SearchSelectInput
                                 options={searchValues}
                                 value={searchValue?.id}
                                 className={styles.searchInput}
                                 onChange={handleSearchValueChange}
-                                placeholder="Search"
+                                placeholder={_ts('entries.qualityControl', 'searchInputPlacehoder')}
                                 keySelector={idSelector}
                                 labelSelector={labelSelector}
-                                showLabel={true}
+                                showLabel
                                 showHintAndError={false}
-                                />
+                            />
                         </header>
                         <TableOfContents
                             className={styles.content}
@@ -351,7 +382,7 @@ function QualityControl(props: Props) {
                             onChange={handleSelection}
                             searchValue={searchValue}
                             value={tocFilters}
-                            defaultCollapseLevel={5}
+                            defaultCollapseLevel={defaultCollapseLevel}
                             multiple
                         />
                     </div>
