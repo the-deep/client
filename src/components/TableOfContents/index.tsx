@@ -102,6 +102,11 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         isDefined(defaultCollapseLevel) && level >= defaultCollapseLevel,
     );
 
+    useEffect(() => {
+        const isCollapsed = isDefined(defaultCollapseLevel) && level >= defaultCollapseLevel;
+        isCollapsed ? setCollapsed(true) : setCollapsed(false);
+    }, [level, defaultCollapseLevel]);
+
     const handleCollapseToggle = useCallback(
         () => setCollapsed(v => !v),
         [],

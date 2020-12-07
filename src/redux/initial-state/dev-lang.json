@@ -1213,7 +1213,10 @@
         "-978987098": "Showing entries based on ",
         "-72741271": "Showing all entries",
         "-55557162": "This export is currently in queue to be exported and has not been started.",
-        "-11119478": "{verified} out of {total} entries are verified in this category."
+        "-11119478": "{verified} out of {total} entries are verified in this category.",
+        "-79879872": "Expand All",
+        "-79797971": "Collapse All",
+        "-46164024": "Jump to"
     },
     "links": {
         "browserExtension": {
@@ -3468,7 +3471,10 @@
             "totalVerifiedEntries": -897879798,
             "selectedTocFilters": -978987098,
             "noSelectedTocFilters": -72741271,
-            "verifiedCountTooltip": -11119478
+            "verifiedCountTooltip": -11119478,
+            "expandAll": -79879872,
+            "collapseAll": -79797971,
+            "searchInputPlacehoder": -46164024
         },
         "qualityControl": {
             "matrix1dTitle": -90901113,
