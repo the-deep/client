@@ -9,7 +9,7 @@
         flex-shrink: 0;
     }
 
-    .resizable-container {
+    .wrapping-container{
         display: flex;
         flex-grow: 1;
         background-color: var(--color-foreground);
@@ -18,18 +18,19 @@
         .left {
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
             border-right: var(--width-separator-thin) solid var(--color-separator);
-            width: var(--width-left-initial);
-            min-width: var(--width-left-min);
+            min-width: 320px;
             overflow-y: auto;
 
             .framework-selection {
                 display: flex;
                 flex-direction: column;
-                flex-grow: 1;
-                overflow: auto;
+
 
                 .header {
+                    display: flex;
+                    flex-direction: column;
                     padding: var(--spacing-small) var(--spacing-medium);
 
                     .top {
@@ -38,6 +39,14 @@
 
                         .heading {
                             flex-grow: 1;
+
+                            .collapse-button{
+                                outline: none;
+                                border: none;
+                                background: none;
+                                width: 25px;
+                                height: 25px;
+                            }
                         }
 
                         .toggle-expand-button {
@@ -51,18 +60,26 @@
                     }
                 }
 
-                .content {
-                    flex-grow: 1;
-                    overflow: auto;
-                }
             }
+
+
+            .content {
+                flex-grow: 1;
+                overflow: auto;
+            }
+        }
+
+        .expand-button {
+            z-index: 999;
+            width: 25px;
+            height: 25px;
         }
 
         .right {
             display: flex;
+            position: relative;
             flex-direction: column;
-            width: calc(100% - var(--width-left-initial));
-            min-width: var(--width-right-min);
+            flex-grow: 1;
             overflow-y: auto;
 
             .toc-filter-list {
