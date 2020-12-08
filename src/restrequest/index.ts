@@ -11,6 +11,8 @@ import ReactDOM from 'react-dom';
 import { isTruthyString, isDefined } from '@togglecorp/fujs';
 import AbortController from 'abort-controller';
 
+import { alterResponseErrorToFaramError } from '#rest';
+
 import sleep from './sleep';
 import { prepareUrlParams } from './utils';
 import {
@@ -51,7 +53,7 @@ interface RequestOptions<T> {
     shouldRetry?: (val: T, run: number) => number;
     shouldPoll?: (val: T | undefined) => number;
     onSuccess?: (val: T) => void;
-    onFailure?: (val: Err) => void;
+    onFailure?: (val: Err, error: Record<string, unknown>) => void;
 }
 
 function isFetchable(
@@ -124,7 +126,20 @@ async function fetchResource<T>(
             const { onFailure } = requestOptionsRef.current;
             if (onFailure) {
                 callSideEffectSafe(() => {
-                    onFailure(message.value);
+                    const faramErrors = alterResponseErrorToFaramError(message.value);
+
+                    // FIXME: Use strings for this
+                    const messageForNotification = (
+                        faramErrors
+                        && faramErrors.$internal
+                        && faramErrors.$internal.join(' ')
+                    ) || 'There was some error while performing this action. Please try again.';
+
+                    const requestError = {
+                        faramErrors,
+                        messageForNotification,
+                    };
+                    onFailure(message.value, requestError);
                 }, clientId);
             }
         }

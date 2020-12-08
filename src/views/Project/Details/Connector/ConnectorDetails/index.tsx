@@ -12,12 +12,16 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';
 import useRequest from '#restrequest';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Icon from '#rscg/Icon';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
     Connector,
     UnifiedConnectorSource,
 } from '#typings';
 
+import notify from '#notify';
 import _ts from '#ts';
 
 import ConnectorEditForm from '../ConnectorEditForm';
@@ -72,6 +76,27 @@ function ProjectConnectorDetail(props: OwnProps) {
                 onConnectorDelete(connectorId);
             }
         },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
+        },
+    });
+
+    const [pendingTrigger,,, connectorTriggerTrigger] = useRequest({
+        url: `server://projects/${projectId}/unified-connectors/${connectorId}/trigger-sync/`,
+        method: 'POST',
+        body: {},
+        onSuccess: () => {
+            notify.send({
+                title: _ts('project.connector', 'connectorSourcesTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('project.connector', 'triggerSuccessMessage'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
+        },
+        // FIXME: add error handling
     });
 
     const [pendingConnectorPatch,,, triggerConnectorPatch] = useRequest<Connector>({
@@ -91,6 +116,9 @@ function ProjectConnectorDetail(props: OwnProps) {
                     }),
                 );
             }
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
         },
     });
 
@@ -129,6 +157,7 @@ function ProjectConnectorDetail(props: OwnProps) {
     }, [onConnectorEdit, connectorId]);
 
     const pending = pendingConnectorDelete || pendingConnectorPatch;
+    const triggerDisabled = false;
 
     return (
         <div className={_cs(className, styles.projectConnectorDetail, isActive && styles.active)}>
@@ -150,6 +179,16 @@ function ProjectConnectorDetail(props: OwnProps) {
                     </div>
                 </div>
                 <div className={styles.actions}>
+                    <PrimaryButton
+                        onClick={connectorTriggerTrigger}
+                        pending={pendingTrigger}
+                        className={styles.button}
+                        disabled={triggerDisabled}
+                        title={_ts('project.connector', 'reTriggerLeads')}
+                        transparent
+                    >
+                        <Icon name="refresh" />
+                    </PrimaryButton>
                     <Switch
                         name="activateSwitch"
                         value={isActive}

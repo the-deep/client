@@ -1161,7 +1161,14 @@
         "-20165077": "Select connector sources",
         "-90542170": "Configure connector sources",
         "-79582562": "Add new connector",
-        "-30766440": "Activate connector"
+        "-30766440": "Activate connector",
+        "-58841555": "Data not available for charts",
+        "-18527710": "Failed to load leads from this source",
+        "-26012111": "Last calculated at",
+        "-30914726": "Extraction of leads from this source has not been started.",
+        "-31188416": "Fetching leads from this source.",
+        "-89822585": "Trigger leads extraction",
+        "-76709910": "Extraction of leads from selected source has started."
     },
     "links": {
         "browserExtension": {
@@ -3243,7 +3250,18 @@
             "connectorDeleteMessage": -3611094,
             "editButtonTitle": -23121024,
             "updatedOnLabel": -31701107,
-            "activeSwitchLabel": -30766440
+            "activeSwitchLabel": -30766440,
+            "connectorSourcesTitle": 1109,
+            "reTriggerLeads": -89822585,
+            "triggerSuccessMessage": -76709910
+        },
+        "project.connector.source": {
+            "dataNotAvailable": -58841555,
+            "errorLabel": -18527710,
+            "leadsLabel": 34,
+            "lastCalculatedOnLabel": -26012111,
+            "notProcessedLabel": -30914726,
+            "processingLabel": -31188416
         }
     }
 }

@@ -6,7 +6,7 @@ export interface PublishedDateCount {
 }
 
 export type FieldType = 'string' | 'number' | 'url' | 'select' | 'date';
-export type ConnectorSourceStatus = 'processing' | 'success' | 'failure';
+export type ConnectorSourceStatus = 'not_processed' | 'processing' | 'success' | 'failure';
 
 export interface ConnectorSourceParams {
     [key: string]: string | number;

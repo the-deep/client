@@ -15,11 +15,14 @@ import {
 import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
+import Spinner from '#rsu/../v2/View/Spinner';
 
 import {
     ConnectorSourceStatistics,
     ConnectorSourceStatus,
 } from '#typings';
+
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -76,13 +79,34 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                 <h5 className={styles.heading}>
                     {title}
                 </h5>
+                <div className={styles.status}>
+                    {status === 'not_processed' && (
+                        <Icon
+                            name="warning"
+                            className={styles.warning}
+                            title={_ts('project.connector.source', 'notProcessedLabel')}
+                        />
+                    )}
+                    {status === 'failure' && (
+                        <Icon
+                            name="error"
+                            className={styles.error}
+                            title={_ts('project.connector.source', 'errorLabel')}
+                        />
+                    )}
+                    {status === 'processing' && (
+                        <Spinner
+                            small
+                            title={_ts('project.connector.source', 'processingLabel')}
+                        />
+                    )}
+                </div>
             </header>
             <div className={styles.content}>
                 <div className={styles.detailsContainer}>
                     <div className={styles.updatedOn}>
                         <div className={styles.label}>
-                            {/* FIXME: Use translation */}
-                            Last updated on
+                            {_ts('project.connector.source', 'lastCalculatedOnLabel')}
                         </div>
                         <FormattedDate
                             className={styles.date}
@@ -95,7 +119,7 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                             { totalLeads }
                         </div>
                         <div className={styles.label}>
-                            Leads
+                            {_ts('project.connector.source', 'leadsLabel')}
                         </div>
                     </div>
                 </div>
@@ -106,8 +130,7 @@ function ProjectConnectorSourceDetail(props: OwnProps) {
                                 name="barChart"
                                 className={styles.icon}
                             />
-                            {/* FIXME: Use translation */ }
-                            Data not available for charts
+                            {_ts('project.connector.source', 'dataNotAvailable')}
                         </Message>
                     ) : (
                         <ResponsiveContainer className={styles.responsiveContainer}>
