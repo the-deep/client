@@ -1168,7 +1168,8 @@
         "-30914726": "Extraction of leads from this source has not been started.",
         "-31188416": "Fetching leads from this source.",
         "-89822585": "Trigger leads extraction",
-        "-76709910": "Extraction of leads from selected source has started."
+        "-76709910": "Extraction of leads from selected source has started.",
+        "-28752967": "Auto-trigger leads extraction"
     },
     "links": {
         "browserExtension": {
@@ -3242,7 +3243,8 @@
             "connectorSourcesSelection": 1109,
             "sourceOptionsEmptyText": -48401335,
             "connectorSourcesListHeading": -20165077,
-            "connectorSourcesOptionHeading": -90542170
+            "connectorSourcesOptionHeading": -90542170,
+            "triggerLeadsExtraction": -28752967
         },
         "project.connector": {
             "addButtonTitle": -79582562,

@@ -14,6 +14,7 @@ import Faram, {
 
 import Icon from '#rscg/Icon';
 import TextInput from '#rsci/TextInput';
+import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -24,6 +25,7 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import Message from '#rscv/Message';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import useRequest from '#restrequest';
 import {
@@ -177,6 +179,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
         onSuccess,
     } = props;
 
+    const [autoTrigger, setAutoTrigger] = useState(!connector);
     const [faramValues, setFaramValues] = useState<ConnectorFaramValues>(connector ?? {});
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [bodyToSend, setBodyToSend] = useState<BodyForRequest | undefined>(undefined);
@@ -218,7 +221,20 @@ function ProjectConnectorEditForm(props: OwnProps) {
         connector,
     ]);
 
-    const [pending,,, triggerConnectorSave] = useRequest<Connector>({
+    const [pendingTrigger,,, connectorTriggerTrigger] = useRequest({
+        url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
+        method: 'POST',
+        body: {},
+        onSuccess: () => {
+            closeModal();
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
+            closeModal();
+        },
+    });
+
+    const [pendingSave,,, triggerConnectorSave] = useRequest<Connector>({
         url: connectorUrl,
         method: isAddForm ? 'POST' : 'PATCH',
         query: {
@@ -229,16 +245,16 @@ function ProjectConnectorEditForm(props: OwnProps) {
             if (onSuccess) {
                 onSuccess(response);
             }
-            setConnectorToTrigger(response.id);
-            closeModal();
+            if (autoTrigger) {
+                setConnectorToTrigger(response.id);
+                connectorTriggerTrigger();
+            } else {
+                closeModal();
+            }
         },
-    });
-
-    const [,,, connectorTriggerTrigger] = useRequest({
-        url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
-        method: 'POST',
-        body: {},
-        // FIXME: add error handling
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
+        },
     });
 
     const handleFaramValidationSucces = useCallback((finalFaramValues) => {
@@ -297,6 +313,8 @@ function ProjectConnectorEditForm(props: OwnProps) {
             active,
         });
     }, [handleConnectorAdd, faramValues]);
+
+    const pending = pendingTrigger || pendingSave;
 
     return (
         <Modal className={_cs(className, styles.connectorEditForm)}>
@@ -369,6 +387,12 @@ function ProjectConnectorEditForm(props: OwnProps) {
                     </FaramList>
                 </ModalBody>
                 <ModalFooter className={styles.modalFooter}>
+                    <Checkbox
+                        value={autoTrigger}
+                        onChange={setAutoTrigger}
+                        label={_ts('project.connector.editForm', 'triggerLeadsExtraction')}
+                        disabled={pending}
+                    />
                     <DangerButton onClick={closeModal} >
                         {_ts('project.connector.editForm', 'cancelButtonLabel')}
                     </DangerButton>
