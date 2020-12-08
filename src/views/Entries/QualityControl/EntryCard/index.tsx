@@ -153,10 +153,10 @@ function EntryCard(props: EntryCardProps) {
     });
 
     useEffect(() => {
-        if(leadFromRequest) {
+        if (leadFromRequest) {
             showEditLeadModal(true);
         }
-    },[leadFromRequest]);
+    }, [leadFromRequest]);
 
     const handleDeletePendingChange = useCallback((/* isPending: boolean */) => {
         // TODO; disable all actions if pending
@@ -179,11 +179,13 @@ function EntryCard(props: EntryCardProps) {
         showEditLeadModal(false);
     };
 
-    const handleLeadEditSave = useCallback((lead: Lead) => {
-        onLeadChange(lead);
-    },[onLeadChange]);
+    const handleLeadEditSave = useCallback((value: Lead) => {
+        onLeadChange(value);
+    }, [onLeadChange]);
 
-    const shouldHideLeadEdit = ({ leadPermissions }: { leadPermissions: Permission }) => !leadPermissions.modify
+    const shouldHideLeadEdit = ({ leadPermissions }: { leadPermissions: Permission }) =>
+        !leadPermissions.modify;
+
     const isConfidential = lead.confidentiality === 'confidential';
 
     const loading = verifiyChangePending;
@@ -191,16 +193,16 @@ function EntryCard(props: EntryCardProps) {
     const scaleWidgets = useMemo(() => getScaleWidgetsData(framework, entry), [framework, entry]);
 
     const scaleWidgetRendererParams = useCallback((_: string, d: ScaleWidget) => {
-        const icons = <DefaultIcon color={d.color} title={d.label} />
+        const icons = <DefaultIcon color={d.color} title={d.label} />;
         return {
             icons,
             value: d.label,
-        }
+        };
     }, []);
 
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
-        {loading && <LoadingAnimation />}
+            {loading && <LoadingAnimation />}
             <div
                 className={_cs(
                     styles.entryCard,
@@ -289,11 +291,10 @@ function EntryCard(props: EntryCardProps) {
                     <div className={styles.row}>
                         <div className={styles.source}>
                             { leadSource && (
-                                  <Icon
-                                      name="world"
-                                      className={styles.title}
-                                  />
-                              )}
+                                <Icon
+                                    name="world"
+                                />
+                            )}
                             <div
                                 className={styles.value}
                                 title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
@@ -359,7 +360,7 @@ function EntryCard(props: EntryCardProps) {
                                 'verificationLastChangedBy',
                                 {
                                     userName: entry
-                                    .verificationLastChangedByDetails.displayName,
+                                        .verificationLastChangedByDetails.displayName,
                                 },
                             )
                         ) : undefined}

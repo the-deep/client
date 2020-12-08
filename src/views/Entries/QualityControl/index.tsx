@@ -113,7 +113,7 @@ interface CollapseLevel {
 const collapseLevel: CollapseLevel = {
     min: 0,
     max: 5,
-}
+};
 
 type Props = ComponentProps & PropsFromDispatch;
 
@@ -214,12 +214,12 @@ function QualityControl(props: Props) {
         body: requestFilters as object,
         method: 'POST',
         onSuccess: (response) => {
-            const tocCount = mapToMap(
-                listToGroupList(response.summary?.countPerTocItem?? [], d => d.widgetKey),
+            const count = mapToMap(
+                listToGroupList(response.summary?.countPerTocItem ?? [], d => d.widgetKey),
                 k => k,
                 e => listToMap(e, i => i.labelKey),
             );
-            setTocCount(tocCount);
+            setTocCount(count);
             setEntries(response.results);
             setStats(response.summary);
             setEntriesCount({ count: response.count });
@@ -242,12 +242,12 @@ function QualityControl(props: Props) {
         body: requestFilters as object,
         method: 'POST',
         onSuccess: (response) => {
-            const tocCount = mapToMap(
-                listToGroupList(response.summary?.countPerTocItem?? [], d => d.widgetKey),
+            const count = mapToMap(
+                listToGroupList(response.summary?.countPerTocItem ?? [], d => d.widgetKey),
                 k => k,
                 e => listToMap(e, i => i.labelKey),
             );
-            setTocCount(tocCount);
+            setTocCount(count);
             setStats(response.summary);
         },
     });
@@ -331,11 +331,12 @@ function QualityControl(props: Props) {
 
     const searchValues = useMemo(() =>
         flatten(matrixToc, childrenSelector).filter((v: MatrixTocElement) => v.key),
-        [matrixToc]);
+    [matrixToc]);
 
     const handleSearchValueChange = useCallback((value: string) =>
         setSearchValue(searchValues.find((v: MatrixTocElement) => idSelector(v) === value)),
-    []);
+    [searchValues]);
+
     const handleToggleExpand = useCallback(() => {
         if (defaultCollapseLevel === collapseLevel.max) {
             setDefaultCollapseLevel(collapseLevel.min);
@@ -376,8 +377,7 @@ function QualityControl(props: Props) {
                             </div>
                             <SearchSelectInput
                                 options={searchValues}
-                                value={searchValue?.id}
-                                className={styles.searchInput}
+                                value={searchValue && idSelector(searchValue)}
                                 onChange={handleSearchValueChange}
                                 placeholder={_ts('entries.qualityControl', 'searchInputPlacehoder')}
                                 keySelector={idSelector}
