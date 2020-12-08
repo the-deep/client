@@ -32,6 +32,7 @@ const ModalButton = modalize(Button);
 
 interface OwnProps {
     className?: string;
+    readOnly?: boolean;
     projectId: number;
     details: Connector;
     onConnectorDelete: (id: number) => void;
@@ -54,6 +55,7 @@ function ProjectConnectorDetail(props: OwnProps) {
         projectId,
         className,
         details,
+        readOnly,
     } = props;
 
     const {
@@ -96,7 +98,6 @@ function ProjectConnectorDetail(props: OwnProps) {
         onFailure: (error, errorBody) => {
             notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
         },
-        // FIXME: add error handling
     });
 
     const [pendingConnectorPatch,,, triggerConnectorPatch] = useRequest<Connector>({
@@ -178,48 +179,50 @@ function ProjectConnectorDetail(props: OwnProps) {
                         />
                     </div>
                 </div>
-                <div className={styles.actions}>
-                    <PrimaryButton
-                        onClick={connectorTriggerTrigger}
-                        pending={pendingTrigger}
-                        className={styles.button}
-                        disabled={triggerDisabled}
-                        title={_ts('project.connector', 'reTriggerLeads')}
-                        transparent
-                    >
-                        <Icon name="refresh" />
-                    </PrimaryButton>
-                    <Switch
-                        name="activateSwitch"
-                        value={isActive}
-                        onChange={handleConnectorActiveStatusChange}
-                        label={_ts('project.connector', 'activeSwitchLabel')}
-                    />
-                    <ModalButton
-                        iconName="edit"
-                        className={styles.button}
-                        transparent
-                        modal={(
-                            <ConnectorEditForm
-                                projectId={projectId}
-                                connector={details}
-                                onSuccess={handleConnectorEdit}
-                            />
-                        )}
-                        title={_ts('project.connector', 'editButtonTitle')}
-                    />
-                    <DangerConfirmButton
-                        className={styles.button}
-                        transparent
-                        iconName="delete"
-                        onClick={deleteConnectorTrigger}
-                        confirmationMessage={_ts(
-                            'project.connector',
-                            'connectorDeleteMessage',
-                            { title },
-                        )}
-                    />
-                </div>
+                {!readOnly && (
+                    <div className={styles.actions}>
+                        <PrimaryButton
+                            onClick={connectorTriggerTrigger}
+                            pending={pendingTrigger}
+                            className={styles.button}
+                            disabled={triggerDisabled}
+                            title={_ts('project.connector', 'reTriggerLeads')}
+                            transparent
+                        >
+                            <Icon name="refresh" />
+                        </PrimaryButton>
+                        <Switch
+                            name="activateSwitch"
+                            value={isActive}
+                            onChange={handleConnectorActiveStatusChange}
+                            label={_ts('project.connector', 'activeSwitchLabel')}
+                        />
+                        <ModalButton
+                            iconName="edit"
+                            className={styles.button}
+                            transparent
+                            modal={(
+                                <ConnectorEditForm
+                                    projectId={projectId}
+                                    connector={details}
+                                    onSuccess={handleConnectorEdit}
+                                />
+                            )}
+                            title={_ts('project.connector', 'editButtonTitle')}
+                        />
+                        <DangerConfirmButton
+                            className={styles.button}
+                            transparent
+                            iconName="delete"
+                            onClick={deleteConnectorTrigger}
+                            confirmationMessage={_ts(
+                                'project.connector',
+                                'connectorDeleteMessage',
+                                { title },
+                            )}
+                        />
+                    </div>
+                )}
             </header>
             <ListView
                 className={styles.content}

@@ -193,6 +193,9 @@ function ProjectConnectorEditForm(props: OwnProps) {
         url: 'server://connector-sources/',
         schemaName: 'connectorSources',
         autoTrigger: true,
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project', 'connectorsTitle'))({ error: errorBody });
+        },
     });
 
     const connectorSources = useMemo(() => (
@@ -253,6 +256,7 @@ function ProjectConnectorEditForm(props: OwnProps) {
             }
         },
         onFailure: (error, errorBody) => {
+            setFaramErrors(errorBody?.faramErrors);
             notifyOnFailure(_ts('project.connector', 'connectorSourcesTitle'))({ error: errorBody });
         },
     });
