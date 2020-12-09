@@ -1217,7 +1217,8 @@
         "-79879872": "Expand All",
         "-79797971": "Collapse All",
         "-46164024": "Jump to",
-        "-19695002": "Show table of contents"
+        "-19695002": "Show table of contents",
+        "-40350374": "% of verified entries"
     },
     "links": {
         "browserExtension": {
@@ -1919,7 +1920,8 @@
             "selectedLeadsCount": -86276092,
             "clearSelectedLeadsTitle": -22337727,
             "clearSelectionButtonTitle": 528,
-            "exportToOtherProjectsButtonLabel": 600
+            "exportToOtherProjectsButtonLabel": 600,
+            "verified_entries": -40350374
         },
         "leadsGrid": {
             "publisherLabel": 5,

@@ -410,7 +410,17 @@ function Table(props) {
                 key: 'no_of_entries',
                 order: 13,
                 defaultSortOrder: 'dsc',
-                modifier: row => row.noOfEntries,
+                modifier: row => (
+                    <div>
+                        {row.noOfEntries}
+                        <span
+                            title={_ts('leads', 'verified_entries')}
+                        > ({row.noOfEntries
+                            ?(row.verifiedEntriesCount/row.noOfEntries)*100
+                            :0
+                        }%)</span>
+                    </div>
+                ),
             },
             {
                 key: 'actions',
