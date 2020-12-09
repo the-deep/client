@@ -1218,7 +1218,8 @@
         "-79797971": "Collapse All",
         "-46164024": "Jump to",
         "-19695002": "Show table of contents",
-        "-40350374": "% of verified entries"
+        "-40350374": "% of verified entries",
+        "-81087776": "{verifiedCount} verified out of {entriesCount} entries"
     },
     "links": {
         "browserExtension": {
@@ -1921,7 +1922,7 @@
             "clearSelectedLeadsTitle": -22337727,
             "clearSelectionButtonTitle": 528,
             "exportToOtherProjectsButtonLabel": 600,
-            "verified_entries": -40350374
+            "verifiedEntries": -81087776
         },
         "leadsGrid": {
             "publisherLabel": 5,

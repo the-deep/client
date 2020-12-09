@@ -410,17 +410,27 @@ function Table(props) {
                 key: 'no_of_entries',
                 order: 13,
                 defaultSortOrder: 'dsc',
-                modifier: row => (
-                    <div>
-                        {row.noOfEntries}
-                        <span
-                            title={_ts('leads', 'verified_entries')}
-                        > ({row.noOfEntries
-                            ?(row.verifiedEntriesCount/row.noOfEntries)*100
-                            :0
-                        }%)</span>
-                    </div>
-                ),
+                modifier: row => {
+                    const percentage = row.noOfEntries
+                        ? (row.verifiedEntriesCount/row.noOfEntries)*100
+                        : 0;
+                    return (
+                        <div
+                            title={_ts(
+                                'leads',
+                                'verifiedEntries',
+                                {verifiedCount: row.verifiedEntriesCount, entriesCount: row.noOfEntries}
+                            )}
+                        >
+                            <span>{row.noOfEntries}</span>
+                            <Numeral
+                                value={percentage}
+                                prefix="("
+                                suffix="%)"
+                            />
+                        </div>
+                    );
+                }
             },
             {
                 key: 'actions',
