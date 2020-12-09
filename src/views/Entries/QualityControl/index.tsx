@@ -21,6 +21,7 @@ import ListItem from '#rscv/ListItem';
 import Icon from '#rscg/Icon';
 import SearchSelectInput from '#rsci/SearchSelectInput';
 import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -348,71 +349,69 @@ function QualityControl(props: Props) {
                 stats={stats}
             />
             <div className={styles.wrappingContainer}>
-                {isExpanded ? (
-                    <div className={styles.left}>
-                        <div className={styles.frameworkSelection}>
-                            <header className={styles.header}>
-                                <div className={styles.top}>
-                                    <h3 className={styles.heading}>
-                                        <Button
-                                            className={styles.collapseButton}
-                                            buttonType='button-primary'
-                                            onClick={handleTocCollapse}
-                                            iconName='chevronLeft'
-                                        />
-                                        {_ts('entries.qualityControl', 'tableOfContentHeading')}
-                                    </h3>
+                <div className={_cs(styles.left, !isExpanded && styles.hidden)}>
+                    <div className={styles.frameworkSelection}>
+                        <header className={styles.header}>
+                            <div className={styles.top}>
+                                <h3 className={styles.heading}>
                                     <Button
-                                        className={styles.toggleExpandButton}
-                                        onClick={handleToggleExpand}
-                                        transparent
-                                        iconName={defaultCollapseLevel === collapseLevel.min ? 'chevronDown' : 'chevronUp'}
-                                        title={defaultCollapseLevel === collapseLevel.min ?
-                                            _ts('entries.qualityControl', 'expandAll')
-                                            : _ts('entries.qualityControl', 'collapseAll')
-                                        }
+                                        className={styles.collapseButton}
+                                        onClick={handleTocCollapse}
+                                        iconName='chevronLeft'
                                     />
-                                </div>
-                                <SearchSelectInput
-                                    options={searchValues}
-                                    value={searchValue?.id}
-                                    className={styles.searchInput}
-                                    onChange={handleSearchValueChange}
-                                    placeholder={_ts('entries.qualityControl', 'searchInputPlacehoder')}
-                                    keySelector={idSelector}
-                                    labelSelector={labelSelector}
-                                    showLabel
-                                    showHintAndError={false}
+                                    {_ts('entries.qualityControl', 'tableOfContentHeading')}
+                                </h3>
+                                <Button
+                                    className={styles.toggleExpandButton}
+                                    onClick={handleToggleExpand}
+                                    transparent
+                                    iconName={defaultCollapseLevel === collapseLevel.min ? 'chevronDown' : 'chevronUp'}
+                                    title={defaultCollapseLevel === collapseLevel.min ?
+                                        _ts('entries.qualityControl', 'expandAll')
+                                        : _ts('entries.qualityControl', 'collapseAll')
+                                    }
                                 />
-                            </header>
-                        </div>
-                        <TableOfContents
-                            className={styles.content}
-                            options={matrixToc}
-                            idSelector={idSelector}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            childrenSelector={childrenSelector}
-                            verifiedCountSelector={verifiedCountSelector}
-                            unverifiedCountSelector={unverifiedCountSelector}
-                            onChange={handleSelection}
-                            searchValue={searchValue}
-                            value={tocFilters}
-                            defaultCollapseLevel={defaultCollapseLevel}
-                            multiple
-                        />
+                            </div>
+                            <SearchSelectInput
+                                options={searchValues}
+                                value={searchValue?.id}
+                                className={styles.searchInput}
+                                onChange={handleSearchValueChange}
+                                placeholder={_ts('entries.qualityControl', 'searchInputPlacehoder')}
+                                keySelector={idSelector}
+                                labelSelector={labelSelector}
+                                showLabel
+                                showHintAndError={false}
+                            />
+                        </header>
                     </div>
-                ) :(
-                    <Button
-                        className={styles.expandButton}
-                        buttonType='button-primary'
-                        onClick={handleTocExpand}
-                        iconName='chevronRight'
+                    <TableOfContents
+                        className={styles.content}
+                        options={matrixToc}
+                        idSelector={idSelector}
+                        keySelector={keySelector}
+                        labelSelector={labelSelector}
+                        childrenSelector={childrenSelector}
+                        verifiedCountSelector={verifiedCountSelector}
+                        unverifiedCountSelector={unverifiedCountSelector}
+                        onChange={handleSelection}
+                        searchValue={searchValue}
+                        value={tocFilters}
+                        defaultCollapseLevel={defaultCollapseLevel}
+                        multiple
                     />
-                )}
+                </div>
                 <div className={styles.right}>
                     { pending && <LoadingAnimation /> }
                     <h3 className={styles.tocFilterList}>
+                        {!isExpanded && (
+                            <PrimaryButton
+                                className={styles.expandButton}
+                                onClick={handleTocExpand}
+                                iconName='list'
+                                title={_ts('entries.qualityControl', 'showTableOfContents')}
+                            />
+                        )}
                         <Icon
                             className={styles.infoIcon}
                             name="info"

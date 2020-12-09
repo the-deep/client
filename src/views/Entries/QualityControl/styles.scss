@@ -11,6 +11,7 @@
 
     .wrapping-container{
         display: flex;
+        position: relative;
         flex-grow: 1;
         background-color: var(--color-foreground);
         overflow-y: auto;
@@ -62,17 +63,19 @@
 
             }
 
-
             .content {
                 flex-grow: 1;
                 overflow: auto;
             }
+
+            &.hidden {
+                display: none;
+            }
         }
 
         .expand-button {
-            z-index: 999;
-            width: 25px;
-            height: 25px;
+            padding: var(--spacing-extra-small) var(--spacing-small);
+            font-size: var(--font-size-large);
         }
 
         .right {
@@ -111,7 +114,7 @@
                 overflow-y: auto;
 
                 .card {
-                    margin: var(--spacing-large);
+                    margin: var(--spacing-medium-alt);
                 }
             }
         }
