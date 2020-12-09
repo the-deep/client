@@ -45,7 +45,7 @@ const defaultProps = {
 };
 
 const MAX_DISPLAY_ORGANIZATIONS = 50;
-const organizationLabelSelector = organization => organization.label;
+const organizationLabelSelector = organization => organization.title;
 const organizationAbbrSelector = organization => organization.shortName;
 const organizationKeySelector = item => item.key;
 
@@ -95,7 +95,7 @@ export default class OrganizationList extends React.PureComponent {
             itemKey: key,
             logo: d.logo,
             longName: d.longName,
-            name: d.label,
+            name: d.title,
             searchValue,
             shortName: d.shortName,
             type: d.organizationType,
@@ -145,7 +145,7 @@ export default class OrganizationList extends React.PureComponent {
 
         const newOrganization = {
             key: organization.id,
-            label: organization.title,
+            title: organization.title,
             shortName: organization.shortName,
             logo: organization.logoUrl,
         };
