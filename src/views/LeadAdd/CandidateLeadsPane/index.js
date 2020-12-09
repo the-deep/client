@@ -6,6 +6,8 @@ import { clearEmptyValues } from '#utils/common';
 import Button from '#rsca/Button';
 
 import useRequest from '#restrequest';
+import { notifyOnFailure } from '#utils/requestNotify';
+import _ts from '#ts';
 
 import {
     LEAD_STATUS,
@@ -195,8 +197,8 @@ function CandidateLeadsPane(props) {
             clearCompletedCandidateLeads();
             setProcessingModalVisibility(false);
         },
-        onFailure: () => {
-            console.error('failed');
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'organizationsTitle'))({ error: errorBody });
         },
     });
 
@@ -219,8 +221,8 @@ function CandidateLeadsPane(props) {
                 console.error('failed');
             }
         },
-        onFailure: () => {
-            console.error('failed');
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'sourceExtractionTitle'))({ error: errorBody });
         },
     });
 
@@ -241,8 +243,8 @@ function CandidateLeadsPane(props) {
                 organizationTrigger();
             }
         },
-        onFailure: () => {
-            console.error('failed');
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'sourceExtractionTitle'))({ error: errorBody });
         },
     });
 

@@ -6,6 +6,9 @@ import useRequest from '#restrequest';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
+import { notifyOnFailure } from '#utils/requestNotify';
+import _ts from '#ts';
+
 import ListStatusItem from '../../ListStatusItem';
 
 import styles from './styles.scss';
@@ -73,6 +76,9 @@ function ConnectorLeadItem(props) {
         },
         onSuccess: (response) => {
             modifyLead(leadToChangeStatus?.leadKey, response);
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'connectorLeadsTitle'))({ error: errorBody });
         },
     });
 
