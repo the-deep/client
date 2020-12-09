@@ -21,6 +21,7 @@ import ListItem from '#rscv/ListItem';
 import Icon from '#rscg/Icon';
 import SearchSelectInput from '#rsci/SearchSelectInput';
 import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -131,6 +132,16 @@ function QualityControl(props: Props) {
         setEntriesCount,
         parentFooterRef,
     } = props;
+
+    const [isExpanded, setExpansion] = useState(true);
+
+    const handleTocCollapse = useCallback(() => {
+        setExpansion(false);
+    }, [setExpansion]);
+
+    const handleTocExpand = useCallback(() => {
+        setExpansion(true);
+    }, [setExpansion]);
 
     const [entries, setEntries] = useState<EntryFields[]>([]);
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
@@ -337,14 +348,17 @@ function QualityControl(props: Props) {
                 className={styles.stats}
                 stats={stats}
             />
-            <ResizableH
-                className={styles.resizableContainer}
-                leftContainerClassName={styles.left}
-                leftChild={(
+            <div className={styles.wrappingContainer}>
+                <div className={_cs(styles.left, !isExpanded && styles.hidden)}>
                     <div className={styles.frameworkSelection}>
                         <header className={styles.header}>
                             <div className={styles.top}>
                                 <h3 className={styles.heading}>
+                                    <Button
+                                        className={styles.collapseButton}
+                                        onClick={handleTocCollapse}
+                                        iconName='chevronLeft'
+                                    />
                                     {_ts('entries.qualityControl', 'tableOfContentHeading')}
                                 </h3>
                                 <Button
@@ -370,65 +384,70 @@ function QualityControl(props: Props) {
                                 showHintAndError={false}
                             />
                         </header>
-                        <TableOfContents
-                            className={styles.content}
-                            options={matrixToc}
-                            idSelector={idSelector}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            childrenSelector={childrenSelector}
-                            verifiedCountSelector={verifiedCountSelector}
-                            unverifiedCountSelector={unverifiedCountSelector}
-                            onChange={handleSelection}
-                            searchValue={searchValue}
-                            value={tocFilters}
-                            defaultCollapseLevel={defaultCollapseLevel}
-                            multiple
-                        />
                     </div>
-                )}
-                rightContainerClassName={styles.right}
-                rightChild={(
-                    <>
-                        { pending && <LoadingAnimation /> }
-                        <h3 className={styles.tocFilterList}>
-                            <Icon
-                                className={styles.infoIcon}
-                                name="info"
+                    <TableOfContents
+                        className={styles.content}
+                        options={matrixToc}
+                        idSelector={idSelector}
+                        keySelector={keySelector}
+                        labelSelector={labelSelector}
+                        childrenSelector={childrenSelector}
+                        verifiedCountSelector={verifiedCountSelector}
+                        unverifiedCountSelector={unverifiedCountSelector}
+                        onChange={handleSelection}
+                        searchValue={searchValue}
+                        value={tocFilters}
+                        defaultCollapseLevel={defaultCollapseLevel}
+                        multiple
+                    />
+                </div>
+                <div className={styles.right}>
+                    { pending && <LoadingAnimation /> }
+                    <h3 className={styles.tocFilterList}>
+                        {!isExpanded && (
+                            <PrimaryButton
+                                className={styles.expandButton}
+                                onClick={handleTocExpand}
+                                iconName='list'
+                                title={_ts('entries.qualityControl', 'showTableOfContents')}
                             />
-                            {tocFilters.length > 0
-                                ? _ts('entries.qualityControl', 'selectedTocFilters')
-                                : _ts('entries.qualityControl', 'noSelectedTocFilters')
-                            }
-                            {tocFilters.length > 0 && (
-                                <ListView
-                                    className={styles.tocFilterNames}
-                                    data={tocFilters}
-                                    keySelector={tocFilterIdSelector}
-                                    renderer={ListItem}
-                                    rendererParams={tocFilterRendererParams}
-                                />
-                            )}
-                        </h3>
-                        <div className={styles.entryList}>
-                            { (entries && entries.length > 0) ? (
-                                <List
-                                    data={entries}
-                                    keySelector={entryKeySelector}
-                                    renderer={EntryCard}
-                                    rendererParams={entryCardRendererParams}
-                                />
-                            ) : (
-                                <EmptyEntries
-                                    projectId={projectId}
-                                    entriesFilters={entriesFilters}
-                                    tocFilters={tocFilters}
-                                />
-                            )}
-                        </div>
-                    </>
-                )}
-            />
+                        )}
+                        <Icon
+                            className={styles.infoIcon}
+                            name="info"
+                        />
+                        {tocFilters.length > 0
+                            ? _ts('entries.qualityControl', 'selectedTocFilters')
+                            : _ts('entries.qualityControl', 'noSelectedTocFilters')
+                        }
+                        {tocFilters.length > 0 && (
+                            <ListView
+                                className={styles.tocFilterNames}
+                                data={tocFilters}
+                                keySelector={tocFilterIdSelector}
+                                renderer={ListItem}
+                                rendererParams={tocFilterRendererParams}
+                            />
+                        )}
+                    </h3>
+                    <div className={styles.entryList}>
+                        { (entries && entries.length > 0) ? (
+                            <List
+                                data={entries}
+                                keySelector={entryKeySelector}
+                                renderer={EntryCard}
+                                rendererParams={entryCardRendererParams}
+                            />
+                        ) : (
+                            <EmptyEntries
+                                projectId={projectId}
+                                entriesFilters={entriesFilters}
+                                tocFilters={tocFilters}
+                            />
+                        )}
+                    </div>
+                </div>
+            </div>
             <FooterContainer parentFooterRef={parentFooterRef}>
                 <Pager
                     activePage={activePage}

@@ -1216,7 +1216,8 @@
         "-11119478": "{verified} out of {total} entries are verified in this category.",
         "-79879872": "Expand All",
         "-79797971": "Collapse All",
-        "-46164024": "Jump to"
+        "-46164024": "Jump to",
+        "-19695002": "Show table of contents"
     },
     "links": {
         "browserExtension": {
@@ -3474,7 +3475,8 @@
             "verifiedCountTooltip": -11119478,
             "expandAll": -79879872,
             "collapseAll": -79797971,
-            "searchInputPlacehoder": -46164024
+            "searchInputPlacehoder": -46164024,
+            "showTableOfContents": -19695002
         },
         "qualityControl": {
             "matrix1dTitle": -90901113,
