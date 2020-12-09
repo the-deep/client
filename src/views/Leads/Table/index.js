@@ -412,7 +412,7 @@ function Table(props) {
                 defaultSortOrder: 'dsc',
                 modifier: row => {
                     const percentage = row.noOfEntries
-                        ? (row.verifiedEntriesCount/row.noOfEntries)*100
+                        ? ((row.verifiedEntriesCount ?? 0) / row.noOfEntries) * 100
                         : 0;
                     return (
                         <div
@@ -422,11 +422,17 @@ function Table(props) {
                                 {verifiedCount: row.verifiedEntriesCount, entriesCount: row.noOfEntries}
                             )}
                         >
-                            <span>{row.noOfEntries}</span>
+                            <Numeral
+                                className={styles.entriesCount}
+                                value={row.noOfEntries}
+                                precision={0}
+                            />
+
                             <Numeral
                                 value={percentage}
                                 prefix="("
                                 suffix="%)"
+                                precision={0}
                             />
                         </div>
                     );
