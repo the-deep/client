@@ -16,6 +16,7 @@ import {
 } from '#typings';
 import useRequest from '#restrequest';
 import { useArrayEdit } from '#hooks/stateManagement';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import ConnectorEditForm from './ConnectorEditForm';
 import ConnectorDetails from './ConnectorDetails';
@@ -27,6 +28,7 @@ const ModalButton = modalize(Button);
 interface OwnProps {
     className?: string;
     projectId: number;
+    readOnly?: boolean;
 }
 
 const connectorKeySelector = (connector: Connector) => connector.id;
@@ -35,6 +37,7 @@ function ProjectConnector(props: OwnProps) {
     const {
         projectId,
         className,
+        readOnly,
     } = props;
 
     const [connectors, setConnectors] = useState<Connector[] | undefined>(undefined);
@@ -54,6 +57,9 @@ function ProjectConnector(props: OwnProps) {
         onSuccess: (response) => {
             setConnectors(response.results);
         },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('project.connector', 'connectorsTitle'))({ error: errorBody });
+        },
     });
 
     const connectorRendererParams = useCallback((key, data) => ({
@@ -61,8 +67,10 @@ function ProjectConnector(props: OwnProps) {
         details: data,
         onConnectorDelete: handleConnectorDelete,
         onConnectorEdit: handleConnectorEdit,
+        readOnly,
     }), [
         projectId,
+        readOnly,
         handleConnectorDelete,
         handleConnectorEdit,
     ]);
@@ -72,19 +80,21 @@ function ProjectConnector(props: OwnProps) {
             {pendingConnectors && isNotDefined(connectors) && <LoadingAnimation />}
             <header className={styles.header}>
                 <div className={styles.heading} />
-                <ModalButton
-                    iconName="add"
-                    variant="primary"
-                    modal={(
-                        <ConnectorEditForm
-                            projectId={projectId}
-                            onSuccess={handleConnectorAdd}
-                            isAddForm
-                        />
-                    )}
-                >
-                    {_ts('project.connector', 'addButtonTitle')}
-                </ModalButton>
+                {!readOnly && (
+                    <ModalButton
+                        iconName="add"
+                        variant="primary"
+                        modal={(
+                            <ConnectorEditForm
+                                projectId={projectId}
+                                onSuccess={handleConnectorAdd}
+                                isAddForm
+                            />
+                        )}
+                    >
+                        {_ts('project.connector', 'addButtonTitle')}
+                    </ModalButton>
+                )}
             </header>
             <ListView
                 className={styles.content}
