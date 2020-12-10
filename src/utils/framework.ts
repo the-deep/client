@@ -324,6 +324,7 @@ export const getMatrix1dToc = (
                     title: value,
                     verified: count?.verifiedCount,
                     unverified: count?.unverifiedCount,
+                    uniqueId: `${key}-${cellKey}`,
                 });
             });
 
@@ -336,6 +337,7 @@ export const getMatrix1dToc = (
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedCells,
+                uniqueId: `${key}-${rowKey}`,
             });
         });
 
@@ -343,6 +345,7 @@ export const getMatrix1dToc = (
             id: key,
             title,
             children: transformedRows,
+            uniqueId: key,
         });
     });
 
@@ -398,6 +401,7 @@ export const getMatrix2dToc = (
                         title: subDimensionTitle,
                         verified: count?.verifiedCount,
                         unverified: count?.unverifiedCount,
+                        uniqueId: `${dimensionKey}-${subDimensionId}`,
                     };
                 },
             );
@@ -411,6 +415,7 @@ export const getMatrix2dToc = (
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedSubDimensions,
+                uniqueId: `${dimensionKey}-${dimensionId}`,
             });
         });
 
@@ -430,6 +435,7 @@ export const getMatrix2dToc = (
                         title: subSectorTitle,
                         verified: count?.verifiedCount,
                         unverified: count?.unverifiedCount,
+                        uniqueId: `${sectorKey}-${subSectorId}`,
                     };
                 },
             );
@@ -443,22 +449,26 @@ export const getMatrix2dToc = (
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedSubSectors,
+                uniqueId: `${sectorKey}-${sectorId}`,
             });
         });
 
         return {
             id: key,
             title,
+            uniqueId: key,
             children: [
                 {
                     id: 'dimensions',
                     title: 'Dimensions',
                     children: transformedDimensions,
+                    uniqueId: 'dimensions',
                 },
                 {
                     id: 'sectors',
                     title: 'Sectors',
                     children: transformedSectors,
+                    uniqueId: 'sectors',
                 },
             ],
         };
