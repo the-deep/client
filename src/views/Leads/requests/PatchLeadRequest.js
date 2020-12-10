@@ -43,6 +43,13 @@ export default class PatchLeadRequest {
                         message: _ts('leads', 'leadsPendingSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
+                } else if (status === 'validated') {
+                    notify.send({
+                        title: _ts('leads', 'leads'),
+                        type: notify.type.SUCCESS,
+                        message: _ts('leads', 'leadsValidatedSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
                 } else {
                     notify.send({
                         title: _ts('leads', 'leads'),

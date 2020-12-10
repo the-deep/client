@@ -22,6 +22,7 @@ const propTypes = {
     onRemoveLead: PropTypes.func.isRequired,
     onMarkProcessed: PropTypes.func.isRequired,
     onMarkPending: PropTypes.func.isRequired,
+    onMarkValidated: PropTypes.func.isRequired,
     setLeadPageActivePage: PropTypes.func.isRequired,
     emptyComponent: PropTypes.func.isRequired,
 };
@@ -115,6 +116,7 @@ export default class LeadGrid extends React.Component {
             onSearchSimilarLead={this.props.onSearchSimilarLead}
             onMarkPending={this.props.onMarkPending}
             onMarkProcessed={this.props.onMarkProcessed}
+            onMarkValidated={this.props.onMarkValidated}
             onLeadClick={this.handleLeadClick}
         />
     );
