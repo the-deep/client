@@ -174,6 +174,7 @@ export interface MatrixTocElement {
     verified?: number;
     unverified?: number;
     children?: MatrixTocElement[] | [];
+    uniqueId: string;
 }
 
 export interface ScaleWidget {

@@ -12,14 +12,12 @@ import {
 } from '@togglecorp/fujs';
 
 import Pager from '#rscv/Pager';
-import ResizableH from '#rscv/Resizable/ResizableH';
 import TableOfContents from '#components/TableOfContents';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
-import ListItem from '#rscv/ListItem';
 import Icon from '#rscg/Icon';
-import SearchSelectInput from '#rsci/SearchSelectInput';
+import SelectInput from '#rsci/SelectInput';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Badge from '#components/viewer/Badge';
@@ -67,10 +65,8 @@ interface ComponentProps {
     parentFooterRef: React.RefObject<HTMLElement>;
 }
 
-interface MatrixKeyId {
+interface MatrixKeyId extends MatrixTocElement {
     key: string;
-    id: string;
-    title: string;
 }
 
 interface PropsFromDispatch {
@@ -86,7 +82,7 @@ interface EntriesWithSummaryResponse<T> extends MultiResponse<T>{
 const tocFilterKeySelector = (d: MatrixKeyId) => d.key;
 const tocFilterIdSelector = (d: MatrixKeyId) => d.id;
 const keySelector = (d: MatrixTocElement) => d.key;
-const idSelector = (d: MatrixTocElement) => d.id;
+const idSelector = (d: MatrixTocElement) => d.uniqueId;
 const labelSelector = (d: MatrixTocElement) => d.title;
 const verifiedCountSelector = (d: MatrixTocElement) => d.verified;
 const unverifiedCountSelector = (d: MatrixTocElement) => d.unverified;
@@ -146,9 +142,9 @@ function QualityControl(props: Props) {
 
     const [entries, setEntries] = useState<EntryFields[]>([]);
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
-    const [stats, setStats] = useState<EntrySummary | undefined>();
+    const [stats, setStats] = useState<EntrySummary>();
     const [tocCount, setTocCount] = useState<TocCountMap>({});
-    const [searchValue, setSearchValue] = useState<MatrixTocElement | undefined>();
+    const [searchValue, setSearchValue] = useState<string | undefined>();
     const [defaultCollapseLevel, setDefaultCollapseLevel] = useState(collapseLevel.max);
 
     const matrixToc = useMemo(
@@ -333,10 +329,6 @@ function QualityControl(props: Props) {
         flatten(matrixToc, childrenSelector).filter((v: MatrixTocElement) => v.key),
     [matrixToc]);
 
-    const handleSearchValueChange = useCallback((value: string) =>
-        setSearchValue(searchValues.find((v: MatrixTocElement) => idSelector(v) === value)),
-    [searchValues]);
-
     const handleToggleExpand = useCallback(() => {
         if (defaultCollapseLevel === collapseLevel.max) {
             setDefaultCollapseLevel(collapseLevel.min);
@@ -360,7 +352,7 @@ function QualityControl(props: Props) {
                                     <Button
                                         className={styles.collapseButton}
                                         onClick={handleTocCollapse}
-                                        iconName='chevronLeft'
+                                        iconName="chevronLeft"
                                     />
                                     {_ts('entries.qualityControl', 'tableOfContentHeading')}
                                 </h3>
@@ -375,14 +367,13 @@ function QualityControl(props: Props) {
                                     }
                                 />
                             </div>
-                            <SearchSelectInput
+                            <SelectInput
+                                onChange={setSearchValue}
                                 options={searchValues}
-                                value={searchValue && idSelector(searchValue)}
-                                onChange={handleSearchValueChange}
+                                value={searchValue}
                                 placeholder={_ts('entries.qualityControl', 'searchInputPlacehoder')}
                                 keySelector={idSelector}
                                 labelSelector={labelSelector}
-                                showLabel
                                 showHintAndError={false}
                             />
                         </header>
@@ -410,7 +401,7 @@ function QualityControl(props: Props) {
                             <PrimaryButton
                                 className={styles.expandButton}
                                 onClick={handleTocExpand}
-                                iconName='list'
+                                iconName="list"
                                 title={_ts('entries.qualityControl', 'showTableOfContents')}
                             />
                         )}

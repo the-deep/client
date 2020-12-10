@@ -14,7 +14,9 @@ import { hasKey } from '#utils/common';
 
 import styles from './styles.scss';
 
-const noOp = () => {};
+const noOp = () => {
+    // no operation
+};
 
 interface Props<T, K extends string | number>{
     idSelector: (datum: T) => K;
@@ -26,7 +28,7 @@ interface Props<T, K extends string | number>{
     onChange: (value: T[]) => void;
     options: T[];
     value: T[];
-    searchValue: T | undefined;
+    searchValue?: string;
     level?: number;
     defaultCollapseLevel?: number;
     className?: string;
@@ -69,13 +71,12 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const children = childrenSelector(option);
     const verifiedCount = verifiedCountSelector(option);
     const unverifiedCount = unverifiedCountSelector(option);
-    const searchKey = searchValue && idSelector(searchValue);
 
     const tocElementRef = useRef<HTMLDivElement>(null);
 
     const isParent = useMemo(() =>
-        hasKey(option, searchKey, idSelector, childrenSelector),
-    [option, searchKey, idSelector, childrenSelector]);
+        hasKey(option, searchValue, idSelector, childrenSelector),
+    [option, searchValue, idSelector, childrenSelector]);
 
     const handleClick = useCallback(
         () => {
@@ -119,7 +120,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         (verifiedCount ?? 0) + (unverifiedCount ?? 0)
     ), [verifiedCount, unverifiedCount]);
 
-    const isIdSearched = isDefined(searchValue) ? id === idSelector(searchValue) : false;
+    const isIdSearched = id === searchValue;
 
     useEffect(() => {
         if (isParent) {
