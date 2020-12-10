@@ -22,6 +22,7 @@ import Icon from '#rscg/Icon';
 import SearchSelectInput from '#rsci/SearchSelectInput';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Badge from '#components/viewer/Badge';
 
 import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -324,7 +325,8 @@ function QualityControl(props: Props) {
     ]);
 
     const tocFilterRendererParams = useCallback((_: string, data: MatrixKeyId) => ({
-        value: labelSelector(data),
+        className: styles.badge,
+        title: labelSelector(data),
     }), []);
 
     const searchValues = useMemo(() =>
@@ -425,7 +427,7 @@ function QualityControl(props: Props) {
                                 className={styles.tocFilterNames}
                                 data={tocFilters}
                                 keySelector={tocFilterIdSelector}
-                                renderer={ListItem}
+                                renderer={Badge}
                                 rendererParams={tocFilterRendererParams}
                             />
                         )}
