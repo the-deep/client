@@ -6,7 +6,7 @@ import Numeral from '#rscv/Numeral';
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
 
-import styles from './styles.css';
+import styles from './styles.scss';
 
 interface Stats {
     id: string;
@@ -84,7 +84,7 @@ function EntriesStats(props: ComponentProps) {
     } = stats;
 
     const statsList: Stats[] = useMemo(() => {
-        const statsList = Object.keys(staticEntryStatTitles).map((k) => ({
+        const list = Object.keys(staticEntryStatTitles).map(k => ({
             id: k,
             title: staticEntryStatTitles[k as keyof StaticEntrySummary],
             value: staticStats[k as keyof StaticEntrySummary],
@@ -97,7 +97,7 @@ function EntriesStats(props: ComponentProps) {
         }));
 
         return [
-            ...statsList,
+            ...list,
             ...orgTypeItems,
         ];
     }, [staticStats, orgTypeCount]);

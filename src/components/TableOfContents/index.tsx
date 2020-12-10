@@ -75,8 +75,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
 
     const isParent = useMemo(() =>
         hasKey(option, searchKey, idSelector, childrenSelector),
-        [option, searchKey],
-    );
+    [option, searchKey, idSelector, childrenSelector]);
 
     const handleClick = useCallback(
         () => {
@@ -104,7 +103,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
 
     useEffect(() => {
         const isCollapsed = isDefined(defaultCollapseLevel) && level >= defaultCollapseLevel;
-        isCollapsed ? setCollapsed(true) : setCollapsed(false);
+        setCollapsed(isCollapsed);
     }, [level, defaultCollapseLevel]);
 
     const handleCollapseToggle = useCallback(
@@ -130,7 +129,7 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
             tocElementRef.current?.scrollIntoView({
                 behavior: 'smooth',
                 block: 'center',
-            })
+            });
         }
     }, [isParent, isIdSearched]);
 
@@ -141,7 +140,6 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                 styles.tocItem,
                 isIdSearched && styles.searched,
                 isSelected && styles.active,
-                !collapsed && styles.expanded,
             )}
             ref={tocElementRef}
         >
@@ -159,8 +157,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                             className={styles.count}
                             title={`${verifiedCount ?? 0} of ${totalEntries}`}
                             tooltip={_ts(
-                            'entries.qualityControl',
-                            'verifiedCountTooltip',
+                                'entries.qualityControl',
+                                'verifiedCountTooltip',
                                 {
                                     verified: verifiedCount ?? 0,
                                     total: totalEntries,
