@@ -91,8 +91,9 @@ function LeadEditModal(props) {
                 closeModal();
             }
         },
-        onFailure: notifyOnFailure(_ts('leads', 'leads')),
-        onFatal: notifyOnFatal(_ts('leads', 'leads')),
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('leads', 'leads'))({ error: errorBody });
+        },
     });
 
     const handleLeadDetailChange = useCallback(({

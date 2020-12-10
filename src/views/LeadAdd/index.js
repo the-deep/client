@@ -22,6 +22,7 @@ import LeadCopyModal from '#components/general/LeadCopyModal';
 import { pathNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import useRequest from '#restrequest';
 import { RequestCoordinator } from '#request';
@@ -196,9 +197,10 @@ function LeadAdd(props) {
             setOrganizations(response.organizations);
             setLeadGroups(response.leadGroups);
         },
-        onFailure: () => {
+        onFailure: (error, errorBody) => {
             setOrganizations([]);
             setLeadGroups([]);
+            notifyOnFailure(_ts('addLeads', 'connectorLeadsTitle'))({ error: errorBody });
         },
     });
 
@@ -538,7 +540,9 @@ function LeadAdd(props) {
         url: `server://projects/${projectId}/unified-connectors/`,
         autoTrigger: true,
         shouldPoll: () => 10 * 1000,
-        // FIXME: add error handling
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'connectorLeadsTitle'))({ error: errorBody });
+        },
     });
     const [selectedConnector, setSelectedConnector] = useState(undefined);
     // TODO: validate this selected connector source
@@ -550,7 +554,9 @@ function LeadAdd(props) {
         url: `server://projects/${projectId}/unified-connectors/${connectorToTrigger}/trigger-sync/`,
         method: 'POST',
         body: {},
-        // FIXME: add error handling
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'connectorLeadsTitle'))({ error: errorBody });
+        },
     });
 
     const handleSourceSelect = useCallback(

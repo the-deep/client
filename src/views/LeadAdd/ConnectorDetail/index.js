@@ -17,6 +17,7 @@ import {
     useArraySelection,
     useArrayEdit,
 } from '#hooks/stateManagement';
+import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import {
@@ -109,6 +110,9 @@ function ConnectorDetail(props) {
         onSuccess: (response) => {
             setTotalLeadsCount(response?.count);
             setLeads(response?.results);
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'connectorLeadsTitle'))({ error: errorBody });
         },
     });
 
@@ -245,6 +249,9 @@ function ConnectorDetail(props) {
                 mergeLeads(leadsToPatch);
             }
             clearSelection();
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('addLeads', 'connectorLeadsTitle'))({ error: errorBody });
         },
     });
 
