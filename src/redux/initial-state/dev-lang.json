@@ -1219,7 +1219,9 @@
         "-46164024": "Jump to",
         "-19695002": "Show table of contents",
         "-40350374": "% of verified entries",
-        "-81087776": "{verifiedCount} verified out of {entriesCount} entries"
+        "-81087776": "{verifiedCount} verified out of {entriesCount} entries",
+        "-38882854": "Mark as validated",
+        "-65674515": "Lead has been marked as validated!"
     },
     "links": {
         "browserExtension": {
@@ -1922,7 +1924,9 @@
             "clearSelectedLeadsTitle": -22337727,
             "clearSelectionButtonTitle": 528,
             "exportToOtherProjectsButtonLabel": 600,
-            "verifiedEntries": -81087776
+            "verifiedEntries": -81087776,
+            "markAsValidatedTitle": -38882854,
+            "leadsValidatedSuccess": -65674515
         },
         "leadsGrid": {
             "publisherLabel": 5,

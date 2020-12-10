@@ -453,6 +453,18 @@ export default class Leads extends React.PureComponent {
         this.leadEditRequest.start();
     }
 
+    handleMarkAsValidated = (selectedLead) => {
+        if (this.leadEditRequest) {
+            this.leadEditRequest.stop();
+        }
+        const request = new PatchLeadRequest({
+            setState: params => this.setState(params),
+            patchLead: this.props.patchLead,
+        });
+        this.leadEditRequest = request.create(selectedLead, { status: 'validated' });
+        this.leadEditRequest.start();
+    }
+
     handlePageClick = (page) => {
         this.props.setLeadPageActivePage({ activePage: page });
     }
@@ -702,6 +714,7 @@ export default class Leads extends React.PureComponent {
             onRemoveLead={this.handleLeadDelete}
             onMarkProcessed={this.handleMarkAsProcessed}
             onMarkPending={this.handleMarkAsPending}
+            onMarkValidated={this.handleMarkAsValidated}
             activeProject={this.props.activeProject}
             emptyComponent={EmptyComponent}
         />

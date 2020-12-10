@@ -44,6 +44,7 @@ const propTypes = {
     onRemoveLead: PropTypes.func.isRequired,
     onMarkProcessed: PropTypes.func.isRequired,
     onMarkPending: PropTypes.func.isRequired,
+    onMarkValidated: PropTypes.func.isRequired,
     minHeight: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
 };
 
@@ -145,6 +146,10 @@ export default class GridItem extends React.PureComponent {
         this.props.onMarkPending(this.props.lead);
     }
 
+    handleMarkAsValidatedClick = () => {
+        this.props.onMarkValidated(this.props.lead);
+    }
+
     handleRemoveLeadClick = () => {
         this.props.onRemoveLead(this.props.lead);
     }
@@ -197,6 +202,17 @@ export default class GridItem extends React.PureComponent {
                 />
             );
         } else if (lead.status === 'processed') {
+            return (
+                <Button
+                    tabIndex="-1"
+                    title={_ts('leads', 'markAsValidatedTitle')}
+                    className={classNames(styles.markValidated, styles.mark)}
+                    onClick={this.handleMarkAsValidatedClick}
+                    transparent
+                    iconName="check"
+                />
+            );
+        } else if (lead.status === 'validated') {
             return (
                 <Button
                     tabIndex="-1"

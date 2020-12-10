@@ -183,6 +183,9 @@
         font-size: var(--font-size-extra-large-alt);
 
         &-processed {
+            background-color: var(--color-warning);
+        }
+        &-validated {
             background-color: var(--processed-color);
         }
         &-pending {
