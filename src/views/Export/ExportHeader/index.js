@@ -17,6 +17,7 @@ import {
     viewsAcl,
 } from '#constants';
 import {
+    RequestCoordinator,
     RequestClient,
     methods,
 } from '#request';
@@ -149,6 +150,7 @@ const requestOptions = {
     },
 };
 
+@RequestCoordinator
 @RequestClient(requestOptions)
 export default class ExportHeader extends React.PureComponent {
     static propTypes = propTypes;

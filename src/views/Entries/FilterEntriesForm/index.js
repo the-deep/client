@@ -527,6 +527,7 @@ FilterEntriesForm.propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setEntryFilterOptions: PropTypes.func.isRequired,
     unsetEntriesViewFilter: PropTypes.func.isRequired,
+
     hideMatrixFilters: PropTypes.bool.isRequired,
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
@@ -538,6 +539,7 @@ FilterEntriesForm.defaultProps = {
     hideLeadFilters: false,
     className: undefined,
     filters: [],
+    widgets: [],
     geoOptions: {},
     applyOnChange: false,
 };

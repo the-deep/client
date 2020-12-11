@@ -73,4 +73,3 @@ export interface DatabaseEntityBase {
     modifiedByName: string;
     versionId: number;
 }
-

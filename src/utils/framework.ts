@@ -1,7 +1,6 @@
-import { isDefined, doesObjectHaveNoData } from '@togglecorp/fujs';
+import { isDefined, doesObjectHaveNoData, compareString } from '@togglecorp/fujs';
 import _ts from '#ts';
 import {
-    FrameworkElement,
     FrameworkFields,
     MiniFrameworkElement,
     Matrix2dWidgetElement,
@@ -16,10 +15,11 @@ import {
     ConditionalWidget,
     Entry,
     TocCountMap,
+    ReportStructureVariant,
 } from '#typings';
 
-export const SECTOR_FIRST = 'sectorFirst';
-export const DIMENSION_FIRST = 'dimensionFirst';
+export const SECTOR_FIRST: ReportStructureVariant = 'sectorFirst';
+export const DIMENSION_FIRST: ReportStructureVariant = 'dimensionFirst';
 
 interface Matrix2dData {
     sectors: {
@@ -85,12 +85,25 @@ interface WidgetData {
         value: string;
     };
 }
+
 interface ConditionalAttribute {
     selectedWidgetKey?: string;
     [key: string]: WidgetData | string | undefined;
 }
 
-function isWidgetData(arg: any): arg is WidgetData {
+const contextualWidgetTypes = [
+    'selectWidget',
+    'multiselectWidget',
+    'scaleWidget',
+    'geoWidget',
+    'timeWidget',
+    'dateWidget',
+    'organigramWidget',
+    'dateRangeWidget',
+    'timeRangeWidget',
+];
+
+function isWidgetData(arg: unknown): arg is WidgetData {
     return arg?.data?.value !== undefined;
 }
 
@@ -105,8 +118,8 @@ export function mapReportLevelsToNodes(levels: Level[]): LevelOutput[] {
 }
 
 export const createReportStructure = (
-    analysisFramework: FrameworkElement,
-    reportStructureVariant = SECTOR_FIRST,
+    analysisFramework: FrameworkFields,
+    reportStructureVariant: ReportStructureVariant = SECTOR_FIRST,
 ) => {
     if (!analysisFramework) {
         return undefined;
@@ -535,4 +548,102 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
         ...scaleWidgets,
         ...scaleWidgetsInsideConditionals,
     ];
+}
+
+export function getTextWidgetsFromFramework(framework: FrameworkFields) {
+    if (!framework || !framework.widgets) {
+        return [];
+    }
+
+    const { widgets } = framework;
+
+    const textWidgets = widgets
+        .filter(w => w.widgetId === 'textWidget')
+        .map(w => ({
+            title: w.title,
+            key: w.key,
+            id: w.id,
+            selected: true,
+            draggable: true,
+        }));
+
+    const textWidgetsInsideConditionals = widgets
+        .filter(w => w.widgetId === 'conditionalWidget')
+        .map((conditional) => {
+            const {
+                title,
+                id,
+            } = conditional;
+            const {
+                widgets: widgetsInsideConditional = [],
+            } = (conditional as WidgetElement<ConditionalWidget>).properties.data;
+
+            return widgetsInsideConditional
+                .filter(w => w.widget && w.widget.widgetId === 'textWidget')
+                .map(({ widget }) => (
+                    {
+                        key: widget.key,
+                        id: widget.key,
+                        title: `${title} › ${widget.title}`,
+                        actualTitle: widget.title,
+                        conditionalId: id,
+                        isConditional: true,
+                        selected: true,
+                        draggable: true,
+                    }
+                ));
+        }).flat();
+
+    return [...textWidgets, ...textWidgetsInsideConditionals];
+}
+
+export function getContextualWidgetsFromFramework(framework: FrameworkFields) {
+    if (!framework || !framework.widgets) {
+        return [];
+    }
+
+    const { widgets } = framework;
+
+    const isContextualWidget = (id: string) => contextualWidgetTypes.some(w => w === id);
+
+    const contextualWidgets = widgets
+        .filter(({ widgetId }) => isContextualWidget(widgetId))
+        .sort((a, b) => compareString(a.widgetId, b.widgetId))
+        .map(w => ({
+            title: w.title,
+            key: w.key,
+            id: w.id,
+            selected: true,
+            draggable: true,
+        }));
+
+    const contextualWidgetsInsideConditionals = widgets
+        .filter(w => w.widgetId === 'conditionalWidget')
+        .map((conditional) => {
+            const {
+                title,
+                id,
+            } = conditional;
+            const {
+                widgets: widgetsInsideConditional = [],
+            } = (conditional as WidgetElement<ConditionalWidget>).properties.data;
+
+            return widgetsInsideConditional
+                .filter(w => w.widget && isContextualWidget(w.widget.widgetId))
+                .sort((a, b) => compareString(a.widget.widgetId, b.widget.widgetId))
+                .map(({ widget }) => (
+                    {
+                        key: widget.key,
+                        id: widget.key,
+                        title: `${title} › ${widget.title}`,
+                        actualTitle: widget.title,
+                        conditionalId: id,
+                        isConditional: true,
+                        selected: true,
+                        draggable: true,
+                    }
+                ));
+        }).flat();
+
+    return [...contextualWidgets, ...contextualWidgetsInsideConditionals];
 }
