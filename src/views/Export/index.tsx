@@ -39,6 +39,8 @@ import {
     MultiResponse,
     ExportType,
     ReportStructureVariant,
+    TreeSelectableWidget,
+    ReportStructure,
 } from '#typings';
 
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
@@ -88,17 +90,6 @@ interface ComponentProps {
     geoOptions: {};
 }
 
-type TreeSelectableWidget = {
-    key: string;
-    id: string | number;
-    title: string;
-    selected: boolean;
-    draggable: boolean;
-    actualTitle?: string;
-    conditionalId?: number;
-    isConditional?: boolean;
-}
-
 type Props = ComponentProps & PropsFromDispatch;
 
 function Export(props: Props) {
@@ -121,12 +112,12 @@ function Export(props: Props) {
 
     const filterOnlyUnprotected = projectRole?.exportPermissions?.['create_only_unprotected'];
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
-    const [previewId, setPreviewId] = useState<string>();
+    const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget[]>([]);
     const [contextualWidgets, setContextualWidgets] = useState<TreeSelectableWidget[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
-    const [reportStructure, setReportStructure] = useState<unknown>(undefined);
+    const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [leads, setLeads] = useState<SelectedLead[]>([]);
     const [
         reportStructureVariant,
@@ -237,7 +228,7 @@ function Export(props: Props) {
     useEffect(() => {
         setActiveExportTypeKey('word');
         setPreviewId(undefined);
-        setReportStructure(undefined);
+        setReportStructure([]);
         setDecoupledEntries(true);
     }, [projectId]);
 
@@ -250,7 +241,7 @@ function Export(props: Props) {
 
     useEffect(() => {
         const structure = createReportStructure(
-            analysisFramework as FrameworkFields,
+            analysisFramework,
             reportStructureVariant,
         );
         setReportStructure(structure);

@@ -16,6 +16,8 @@ import {
     Entry,
     TocCountMap,
     ReportStructureVariant,
+    Level,
+    ReportStructure,
 } from '#typings';
 
 export const SECTOR_FIRST: ReportStructureVariant = 'sectorFirst';
@@ -23,11 +25,11 @@ export const DIMENSION_FIRST: ReportStructureVariant = 'dimensionFirst';
 
 interface Matrix2dData {
     sectors: {
-        id: number;
+        id: string;
         title: string;
     }[];
     dimensions: {
-        id: number;
+        id: string;
         title: string;
         subdimensions: {
             id: string;
@@ -66,20 +68,6 @@ const transformMatrix2dLevels = ({
     return dimensionFirstLevels;
 };
 
-interface Level {
-    id: string | number;
-    title: string;
-    sublevels?: Level[];
-}
-
-interface LevelOutput {
-    key: Level['id'];
-    title: Level['title'];
-    selected: boolean;
-    draggable: boolean;
-    nodes?: LevelOutput[];
-}
-
 interface WidgetData {
     data: {
         value: string;
@@ -103,11 +91,11 @@ const contextualWidgetTypes = [
     'timeRangeWidget',
 ];
 
-function isWidgetData(arg: unknown): arg is WidgetData {
+function isWidgetData(arg: any): arg is WidgetData {
     return arg?.data?.value !== undefined;
 }
 
-export function mapReportLevelsToNodes(levels: Level[]): LevelOutput[] {
+export function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
     return levels.map(level => ({
         key: level.id,
         title: level.title,
@@ -122,25 +110,16 @@ export const createReportStructure = (
     reportStructureVariant: ReportStructureVariant = SECTOR_FIRST,
 ) => {
     if (!analysisFramework) {
-        return undefined;
+        return [];
     }
 
     const { exportables, widgets } = analysisFramework;
     if (!exportables || !widgets) {
-        return undefined;
+        return [];
     }
 
     const nodes = [];
-    exportables.forEach((exportableUntyped) => {
-        const exportable = exportableUntyped as {
-            id: number;
-            widgetKey: string;
-            data?: {
-                report?: {
-                    levels?: Level[];
-                };
-            };
-        };
+    exportables.forEach((exportable) => {
         const levels = exportable.data && exportable.data.report &&
             exportable.data.report.levels;
         const widget = widgets.find(w => w.key === exportable.widgetKey);
@@ -168,7 +147,7 @@ export const createReportStructure = (
                 key: String(exportable.id),
                 selected: true,
                 draggable: true,
-                nodes: mapReportLevelsToNodes(levels),
+                nodes: mapReportLevelsToNodes(levels as Level[]),
             });
         }
     });
