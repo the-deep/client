@@ -70,7 +70,7 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
 });
 
-interface SelectedLead extends Lead {
+export interface SelectedLead extends Lead {
     selected: boolean;
 }
 
@@ -132,6 +132,7 @@ function Export(props: Props) {
     ] = useRequest<unknown>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
+        schemaName: 'analysisFramework',
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
@@ -201,6 +202,7 @@ function Export(props: Props) {
         query: {
             project: projectId,
         },
+        schemaName: 'geoOptions',
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
