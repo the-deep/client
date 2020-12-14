@@ -162,8 +162,9 @@ function FilterEntriesForm(props) {
         }));
         let finalFilters = [...filtersWithId];
         if (hideMatrixFilters) {
-            finalFilters = finalFilters
-            .filter(f => f.widgetId !== 'matrix1dWidget' && f.widgetId !== 'matrix2dWidget');
+            finalFilters = finalFilters.filter(
+                f => f.widgetId !== 'matrix1dWidget' && f.widgetId !== 'matrix2dWidget',
+            );
         }
         return finalFilters;
     }, [filtersFromProps, widgets, hideMatrixFilters]);
@@ -395,7 +396,7 @@ function FilterEntriesForm(props) {
                                     );
                                 }}
                                 showHintAndError={false}
-                                value={(selectedVerification ? selectedVerification.key : undefined)}
+                                value={selectedVerification ? selectedVerification.key : undefined}
                                 disabled={pending}
                                 placeholder={_ts('entries', 'verificationStatusPlaceholder')}
                             />

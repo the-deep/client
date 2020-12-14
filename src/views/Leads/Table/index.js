@@ -133,9 +133,12 @@ function Table(props) {
         [],
     );
 
-    useEffect(()=>{
-        clearSelection()
-    },[activeProject, filters]);
+    useEffect(
+        () => {
+            clearSelection();
+        },
+        [activeProject, filters],
+    );
 
     const handleLeadsRemove = useCallback((leadIds) => {
         removeItems(leadIds);
@@ -410,7 +413,7 @@ function Table(props) {
                 key: 'no_of_entries',
                 order: 13,
                 defaultSortOrder: 'dsc',
-                modifier: row => {
+                modifier: (row) => {
                     const percentage = row.noOfEntries
                         ? ((row.verifiedEntriesCount ?? 0) / row.noOfEntries) * 100
                         : 0;
@@ -419,7 +422,10 @@ function Table(props) {
                             title={_ts(
                                 'leads',
                                 'verifiedEntries',
-                                {verifiedCount: row.verifiedEntriesCount, entriesCount: row.noOfEntries}
+                                {
+                                    verifiedCount: row.verifiedEntriesCount,
+                                    entriesCount: row.noOfEntries,
+                                },
                             )}
                         >
                             <Numeral
@@ -436,7 +442,7 @@ function Table(props) {
                             />
                         </div>
                     );
-                }
+                },
             },
             {
                 key: 'actions',
@@ -475,7 +481,7 @@ function Table(props) {
     const leadModifier = useCallback(
         (lead, columnKey) => {
             const header = headers.find(d => d.key === columnKey);
-            return header.modifier(lead)??lead[columnKey];
+            return header.modifier(lead) ?? lead[columnKey];
         }, [headers],
     );
 
