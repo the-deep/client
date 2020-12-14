@@ -42,6 +42,12 @@ const connectorLeadStatusToLeadStatusMap = {
     processing: LEAD_STATUS.warning,
 };
 
+const connectorLeadStatusTitle = {
+    success: undefined,
+    failure: _ts('addLeads.connector', 'itemExtractionFailedMessage'),
+    processing: _ts('addLeads.connector', 'itemExtractionPendingMessage'),
+};
+
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
@@ -303,6 +309,7 @@ function ConnectorDetail(props) {
             type: LEAD_TYPE.connectors,
             onItemClick: setSelectedConnectorLead,
             itemState: connectorLeadStatusToLeadStatusMap[data.lead.status ?? 'processing'],
+            itemStateTitle: connectorLeadStatusTitle[data.lead.status ?? 'processing'],
 
             onLoadClick: handleConnectorLeadLoad,
             modifyLead,

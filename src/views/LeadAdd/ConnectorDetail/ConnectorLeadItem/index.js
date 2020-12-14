@@ -24,6 +24,7 @@ const propTypes = {
     selectedConnector: PropTypes.number,
     itemKey: PropTypes.number.isRequired,
     itemState: PropTypes.string.isRequired,
+    itemStateTitle: PropTypes.string,
     onLoadClick: PropTypes.func.isRequired,
     clickOnItem: PropTypes.func.isRequired,
     active: PropTypes.bool.isRequired,
@@ -35,6 +36,7 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     type: undefined,
+    itemStateTitle: undefined,
     selectedConnector: undefined,
     selectedConnectorSource: undefined,
     alreadyAdded: false,
@@ -50,6 +52,7 @@ function ConnectorLeadItem(props) {
         type,
         onItemClick,
         itemState,
+        itemStateTitle,
         projectId,
         selectedConnectorSource,
         selectedConnector,
@@ -114,6 +117,7 @@ function ConnectorLeadItem(props) {
             onItemClick={onItemClick}
             type={type}
             itemState={itemState}
+            itemStateTitle={itemStateTitle}
             title={leadData.lead?.data.title ?? leadData.lead.url}
             actionButtons={(
                 <>

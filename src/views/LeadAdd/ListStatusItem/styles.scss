@@ -12,6 +12,33 @@
     flex-shrink: 0;
     overflow: hidden;
 
+    .status-icon {
+        flex-shrink: 0;
+        margin: 0 var(--spacing-extra-small);
+        color: var(--color-text-label);
+        font-size: var(--font-size-large);
+    }
+
+    .pending {
+        animation: spin 1s linear infinite;
+    }
+
+    .warning {
+        color: var(--color-warning);
+    }
+
+    .error {
+        color: var(--color-danger);
+    }
+
+    .complete {
+        color: var(--color-success);
+    }
+
+    .pristine {
+        color: var(--color-text-label);
+    }
+
     .add-lead-list-item {
         display: flex;
         border-left: var(--width-separator-thick) solid transparent;
@@ -102,13 +129,6 @@
             margin: 0 var(--spacing-extra-small);
         }
 
-        .status-icon {
-            flex-shrink: 0;
-            margin: 0 var(--spacing-extra-small);
-            color: var(--color-text-label);
-            font-size: var(--font-size-large);
-        }
-
         &.separator {
             border-bottom: var(--width-separator-thin) solid var(--color-separator);
         }
@@ -118,25 +138,6 @@
             background-color: var(--color-background-hover);
         }
 
-        .pending {
-            animation: spin 1s linear infinite;
-        }
-
-        .warning {
-            color: var(--color-warning);
-        }
-
-        .error {
-            color: var(--color-danger);
-        }
-
-        .complete {
-            color: var(--color-success);
-        }
-
-        .pristine {
-            color: var(--color-text-label);
-        }
     }
 
     .action-container {

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import List from '#rscv/List';
 import Icon from '#rscg/Icon';
+import _ts from '#ts';
 
 import ListStatusItem from '../ListStatusItem';
 import { LEAD_TYPE, LEAD_STATUS } from '../utils';
@@ -18,6 +19,13 @@ const connectorStatusToLeadStatusMap = {
     success: undefined,
     failure: LEAD_STATUS.invalid,
     processing: LEAD_STATUS.requesting,
+};
+
+const connectorLeadStatusTitle = {
+    success: undefined,
+    failure: _ts('addLeads.connector', 'extractionFailedMessage'),
+    not_processed: _ts('addLeads.connector', 'extractionNotProcessedMessage'),
+    processing: _ts('addLeads.connector', 'extractionPendingMessage'),
 };
 
 function ConnectorItem(props) {
@@ -65,6 +73,7 @@ function ConnectorItem(props) {
             indent: 1,
             separator: false,
             itemState: connectorStatusToLeadStatusMap[source.status],
+            itemStateTitle: connectorLeadStatusTitle[source.status ?? 'processing'],
             logo: source.sourceDetail.logo,
         }),
         [id, handleConnectorSourceSelect, selectedConnector, selectedConnectorSource],

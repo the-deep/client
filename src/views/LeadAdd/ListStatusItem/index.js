@@ -79,6 +79,7 @@ const propTypes = {
 
     title: PropTypes.string.isRequired,
     itemState: PropTypes.string,
+    itemStateTitle: PropTypes.string,
     type: PropTypes.string,
     itemKey: PropTypes.string.isRequired,
 
@@ -104,6 +105,7 @@ const defaultProps = {
     type: undefined,
     className: undefined,
     itemState: undefined,
+    itemStateTitle: undefined,
     actionButtons: undefined,
     onItemClick: undefined,
     indent: undefined,
@@ -126,6 +128,7 @@ function ListStatusItem(props) {
         type,
         count,
         itemState,
+        itemStateTitle,
         indent,
         separator,
         onItemSelect,
@@ -233,6 +236,7 @@ function ListStatusItem(props) {
                         <Icon
                             className={stateIconClassName}
                             name={iconMap[itemState]}
+                            title={itemStateTitle}
                         />
                     )}
                 </button>
@@ -240,6 +244,18 @@ function ListStatusItem(props) {
             {actionButtons && (
                 <div className={styles.actionContainer}>
                     {actionButtons}
+                    {isDefined(progress) && progress > 0 && progress < 100 ? (
+                        <UploadProgress
+                            className={styles.progress}
+                            progress={progress}
+                        />
+                    ) : (
+                        <Icon
+                            className={stateIconClassName}
+                            name={iconMap[itemState]}
+                            title={itemStateTitle}
+                        />
+                    )}
                 </div>
             )}
         </Jumper>
