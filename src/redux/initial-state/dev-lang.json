@@ -1222,7 +1222,9 @@
         "-81087776": "{verifiedCount} verified out of {entriesCount} entries",
         "-38882854": "Mark as validated",
         "-65674515": "Lead has been marked as validated!",
-        "-60769703": "Authoring Organization Type"
+        "-60769703": "Authoring Organization Type",
+        "-87098708": "Any Organization Type",
+        "-89081134": "Organization Type"
     },
     "links": {
         "browserExtension": {
@@ -1688,6 +1690,7 @@
             "commentStatusPlaceholder": 8,
             "textSearchPlaceholder": -5446515,
             "entryGroupsFilterLabel": -47675119,
+            "authoringOrganizationsFilterLabel": -89081134,
             "entryGroupsFilterPlaceholder": 14,
             "entryLabelsFilterPlaceholder": 14,
             "entryLabelsFilterLabel": -80269151,
@@ -1715,6 +1718,7 @@
             "dataSeries": -43286063,
             "entryTypePlaceholder": 14,
             "entryTypeFilterLabel": -42342342,
+            "organizationTypePlaceholder": -87098708,
             "leadPublishedOnPlaceholder": 18,
             "leadFiltersGroupTitle": -86792115,
             "entriesFiltersGroupTitle": -86210237,

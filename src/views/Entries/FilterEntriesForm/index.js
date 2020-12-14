@@ -39,8 +39,6 @@ import FrameworkFilter from './FrameworkFilter';
 
 import styles from './styles.scss';
 
-const emptyList = [];
-
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
@@ -109,9 +107,16 @@ const staticFiltersLabelMap = {
 
     project_entry_labels: _ts('entries', 'entryLabelsFilterLabel'),
     lead_group_label: _ts('entries', 'entryGroupsFilterLabel'),
+    authoring_organizations: _ts('entries', 'authoringOrganizationsFilterLabel'),
 };
 
 const requestOptions = {
+    organizationTypesRequest: {
+        url: '/organization-types/',
+        method: methods.GET,
+        onMount: true,
+        onPropsChanged: ['activeProject'],
+    },
     entryFilterOptionsRequest: {
         url: '/entry-options/',
         query: ({ props: { activeProject } }) => ({
@@ -152,6 +157,12 @@ function FilterEntriesForm(props) {
         widgets,
         geoOptions,
         projectDetails,
+        requests: {
+            organizationTypesRequest: {
+                response,
+                pending: organizationTypesPending,
+            },
+        },
     } = props;
 
     const filteredFrameworkFilters = useMemo(() => {
@@ -414,6 +425,18 @@ function FilterEntriesForm(props) {
                                 disabled={pending}
                                 placeholder={_ts('entries', 'entryTypePlaceholder')}
                             />
+                            <MultiSelectInput
+                                className={styles.entriesFilter}
+                                keySelector={optionIdSelector}
+                                labelSelector={optionTitleSelector}
+                                options={response?.results}
+                                label={staticFiltersLabelMap.authoring_organizations}
+                                onChange={(value) => { handleFilterChange('authoring_organizations', value); }}
+                                showHintAndError={false}
+                                value={filters.authoring_organizations}
+                                disabled={pending || organizationTypesPending}
+                                placeholder={_ts('entries', 'organizationTypePlaceholder')}
+                            />
                             {showEntryLabelFilters && (
                                 <>
                                     <MultiSelectInput
@@ -515,6 +538,9 @@ FilterEntriesForm.propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setEntryFilterOptions: PropTypes.func.isRequired,
     unsetEntriesViewFilter: PropTypes.func.isRequired,
+    hideMatrixFilters: PropTypes.bool.isRequired,
+    widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 FilterEntriesForm.defaultProps = {
