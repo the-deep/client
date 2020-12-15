@@ -15,13 +15,12 @@ import {
     ConditionalWidget,
     Entry,
     TocCountMap,
-    ReportStructureVariant,
     Level,
     ReportStructure,
 } from '#typings';
 
-export const SECTOR_FIRST: ReportStructureVariant = 'sectorFirst';
-export const DIMENSION_FIRST: ReportStructureVariant = 'dimensionFirst';
+export const SECTOR_FIRST = 'sectorFirst' as const;
+export const DIMENSION_FIRST = 'dimensionFirst' as const;
 
 interface Matrix2dData {
     sectors: {
@@ -107,7 +106,7 @@ export function mapReportLevelsToNodes(levels: Level[]): ReportStructure[] {
 
 export const createReportStructure = (
     analysisFramework: FrameworkFields,
-    reportStructureVariant: ReportStructureVariant = SECTOR_FIRST,
+    reportStructureVariant: string = SECTOR_FIRST,
 ) => {
     if (!analysisFramework) {
         return [];
@@ -559,18 +558,16 @@ export function getTextWidgetsFromFramework(framework: FrameworkFields) {
 
             return widgetsInsideConditional
                 .filter(w => w.widget && w.widget.widgetId === 'textWidget')
-                .map(({ widget }) => (
-                    {
-                        key: widget.key,
-                        id: widget.key,
-                        title: `${title} › ${widget.title}`,
-                        actualTitle: widget.title,
-                        conditionalId: id,
-                        isConditional: true,
-                        selected: true,
-                        draggable: true,
-                    }
-                ));
+                .map(({ widget }) => ({
+                    key: widget.key,
+                    id: widget.key,
+                    title: `${title} › ${widget.title}`,
+                    actualTitle: widget.title,
+                    conditionalId: id,
+                    isConditional: true,
+                    selected: true,
+                    draggable: true,
+                }));
         }).flat();
 
     return [...textWidgets, ...textWidgetsInsideConditionals];

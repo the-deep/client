@@ -38,8 +38,8 @@ function ExportLeadsTable(props: ComponentProps) {
         onSelectLeadChange,
     } = props;
 
-    const areSomeNotSelected = useMemo(() => leads.some(l => !l.selected), [leads]);
-    const isDisabled = useMemo(() => leads.length === 0, [leads]);
+    const areSomeNotSelected = leads.some(l => !l.selected);
+    const isDisabled = leads.length === 0;
 
     const headers = useMemo(() => ([
         {

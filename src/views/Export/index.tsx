@@ -38,7 +38,6 @@ import {
     Lead,
     MultiResponse,
     ExportType,
-    ReportStructureVariant,
     TreeSelectableWidget,
     ReportStructure,
 } from '#typings';
@@ -83,11 +82,13 @@ interface ComponentProps {
     setAnalysisFramework: () => void;
     analysisFramework: FrameworkFields;
     projectId: number;
-    entriesFilters: {};
-    entryFilterOptions: {};
-    leadsFilters: {};
+    entriesFilters: unknown;
+    entryFilterOptions: {
+        projectEntryLabel: [];
+    };
+    leadsFilters: unknown;
     setGeoOptions: () => void;
-    geoOptions: {};
+    geoOptions: unknown;
 }
 
 type Props = ComponentProps & PropsFromDispatch;
@@ -114,25 +115,27 @@ function Export(props: Props) {
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
-    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget[]>([]);
-    const [contextualWidgets, setContextualWidgets] = useState<TreeSelectableWidget[]>([]);
+    const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [leads, setLeads] = useState<SelectedLead[]>([]);
     const [
         reportStructureVariant,
         setReportStructureVariant,
-    ] = useState<ReportStructureVariant>(SECTOR_FIRST);
+    ] = useState<string>(SECTOR_FIRST);
+    const [
+        contextualWidgets,
+        setContextualWidgets,
+    ] = useState<TreeSelectableWidget<string | number>[]>([]);
+
 
     const [
         analysisFrameworkPending,
-        ,
-        ,
-        getAnalysisFramework,
     ] = useRequest<unknown>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         schemaName: 'analysisFramework',
+        autoTrigger: true,
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
@@ -156,21 +159,21 @@ function Export(props: Props) {
         return processedFilters;
     }, [filterOnlyUnprotected, leadsFilters]);
 
+    const leadsRequestBody = useMemo(() => ({
+        project: [projectId],
+        ...sanitizedFilters,
+    }), [projectId, sanitizedFilters]);
+
     const [
         leadsPending,
-        ,
-        ,
-        getLeads,
     ] = useRequest<MultiResponse<Lead>>({
         url: 'server://v2/leads/filter/',
         method: 'POST',
         query: {
             fields: ['id', 'title', 'created_at'],
         },
-        body: {
-            project: [projectId],
-            ...sanitizedFilters,
-        },
+        autoTrigger: true,
+        body: leadsRequestBody,
         onSuccess: (response) => {
             const newLeads: SelectedLead[] = [];
             (response.results || []).forEach((l) => {
@@ -191,18 +194,18 @@ function Export(props: Props) {
         },
     });
 
+    const geoOptionsRequestQueryParams = useMemo(() => ({
+        project: projectId,
+    }), [projectId]);
+
     const [
         geoOptionsPending,
-        ,
-        ,
-        getGeoOptions,
     ] = useRequest<unknown>({
         url: 'server://geo-options/',
         method: 'GET',
-        query: {
-            project: projectId,
-        },
+        query: geoOptionsRequestQueryParams,
         schemaName: 'geoOptions',
+        autoTrigger: true,
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
@@ -215,17 +218,6 @@ function Export(props: Props) {
             });
         },
     });
-
-    useEffect(() => {
-        getAnalysisFramework();
-        getGeoOptions();
-    },
-    [getAnalysisFramework, getGeoOptions, projectId]);
-
-    useEffect(
-        getLeads,
-        [projectId, leadsFilters],
-    );
 
     useEffect(() => {
         setActiveExportTypeKey('word');
@@ -242,52 +234,36 @@ function Export(props: Props) {
     }, [analysisFramework]);
 
     useEffect(() => {
-        const structure = createReportStructure(
-            analysisFramework,
-            reportStructureVariant,
-        );
+        const structure = createReportStructure(analysisFramework, reportStructureVariant);
         setReportStructure(structure);
     }, [analysisFramework, reportStructureVariant]);
 
-    const handleShowGroupsChange = setShowGroups;
+    const handleSelectLeadChange = useCallback((key: number, value: boolean) => (
+        setLeads((oldLeads) => {
+            const newLeads = produce(oldLeads, (safeLeads) => {
+                const index = safeLeads.findIndex(d => d.id === key);
+                if (index !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeLeads[index].selected = value;
+                }
+            });
+            return newLeads;
+        })
+    ), []);
 
-    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
-        const newLeads = produce(leads, (safeLeads) => {
-            const index = safeLeads.findIndex(d => d.id === key);
-            if (index !== -1) {
-                // eslint-disable-next-line no-param-reassign
-                safeLeads[index].selected = value;
-            }
-        });
-        setLeads(newLeads);
-    }, [leads]);
+    const handleSelectAllLeads = useCallback((selectAll: boolean) => (
+        setLeads((oldLeads) => {
+            const newLeads = oldLeads.map(l => ({
+                ...l,
+                selected: selectAll,
+            }));
+            return newLeads;
+        })
+    ), []);
 
-    const handleSelectAllLeads = useCallback((selectAll: boolean) => {
-        const newLeads = leads.map(l => ({
-            ...l,
-            selected: selectAll,
-        }));
-
-        setLeads(newLeads);
-    }, [leads]);
-
-    const handleReportStructureChange = setReportStructure;
-
-    const handleTextWidgetsSelection = setTextWidgets;
-
-    const handleContextualWidgetsSelection = setContextualWidgets;
-
-    const handleDecoupledEntriesChange = setDecoupledEntries;
-
-    const handleExportTypeSelectButtonClick = setActiveExportTypeKey;
-
-    const handlePreview = setPreviewId;
-
-    const handleReportStructureVariantChange = useCallback((value: ReportStructureVariant) => {
-        const report = createReportStructure(analysisFramework, value);
+    const handleReportStructureVariantChange = useCallback((value: string) => {
         setReportStructureVariant(value);
-        setReportStructure(report);
-    }, [analysisFramework]);
+    }, []);
 
     const selectedLeads = useMemo(() =>
         listToMap(leads, d => d.id, d => d.selected),
@@ -304,7 +280,7 @@ function Export(props: Props) {
                     selectedLeads={selectedLeads}
                     reportStructure={reportStructure}
                     decoupledEntries={decoupledEntries}
-                    onPreview={handlePreview}
+                    onPreview={setPreviewId}
                     showGroups={showGroups}
                     pending={leadsPending || analysisFrameworkPending || geoOptionsPending}
                     analysisFramework={analysisFramework}
@@ -356,16 +332,15 @@ function Export(props: Props) {
                         contextualWidgets={contextualWidgets}
                         reportStructureVariant={reportStructureVariant}
                         decoupledEntries={decoupledEntries}
-                        onExportTypeChange={handleExportTypeSelectButtonClick}
-                        onReportStructureChange={handleReportStructureChange}
-                        onContextualWidgetsChange={handleContextualWidgetsSelection}
-                        onTextWidgetsChange={handleTextWidgetsSelection}
-                        entryFilterOptions={entryFilterOptions}
                         showGroups={showGroups}
-                        onShowGroupsChange={handleShowGroupsChange}
+                        onExportTypeChange={setActiveExportTypeKey}
+                        onReportStructureChange={setReportStructure}
+                        onContextualWidgetsChange={setContextualWidgets}
+                        onTextWidgetsChange={setTextWidgets}
+                        entryFilterOptions={entryFilterOptions}
+                        onShowGroupsChange={setShowGroups}
                         onReportStructureVariantChange={handleReportStructureVariantChange}
-                        onDecoupledEntriesChange={handleDecoupledEntriesChange}
-                        analysisFramework={analysisFramework}
+                        onDecoupledEntriesChange={setDecoupledEntries}
                     />
                     <ExportPreview
                         className={styles.preview}

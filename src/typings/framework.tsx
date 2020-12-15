@@ -98,13 +98,13 @@ export interface ExportableFields {
     order: number;
     widgetKey: string;
     data?: {
-        excel: {
+        excel?: {
             // TODO; use actual enum
             type: string;
             title: string;
             children: unknown[];
         };
-        report: {
+        report?: {
             levels: unknown[];
         };
     };
@@ -207,9 +207,9 @@ export interface ConditionalWidget {
     }[];
 }
 
-export type TreeSelectableWidget = {
+export type TreeSelectableWidget<T extends string | number> = {
     key: string;
-    id: string | number;
+    id: T;
     title: string;
     selected: boolean;
     draggable: boolean;

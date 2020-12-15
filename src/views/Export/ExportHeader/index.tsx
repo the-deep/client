@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
     _cs,
@@ -65,19 +65,56 @@ interface ExportTriggerResponse {
 interface ComponentProps {
     className?: string;
     reportStructure: ReportStructure[];
-    textWidgets: TreeSelectableWidget[];
-    contextualWidgets: TreeSelectableWidget[];
+    textWidgets: TreeSelectableWidget<string | number>[];
+    contextualWidgets: TreeSelectableWidget<string | number>[];
     activeExportTypeKey: string;
     decoupledEntries: boolean;
     projectId: number;
-    entriesFilters: {};
-    analysisFramework: {};
-    geoOptions?: {};
+    entriesFilters: unknown;
+    analysisFramework: unknown;
+    geoOptions?: unknown;
     selectedLeads: SelectedLeads;
     onPreview: (v: number | undefined) => void;
     pending: boolean;
     showGroups: boolean;
 }
+
+
+const createReportStructureForExport = (nodes: ReportStructure[]): ExportReportStructure[] =>
+    nodes
+        .filter(node => node.selected)
+        .map(node => ({
+            id: node.key,
+            levels: node.nodes
+                ? createReportStructureForExport(node.nodes)
+                : undefined,
+        }));
+
+const createReportStructureLevelForExport = (nodes: ReportStructure[]): ReportStructureLevel[] =>
+    nodes
+        .filter(node => node.selected)
+        .map(node => ({
+            id: node.key,
+            title: node.title,
+            sublevels: node.nodes
+                ? createReportStructureLevelForExport(node.nodes)
+                : undefined,
+        }));
+
+const createWidgetIds = (widgets: TreeSelectableWidget<string | number>[]) => (
+    widgets
+        .filter(widget => widget.selected)
+        .map((widget) => {
+            if (widget.isConditional) {
+                return ([
+                    widget.conditionalId,
+                    widget.id,
+                    widget.actualTitle,
+                ]);
+            }
+            return widget.id;
+        })
+);
 
 function ExportHeader(props: ComponentProps) {
     const {
@@ -134,50 +171,16 @@ function ExportHeader(props: ComponentProps) {
         },
         onFailure: () => {
             setExportClass(undefined);
+            notify.send({
+                title: _ts('export', 'headerExport'),
+                type: notify.type.ERROR,
+                message: _ts('export', 'exportFailedNotifyMessage'),
+                duration: 15000,
+            });
         },
     });
 
-    const createReportStructureForExport =
-        useCallback((nodes: ReportStructure[]): ExportReportStructure[] => (
-            nodes
-                .filter(node => node.selected)
-                .map(node => ({
-                    id: node.key,
-                    levels: node.nodes
-                        ? createReportStructureForExport(node.nodes)
-                        : undefined,
-                }))
-        ), []);
-
-    const createReportStructureLevelForExport =
-        useCallback((nodes: ReportStructure[]): ReportStructureLevel[] => (
-            nodes
-                .filter(node => node.selected)
-                .map(node => ({
-                    id: node.key,
-                    title: node.title,
-                    sublevels: node.nodes
-                        ? createReportStructureLevelForExport(node.nodes)
-                        : undefined,
-                }))
-        ), []);
-
-    const createWidgetIds = useCallback((widgets: TreeSelectableWidget[]) => (
-        widgets
-            .filter(widget => widget.selected)
-            .map((widget) => {
-                if (widget.isConditional) {
-                    return ([
-                        widget.conditionalId,
-                        widget.id,
-                        widget.actualTitle,
-                    ]);
-                }
-                return widget.id;
-            })
-    ), []);
-
-    const startExport = (preview: boolean, item: string) => {
+    const startExport = useCallback((preview: boolean, item: string) => {
         const isWord = activeExportTypeKey === 'word';
         const isPdf = activeExportTypeKey === 'pdf';
 
@@ -255,26 +258,38 @@ function ExportHeader(props: ComponentProps) {
             || undefined
         );
         setExportClass(newExportClass);
-    };
+        getExport();
+    }, [
+        activeExportTypeKey,
+        analysisFramework,
+        contextualWidgets,
+        decoupledEntries,
+        entriesFilters,
+        geoOptions,
+        projectId,
+        reportStructure,
+        selectedLeads,
+        showGroups,
+        textWidgets,
+        getExport,
+    ]);
 
-    useEffect(getExport, [filters, exportItem]);
-
-    const handleAssessmentExportClick = () => {
+    const handleAssessmentExportClick = useCallback(() => {
         startExport(false, exportItems.assessment);
-    };
+    }, [startExport]);
 
-    const handlePlannedAssessmentExportClick = () => {
+    const handlePlannedAssessmentExportClick = useCallback(() => {
         startExport(false, exportItems.plannedAssessment);
-    };
+    }, [startExport]);
 
-    const handleEntryExport = () => {
+    const handleEntryExport = useCallback(() => {
         startExport(false, exportItems.entry);
-    };
+    }, [startExport]);
 
-    const handleEntryPreview = () => {
+    const handleEntryPreview = useCallback(() => {
         onPreview(undefined);
         startExport(true, exportItems.entry);
-    };
+    }, [onPreview, startExport]);
 
     return (
         <header className={_cs(styles.header, className)}>
