@@ -164,7 +164,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 confidentiality: [],
                 status: [],
                 priority: [],
-                authoring_organizations: [],
+                authoring_organization_types: [],
                 exists: [],
                 emm_risk_factors: [],
                 emm_keywords: [],
@@ -374,7 +374,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                     className={styles.leadsFilter}
                 />
                 <MultiSelectInput
-                    faramElementName="authoring_organizations"
+                    faramElementName="authoring_organization_types"
                     keySelector={FilterLeadsForm.optionKeySelector}
                     label={_ts('leads', 'filterOrganizationType')}
                     labelSelector={FilterLeadsForm.optionLabelSelector}
