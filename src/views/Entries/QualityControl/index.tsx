@@ -417,7 +417,7 @@ function QualityControl(props: Props) {
                             <ListView
                                 className={styles.tocFilterNames}
                                 data={tocFilters}
-                                keySelector={tocFilterIdSelector}
+                                keySelector={idSelector}
                                 renderer={Badge}
                                 rendererParams={tocFilterRendererParams}
                             />
