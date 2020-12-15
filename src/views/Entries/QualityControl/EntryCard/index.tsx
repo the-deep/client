@@ -82,6 +82,7 @@ function AuthorListOutput(props: AuthorListOutputProps) {
         value = [],
     } = props;
 
+
     const tooltipValue = value.map(o => o.title).join(', ');
     const displayValue = value.map(o => o.shortName ?? o.title).join(', ');
 
@@ -125,6 +126,16 @@ function EntryCard(props: EntryCardProps) {
         onLeadChange,
         onEntryChange,
     } = props;
+
+    const [isVisible, setVisibility] = useState(false);
+
+    const handleShow = useCallback(() => {
+        setVisibility(true);
+    }, [setVisibility]);
+
+    const handleHide = useCallback(() => {
+        setVisibility(false);
+    }, [setVisibility]);
 
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
 
@@ -279,47 +290,49 @@ function EntryCard(props: EntryCardProps) {
                         />
                     </div>
                 </section>
-                <section className={styles.bottom}>
-                    <div className={styles.row}>
-                        <div className={styles.source}>
-                            { leadSource && (
-                                <Icon
-                                    name="world"
-                                />
-                            )}
-                            <div
-                                className={styles.value}
-                                title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
-                            >
-                                { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
+                {isVisible && (
+                    <section className={styles.bottom}>
+                        <div className={styles.row}>
+                            <div className={styles.source}>
+                                { leadSource && (
+                                    <Icon
+                                        name="world"
+                                    />
+                                )}
+                                <div
+                                    className={styles.value}
+                                    title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
+                                >
+                                    { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
+                                </div>
+                            </div>
+                            <div className={styles.confidentiality}>
+                                { lead.confidentialityDisplay }
                             </div>
                         </div>
-                        <div className={styles.confidentiality}>
-                            { lead.confidentialityDisplay }
+                        <div className={styles.entryDetailsRow}>
+                            <div
+                                className={styles.createdBy}
+                                title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
+                            >
+                                { entry.createdByName }
+                            </div>
+                            <DateOutput
+                                className={styles.createdAt}
+                                value={entry.createdAt}
+                                tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                            />
                         </div>
-                    </div>
-                    <div className={styles.entryDetailsRow}>
-                        <div
-                            className={styles.createdBy}
-                            title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
-                        >
-                            { entry.createdByName }
-                        </div>
-                        <DateOutput
-                            className={styles.createdAt}
-                            value={entry.createdAt}
-                            tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                        <ListView
+                            className={styles.scaleWidgets}
+                            data={scaleWidgets}
+                            renderer={ListItem}
+                            rendererParams={scaleWidgetRendererParams}
+                            keySelector={widgetKeySelector}
+                            emptyComponent={EmptyComponent}
                         />
-                    </div>
-                    <ListView
-                        className={styles.scaleWidgets}
-                        data={scaleWidgets}
-                        renderer={ListItem}
-                        rendererParams={scaleWidgetRendererParams}
-                        keySelector={widgetKeySelector}
-                        emptyComponent={EmptyComponent}
-                    />
-                </section>
+                    </section>
+                )}
                 <div className={styles.actions}>
                     <EntryDeleteButton
                         entryId={entry.id}
@@ -359,7 +372,6 @@ function EntryCard(props: EntryCardProps) {
                         value={entry.verified}
                         entryId={entry.id}
                         leadId={entry.lead}
-                        versionId={entry.versionId}
                         disabled={isDeleted}
                         handleEntryVerify={onEntryChange}
                         onPendingChange={setVerifyChangePending}
