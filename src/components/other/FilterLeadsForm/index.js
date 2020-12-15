@@ -164,6 +164,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 confidentiality: [],
                 status: [],
                 priority: [],
+                authoring_organizations: [],
                 exists: [],
                 emm_risk_factors: [],
                 emm_keywords: [],
@@ -240,6 +241,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 status,
                 assignee,
                 priority,
+                organizationTypes,
                 emmEntities = emptyList,
                 emmKeywords = emptyList,
                 emmRiskFactors = emptyList,
@@ -366,6 +368,17 @@ export default class FilterLeadsForm extends React.PureComponent {
                     label={_ts('leads', 'filterStatus')}
                     labelSelector={FilterLeadsForm.optionLabelSelector}
                     options={status}
+                    placeholder={_ts('leads', 'placeholderAny')}
+                    showHintAndError={false}
+                    showLabel
+                    className={styles.leadsFilter}
+                />
+                <MultiSelectInput
+                    faramElementName="authoring_organizations"
+                    keySelector={FilterLeadsForm.optionKeySelector}
+                    label={_ts('leads', 'filterOrganizationType')}
+                    labelSelector={FilterLeadsForm.optionLabelSelector}
+                    options={organizationTypes}
                     placeholder={_ts('leads', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
