@@ -1169,7 +1169,12 @@
         "-31188416": "Fetching leads from this source.",
         "-89822585": "Trigger leads extraction",
         "-76709910": "Extraction of leads from selected source has started.",
-        "-28752967": "Auto-trigger leads extraction"
+        "-28752967": "Auto-trigger leads extraction",
+        "-3294322": "This connector has not been processed.",
+        "-31960920": "There was an issues extracting information from this connector.",
+        "-93099593": "DEEP is still processing this connector.",
+        "-30202450": "There was an issue extracting text from this URL.",
+        "-32424553": "DEEP is extracting text from this URL."
     },
     "links": {
         "browserExtension": {
@@ -3264,6 +3269,13 @@
             "lastCalculatedOnLabel": -26012111,
             "notProcessedLabel": -30914726,
             "processingLabel": -31188416
+        },
+        "addLeads.connector": {
+            "extractionPendingMessage": -93099593,
+            "extractionFailedMessage": -31960920,
+            "extractionNotProcessedMessage": -3294322,
+            "itemExtractionFailedMessage": -30202450,
+            "itemExtractionPendingMessage": -32424553
         }
     }
 }
