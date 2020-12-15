@@ -1221,7 +1221,8 @@
         "-40350374": "% of verified entries",
         "-81087776": "{verifiedCount} verified out of {entriesCount} entries",
         "-38882854": "Mark as validated",
-        "-65674515": "Lead has been marked as validated!"
+        "-65674515": "Lead has been marked as validated!",
+        "-60769703": "Authoring Organization Type"
     },
     "links": {
         "browserExtension": {
@@ -1926,7 +1927,8 @@
             "exportToOtherProjectsButtonLabel": 600,
             "verifiedEntries": -81087776,
             "markAsValidatedTitle": -38882854,
-            "leadsValidatedSuccess": -65674515
+            "leadsValidatedSuccess": -65674515,
+            "filterOrganizationType": -60769703
         },
         "leadsGrid": {
             "publisherLabel": 5,

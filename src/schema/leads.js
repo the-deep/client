@@ -32,6 +32,7 @@ const leadSchema = [];
             assigneeDetails: { type: 'user-s' },
             attachment: { type: 'object' }, // file url
             confidentiality: { type: 'string', required: true },
+            confidentialityDisplay: { type: 'string' },
             noOfEntries: { type: 'int' },
             project: { type: 'uint' },
             publishedOn: { type: 'string' },
@@ -125,6 +126,7 @@ const leadSchema = [];
             leadGroup: { type: 'array.keyValuePairSS' },
             priority: { type: 'array.keyValuePairNS' },
             confidentiality: { type: 'array.keyValuePairSS' },
+            organizationTypes: { type: 'array.keyValuePairSS' },
             hasEmmLeads: { type: 'boolean' },
             emmEntities: { type: 'array.emmEntityFilterOption' },
             emmRiskFactors: { type: 'array.emmTriggerFilterOption' },
