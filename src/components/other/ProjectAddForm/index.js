@@ -81,6 +81,7 @@ function ProjectAddForm(props) {
     } = props;
 
     const [faramValues, setFaramValues] = useState({ isPrivate: false, organizations: [] });
+    const [submitValues, setSubmitValues] = useState({});
     const [faramErrors, setFaramErrors] = useState({});
     const [pristine, setPristine] = useState(true);
 
@@ -91,14 +92,10 @@ function ProjectAddForm(props) {
         createNewProject,
     ] = useRequest({
         url: 'server://projects/',
-        body: {
-            title: faramValues.title,
-            userGroups,
-            isPrivate: faramValues.isPrivate,
-            organizations: faramValues.organizations,
-        },
+        body: submitValues,
         method: 'POST',
         onSuccess: (response) => {
+            // FIXME: Remove too many redux writes in future
             setUserProject({ project: response });
             setUsergroupProject({ project: response });
             setUserProfileProject({
@@ -118,7 +115,6 @@ function ProjectAddForm(props) {
         },
         onFailure: (error, errorBody) => {
             setFaramErrors(errorBody?.faramErrors);
-            setPristine(true);
             notifyOnFailure(_ts('components.addProject', 'addProjectModalLabel'))({ error: errorBody });
         },
     });
@@ -131,12 +127,15 @@ function ProjectAddForm(props) {
 
     const handleFaramFailure = useCallback((newFaramErrors) => {
         setFaramErrors(newFaramErrors);
-        setPristine(true);
-    }, [setFaramErrors, setPristine]);
+    }, [setFaramErrors]);
 
-    const handleFaramSuccess = useCallback(() => {
+    const handleFaramSuccess = useCallback((values) => {
+        setSubmitValues({
+            ...values,
+            userGroups,
+        });
         createNewProject();
-    }, [createNewProject]);
+    }, [createNewProject, userGroups]);
 
     return (
         <Faram
