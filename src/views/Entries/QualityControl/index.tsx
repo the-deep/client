@@ -342,6 +342,7 @@ function QualityControl(props: Props) {
             <EntriesStats
                 className={styles.stats}
                 stats={stats}
+                entriesFilters={entriesFilters}
             />
             <div className={styles.wrappingContainer}>
                 <div className={_cs(styles.left, !isExpanded && styles.hidden)}>
