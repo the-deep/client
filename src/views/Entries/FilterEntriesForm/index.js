@@ -107,16 +107,10 @@ const staticFiltersLabelMap = {
 
     project_entry_labels: _ts('entries', 'entryLabelsFilterLabel'),
     lead_group_label: _ts('entries', 'entryGroupsFilterLabel'),
-    authoring_organizations: _ts('entries', 'authoringOrganizationsFilterLabel'),
+    authoring_organization_types: _ts('entries', 'authoringOrganizationsFilterLabel'),
 };
 
 const requestOptions = {
-    organizationTypesRequest: {
-        url: '/organization-types/',
-        method: methods.GET,
-        onMount: true,
-        onPropsChanged: ['activeProject'],
-    },
     entryFilterOptionsRequest: {
         url: '/entry-options/',
         query: ({ props: { activeProject } }) => ({
@@ -157,12 +151,6 @@ function FilterEntriesForm(props) {
         widgets,
         geoOptions,
         projectDetails,
-        requests: {
-            organizationTypesRequest: {
-                response,
-                pending: organizationTypesPending,
-            },
-        },
     } = props;
 
     const filteredFrameworkFilters = useMemo(() => {
@@ -241,6 +229,7 @@ function FilterEntriesForm(props) {
         leadStatus,
         leadPriority,
         leadConfidentiality,
+        organizationTypes,
     } = entryFilterOptions;
 
     const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
@@ -427,14 +416,14 @@ function FilterEntriesForm(props) {
                             />
                             <MultiSelectInput
                                 className={styles.entriesFilter}
-                                keySelector={optionIdSelector}
-                                labelSelector={optionTitleSelector}
-                                options={response?.results}
-                                label={staticFiltersLabelMap.authoring_organizations}
-                                onChange={(value) => { handleFilterChange('authoring_organizations', value); }}
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={organizationTypes}
+                                label={staticFiltersLabelMap.authoring_organization_types}
+                                onChange={(value) => { handleFilterChange('authoring_organization_types', value); }}
                                 showHintAndError={false}
-                                value={filters.authoring_organizations}
-                                disabled={pending || organizationTypesPending}
+                                value={filters.authoring_organization_types}
+                                disabled={pending}
                                 placeholder={_ts('entries', 'organizationTypePlaceholder')}
                             />
                             {showEntryLabelFilters && (
@@ -540,6 +529,7 @@ FilterEntriesForm.propTypes = {
     unsetEntriesViewFilter: PropTypes.func.isRequired,
     hideMatrixFilters: PropTypes.bool.isRequired,
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 

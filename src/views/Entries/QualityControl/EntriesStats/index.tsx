@@ -81,7 +81,7 @@ function EntryStat({
                 const v = filterValues[id as FilterableKeys];
                 handleClick(v);
             } else {
-                handleClick({ authoring_organizations: [Number(id)] });
+                handleClick({ authoring_organization_types: [Number(id)] });
             }
         }
     };
