@@ -1225,7 +1225,8 @@
         "-60769703": "Authoring Organization Type",
         "-87098708": "Any Organization Type",
         "-89081134": "Organization Type",
-        "-78970877": "Failed to export"
+        "-78970877": "Failed to export",
+        "-89798798": "Include sub sector"
     },
     "links": {
         "browserExtension": {
@@ -1778,7 +1779,8 @@
             "showEntryGroupsLabel": -99420745,
             "structureLabel": -96285781,
             "userExportsFailure": 622,
-            "toBeStartedTitle": -55557162
+            "toBeStartedTitle": -55557162,
+            "includeSubSector": -89798798
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

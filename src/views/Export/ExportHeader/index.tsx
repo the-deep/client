@@ -200,7 +200,6 @@ function ExportHeader(props: ComponentProps) {
                 levels: node.sublevels,
             }));
         const newReportStructure = createReportStructureForExport(reportStructure);
-        console.warn('newReportStructure', newReportStructure);
         const textWidgetIds = createWidgetIds(textWidgets);
         let contextualWidgetIds;
         if (isWord || isPdf) {
