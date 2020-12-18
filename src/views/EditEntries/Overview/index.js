@@ -32,6 +32,7 @@ import {
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetEntryCommentsCountAction,
+    editEntriesSetEntryVerificationStatusAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
@@ -40,6 +41,7 @@ import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
+import EntryVerify from '#components/general/EntryVerify';
 
 import {
     calculateFirstTimeAttributes,
@@ -62,6 +64,7 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    setEntryVerificationStatus: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -94,6 +97,9 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
+    setEntryVerificationStatus: params => dispatch(
+        editEntriesSetEntryVerificationStatusAction(params),
+    ),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
@@ -235,6 +241,21 @@ export default class Overview extends React.PureComponent {
         setEntryCommentsCount({ entry, leadId });
     }
 
+    handleVerificationChange = (_, newEntry) => {
+        const {
+            leadId,
+            setEntryVerificationStatus,
+        } = this.props;
+
+        const entry = {
+            versionId: newEntry.versionId,
+            verified: newEntry.verified,
+            entryId: newEntry.id,
+        };
+
+        setEntryVerificationStatus({ entry, leadId });
+    }
+
     render() {
         const {
             entry,
@@ -262,8 +283,11 @@ export default class Overview extends React.PureComponent {
 
         const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
+        const verified = entryAccessor.verified(entry);
 
         const defaultAssignees = this.getDefaultAssignees(entry);
+        const disableVerifiedButton = !entry?.localData?.isPristine
+            || isFalsy(entryAccessor.serverId(entry));
 
         return (
             <ResizableH
@@ -324,6 +348,25 @@ export default class Overview extends React.PureComponent {
                                         }
                                     />
                                 )}
+                                <EntryVerify
+                                    title={entry.verificationLastChangedByDetails ? (
+                                        _ts(
+                                            'entries',
+                                            'verificationLastChangedBy',
+                                            {
+                                                userName: entry
+                                                    .verificationLastChangedByDetails.displayName,
+                                            },
+                                        )
+                                    ) : undefined}
+                                    entryId={entryAccessor.serverId(entry)}
+                                    leadId={leadId}
+                                    versionId={entryAccessor.versionId(entry)}
+                                    disabled={disableVerifiedButton}
+                                    value={verified}
+                                    handleEntryVerify={this.handleVerificationChange}
+                                    // onPendingChange={setVerifyChangePending}
+                                />
                                 {mountModalButton && (
                                     <ModalButton
                                         className={

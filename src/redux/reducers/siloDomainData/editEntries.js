@@ -37,6 +37,8 @@ export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 
 export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
 export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
+export const EEB__SET_ENTRIES_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRIES_VERIFICATION_STATUS';
+export const EEB__SET_ENTRY_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRY_VERIFICATION_STATUS';
 
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
 
@@ -149,6 +151,18 @@ export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
 export const editEntriesSetEntriesCommentsCountAction = ({ entries, leadId }) => ({
     type: EEB__SET_ENTRIES_COMMENTS_COUNT,
     entries,
+    leadId,
+});
+
+export const editEntriesSetEntriesVerificationStatusAction = ({ entries, leadId }) => ({
+    type: EEB__SET_ENTRIES_VERIFICATION_STATUS,
+    entries,
+    leadId,
+});
+
+export const editEntriesSetEntryVerificationStatusAction = ({ entry, leadId }) => ({
+    type: EEB__SET_ENTRY_VERIFICATION_STATUS,
+    entry,
     leadId,
 });
 
@@ -414,6 +428,89 @@ const setEntryCommentsCount = (state, action) => {
             // eslint-disable-next-line no-param-reassign
             safeState.editEntries[leadId].entries[index]
                 .serverData.resolvedCommentCount = entry.resolvedCommentCount;
+        }
+    });
+
+    return newState;
+};
+
+const setEntriesVerificationStatus = (state, action) => {
+    const {
+        leadId,
+        entries: entriesFromServer,
+    } = action;
+
+    const {
+        editEntries: {
+            [leadId]: {
+                entries = [],
+            } = {},
+        } = {},
+    } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.editEntries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries = {};
+        }
+        if (!safeState.editEntries[leadId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId] = {};
+        }
+        if (!safeState.editEntries[leadId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries = [];
+        }
+        entriesFromServer.forEach((es) => {
+            const index = entries.findIndex(e => es.id === entryAccessor.serverId(e));
+
+            if (index > -1) {
+                const safeEntry = safeState.editEntries[leadId].entries[index];
+                // eslint-disable-next-line no-param-reassign
+                safeEntry.serverData.verified = es.verified;
+            }
+        });
+    });
+
+    return newState;
+};
+
+const setEntryVerificationStatus = (state, action) => {
+    const {
+        leadId,
+        entry,
+    } = action;
+
+    const {
+        editEntries: {
+            [leadId]: {
+                entries = [],
+            } = {},
+        } = {},
+    } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.editEntries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries = {};
+        }
+        if (!safeState.editEntries[leadId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId] = {};
+        }
+        if (!safeState.editEntries[leadId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries = [];
+        }
+        const index = entries.findIndex(e => entry.entryId === entryAccessor.serverId(e));
+        if (index > -1) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries[index]
+                .serverData.versionId = entry.versionId;
+
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries[index]
+                .serverData.verified = entry.verified;
         }
     });
 
@@ -1386,7 +1483,9 @@ const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
     [EEB__SET_ENTRIES_COMMENTS_COUNT]: setEntriesCommentsCount,
+    [EEB__SET_ENTRIES_VERIFICATION_STATUS]: setEntriesVerificationStatus,
     [EEB__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
+    [EEB__SET_ENTRY_VERIFICATION_STATUS]: setEntryVerificationStatus,
     [EEB__UPDATE_ENTRIES_BULK]: updateEntriesBulk,
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,
