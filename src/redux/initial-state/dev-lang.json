@@ -1224,7 +1224,8 @@
         "-65674515": "Lead has been marked as validated!",
         "-60769703": "Authoring Organization Type",
         "-87098708": "Any Organization Type",
-        "-89081134": "Organization Type"
+        "-89081134": "Organization Type",
+        "-78970877": "Failed to export"
     },
     "links": {
         "browserExtension": {
@@ -1754,6 +1755,7 @@
             "decoupledEntriesTitle": 635,
             "decoupledEntriesTitle2": 636,
             "exportStartedNotifyMessage": 637,
+            "exportFailedNotifyMessage": -78970877,
             "noMatrixAfText": 638,
             "noOptionsAvailable": 640,
             "reportStructureLabel": 639,

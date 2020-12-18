@@ -93,14 +93,20 @@ export type Matrix2dWidgetElement = WidgetElement<{
 
 
 export interface ExportableFields {
-    excel: {
-        // TODO; use actual enum
-        type: string;
-        title: string;
-        children: unknown[];
-    };
-    report: {
-        levels: unknown[];
+    id: number;
+    inline: boolean;
+    order: number;
+    widgetKey: string;
+    data?: {
+        excel?: {
+            // TODO; use actual enum
+            type: string;
+            title: string;
+            children: unknown[];
+        };
+        report?: {
+            levels: unknown[];
+        };
     };
 }
 
@@ -200,3 +206,29 @@ export interface ConditionalWidget {
         };
     }[];
 }
+
+export type TreeSelectableWidget<T extends string | number> = {
+    key: string;
+    id: T;
+    title: string;
+    selected: boolean;
+    draggable: boolean;
+    actualTitle?: string;
+    conditionalId?: number;
+    isConditional?: boolean;
+}
+
+export interface Level {
+    id: string;
+    title: string;
+    sublevels?: Level[];
+}
+
+export interface ReportStructure {
+    title: string;
+    key: string;
+    selected: boolean;
+    draggable: boolean;
+    nodes?: ReportStructure[];
+}
+
