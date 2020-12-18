@@ -77,6 +77,7 @@ interface ComponentProps {
     onPreview: (v: number | undefined) => void;
     pending: boolean;
     showGroups: boolean;
+    excludeLeads: boolean;
 }
 
 
@@ -132,6 +133,7 @@ function ExportHeader(props: ComponentProps) {
         textWidgets,
         contextualWidgets,
         showGroups,
+        excludeLeads,
     } = props;
 
     const [exportClass, setExportClass] = useState<string>();
@@ -208,6 +210,7 @@ function ExportHeader(props: ComponentProps) {
 
         const otherFilters = {
             project: projectId,
+            exclude: excludeLeads,
             lead: Object.entries(selectedLeads).reduce((acc: string[], [key, value]) => {
                 if (value) return [...acc, key];
                 return acc;

@@ -119,6 +119,7 @@ function Export(props: Props) {
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [leads, setLeads] = useState<SelectedLead[]>([]);
+    const [selectAll, setSelectAll] = useState<boolean>(true);
     const [
         reportStructureVariant,
         setReportStructureVariant,
@@ -182,6 +183,7 @@ function Export(props: Props) {
                     ...l,
                 });
             });
+            setSelectAll(true);
             setLeads(newLeads);
         },
         onFailure: (error) => {
@@ -251,23 +253,27 @@ function Export(props: Props) {
         })
     ), []);
 
-    const handleSelectAllLeads = useCallback((selectAll: boolean) => (
+    const handleSelectAllLeads = useCallback((allSelect: boolean) => {
+        setSelectAll(allSelect);
         setLeads((oldLeads) => {
             const newLeads = oldLeads.map(l => ({
                 ...l,
-                selected: selectAll,
+                selected: allSelect,
             }));
             return newLeads;
-        })
-    ), []);
+        });
+    }, []);
 
     const handleReportStructureVariantChange = useCallback((value: string) => {
         setReportStructureVariant(value);
     }, []);
 
-    const selectedLeads = useMemo(() =>
-        listToMap(leads, d => d.id, d => d.selected),
-    [leads]);
+    const selectedLeads = useMemo(() => {
+        if (selectAll) {
+            return listToMap(leads, d => d.id, d => !d.selected);
+        }
+        return listToMap(leads, d => d.id, d => d.selected);
+    }, [leads, selectAll]);
 
     return (
         <Page
@@ -286,6 +292,7 @@ function Export(props: Props) {
                     analysisFramework={analysisFramework}
                     geoOptions={geoOptions}
                     textWidgets={textWidgets}
+                    excludeLeads={selectAll}
                     contextualWidgets={contextualWidgets}
                 />
             }
