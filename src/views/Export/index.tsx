@@ -233,6 +233,7 @@ function Export(props: Props) {
         setContextualWidgets(contextualWidgetList);
     }, [analysisFramework]);
 
+    console.warn('reportStructure', reportStructure);
     useEffect(() => {
         const structure = createReportStructure(analysisFramework, reportStructureVariant);
         setReportStructure(structure);

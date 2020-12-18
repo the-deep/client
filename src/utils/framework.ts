@@ -22,34 +22,33 @@ import {
 export const SECTOR_FIRST = 'sectorFirst' as const;
 export const DIMENSION_FIRST = 'dimensionFirst' as const;
 
-interface Matrix2dData {
-    sectors: {
-        id: string;
-        title: string;
-    }[];
-    dimensions: {
-        id: string;
-        title: string;
-        subdimensions: {
-            id: string;
-            title: string;
-        }[];
-    }[];
-}
-
 // NOTE: This function generates dimension first level
-const transformMatrix2dLevels = ({
+const transformLevelsDimensionFirst = ({
     dimensions: widgetDim,
     sectors: widgetSec,
-}: Matrix2dData) => {
+}: Matrix2dWidgetElement['properties']['data']) => {
     const dimensionFirstLevels = widgetDim.map((d) => {
         const subDims = d.subdimensions;
 
         const sublevels = subDims.map((sd) => {
-            const sectors = widgetSec.map(s => ({
-                id: `${s.id}-${d.id}-${sd.id}`,
-                title: s.title,
-            }));
+            const sectors = widgetSec.map((s) => {
+                const { subsectors } = s;
+                if (subsectors) {
+                    const subSectorLevels = subsectors.map(ss => ({
+                        id: `${s.id}-${ss.id}-${d.id}-${sd.id}`,
+                        title: ss.title,
+                    }));
+                    return ({
+                        id: `${s.id}-${d.id}-${sd.id}`,
+                        title: s.title,
+                        sublevels: subSectorLevels,
+                    });
+                }
+                return ({
+                    id: `${s.id}-${d.id}-${sd.id}`,
+                    title: s.title,
+                });
+            });
             return ({
                 id: `${d.id}-${sd.id}`,
                 title: sd.title,
@@ -65,6 +64,58 @@ const transformMatrix2dLevels = ({
     });
 
     return dimensionFirstLevels;
+};
+
+const transformLevelsSectorFirst = ({
+    dimensions: widgetDim,
+    sectors: widgetSec,
+}: Matrix2dWidgetElement['properties']['data']) => {
+    const sectorFirstLevels = widgetSec.map((s) => {
+        const { subsectors } = s;
+        let sublevels: Level[] = [];
+        if (subsectors) {
+            sublevels = subsectors.map((ss) => {
+                const dimensions = widgetDim.map((d) => {
+                    const { subdimensions } = d;
+                    const subDimensionsLevel = subdimensions.map(sd => ({
+                        id: `${s.id}-${ss.id}-${d.id}-${sd.id}`,
+                        title: sd.title,
+                    }));
+                    return ({
+                        id: `${s.id}-${ss.id}-${d.id}`,
+                        title: d.title,
+                        sublevels: subDimensionsLevel,
+                    });
+                });
+                return ({
+                    id: `${s.id}-${ss.id}`,
+                    title: ss.title,
+                    sublevels: dimensions,
+                });
+            });
+        } else {
+            sublevels = widgetDim.map((d) => {
+                const { subdimensions } = d;
+                const subDimensionsLevel = subdimensions.map(sd => ({
+                    id: `${s.id}-${d.id}-${sd.id}`,
+                    title: sd.title,
+                }));
+                return ({
+                    id: `${s.id}-${d.id}`,
+                    title: d.title,
+                    sublevels: subDimensionsLevel,
+                });
+            });
+        }
+
+        return ({
+            id: s.id,
+            title: s.title,
+            sublevels,
+        });
+    });
+
+    return sectorFirstLevels;
 };
 
 interface WidgetData {
@@ -131,8 +182,21 @@ export const createReportStructure = (
             if (!widget.properties) {
                 return;
             }
-            const matrix2dProperties = widget.properties.data as Matrix2dData;
-            const newLevels = transformMatrix2dLevels(matrix2dProperties);
+            const { properties: { data } } = widget as Matrix2dWidgetElement;
+            const newLevels = transformLevelsDimensionFirst(data);
+            nodes.push({
+                title: widget.title,
+                key: String(exportable.id),
+                selected: true,
+                draggable: true,
+                nodes: mapReportLevelsToNodes(newLevels),
+            });
+        } else if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === SECTOR_FIRST) {
+            if (!widget.properties) {
+                return;
+            }
+            const { properties: { data } } = widget as Matrix2dWidgetElement;
+            const newLevels = transformLevelsSectorFirst(data);
             nodes.push({
                 title: widget.title,
                 key: String(exportable.id),
