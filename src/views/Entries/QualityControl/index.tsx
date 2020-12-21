@@ -145,7 +145,7 @@ function QualityControl(props: Props) {
     const [stats, setStats] = useState<EntrySummary>();
     const [tocCount, setTocCount] = useState<TocCountMap>({});
     const [searchValue, setSearchValue] = useState<string | undefined>();
-    const [defaultCollapseLevel, setDefaultCollapseLevel] = useState(collapseLevel.max);
+    const [defaultCollapseLevel, setDefaultCollapseLevel] = useState(collapseLevel.min);
 
     const matrixToc = useMemo(
         () => [
