@@ -125,37 +125,23 @@
         }
     }
     .expand-button {
-        border: none !important;
-        background: var(--color-foreground-alt) !important;
-        padding: var(--spacing-medium) calc(var(--spacing-large) - var(--spacing-small));
-        text-align: right;
-
-        &:hover {
-            background: var(--color-background-alt) !important;
-        }
+        display: flex;
+        outline: none;
     }
-
     .collapse-button {
-        border: none !important;
-        border-top: var(--width-separator-thin) solid var(--color-separator) !important;
-        background-color: var(--foreground-alt) !important;
-        padding: var(--spacing-medium) calc(var(--spacing-large) - var(--spacing-small));
-        text-align: right;
-
-        &:hover {
-            background-color: var(--color-background-alt) !important;
-        }
+        display: flex;
+        outline: none;
     }
 
     .bottom {
         display: flex;
         position: absolute;
-        bottom: 0;
+        bottom: calc(var(--spacing-large) + var(--spacing-small));
         flex-direction: column;
         flex-shrink: 0;
         transition: 0.2s all ease-in-out;
         background-color: var(--color-foreground-alt);
-        padding: var(--spacing-medium) 0 0;
+        padding: var(--spacing-medium) 0 var(--spacing-large);
         width: 100%;
 
 
@@ -225,15 +211,33 @@
     }
 
 
-    .actions {
+    .actions-wrapper {
         display: flex;
+        position: absolute;
+        right: -100%;
+        bottom: 0;
+        width: 100%;
         flex-grow: 1;
         justify-content: flex-end;
+        transition: 0.2s all ease-in-out;
         border-top: var(--width-separator-thin) solid var(--color-separator);
         padding: var(--spacing-small) calc(var(--spacing-large) - var(--spacing-small));
 
+        .actions {
+            display: flex;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+
         button {
+            flex-shrink: 0;
+            justify-content: flex-start;
             margin: 0 var(--spacing-extra-small);
+        }
+    }
+    &:hover {
+        .actions-wrapper {
+            right: 0;
         }
     }
 }

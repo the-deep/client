@@ -82,7 +82,6 @@ function AuthorListOutput(props: AuthorListOutputProps) {
         value = [],
     } = props;
 
-
     const tooltipValue = value.map(o => o.title).join(', ');
     const displayValue = value.map(o => o.shortName ?? o.title).join(', ');
 
@@ -131,11 +130,11 @@ function EntryCard(props: EntryCardProps) {
 
     const handleShow = useCallback(() => {
         setVisibility(true);
-    }, [setVisibility]);
+    }, []);
 
     const handleHide = useCallback(() => {
         setVisibility(false);
-    }, [setVisibility]);
+    }, []);
 
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
 
@@ -290,92 +289,116 @@ function EntryCard(props: EntryCardProps) {
                         />
                     </div>
                 </section>
-                {isVisible && (
-                    <section className={styles.bottom}>
-                        <div className={styles.row}>
-                            <div className={styles.source}>
-                                { leadSource && (
-                                    <Icon
-                                        name="world"
-                                    />
-                                )}
-                                <div
-                                    className={styles.value}
-                                    title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
-                                >
-                                    { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
+                <div className={styles.actionsWrapper}>
+                    {isVisible && (
+                        <section className={styles.bottom}>
+                            <div className={styles.row}>
+                                <div className={styles.source}>
+                                    { leadSource && (
+                                        <Icon
+                                            name="world"
+                                        />
+                                    )}
+                                    <div
+                                        className={styles.value}
+                                        title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
+                                    >
+                                        { leadSource }
+                                    </div>
+                                </div>
+                                <div className={styles.confidentiality}>
+                                    { lead.confidentialityDisplay }
                                 </div>
                             </div>
-                            <div className={styles.confidentiality}>
-                                { lead.confidentialityDisplay }
+                            <div className={styles.entryDetailsRow}>
+                                <div
+                                    className={styles.createdBy}
+                                    title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
+                                >
+                                    { entry.createdByName }
+                                </div>
+                                <DateOutput
+                                    className={styles.createdAt}
+                                    value={entry.createdAt}
+                                    tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                                />
                             </div>
-                        </div>
-                        <div className={styles.entryDetailsRow}>
-                            <div
-                                className={styles.createdBy}
-                                title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
-                            >
-                                { entry.createdByName }
-                            </div>
-                            <DateOutput
-                                className={styles.createdAt}
-                                value={entry.createdAt}
-                                tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                            <ListView
+                                className={styles.scaleWidgets}
+                                data={scaleWidgets}
+                                renderer={ListItem}
+                                rendererParams={scaleWidgetRendererParams}
+                                keySelector={widgetKeySelector}
+                                emptyComponent={EmptyComponent}
                             />
-                        </div>
-                        <ListView
-                            className={styles.scaleWidgets}
-                            data={scaleWidgets}
-                            renderer={ListItem}
-                            rendererParams={scaleWidgetRendererParams}
-                            keySelector={widgetKeySelector}
-                            emptyComponent={EmptyComponent}
+                        </section>
+                    )}
+                    {!isVisible
+                        ? (
+                            <Button
+                                className={styles.expandButton}
+                                onClick={handleShow}
+                                transparent
+                            >
+                                <Icon name="chevronUp" />
+                                {_ts('entries', 'more')}
+                            </Button>
+                        )
+                        : (
+                            <Button
+                                className={styles.collapseButton}
+                                onClick={handleHide}
+                                transparent
+                            >
+                                <Icon name="chevronDown" />
+                                {_ts('entries', 'less')}
+                            </Button>
+                        )
+                    }
+                    <div className={styles.actions}>
+                        <EntryDeleteButton
+                            entryId={entry.id}
+                            onPendingChange={handleDeletePendingChange}
+                            onDeleteSuccess={handleDeleteSuccess}
+                            disabled={isDeleted}
                         />
-                    </section>
-                )}
-                <div className={styles.actions}>
-                    <EntryDeleteButton
-                        entryId={entry.id}
-                        onPendingChange={handleDeletePendingChange}
-                        onDeleteSuccess={handleDeleteSuccess}
-                        disabled={isDeleted}
-                    />
-                    <EntryOpenLink
-                        entryId={entry.id}
-                        leadId={entry.lead}
-                        projectId={entry.project}
-                        disabled={isDeleted}
-                    />
-                    <EntryCommentButton
-                        entryId={entry.id}
-                        commentCount={entry.unresolvedCommentCount}
-                        assignee={lead.assigneeDetails.id}
-                        disabled={isDeleted}
-                    />
-                    <EntryEditButton
-                        entry={entry}
-                        framework={framework}
-                        disabled={isDeleted}
-                        onEditSuccess={onEntryChange}
-                    />
-                    <EntryVerify
-                        title={entry.verificationLastChangedByDetails ? (
-                            _ts(
-                                'entries',
-                                'verificationLastChangedBy',
-                                {
-                                    userName: entry
-                                        .verificationLastChangedByDetails.displayName,
-                                },
-                            )
-                        ) : undefined}
-                        value={entry.verified}
-                        entryId={entry.id}
-                        leadId={entry.lead}
-                        disabled={isDeleted}
-                        handleEntryVerify={onEntryChange}
-                        onPendingChange={setVerifyChangePending}
-                    />
+                        <EntryOpenLink
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            projectId={entry.project}
+                            disabled={isDeleted}
+                        />
+                        <EntryCommentButton
+                            entryId={entry.id}
+                            commentCount={entry.unresolvedCommentCount}
+                            assignee={lead.assigneeDetails.id}
+                            disabled={isDeleted}
+                        />
+                        <EntryEditButton
+                            entry={entry}
+                            framework={framework}
+                            disabled={isDeleted}
+                            onEditSuccess={onEntryChange}
+                        />
+                        <EntryVerify
+                            title={entry.verificationLastChangedByDetails ? (
+                                _ts(
+                                    'entries',
+                                    'verificationLastChangedBy',
+                                    {
+                                        userName: entry
+                                            .verificationLastChangedByDetails.displayName,
+                                    },
+                                )
+                            ) : undefined}
+                            value={entry.verified}
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            disabled={isDeleted}
+                            handleEntryVerify={onEntryChange}
+                            onPendingChange={setVerifyChangePending}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
