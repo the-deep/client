@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-import memoize from 'memoize-one';
+import React, { useMemo, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
@@ -12,9 +11,11 @@ import ListView from '#rscv/List/ListView';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
+import EntryVerify from '#components/general/EntryVerify';
 
 import {
     entryAccessor,
@@ -25,6 +26,7 @@ import {
     editEntriesFilteredEntryGroupsSelector,
 
     editEntriesSetSelectedEntryKeyAction,
+    editEntriesSetEntryVerificationStatusAction,
     editEntriesSetEntryCommentsCountAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
@@ -49,6 +51,7 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    setEntryVerificationStatus: PropTypes.func.isRequired,
 
     index: PropTypes.number.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -72,37 +75,56 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
+    setEntryVerificationStatus: params => dispatch(
+        editEntriesSetEntryVerificationStatusAction(params),
+    ),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
 const entryLabelKeySelector = d => d.labelId;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class WidgetFaramContainer extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+function WidgetFaramContainer(props) {
+    const {
+        widgets, // eslint-disable-line no-unused-vars
+        setEntryCommentsCount,
+        className: classNameFromProps,
+        pending,
+        widgetType,
+        entry,
+        index,
+        entryState,
+        tabularData,
+        schema,
+        computeSchema,
+        onEntryStateChange,
+        analysisFramework,
+        lead,
+        leadId,
+        entryGroups,
+        labels,
+        selectedEntryKey,
+        setSelectedEntryKey,
+        setEntryVerificationStatus,
+        markAsDeletedEntry,
+    } = props;
 
-    getEntryGroupsForCurrentEntry = memoize(getEntryGroupsForEntry);
-    getDefaultAssignees = memoize(entry => [entryAccessor.createdBy(entry)]);
+    const [verifyPending, setVerifyChangePending] = useState(false);
 
-    containerRef = React.createRef();
-    dragEnterCount = 0;
+    const {
+        serverData: {
+            unresolvedCommentCount,
+        },
+    } = entry;
 
-    shouldHideEntryDelete = ({ entryPermissions }) => (
-        !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
-    )
+    const shouldHideEntryDelete = useCallback(({ entryPermissions }) => (
+        !entryPermissions.delete && !!entryAccessor.serverId(entry)
+    ), [entry]);
 
-    shouldHideEntryEdit = ({ entryPermissions }) => (
-        !entryPermissions.modify && !!entryAccessor.serverId(this.props.entry)
-    )
+    const shouldHideEntryEdit = useCallback(({ entryPermissions }) => (
+        !entryPermissions.modify && !!entryAccessor.serverId(entry)
+    ), [entry]);
 
-    handleEdit = (e) => {
-        const {
-            entry,
-            setSelectedEntryKey,
-            leadId,
-        } = this.props;
-
+    const handleEdit = useCallback((e) => {
         const entryKey = entryAccessor.key(entry);
 
         setSelectedEntryKey({
@@ -111,15 +133,9 @@ export default class WidgetFaramContainer extends React.PureComponent {
         });
         window.location.replace('#/overview');
         e.preventDefault();
-    };
+    }, [leadId, entry, setSelectedEntryKey]);
 
-    handleEntryDelete = () => {
-        const {
-            entry,
-            leadId,
-            markAsDeletedEntry,
-        } = this.props;
-
+    const handleEntryDelete = useCallback(() => {
         if (!entry) {
             return;
         }
@@ -128,169 +144,185 @@ export default class WidgetFaramContainer extends React.PureComponent {
             key: entryAccessor.key(entry),
             value: true,
         });
-    }
+    }, [markAsDeletedEntry, entry, leadId]);
 
-    handleCommentsCountChange = (unresolvedCommentCount, resolvedCommentCount, entryId) => {
-        const {
-            leadId,
-            setEntryCommentsCount,
-        } = this.props;
-
-        const entry = {
-            unresolvedCommentCount,
+    const handleCommentsCountChange = useCallback((
+        newUnresolvedCommentCount,
+        resolvedCommentCount,
+        entryId,
+    ) => {
+        const entryForPatch = {
+            unresolvedCommentCount: newUnresolvedCommentCount,
             resolvedCommentCount,
             entryId,
         };
 
-        setEntryCommentsCount({ entry, leadId });
-    }
+        setEntryCommentsCount({ entry: entryForPatch, leadId });
+    }, [setEntryCommentsCount, leadId]);
 
-    entryLabelsRendererParams = (key, data) => ({
+    const handleVerificationChange = useCallback((_, newEntry) => {
+        const entryForPatch = {
+            versionId: newEntry.versionId,
+            verified: newEntry.verified,
+            entryId: newEntry.id,
+        };
+
+        setEntryVerificationStatus({ entry: entryForPatch, leadId });
+    }, [setEntryVerificationStatus, leadId]);
+
+    const entryServerId = entryAccessor.serverId(entry);
+    const entryKey = entryAccessor.key(entry);
+    const verified = entryAccessor.verified(entry);
+
+    const defaultAssignees = useMemo(() => [
+        entryAccessor.createdBy(entry),
+    ], [entry]);
+
+    const entryLabelsForEntry = useMemo(() => (
+        getEntryGroupsForEntry(
+            entryGroups,
+            entryKey,
+            labels,
+        )
+    ), [entryKey, entryGroups, labels]);
+
+    const disableVerifiedButton = !entry?.localData?.isPristine
+        || isFalsy(entryAccessor.serverId(entry));
+
+    const entryLabelsRendererParams = useCallback((key, data) => ({
         title: `${data.labelTitle} (${data.count})`,
         titleClassName: styles.title,
         className: styles.entryLabel,
         labelColor: data.labelColor,
         groups: data.groups,
-    });
+    }), []);
 
-    render() {
-        const {
-            widgets, // eslint-disable-line no-unused-vars
-            className: classNameFromProps,
-            pending,
-            widgetType,
-            entry,
-            index,
-            entryState,
-            tabularData,
-            schema,
-            computeSchema,
-            onEntryStateChange,
-            analysisFramework,
-            lead,
-            leadId,
-            entryGroups,
-            labels,
-            selectedEntryKey,
-        } = this.props;
-
-        const {
-            serverData: {
-                unresolvedCommentCount,
-            },
-        } = entry;
-
-        const entryServerId = entryAccessor.serverId(entry);
-        const entryKey = entryAccessor.key(entry);
-
-        const entryLabelsForEntry = this.getEntryGroupsForCurrentEntry(
-            entryGroups,
-            entryKey,
-            labels,
-        );
-
-        const defaultAssignees = this.getDefaultAssignees(entry);
-
-        return (
-            <div className={_cs(
+    return (
+        <div
+            className={_cs(
                 classNameFromProps,
                 styles.widgetFaramContainer,
                 entryKey === selectedEntryKey && styles.selected,
             )}
-            >
-                <header className={_cs('widget-container-header', styles.header)}>
-                    <h3 className={styles.heading}>
-                        {/* FIXME: use strings */}
-                        {`Entry ${index + 1}`}
-                    </h3>
-                    <ListView
-                        data={entryLabelsForEntry}
-                        className={styles.entryLabels}
-                        rendererParams={this.entryLabelsRendererParams}
-                        renderer={EntryLabelBadge}
-                        keySelector={entryLabelKeySelector}
-                        emptyComponent={null}
-                    />
-                    {labels.length > 0 && (
-                        <ModalButton
-                            iconName="album"
-                            modal={
-                                <EntryGroupModal
-                                    entryGroups={entryGroups}
-                                    labels={labels}
-                                    selectedEntryKey={entryKey}
-                                    selectedEntryServerId={entryAccessor.serverId(entry)}
-                                    leadId={leadId}
-                                />
-                            }
-                        />
-                    )}
-                    <ModalButton
-                        disabled={isFalsy(entryServerId)}
-                        className={
-                            _cs(
-                                styles.entryCommentButton,
-                                unresolvedCommentCount > 0 && styles.accented,
-                            )
-                        }
-                        modal={
-                            <EntryCommentModal
-                                entryServerId={entryServerId}
-                                onCommentsCountChange={this.handleCommentsCountChange}
-                                defaultAssignees={defaultAssignees}
-                            />
-                        }
-                        iconName="chat"
-                    >
-                        {unresolvedCommentCount > 0 &&
-                            <div className={styles.commentCount}>
-                                {unresolvedCommentCount}
-                            </div>
-                        }
-                    </ModalButton>
-                    <Cloak
-                        hide={this.shouldHideEntryEdit}
-                        render={
-                            <WarningButton
-                                className={styles.button}
-                                onClick={this.handleEdit}
-                                title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
-                                iconName="edit"
-                                // NOTE: no need to disable edit on save pending
-                            />
-                        }
-                    />
-                    <Cloak
-                        hide={this.shouldHideEntryDelete}
-                        render={
-                            <DangerButton
-                                className={styles.button}
-                                iconName="delete"
-                                title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
-                                onClick={this.handleEntryDelete}
-                                disabled={pending}
-                            />
-                        }
-                    />
-                </header>
-                <WidgetFaram
-                    className={_cs('widget', styles.widget)}
-                    widgetType={widgetType}
-                    entry={entry}
-                    pending={pending}
-                    widgets={widgets}
-                    actionComponent={HeaderComponent}
-
-                    entryState={entryState}
-                    tabularData={tabularData}
-                    schema={schema}
-                    computeSchema={computeSchema}
-                    onEntryStateChange={onEntryStateChange}
-                    analysisFramework={analysisFramework}
-                    lead={lead}
-                    leadId={leadId}
+        >
+            {verifyPending && <LoadingAnimation />}
+            <header className={_cs('widget-container-header', styles.header)}>
+                <h3 className={styles.heading}>
+                    {/* FIXME: use strings */}
+                    {`Entry ${index + 1}`}
+                </h3>
+                <ListView
+                    data={entryLabelsForEntry}
+                    className={styles.entryLabels}
+                    rendererParams={entryLabelsRendererParams}
+                    renderer={EntryLabelBadge}
+                    keySelector={entryLabelKeySelector}
+                    emptyComponent={null}
                 />
-            </div>
-        );
-    }
+                <EntryVerify
+                    title={entry.verificationLastChangedByDetails ? (
+                        _ts(
+                            'entries',
+                            'verificationLastChangedBy',
+                            {
+                                userName: entry
+                                    .verificationLastChangedByDetails.displayName,
+                            },
+                        )
+                    ) : undefined}
+                    entryId={entryAccessor.serverId(entry)}
+                    leadId={leadId}
+                    versionId={entryAccessor.versionId(entry)}
+                    disabled={disableVerifiedButton}
+                    value={verified}
+                    handleEntryVerify={handleVerificationChange}
+                    className={styles.entryVerifyButton}
+                    onPendingChange={setVerifyChangePending}
+                />
+                {labels.length > 0 && (
+                    <ModalButton
+                        iconName="album"
+                        modal={
+                            <EntryGroupModal
+                                entryGroups={entryGroups}
+                                labels={labels}
+                                selectedEntryKey={entryKey}
+                                selectedEntryServerId={entryAccessor.serverId(entry)}
+                                leadId={leadId}
+                            />
+                        }
+                    />
+                )}
+                <ModalButton
+                    disabled={isFalsy(entryServerId)}
+                    className={
+                        _cs(
+                            styles.entryCommentButton,
+                            unresolvedCommentCount > 0 && styles.accented,
+                        )
+                    }
+                    modal={
+                        <EntryCommentModal
+                            entryServerId={entryServerId}
+                            onCommentsCountChange={handleCommentsCountChange}
+                            defaultAssignees={defaultAssignees}
+                        />
+                    }
+                    iconName="chat"
+                >
+                    {unresolvedCommentCount > 0 &&
+                        <div className={styles.commentCount}>
+                            {unresolvedCommentCount}
+                        </div>
+                    }
+                </ModalButton>
+                <Cloak
+                    hide={shouldHideEntryEdit}
+                    render={
+                        <WarningButton
+                            className={styles.button}
+                            onClick={handleEdit}
+                            title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
+                            iconName="edit"
+                            // NOTE: no need to disable edit on save pending
+                        />
+                    }
+                />
+                <Cloak
+                    hide={shouldHideEntryDelete}
+                    render={
+                        <DangerButton
+                            className={styles.button}
+                            iconName="delete"
+                            title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
+                            onClick={handleEntryDelete}
+                            disabled={pending}
+                        />
+                    }
+                />
+            </header>
+            <WidgetFaram
+                className={_cs('widget', styles.widget)}
+                widgetType={widgetType}
+                entry={entry}
+                pending={pending}
+                widgets={widgets}
+                actionComponent={HeaderComponent}
+
+                entryState={entryState}
+                tabularData={tabularData}
+                schema={schema}
+                computeSchema={computeSchema}
+                onEntryStateChange={onEntryStateChange}
+                analysisFramework={analysisFramework}
+                lead={lead}
+                leadId={leadId}
+            />
+        </div>
+    );
 }
+
+WidgetFaramContainer.propTypes = propTypes;
+WidgetFaramContainer.defaultProps = defaultProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(WidgetFaramContainer);

@@ -3,6 +3,7 @@
 }
 
 .widget-faram-container {
+    position: relative;
     border: var(--width-separator-thin) solid transparent;
     border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
@@ -33,6 +34,10 @@
                     text-transform: none;
                 }
             }
+        }
+
+        .entry-verify-button {
+            margin: 0 var(--spacing-small);
         }
 
         .button {

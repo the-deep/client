@@ -16,6 +16,7 @@ import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import Button from '#rsca/Button';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     entryAccessor,
@@ -124,6 +125,7 @@ export default class Overview extends React.PureComponent {
 
         this.state = {
             mountModalButton: false,
+            entryVerifyPending: false,
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -256,6 +258,10 @@ export default class Overview extends React.PureComponent {
         setEntryVerificationStatus({ entry, leadId });
     }
 
+    handleEntryVerifyPendingChange = (entryVerifyPending) => {
+        this.setState({ entryVerifyPending });
+    }
+
     render() {
         const {
             entry,
@@ -276,7 +282,10 @@ export default class Overview extends React.PureComponent {
             labels,
         } = this.props;
 
-        const { mountModalButton } = this.state;
+        const {
+            mountModalButton,
+            entryVerifyPending,
+        } = this.state;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
@@ -304,6 +313,7 @@ export default class Overview extends React.PureComponent {
                 }
                 rightChild={
                     <React.Fragment>
+                        {entryVerifyPending && <LoadingAnimation />}
                         <header className={styles.header}>
                             <div className={styles.leftActionButtons}>
                                 <Cloak
@@ -331,23 +341,6 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.rightActionButtons}>
-                                {labels.length > 0 && (
-                                    <ModalButton
-                                        iconName="album"
-                                        disabled={isNotDefined(selectedEntryKey)}
-                                        modal={
-                                            <EntryGroupModal
-                                                entryGroups={entryGroups}
-                                                labels={labels}
-                                                selectedEntryKey={selectedEntryKey}
-                                                selectedEntryServerId={
-                                                    entryAccessor.serverId(entry)
-                                                }
-                                                leadId={leadId}
-                                            />
-                                        }
-                                    />
-                                )}
                                 <EntryVerify
                                     title={entry.verificationLastChangedByDetails ? (
                                         _ts(
@@ -365,8 +358,25 @@ export default class Overview extends React.PureComponent {
                                     disabled={disableVerifiedButton}
                                     value={verified}
                                     handleEntryVerify={this.handleVerificationChange}
-                                    // onPendingChange={setVerifyChangePending}
+                                    onPendingChange={this.handleEntryVerifyPendingChange}
                                 />
+                                {labels.length > 0 && (
+                                    <ModalButton
+                                        iconName="album"
+                                        disabled={isNotDefined(selectedEntryKey)}
+                                        modal={
+                                            <EntryGroupModal
+                                                entryGroups={entryGroups}
+                                                labels={labels}
+                                                selectedEntryKey={selectedEntryKey}
+                                                selectedEntryServerId={
+                                                    entryAccessor.serverId(entry)
+                                                }
+                                                leadId={leadId}
+                                            />
+                                        }
+                                    />
+                                )}
                                 {mountModalButton && (
                                     <ModalButton
                                         className={
