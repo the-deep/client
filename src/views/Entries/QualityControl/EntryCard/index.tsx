@@ -333,28 +333,25 @@ function EntryCard(props: EntryCardProps) {
                             />
                         </section>
                     )}
-                    {!isVisible
-                        ? (
-                            <Button
-                                className={styles.expandButton}
-                                onClick={handleShow}
-                                transparent
-                            >
-                                <Icon name="chevronUp" />
-                                {_ts('entries', 'more')}
-                            </Button>
-                        )
-                        : (
-                            <Button
-                                className={styles.collapseButton}
-                                onClick={handleHide}
-                                transparent
-                            >
-                                <Icon name="chevronDown" />
-                                {_ts('entries', 'less')}
-                            </Button>
-                        )
-                    }
+                    {!isVisible ? (
+                        <Button
+                            className={styles.expandButton}
+                            onClick={handleShow}
+                            transparent
+                            iconName="chevronUp"
+                        >
+                            {_ts('entries', 'more')}
+                        </Button>
+                    ) : (
+                        <Button
+                            className={styles.collapseButton}
+                            onClick={handleHide}
+                            transparent
+                            iconName="chevronDown"
+                        >
+                            {_ts('entries', 'less')}
+                        </Button>
+                    )}
                     <div className={styles.actions}>
                         <EntryDeleteButton
                             entryId={entry.id}

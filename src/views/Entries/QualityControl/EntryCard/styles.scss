@@ -136,12 +136,12 @@
     .bottom {
         display: flex;
         position: absolute;
-        bottom: calc(var(--spacing-large) + var(--spacing-small));
+        bottom: calc(var(--spacing-extra-large-alt) + var(--spacing-medium-alt));
+        left: 0;
         flex-direction: column;
-        flex-shrink: 0;
         transition: 0.2s all ease-in-out;
         background-color: var(--color-foreground-alt);
-        padding: var(--spacing-medium) 0 var(--spacing-large);
+        padding: var(--spacing-medium) 0;
         width: 100%;
 
 
@@ -216,12 +216,14 @@
         position: absolute;
         right: -100%;
         bottom: 0;
-        width: 100%;
         flex-grow: 1;
         justify-content: flex-end;
         transition: 0.2s all ease-in-out;
         border-top: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground-alt);
         padding: var(--spacing-small) calc(var(--spacing-large) - var(--spacing-small));
+        width: 100%;
+        height: var(--height-action-bar);
 
         .actions {
             display: flex;
