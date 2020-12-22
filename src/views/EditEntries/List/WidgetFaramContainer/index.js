@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { memo, useMemo, useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
@@ -85,7 +85,7 @@ const entryLabelKeySelector = d => d.labelId;
 
 function WidgetFaramContainer(props) {
     const {
-        widgets, // eslint-disable-line no-unused-vars
+        widgets,
         setEntryCommentsCount,
         className: classNameFromProps,
         pending,
@@ -325,4 +325,4 @@ function WidgetFaramContainer(props) {
 WidgetFaramContainer.propTypes = propTypes;
 WidgetFaramContainer.defaultProps = defaultProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(WidgetFaramContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(memo(WidgetFaramContainer));

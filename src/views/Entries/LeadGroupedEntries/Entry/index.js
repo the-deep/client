@@ -281,6 +281,7 @@ export default class Entry extends React.PureComponent {
                 projectLabels,
                 verified,
                 verificationLastChangedByDetails,
+                versionId,
             },
             projectId,
             leadId,
@@ -326,6 +327,7 @@ export default class Entry extends React.PureComponent {
                             ) : undefined}
                             value={verified}
                             entryId={entryId}
+                            versionId={versionId}
                             leadId={leadId}
                             onPendingChange={this.handleEntryVerificationPendingChange}
                         />

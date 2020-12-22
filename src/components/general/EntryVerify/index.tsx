@@ -33,7 +33,7 @@ interface ComponentProps {
     title?: string;
     entryId: number;
     leadId: number;
-    versionId?: number;
+    versionId: number;
     value: boolean;
     className?: string;
     onPendingChange?: (pending: boolean) => void;
