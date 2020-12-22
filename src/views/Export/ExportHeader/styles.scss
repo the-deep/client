@@ -10,11 +10,5 @@
         .button {
             margin-left: var(--spacing-small);
         }
-
-        .link {
-            @include button-like-link(var(--color-accent));
-            margin-left: var(--spacing-small);
-            font-weight: var(--font-weight-bold);
-        }
     }
 }

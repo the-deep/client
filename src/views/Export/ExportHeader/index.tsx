@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import {
     _cs,
-    reverseRoute,
 } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
@@ -10,7 +8,6 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Cloak from '#components/general/Cloak';
 
 import {
-    pathNames,
     viewsAcl,
 } from '#constants';
 import { processEntryFilters } from '#entities/entries';
@@ -297,12 +294,6 @@ function ExportHeader(props: ComponentProps) {
                 {_ts('export', 'headerExport')}
             </h2>
             <div className={styles.actionButtons}>
-                <Link
-                    to={reverseRoute(pathNames.userExports, { projectId })}
-                    className={styles.link}
-                >
-                    {_ts('export', 'viewAllExportsButtonLabel')}
-                </Link>
                 <Button
                     className={styles.button}
                     onClick={handleEntryPreview}

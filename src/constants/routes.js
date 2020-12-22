@@ -207,18 +207,10 @@ export const routes = {
     export: {
         order: 60,
         type: ROUTE.private,
-        path: '/projects/:projectId/exports/create/',
+        path: '/projects/:projectId/export/',
         loader: () => import('../views/Export'),
         links: allLinks,
     }, // _ts('pageTitle', 'export');
-
-    userExports: {
-        order: 61,
-        type: ROUTE.private,
-        path: '/projects/:projectId/exports/',
-        loader: () => import('../views/UserExports'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'userExports');
 
     countries: {
         order: 70,
