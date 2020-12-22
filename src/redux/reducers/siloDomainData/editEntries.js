@@ -37,6 +37,8 @@ export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 
 export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
 export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
+export const EEB__SET_ENTRIES_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRIES_VERIFICATION_STATUS';
+export const EEB__SET_ENTRY_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRY_VERIFICATION_STATUS';
 
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
 
@@ -149,6 +151,23 @@ export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
 export const editEntriesSetEntriesCommentsCountAction = ({ entries, leadId }) => ({
     type: EEB__SET_ENTRIES_COMMENTS_COUNT,
     entries,
+    leadId,
+});
+
+export const editEntriesSetEntriesVerificationStatusAction = ({
+    updateVersionId,
+    entries,
+    leadId,
+}) => ({
+    type: EEB__SET_ENTRIES_VERIFICATION_STATUS,
+    entries,
+    leadId,
+    updateVersionId,
+});
+
+export const editEntriesSetEntryVerificationStatusAction = ({ entry, leadId }) => ({
+    type: EEB__SET_ENTRY_VERIFICATION_STATUS,
+    entry,
     leadId,
 });
 
@@ -321,7 +340,6 @@ const setLead = (state, action) => {
     return update(state, settings);
 };
 
-
 const setLabels = (state, action) => {
     const { labels, leadId } = action;
     const settings = {
@@ -418,6 +436,62 @@ const setEntryCommentsCount = (state, action) => {
     });
 
     return newState;
+};
+
+const setEntriesVerificationStatus = (state, action) => {
+    const {
+        leadId,
+        entries: entriesFromServer,
+        updateVersionId = false,
+    } = action;
+
+    const entries = state?.editEntries[leadId]?.entries ?? [];
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.editEntries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries = {};
+        }
+        if (!safeState.editEntries[leadId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId] = {};
+        }
+        if (!safeState.editEntries[leadId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries = [];
+        }
+        entriesFromServer.forEach((es) => {
+            const index = entries.findIndex(e => es.id === entryAccessor.serverId(e));
+
+            if (index > -1) {
+                const safeEntry = safeState.editEntries[leadId].entries[index];
+                // eslint-disable-next-line no-param-reassign
+                safeEntry.serverData.verified = es.verified;
+
+                if (updateVersionId) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeEntry.serverData.versionId = es.versionId;
+                }
+            }
+        });
+    });
+
+    return newState;
+};
+
+const setEntryVerificationStatus = (state, action) => {
+    const {
+        leadId,
+        entry,
+    } = action;
+
+    const newAction = {
+        leadId,
+        entries: [entry],
+        updateVersionId: true,
+    };
+
+    return setEntriesVerificationStatus(state, newAction);
 };
 
 const setEntries = (state, action) => {
@@ -1386,7 +1460,9 @@ const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
     [EEB__SET_ENTRIES_COMMENTS_COUNT]: setEntriesCommentsCount,
+    [EEB__SET_ENTRIES_VERIFICATION_STATUS]: setEntriesVerificationStatus,
     [EEB__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
+    [EEB__SET_ENTRY_VERIFICATION_STATUS]: setEntryVerificationStatus,
     [EEB__UPDATE_ENTRIES_BULK]: updateEntriesBulk,
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,

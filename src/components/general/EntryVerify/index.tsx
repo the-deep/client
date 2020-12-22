@@ -12,6 +12,7 @@ import {
 import {
     AddRequestProps,
     Requests,
+    Entry,
 } from '#typings';
 
 import {
@@ -32,10 +33,11 @@ interface ComponentProps {
     title?: string;
     entryId: number;
     leadId: number;
+    versionId: number;
     value: boolean;
     className?: string;
     onPendingChange?: (pending: boolean) => void;
-    handleEntryVerify?: (status: boolean) => void;
+    handleEntryVerify?: (status: boolean, entry: Entry) => void;
     disabled?: boolean;
 }
 
@@ -72,15 +74,21 @@ const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
             params,
         }) => ((params && params.verify) ? `/entries/${entryId}/verify/` : `/entries/${entryId}/unverify/`),
         method: methods.POST,
-        query: ({ params: { verify } = {} }) => ({ verify }),
-        onSuccess: ({ props, params = {} }) => {
+        body: ({
+            props: {
+                versionId,
+            } = {},
+        }) => ({
+            versionId,
+        }),
+        onSuccess: ({ props, params = {}, response }) => {
             const { handleEntryVerify, setEntryVerification, entryId, leadId } = props;
             const { verify = false } = params;
             if (setEntryVerification) {
                 setEntryVerification({ entryId, leadId, status: verify });
             }
             if (handleEntryVerify) {
-                handleEntryVerify(verify);
+                handleEntryVerify(verify, response as Entry);
             }
             notify.send({
                 title: _ts('editEntry', 'entryVerificationStatusChange'),
