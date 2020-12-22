@@ -134,6 +134,7 @@ async function fetchResource<T>(
                     const requestError = {
                         faramErrors,
                         messageForNotification,
+                        errorCode: message.errorCode,
                     };
 
                     onFailure(message.value, requestError);
@@ -179,6 +180,7 @@ async function fetchResource<T>(
             reason: 'other',
             exception: undefined,
             value: (resBody as { errors: Err }).errors,
+            errorCode: (resBody as { errors: Err; errorCode: number }).errorCode,
         };
         handleError(message);
         return;

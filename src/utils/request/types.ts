@@ -12,4 +12,5 @@ export interface Error {
     reason: string;
     exception: any;
     value: Err;
+    errorCode?: number;
 }
