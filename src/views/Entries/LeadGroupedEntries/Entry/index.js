@@ -9,10 +9,6 @@ import {
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
-import {
-    entriesSetEntryCommentsCountAction,
-    deleteEntryAction,
-} from '#redux';
 import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
@@ -32,6 +28,12 @@ import {
     hasWidgetViewComponent,
     VIEW,
 } from '#widgets';
+
+import {
+    entriesSetEntryCommentsCountAction,
+    deleteEntryAction,
+    patchEntryVerificationAction,
+} from '#redux';
 
 import {
     RequestClient,
@@ -61,6 +63,7 @@ const propTypes = {
     projectId: PropTypes.number,
     leadId: PropTypes.number,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    setEntryVerification: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
 };
@@ -102,6 +105,7 @@ const requestOptions = {
 const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
+    setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
 });
 
 const widgetLayoutSelector = (widget) => {
@@ -157,6 +161,23 @@ export default class Entry extends React.PureComponent {
         };
 
         setEntryCommentsCount({ entry, projectId, leadId });
+    }
+
+    handleEntryVerificationChange = (entry) => {
+        const {
+            setEntryVerification,
+            entry: {
+                id: entryId,
+            },
+            leadId,
+        } = this.props;
+
+        setEntryVerification({
+            entryId,
+            leadId,
+            status: entry.verified,
+            versionId: entry.versionId,
+        });
     }
 
     handleEntryVerificationPendingChange = (entryVerificationPending) => {
@@ -330,6 +351,7 @@ export default class Entry extends React.PureComponent {
                             versionId={versionId}
                             leadId={leadId}
                             onPendingChange={this.handleEntryVerificationPendingChange}
+                            handleEntryVerify={this.handleEntryVerificationChange}
                         />
                         <ButtonLikeLink
                             className={styles.editEntryLink}

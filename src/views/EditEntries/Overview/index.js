@@ -243,7 +243,7 @@ export default class Overview extends React.PureComponent {
         setEntryCommentsCount({ entry, leadId });
     }
 
-    handleVerificationChange = (_, newEntry) => {
+    handleVerificationChange = (newEntry) => {
         const {
             leadId,
             setEntryVerificationStatus,
@@ -252,7 +252,7 @@ export default class Overview extends React.PureComponent {
         const entry = {
             versionId: newEntry.versionId,
             verified: newEntry.verified,
-            entryId: newEntry.id,
+            id: newEntry.id,
         };
 
         setEntryVerificationStatus({ entry, leadId });

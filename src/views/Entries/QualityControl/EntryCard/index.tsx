@@ -111,7 +111,6 @@ interface EntryCardProps {
     isDeleted?: boolean;
     onDelete: (entryId: EntryFields['id']) => void;
     onLeadChange: (lead: Pick<Lead, EntryLeadType>) => void;
-    onVerificationChange: () => void;
     onEntryChange: (entry: Entry) => void;
 }
 
@@ -122,14 +121,12 @@ function EntryCard(props: EntryCardProps) {
         lead,
         framework,
         onDelete,
-        onVerificationChange,
         isDeleted,
         onLeadChange,
         onEntryChange,
     } = props;
 
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
-    const [isVerified, setVerificationStatus] = React.useState<boolean>(entry.verified);
 
     const {
         url: leadUrlFromProps,
@@ -161,11 +158,6 @@ function EntryCard(props: EntryCardProps) {
     const handleDeletePendingChange = useCallback((/* isPending: boolean */) => {
         // TODO; disable all actions if pending
     }, []);
-
-    const handleVerificationChange = React.useCallback((status: boolean) => {
-        onVerificationChange();
-        setVerificationStatus(status);
-    }, [onVerificationChange]);
 
     const handleDeleteSuccess = useCallback(() => {
         onDelete(entry.id);
@@ -206,7 +198,7 @@ function EntryCard(props: EntryCardProps) {
             <div
                 className={_cs(
                     styles.entryCard,
-                    isVerified && styles.verified,
+                    entry.verified && styles.verified,
                     isDeleted && styles.deleted,
                     isConfidential && styles.confidential,
                 )}
@@ -364,12 +356,12 @@ function EntryCard(props: EntryCardProps) {
                                 },
                             )
                         ) : undefined}
-                        value={isVerified}
+                        value={entry.verified}
                         entryId={entry.id}
                         leadId={entry.lead}
                         versionId={entry.versionId}
                         disabled={isDeleted}
-                        handleEntryVerify={handleVerificationChange}
+                        handleEntryVerify={onEntryChange}
                         onPendingChange={setVerifyChangePending}
                     />
                 </div>

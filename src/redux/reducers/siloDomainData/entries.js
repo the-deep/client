@@ -51,11 +51,12 @@ export const setEntriesAction = ({ projectId, entries, totalEntriesCount }) => (
     totalEntriesCount,
 });
 
-export const patchEntryVerificationAction = ({ entryId, leadId, status }) => ({
+export const patchEntryVerificationAction = ({ versionId, entryId, leadId, status }) => ({
     type: E__PATCH_ENTRY_VERIFICATION,
     entryId,
     leadId,
     status,
+    versionId,
 });
 
 export const deleteEntryAction = ({ entryId, leadId }) => ({
@@ -158,6 +159,7 @@ const patchEntryVerification = (state, action) => {
         leadId,
         entryId,
         status,
+        versionId,
     } = action;
 
     const { activeProject: projectId } = state;
@@ -196,6 +198,9 @@ const patchEntryVerification = (state, action) => {
             if (entryIndex > -1) {
                 // eslint-disable-next-line no-param-reassign
                 safeEntries[entryIndex].verified = status;
+
+                // eslint-disable-next-line no-param-reassign
+                safeEntries[entryIndex].versionId = versionId;
             }
         }
     });

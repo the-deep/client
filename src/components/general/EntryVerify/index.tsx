@@ -1,14 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 
 import Cloak from '#components/general/Cloak';
 import Checkbox from '#rsci/Checkbox';
 
-import {
-    patchEntryVerificationAction,
-} from '#redux';
 import {
     AddRequestProps,
     Requests,
@@ -37,12 +32,8 @@ interface ComponentProps {
     value: boolean;
     className?: string;
     onPendingChange?: (pending: boolean) => void;
-    handleEntryVerify?: (status: boolean, entry: Entry) => void;
+    handleEntryVerify?: (entry: Entry) => void;
     disabled?: boolean;
-}
-
-interface PropsFromDispatch {
-    setEntryVerification: typeof patchEntryVerificationAction;
 }
 
 interface Params {
@@ -61,13 +52,9 @@ const shouldHideEntryEdit = ({ entryPermissions }: {
 }) => !entryPermissions.modify;
 
 
-type Props = AddRequestProps<ComponentProps & PropsFromDispatch, Params>;
+type Props = AddRequestProps<ComponentProps, Params>;
 
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
-    setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
-});
-
-const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
+const requestOptions: Requests<ComponentProps, Params> = {
     setEntryVerificationRequest: {
         url: ({
             props: { entryId },
@@ -82,13 +69,10 @@ const requestOptions: Requests<ComponentProps & PropsFromDispatch, Params> = {
             versionId,
         }),
         onSuccess: ({ props, params = {}, response }) => {
-            const { handleEntryVerify, setEntryVerification, entryId, leadId } = props;
-            const { verify = false } = params;
-            if (setEntryVerification) {
-                setEntryVerification({ entryId, leadId, status: verify });
-            }
+            const { handleEntryVerify } = props;
+
             if (handleEntryVerify) {
-                handleEntryVerify(verify, response as Entry);
+                handleEntryVerify(response as Entry);
             }
             notify.send({
                 title: _ts('editEntry', 'entryVerificationStatusChange'),
@@ -162,8 +146,4 @@ function EntryVerify(props: Props) {
     );
 }
 
-export default connect(null, mapDispatchToProps)(
-    RequestClient(requestOptions)(
-        EntryVerify,
-    ),
-);
+export default RequestClient(requestOptions)(EntryVerify);

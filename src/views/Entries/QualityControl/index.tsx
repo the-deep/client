@@ -141,6 +141,7 @@ function QualityControl(props: Props) {
     }, [setExpansion]);
 
     const [entries, setEntries] = useState<EntryFields[]>([]);
+
     const [deletedEntries, setDeletedEntries] = useState<{[key: string]: boolean}>({});
     const [stats, setStats] = useState<EntrySummary>();
     const [tocCount, setTocCount] = useState<TocCountMap>({});
@@ -272,7 +273,7 @@ function QualityControl(props: Props) {
         ));
         getEntriesWithStats();
     }, [getEntriesWithStats, setEntries]);
-    const handleVerificationChange = getEntriesWithStats;
+
     const handleLeadEdit = useCallback((updatedLead) => {
         getEntriesWithStats();
         setEntries(oldEntries => (
@@ -308,7 +309,6 @@ function QualityControl(props: Props) {
         onDelete: handleEntryDelete,
         onLeadChange: handleLeadEdit,
         onEntryChange: handleEntryEdit,
-        onVerificationChange: handleVerificationChange,
         className: styles.card,
     }),
     [
@@ -317,7 +317,6 @@ function QualityControl(props: Props) {
         deletedEntries,
         framework,
         handleEntryDelete,
-        handleVerificationChange,
     ]);
 
     const tocFilterRendererParams = useCallback((_: string, data: MatrixKeyId) => ({
