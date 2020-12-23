@@ -57,6 +57,8 @@ interface Props {
     onTextWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onDecoupledEntriesChange: (value: boolean) => void;
+    includeSubSector: boolean;
+    onIncludeSubSectorChange: (value: boolean) => void;
 }
 
 const reportStructureOptions: ReportStructureOption[] = [
@@ -111,6 +113,8 @@ interface RenderWordProps {
     onContextualWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
     onTextWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
+    includeSubSector: boolean;
+    onIncludeSubSectorChange: (value: boolean) => void;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -126,6 +130,8 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         reportStructureVariant,
         showGroups,
         textWidgets,
+        includeSubSector,
+        onIncludeSubSectorChange,
     } = props;
 
     if (!reportStructure) {
@@ -152,6 +158,13 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                 <h4 className={styles.heading}>
                     { _ts('export', 'reportStructureLabel')}
                 </h4>
+                <Checkbox
+                    className={styles.includeSubSector}
+                    key="checkbox"
+                    label={_ts('export', 'includeSubSector')}
+                    value={includeSubSector}
+                    onChange={onIncludeSubSectorChange}
+                />
                 <SegmentInput
                     label={_ts('export', 'orderMatrix2D')}
                     keySelector={reportVariantKeySelector}
@@ -253,6 +266,8 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
         decoupledEntries,
         onDecoupledEntriesChange,
         entryFilterOptions,
+        includeSubSector,
+        onIncludeSubSectorChange,
     } = props;
 
     switch (activeExportTypeKey) {
@@ -271,6 +286,8 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
                     textWidgets={textWidgets}
                     showGroups={showGroups}
                     onShowGroupsChange={onShowGroupsChange}
+                    includeSubSector={includeSubSector}
+                    onIncludeSubSectorChange={onIncludeSubSectorChange}
                 />
             );
         case 'excel':
@@ -306,6 +323,8 @@ function ExportTypePane(props: Props) {
         decoupledEntries,
         onDecoupledEntriesChange,
         entryFilterOptions,
+        includeSubSector,
+        onIncludeSubSectorChange,
     } = props;
 
     const exportTypeRendererParams = useCallback((key: ExportType, data: ExportTypeItem) => {
@@ -350,6 +369,8 @@ function ExportTypePane(props: Props) {
                     onShowGroupsChange={onShowGroupsChange}
                     decoupledEntries={decoupledEntries}
                     onDecoupledEntriesChange={onDecoupledEntriesChange}
+                    includeSubSector={includeSubSector}
+                    onIncludeSubSectorChange={onIncludeSubSectorChange}
                 />
             </div>
         </section>

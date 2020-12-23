@@ -119,6 +119,7 @@ function Export(props: Props) {
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [leads, setLeads] = useState<SelectedLead[]>([]);
+    const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [
         reportStructureVariant,
         setReportStructureVariant,
@@ -234,9 +235,13 @@ function Export(props: Props) {
     }, [analysisFramework]);
 
     useEffect(() => {
-        const structure = createReportStructure(analysisFramework, reportStructureVariant);
+        const structure = createReportStructure(
+            analysisFramework,
+            reportStructureVariant,
+            includeSubSector,
+        );
         setReportStructure(structure);
-    }, [analysisFramework, reportStructureVariant]);
+    }, [analysisFramework, reportStructureVariant, includeSubSector]);
 
     const handleSelectLeadChange = useCallback((key: number, value: boolean) => (
         setLeads((oldLeads) => {
@@ -341,6 +346,8 @@ function Export(props: Props) {
                         onShowGroupsChange={setShowGroups}
                         onReportStructureVariantChange={handleReportStructureVariantChange}
                         onDecoupledEntriesChange={setDecoupledEntries}
+                        includeSubSector={includeSubSector}
+                        onIncludeSubSectorChange={setIncludeSubSector}
                     />
                     <ExportPreview
                         className={styles.preview}
