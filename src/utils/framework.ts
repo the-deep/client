@@ -43,7 +43,7 @@ const transformLevelsDimensionFirst = (
                 return ({
                     id: createId(s.id, d.id, sd.id),
                     title: s.title,
-                    subLevels: includeSubSector ?
+                    sublevels: includeSubSector ?
                         subsectors.map(ss => ({
                             id: createId(s.id, ss.id, d.id, sd.id),
                             title: ss.title,
