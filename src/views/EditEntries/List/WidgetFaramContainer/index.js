@@ -160,11 +160,11 @@ function WidgetFaramContainer(props) {
         setEntryCommentsCount({ entry: entryForPatch, leadId });
     }, [setEntryCommentsCount, leadId]);
 
-    const handleVerificationChange = useCallback((_, newEntry) => {
+    const handleVerificationChange = useCallback((newEntry) => {
         const entryForPatch = {
             versionId: newEntry.versionId,
             verified: newEntry.verified,
-            entryId: newEntry.id,
+            id: newEntry.id,
         };
 
         setEntryVerificationStatus({ entry: entryForPatch, leadId });
