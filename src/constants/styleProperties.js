@@ -59,6 +59,8 @@ const styleProperties = {
         widthQuestionIcon: '48px',
         heightQuestionIcon: '48px',
         heightNagbar: '64px',
+
+        heightActionBar: '42px',
     },
 };
 

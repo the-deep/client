@@ -1226,7 +1226,9 @@
         "-87098708": "Any Organization Type",
         "-89081134": "Organization Type",
         "-78970877": "Failed to export",
-        "-89798798": "Include sub sector"
+        "-89798798": "Include sub sector",
+        "-68982194": "more",
+        "-75616009": "Less"
     },
     "links": {
         "browserExtension": {
@@ -1727,7 +1729,9 @@
             "widgetsFiltersGroupTitle": -69483734,
             "filteredByLabel": -71515950,
             "showFiltersLabel": -60218291,
-            "hideFiltersLabel": -90290386
+            "hideFiltersLabel": -90290386,
+            "more": -68982194,
+            "less": -75616009
         },
         "export": {
             "headerExport": 600,

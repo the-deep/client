@@ -126,6 +126,16 @@ function EntryCard(props: EntryCardProps) {
         onEntryChange,
     } = props;
 
+    const [isVisible, setVisibility] = useState(false);
+
+    const handleShow = useCallback(() => {
+        setVisibility(true);
+    }, []);
+
+    const handleHide = useCallback(() => {
+        setVisibility(false);
+    }, []);
+
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
 
     const {
@@ -279,91 +289,103 @@ function EntryCard(props: EntryCardProps) {
                         />
                     </div>
                 </section>
-                <section className={styles.bottom}>
-                    <div className={styles.row}>
-                        <div className={styles.source}>
-                            { leadSource && (
-                                <Icon
-                                    name="world"
-                                />
-                            )}
-                            <div
-                                className={styles.value}
-                                title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
-                            >
-                                { lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw }
+                <div className={styles.actionsWrapper}>
+                    {isVisible && (
+                        <section className={styles.bottom}>
+                            <div className={styles.row}>
+                                <div className={styles.source}>
+                                    { leadSource && (
+                                        <Icon
+                                            name="world"
+                                        />
+                                    )}
+                                    <div
+                                        className={styles.value}
+                                        title={_ts('entries.qualityControl', 'leadSourceTooltip', { leadSource })}
+                                    >
+                                        { leadSource }
+                                    </div>
+                                </div>
+                                <div className={styles.confidentiality}>
+                                    { lead.confidentialityDisplay }
+                                </div>
                             </div>
-                        </div>
-                        <div className={styles.confidentiality}>
-                            { lead.confidentialityDisplay }
-                        </div>
-                    </div>
-                    <div className={styles.entryDetailsRow}>
-                        <div
-                            className={styles.createdBy}
-                            title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
-                        >
-                            { entry.createdByName }
-                        </div>
-                        <DateOutput
-                            className={styles.createdAt}
-                            value={entry.createdAt}
-                            tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                            <div className={styles.entryDetailsRow}>
+                                <div
+                                    className={styles.createdBy}
+                                    title={_ts('entries.qualityControl', 'leadCreatedByTooltip', { user: entry.createdByName })}
+                                >
+                                    { entry.createdByName }
+                                </div>
+                                <DateOutput
+                                    className={styles.createdAt}
+                                    value={entry.createdAt}
+                                    tooltip={_ts('entries.qualityControl', 'entryCreatedOnTooltip')}
+                                />
+                            </div>
+                            <ListView
+                                className={styles.scaleWidgets}
+                                data={scaleWidgets}
+                                renderer={ListItem}
+                                rendererParams={scaleWidgetRendererParams}
+                                keySelector={widgetKeySelector}
+                                emptyComponent={EmptyComponent}
+                            />
+                        </section>
+                    )}
+                    <Button
+                        className={styles.expandButton}
+                        onClick={isVisible ? handleHide : handleShow}
+                        transparent
+                        iconName={isVisible ? 'chevronDown' : 'chevronUp'}
+                    >
+                        {isVisible ? (_ts('entries', 'less')) : (_ts('entries', 'more'))}
+                    </Button>
+                    <div className={styles.actions}>
+                        <EntryDeleteButton
+                            entryId={entry.id}
+                            onPendingChange={handleDeletePendingChange}
+                            onDeleteSuccess={handleDeleteSuccess}
+                            disabled={isDeleted}
+                        />
+                        <EntryOpenLink
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            projectId={entry.project}
+                            disabled={isDeleted}
+                        />
+                        <EntryCommentButton
+                            entryId={entry.id}
+                            commentCount={entry.unresolvedCommentCount}
+                            assignee={lead.assigneeDetails.id}
+                            disabled={isDeleted}
+                        />
+                        <EntryEditButton
+                            entry={entry}
+                            framework={framework}
+                            disabled={isDeleted}
+                            onEditSuccess={onEntryChange}
+                        />
+                        <EntryVerify
+                            title={entry.verificationLastChangedByDetails ? (
+                                _ts(
+                                    'entries',
+                                    'verificationLastChangedBy',
+                                    {
+                                        userName: entry
+                                            .verificationLastChangedByDetails.displayName,
+                                    },
+                                )
+                            ) : undefined}
+                            value={entry.verified}
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            versionId={entry.versionId}
+                            disabled={isDeleted}
+                            handleEntryVerify={onEntryChange}
+                            onPendingChange={setVerifyChangePending}
                         />
                     </div>
-                    <ListView
-                        className={styles.scaleWidgets}
-                        data={scaleWidgets}
-                        renderer={ListItem}
-                        rendererParams={scaleWidgetRendererParams}
-                        keySelector={widgetKeySelector}
-                        emptyComponent={EmptyComponent}
-                    />
-                </section>
-                <div className={styles.actions}>
-                    <EntryDeleteButton
-                        entryId={entry.id}
-                        onPendingChange={handleDeletePendingChange}
-                        onDeleteSuccess={handleDeleteSuccess}
-                        disabled={isDeleted}
-                    />
-                    <EntryOpenLink
-                        entryId={entry.id}
-                        leadId={entry.lead}
-                        projectId={entry.project}
-                        disabled={isDeleted}
-                    />
-                    <EntryCommentButton
-                        entryId={entry.id}
-                        commentCount={entry.unresolvedCommentCount}
-                        assignee={lead.assigneeDetails.id}
-                        disabled={isDeleted}
-                    />
-                    <EntryEditButton
-                        entry={entry}
-                        framework={framework}
-                        disabled={isDeleted}
-                        onEditSuccess={onEntryChange}
-                    />
-                    <EntryVerify
-                        title={entry.verificationLastChangedByDetails ? (
-                            _ts(
-                                'entries',
-                                'verificationLastChangedBy',
-                                {
-                                    userName: entry
-                                        .verificationLastChangedByDetails.displayName,
-                                },
-                            )
-                        ) : undefined}
-                        value={entry.verified}
-                        entryId={entry.id}
-                        leadId={entry.lead}
-                        versionId={entry.versionId}
-                        disabled={isDeleted}
-                        handleEntryVerify={onEntryChange}
-                        onPendingChange={setVerifyChangePending}
-                    />
                 </div>
             </div>
         </div>
