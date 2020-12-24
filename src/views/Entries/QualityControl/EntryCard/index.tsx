@@ -333,25 +333,14 @@ function EntryCard(props: EntryCardProps) {
                             />
                         </section>
                     )}
-                    {!isVisible ? (
-                        <Button
-                            className={styles.expandButton}
-                            onClick={handleShow}
-                            transparent
-                            iconName="chevronUp"
-                        >
-                            {_ts('entries', 'more')}
-                        </Button>
-                    ) : (
-                        <Button
-                            className={styles.collapseButton}
-                            onClick={handleHide}
-                            transparent
-                            iconName="chevronDown"
-                        >
-                            {_ts('entries', 'less')}
-                        </Button>
-                    )}
+                    <Button
+                        className={styles.expandButton}
+                        onClick={isVisible ? handleHide : handleShow}
+                        transparent
+                        iconName={isVisible ? 'chevronDown' : 'chevronUp'}
+                    >
+                        {isVisible ? (_ts('entries', 'less')) : (_ts('entries', 'more'))}
+                    </Button>
                     <div className={styles.actions}>
                         <EntryDeleteButton
                             entryId={entry.id}
@@ -391,6 +380,7 @@ function EntryCard(props: EntryCardProps) {
                             value={entry.verified}
                             entryId={entry.id}
                             leadId={entry.lead}
+                            versionId={entry.versionId}
                             disabled={isDeleted}
                             handleEntryVerify={onEntryChange}
                             onPendingChange={setVerifyChangePending}
