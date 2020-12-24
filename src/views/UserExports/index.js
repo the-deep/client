@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import {
     isNotDefined,
-    reverseRoute,
     compareString,
     compareDate,
 } from '@togglecorp/fujs';
@@ -17,11 +16,9 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import BackLink from '#components/general/BackLink';
 import {
     projectIdFromRouteSelector,
 } from '#redux';
-import { pathNames } from '#constants';
 import { mimeTypeToIconMap } from '#entities/lead';
 import notify from '#notify';
 import _ts from '#ts';
@@ -258,10 +255,6 @@ function UserExports(props) {
             headerClassName={styles.header}
             header={
                 <>
-                    <BackLink
-                        className={styles.backLink}
-                        defaultLink={reverseRoute(pathNames.export, { projectId })}
-                    />
                     <h2 className={styles.heading}>
                         {_ts('export', 'userExportsHeader')}
                     </h2>

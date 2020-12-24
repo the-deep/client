@@ -1,11 +1,10 @@
 .user-exports {
+    display: flex;
+    flex-grow: 1;
+
     .header {
         display: flex;
         align-items: center;
-
-        .back-link {
-            flex-shrink: 0;
-        }
 
         .heading {
             flex-grow: 1;
