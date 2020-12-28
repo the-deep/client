@@ -276,7 +276,6 @@
         "606": "JSON",
         "609": "Entry attributes",
         "610": "Lead attributes",
-        "620": "View all exports",
         "621": "User exports",
         "622": "Unable to load your previous exports.",
         "623": "Doc type",
@@ -747,7 +746,6 @@
         "-28004665": "Join our skype group",
         "-76332316": "Do you want to format all excerpts?",
         "-83635501": "Format all excerpts",
-        "-77603800": "Couldn't save project",
         "-71533605": "Failed to save user information.",
         "-5184045": "Failed to retrieve user's projects.",
         "-59897985": "Failed to retrieve user's Usergroups.",
@@ -796,7 +794,6 @@
         "-87861842": "dd-mm-yyyy",
         "-78904030": "Excerpt Image",
         "-99467671": "No matching conditions.",
-        "-65673584": "Error while trying to log in.",
         "-17483186": "Error 403",
         "-83729493": "Looks like you don’t have the required permissions to view this page!",
         "-44264923": "403",
@@ -1193,8 +1190,6 @@
         "-91590870": "Bulk Delete Leads",
         "-86276092": "{count} leads selected",
         "-22337727": "Clear all selected items",
-        "-90901113": "Matrix 1D",
-        "-90901114": "Matrix 2D",
         "-86792115": "Lead filters",
         "-86210237": "Entry filters",
         "-69483734": "Widget filters",
@@ -1207,7 +1202,6 @@
         "-79879777": "Looks like the framework in use doesn't have matrix1D and matrix2D widgets.",
         "-987979879": "Leads",
         "-987979871": "Sources",
-        "-987979798": "Authors",
         "-879879798": "Unverified entries",
         "-897879798": "Verified entries",
         "-978987098": "Showing entries based on ",
@@ -1218,7 +1212,6 @@
         "-79797971": "Collapse All",
         "-46164024": "Jump to",
         "-19695002": "Show table of contents",
-        "-40350374": "% of verified entries",
         "-81087776": "{verifiedCount} verified out of {entriesCount} entries",
         "-38882854": "Mark as validated",
         "-65674515": "Lead has been marked as validated!",
@@ -1228,7 +1221,10 @@
         "-78970877": "Failed to export",
         "-89798798": "Include sub sector",
         "-68982194": "more",
-        "-75616009": "Less"
+        "-75616009": "Less",
+        "-12398709": "Export successfully deleted",
+        "-42519233": "Failed to delete export.",
+        "-5650209": "Are you sure you want to delete this export?"
     },
     "links": {
         "browserExtension": {
@@ -1737,7 +1733,6 @@
             "headerExport": 600,
             "showPreviewButtonLabel": 601,
             "startExportButtonLabel": 602,
-            "viewAllExportsButtonLabel": 620,
             "docxLabel": 603,
             "pdfLabel": 604,
             "xlsxLabel": 605,
@@ -1768,11 +1763,9 @@
             "leadsLabel": 641,
             "titleLabel": 13,
             "afLabel": 379,
-            "cantLoadAf": 648,
             "startAssessmentExportButtonLabel": -58642627,
             "startPlannedAssessmentExportButtonLabel": -8007367,
             "geoLabel": -80682543,
-            "cantLoadGeo": 534,
             "startedStatusLabel": -28816005,
             "dimensionFirstExportTypeLabel": -51656640,
             "sectorFirstExportTypeLabel": -74878255,
@@ -1784,7 +1777,12 @@
             "structureLabel": -96285781,
             "userExportsFailure": 622,
             "toBeStartedTitle": -55557162,
-            "includeSubSector": -89798798
+            "includeSubSector": -89798798,
+            "exportDeleteLabel": -94736495,
+            "deleteExportSuccess": -12398709,
+            "exportActionsLabel": 16,
+            "deleteExportFailure": -42519233,
+            "exportDeleteConfirmationMessage": -5650209
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
@@ -2156,8 +2154,7 @@
             "registerLabel": 811,
             "enterRecaptcha": 893,
             "retryRecaptcha": 894,
-            "passwordPlaceholder": -67300185,
-            "loginError": -65673584
+            "passwordPlaceholder": -67300185
         },
         "widgetTitle": {
             "dateWidgetLabel": 704,
@@ -2205,7 +2202,6 @@
             "categoryEditor": 380,
             "weeklySnapshot": 5569,
             "apiDocs": 5570,
-            "userExports": 621,
             "fourHundredFour": 5571,
             "browserExtension": 2000,
             "stringManagement": 5572,
@@ -2588,7 +2584,6 @@
             "modalCreate": 179,
             "userProjectCreate": 916,
             "userProjectCreateSuccess": 917,
-            "projectCreateFatalError": -77603800,
             "projectVisibilityInputLabel": 1120,
             "visibilityPrivateLabel": -92759559,
             "visibilityPublicLabel": -59389,
@@ -3488,7 +3483,6 @@
             "tableOfContentEmpty": -79879777,
             "totalLeads": -987979879,
             "totalSources": -987979871,
-            "totalUniqueAuthors": -987979798,
             "totalUnverifiedEntries": -879879798,
             "totalVerifiedEntries": -897879798,
             "selectedTocFilters": -978987098,
@@ -3499,9 +3493,6 @@
             "searchInputPlacehoder": -46164024,
             "showTableOfContents": -19695002
         },
-        "qualityControl": {
-            "matrix1dTitle": -90901113,
-            "matrix2dTitle": -90901114
-        }
+        "qualityControl": {}
     }
 }

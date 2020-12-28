@@ -79,6 +79,12 @@
                             .cell {
                                 position: relative;
                             }
+
+                            .button {
+                                &:not(:last-child) {
+                                    margin-right: var(--spacing-medium);
+                                }
+                            }
                         }
                     }
 

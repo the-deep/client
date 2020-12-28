@@ -8,6 +8,7 @@ const exportSchema = [];
             description: 'Attributes after any export',
         },
         fields: {
+            isDeleted: { type: 'boolean', required: true },
             exportedAt: { type: 'string', required: true }, // date
             exportedBy: { type: 'uint', required: true },
             file: { type: 'string' },

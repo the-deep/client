@@ -15,6 +15,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import {
     projectIdFromRouteSelector,
@@ -53,6 +54,7 @@ function UserExports(props) {
     const [exportCount, setExportCount] = useState(0);
     const [activeSort, setActiveSort] = useState('-exported_at');
     const [activePage, setActivePage] = useState(1);
+    const [deleteExportId, setDeleteExportId] = useState();
     const [
         pending,
         ,
@@ -89,6 +91,43 @@ function UserExports(props) {
             });
         },
     });
+
+    const [
+        deletePending,
+        ,
+        ,
+        deleteExport,
+    ] = useRequest({
+        url: `server://exports/${deleteExportId}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            const newUserExportList = userExports.filter(v => v.id !== deleteExportId);
+            setUserExports(newUserExportList);
+            if (deleteExportId === selectedExport) {
+                setSelectedExport(undefined);
+            }
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'deleteExportSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        autoTrigger: false,
+        onFailure: () => {
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('export', 'deleteExportFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    });
+
+    const handleExportDelete = useCallback((id) => {
+        setDeleteExportId(id);
+        deleteExport();
+    }, [deleteExport]);
 
     const headers = useMemo(() => ([
         {
@@ -196,7 +235,23 @@ function UserExports(props) {
                 );
             },
         },
-    ]), []);
+        {
+            key: 'action',
+            label: _ts('export', 'exportActionsLabel'),
+            order: 6,
+            sortable: false,
+            modifier: row => (
+                <DangerConfirmButton
+                    onClick={() => handleExportDelete(row.id)}
+                    iconName="delete"
+                    disabled={row.id === deleteExportId && deletePending}
+                    title={_ts('export', 'exportDeleteLabel')}
+                    confirmationMessage={_ts('export', 'exportDeleteConfirmationMessage')}
+                    transparent
+                />
+            ),
+        },
+    ]), [deletePending, handleExportDelete, deleteExportId]);
 
     const dataModifier = useCallback(
         (data, columnKey) => {
@@ -249,6 +304,12 @@ function UserExports(props) {
         }, [headers, activeSort, setActiveSort],
     );
 
+    const handleBodyClick = useCallback((key, column) => {
+        if (column !== 'action') {
+            setSelectedExport(key);
+        }
+    }, []);
+
     return (
         <Page
             className={styles.userExports}
@@ -271,10 +332,10 @@ function UserExports(props) {
                             headerModifier={headerModifier}
                             headers={headers}
                             onHeaderClick={handleTableHeaderClick}
+                            onBodyClick={handleBodyClick}
                             keySelector={tableKeyExtractor}
                             className={styles.table}
                             pending={pending && isNotDefined(userExports)}
-                            onBodyClick={setSelectedExport}
                             highlightRowKey={selectedExport}
                         />
                     </div>
