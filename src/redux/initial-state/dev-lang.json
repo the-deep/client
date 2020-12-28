@@ -2627,7 +2627,8 @@
         "components.exportPreview": {
             "previewNotAvailableLabel": 132,
             "serverErrorText": 500,
-            "connectionFailureText": 501
+            "connectionFailureText": 501,
+            "previewHeading": -77224022
         },
         "components.regionAdminLevel": {
             "addAdminLevelButtonLabel": 87,

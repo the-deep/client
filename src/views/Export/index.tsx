@@ -16,12 +16,15 @@ import {
 
 import ExportedFiles from './ExportedFiles';
 import ExportSelection from './ExportSelection';
+import AssessmentExportSelection from './AssessmentExportSelection';
+
 import styles from './styles.scss';
 
-type TabElement = 'exportSelection' | 'exportedFiles';
+type TabElement = 'exportSelection' | 'aryExportSelection' | 'exportedFiles';
 
 const tabs: {[key in TabElement]: string} = {
-    exportSelection: 'Export Selection',
+    exportSelection: 'Export Entries',
+    aryExportSelection: 'Export Assessments',
     exportedFiles: 'Exported Files',
 };
 
@@ -34,7 +37,8 @@ interface PropsFromState {
 }
 function Export(props: PropsFromState) {
     const { projectId } = props;
-    const [activeTab, setActiveTab] = useState<TabElement>('exportSelection');
+    // TODO: Reset this
+    const [activeTab, setActiveTab] = useState<TabElement>('aryExportSelection');
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({
         title,
@@ -49,7 +53,14 @@ function Export(props: PropsFromState) {
                     />
                 ),
                 lazyMount: true,
-                wrapContainer: true,
+            },
+            aryExportSelection: {
+                component: () => (
+                    <AssessmentExportSelection
+                        projectId={projectId}
+                    />
+                ),
+                lazyMount: true,
             },
             exportedFiles: {
                 component: () => (
@@ -58,7 +69,6 @@ function Export(props: PropsFromState) {
                     />
                 ),
                 lazyMount: true,
-                wrapContainer: true,
             },
         }
     ), [projectId]);
@@ -66,6 +76,7 @@ function Export(props: PropsFromState) {
     return (
         <Page
             className={styles.export}
+            headerClassName={styles.header}
             header={
                 <ScrollTabs
                     tabs={tabs}

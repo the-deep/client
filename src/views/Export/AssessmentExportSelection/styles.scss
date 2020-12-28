@@ -1,0 +1,17 @@
+.export-selection {
+    display: flex;
+    flex-grow: 1;
+
+    .left-container {
+        width: 70%;
+
+        .button {
+            margin: var(--spacing-small);
+        }
+    }
+
+    .preview {
+        border-left: var(--width-separator-thin) solid var(--color-separator);
+        width: 30%;
+    }
+}

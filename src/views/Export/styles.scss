@@ -1,4 +1,9 @@
 .export {
+    .header {
+        border-bottom: none;
+        padding: 0;
+    }
+
     .main-content {
         display: flex;
         flex-grow: 1;
