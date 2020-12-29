@@ -20,7 +20,6 @@ import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Badge from '#components/viewer/Badge';
 
 import { EntryFields, EntrySummary, TocCountMap } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
@@ -43,6 +42,7 @@ import {
 
 import _ts from '#ts';
 
+import Chip from './Chip';
 import EntryCard from './EntryCard';
 import EntriesStats from './EntriesStats';
 import {
@@ -319,10 +319,17 @@ function QualityControl(props: Props) {
         handleEntryDelete,
     ]);
 
-    const tocFilterRendererParams = useCallback((_: string, data: MatrixKeyId) => ({
-        className: styles.badge,
-        title: labelSelector(data),
-    }), []);
+    const handleRemoveSelection = useCallback((id: string) => {
+        const newTocFilters = tocFilters.filter(f => idSelector(f) !== id);
+        setTocFilters({ tocFilters: newTocFilters });
+    }, [setTocFilters, tocFilters]);
+
+    const tocFilterRendererParams = useCallback((id: string, data: MatrixKeyId) => ({
+        id,
+        className: styles.chip,
+        label: labelSelector(data),
+        onClose: handleRemoveSelection,
+    }), [handleRemoveSelection]);
 
     const searchValues = useMemo(() =>
         flatten(matrixToc, childrenSelector).filter((v: MatrixTocElement) => v.key),
@@ -418,7 +425,7 @@ function QualityControl(props: Props) {
                                 className={styles.tocFilterNames}
                                 data={tocFilters}
                                 keySelector={idSelector}
-                                renderer={Badge}
+                                renderer={Chip}
                                 rendererParams={tocFilterRendererParams}
                             />
                         )}
