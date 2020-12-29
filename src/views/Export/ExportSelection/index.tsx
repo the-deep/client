@@ -28,7 +28,7 @@ import {
 
 import { getFiltersForRequest } from '#entities/lead';
 import useRequest from '#utils/request';
-import notify from '#notify';
+import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import {
@@ -139,13 +139,8 @@ function Export(props: Props) {
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
-        onFailure: (error) => {
-            notify.send({
-                title: _ts('export', 'afLabel'),
-                type: notify.type.ERROR,
-                message: error,
-                duration: notify.duration.MEDIUM,
-            });
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('export', 'afLabel'))({ error: errorBody });
         },
     });
 
@@ -184,13 +179,8 @@ function Export(props: Props) {
             });
             setLeads(newLeads);
         },
-        onFailure: (error) => {
-            notify.send({
-                title: _ts('export', 'leadsLabel'),
-                type: notify.type.ERROR,
-                message: error,
-                duration: notify.duration.MEDIUM,
-            });
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
         },
     });
 
@@ -209,13 +199,8 @@ function Export(props: Props) {
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
-        onFailure: (error) => {
-            notify.send({
-                title: _ts('export', 'geoLabel'),
-                type: notify.type.ERROR,
-                message: error,
-                duration: notify.duration.MEDIUM,
-            });
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('export', 'geoLabel'))({ error: errorBody });
         },
     });
 
