@@ -38,7 +38,7 @@ interface PropsFromState {
 function Export(props: PropsFromState) {
     const { projectId } = props;
     // TODO: Reset this
-    const [activeTab, setActiveTab] = useState<TabElement>('aryExportSelection');
+    const [activeTab, setActiveTab] = useState<TabElement>('exportSelection');
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({
         title,

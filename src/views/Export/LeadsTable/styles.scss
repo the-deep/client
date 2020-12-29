@@ -1,20 +1,22 @@
 .leads-table {
-    border-top: var(--width-separator-thin) solid var(--color-separator);
-    overflow: auto;
+    .table {
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        overflow: auto;
 
-    :global {
-        .select {
+        :global {
+            .select {
+                max-width: 56px;
+                white-space: nowrap;
+            }
+
+            .createdAt {
+                white-space: nowrap;
+            }
+        }
+
+        .select-all-checkbox {
             max-width: 56px;
             white-space: nowrap;
         }
-
-        .createdAt {
-            white-space: nowrap;
-        }
-    }
-
-    .select-all-checkbox {
-        max-width: 56px;
-        white-space: nowrap;
     }
 }

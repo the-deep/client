@@ -309,6 +309,18 @@ function FilterEntriesForm(props) {
                                     disabled={pending}
                                     placeholder={_ts('entries', 'leadPublishedOnPlaceholder')}
                                 />
+                                <MultiSelectInput
+                                    className={styles.entriesFilter}
+                                    keySelector={optionKeySelector}
+                                    labelSelector={optionLabelSelector}
+                                    options={organizationTypes}
+                                    label={staticFiltersLabelMap.authoring_organization_types}
+                                    onChange={(value) => { handleFilterChange('authoring_organization_types', value); }}
+                                    showHintAndError={false}
+                                    value={filters.authoring_organization_types}
+                                    disabled={pending}
+                                    placeholder={_ts('entries', 'organizationTypePlaceholder')}
+                                />
                             </div>
                         </div>
                     )}
@@ -413,18 +425,6 @@ function FilterEntriesForm(props) {
                                 value={filters.entry_type}
                                 disabled={pending}
                                 placeholder={_ts('entries', 'entryTypePlaceholder')}
-                            />
-                            <MultiSelectInput
-                                className={styles.entriesFilter}
-                                keySelector={optionKeySelector}
-                                labelSelector={optionLabelSelector}
-                                options={organizationTypes}
-                                label={staticFiltersLabelMap.authoring_organization_types}
-                                onChange={(value) => { handleFilterChange('authoring_organization_types', value); }}
-                                showHintAndError={false}
-                                value={filters.authoring_organization_types}
-                                disabled={pending}
-                                placeholder={_ts('entries', 'organizationTypePlaceholder')}
                             />
                             {showEntryLabelFilters && (
                                 <>

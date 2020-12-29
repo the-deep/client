@@ -6,7 +6,6 @@ import { listToMap } from '@togglecorp/fujs';
 
 import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import FilterLeadsForm from '#components/other/FilterLeadsForm';
 import ExportPreview from '#components/other/ExportPreview';
 
 import {
@@ -26,17 +25,16 @@ import {
     getContextualWidgetsFromFramework,
     getTextWidgetsFromFramework,
 } from '#utils/framework';
-
-import { getFiltersForRequest } from '#entities/lead';
 import useRequest from '#utils/request';
+
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
+import notify from '#notify';
 
 import {
     AppState,
     FrameworkFields,
     Lead,
-    MultiResponse,
     ExportType,
     TreeSelectableWidget,
     ReportStructure,
@@ -161,7 +159,7 @@ function EntriesExportSelection(props: Props) {
         widgets,
     } = analysisFramework;
 
-    const filterOnlyUnprotected = projectRole?.exportPermissions?.['create_only_unprotected'];
+    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
@@ -172,6 +170,7 @@ function EntriesExportSelection(props: Props) {
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
+    const [filterValues, setFilterValues] = useState<unknown>({});
 
     const [
         reportStructureVariant,
@@ -194,46 +193,6 @@ function EntriesExportSelection(props: Props) {
         },
         onFailure: (error, errorBody) => {
             notifyOnFailure(_ts('export', 'afLabel'))({ error: errorBody });
-        },
-    });
-
-    const sanitizedFilters = useMemo(() => {
-        const processedFilters = getFiltersForRequest(leadsFilters);
-        // Unprotected filter is sent to request to fetch leads
-        // if user cannot create export for confidential documents
-        if (filterOnlyUnprotected) {
-            processedFilters.confidentiality = ['unprotected'];
-        }
-        return processedFilters;
-    }, [filterOnlyUnprotected, leadsFilters]);
-
-    const leadsRequestBody = useMemo(() => ({
-        project: [projectId],
-        ...sanitizedFilters,
-    }), [projectId, sanitizedFilters]);
-
-    const [
-        leadsPending,
-    ] = useRequest<MultiResponse<Lead>>({
-        url: 'server://v2/leads/filter/',
-        method: 'POST',
-        query: {
-            fields: ['id', 'title', 'created_at'],
-        },
-        autoTrigger: true,
-        body: leadsRequestBody,
-        onSuccess: (response) => {
-            const newLeads: SelectedLead[] = [];
-            (response.results || []).forEach((l) => {
-                newLeads.push({
-                    selected: true,
-                    ...l,
-                });
-            });
-            setLeads(newLeads);
-        },
-        onFailure: (error, errorBody) => {
-            notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
         },
     });
 
@@ -432,27 +391,21 @@ function EntriesExportSelection(props: Props) {
         startExport(true);
     }, [setPreviewId, startExport]);
 
-    const pending = leadsPending || analysisFrameworkPending || geoOptionsPending;
+    const pending = analysisFrameworkPending || geoOptionsPending;
 
     return (
         <div className={styles.export}>
             <section className={styles.filters} >
                 <div className={styles.leadFilters}>
-                    <div className={styles.leadAttributes}>
-                        <h4 className={styles.heading}>
-                            {_ts('export', 'leadAttributesLabel')}
-                        </h4>
-                        <FilterLeadsForm
-                            className={styles.leadsFilterForm}
-                            filterOnlyUnprotected={filterOnlyUnprotected}
-                        />
-                    </div>
                     <LeadsTable
                         className={styles.leadsTable}
-                        pending={leadsPending}
-                        leads={leads}
+                        projectId={projectId}
+                        filterValues={filterValues}
+                        onFilterChange={setFilterValues}
                         onSelectLeadChange={handleSelectLeadChange}
                         onSelectAllClick={handleSelectAllLeads}
+                        filterOnlyUnprotected={filterOnlyUnprotected}
+                        leadsFilters={leadsFilters}
                     />
                 </div>
                 <div className={styles.entryFilters}>
