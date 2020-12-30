@@ -1,0 +1,30 @@
+.exported-files {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .header {
+        display: flex;
+    }
+
+    .main-content {
+        display: flex;
+        flex-grow: 1;
+
+
+        .left {
+            display: flex;
+            flex-basis: 70%;
+
+        }
+
+        .preview {
+            display: flex;
+            flex-basis: 30%;
+        }
+    }
+
+    .footer {
+        display: flex;
+    }
+}
