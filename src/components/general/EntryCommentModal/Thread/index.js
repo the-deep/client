@@ -55,7 +55,7 @@ const defaultProps = {
 
 const requestOptions = {
     commentCreateRequest: {
-        url: '/entry-comments/',
+        url: ({ props: { entryId } }) => `/entries/${entryId}/entry-comments/`,
         method: methods.POST,
         body: ({ params: { body } }) => body,
         onSuccess: ({
@@ -111,6 +111,7 @@ export default class EntryCommentThread extends React.PureComponent {
             currentEdit,
             onCurrentEditChange,
             setGlobalPristine,
+            entryId,
         } = this.props;
 
         return ({
@@ -125,6 +126,7 @@ export default class EntryCommentThread extends React.PureComponent {
             isResolved,
             members,
             onEdit,
+            entryId,
             onDelete,
         });
     }
@@ -248,6 +250,7 @@ export default class EntryCommentThread extends React.PureComponent {
             currentEdit,
             onCurrentEditChange,
             setGlobalPristine,
+            entryId,
         } = this.props;
 
         const {
@@ -272,6 +275,7 @@ export default class EntryCommentThread extends React.PureComponent {
             <div className={_cs(className, styles.thread)}>
                 <Comment
                     currentEdit={currentEdit}
+                    entryId={entryId}
                     onCurrentEditChange={onCurrentEditChange}
                     commentId={parentId}
                     onEdit={onEdit}

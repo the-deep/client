@@ -62,11 +62,8 @@ const WINDOW_PADDING = 24;
 
 const requestOptions = {
     entryCommentsGet: {
-        url: '/entry-comments/',
+        url: ({ props: { entryServerId } }) => `/entries/${entryServerId}/entry-comments/`,
         method: methods.GET,
-        query: ({ props: { entryServerId } }) => ({
-            entry: entryServerId,
-        }),
         onMount: true,
         onSuccess: ({ params: { onCommentsGet }, response }) => {
             onCommentsGet(response.results);
@@ -85,7 +82,7 @@ const requestOptions = {
         },
     },
     commentCreateRequest: {
-        url: '/entry-comments/',
+        url: ({ props: { entryServerId } }) => `/entries/${entryServerId}/entry-comments/`,
         method: methods.POST,
         body: ({ params: { body } }) => body,
         onSuccess: ({

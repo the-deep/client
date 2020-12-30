@@ -36,6 +36,8 @@ const propTypes = {
     assignees: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     assigneesDetail: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     isParent: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
+    entryId: PropTypes.number.isRequired,
     isResolved: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     textHistory: PropTypes.array.isRequired,
@@ -71,7 +73,10 @@ const mapStateToProps = state => ({
 
 const requestOptions = {
     commentEditRequest: {
-        url: ({ props: { commentId } }) => `/entry-comments/${commentId}/`,
+        url: ({ props: {
+            entryId,
+            commentId,
+        } }) => `/entries/${entryId}/entry-comments/${commentId}/`,
         method: methods.PATCH,
         body: ({ params: { body } }) => body,
         onSuccess: ({
@@ -93,7 +98,10 @@ const requestOptions = {
         },
     },
     commentDeleteRequest: {
-        url: ({ props: { commentId } }) => `/entry-comments/${commentId}/`,
+        url: ({ props: {
+            entryId,
+            commentId,
+        } }) => `/entries/${entryId}/entry-comments/${commentId}/`,
         method: methods.DELETE,
         onSuccess: ({
             params: { onDelete },
@@ -114,7 +122,10 @@ const requestOptions = {
         },
     },
     commentResolveRequest: {
-        url: ({ props: { commentId } }) => `/entry-comments/${commentId}/resolve/`,
+        url: ({ props: {
+            entryId,
+            commentId,
+        } }) => `/entries/${entryId}/entry-comments/${commentId}/resolve/`,
         method: methods.POST,
         onSuccess: ({
             params: { onEditSuccess },
