@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -8,6 +8,8 @@ import Page from '#rscv/Page';
 
 import {
     projectIdFromRouteSelector,
+    activeProjectFromStateSelector,
+    activeProjectRoleSelector,
 } from '#redux';
 
 import {
@@ -22,6 +24,7 @@ import styles from './styles.scss';
 
 type TabElement = 'exportSelection' | 'aryExportSelection' | 'exportedFiles';
 
+// TODO: Fix typescript lint
 const tabs: {[key in TabElement]: string} = {
     exportSelection: 'Export Entries',
     aryExportSelection: 'Export Assessments',
@@ -30,15 +33,40 @@ const tabs: {[key in TabElement]: string} = {
 
 const mapStateToProps = (state: AppState) => ({
     projectId: projectIdFromRouteSelector(state),
+    projectRole: activeProjectRoleSelector(state),
+    currentUserActiveProject: activeProjectFromStateSelector(state),
 });
+
+interface Permissions {
+    view?: boolean;
+}
+
+interface ProjectRole {
+    assessmentPermissions?: Permissions;
+}
+
+interface Project {
+    assessmentTemplate: boolean;
+}
 
 interface PropsFromState {
     projectId: number;
+    // TODO: Fix later
+    projectRole: ProjectRole;
+    currentUserActiveProject: Project;
 }
 function Export(props: PropsFromState) {
-    const { projectId } = props;
+    const {
+        projectId,
+        projectRole: {
+            assessmentPermissions = {},
+        },
+        currentUserActiveProject,
+    } = props;
+
     // TODO: Reset this
     const [activeTab, setActiveTab] = useState<TabElement>('exportSelection');
+    const hasAssessmentTemplate = !!currentUserActiveProject.assessmentTemplate;
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({
         title,
@@ -73,13 +101,31 @@ function Export(props: PropsFromState) {
         }
     ), [projectId]);
 
+    const finalTabs = useMemo(() => {
+        const newTabs = { ...tabs };
+        if (!hasAssessmentTemplate || !assessmentPermissions.view) {
+            delete newTabs.aryExportSelection;
+            return newTabs;
+        }
+        return tabs;
+    }, [hasAssessmentTemplate, assessmentPermissions]);
+
+    useEffect(() => {
+        if (
+            activeTab === 'aryExportSelection'
+            && (!hasAssessmentTemplate || !assessmentPermissions.view)
+        ) {
+            setActiveTab('exportSelection');
+        }
+    }, [activeTab, hasAssessmentTemplate, assessmentPermissions]);
+
     return (
         <Page
             className={styles.export}
             headerClassName={styles.header}
             header={
                 <ScrollTabs
-                    tabs={tabs}
+                    tabs={finalTabs}
                     active={activeTab}
                     renderer={TabTitle}
                     onClick={setActiveTab}

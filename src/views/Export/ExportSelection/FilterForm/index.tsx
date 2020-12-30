@@ -101,9 +101,6 @@ function FilterForm(props: OwnProps) {
         autoTrigger: true,
         method: 'GET',
         schemaName: 'projectLeadFilterOptions',
-        onSuccess: (response) => {
-            console.warn('here', response);
-        },
     });
 
     const {

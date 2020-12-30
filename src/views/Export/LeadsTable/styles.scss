@@ -19,4 +19,11 @@
             white-space: nowrap;
         }
     }
+
+    .pager {
+        display: flex;
+        justify-content: flex-end;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small);
+    }
 }

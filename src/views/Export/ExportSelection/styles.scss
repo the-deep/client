@@ -13,11 +13,16 @@
     flex-grow: 1;
     overflow-y: auto;
 
-    .filters {
+    .left {
         display: flex;
-        flex-basis: 50%;
+        flex-basis: 70%;
         flex-direction: column;
         overflow-y: auto;
+
+        .section-header {
+            display: flex;
+            padding: var(--spacing-small);
+        }
 
         .entry-filters {
             @extend %filter-group;

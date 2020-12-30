@@ -153,27 +153,30 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         || showContextualWidgetSelection;
 
     return (
-        <div className={styles.reportOptions}>
-            <div>
-                <h4 className={styles.heading}>
-                    { _ts('export', 'reportStructureLabel')}
-                </h4>
-                <Checkbox
-                    className={styles.includeSubSector}
-                    key="checkbox"
-                    label={_ts('export', 'includeSubSector')}
-                    value={includeSubSector}
-                    onChange={onIncludeSubSectorChange}
-                />
-                <SegmentInput
-                    label={_ts('export', 'orderMatrix2D')}
-                    keySelector={reportVariantKeySelector}
-                    labelSelector={reportVariantLabelSelector}
-                    value={reportStructureVariant}
-                    onChange={onReportStructureVariantChange}
-                    options={reportStructureOptions}
-                />
+        <>
+            <div className={styles.reportStructure}>
+                <div className={styles.leftContainer}>
+                    <h4 className={styles.heading}>
+                        { _ts('export', 'reportStructureLabel')}
+                    </h4>
+                    <Checkbox
+                        className={styles.includeSubSector}
+                        key="checkbox"
+                        label={_ts('export', 'includeSubSector')}
+                        value={includeSubSector}
+                        onChange={onIncludeSubSectorChange}
+                    />
+                    <SegmentInput
+                        label={_ts('export', 'orderMatrix2D')}
+                        keySelector={reportVariantKeySelector}
+                        labelSelector={reportVariantLabelSelector}
+                        value={reportStructureVariant}
+                        onChange={onReportStructureVariantChange}
+                        options={reportStructureOptions}
+                    />
+                </div>
                 <TreeSelection
+                    className={styles.right}
                     label={_ts('export', 'structureLabel')}
                     value={reportStructure}
                     onChange={onReportStructureChange}
@@ -210,7 +213,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }
 
@@ -353,26 +356,24 @@ function ExportTypePane(props: Props) {
                     keySelector={exportTypeKeyExtractor}
                 />
             </div>
-            <div className={styles.exportTypeOptions}>
-                <RenderOptions
-                    activeExportTypeKey={activeExportTypeKey}
-                    entryFilterOptions={entryFilterOptions}
-                    reportStructure={reportStructure}
-                    reportStructureVariant={reportStructureVariant}
-                    onReportStructureChange={onReportStructureChange}
-                    onContextualWidgetsChange={onContextualWidgetsChange}
-                    onTextWidgetsChange={onTextWidgetsChange}
-                    onReportStructureVariantChange={onReportStructureVariantChange}
-                    contextualWidgets={contextualWidgets}
-                    textWidgets={textWidgets}
-                    showGroups={showGroups}
-                    onShowGroupsChange={onShowGroupsChange}
-                    decoupledEntries={decoupledEntries}
-                    onDecoupledEntriesChange={onDecoupledEntriesChange}
-                    includeSubSector={includeSubSector}
-                    onIncludeSubSectorChange={onIncludeSubSectorChange}
-                />
-            </div>
+            <RenderOptions
+                activeExportTypeKey={activeExportTypeKey}
+                entryFilterOptions={entryFilterOptions}
+                reportStructure={reportStructure}
+                reportStructureVariant={reportStructureVariant}
+                onReportStructureChange={onReportStructureChange}
+                onContextualWidgetsChange={onContextualWidgetsChange}
+                onTextWidgetsChange={onTextWidgetsChange}
+                onReportStructureVariantChange={onReportStructureVariantChange}
+                contextualWidgets={contextualWidgets}
+                textWidgets={textWidgets}
+                showGroups={showGroups}
+                onShowGroupsChange={onShowGroupsChange}
+                decoupledEntries={decoupledEntries}
+                onDecoupledEntriesChange={onDecoupledEntriesChange}
+                includeSubSector={includeSubSector}
+                onIncludeSubSectorChange={onIncludeSubSectorChange}
+            />
         </section>
     );
 }

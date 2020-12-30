@@ -40,7 +40,6 @@ import {
     ReportStructure,
 } from '#typings';
 
-import FilterEntriesForm from '../../Entries/FilterEntriesForm';
 import LeadsTable from '../LeadsTable';
 import ExportTypePane from '../ExportTypePane';
 
@@ -395,8 +394,13 @@ function EntriesExportSelection(props: Props) {
 
     return (
         <div className={styles.export}>
-            <section className={styles.filters} >
-                <div className={styles.leadFilters}>
+            <div className={styles.left} >
+                <section className={styles.leadFilters}>
+                    <header className={styles.sectionHeader}>
+                        <h3 className={styles.heading}>
+                            {_ts('export', 'selectSourcesHeading')}
+                        </h3>
+                    </header>
                     <LeadsTable
                         className={styles.leadsTable}
                         projectId={projectId}
@@ -406,21 +410,38 @@ function EntriesExportSelection(props: Props) {
                         onSelectAllClick={handleSelectAllLeads}
                         filterOnlyUnprotected={filterOnlyUnprotected}
                         leadsFilters={leadsFilters}
-                    />
-                </div>
-                <div className={styles.entryFilters}>
-                    <h4 className={styles.heading}>
-                        {_ts('export', 'entryAttributesLabel')}
-                    </h4>
-                    <FilterEntriesForm
-                        className={styles.entriesFilter}
-                        applyOnChange
+                        entriesFilters={filters}
+                        entriesWidgets={widgets}
+                        entriesGeoOptions={geoOptions}
                         pending={analysisFrameworkPending || geoOptionsPending}
-                        filters={filters}
-                        widgets={widgets}
-                        geoOptions={geoOptions}
                     />
-                </div>
+                </section>
+                <section className={styles.formatSection}>
+                    <header className={styles.sectionHeader}>
+                        <h3 className={styles.heading}>
+                            {_ts('export', 'selectFormatStylingHeading')}
+                        </h3>
+                    </header>
+                    <ExportTypePane
+                        activeExportTypeKey={activeExportTypeKey}
+                        reportStructure={reportStructure}
+                        textWidgets={textWidgets}
+                        contextualWidgets={contextualWidgets}
+                        reportStructureVariant={reportStructureVariant}
+                        decoupledEntries={decoupledEntries}
+                        showGroups={showGroups}
+                        onExportTypeChange={setActiveExportTypeKey}
+                        onReportStructureChange={setReportStructure}
+                        onContextualWidgetsChange={setContextualWidgets}
+                        onTextWidgetsChange={setTextWidgets}
+                        entryFilterOptions={entryFilterOptions}
+                        onShowGroupsChange={setShowGroups}
+                        onReportStructureVariantChange={handleReportStructureVariantChange}
+                        onDecoupledEntriesChange={setDecoupledEntries}
+                        onIncludeSubSectorChange={setIncludeSubSector}
+                        includeSubSector={includeSubSector}
+                    />
+                </section>
                 <PrimaryButton
                     className={styles.exportButton}
                     onClick={handleEntryExport}
@@ -429,26 +450,7 @@ function EntriesExportSelection(props: Props) {
                 >
                     {_ts('export', 'startExportButtonLabel')}
                 </PrimaryButton>
-            </section>
-            <ExportTypePane
-                activeExportTypeKey={activeExportTypeKey}
-                reportStructure={reportStructure}
-                textWidgets={textWidgets}
-                contextualWidgets={contextualWidgets}
-                reportStructureVariant={reportStructureVariant}
-                decoupledEntries={decoupledEntries}
-                showGroups={showGroups}
-                onExportTypeChange={setActiveExportTypeKey}
-                onReportStructureChange={setReportStructure}
-                onContextualWidgetsChange={setContextualWidgets}
-                onTextWidgetsChange={setTextWidgets}
-                entryFilterOptions={entryFilterOptions}
-                onShowGroupsChange={setShowGroups}
-                onReportStructureVariantChange={handleReportStructureVariantChange}
-                onDecoupledEntriesChange={setDecoupledEntries}
-                onIncludeSubSectorChange={setIncludeSubSector}
-                includeSubSector={includeSubSector}
-            />
+            </div>
             <ExportPreview
                 className={styles.preview}
                 exportId={previewId}

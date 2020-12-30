@@ -19,6 +19,8 @@ import {
     MultiResponse,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
+import FilterEntriesForm from '#views/Entries/FilterEntriesForm';
+import { Header } from '#rscv/Table';
 
 import FilterForm from '../ExportSelection/FilterForm';
 import { SelectedLead } from '../index';
@@ -31,6 +33,9 @@ interface ComponentProps {
     projectId: number;
     filterOnlyUnprotected: boolean;
     className?: string;
+    entriesFilters: unknown;
+    entriesWidgets: unknown;
+    entriesGeoOptions: unknown;
 }
 
 const leadKeyExtractor = (d: SelectedLead) => d.id;
@@ -45,6 +50,9 @@ function ExportLeadsTable(props: ComponentProps) {
         onSelectAllClick,
         onSelectLeadChange,
         filterOnlyUnprotected,
+        entriesFilters,
+        entriesWidgets,
+        entriesGeoOptions,
     } = props;
 
     const [leads, setLeads] = useState<SelectedLead[]>([]);
@@ -101,7 +109,7 @@ function ExportLeadsTable(props: ComponentProps) {
     const areSomeNotSelected = leads.some(l => !l.selected);
     const isDisabled = leads.length === 0;
 
-    const headers = useMemo(() => ([
+    const headers: Header<Lead>[] = useMemo(() => ([
         {
             key: 'select',
             labelModifier: () => {
@@ -223,7 +231,7 @@ function ExportLeadsTable(props: ComponentProps) {
             if (isCurrentHeaderSorted) {
                 tmpActiveSort = isAsc ? `-${key}` : key;
             } else {
-                tmpActiveSort = headerData?.defaultSortOrder === 'dsc' ? `-${key}` : key;
+                tmpActiveSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
             }
 
             setActiveSort(tmpActiveSort);
@@ -237,6 +245,14 @@ function ExportLeadsTable(props: ComponentProps) {
                 filterOnlyUnprotected={filterOnlyUnprotected}
                 filterValues={filterValues}
                 onChange={onFilterChange}
+            />
+            <FilterEntriesForm
+                className={styles.entriesFilter}
+                applyOnChange
+                pending={pending}
+                filters={entriesFilters}
+                widgets={entriesWidgets}
+                geoOptions={entriesGeoOptions}
             />
             <RawTable
                 data={leads}
