@@ -48,6 +48,7 @@ function ExportedFiles(props: Props) {
     const [exportCount, setExportCount] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<number>();
     const [deleteExportId, setDeleteExportId] = useState<number>();
+    const [archiveExportId, setArchiveExportId] = useState<number>();
 
     const status = useMemo(() => tabExportStatus[activeTab], [activeTab]);
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
@@ -117,10 +118,48 @@ function ExportedFiles(props: Props) {
         },
     });
 
+    const [
+        archivePending,
+        ,
+        ,
+        archiveExport,
+    ] = useRequest({
+        url: `server://exports/${archiveExportId}/`,
+        method: 'PATCH',
+        body: { is_archived: true },
+        onSuccess: () => {
+            getExport();
+            setExportCount(oldCount => oldCount - 1);
+            if (archiveExportId === selectedExport) {
+                setSelectedExport(undefined);
+            }
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'archiveExportSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        autoTrigger: false,
+        onFailure: () => {
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('export', 'archiveExportFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    });
+
     const handleExportDelete = useCallback((id) => {
         setDeleteExportId(id);
         deleteExport();
     }, [deleteExport]);
+
+    const handleExportArchive = useCallback((id) => {
+        setArchiveExportId(id);
+        archiveExport();
+    }, [archiveExport]);
 
     const handleTabChange = useCallback((tab: TabElement) => {
         setSelectedExport(undefined);
@@ -156,6 +195,9 @@ function ExportedFiles(props: Props) {
                         deleteExportId={deleteExportId}
                         handleExportDelete={handleExportDelete}
                         deletePending={deletePending}
+                        archiveExportId={archiveExportId}
+                        handleExportArchive={handleExportArchive}
+                        archivePending={archivePending}
                     />
                 ),
                 lazyMount: true,
@@ -184,6 +226,9 @@ function ExportedFiles(props: Props) {
         deleteExportId,
         deletePending,
         handleExportDelete,
+        archivePending,
+        archiveExportId,
+        handleExportArchive,
     ]);
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({

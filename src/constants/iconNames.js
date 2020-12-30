@@ -125,6 +125,7 @@ const iconNames = {
     unarchive: 'ion-ios-upload-outline',
     unlocked: 'ion-unlocked',
     archive: 'ion-ios-download-outline',
+    archiveBlock: 'ion-archive',
     userGroup: 'ion-android-contacts',
     verticalBar: 'ion-connection-bars',
     visualization: 'ion-stats-bars',

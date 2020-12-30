@@ -11,6 +11,7 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 
 import { mimeTypeToIconMap } from '#entities/lead';
 import _ts from '#ts';
@@ -30,8 +31,10 @@ interface Props {
     handleExportDelete?: (id: number) => void;
     deletePending?: boolean;
     deleteExportId?: number;
+    handleExportArchive?: (id: number) => void;
+    archivePending?: boolean;
+    archiveExportId?: number;
 }
-
 
 const tableKeyExtractor = (d: Export) => d.id;
 
@@ -154,32 +157,54 @@ function ExportsTable(props: Props) {
         handleExportDelete,
         deleteExportId,
         deletePending,
+        handleExportArchive,
+        archiveExportId,
+        archivePending,
     } = props;
 
     const headers: Header<Export>[] = useMemo(() => {
-        if (handleExportDelete) {
-            return [
-                ...defaultHeaders,
-                {
-                    key: 'action',
-                    label: _ts('export', 'exportActionsLabel'),
-                    order: 6,
-                    sortable: false,
-                    modifier: row => (
-                        <DangerConfirmButton
-                            onClick={() => handleExportDelete(row.id)}
-                            iconName="delete"
-                            disabled={row.id === deleteExportId && deletePending}
-                            title={_ts('export', 'exportDeleteLabel')}
-                            confirmationMessage={_ts('export', 'exportDeleteConfirmationMessage')}
-                            transparent
-                        />
-                    ),
-                },
-            ];
+        const newHeaders = [...defaultHeaders];
+        if (handleExportDelete || handleExportArchive) {
+            newHeaders.push({
+                key: 'action',
+                label: _ts('export', 'exportActionsLabel'),
+                order: 6,
+                sortable: false,
+                modifier: row => (
+                    <>
+                        {handleExportArchive && (
+                            <PrimaryConfirmButton
+                                onClick={() => handleExportArchive(row.id)}
+                                iconName="archiveBlock"
+                                disabled={row.id === archiveExportId && archivePending}
+                                title={_ts('export', 'exportArchiveLabel')}
+                                confirmationMessage={_ts('export', 'exportArchiveConfirmationMessage')}
+                                transparent
+                            />
+                        )}
+                        {handleExportDelete && (
+                            <DangerConfirmButton
+                                onClick={() => handleExportDelete(row.id)}
+                                iconName="delete"
+                                disabled={row.id === deleteExportId && deletePending}
+                                title={_ts('export', 'exportDeleteLabel')}
+                                confirmationMessage={_ts('export', 'exportDeleteConfirmationMessage')}
+                                transparent
+                            />
+                        )}
+                    </>
+                ),
+            });
         }
-        return defaultHeaders;
-    }, [deleteExportId, deletePending, handleExportDelete]);
+        return newHeaders;
+    }, [
+        deleteExportId,
+        deletePending,
+        handleExportDelete,
+        archiveExportId,
+        archivePending,
+        handleExportArchive,
+    ]);
 
     const dataModifier = useCallback(
         (data, columnKey) => {
