@@ -31,8 +31,11 @@ interface Props {
     handleExportDelete?: (id: number) => void;
     deletePending?: boolean;
     deleteExportId?: number;
-    handleExportArchive?: (id: number) => void;
+    handleExportArchive?: (id: number, value: boolean) => void;
     archivePending?: boolean;
+    handleExportUnArchive?: (id: number) => void;
+    unarchiveExportId?: number;
+    isArchived?: boolean;
     archiveExportId?: number;
 }
 
@@ -160,6 +163,7 @@ function ExportsTable(props: Props) {
         handleExportArchive,
         archiveExportId,
         archivePending,
+        isArchived,
     } = props;
 
     const headers: Header<Export>[] = useMemo(() => {
@@ -173,14 +177,25 @@ function ExportsTable(props: Props) {
                 modifier: row => (
                     <>
                         {handleExportArchive && (
-                            <PrimaryConfirmButton
-                                onClick={() => handleExportArchive(row.id)}
-                                iconName="archiveBlock"
-                                disabled={row.id === archiveExportId && archivePending}
-                                title={_ts('export', 'exportArchiveLabel')}
-                                confirmationMessage={_ts('export', 'exportArchiveConfirmationMessage')}
-                                transparent
-                            />
+                            isArchived ? (
+                                <PrimaryConfirmButton
+                                    onClick={() => handleExportArchive(row.id, false)}
+                                    iconName="unarchive"
+                                    disabled={row.id === archiveExportId && archivePending}
+                                    title={_ts('export', 'exportUnArchiveLabel')}
+                                    confirmationMessage={_ts('export', 'exportUnArchiveConfirmationMessage')}
+                                    transparent
+                                />
+                            ) : (
+                                <PrimaryConfirmButton
+                                    onClick={() => handleExportArchive(row.id, true)}
+                                    iconName="archiveBlock"
+                                    disabled={row.id === archiveExportId && archivePending}
+                                    title={_ts('export', 'exportArchiveLabel')}
+                                    confirmationMessage={_ts('export', 'exportArchiveConfirmationMessage')}
+                                    transparent
+                                />
+                            )
                         )}
                         {handleExportDelete && (
                             <DangerConfirmButton
@@ -198,6 +213,7 @@ function ExportsTable(props: Props) {
         }
         return newHeaders;
     }, [
+        isArchived,
         deleteExportId,
         deletePending,
         handleExportDelete,
@@ -260,7 +276,7 @@ function ExportsTable(props: Props) {
     );
 
     const handleBodyClick = useCallback((key, column) => {
-        if (column !== 'action') {
+        if (column !== 'action' && column !== 'file') {
             setSelectedExport(key);
         }
     }, [setSelectedExport]);

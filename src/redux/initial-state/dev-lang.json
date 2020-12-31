@@ -1222,9 +1222,20 @@
         "-89798798": "Include sub sector",
         "-68982194": "more",
         "-75616009": "Less",
-        "-12398709": "Export successfully deleted",
+        "-12398709": "Export deleted successfully",
         "-42519233": "Failed to delete export.",
-        "-5650209": "Are you sure you want to delete this export?"
+        "-5650209": "Are you sure you want to delete this export?",
+        "-69879791": "Archive",
+        "-12797797": "Are you sure you want to archive this export?",
+        "-80808081": "Exports in progress",
+        "-80981123": "Recent exports",
+        "-87908082": "Archive",
+        "-12234798": "Export archived successfully",
+        "-72797123": "Failed to archive export",
+        "-79797981": "Export unarchived successfully",
+        "-12312398": "Failed to unarchive export",
+        "-80808108": "Unarchive",
+        "-80870871": "Are you sure you want to unarchive this export?"
     },
     "links": {
         "browserExtension": {
@@ -1782,7 +1793,19 @@
             "deleteExportSuccess": -12398709,
             "exportActionsLabel": 16,
             "deleteExportFailure": -42519233,
-            "exportDeleteConfirmationMessage": -5650209
+            "exportDeleteConfirmationMessage": -5650209,
+            "exportArchiveLabel": -69879791,
+            "exportArchiveConfirmationMessage": -12797797,
+            "exporstInProgressLabel": -80808081,
+            "recentExportsLabel": -80981123,
+            "archivedExportsLabel": -87908082,
+            "archiveExportSuccess": -12234798,
+            "archiveExportFailure": -72797123,
+            "unArchiveExportSuccess": -79797981,
+            "unArchiveExportFailure": -12312398,
+            "exportUnArchiveLabel": -80808108,
+            "exportUnArchiveConfirmationMessage": -80870871
+
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

@@ -23,17 +23,18 @@ interface Props {
     projectId: number;
 }
 
-const maxItemsPerPage = 5;
+const maxItemsPerPage = 25;
 
 type TabElement = 'pending' | 'recent' | 'archived';
+
 const tabs: { [key in TabElement]: string} = {
-    pending: 'Downloads in progres',
-    recent: 'Recent downloads',
-    archived: 'Archive',
+    pending: _ts('export', 'exporstInProgressLabel'),
+    recent: _ts('export', 'recentExportsLabel'),
+    archived: _ts('export', 'archivedExportsLabel'),
 };
 
 const tabExportStatus: { [key in TabElement]: ExportStatus} = {
-    pending: 'pending',
+    pending: 'started',
     recent: 'success',
     archived: 'success',
 };
@@ -49,6 +50,7 @@ function ExportedFiles(props: Props) {
     const [selectedExport, setSelectedExport] = useState<number>();
     const [deleteExportId, setDeleteExportId] = useState<number>();
     const [archiveExportId, setArchiveExportId] = useState<number>();
+    const [archiveStatus, setArchiveStatus] = useState<boolean>();
 
     const status = useMemo(() => tabExportStatus[activeTab], [activeTab]);
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
@@ -122,11 +124,12 @@ function ExportedFiles(props: Props) {
         archivePending,
         ,
         ,
-        archiveExport,
+        changeArchiveStatus,
     ] = useRequest({
         url: `server://exports/${archiveExportId}/`,
         method: 'PATCH',
-        body: { is_archived: true },
+        body: { is_archived: archiveStatus },
+        autoTrigger: false,
         onSuccess: () => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
@@ -136,16 +139,17 @@ function ExportedFiles(props: Props) {
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,
-                message: _ts('export', 'archiveExportSuccess'),
+                message: archiveStatus ? _ts('export', 'archiveExportSuccess') :
+                    _ts('export', 'unArchiveExportSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         },
-        autoTrigger: false,
         onFailure: () => {
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.ERROR,
-                message: _ts('export', 'archiveExportFailure'),
+                message: archiveStatus ? _ts('export', 'archiveExportFailure') :
+                    _ts('export', 'unArchiveExportFailure'),
                 duration: notify.duration.MEDIUM,
             });
         },
@@ -156,10 +160,11 @@ function ExportedFiles(props: Props) {
         deleteExport();
     }, [deleteExport]);
 
-    const handleExportArchive = useCallback((id) => {
+    const handleExportArchive = useCallback((id, value) => {
+        setArchiveStatus(value);
         setArchiveExportId(id);
-        archiveExport();
-    }, [archiveExport]);
+        changeArchiveStatus();
+    }, [changeArchiveStatus]);
 
     const handleTabChange = useCallback((tab: TabElement) => {
         setSelectedExport(undefined);
@@ -211,7 +216,10 @@ function ExportedFiles(props: Props) {
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
+                        archiveExportId={archiveExportId}
+                        isArchived={isArchived}
                         setActiveSort={setActiveSort}
+                        handleExportArchive={handleExportArchive}
                     />
                 ),
                 lazyMount: true,
@@ -229,6 +237,7 @@ function ExportedFiles(props: Props) {
         archivePending,
         archiveExportId,
         handleExportArchive,
+        isArchived,
     ]);
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({

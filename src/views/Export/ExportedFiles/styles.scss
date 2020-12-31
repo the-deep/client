@@ -26,5 +26,9 @@
 
     .footer {
         display: flex;
+
+        .pager {
+            padding: var(--spacing-extra-small) 0;
+        }
     }
 }
