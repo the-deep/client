@@ -3,7 +3,6 @@ import React, { useCallback, useState, useMemo } from 'react';
 import ScrollTabs from '#rscv/ScrollTabs';
 import TabTitle from '#components/general/TabTitle';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import Page from '#rscv/Page';
 import Pager from '#rscv/Pager';
 
 import {
@@ -65,7 +64,6 @@ function ExportedFiles(props: Props) {
         query: {
             project: projectId,
             ordering: activeSort,
-            is_preview: false,
             is_archived: isArchived,
             status,
             offset: (activePage - 1) * maxItemsPerPage,
@@ -245,45 +243,39 @@ function ExportedFiles(props: Props) {
     }), []);
 
     return (
-        <Page
-            className={styles.exportedFiles}
-            headerClassName={styles.header}
-            header={
-                <ScrollTabs
-                    tabs={tabs}
-                    active={activeTab}
-                    renderer={TabTitle}
-                    onClick={handleTabChange}
-                    rendererParams={tabRendererParams}
-                />
-            }
-            mainContentClassName={styles.mainContent}
-            mainContent={
-                <>
+        <div className={styles.exportedFiles}>
+            <ScrollTabs
+                className={styles.header}
+                tabs={tabs}
+                active={activeTab}
+                renderer={TabTitle}
+                onClick={handleTabChange}
+                rendererParams={tabRendererParams}
+            />
+            <div className={styles.mainContent}>
+                <div className={styles.leftContent}>
                     <MultiViewContainer
                         containerClassName={styles.left}
                         views={views}
                         active={activeTab}
                     />
-                    <ExportPreview
-                        key={selectedExport}
-                        className={styles.preview}
-                        exportId={selectedExport}
-                    />
-                </>
-            }
-            footerClassName={styles.footer}
-            footer={
-                <Pager
-                    activePage={activePage}
-                    className={styles.pager}
-                    itemsCount={exportCount}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onPageClick={setActivePage}
-                    showItemsPerPageChange={false}
+                    <footer className={styles.footer}>
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={exportCount}
+                            maxItemsPerPage={maxItemsPerPage}
+                            onPageClick={setActivePage}
+                            showItemsPerPageChange={false}
+                        />
+                    </footer>
+                </div>
+                <ExportPreview
+                    key={selectedExport}
+                    className={styles.preview}
+                    exportId={selectedExport}
                 />
-            }
-        />
+            </div>
+        </div>
     );
 }
 
