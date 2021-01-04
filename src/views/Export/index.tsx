@@ -14,7 +14,7 @@ import {
     AppState,
 } from '#typings';
 
-import UserExport from '#views/UserExports';
+import ExportedFiles from './ExportedFiles';
 import ExportSelection from './ExportSelection';
 import styles from './styles.scss';
 
@@ -53,7 +53,7 @@ function Export(props: PropsFromState) {
             },
             exportedFiles: {
                 component: () => (
-                    <UserExport
+                    <ExportedFiles
                         projectId={projectId}
                     />
                 ),
