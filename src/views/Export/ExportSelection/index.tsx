@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { listToMap } from '@togglecorp/fujs';
+import { _cs, listToMap } from '@togglecorp/fujs';
 
 import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import ExportPreview from '#components/other/ExportPreview';
 
 import {
@@ -28,6 +29,7 @@ import {
 import useRequest from '#utils/request';
 
 import { notifyOnFailure } from '#utils/requestNotify';
+import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 import notify from '#notify';
 
@@ -170,6 +172,16 @@ function EntriesExportSelection(props: Props) {
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [filterValues, setFilterValues] = useState<unknown>({});
+    const [
+        showSourceSelect,
+        setSectorSelectVisible,
+        setSectorSelectHidden,
+    ] = useModalState(true);
+    const [
+        showFormatSelect,
+        setFormatSelectVisible,
+        setFormatSelectHidden,
+    ] = useModalState(false);
 
     const [
         reportStructureVariant,
@@ -395,52 +407,76 @@ function EntriesExportSelection(props: Props) {
     return (
         <div className={styles.export}>
             <div className={styles.left} >
-                <section className={styles.leadFilters}>
+                <section className={_cs(styles.section, styles.leadFilters)}>
                     <header className={styles.sectionHeader}>
                         <h3 className={styles.heading}>
-                            {_ts('export', 'selectSourcesHeading')}
+                            {_ts('export', 'selectSourcesStepHeading')}
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectSourcesHeading')}
+                            </span>
                         </h3>
+                        <Button
+                            transparent
+                            onClick={
+                                showSourceSelect ? setSectorSelectHidden : setSectorSelectVisible
+                            }
+                            iconName={showSourceSelect ? 'chevronUp' : 'chevronDown'}
+                        />
                     </header>
-                    <LeadsTable
-                        className={styles.leadsTable}
-                        projectId={projectId}
-                        filterValues={filterValues}
-                        onFilterChange={setFilterValues}
-                        onSelectLeadChange={handleSelectLeadChange}
-                        onSelectAllClick={handleSelectAllLeads}
-                        filterOnlyUnprotected={filterOnlyUnprotected}
-                        leadsFilters={leadsFilters}
-                        entriesFilters={filters}
-                        entriesWidgets={widgets}
-                        entriesGeoOptions={geoOptions}
-                        pending={analysisFrameworkPending || geoOptionsPending}
-                    />
+                    {showSourceSelect && (
+                        <LeadsTable
+                            className={styles.leadsTable}
+                            projectId={projectId}
+                            filterValues={filterValues}
+                            onFilterChange={setFilterValues}
+                            onSelectLeadChange={handleSelectLeadChange}
+                            onSelectAllClick={handleSelectAllLeads}
+                            filterOnlyUnprotected={filterOnlyUnprotected}
+                            leadsFilters={leadsFilters}
+                            entriesFilters={filters}
+                            entriesWidgets={widgets}
+                            entriesGeoOptions={geoOptions}
+                            pending={analysisFrameworkPending || geoOptionsPending}
+                        />
+                    )}
                 </section>
-                <section className={styles.formatSection}>
+                <section className={styles.section}>
                     <header className={styles.sectionHeader}>
                         <h3 className={styles.heading}>
-                            {_ts('export', 'selectFormatStylingHeading')}
+                            {_ts('export', 'selectFormatStylingStepHeading')}
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectFormatStylingHeading')}
+                            </span>
                         </h3>
+                        <Button
+                            onClick={
+                                showFormatSelect ? setFormatSelectHidden : setFormatSelectVisible
+                            }
+                            iconName={showFormatSelect ? 'chevronUp' : 'chevronDown'}
+                            transparent
+                        />
                     </header>
-                    <ExportTypePane
-                        activeExportTypeKey={activeExportTypeKey}
-                        reportStructure={reportStructure}
-                        textWidgets={textWidgets}
-                        contextualWidgets={contextualWidgets}
-                        reportStructureVariant={reportStructureVariant}
-                        decoupledEntries={decoupledEntries}
-                        showGroups={showGroups}
-                        onExportTypeChange={setActiveExportTypeKey}
-                        onReportStructureChange={setReportStructure}
-                        onContextualWidgetsChange={setContextualWidgets}
-                        onTextWidgetsChange={setTextWidgets}
-                        entryFilterOptions={entryFilterOptions}
-                        onShowGroupsChange={setShowGroups}
-                        onReportStructureVariantChange={handleReportStructureVariantChange}
-                        onDecoupledEntriesChange={setDecoupledEntries}
-                        onIncludeSubSectorChange={setIncludeSubSector}
-                        includeSubSector={includeSubSector}
-                    />
+                    {showFormatSelect && (
+                        <ExportTypePane
+                            activeExportTypeKey={activeExportTypeKey}
+                            reportStructure={reportStructure}
+                            textWidgets={textWidgets}
+                            contextualWidgets={contextualWidgets}
+                            reportStructureVariant={reportStructureVariant}
+                            decoupledEntries={decoupledEntries}
+                            showGroups={showGroups}
+                            onExportTypeChange={setActiveExportTypeKey}
+                            onReportStructureChange={setReportStructure}
+                            onContextualWidgetsChange={setContextualWidgets}
+                            onTextWidgetsChange={setTextWidgets}
+                            entryFilterOptions={entryFilterOptions}
+                            onShowGroupsChange={setShowGroups}
+                            onReportStructureVariantChange={handleReportStructureVariantChange}
+                            onDecoupledEntriesChange={setDecoupledEntries}
+                            onIncludeSubSectorChange={setIncludeSubSector}
+                            includeSubSector={includeSubSector}
+                        />
+                    )}
                 </section>
                 <PrimaryButton
                     className={styles.exportButton}

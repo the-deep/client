@@ -39,7 +39,7 @@ interface ComponentProps {
 }
 
 const leadKeyExtractor = (d: SelectedLead) => d.id;
-const maxItemsPerPage = 25;
+const maxItemsPerPage = 10;
 
 function ExportLeadsTable(props: ComponentProps) {
     const {

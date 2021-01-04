@@ -2,11 +2,10 @@
 
 .export-types {
     display: flex;
-    align-items: center;
-    flex-basis: 20%;
+    align-items: flex-start;
     justify-content: space-around;
-    border-top: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
+    padding: var(--spacing-medium);
 
     .export-type-select-list {
         display: flex;

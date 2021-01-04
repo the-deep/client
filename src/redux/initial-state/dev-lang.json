@@ -1235,7 +1235,12 @@
         "-79797981": "Export unarchived successfully",
         "-12312398": "Failed to unarchive export",
         "-80808108": "Unarchive",
-        "-80870871": "Are you sure you want to unarchive this export?"
+        "-80870871": "Are you sure you want to unarchive this export?",
+        "-26654172": "Select format and styling",
+        "-78169579": "Select source(s)",
+        "-84787220": "Step 1:",
+        "-27725338": "Step 2:",
+        "-50472183": "Step 3:"
     },
     "links": {
         "browserExtension": {
@@ -1804,8 +1809,11 @@
             "unArchiveExportSuccess": -79797981,
             "unArchiveExportFailure": -12312398,
             "exportUnArchiveLabel": -80808108,
-            "exportUnArchiveConfirmationMessage": -80870871
-
+            "exportUnArchiveConfirmationMessage": -80870871,
+            "selectSourcesStepHeading": -84787220,
+            "selectFormatStylingHeading": -26654172,
+            "selectSourcesHeading": -78169579,
+            "selectFormatStylingStepHeading": -27725338
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

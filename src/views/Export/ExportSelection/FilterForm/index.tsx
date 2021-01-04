@@ -119,17 +119,12 @@ function FilterForm(props: OwnProps) {
         let isFilterEmptyValue;
 
         if (filterOnlyUnprotected) {
-            let newFilter = {
+            const newFilter = {
                 ...faramValues,
                 confidentiality: undefined,
             };
 
             isFilterEmptyValue = doesObjectHaveNoData(newFilter, ['']);
-
-            newFilter = {
-                ...faramValues,
-                confidentiality: ['unprotected'],
-            };
         } else {
             isFilterEmptyValue = doesObjectHaveNoData(faramValues, ['']);
         }
