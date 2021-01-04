@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { listToMap } from '@togglecorp/fujs';
+import { _cs, listToMap } from '@togglecorp/fujs';
 
-import Page from '#rscv/Page';
-import FilterLeadsForm from '#components/other/FilterLeadsForm';
+import { processEntryFilters } from '#entities/entries';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import ExportPreview from '#components/other/ExportPreview';
 
 import {
@@ -25,32 +26,81 @@ import {
     getContextualWidgetsFromFramework,
     getTextWidgetsFromFramework,
 } from '#utils/framework';
-
-import { getFiltersForRequest } from '#entities/lead';
 import useRequest from '#utils/request';
+
 import { notifyOnFailure } from '#utils/requestNotify';
+import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
+import notify from '#notify';
 
 import {
     AppState,
     FrameworkFields,
     Lead,
-    MultiResponse,
     ExportType,
     TreeSelectableWidget,
     ReportStructure,
 } from '#typings';
 
-import FilterEntriesForm from '../../Entries/FilterEntriesForm';
-import ExportHeader from '../ExportHeader';
 import LeadsTable from '../LeadsTable';
 import ExportTypePane from '../ExportTypePane';
 
 import styles from './styles.scss';
 
+interface ExportReportStructure {
+    id: string;
+    levels?: ExportReportStructure[];
+}
+
+interface ReportStructureLevel {
+    id: string;
+    title: string;
+    sublevels?: ReportStructureLevel[];
+}
+
+const createReportStructureForExport = (nodes: ReportStructure[]): ExportReportStructure[] =>
+    nodes
+        .filter(node => node.selected)
+        .map(node => ({
+            id: node.key,
+            levels: node.nodes
+                ? createReportStructureForExport(node.nodes)
+                : undefined,
+        }));
+
+const createReportStructureLevelForExport = (nodes: ReportStructure[]): ReportStructureLevel[] =>
+    nodes
+        .filter(node => node.selected)
+        .map(node => ({
+            id: node.key,
+            title: node.title,
+            sublevels: node.nodes
+                ? createReportStructureLevelForExport(node.nodes)
+                : undefined,
+        }));
+
+const createWidgetIds = (widgets: TreeSelectableWidget<string | number>[]) => (
+    widgets
+        .filter(widget => widget.selected)
+        .map((widget) => {
+            if (widget.isConditional) {
+                return ([
+                    widget.conditionalId,
+                    widget.id,
+                    widget.actualTitle,
+                ]);
+            }
+            return widget.id;
+        })
+);
+
 interface PropsFromDispatch {
     setAnalysisFramework: typeof setAnalysisFrameworkAction;
     setGeoOptions: typeof setGeoOptionsAction;
+}
+
+interface ExportTriggerResponse {
+    exportTriggered: number;
 }
 
 const mapStateToProps = (state: AppState) => ({
@@ -92,7 +142,7 @@ interface OwnProps {
 
 type Props = OwnProps &PropsFromState & PropsFromDispatch;
 
-function Export(props: Props) {
+function EntriesExportSelection(props: Props) {
     const {
         analysisFramework,
         entriesFilters,
@@ -110,7 +160,7 @@ function Export(props: Props) {
         widgets,
     } = analysisFramework;
 
-    const filterOnlyUnprotected = projectRole?.exportPermissions?.['create_only_unprotected'];
+    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
@@ -119,6 +169,20 @@ function Export(props: Props) {
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [leads, setLeads] = useState<SelectedLead[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
+    const [isPreview, setIsPreview] = useState<boolean>(false);
+    const [filtersToExport, setFiltersToExport] = useState<unknown>();
+    const [filterValues, setFilterValues] = useState<unknown>({});
+    const [
+        showSourceSelect,
+        setSectorSelectVisible,
+        setSectorSelectHidden,
+    ] = useModalState(true);
+    const [
+        showFormatSelect,
+        setFormatSelectVisible,
+        setFormatSelectHidden,
+    ] = useModalState(false);
+
     const [
         reportStructureVariant,
         setReportStructureVariant,
@@ -127,7 +191,6 @@ function Export(props: Props) {
         contextualWidgets,
         setContextualWidgets,
     ] = useState<TreeSelectableWidget<string | number>[]>([]);
-
 
     const [
         analysisFrameworkPending,
@@ -141,46 +204,6 @@ function Export(props: Props) {
         },
         onFailure: (error, errorBody) => {
             notifyOnFailure(_ts('export', 'afLabel'))({ error: errorBody });
-        },
-    });
-
-    const sanitizedFilters = useMemo(() => {
-        const processedFilters = getFiltersForRequest(leadsFilters);
-        // Unprotected filter is sent to request to fetch leads
-        // if user cannot create export for confidential documents
-        if (filterOnlyUnprotected) {
-            processedFilters.confidentiality = ['unprotected'];
-        }
-        return processedFilters;
-    }, [filterOnlyUnprotected, leadsFilters]);
-
-    const leadsRequestBody = useMemo(() => ({
-        project: [projectId],
-        ...sanitizedFilters,
-    }), [projectId, sanitizedFilters]);
-
-    const [
-        leadsPending,
-    ] = useRequest<MultiResponse<Lead>>({
-        url: 'server://v2/leads/filter/',
-        method: 'POST',
-        query: {
-            fields: ['id', 'title', 'created_at'],
-        },
-        autoTrigger: true,
-        body: leadsRequestBody,
-        onSuccess: (response) => {
-            const newLeads: SelectedLead[] = [];
-            (response.results || []).forEach((l) => {
-                newLeads.push({
-                    selected: true,
-                    ...l,
-                });
-            });
-            setLeads(newLeads);
-        },
-        onFailure: (error, errorBody) => {
-            notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
         },
     });
 
@@ -258,89 +281,219 @@ function Export(props: Props) {
         listToMap(leads, d => d.id, d => d.selected),
     [leads]);
 
+    const [
+        exportPending,
+        ,
+        ,
+        getExport,
+    ] = useRequest<ExportTriggerResponse>({
+        url: 'server://export-trigger/',
+        method: 'POST',
+        body: { filters: filtersToExport },
+        onSuccess: (response) => {
+            if (isPreview) {
+                setPreviewId(response.exportTriggered);
+            } else {
+                notify.send({
+                    title: _ts('export', 'headerExport'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('export', 'exportStartedNotifyMessage'),
+                    duration: 15000,
+                });
+            }
+        },
+        onFailure: () => {
+            notify.send({
+                title: _ts('export', 'headerExport'),
+                type: notify.type.ERROR,
+                message: _ts('export', 'exportFailedNotifyMessage'),
+                duration: 15000,
+            });
+        },
+    });
+
+    const startExport = useCallback((preview: boolean) => {
+        const isWord = activeExportTypeKey === 'word';
+        const isPdf = activeExportTypeKey === 'pdf';
+
+        const exportType = ((isWord || isPdf) && 'report') || activeExportTypeKey;
+        // NOTE: structure and level depict the same thing but are different in structure
+        // levels require the sublevels to be named sublevels whereas structure requires
+        // sublevels to be names levels
+        // This cannot be fixed immediately in server as it requires migration
+        const reportLevels = createReportStructureLevelForExport(reportStructure)
+            .map(node => ({
+                id: node.id,
+                levels: node.sublevels,
+            }));
+        const newReportStructure = createReportStructureForExport(reportStructure);
+        const textWidgetIds = createWidgetIds(textWidgets);
+        let contextualWidgetIds;
+        if (isWord || isPdf) {
+            contextualWidgetIds = createWidgetIds(contextualWidgets);
+        }
+
+        const otherFilters = {
+            project: projectId,
+            lead: Object.entries(selectedLeads).reduce((acc: string[], [key, value]) => {
+                if (value) return [...acc, key];
+                return acc;
+            }, []),
+
+            export_type: exportType,
+            // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
+            pdf: isPdf,
+
+            // for excel
+            decoupled: decoupledEntries,
+
+            // for pdf or word
+            report_levels: reportLevels,
+            report_structure: newReportStructure,
+            text_widget_ids: textWidgetIds,
+            show_groups: showGroups,
+
+            // entry or assessment
+            export_item: 'entry',
+
+            // temporary or permanent
+            is_preview: preview,
+
+            // for word
+            exporting_widgets: contextualWidgetIds,
+        };
+
+        const processedFilters = processEntryFilters(
+            entriesFilters,
+            analysisFramework,
+            geoOptions,
+        );
+
+        const newFilters = [
+            ...Object.entries(otherFilters),
+            ...processedFilters,
+        ];
+
+        setFiltersToExport(newFilters);
+        setIsPreview(preview);
+
+        getExport();
+    }, [
+        activeExportTypeKey,
+        analysisFramework,
+        contextualWidgets,
+        decoupledEntries,
+        entriesFilters,
+        geoOptions,
+        projectId,
+        reportStructure,
+        selectedLeads,
+        showGroups,
+        textWidgets,
+        getExport,
+    ]);
+
+    const handleEntryExport = useCallback(() => {
+        startExport(false);
+    }, [startExport]);
+
+    const handleEntryPreview = useCallback(() => {
+        setPreviewId(undefined);
+        startExport(true);
+    }, [setPreviewId, startExport]);
+
+    const pending = analysisFrameworkPending || geoOptionsPending;
+
     return (
-        <Page
-            className={styles.export}
-            header={
-                <ExportHeader
-                    projectId={projectId}
-                    entriesFilters={entriesFilters}
-                    activeExportTypeKey={activeExportTypeKey}
-                    selectedLeads={selectedLeads}
-                    reportStructure={reportStructure}
-                    decoupledEntries={decoupledEntries}
-                    onPreview={setPreviewId}
-                    showGroups={showGroups}
-                    pending={leadsPending || analysisFrameworkPending || geoOptionsPending}
-                    analysisFramework={analysisFramework}
-                    geoOptions={geoOptions}
-                    textWidgets={textWidgets}
-                    contextualWidgets={contextualWidgets}
-                />
-            }
-            mainContentClassName={styles.mainContent}
-            mainContent={
-                <React.Fragment>
-                    <section className={styles.filters} >
-                        <div className={styles.leadFilters}>
-                            <div className={styles.leadAttributes}>
-                                <h4 className={styles.heading}>
-                                    {_ts('export', 'leadAttributesLabel')}
-                                </h4>
-                                <FilterLeadsForm
-                                    className={styles.leadsFilterForm}
-                                    filterOnlyUnprotected={filterOnlyUnprotected}
-                                />
-                            </div>
-                            <LeadsTable
-                                className={styles.leadsTable}
-                                pending={leadsPending}
-                                leads={leads}
-                                onSelectLeadChange={handleSelectLeadChange}
-                                onSelectAllClick={handleSelectAllLeads}
-                            />
-                        </div>
-                        <div className={styles.entryFilters}>
-                            <h4 className={styles.heading}>
-                                {_ts('export', 'entryAttributesLabel')}
-                            </h4>
-                            <FilterEntriesForm
-                                className={styles.entriesFilter}
-                                applyOnChange
-                                pending={analysisFrameworkPending || geoOptionsPending}
-                                filters={filters}
-                                widgets={widgets}
-                                geoOptions={geoOptions}
-                            />
-                        </div>
-                    </section>
-                    <ExportTypePane
-                        activeExportTypeKey={activeExportTypeKey}
-                        reportStructure={reportStructure}
-                        textWidgets={textWidgets}
-                        contextualWidgets={contextualWidgets}
-                        reportStructureVariant={reportStructureVariant}
-                        decoupledEntries={decoupledEntries}
-                        showGroups={showGroups}
-                        onExportTypeChange={setActiveExportTypeKey}
-                        onReportStructureChange={setReportStructure}
-                        onContextualWidgetsChange={setContextualWidgets}
-                        onTextWidgetsChange={setTextWidgets}
-                        entryFilterOptions={entryFilterOptions}
-                        onShowGroupsChange={setShowGroups}
-                        onReportStructureVariantChange={handleReportStructureVariantChange}
-                        onDecoupledEntriesChange={setDecoupledEntries}
-                        onIncludeSubSectorChange={setIncludeSubSector}
-                        includeSubSector={includeSubSector}
-                    />
-                    <ExportPreview
-                        className={styles.preview}
-                        exportId={previewId}
-                    />
-                </React.Fragment>
-            }
-        />
+        <div className={styles.export}>
+            <div className={styles.left} >
+                <section className={_cs(styles.section, styles.leadFilters)}>
+                    <header className={styles.sectionHeader}>
+                        <h3 className={styles.heading}>
+                            {_ts('export', 'selectSourcesStepHeading')}
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectSourcesHeading')}
+                            </span>
+                        </h3>
+                        <Button
+                            transparent
+                            onClick={
+                                showSourceSelect ? setSectorSelectHidden : setSectorSelectVisible
+                            }
+                            iconName={showSourceSelect ? 'chevronUp' : 'chevronDown'}
+                        />
+                    </header>
+                    {showSourceSelect && (
+                        <LeadsTable
+                            className={styles.leadsTable}
+                            projectId={projectId}
+                            filterValues={filterValues}
+                            onFilterChange={setFilterValues}
+                            onSelectLeadChange={handleSelectLeadChange}
+                            onSelectAllClick={handleSelectAllLeads}
+                            filterOnlyUnprotected={filterOnlyUnprotected}
+                            leadsFilters={leadsFilters}
+                            entriesFilters={filters}
+                            entriesWidgets={widgets}
+                            entriesGeoOptions={geoOptions}
+                            pending={analysisFrameworkPending || geoOptionsPending}
+                        />
+                    )}
+                </section>
+                <section className={styles.section}>
+                    <header className={styles.sectionHeader}>
+                        <h3 className={styles.heading}>
+                            {_ts('export', 'selectFormatStylingStepHeading')}
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectFormatStylingHeading')}
+                            </span>
+                        </h3>
+                        <Button
+                            onClick={
+                                showFormatSelect ? setFormatSelectHidden : setFormatSelectVisible
+                            }
+                            iconName={showFormatSelect ? 'chevronUp' : 'chevronDown'}
+                            transparent
+                        />
+                    </header>
+                    {showFormatSelect && (
+                        <ExportTypePane
+                            activeExportTypeKey={activeExportTypeKey}
+                            reportStructure={reportStructure}
+                            textWidgets={textWidgets}
+                            contextualWidgets={contextualWidgets}
+                            reportStructureVariant={reportStructureVariant}
+                            decoupledEntries={decoupledEntries}
+                            showGroups={showGroups}
+                            onExportTypeChange={setActiveExportTypeKey}
+                            onReportStructureChange={setReportStructure}
+                            onContextualWidgetsChange={setContextualWidgets}
+                            onTextWidgetsChange={setTextWidgets}
+                            entryFilterOptions={entryFilterOptions}
+                            onShowGroupsChange={setShowGroups}
+                            onReportStructureVariantChange={handleReportStructureVariantChange}
+                            onDecoupledEntriesChange={setDecoupledEntries}
+                            onIncludeSubSectorChange={setIncludeSubSector}
+                            includeSubSector={includeSubSector}
+                        />
+                    )}
+                </section>
+                <PrimaryButton
+                    className={styles.exportButton}
+                    onClick={handleEntryExport}
+                    disabled={pending}
+                    pending={exportPending}
+                >
+                    {_ts('export', 'startExportButtonLabel')}
+                </PrimaryButton>
+            </div>
+            <ExportPreview
+                className={styles.preview}
+                exportId={previewId}
+                onPreviewClick={handleEntryPreview}
+            />
+        </div>
     );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Export);
+export default connect(mapStateToProps, mapDispatchToProps)(EntriesExportSelection);

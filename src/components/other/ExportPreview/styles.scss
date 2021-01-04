@@ -1,8 +1,29 @@
-
 .export-preview {
     display: flex;
-    position: relative;
-    flex-grow: 1;
-    overflow-x: hidden;
+    flex-direction: column;
     overflow-y: auto;
+
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small);
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .button {
+            flex-shrink: 0;
+        }
+    }
+
+    .main-content {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        flex-grow: 1;
+        width: 100%;
+    }
 }

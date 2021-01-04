@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
     compareString,
     compareDate,
@@ -7,41 +7,109 @@ import {
 
 import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
-import Table from '#rscv/Table';
+import RawTable from '#rscv/RawTable';
+import Pager from '#rscv/Pager';
+import TableHeader from '#rscv/TableHeader';
+import { getFiltersForRequest } from '#entities/lead';
+import useRequest from '#utils/request';
 
 import _ts from '#ts';
+import {
+    Lead,
+    MultiResponse,
+} from '#typings';
+import { notifyOnFailure } from '#utils/requestNotify';
+import FilterEntriesForm from '#views/Entries/FilterEntriesForm';
+import { Header } from '#rscv/Table';
 
+import FilterForm from '../ExportSelection/FilterForm';
 import { SelectedLead } from '../index';
 import styles from './styles.scss';
-
-const defaultSort = {
-    key: 'createdAt',
-    order: 'dsc',
-};
 
 interface ComponentProps {
     onSelectLeadChange: (key: number, selected: boolean) => void;
     onSelectAllClick: (v: boolean) => void;
     pending?: boolean;
-    leads: SelectedLead[];
+    projectId: number;
+    filterOnlyUnprotected: boolean;
     className?: string;
+    entriesFilters: unknown;
+    entriesWidgets: unknown;
+    entriesGeoOptions: unknown;
 }
 
 const leadKeyExtractor = (d: SelectedLead) => d.id;
+const maxItemsPerPage = 10;
 
 function ExportLeadsTable(props: ComponentProps) {
     const {
-        leads,
-        pending,
+        filterValues,
+        onFilterChange,
+        projectId,
         className,
         onSelectAllClick,
         onSelectLeadChange,
+        filterOnlyUnprotected,
+        entriesFilters,
+        entriesWidgets,
+        entriesGeoOptions,
     } = props;
+
+    const [leads, setLeads] = useState<SelectedLead[]>([]);
+    const [leadsCount, setLeadsCount] = useState<number>(0);
+    const [activeSort, setActiveSort] = useState<string>('-created_at');
+    const [activePage, setActivePage] = useState<number>(1);
+
+    const sanitizedFilters = useMemo(() => {
+        const processedFilters = getFiltersForRequest(filterValues);
+        // Unprotected filter is sent to request to fetch leads
+        // if user cannot create export for confidential documents
+        if (filterOnlyUnprotected) {
+            processedFilters.confidentiality = ['unprotected'];
+        }
+        return processedFilters;
+    }, [filterOnlyUnprotected, filterValues]);
+
+    const leadsRequestBody = useMemo(() => ({
+        project: [projectId],
+        ...sanitizedFilters,
+    }), [projectId, sanitizedFilters]);
+
+    const [
+        pending,
+    ] = useRequest<MultiResponse<Lead>>({
+        url: 'server://v2/leads/filter/',
+        method: 'POST',
+        query: {
+            fields: ['id', 'title', 'created_at'],
+            project: projectId,
+            ordering: activeSort,
+            is_preview: false,
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        },
+        autoTrigger: true,
+        body: leadsRequestBody,
+        onSuccess: (response) => {
+            const newLeads: SelectedLead[] = [];
+            (response.results || []).forEach((l) => {
+                newLeads.push({
+                    selected: true,
+                    ...l,
+                });
+            });
+            setLeadsCount(response.count);
+            setLeads(newLeads);
+        },
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
+        },
+    });
 
     const areSomeNotSelected = leads.some(l => !l.selected);
     const isDisabled = leads.length === 0;
 
-    const headers = useMemo(() => ([
+    const headers: Header<Lead>[] = useMemo(() => ([
         {
             key: 'select',
             labelModifier: () => {
@@ -119,15 +187,92 @@ function ExportLeadsTable(props: ComponentProps) {
         isDisabled,
     ]);
 
+    const dataModifier = useCallback(
+        (data, columnKey) => {
+            const header = headers.find(d => d.key === columnKey);
+            if (header?.modifier) {
+                return header.modifier(data);
+            }
+            return data[columnKey];
+        }, [headers],
+    );
+
+    const headerModifier = useCallback((headerData) => {
+        let sortOrder = '';
+        if (activeSort === headerData.key) {
+            sortOrder = 'asc';
+        } else if (activeSort === `-${headerData.key}`) {
+            sortOrder = 'dsc';
+        }
+        return (
+            <TableHeader
+                label={headerData.label}
+                sortOrder={sortOrder}
+                sortable={headerData.sortable}
+            />
+        );
+    }, [activeSort]);
+
+    const handleTableHeaderClick = useCallback(
+        (key) => {
+            const headerData = headers.find(h => h.key === key);
+            // prevent click on 'actions' column
+            if (!headerData || !headerData.sortable) {
+                return;
+            }
+
+            let tmpActiveSort = activeSort;
+
+            const isAsc = tmpActiveSort?.charAt(0) !== '-';
+
+            const isCurrentHeaderSorted = tmpActiveSort === key
+                || (tmpActiveSort?.substr(1) === key && !isAsc);
+
+            if (isCurrentHeaderSorted) {
+                tmpActiveSort = isAsc ? `-${key}` : key;
+            } else {
+                tmpActiveSort = headerData.defaultSortOrder === 'dsc' ? `-${key}` : key;
+            }
+
+            setActiveSort(tmpActiveSort);
+        }, [headers, activeSort, setActiveSort],
+    );
+
     return (
-        <Table
-            pending={pending}
-            className={_cs(className, styles.leadsTable)}
-            data={leads}
-            headers={headers}
-            defaultSort={defaultSort}
-            keySelector={leadKeyExtractor}
-        />
+        <div className={_cs(className, styles.leadsTable)}>
+            <FilterForm
+                projectId={projectId}
+                filterOnlyUnprotected={filterOnlyUnprotected}
+                filterValues={filterValues}
+                onChange={onFilterChange}
+            />
+            <FilterEntriesForm
+                className={styles.entriesFilter}
+                applyOnChange
+                pending={pending}
+                filters={entriesFilters}
+                widgets={entriesWidgets}
+                geoOptions={entriesGeoOptions}
+            />
+            <RawTable
+                data={leads}
+                dataModifier={dataModifier}
+                headerModifier={headerModifier}
+                headers={headers}
+                onHeaderClick={handleTableHeaderClick}
+                keySelector={leadKeyExtractor}
+                className={styles.table}
+                pending={pending && leads.length < 1}
+            />
+            <Pager
+                activePage={activePage}
+                className={styles.pager}
+                itemsCount={leadsCount}
+                maxItemsPerPage={maxItemsPerPage}
+                onPageClick={setActivePage}
+                showItemsPerPageChange={false}
+            />
+        </div>
     );
 }
 

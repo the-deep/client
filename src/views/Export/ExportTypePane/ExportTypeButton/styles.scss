@@ -4,7 +4,6 @@
     display: block;
     outline: 0;
     border: 0;
-    border-bottom: var(--width-separator-medium) solid var(--color-separator);
     background-color: transparent;
     cursor: pointer;
     padding: var(--spacing-medium);
@@ -17,7 +16,6 @@
     }
 
     &.active {
-        border-bottom-color: var(--color-accent);
         background-color: var(--color-background-accent-hint);
 
         .image {

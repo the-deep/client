@@ -263,6 +263,7 @@ function useRequest<T>(
 
     // NOTE: timestamp is used to re-trigger fetch
     const [timestamp, setTimestamp] = useState(() => {
+        console.warn('here', autoTrigger);
         if (autoTrigger) {
             return new Date().getTime();
         }

@@ -1,4 +1,7 @@
-import { DatabaseEntityBase } from './common';
+import {
+    KeyValueElement,
+    DatabaseEntityBase,
+} from './common';
 
 export type Confidentiality = 'confidential' | 'unprotected';
 export type LeadStatus = 'pending' | 'processed';
@@ -49,4 +52,24 @@ export interface Lead extends DatabaseEntityBase {
     pageCount: number;
     wordCount?: number;
     confidentialityDisplay?: string;
+}
+
+export interface EmmEntity {
+    key: number;
+    label: string;
+    totalCount: number;
+}
+
+export interface LeadOptions {
+    status: KeyValueElement;
+    project: KeyValueElement;
+    assignee: KeyValueElement;
+    leadGroup: KeyValueElement;
+    priority: KeyValueElement;
+    confidentiality: KeyValueElement;
+    organizationTypes: KeyValueElement;
+    hasEmmLeads: boolean;
+    emmEntities?: EmmEntity;
+    emmRiskFactors?: EmmEntity;
+    emmKeywords?: EmmEntity;
 }

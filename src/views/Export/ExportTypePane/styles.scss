@@ -2,10 +2,10 @@
 
 .export-types {
     display: flex;
-    flex-basis: 20%;
-    flex-direction: column;
-    border-left: var(--width-separator-thin) solid var(--color-separator);
+    align-items: flex-start;
+    justify-content: space-around;
     background-color: var(--color-foreground);
+    padding: var(--spacing-medium);
 
     .export-type-select-list {
         display: flex;
@@ -37,22 +37,23 @@
                 color: var(--color-info);
                 font-size: var(--font-size-large);
             }
-
         }
     }
 
-    .report-options {
+    .report-structure {
+        display: flex;
+
         .heading {
             margin-bottom: var(--spacing-small);
         }
         .include-sub-sector {
             margin-bottom: var(--spacing-small);
         }
+    }
 
-        .content-settings {
-            .show-group-checkbox {
-                margin-bottom: var(--spacing-small-alt);
-            }
+    .content-settings {
+        .show-group-checkbox {
+            margin-bottom: var(--spacing-small-alt);
         }
     }
 }
