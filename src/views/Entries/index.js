@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import {
     _cs,
-    isDefined,
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
@@ -51,9 +50,7 @@ import {
     totalEntriesCountForProjectSelector,
     setEntriesViewActivePageAction,
     geoOptionsForProjectSelector,
-    activeUserSelector,
 } from '#redux';
-import featuresMapping from '#constants/features';
 
 import QualityControl from './QualityControl';
 import EntriesViz from './EntriesViz';
@@ -165,7 +162,6 @@ Tab.defaultProps = {
 
 const mapStateToProps = state => ({
     activePage: entriesViewActivePageSelector(state),
-    activeUser: activeUserSelector(state),
     entriesFilter: entriesViewFilterSelector(state),
     framework: analysisFrameworkForProjectSelector(state),
     leadGroupedEntriesList: entriesForProjectSelector(state),
@@ -194,9 +190,6 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     leadGroupedEntriesList: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
-    activeUser: PropTypes.shape({
-        userId: PropTypes.number,
-    }),
     currentUserActiveProject: PropTypes.object.isRequired,
     projectId: PropTypes.number.isRequired,
     totalEntriesCount: PropTypes.number,
@@ -213,7 +206,6 @@ const propTypes = {
 
 const defaultProps = {
     framework: {},
-    activeUser: {},
     totalEntriesCount: 0,
     geoOptions: {},
 };
@@ -455,16 +447,13 @@ export default class Entries extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    getTabs = memoize((framework, isVisualizationEnabled, accessibleFeatures) => {
-        const accessQualityControl = isDefined(accessibleFeatures.find(
-            f => f.key === featuresMapping.qualityControl,
-        ));
-        const tabs = { [LIST_VIEW]: LIST_VIEW };
+    getTabs = memoize((framework, isVisualizationEnabled) => {
+        const tabs = {
+            [LIST_VIEW]: LIST_VIEW,
+            [QC_VIEW]: QC_VIEW,
+        };
         if (isVisualizationEnabled && isVisualizationEnabled.entry) {
             tabs[VIZ_VIEW] = VIZ_VIEW;
-        }
-        if (accessQualityControl) {
-            tabs[QC_VIEW] = QC_VIEW;
         }
 
         return {
@@ -593,9 +582,6 @@ export default class Entries extends React.PureComponent {
             requests: {
                 projectFrameworkRequest: { pending: pendingFramework },
             },
-            activeUser: {
-                accessibleFeatures,
-            },
         } = this.props;
 
         const { view } = this.state;
@@ -603,7 +589,7 @@ export default class Entries extends React.PureComponent {
         const {
             tabs,
             showTabs,
-        } = this.getTabs(framework, isVisualizationEnabled, accessibleFeatures);
+        } = this.getTabs(framework, isVisualizationEnabled);
 
         return (
             <Page

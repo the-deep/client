@@ -2,7 +2,6 @@
 const featuresMapping = {
     zoomableImage: 'zoomable_image',
     privateProject: 'private_project',
-    qualityControl: 'quality_control',
     entryVizConfig: 'entry_visualization_configuration',
     questionnaire: 'questionnaire',
 };
