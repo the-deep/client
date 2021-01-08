@@ -66,7 +66,6 @@ const allAccessibleFeatures = {
     accessQuestionnaire: featureList => featureList.includes(featuresMapping.questionnaire),
     accessEntryVisualizationConfiguration: featureList =>
         featureList.includes(featuresMapping.entryVizConfig),
-    accessQualityControl: featureList => featureList.includes(featuresMapping.qualityControl),
 };
 
 @connect(mapStateToProps, undefined)
@@ -126,7 +125,6 @@ export default class Cloak extends React.Component {
             accessPrivateProject,
             accessEntryVisualizationConfiguration,
             accessQuestionnaire,
-            accessQualityControl,
         } = this.getAccessibleFeatures(accessibleFeatures);
 
         const params = {
@@ -151,7 +149,6 @@ export default class Cloak extends React.Component {
             accessPrivateProject,
             accessQuestionnaire,
             accessEntryVisualizationConfiguration,
-            accessQualityControl,
         };
 
         const hidden = hide && hide(params);
