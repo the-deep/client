@@ -6,6 +6,7 @@ import { _cs, listToMap } from '@togglecorp/fujs';
 
 import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import TreeSelection from '#rsci/TreeSelection';
 import Button from '#rsca/Button';
 import ExportPreview from '#components/other/ExportPreview';
 
@@ -181,6 +182,11 @@ function EntriesExportSelection(props: Props) {
         showFormatSelect,
         setFormatSelectVisible,
         setFormatSelectHidden,
+    ] = useModalState(false);
+    const [
+        showFrameworkSections,
+        setFrameworkSectionsVisible,
+        setFrameworkSectionsHidden,
     ] = useModalState(false);
 
     const [
@@ -403,6 +409,8 @@ function EntriesExportSelection(props: Props) {
     }, [setPreviewId, startExport]);
 
     const pending = analysisFrameworkPending || geoOptionsPending;
+    const showTextWidgetSelection = textWidgets.length > 0;
+    const showContextualWidgetSelection = contextualWidgets.length > 0;
 
     return (
         <div className={styles.export}>
@@ -460,15 +468,11 @@ function EntriesExportSelection(props: Props) {
                         <ExportTypePane
                             activeExportTypeKey={activeExportTypeKey}
                             reportStructure={reportStructure}
-                            textWidgets={textWidgets}
-                            contextualWidgets={contextualWidgets}
                             reportStructureVariant={reportStructureVariant}
                             decoupledEntries={decoupledEntries}
                             showGroups={showGroups}
                             onExportTypeChange={setActiveExportTypeKey}
                             onReportStructureChange={setReportStructure}
-                            onContextualWidgetsChange={setContextualWidgets}
-                            onTextWidgetsChange={setTextWidgets}
                             entryFilterOptions={entryFilterOptions}
                             onShowGroupsChange={setShowGroups}
                             onReportStructureVariantChange={handleReportStructureVariantChange}
@@ -478,6 +482,49 @@ function EntriesExportSelection(props: Props) {
                         />
                     )}
                 </section>
+                {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf')
+                    && (showContextualWidgetSelection || showTextWidgetSelection)
+                    && (
+                        <section className={styles.section}>
+                            <header className={styles.sectionHeader}>
+                                <h3 className={styles.heading}>
+                                    {_ts('export', 'selectFrameworkSectionsStepHeading')}
+                                    <span className={styles.subHeading}>
+                                        {_ts('export', 'selectFrameworkSectionsHeading')}
+                                    </span>
+                                </h3>
+                                <Button
+                                    onClick={showFrameworkSections
+                                        ? setFrameworkSectionsHidden
+                                        : setFrameworkSectionsVisible
+                                    }
+                                    iconName={showFrameworkSections ? 'chevronUp' : 'chevronDown'}
+                                    transparent
+                                />
+                            </header>
+                            {showFrameworkSections && (
+                                <div className={styles.sectionBody}>
+                                    {showContextualWidgetSelection && (
+                                        <TreeSelection
+                                            label={_ts('export', 'contextualWidgetLabel')}
+                                            value={contextualWidgets}
+                                            onChange={setContextualWidgets}
+                                            direction="horizontal"
+                                        />
+                                    )}
+                                    {showTextWidgetSelection && (
+                                        <TreeSelection
+                                            label={_ts('export', 'textWidgetLabel')}
+                                            value={textWidgets}
+                                            onChange={setTextWidgets}
+                                            direction="horizontal"
+                                        />
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    )
+                }
                 <PrimaryButton
                     className={styles.exportButton}
                     onClick={handleEntryExport}

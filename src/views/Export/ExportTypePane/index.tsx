@@ -41,8 +41,6 @@ interface ReportStructureOption {
 
 interface Props {
     reportStructure?: ReportStructure[];
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    textWidgets: TreeSelectableWidget<string | number>[];
     entryFilterOptions: {
         projectEntryLabel: [];
     };
@@ -53,8 +51,6 @@ interface Props {
     onShowGroupsChange: (show: boolean) => void;
     onExportTypeChange: (type: ExportType) => void;
     onReportStructureChange: (reports: ReportStructure[]) => void;
-    onContextualWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
-    onTextWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onDecoupledEntriesChange: (value: boolean) => void;
     includeSubSector: boolean;
@@ -119,17 +115,13 @@ interface RenderWordProps {
 
 function RenderWordPdfOptions(props: RenderWordProps) {
     const {
-        contextualWidgets,
         entryFilterOptions,
-        onContextualWidgetsChange,
         onReportStructureChange,
         onReportStructureVariantChange,
         onShowGroupsChange,
-        onTextWidgetsChange,
         reportStructure,
         reportStructureVariant,
         showGroups,
-        textWidgets,
         includeSubSector,
         onIncludeSubSectorChange,
     } = props;
@@ -142,15 +134,9 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         );
     }
 
-    const showTextWidgetSelection = textWidgets.length > 0;
     const showEntryGroupsSelection =
         entryFilterOptions?.projectEntryLabel &&
         entryFilterOptions?.projectEntryLabel.length > 0;
-    const showContextualWidgetSelection = contextualWidgets.length > 0;
-    const showContentSettings =
-        showTextWidgetSelection
-        || showEntryGroupsSelection
-        || showContextualWidgetSelection;
 
     return (
         <>
@@ -182,35 +168,17 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                     onChange={onReportStructureChange}
                 />
             </div>
-            {showContentSettings && (
+            {showEntryGroupsSelection && (
                 <div className={styles.contentSettings}>
                     <h4 className={styles.heading}>
                         { _ts('export', 'contentSettingsText')}
                     </h4>
-                    <div>
-                        {showEntryGroupsSelection && (
-                            <Checkbox
-                                label={_ts('export', 'showEntryGroupsLabel')}
-                                value={showGroups}
-                                className={styles.showGroupCheckbox}
-                                onChange={onShowGroupsChange}
-                            />
-                        )}
-                        {showTextWidgetSelection && (
-                            <TreeSelection
-                                label={_ts('export', 'textWidgetLabel')}
-                                value={textWidgets}
-                                onChange={onTextWidgetsChange}
-                            />
-                        )}
-                        {showContextualWidgetSelection && (
-                            <TreeSelection
-                                label={_ts('export', 'contextualWidgetLabel')}
-                                value={contextualWidgets}
-                                onChange={onContextualWidgetsChange}
-                            />
-                        )}
-                    </div>
+                    <Checkbox
+                        label={_ts('export', 'showEntryGroupsLabel')}
+                        value={showGroups}
+                        className={styles.showGroupCheckbox}
+                        onChange={onShowGroupsChange}
+                    />
                 </div>
             )}
         </>
