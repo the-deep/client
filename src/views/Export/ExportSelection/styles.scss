@@ -29,26 +29,15 @@
                     }
                 }
             }
-        }
 
-        .entry-filters {
-            .entries-filter {
-                padding: var(--spacing-small);
+            .section-body {
+                padding: var(--spacing-medium);
             }
         }
 
         .lead-filters {
             display: flex;
             flex-direction: column;
-
-            .lead-attributes {
-                .leads-filter-form {
-                    display: flex;
-                    align-items: flex-end;
-                    flex-shrink: 0;
-                    padding: var(--spacing-small);
-                }
-            }
 
             .leads-table {
                 display: flex;

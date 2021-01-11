@@ -274,8 +274,6 @@
         "604": "PDF",
         "605": "XLXS",
         "606": "JSON",
-        "609": "Entry attributes",
-        "610": "Lead attributes",
         "621": "User exports",
         "622": "Unable to load your previous exports.",
         "623": "Doc type",
@@ -285,7 +283,6 @@
         "629": "Pending",
         "630": "Error",
         "631": "Completed",
-        "632": "Recent exports",
         "634": "Decoupled entries",
         "635": "Note that by selecting this option, it can greatly increase the amount of time to generate the export.",
         "636": "Disaggregate data for any list values (i.e. multiple administrative areas or multiple select fields).",
@@ -1196,7 +1193,6 @@
         "-71515950": "Filtered by:",
         "-90290386": "Hide filters",
         "-60218291": "Show filters",
-        "-92777682": "Table of contents",
         "-10912171": "No stakeholders are selected.",
         "-13101548": "Please add your stakeholders.",
         "-79879777": "Looks like the framework in use doesn't have matrix1D and matrix2D widgets.",
@@ -1240,7 +1236,8 @@
         "-78169579": "Select source(s)",
         "-84787220": "Step 1:",
         "-27725338": "Step 2:",
-        "-50472183": "Step 3:"
+        "-50472183": "Step 3:",
+        "-66346353": "Select framework sections"
     },
     "links": {
         "browserExtension": {
@@ -1753,8 +1750,6 @@
             "pdfLabel": 604,
             "xlsxLabel": 605,
             "jsonLabel": 606,
-            "entryAttributesLabel": 609,
-            "leadAttributesLabel": 610,
             "createdAtLabel": 163,
             "userExportsTitle": 621,
             "documentTypeHeaderLabel": 623,
@@ -1766,7 +1761,6 @@
             "pendingStatusLabel": 629,
             "errorStatusLabel": 630,
             "completedStatusLabel": 631,
-            "userExportsHeader": 632,
             "decoupledEntriesLabel": 634,
             "decoupledEntriesTitle": 635,
             "decoupledEntriesTitle2": 636,
@@ -1813,7 +1807,9 @@
             "selectSourcesStepHeading": -84787220,
             "selectFormatStylingHeading": -26654172,
             "selectSourcesHeading": -78169579,
-            "selectFormatStylingStepHeading": -27725338
+            "selectFormatStylingStepHeading": -27725338,
+            "selectFrameworkSectionsHeading": -66346353,
+            "selectFrameworkSectionsStepHeading": -50472183
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
