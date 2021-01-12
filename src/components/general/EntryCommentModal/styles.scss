@@ -12,7 +12,9 @@
         flex-direction: column;
         flex-shrink: 0;
         background-color: var(--color-foreground);
+        cursor: move;
         overflow-y: auto;
+        user-select: none;
 
         .top-header {
             display: flex;

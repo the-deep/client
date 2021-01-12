@@ -5,6 +5,7 @@ import {
     isNotDefined,
     listToGroupList,
     compareDate,
+    bound,
 } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 import React from 'react';
@@ -45,9 +46,14 @@ const propTypes = {
     onCommentsCountChange: PropTypes.func.isRequired,
     defaultAssignees: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    parentBCR: PropTypes.shape({
+        top: PropTypes.number,
+        left: PropTypes.number,
+    }),
 };
 
 const defaultProps = {
+    parentBCR: undefined,
     className: undefined,
     projectId: undefined,
     entryServerId: undefined,
@@ -150,7 +156,11 @@ export default class EntryCommentModal extends React.PureComponent {
                 entryCommentsGet,
             },
             defaultAssignees,
-        } = this.props;
+            parentBCR: {
+                top,
+                left,
+            } = {},
+        } = props;
 
         entryCommentsGet.setDefaultParams({
             onCommentsGet: this.handleCommentsGet,
@@ -167,7 +177,23 @@ export default class EntryCommentModal extends React.PureComponent {
             globalPristine: true,
             pristine: true,
             showConfirm: false,
+            position: {
+                top,
+                left,
+            },
         };
+
+        this.containerRef = React.createRef();
+    }
+
+    componentDidMount() {
+        window.addEventListener('mousemove', this.handleMouseMove);
+        window.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('mousemove', this.handleMouseMove);
+        window.removeEventListener('mouseup', this.handleMouseUp);
     }
 
     setGlobalPristine = (globalPristine) => {
@@ -213,6 +239,53 @@ export default class EntryCommentModal extends React.PureComponent {
         return { resolvedThreads, unresolvedThreads };
     }
 
+    handleMouseMove = (e) => {
+        if (!this.mouseDownOnHeader) {
+            return;
+        }
+        const dx = e.clientX - this.mouseDownPosition.x;
+        const dy = e.clientY - this.mouseDownPosition.y;
+
+        const { position } = this.state;
+        const { current } = this.containerRef;
+        const { width, height } = current.getBoundingClientRect();
+        const maxX = window.innerWidth - width;
+        const maxY = window.innerHeight - height;
+
+        this.setState({
+            position: {
+                top: bound(position.top + dx, 0, maxX),
+                left: bound(position.left + dy, 0, maxY),
+            },
+        });
+
+
+        const getNumericPart = d => parseFloat(d.substr(0, d.length - 2));
+
+        const left = getNumericPart(String(current.style.left));
+        const top = getNumericPart(String(current.style.top));
+        current.style.left = `${bound(left + dx, 0, maxX)}px`;
+        current.style.top = `${bound(top + dy, 0, maxY)}px`;
+
+        this.mouseDownPosition = {
+            x: e.clientX,
+            y: e.clientY,
+        };
+    }
+
+    handleMouseUp = () => {
+        this.mouseDownOnHeader = false;
+    }
+
+
+    handleHeaderMouseDown = (e) => {
+        this.mouseDownOnHeader = true;
+        this.mouseDownPosition = {
+            x: e.clientX,
+            y: e.clientY,
+        };
+    }
+
     handleTabClick = (tab) => {
         this.setState({ activeTabKey: tab });
     }
@@ -240,14 +313,11 @@ export default class EntryCommentModal extends React.PureComponent {
 
     handleInvalidate = (container) => {
         const {
-            // eslint-disable-next-line react/prop-types
-            parentBCR: {
-                // eslint-disable-next-line react/prop-types
+            position: {
                 top: parentBCRTop,
-                // eslint-disable-next-line react/prop-types
                 left: parentBCRLeft,
             },
-        } = this.props;
+        } = this.state;
 
         const contentRect = container.getBoundingClientRect();
 
@@ -502,6 +572,7 @@ export default class EntryCommentModal extends React.PureComponent {
         return (
             <React.Fragment>
                 <FloatingContainer
+                    elementRef={this.containerRef}
                     className={_cs(className, styles.container)}
                     onInvalidate={this.handleInvalidate}
                     onClose={this.handleCommentsClose}
@@ -509,7 +580,11 @@ export default class EntryCommentModal extends React.PureComponent {
                     closeOnEscape
                     showHaze
                 >
-                    <div className={styles.header}>
+                    <div
+                        role="presentation"
+                        className={styles.header}
+                        onMouseDown={this.handleHeaderMouseDown}
+                    >
                         <div className={styles.topHeader}>
                             <h3 className={styles.heading}>
                                 {_ts('entryComments', 'commentsHeader')}
