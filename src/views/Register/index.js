@@ -1,8 +1,4 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- */
-
-import React from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import Faram, {
@@ -15,246 +11,151 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import { FgRestBuilder } from '#rsu/rest';
 
 import { reCaptchaSiteKey } from '#config/reCaptcha';
+import useRequest from '#utils/request';
 import { pathNames } from '#constants';
-import schema from '#schema';
-import {
-    alterResponseErrorToFaramError,
-    createParamsForUserCreate,
-    urlForUserCreate,
-} from '#rest';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const propTypes = {
+const faramSchema = {
+    fields: {
+        firstname: [requiredCondition],
+        lastname: [requiredCondition],
+        organization: [requiredCondition],
+        email: [
+            requiredCondition,
+            emailCondition,
+        ],
+        recaptchaResponse: [requiredCondition],
+    },
 };
 
-const defaultProps = {
-};
+function Register() {
+    const [faramValues, setFaramValues] = useState({});
+    const [faramErrors, setFaramErrors] = useState({});
+    const [success, setSuccess] = useState(false);
+    const [userData, setUserData] = useState(undefined);
 
-export default class Register extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+    const recaptchaRef = useRef(null);
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            faramErrors: {},
-            faramValues: {},
-            pending: false,
-            success: false,
-        };
-
-        this.schema = {
-            fields: {
-                firstname: [requiredCondition],
-                lastname: [requiredCondition],
-                organization: [requiredCondition],
-                email: [
-                    requiredCondition,
-                    emailCondition,
-                ],
-                recaptchaResponse: [requiredCondition],
-            },
-        };
-    }
-
-    componentWillUnmount() {
-        // Stop any retry action
-        if (this.userCreateRequest) {
-            this.userCreateRequest.stop();
-        }
-    }
-
-    setResetRecaptchaFunction = (func) => {
-        this.resetRecaptcha = func;
-    }
-
-    // FORM RELATED
-
-    handleFaramChange = (faramValues, faramErrors) => {
-        this.setState({
-            faramValues,
-            faramErrors,
-        });
-    };
-
-    handleFaramValidationFailure = (faramErrors) => {
-        this.setState({ faramErrors });
-    };
-
-    handleFaramValidationSuccess = (values) => {
-        this.register(values);
-    };
-
-    // REGISTER ACTION
-
-    register = (data) => {
-        // Stop previous retry
-        if (this.userCreateRequest) {
-            this.userCreateRequest.stop();
-        }
-        this.userCreateRequest = this.createRequestRegister(data);
-        this.userCreateRequest.start();
-    }
-
-    // REGISTER REST API
-
-    createRequestRegister = ({
-        firstname, lastname, organization, country, email, recaptchaResponse,
-    }) => {
-        const userCreateRequest = new FgRestBuilder()
-            .url(urlForUserCreate)
-            .params(() => createParamsForUserCreate({
-                firstName: firstname,
-                lastName: lastname,
-                organization,
-                country,
-                email,
-                recaptchaResponse,
-            }))
-            .preLoad(() => {
-                this.setState({ pending: true });
-            })
-            .postLoad(() => {
-                if (this.resetRecaptcha) {
-                    this.resetRecaptcha();
-                }
-                this.setState({ pending: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'userCreateResponse');
-                    // go to login
-                    this.setState({
-                        success: true,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.info('FAILURE:', response);
-                const faramErrors = alterResponseErrorToFaramError(response.errors);
-                if (response.errorCode === 4004) {
-                    this.setState({
-                        faramErrors: {
-                            ...faramErrors,
-                            $internal: [_ts('register', 'retryRecaptcha')],
-                        },
-                    });
-                } else {
-                    // NOTE: server uses username, client side uses email
-                    faramErrors.email = faramErrors.username;
-                    this.setState({ faramErrors });
-                }
-            })
-            .fatal((response) => {
-                console.info('FATAL:', response);
-                this.setState({
-                    faramErrors: { $internal: ['Error while trying to register.'] },
+    const [registerPending, , , triggerRegister] = useRequest({
+        url: 'server://users/',
+        method: 'POST',
+        body: userData,
+        onSuccess: () => {
+            setSuccess(true);
+        },
+        onFailure: (_, { errorCode, faramErrors: newFaramErrors }) => {
+            if (errorCode === 4004) {
+                setFaramErrors({
+                    ...newFaramErrors,
+                    $internal: [
+                        _ts('register', 'retryRecaptcha'),
+                    ],
                 });
-            })
-            .build();
-        return userCreateRequest;
-    }
+            } else {
+                setFaramErrors({
+                    ...newFaramErrors,
+                    email: newFaramErrors.username,
+                });
+            }
+        },
+        schemaName: 'userCreateResponse',
+    });
 
-    renderFaram = () => {
-        const {
-            faramErrors,
-            faramValues,
-            pending,
-        } = this.state;
+    const handleFaramChange = useCallback((newFaramValues, newFaramErrors) => {
+        setFaramValues(newFaramValues);
+        setFaramErrors(newFaramErrors);
+    }, []);
 
-        return (
-            <Faram
-                className={styles.registerForm}
-                onChange={this.handleFaramChange}
-                onValidationFailure={this.handleFaramValidationFailure}
-                onValidationSuccess={this.handleFaramValidationSuccess}
-                schema={this.schema}
-                value={faramValues}
-                error={faramErrors}
-                disabled={pending}
-            >
-                <NonFieldErrors faramElement />
-                <TextInput
-                    faramElementName="firstname"
-                    label={_ts('register', 'firstNameLabel')}
-                    placeholder={_ts('register', 'firstNamePlaceholder')}
-                    autoFocus
-                />
-                <TextInput
-                    faramElementName="lastname"
-                    label={_ts('register', 'lastNameLabel')}
-                    placeholder={_ts('register', 'lastNamePlaceholder')}
-                />
-                <TextInput
-                    faramElementName="organization"
-                    label={_ts('register', 'organizationLabel')}
-                    placeholder={_ts('register', 'organizationPlaceholder')}
-                />
-                <TextInput
-                    faramElementName="email"
-                    label={_ts('register', 'emailLabel')}
-                    placeholder={_ts('register', 'emailPlaceholder')}
-                />
-                <ReCaptcha
-                    setResetFunction={this.setResetRecaptchaFunction}
-                    faramElementName="recaptchaResponse"
-                    siteKey={reCaptchaSiteKey}
-                    reset={pending}
-                />
-                <div className={styles.actionButtons}>
-                    <PrimaryButton
-                        type="submit"
-                        pending={pending}
-                    >
-                        { _ts('register', 'registerLabel')}
-                    </PrimaryButton>
-                </div>
-            </Faram>
-        );
-    }
+    const handleFaramValidationFailure = useCallback((newFaramErrors) => {
+        setFaramErrors(newFaramErrors);
+    }, []);
 
-    renderSuccess = () => {
-        const { email } = this.state.faramValues;
-        return (
-            <div className={styles.registerSuccess}>
-                {_ts('register', 'checkYourEmailText', { email })}
-            </div>
-        );
-    }
+    const handleFaramValidationSuccess = useCallback((finalValues) => {
+        setUserData({
+            ...finalValues,
+            // NOTE: username of the user is their email address
+            username: finalValues.email,
+        });
+        triggerRegister();
+    }, [triggerRegister]);
 
-    render() {
-        const {
-            success,
-        } = this.state;
-
-        return (
-            <div className={styles.register}>
-                <div className={styles.registerBox}>
-                    { success ? this.renderSuccess() : this.renderFaram() }
-                    <div className={styles.loginLinkContainer}>
-                        <p>
-                            { success ?
-                                _ts('register', 'goBackToLoginText') :
-                                _ts('register', 'alreadyHaveAccountText')
-                            }
-                        </p>
-                        <Link
-                            to={reverseRoute(pathNames.login, {})}
-                            className={styles.loginLink}
-                        >
-                            {_ts('register', 'loginLabel')}
-                        </Link>
+    return (
+        <div className={styles.register}>
+            <div className={styles.registerBox}>
+                { success ? (
+                    <div className={styles.registerSuccess}>
+                        {_ts('register', 'checkYourEmailText', { email: userData?.email })}
                     </div>
+                ) : (
+                    <Faram
+                        className={styles.registerForm}
+                        onChange={handleFaramChange}
+                        onValidationFailure={handleFaramValidationFailure}
+                        onValidationSuccess={handleFaramValidationSuccess}
+                        schema={faramSchema}
+                        value={faramValues}
+                        error={faramErrors}
+                        disabled={registerPending}
+                    >
+                        <NonFieldErrors faramElement />
+                        <TextInput
+                            faramElementName="firstname"
+                            label={_ts('register', 'firstNameLabel')}
+                            placeholder={_ts('register', 'firstNamePlaceholder')}
+                            autoFocus
+                        />
+                        <TextInput
+                            faramElementName="lastname"
+                            label={_ts('register', 'lastNameLabel')}
+                            placeholder={_ts('register', 'lastNamePlaceholder')}
+                        />
+                        <TextInput
+                            faramElementName="organization"
+                            label={_ts('register', 'organizationLabel')}
+                            placeholder={_ts('register', 'organizationPlaceholder')}
+                        />
+                        <TextInput
+                            faramElementName="email"
+                            label={_ts('register', 'emailLabel')}
+                            placeholder={_ts('register', 'emailPlaceholder')}
+                        />
+                        <ReCaptcha
+                            componentRef={recaptchaRef}
+                            faramElementName="recaptchaResponse"
+                            siteKey={reCaptchaSiteKey}
+                            reset={registerPending}
+                        />
+                        <div className={styles.actionButtons}>
+                            <PrimaryButton
+                                type="submit"
+                                pending={registerPending}
+                            >
+                                { _ts('register', 'registerLabel')}
+                            </PrimaryButton>
+                        </div>
+                    </Faram>
+                )}
+                <div className={styles.loginLinkContainer}>
+                    <p>
+                        { success ?
+                            _ts('register', 'goBackToLoginText') :
+                            _ts('register', 'alreadyHaveAccountText')
+                        }
+                    </p>
+                    <Link
+                        to={reverseRoute(pathNames.login, {})}
+                        className={styles.loginLink}
+                    >
+                        {_ts('register', 'loginLabel')}
+                    </Link>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
+
+export default Register;

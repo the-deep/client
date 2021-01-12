@@ -1,8 +1,4 @@
-/**
- * @author thenav56 <ayernavin@gmail.com>
- */
-
-import React from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Faram, {
     requiredCondition,
@@ -10,7 +6,6 @@ import Faram, {
 } from '@togglecorp/faram';
 import { reverseRoute } from '@togglecorp/fujs';
 
-import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
@@ -18,189 +13,125 @@ import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import _ts from '#ts';
-import {
-    alterResponseErrorToFaramError,
-    createParamsForUserPasswordReset,
-    urlForUserPasswordReset,
-} from '#rest';
 import { pathNames } from '#constants';
 import { reCaptchaSiteKey } from '#config/reCaptcha';
-import schema from '#schema';
+import useRequest from '#utils/request';
 
 import styles from './styles.scss';
 
-const propTypes = {
+const faramSchema = {
+    fields: {
+        email: [
+            requiredCondition,
+            emailCondition,
+        ],
+        recaptchaResponse: [
+            requiredCondition,
+        ],
+    },
 };
 
-const defaultProps = { };
+function PasswordReset() {
+    const [faramValues, setFaramValues] = useState({});
+    const [faramErrors, setFaramErrors] = useState({});
+    const [success, setSuccess] = useState(false);
+    const [userData, setUserData] = useState(undefined);
 
-export default class PasswordReset extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+    const recaptchaRef = useRef(null);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            faramErrors: {},
-            faramValues: {},
-            pending: false,
-            resetSuccess: false,
-        };
-
-        this.schema = {
-            fields: {
-                email: [
-                    requiredCondition,
-                    emailCondition,
-                ],
-                recaptchaResponse: [
-                    requiredCondition,
-                ],
-            },
-        };
-    }
-
-    setResetRecaptchaFunction = (func) => {
-        this.resetRecaptcha = func;
-    }
-
-    handleFaramChange = (faramValues, faramErrors) => {
-        this.setState({
-            faramValues,
-            faramErrors,
-        });
-    };
-
-    handleFaramValidationFailure = (faramErrors) => {
-        this.setState({ faramErrors });
-    };
-
-    handleFaramValidationSuccess = (_, { email, recaptchaResponse }) => {
-        const url = urlForUserPasswordReset;
-        const params = createParamsForUserPasswordReset({ email, recaptchaResponse });
-        this.passwordReset({ url, params });
-    };
-
-    // LOGIN ACTION
-
-    passwordReset = ({ url, params }) => {
-        // Stop any retry action
-        if (this.userPasswordRestRequest) {
-            this.userPasswordRestRequest.stop();
-        }
-        this.userPasswordRestRequest = this.createRequestPasswordReset(url, params);
-
-        this.userPasswordRestRequest.start();
-    };
-
-    // LOGIN REST API
-
-    createRequestPasswordReset = (url, params) => {
-        const userPasswordRestRequest = new FgRestBuilder()
-            .url(url)
-            .params(params)
-            .preLoad(() => {
-                this.setState({ pending: true });
-            })
-            .postLoad(() => {
-                if (this.resetRecaptcha) {
-                    this.resetRecaptcha();
-                }
-                this.setState({ pending: false });
-            })
-            .success((response) => {
-                try {
-                    schema.validate(response, 'userPasswordResetResponse');
-                    this.setState({ resetSuccess: true });
-                } catch (err) {
-                    console.error(err);
-                }
-            })
-            .failure((response) => {
-                console.info('FAILURE:', response);
-                const faramErrors = alterResponseErrorToFaramError(response.errors);
-                if (response.errorCode === 4004) {
-                    this.setState({
-                        faramErrors: {
-                            ...faramErrors,
-                            $internal: [_ts('passwordReset', 'retryRecaptcha')],
-                        },
-                    });
-                } else {
-                    this.setState({ faramErrors });
-                }
-            })
-            .fatal((response) => {
-                console.info('FATAL:', response);
-                this.setState({
-                    faramErrors: { $internal: [_ts('passwordReset', 'passwordResetError')] },
+    const [resetPending, , , triggerReset] = useRequest({
+        url: 'server://password/reset/',
+        method: 'POST',
+        body: userData,
+        onSuccess: () => {
+            setSuccess(true);
+        },
+        onFailure: (_, { errorCode, faramErrors: newFaramErrors }) => {
+            if (errorCode === 4004) {
+                setFaramErrors({
+                    ...newFaramErrors,
+                    $internal: [
+                        _ts('passwordReset', 'retryRecaptcha'),
+                    ],
                 });
-            })
-            .build();
-        return userPasswordRestRequest;
-    }
+            } else {
+                setFaramErrors(newFaramErrors);
+            }
+        },
+        schemaName: 'userPasswordResetResponse',
+    });
 
-    render() {
-        const {
-            faramErrors,
-            faramValues,
-            pending,
-            resetSuccess,
-        } = this.state;
+    const handleFaramChange = useCallback((newFaramValues, newFaramErrors) => {
+        setFaramValues(newFaramValues);
+        setFaramErrors(newFaramErrors);
+    }, []);
 
-        return (
-            <div className={styles.resetPassword}>
-                <div className={styles.formContainer}>
-                    {
-                        resetSuccess ? (
-                            <div className={styles.info}>
-                                <p>
-                                    {
-                                        _ts('passwordReset', 'checkInboxText', { email: faramValues.email })
-                                    }
-                                </p>
-                            </div>
-                        ) : (
-                            <Faram
-                                className={styles.resetPasswordForm}
-                                onChange={this.handleFaramChange}
-                                onValidationFailure={this.handleFaramValidationFailure}
-                                onValidationSuccess={this.handleFaramValidationSuccess}
-                                schema={this.schema}
-                                value={faramValues}
-                                error={faramErrors}
-                                disabled={pending}
-                            >
-                                { pending && <LoadingAnimation /> }
-                                <NonFieldErrors faramElement />
-                                <TextInput
-                                    faramElementName="email"
-                                    label={_ts('passwordReset', 'emailLabel')}
-                                    placeholder={_ts('passwordReset', 'emailPlaceholder')}
-                                />
-                                <ReCaptcha
-                                    setResetFunction={this.setResetRecaptchaFunction}
-                                    faramElementName="recaptchaResponse"
-                                    siteKey={reCaptchaSiteKey}
-                                />
-                                <div className={styles.actionButtons}>
-                                    <PrimaryButton type="submit">
-                                        { _ts('passwordReset', 'submitForgetPassword') }
-                                    </PrimaryButton>
-                                </div>
-                            </Faram>
-                        )
-                    }
-                    <div className={styles.goBackContainer}>
-                        <Link
-                            className={styles.goBackLink}
-                            to={reverseRoute(pathNames.login, {})}
+    const handleFaramValidationFailure = useCallback((newFaramErrors) => {
+        setFaramErrors(newFaramErrors);
+    }, []);
+
+    const handleFaramValidationSuccess = useCallback((_, finalValues) => {
+        setUserData({
+            email: finalValues.email,
+            recaptchaResponse: finalValues.recaptchaResponse,
+        });
+        triggerReset();
+    }, [triggerReset]);
+
+    return (
+        <div className={styles.resetPassword}>
+            <div className={styles.formContainer}>
+                {
+                    success ? (
+                        <div className={styles.info}>
+                            <p>
+                                {
+                                    _ts('passwordReset', 'checkInboxText', { email: faramValues.email })
+                                }
+                            </p>
+                        </div>
+                    ) : (
+                        <Faram
+                            className={styles.resetPasswordForm}
+                            onChange={handleFaramChange}
+                            onValidationFailure={handleFaramValidationFailure}
+                            onValidationSuccess={handleFaramValidationSuccess}
+                            schema={faramSchema}
+                            value={faramValues}
+                            error={faramErrors}
+                            disabled={resetPending}
                         >
-                            {_ts('passwordReset', 'goBackToLoginText')}
-                        </Link>
-                    </div>
+                            { resetPending && <LoadingAnimation /> }
+                            <NonFieldErrors faramElement />
+                            <TextInput
+                                faramElementName="email"
+                                label={_ts('passwordReset', 'emailLabel')}
+                                placeholder={_ts('passwordReset', 'emailPlaceholder')}
+                            />
+                            <ReCaptcha
+                                faramElementName="recaptchaResponse"
+                                componentRef={recaptchaRef}
+                                siteKey={reCaptchaSiteKey}
+                            />
+                            <div className={styles.actionButtons}>
+                                <PrimaryButton type="submit">
+                                    { _ts('passwordReset', 'submitForgetPassword') }
+                                </PrimaryButton>
+                            </div>
+                        </Faram>
+                    )
+                }
+                <div className={styles.goBackContainer}>
+                    <Link
+                        className={styles.goBackLink}
+                        to={reverseRoute(pathNames.login, {})}
+                    >
+                        {_ts('passwordReset', 'goBackToLoginText')}
+                    </Link>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
+
+export default PasswordReset;
