@@ -98,7 +98,6 @@ function Login(props) {
         },
         onFailure: (_, { errorCode, faramErrors: newFaramErrors }) => {
             if (errorCode === 4004) {
-                console.warn('i am here');
                 setFaramErrors({
                     ...newFaramErrors,
                     $internal: [

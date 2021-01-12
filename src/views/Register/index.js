@@ -5,9 +5,7 @@ import Faram, {
     emailCondition,
     requiredCondition,
 } from '@togglecorp/faram';
-import {
-    reverseRoute,
-} from '@togglecorp/fujs';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -51,7 +49,6 @@ function Register() {
         },
         onFailure: (_, { errorCode, faramErrors: newFaramErrors }) => {
             if (errorCode === 4004) {
-                console.warn('i am here');
                 setFaramErrors({
                     ...newFaramErrors,
                     $internal: [

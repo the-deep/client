@@ -1,6 +1,5 @@
 import {
     wsEndpoint,
-    POST,
     PATCH,
     p,
     commonHeaderForPost,
@@ -46,11 +45,3 @@ export const createParamsForSetUserProject = projectId => ({
         lastActiveProject: projectId,
     }),
 });
-
-export const urlForUserPasswordReset = `${wsEndpoint}/password/reset/`;
-export const createParamsForUserPasswordReset = ({ email, recaptchaResponse }) => ({
-    method: POST,
-    headers: commonHeaderForPost,
-    body: JSON.stringify({ email, recaptchaResponse }),
-});
-
