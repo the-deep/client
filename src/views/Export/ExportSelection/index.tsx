@@ -15,13 +15,14 @@ import Button from '#rsca/Button';
 import ExportPreview from '#components/other/ExportPreview';
 
 import {
+    projectDetailsSelector,
     entriesViewFilterSelector,
     analysisFrameworkForProjectSelector,
-    leadPageFilterSelector,
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
     activeProjectRoleSelector,
+
     entryFilterOptionsForProjectSelector,
 } from '#redux';
 
@@ -47,7 +48,7 @@ import {
     ReportStructure,
 } from '#typings';
 
-import LeadsTable from '../LeadsTable';
+import LeadsSelection from './LeadsSelection';
 import ExportTypePane from '../ExportTypePane';
 
 import styles from './styles.scss';
@@ -112,9 +113,9 @@ const mapStateToProps = (state: AppState) => ({
     analysisFramework: analysisFrameworkForProjectSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state),
-    leadsFilters: leadPageFilterSelector(state),
     geoOptions: geoOptionsForProjectSelector(state),
     projectRole: activeProjectRoleSelector(state),
+    projectDetails: projectDetailsSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
@@ -137,8 +138,8 @@ interface PropsFromState {
     entryFilterOptions: {
         projectEntryLabel: [];
     };
-    leadsFilters: unknown;
     geoOptions: unknown;
+    projectDetails: unknown;
 }
 
 interface OwnProps {
@@ -153,11 +154,11 @@ function EntriesExportSelection(props: Props) {
         entriesFilters,
         projectId,
         geoOptions,
-        leadsFilters,
         entryFilterOptions,
         projectRole,
         setAnalysisFramework,
         setGeoOptions,
+        projectDetails,
     } = props;
 
     const {
@@ -176,7 +177,7 @@ function EntriesExportSelection(props: Props) {
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
-    const [filterValues, setFilterValues] = useState<unknown>({});
+
     const [
         showSourceSelect,
         setSectorSelectVisible,
@@ -212,7 +213,7 @@ function EntriesExportSelection(props: Props) {
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
-        onFailure: (error, errorBody) => {
+        onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'afLabel'))({ error: errorBody });
         },
     });
@@ -232,7 +233,7 @@ function EntriesExportSelection(props: Props) {
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
-        onFailure: (error, errorBody) => {
+        onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'geoLabel'))({ error: errorBody });
         },
     });
@@ -457,15 +458,13 @@ function EntriesExportSelection(props: Props) {
                         />
                     </header>
                     {showSourceSelect && (
-                        <LeadsTable
+                        <LeadsSelection
                             className={styles.leadsTable}
                             projectId={projectId}
-                            filterValues={filterValues}
-                            onFilterChange={setFilterValues}
                             onSelectLeadChange={handleSelectLeadChange}
                             onSelectAllClick={handleSelectAllLeads}
                             filterOnlyUnprotected={filterOnlyUnprotected}
-                            leadsFilters={leadsFilters}
+                            projectRegions={projectDetails.regions}
                             entriesFilters={filters}
                             entriesWidgets={widgets}
                             entriesGeoOptions={geoOptions}

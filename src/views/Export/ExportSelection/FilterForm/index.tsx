@@ -1,11 +1,13 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import Faram from '@togglecorp/faram';
+import Faram, { FaramGroup } from '@togglecorp/faram';
 import {
     _cs,
+    listToMap,
     isTruthyString,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
+import List from '#rscv/List';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SearchInput from '#rsci/SearchInput';
@@ -18,14 +20,61 @@ import useRequest from '#utils/request';
 import _ts from '#ts';
 import {
     LeadOptions,
+    EntryOptions,
     KeyValueElement,
     EmmEntity,
+    BasicElement,
+    WidgetElement,
+    FilterFields,
+    FaramValues,
+    FaramErrors,
 } from '#typings';
+
+import FrameworkFilter from './FrameworkFilter';
 
 import styles from './styles.scss';
 
 const emptyList: EmmEntity[] = [];
 
+interface BooleanKeyValueElement {
+    key: boolean;
+    value: string;
+}
+const verificationStatusOptions: BooleanKeyValueElement[] = [
+    {
+        key: true,
+        value: _ts('editEntry', 'verifiedLabel'),
+    },
+    {
+        key: false,
+        value: _ts('editEntry', 'unverifiedLabel'),
+    },
+];
+
+const entryTypeOptions: KeyValueElement[] = [
+    {
+        key: 'excerpt',
+        value: _ts('entries', 'excerpt'),
+    },
+    {
+        key: 'image',
+        value: _ts('entries', 'image'),
+    },
+    {
+        key: 'dataSeries',
+        value: _ts('entries', 'dataSeries'),
+    },
+];
+const commentStatusOptions: KeyValueElement[] = [
+    {
+        key: 'resolved',
+        value: _ts('entries', 'resolvedCommentLabel'),
+    },
+    {
+        key: 'unresolved',
+        value: _ts('entries', 'unresolvedCommentLabel'),
+    },
+];
 const existsFilterOptions: KeyValueElement[] = [
     {
         key: 'assessment_exists',
@@ -37,16 +86,21 @@ const existsFilterOptions: KeyValueElement[] = [
     },
 ];
 
-interface FilterValues {
-}
-
 interface OwnProps {
     className?: string;
     projectId: number;
     filterOnlyUnprotected?: boolean;
-    filterValues: FilterValues;
+    filterValues: FaramValues;
+    entriesFilters: FilterFields[];
+    entriesWidgets: WidgetElement<unknown>[];
+    onChange: (filter: FaramValues) => void;
+    regions: unknown[];
+    geoOptions: unknown;
 }
 
+const filterKeySelector = (d: FilterFields) => d.key;
+const optionTitleSelector = (d: BasicElement) => d.title;
+const optionIdSelector = (d: BasicElement) => d.id;
 const optionLabelSelector = (d: KeyValueElement) => d.value;
 const optionKeySelector = (d: KeyValueElement) => d.key;
 const emmRiskFactorsKeySelector = (d: KeyValueElement) => (isTruthyString(d.key) ? d.key : 'None');
@@ -65,8 +119,12 @@ function FilterForm(props: OwnProps) {
         className,
         projectId,
         filterValues,
+        entriesFilters,
+        entriesWidgets,
         onChange,
         filterOnlyUnprotected,
+        regions,
+        geoOptions,
     } = props;
 
     const schema = useMemo(() => ({
@@ -83,14 +141,48 @@ function FilterForm(props: OwnProps) {
             emm_risk_factors: [],
             emm_keywords: [],
             emm_entities: [],
+            entries_filter: {
+                fields: {
+                    created_by: [],
+                    comment_assignee: [],
+                    comment_created_by: [],
+                    comment_status: [],
+                    verified: [],
+                    entry_type: [],
+                    project_entry_labels: [],
+                    lead_group_label: [],
+                    ...listToMap(entriesFilters, v => v.key, v => []),
+                },
+            },
         },
-    }), []);
+    }), [entriesFilters]);
 
-    const [faramValues, setFaramValues] = useState<FilterValues>(filterValues);
+    const [faramValues, setFaramValues] = useState<FaramValues>(filterValues);
+    const [faramErrors, setFaramErrors] = useState<FaramErrors>({});
     const [pristine, setPristine] = useState(true);
 
+    const filteredFrameworkFilters = useMemo(() => {
+        const widgetsMap = listToMap(entriesWidgets, d => d.key, d => d.widgetId);
+        const filtersWithId = entriesFilters?.map(f => ({
+            ...f,
+            widgetId: widgetsMap[f.widgetKey],
+        }));
+        return filtersWithId ? [...filtersWithId] : [];
+    }, [entriesWidgets, entriesFilters]);
+
+    const frameworkFilterRendererParams = useCallback((key, data) => ({
+        filterKey: key,
+        title: data.title,
+        filter: data.properties,
+        regions,
+        geoOptions,
+    }), [
+        regions,
+        geoOptions,
+    ]);
+
     const [
-        pending,
+        leadOptionsPending,
         leadOptions,
         ,
     ] = useRequest<LeadOptions>({
@@ -101,6 +193,19 @@ function FilterForm(props: OwnProps) {
         autoTrigger: true,
         method: 'GET',
         schemaName: 'projectLeadFilterOptions',
+    });
+
+    const [
+        entryOptionsPending,
+        entryOptions,
+        ,
+    ] = useRequest<EntryOptions>({
+        url: 'server://entry-options/',
+        query: {
+            projects: [projectId],
+        },
+        autoTrigger: true,
+        method: 'GET',
     });
 
     const {
@@ -138,7 +243,7 @@ function FilterForm(props: OwnProps) {
         setPristine(false);
     }, []);
 
-    const handleFaramValidationSuccess = useCallback((finalValues) => {
+    const handleFaramValidationSuccess = useCallback((_, finalValues) => {
         onChange(finalValues);
         setPristine(true);
     }, [onChange]);
@@ -149,145 +254,251 @@ function FilterForm(props: OwnProps) {
         setPristine(true);
     }, [onChange]);
 
+    const pending = leadOptionsPending || entryOptionsPending;
+    const showEntryLabelFilters = entryOptions && entryOptions.projectEntryLabel?.length > 0;
+
     return (
-        <div className={_cs(className, styles.filterForm)}>
-            <Faram
-                className={_cs(styles.leadsFilters, className)}
-                onValidationSuccess={handleFaramValidationSuccess}
-                onChange={handleFaramChange}
-                schema={schema}
-                value={faramValues}
-                disabled={pending}
-            >
-                <SearchInput
-                    faramElementName="search"
-                    label={_ts('leads', 'placeholderSearch')}
-                    placeholder={_ts('leads', 'placeholderSearch')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                <DateFilter
-                    faramElementName="published_on"
-                    label={_ts('leads', 'filterDatePublished')}
-                    placeholder={_ts('leads', 'placeholderAnytime')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                <SelectInput
-                    faramElementName="exists"
-                    keySelector={optionKeySelector}
-                    label={_ts('leads', 'existsFilterLabel')}
-                    labelSelector={optionLabelSelector}
-                    options={existsFilterOptions}
-                    placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                <MultiSelectInput
-                    faramElementName="assignee"
-                    keySelector={optionKeySelector}
-                    label={_ts('leads', 'assigneeLabel')}
-                    labelSelector={optionLabelSelector}
-                    options={assignee}
-                    placeholder={_ts('leads', 'placeholderAnybody')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                <DateFilter
-                    faramElementName="created_at"
-                    label={_ts('leads', 'filterDateCreated')}
-                    placeholder={_ts('leads', 'placeholderAnytime')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                {!filterOnlyUnprotected && (
-                    <MultiSelectInput
-                        faramElementName="confidentiality"
-                        keySelector={optionKeySelector}
-                        label={_ts('leads', 'filterConfidentiality')}
-                        labelSelector={optionLabelSelector}
-                        options={confidentiality}
-                        placeholder={_ts('leads', 'placeholderAny')}
+        <Faram
+            className={_cs(styles.leadsFilters, className)}
+            schema={schema}
+            value={faramValues}
+            error={faramErrors}
+            disabled={pending}
+            onValidationSuccess={handleFaramValidationSuccess}
+            onValidationFailure={setFaramErrors}
+            onChange={handleFaramChange}
+        >
+            <div className={styles.content}>
+                <h4 className={styles.heading}>
+                    {_ts('entries', 'leadFiltersGroupTitle')}
+                </h4>
+                <div className={styles.filter}>
+                    <SearchInput
+                        faramElementName="search"
+                        label={_ts('leads', 'placeholderSearch')}
+                        placeholder={_ts('leads', 'placeholderSearch')}
                         showHintAndError={false}
-                        showLabel
                         className={styles.leadsFilter}
                     />
+                    <DateFilter
+                        faramElementName="published_on"
+                        label={_ts('leads', 'filterDatePublished')}
+                        placeholder={_ts('leads', 'placeholderAnytime')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    <SelectInput
+                        faramElementName="exists"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'existsFilterLabel')}
+                        labelSelector={optionLabelSelector}
+                        options={existsFilterOptions}
+                        placeholder={_ts('leads', 'placeholderAny')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    <MultiSelectInput
+                        faramElementName="assignee"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'assigneeLabel')}
+                        labelSelector={optionLabelSelector}
+                        options={assignee}
+                        placeholder={_ts('leads', 'placeholderAnybody')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    <DateFilter
+                        faramElementName="created_at"
+                        label={_ts('leads', 'filterDateCreated')}
+                        placeholder={_ts('leads', 'placeholderAnytime')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    {!filterOnlyUnprotected && (
+                        <MultiSelectInput
+                            faramElementName="confidentiality"
+                            keySelector={optionKeySelector}
+                            label={_ts('leads', 'filterConfidentiality')}
+                            labelSelector={optionLabelSelector}
+                            options={confidentiality}
+                            placeholder={_ts('leads', 'placeholderAny')}
+                            showHintAndError={false}
+                            className={styles.leadsFilter}
+                        />
+                    )}
+                    <MultiSelectInput
+                        faramElementName="priority"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'filterPriority')}
+                        labelSelector={optionLabelSelector}
+                        options={priority}
+                        placeholder={_ts('leads', 'placeholderAny')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    <MultiSelectInput
+                        faramElementName="status"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'filterStatus')}
+                        labelSelector={optionLabelSelector}
+                        options={status}
+                        placeholder={_ts('leads', 'placeholderAny')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    <MultiSelectInput
+                        faramElementName="authoring_organization_types"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'filterOrganizationType')}
+                        labelSelector={optionLabelSelector}
+                        options={organizationTypes}
+                        placeholder={_ts('leads', 'placeholderAny')}
+                        showHintAndError={false}
+                        className={styles.leadsFilter}
+                    />
+                    {hasEmmLeads && (
+                        <React.Fragment>
+                            <SearchMultiSelectInput
+                                faramElementName="emm_risk_factors"
+                                keySelector={emmRiskFactorsKeySelector}
+                                label={_ts('leads', 'filterEmmRiskFactors')}
+                                labelSelector={emmRiskFactorsLabelSelector}
+                                options={emmRiskFactors}
+                                placeholder={_ts('leads', 'placeholderAny')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
+                            />
+                            <SearchMultiSelectInput
+                                faramElementName="emm_keywords"
+                                keySelector={emmTriggerKeySelector}
+                                label={_ts('leads', 'filterEmmTriggers')}
+                                labelSelector={emmTriggerLabelSelector}
+                                options={emmKeywords}
+                                placeholder={_ts('leads', 'placeholderAny')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
+                            />
+                            <SearchMultiSelectInput
+                                faramElementName="emm_entities"
+                                keySelector={emmEntitiesKeySelector}
+                                label={_ts('leads', 'filterEmmEntities')}
+                                labelSelector={emmEntitiesLabelSelector}
+                                options={emmEntities}
+                                placeholder={_ts('leads', 'placeholderAny')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
+                            />
+                        </React.Fragment>
+                    )}
+                </div>
+            </div>
+            <FaramGroup faramElementName="entries_filter">
+                <div className={styles.content}>
+                    <h4 className={styles.heading}>
+                        {_ts('entries', 'entriesFiltersGroupTitle')}
+                    </h4>
+                    <div className={styles.filter}>
+                        <MultiSelectInput
+                            faramElementName="created_by"
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            options={entryOptions?.createdBy}
+                            label={_ts('entries', 'createdByFilterLabel')}
+                            placeholder={_ts('entries', 'createdByPlaceholder')}
+                            showHintAndError={false}
+                            className={styles.leadsFilter}
+                        />
+                        <MultiSelectInput
+                            faramElementName="comment_assignee"
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            options={entryOptions?.createdBy}
+                            label={_ts('entries', 'commentAssignedToFilterLabel')}
+                            placeholder={_ts('entries', 'createdByPlaceholder')}
+                            showHintAndError={false}
+                            className={styles.leadsFilter}
+                        />
+                        <MultiSelectInput
+                            faramElementName="comment_created_by"
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            options={entryOptions?.createdBy}
+                            label={_ts('entries', 'commentCreatedByFilterLabel')}
+                            showHintAndError={false}
+                            placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
+                            className={styles.leadsFilter}
+                        />
+                        <SelectInput
+                            faramElementName="comment_status"
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            options={commentStatusOptions}
+                            label={_ts('entries', 'commentStatusOptionsFilterLabel')}
+                            placeholder={_ts('entries', 'commentStatusPlaceholder')}
+                            showHintAndError={false}
+                            className={styles.leadsFilter}
+                        />
+                        <SelectInput
+                            faramElementName="verified"
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            options={verificationStatusOptions}
+                            label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
+                            showHintAndError={false}
+                            placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                            className={styles.leadsFilter}
+                        />
+                        <MultiSelectInput
+                            faramElementName="entry_type"
+                            keySelector={optionKeySelector}
+                            labelSelector={optionLabelSelector}
+                            options={entryTypeOptions}
+                            label={_ts('entries', 'entryTypeFilterLabel')}
+                            showHintAndError={false}
+                            placeholder={_ts('entries', 'entryTypePlaceholder')}
+                            className={styles.leadsFilter}
+                        />
+                        {showEntryLabelFilters && (
+                            <>
+                                <MultiSelectInput
+                                    faramElementName="project_entry_labels"
+                                    keySelector={optionIdSelector}
+                                    labelSelector={optionTitleSelector}
+                                    options={entryOptions?.projectEntryLabel}
+                                    label={_ts('entries', 'entryLabelsFilterLabel')}
+                                    showHintAndError={false}
+                                    placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
+                                    className={styles.leadsFilter}
+                                />
+                                <SearchInput
+                                    faramElementName="lead_group_label"
+                                    label={_ts('entries', 'entryGroupsFilterLabel')}
+                                    placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
+                                    showHintAndError={false}
+                                    className={styles.leadsFilter}
+                                />
+                            </>
+                        )}
+                    </div>
+                </div>
+                { filteredFrameworkFilters.length > 0 && (
+                    <div className={styles.content}>
+                        <h4 className={styles.heading}>
+                            {_ts('entries', 'widgetsFiltersGroupTitle')}
+                        </h4>
+                        <div className={styles.filter}>
+                            <List
+                                data={filteredFrameworkFilters}
+                                keySelector={filterKeySelector}
+                                renderer={FrameworkFilter}
+                                rendererParams={frameworkFilterRendererParams}
+                                rendererClassName={styles.leadsFilter}
+                            />
+                        </div>
+                    </div>
                 )}
-                <MultiSelectInput
-                    faramElementName="priority"
-                    keySelector={optionKeySelector}
-                    label={_ts('leads', 'filterPriority')}
-                    labelSelector={optionLabelSelector}
-                    options={priority}
-                    placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                <MultiSelectInput
-                    faramElementName="status"
-                    keySelector={optionKeySelector}
-                    label={_ts('leads', 'filterStatus')}
-                    labelSelector={optionLabelSelector}
-                    options={status}
-                    placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                <MultiSelectInput
-                    faramElementName="authoring_organization_types"
-                    keySelector={optionKeySelector}
-                    label={_ts('leads', 'filterOrganizationType')}
-                    labelSelector={optionLabelSelector}
-                    options={organizationTypes}
-                    placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.leadsFilter}
-                />
-                {hasEmmLeads && (
-                    <React.Fragment>
-                        <SearchMultiSelectInput
-                            faramElementName="emm_risk_factors"
-                            keySelector={emmRiskFactorsKeySelector}
-                            label={_ts('leads', 'filterEmmRiskFactors')}
-                            labelSelector={emmRiskFactorsLabelSelector}
-                            options={emmRiskFactors}
-                            placeholder={_ts('leads', 'placeholderAny')}
-                            showHintAndError={false}
-                            showLabel
-                            className={styles.leadsFilter}
-                        />
-                        <SearchMultiSelectInput
-                            faramElementName="emm_keywords"
-                            keySelector={emmTriggerKeySelector}
-                            label={_ts('leads', 'filterEmmTriggers')}
-                            labelSelector={emmTriggerLabelSelector}
-                            options={emmKeywords}
-                            placeholder={_ts('leads', 'placeholderAny')}
-                            showHintAndError={false}
-                            showLabel
-                            className={styles.leadsFilter}
-                        />
-                        <SearchMultiSelectInput
-                            faramElementName="emm_entities"
-                            keySelector={emmEntitiesKeySelector}
-                            label={_ts('leads', 'filterEmmEntities')}
-                            labelSelector={emmEntitiesLabelSelector}
-                            options={emmEntities}
-                            placeholder={_ts('leads', 'placeholderAny')}
-                            showHintAndError={false}
-                            showLabel
-                            className={styles.leadsFilter}
-                        />
-                    </React.Fragment>
-                )}
+            </FaramGroup>
+            <div className={styles.actionButtons}>
                 <Button
                     className={styles.button}
                     disabled={pristine || pending}
@@ -302,8 +513,8 @@ function FilterForm(props: OwnProps) {
                 >
                     {_ts('leads', 'filterClearFilter')}
                 </DangerButton>
-            </Faram>
-        </div>
+            </div>
+        </Faram>
     );
 }
 

@@ -15,16 +15,21 @@ import useRequest from '#utils/request';
 
 import _ts from '#ts';
 import {
+    FilterFields,
     Lead,
     MultiResponse,
+    WidgetElement,
+    FaramValues,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
-import FilterEntriesForm from '#views/Entries/FilterEntriesForm';
 import { Header } from '#rscv/Table';
 
-import FilterForm from '../ExportSelection/FilterForm';
-import { SelectedLead } from '../index';
+import FilterForm from '../FilterForm';
 import styles from './styles.scss';
+
+interface SelectedLead extends Lead {
+    selected: boolean;
+}
 
 interface ComponentProps {
     onSelectLeadChange: (key: number, selected: boolean) => void;
@@ -33,18 +38,17 @@ interface ComponentProps {
     projectId: number;
     filterOnlyUnprotected: boolean;
     className?: string;
-    entriesFilters: unknown;
-    entriesWidgets: unknown;
+    entriesFilters: FilterFields[];
+    entriesWidgets: WidgetElement<unknown>[];
+    projectRegions: unknown[];
     entriesGeoOptions: unknown;
 }
 
 const leadKeyExtractor = (d: SelectedLead) => d.id;
 const maxItemsPerPage = 10;
 
-function ExportLeadsTable(props: ComponentProps) {
+function LeadsSelection(props: ComponentProps) {
     const {
-        filterValues,
-        onFilterChange,
         projectId,
         className,
         onSelectAllClick,
@@ -52,6 +56,7 @@ function ExportLeadsTable(props: ComponentProps) {
         filterOnlyUnprotected,
         entriesFilters,
         entriesWidgets,
+        projectRegions,
         entriesGeoOptions,
     } = props;
 
@@ -59,6 +64,7 @@ function ExportLeadsTable(props: ComponentProps) {
     const [leadsCount, setLeadsCount] = useState<number>(0);
     const [activeSort, setActiveSort] = useState<string>('-created_at');
     const [activePage, setActivePage] = useState<number>(1);
+    const [filterValues, onFilterChange] = useState<FaramValues>({});
 
     const sanitizedFilters = useMemo(() => {
         const processedFilters = getFiltersForRequest(filterValues);
@@ -71,6 +77,7 @@ function ExportLeadsTable(props: ComponentProps) {
     }, [filterOnlyUnprotected, filterValues]);
 
     const leadsRequestBody = useMemo(() => ({
+        custom_filters: 'exclude_empty_filtered_entries',
         project: [projectId],
         ...sanitizedFilters,
     }), [projectId, sanitizedFilters]);
@@ -101,7 +108,7 @@ function ExportLeadsTable(props: ComponentProps) {
             setLeadsCount(response.count);
             setLeads(newLeads);
         },
-        onFailure: (error, errorBody) => {
+        onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
         },
     });
@@ -198,7 +205,7 @@ function ExportLeadsTable(props: ComponentProps) {
     );
 
     const headerModifier = useCallback((headerData) => {
-        let sortOrder = '';
+        let sortOrder: 'asc' | 'dsc' | undefined;
         if (activeSort === headerData.key) {
             sortOrder = 'asc';
         } else if (activeSort === `-${headerData.key}`) {
@@ -244,15 +251,11 @@ function ExportLeadsTable(props: ComponentProps) {
                 projectId={projectId}
                 filterOnlyUnprotected={filterOnlyUnprotected}
                 filterValues={filterValues}
-                onChange={onFilterChange}
-            />
-            <FilterEntriesForm
-                className={styles.entriesFilter}
-                applyOnChange
-                pending={pending}
-                filters={entriesFilters}
-                widgets={entriesWidgets}
+                entriesFilters={entriesFilters}
+                entriesWidgets={entriesWidgets}
                 geoOptions={entriesGeoOptions}
+                regions={projectRegions}
+                onChange={onFilterChange}
             />
             <RawTable
                 data={leads}
@@ -276,4 +279,4 @@ function ExportLeadsTable(props: ComponentProps) {
     );
 }
 
-export default ExportLeadsTable;
+export default LeadsSelection;

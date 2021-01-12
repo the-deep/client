@@ -1,0 +1,18 @@
+.geo-filter {
+    margin: var(--spacing-small);
+    height: auto;
+
+    .rotating-input {
+        flex-shrink: 0;
+
+        &:not(.disabled) {
+            .sub-region-selected {
+                color: var(--color-accent);
+            }
+
+            .sub-region-not-selected {
+                color: var(--color-text-label);
+            }
+        }
+    }
+}
