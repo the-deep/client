@@ -13,24 +13,6 @@ export const createUrlForUsers = (fields) => {
     return `${wsEndpoint}/users/`;
 };
 
-export const urlForUserCreate = `${wsEndpoint}/users/`;
-export const createParamsForUserCreate = ({
-    firstName, lastName, organization, country, email, displayPicture, recaptchaResponse,
-}) => ({
-    method: POST,
-    headers: commonHeaderForPost,
-    body: JSON.stringify({
-        firstName,
-        lastName,
-        organization,
-        country,
-        email,
-        username: email,
-        displayPicture,
-        recaptchaResponse,
-    }),
-});
-
 export const createUrlForUser = userId => `${wsEndpoint}/users/${userId}/`;
 
 export const urlForUserPreferences = `${wsEndpoint}/users/me/preferences/`;
