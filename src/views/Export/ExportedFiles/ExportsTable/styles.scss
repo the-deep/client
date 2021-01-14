@@ -1,33 +1,57 @@
+@import '~base-scss/utils';
+
 .table {
     display: flex;
     flex-grow: 1;
 
-    .loading-animation {
-        position: relative;
-        height: var(--font-size-large);
+    .actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-        >div {
-            background-color: transparent;
-            padding: 0!important;
-            font-size: var(--font-size-large)!important;
+        .file-error {
+            color: var(--color-danger);
+        }
+
+        .loading-animation {
+            display: flex;
+            position: relative;
+            align-items: center;
+            flex-shrink: 0;
+            border: var(--width-separator-thin) solid var(--color-separator);
+            border-radius: var(--font-size-large);
+            background-color: var(--color-background-disabled);
+            padding: var(--spacing-small) var(--spacing-medium);
+
+            .label {
+                padding: 0 var(--spacing-extra-small);
+            }
+        }
+
+        .download-button {
+            border: var(--width-separator-thin) solid var(--color-separator);
+            border-radius: var(--radius-button-border);
+            padding: var(--spacing-small) var(--spacing-small-alt);
+            text-transform: uppercase;
+            font-family: inherit;
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
+
+            .icon {
+                margin: 0 var(--spacing-extra-small);
+            }
         }
     }
 
     :global {
-        .file-download {
-            display: flex;
-            justify-content: center;
-            color: var(--color-accent);
-        }
-
         .table {
-            .headers {
+            .thead {
                 .mime-type {
                     width: 96px;
                 }
 
                 .file {
-                    width: 64px;
+                    width: 240px;
                 }
             }
 
@@ -56,12 +80,6 @@
                 .cell {
                     position: relative;
                 }
-
-                .button {
-                    &:not(:last-child) {
-                        margin-right: var(--spacing-medium);
-                    }
-                }
             }
         }
 
@@ -73,12 +91,6 @@
         .to-be-started {
             display: flex;
             justify-content: center;
-        }
-
-        .file-error {
-            display: flex;
-            justify-content: center;
-            color: var(--color-danger);
         }
     }
 }

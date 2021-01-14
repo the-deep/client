@@ -1237,7 +1237,11 @@
         "-84787220": "Step 1:",
         "-27725338": "Step 2:",
         "-50472183": "Step 3:",
-        "-66346353": "Select framework sections"
+        "-66346353": "Select framework sections",
+        "-78055212": "Are you sure you want to cancel this export?",
+        "-18293311": "Failed to cancel export.",
+        "-2707814": "Successfully cancelled export.",
+        "-40624719": "Generating the file"
     },
     "links": {
         "browserExtension": {
@@ -1776,7 +1780,7 @@
             "startAssessmentExportButtonLabel": -58642627,
             "startPlannedAssessmentExportButtonLabel": -8007367,
             "geoLabel": -80682543,
-            "startedStatusLabel": -28816005,
+            "startedStatusLabel": -40624719,
             "dimensionFirstExportTypeLabel": -51656640,
             "sectorFirstExportTypeLabel": -74878255,
             "orderMatrix2D": -49902146,
@@ -1809,7 +1813,12 @@
             "selectSourcesHeading": -78169579,
             "selectFormatStylingStepHeading": -27725338,
             "selectFrameworkSectionsHeading": -66346353,
-            "selectFrameworkSectionsStepHeading": -50472183
+            "selectFrameworkSectionsStepHeading": -50472183,
+            "exportCancelConfirmationMessage": -78055212,
+            "exportCancelLabel": 61,
+            "cancelExportFailure": -18293311,
+            "cancelExportSuccess": -2707814,
+            "downloadButtonTitle": 628
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
