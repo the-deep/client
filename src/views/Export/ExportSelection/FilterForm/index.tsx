@@ -92,11 +92,12 @@ interface OwnProps {
     projectId: number;
     filterOnlyUnprotected?: boolean;
     filterValues: FaramValues;
-    entriesFilters: FilterFields[];
-    entriesWidgets: WidgetElement<unknown>[];
+    entriesFilters?: FilterFields[];
+    entriesWidgets?: WidgetElement<unknown>[];
     onChange: (filter: FaramValues) => void;
-    regions: unknown[];
-    geoOptions: unknown;
+    regions?: unknown[];
+    geoOptions?: unknown;
+    hasAssessment?: boolean;
 }
 
 const filterKeySelector = (d: FilterFields) => d.key;
@@ -126,10 +127,11 @@ function FilterForm(props: OwnProps) {
         filterOnlyUnprotected,
         regions,
         geoOptions,
+        hasAssessment,
     } = props;
 
-    const schema = useMemo(() => ({
-        fields: {
+    const schema = useMemo(() => {
+        const leadSchema = {
             search: [],
             assignee: [],
             created_at: [],
@@ -142,21 +144,33 @@ function FilterForm(props: OwnProps) {
             emm_risk_factors: [],
             emm_keywords: [],
             emm_entities: [],
-            entries_filter: {
+        };
+        if (hasAssessment) {
+            return {
                 fields: {
-                    created_by: [],
-                    comment_assignee: [],
-                    comment_created_by: [],
-                    comment_status: [],
-                    verified: [],
-                    entry_type: [],
-                    project_entry_labels: [],
-                    lead_group_label: [],
-                    ...listToMap(entriesFilters, v => v.key, v => []),
+                    ...leadSchema,
+                },
+            };
+        }
+        return {
+            fields: {
+                ...leadSchema,
+                entries_filter: {
+                    fields: {
+                        created_by: [],
+                        comment_assignee: [],
+                        comment_created_by: [],
+                        comment_status: [],
+                        verified: [],
+                        entry_type: [],
+                        project_entry_labels: [],
+                        lead_group_label: [],
+                        ...listToMap(entriesFilters, v => v.key, v => []),
+                    },
                 },
             },
-        },
-    }), [entriesFilters]);
+        };
+    }, [entriesFilters, hasAssessment]);
 
     const [faramValues, setFaramValues] = useState<FaramValues>(filterValues);
     const [faramErrors, setFaramErrors] = useState<FaramErrors>({});
@@ -294,16 +308,19 @@ function FilterForm(props: OwnProps) {
                         showHintAndError={false}
                         className={styles.leadsFilter}
                     />
-                    <SelectInput
-                        faramElementName="exists"
-                        keySelector={optionKeySelector}
-                        label={_ts('leads', 'existsFilterLabel')}
-                        labelSelector={optionLabelSelector}
-                        options={existsFilterOptions}
-                        placeholder={_ts('leads', 'placeholderAny')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
+                    {!hasAssessment && (
+                        <SelectInput
+                            faramElementName="exists"
+                            keySelector={optionKeySelector}
+                            label={_ts('leads', 'existsFilterLabel')}
+                            labelSelector={optionLabelSelector}
+                            options={existsFilterOptions}
+                            placeholder={_ts('leads', 'placeholderAny')}
+                            showHintAndError={false}
+                            disabled={hasAssessment}
+                            className={styles.leadsFilter}
+                        />
+                    )}
                     <MultiSelectInput
                         faramElementName="assignee"
                         keySelector={optionKeySelector}
@@ -399,112 +416,114 @@ function FilterForm(props: OwnProps) {
                     )}
                 </div>
             </div>
-            <FaramGroup faramElementName="entries_filter">
-                <div className={styles.content}>
-                    <h4 className={styles.heading}>
-                        {_ts('entries', 'entriesFiltersGroupTitle')}
-                    </h4>
-                    <div className={styles.filter}>
-                        <MultiSelectInput
-                            faramElementName="created_by"
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={entryOptions?.createdBy}
-                            label={_ts('entries', 'createdByFilterLabel')}
-                            placeholder={_ts('entries', 'createdByPlaceholder')}
-                            showHintAndError={false}
-                            className={styles.leadsFilter}
-                        />
-                        <MultiSelectInput
-                            faramElementName="comment_assignee"
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={entryOptions?.createdBy}
-                            label={_ts('entries', 'commentAssignedToFilterLabel')}
-                            placeholder={_ts('entries', 'createdByPlaceholder')}
-                            showHintAndError={false}
-                            className={styles.leadsFilter}
-                        />
-                        <MultiSelectInput
-                            faramElementName="comment_created_by"
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={entryOptions?.createdBy}
-                            label={_ts('entries', 'commentCreatedByFilterLabel')}
-                            showHintAndError={false}
-                            placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
-                            className={styles.leadsFilter}
-                        />
-                        <SelectInput
-                            faramElementName="comment_status"
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={commentStatusOptions}
-                            label={_ts('entries', 'commentStatusOptionsFilterLabel')}
-                            placeholder={_ts('entries', 'commentStatusPlaceholder')}
-                            showHintAndError={false}
-                            className={styles.leadsFilter}
-                        />
-                        <SelectInput
-                            faramElementName="verified"
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={verificationStatusOptions}
-                            label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
-                            showHintAndError={false}
-                            placeholder={_ts('entries', 'verificationStatusPlaceholder')}
-                            className={styles.leadsFilter}
-                        />
-                        <MultiSelectInput
-                            faramElementName="entry_type"
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            options={entryTypeOptions}
-                            label={_ts('entries', 'entryTypeFilterLabel')}
-                            showHintAndError={false}
-                            placeholder={_ts('entries', 'entryTypePlaceholder')}
-                            className={styles.leadsFilter}
-                        />
-                        {showEntryLabelFilters && (
-                            <>
-                                <MultiSelectInput
-                                    faramElementName="project_entry_labels"
-                                    keySelector={optionIdSelector}
-                                    labelSelector={optionTitleSelector}
-                                    options={entryOptions?.projectEntryLabel}
-                                    label={_ts('entries', 'entryLabelsFilterLabel')}
-                                    showHintAndError={false}
-                                    placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
-                                    className={styles.leadsFilter}
-                                />
-                                <SearchInput
-                                    faramElementName="lead_group_label"
-                                    label={_ts('entries', 'entryGroupsFilterLabel')}
-                                    placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
-                                    showHintAndError={false}
-                                    className={styles.leadsFilter}
-                                />
-                            </>
-                        )}
-                    </div>
-                </div>
-                { filteredFrameworkFilters.length > 0 && (
+            { !hasAssessment && (
+                <FaramGroup faramElementName="entries_filter">
                     <div className={styles.content}>
                         <h4 className={styles.heading}>
-                            {_ts('entries', 'widgetsFiltersGroupTitle')}
+                            {_ts('entries', 'entriesFiltersGroupTitle')}
                         </h4>
                         <div className={styles.filter}>
-                            <List
-                                data={filteredFrameworkFilters}
-                                keySelector={filterKeySelector}
-                                renderer={FrameworkFilter}
-                                rendererParams={frameworkFilterRendererParams}
-                                rendererClassName={styles.leadsFilter}
+                            <MultiSelectInput
+                                faramElementName="created_by"
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={entryOptions?.createdBy}
+                                label={_ts('entries', 'createdByFilterLabel')}
+                                placeholder={_ts('entries', 'createdByPlaceholder')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
                             />
+                            <MultiSelectInput
+                                faramElementName="comment_assignee"
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={entryOptions?.createdBy}
+                                label={_ts('entries', 'commentAssignedToFilterLabel')}
+                                placeholder={_ts('entries', 'createdByPlaceholder')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
+                            />
+                            <MultiSelectInput
+                                faramElementName="comment_created_by"
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={entryOptions?.createdBy}
+                                label={_ts('entries', 'commentCreatedByFilterLabel')}
+                                showHintAndError={false}
+                                placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
+                                className={styles.leadsFilter}
+                            />
+                            <SelectInput
+                                faramElementName="comment_status"
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={commentStatusOptions}
+                                label={_ts('entries', 'commentStatusOptionsFilterLabel')}
+                                placeholder={_ts('entries', 'commentStatusPlaceholder')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
+                            />
+                            <SelectInput
+                                faramElementName="verified"
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={verificationStatusOptions}
+                                label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
+                                showHintAndError={false}
+                                placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                                className={styles.leadsFilter}
+                            />
+                            <MultiSelectInput
+                                faramElementName="entry_type"
+                                keySelector={optionKeySelector}
+                                labelSelector={optionLabelSelector}
+                                options={entryTypeOptions}
+                                label={_ts('entries', 'entryTypeFilterLabel')}
+                                showHintAndError={false}
+                                placeholder={_ts('entries', 'entryTypePlaceholder')}
+                                className={styles.leadsFilter}
+                            />
+                            {showEntryLabelFilters && (
+                                <>
+                                    <MultiSelectInput
+                                        faramElementName="project_entry_labels"
+                                        keySelector={optionIdSelector}
+                                        labelSelector={optionTitleSelector}
+                                        options={entryOptions?.projectEntryLabel}
+                                        label={_ts('entries', 'entryLabelsFilterLabel')}
+                                        showHintAndError={false}
+                                        placeholder={_ts('entries', 'entryLabelsFilterPlaceholder')}
+                                        className={styles.leadsFilter}
+                                    />
+                                    <SearchInput
+                                        faramElementName="lead_group_label"
+                                        label={_ts('entries', 'entryGroupsFilterLabel')}
+                                        placeholder={_ts('entries', 'entryGroupsFilterPlaceholder')}
+                                        showHintAndError={false}
+                                        className={styles.leadsFilter}
+                                    />
+                                </>
+                            )}
                         </div>
                     </div>
-                )}
-            </FaramGroup>
+                    { filteredFrameworkFilters.length > 0 && (
+                        <div className={styles.content}>
+                            <h4 className={styles.heading}>
+                                {_ts('entries', 'widgetsFiltersGroupTitle')}
+                            </h4>
+                            <div className={styles.filter}>
+                                <List
+                                    data={filteredFrameworkFilters}
+                                    keySelector={filterKeySelector}
+                                    renderer={FrameworkFilter}
+                                    rendererParams={frameworkFilterRendererParams}
+                                    rendererClassName={styles.leadsFilter}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </FaramGroup>
+            )}
             <div className={styles.actionButtons}>
                 <Button
                     className={styles.button}

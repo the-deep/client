@@ -20,8 +20,8 @@ interface Props {
     title: string;
     filterKey: string;
     filter: FilterFields['properties'];
-    geoOptions: unknown;
-    regions: unknown[];
+    geoOptions?: unknown;
+    regions?: unknown[];
 }
 
 function FrameworkFilter(props: Props) {

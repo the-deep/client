@@ -1,4 +1,5 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import produce from 'immer';
 import {
     compareString,
     compareNumber,
@@ -28,21 +29,21 @@ import { Header } from '#rscv/Table';
 import FilterForm from '../FilterForm';
 import styles from './styles.scss';
 
-interface SelectedLead extends Lead {
+export interface SelectedLead extends Lead {
     selected: boolean;
 }
 
 interface ComponentProps {
-    onSelectLeadChange: (key: number, selected: boolean) => void;
-    onSelectAllClick: (v: boolean) => void;
     pending?: boolean;
     projectId: number;
     filterOnlyUnprotected: boolean;
     className?: string;
-    entriesFilters: FilterFields[];
-    entriesWidgets: WidgetElement<unknown>[];
-    projectRegions: unknown[];
-    entriesGeoOptions: unknown;
+    entriesFilters?: FilterFields[];
+    entriesWidgets?: WidgetElement<unknown>[];
+    projectRegions?: unknown[];
+    entriesGeoOptions?: unknown;
+    hasAssessment?: boolean;
+    setSelectedLeads: (v: number[]) => void;
 }
 
 const leadKeyExtractor = (d: SelectedLead) => d.id;
@@ -52,13 +53,13 @@ function LeadsSelection(props: ComponentProps) {
     const {
         projectId,
         className,
-        onSelectAllClick,
-        onSelectLeadChange,
         filterOnlyUnprotected,
         entriesFilters,
         entriesWidgets,
         projectRegions,
         entriesGeoOptions,
+        hasAssessment,
+        setSelectedLeads,
     } = props;
 
     const [leads, setLeads] = useState<SelectedLead[]>([]);
@@ -68,14 +69,20 @@ function LeadsSelection(props: ComponentProps) {
     const [filterValues, onFilterChange] = useState<FaramValues>({});
 
     const sanitizedFilters = useMemo(() => {
-        const processedFilters = getFiltersForRequest(filterValues);
+        interface ProcessedFilters {
+            [key: string]: [string] | string;
+        }
+        const processedFilters: Partial<ProcessedFilters> = getFiltersForRequest(filterValues);
         // Unprotected filter is sent to request to fetch leads
         // if user cannot create export for confidential documents
+        if (hasAssessment) {
+            processedFilters.exists = 'assessment_exists';
+        }
         if (filterOnlyUnprotected) {
             processedFilters.confidentiality = ['unprotected'];
         }
         return processedFilters;
-    }, [filterOnlyUnprotected, filterValues]);
+    }, [filterOnlyUnprotected, filterValues, hasAssessment]);
 
     const leadsRequestBody = useMemo(() => ({
         custom_filters: 'exclude_empty_filtered_entries',
@@ -117,6 +124,29 @@ function LeadsSelection(props: ComponentProps) {
     const areSomeNotSelected = leads.some(l => !l.selected);
     const isDisabled = leads.length === 0;
 
+    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
+        setLeads((oldLeads) => {
+            const newLeads = produce(oldLeads, (safeLeads) => {
+                const index = safeLeads.findIndex(d => d.id === key);
+                if (index !== -1) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeLeads[index].selected = value;
+                }
+            });
+            return newLeads;
+        });
+    }, []);
+
+    const handleSelectAllLeads = useCallback((selectAll: boolean) => (
+        setLeads((oldLeads) => {
+            const newLeads = oldLeads.map(l => ({
+                ...l,
+                selected: selectAll,
+            }));
+            return newLeads;
+        })
+    ), []);
+
     const headers: Header<Lead>[] = useMemo(() => ([
         {
             key: 'select',
@@ -134,7 +164,7 @@ function LeadsSelection(props: ComponentProps) {
                         className={styles.selectAllCheckbox}
                         title={title}
                         iconName={icon}
-                        onClick={() => onSelectAllClick(areSomeNotSelected)}
+                        onClick={() => handleSelectAllLeads(areSomeNotSelected)}
                         smallVerticalPadding
                         transparent
                         disabled={isDisabled}
@@ -158,7 +188,7 @@ function LeadsSelection(props: ComponentProps) {
                     <AccentButton
                         title={title}
                         iconName={icon}
-                        onClick={() => onSelectLeadChange(key, !d.selected)}
+                        onClick={() => handleSelectLeadChange(key, !d.selected)}
                         smallVerticalPadding
                         transparent
                     />
@@ -225,8 +255,8 @@ function LeadsSelection(props: ComponentProps) {
             ),
         },
     ]), [
-        onSelectLeadChange,
-        onSelectAllClick,
+        handleSelectLeadChange,
+        handleSelectAllLeads,
         areSomeNotSelected,
         isDisabled,
     ]);
@@ -282,6 +312,10 @@ function LeadsSelection(props: ComponentProps) {
         }, [headers, activeSort, setActiveSort],
     );
 
+    useEffect(() => {
+        setSelectedLeads(leads.filter(v => v.selected).map(v => v.id));
+    }, [setSelectedLeads, leads]);
+
     return (
         <div className={_cs(className, styles.leadsTable)}>
             <FilterForm
@@ -293,6 +327,7 @@ function LeadsSelection(props: ComponentProps) {
                 geoOptions={entriesGeoOptions}
                 regions={projectRegions}
                 onChange={onFilterChange}
+                hasAssessment={hasAssessment}
             />
             <RawTable
                 data={leads}

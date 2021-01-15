@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import produce from 'immer';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import {
-    _cs,
-    listToMap,
-    isNotDefined,
-} from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 
 import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -21,8 +16,6 @@ import {
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
-    activeProjectRoleSelector,
-
     entryFilterOptionsForProjectSelector,
 } from '#redux';
 
@@ -114,7 +107,6 @@ const mapStateToProps = (state: AppState) => ({
     entriesFilters: entriesViewFilterSelector(state),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state),
     geoOptions: geoOptionsForProjectSelector(state),
-    projectRole: activeProjectRoleSelector(state),
     projectDetails: projectDetailsSelector(state),
 });
 
@@ -139,7 +131,9 @@ interface PropsFromState {
         projectEntryLabel: [];
     };
     geoOptions: unknown;
-    projectDetails: unknown;
+    projectDetails: {
+        regions: unknown[];
+    };
 }
 
 interface OwnProps {
@@ -173,10 +167,11 @@ function EntriesExportSelection(props: Props) {
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
-    const [leads, setLeads] = useState<SelectedLead[]>([]);
+    // const [leads, setLeads] = useState<SelectedLead[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
+    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
 
     const [
         showSourceSelect,
@@ -261,36 +256,9 @@ function EntriesExportSelection(props: Props) {
         setReportStructure(structure);
     }, [analysisFramework, reportStructureVariant, includeSubSector]);
 
-    const handleSelectLeadChange = useCallback((key: number, value: boolean) => (
-        setLeads((oldLeads) => {
-            const newLeads = produce(oldLeads, (safeLeads) => {
-                const index = safeLeads.findIndex(d => d.id === key);
-                if (index !== -1) {
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[index].selected = value;
-                }
-            });
-            return newLeads;
-        })
-    ), []);
-
-    const handleSelectAllLeads = useCallback((selectAll: boolean) => (
-        setLeads((oldLeads) => {
-            const newLeads = oldLeads.map(l => ({
-                ...l,
-                selected: selectAll,
-            }));
-            return newLeads;
-        })
-    ), []);
-
     const handleReportStructureVariantChange = useCallback((value: string) => {
         setReportStructureVariant(value);
     }, []);
-
-    const selectedLeads = useMemo(() =>
-        listToMap(leads, d => d.id, d => d.selected),
-    [leads]);
 
     const [
         exportPending,
@@ -346,10 +314,7 @@ function EntriesExportSelection(props: Props) {
 
         const otherFilters = {
             project: projectId,
-            lead: Object.entries(selectedLeads).reduce((acc: string[], [key, value]) => {
-                if (value) return [...acc, key];
-                return acc;
-            }, []),
+            lead: selectedLeads,
 
             export_type: exportType,
             // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
@@ -434,7 +399,7 @@ function EntriesExportSelection(props: Props) {
                 return false;
             });
         },
-        [widgets],
+        [widgets, pending],
     );
 
 
@@ -461,14 +426,13 @@ function EntriesExportSelection(props: Props) {
                         <LeadsSelection
                             className={styles.leadsTable}
                             projectId={projectId}
-                            onSelectLeadChange={handleSelectLeadChange}
-                            onSelectAllClick={handleSelectAllLeads}
                             filterOnlyUnprotected={filterOnlyUnprotected}
                             projectRegions={projectDetails.regions}
                             entriesFilters={filters}
                             entriesWidgets={widgets}
                             entriesGeoOptions={geoOptions}
                             pending={analysisFrameworkPending || geoOptionsPending}
+                            setSelectedLeads={setSelectedLeads}
                         />
                     )}
                 </section>

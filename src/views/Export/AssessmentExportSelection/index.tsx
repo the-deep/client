@@ -13,6 +13,8 @@ import useRequest from '#utils/request';
 import notify from '#notify';
 import _ts from '#ts';
 
+import LeadsSelection from '../ExportSelection/LeadsSelection';
+
 import styles from './styles.scss';
 
 const EXPORT_CLASS = {
@@ -34,6 +36,11 @@ const exportItems: ExportItem = {
 interface OwnProps {
     className?: string;
     projectId: number;
+    projectRole: {
+        exportPermissions?: {
+            'create_only_unprotected'?: boolean;
+        };
+    };
 }
 
 interface ExportTriggerResponse {
@@ -44,8 +51,11 @@ function AssessmentExportSelection(props: OwnProps) {
     const {
         className,
         projectId,
+        projectRole,
     } = props;
 
+    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
+    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [exportClass, setExportClass] = useState<string>();
     const [isPreview, setIsPreview] = useState<boolean>(false);
@@ -93,12 +103,9 @@ function AssessmentExportSelection(props: OwnProps) {
     const startExport = useCallback((preview: boolean, item: string) => {
         const otherFilters = {
             project: projectId,
-            /*
-            lead: Object.entries(selectedLeads).reduce((acc: string[], [key, value]) => {
-                if (value) return [...acc, key];
-                return acc;
-            }, []),
-            */
+
+            lead: selectedLeads,
+
 
             export_type: 'excel',
             // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
@@ -126,6 +133,7 @@ function AssessmentExportSelection(props: OwnProps) {
         setExportClass(newExportClass);
         getExport();
     }, [
+        selectedLeads,
         projectId,
         getExport,
     ]);
@@ -146,6 +154,13 @@ function AssessmentExportSelection(props: OwnProps) {
     return (
         <div className={_cs(className, styles.exportSelection)}>
             <div className={styles.leftContainer}>
+                <LeadsSelection
+                    className={styles.leadsTable}
+                    projectId={projectId}
+                    setSelectedLeads={setSelectedLeads}
+                    filterOnlyUnprotected={filterOnlyUnprotected}
+                    hasAssessment
+                />
                 <Cloak
                     {...viewsAcl.arys}
                     render={
