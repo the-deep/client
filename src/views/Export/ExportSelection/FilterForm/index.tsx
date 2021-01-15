@@ -29,6 +29,7 @@ import {
     FaramValues,
     FaramErrors,
 } from '#typings';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import FrameworkFilter from './FrameworkFilter';
 
@@ -193,6 +194,9 @@ function FilterForm(props: OwnProps) {
         autoTrigger: true,
         method: 'GET',
         schemaName: 'projectLeadFilterOptions',
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('export', 'leadOptions'))({ error: errorBody });
+        },
     });
 
     const [
@@ -206,6 +210,9 @@ function FilterForm(props: OwnProps) {
         },
         autoTrigger: true,
         method: 'GET',
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('export', 'entryOptions'))({ error: errorBody });
+        },
     });
 
     const {

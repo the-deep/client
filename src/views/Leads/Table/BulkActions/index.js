@@ -88,7 +88,7 @@ const BulkActions = (props) => {
     } = bulkLeadDeleteRequest;
 
     const entriesCount = useMemo(() => (
-        sum(selectedLeads.map(lead => lead?.noOfEntries).filter(isDefined))
+        sum(selectedLeads.map(lead => lead?.entriesCount).filter(isDefined))
     ), [selectedLeads]);
 
     const assessmentsCount = useMemo(() => (

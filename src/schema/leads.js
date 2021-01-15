@@ -33,7 +33,7 @@ const leadSchema = [];
             attachment: { type: 'object' }, // file url
             confidentiality: { type: 'string', required: true },
             confidentialityDisplay: { type: 'string' },
-            noOfEntries: { type: 'int' },
+            entriesCount: { type: 'int' },
             project: { type: 'uint' },
             publishedOn: { type: 'string' },
             sourceRaw: { type: 'string' },

@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import {
     compareString,
+    compareNumber,
     compareDate,
     _cs,
 } from '@togglecorp/fujs';
@@ -88,7 +89,7 @@ function LeadsSelection(props: ComponentProps) {
         url: 'server://v2/leads/filter/',
         method: 'POST',
         query: {
-            fields: ['id', 'title', 'created_at'],
+            fields: ['id', 'title', 'created_at', 'published_on', 'entries_count', 'source_detail', 'authors_detail'],
             project: projectId,
             ordering: activeSort,
             is_preview: false,
@@ -165,16 +166,9 @@ function LeadsSelection(props: ComponentProps) {
             },
         },
         {
-            key: 'title',
-            label: _ts('export', 'titleLabel'),
-            order: 2,
-            sortable: true,
-            comparator: (a: SelectedLead, b: SelectedLead) => compareString(a.title, b.title),
-        },
-        {
             key: 'createdAt',
             label: _ts('export', 'createdAtLabel'),
-            order: 3,
+            order: 2,
             sortable: true,
             comparator: (a: SelectedLead, b: SelectedLead) => (
                 compareDate(a.createdAt, b.createdAt) ||
@@ -185,6 +179,49 @@ function LeadsSelection(props: ComponentProps) {
                     value={row.createdAt}
                     mode="dd-MM-yyyy hh:mm"
                 />
+            ),
+        },
+        {
+            key: 'title',
+            label: _ts('export', 'titleLabel'),
+            order: 3,
+            sortable: true,
+            comparator: (a: SelectedLead, b: SelectedLead) => compareString(a.title, b.title),
+        },
+        {
+            key: 'sourceDetail',
+            label: _ts('export', 'sourceDetailLabel'),
+            order: 4,
+            sortable: true,
+            modifier: (a: SelectedLead) => a.sourceDetail.title,
+            comparator: (a: SelectedLead, b: SelectedLead) =>
+                compareString(a.sourceDetail.title, b.sourceDetail.title),
+        },
+        {
+            key: 'authorsDetail',
+            label: _ts('export', 'authoursDetailLabel'),
+            order: 5,
+            sortable: false,
+            modifier: (d: SelectedLead) => d.authorsDetail.map(a => a.title).join(', '),
+        },
+        {
+            key: 'publishedOn',
+            label: _ts('export', 'publishedOnLabel'),
+            order: 6,
+            sortable: true,
+            comparator: (a: SelectedLead, b: SelectedLead) => (
+                compareDate(a.publishedOn, b.publishedOn) ||
+                compareString(a.title, b.title)
+            ),
+        },
+        {
+            key: 'entriesCount',
+            label: _ts('export', 'entriesCountLabel'),
+            order: 7,
+            sortable: true,
+            comparator: (a: SelectedLead, b: SelectedLead) => (
+                compareNumber(a.entriesCount, b.entriesCount) ||
+                compareString(a.title, b.title)
             ),
         },
     ]), [
