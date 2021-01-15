@@ -46,8 +46,14 @@ function Register() {
         body: userData,
         onSuccess: () => {
             setSuccess(true);
+            if (recaptchaRef.current && recaptchaRef.current.reset) {
+                recaptchaRef.current.reset();
+            }
         },
         onFailure: (_, { errorCode, faramErrors: newFaramErrors }) => {
+            if (recaptchaRef.current && recaptchaRef.current.reset) {
+                recaptchaRef.current.reset();
+            }
             if (errorCode === 4004) {
                 setFaramErrors({
                     ...newFaramErrors,
@@ -127,7 +133,6 @@ function Register() {
                             componentRef={recaptchaRef}
                             faramElementName="recaptchaResponse"
                             siteKey={reCaptchaSiteKey}
-                            reset={registerPending}
                         />
                         <div className={styles.actionButtons}>
                             <PrimaryButton

@@ -97,6 +97,9 @@ function Login(props) {
             }
         },
         onFailure: (_, { errorCode, faramErrors: newFaramErrors }) => {
+            if (recaptchaRef.current && recaptchaRef.current.reset) {
+                recaptchaRef.current.reset();
+            }
             if (errorCode === 4004) {
                 setFaramErrors({
                     ...newFaramErrors,
@@ -110,9 +113,6 @@ function Login(props) {
             } else {
                 setFaramErrors(newFaramErrors);
                 setPending(false);
-            }
-            if (recaptchaRef.current && recaptchaRef.current.reset) {
-                recaptchaRef.current.reset();
             }
         },
         schemaName: 'tokenGetResponse',
