@@ -48,10 +48,18 @@ function ExportedFiles(props: Props) {
     const [exportCount, setExportCount] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<number>();
     const [deleteExportId, setDeleteExportId] = useState<number>();
+    const [cancelExportId, setCancelExportId] = useState<number>();
     const [archiveExportId, setArchiveExportId] = useState<number>();
     const [archiveStatus, setArchiveStatus] = useState<boolean>();
 
-    const status = useMemo(() => tabExportStatus[activeTab], [activeTab]);
+    const status = useMemo(() => (
+        activeTab === 'pending' ? (
+            ['started', 'pending']
+        ) : (
+            tabExportStatus[activeTab]
+        )
+    ), [activeTab]);
+
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
 
     const [
@@ -119,6 +127,40 @@ function ExportedFiles(props: Props) {
     });
 
     const [
+        cancelPending,
+        ,
+        ,
+        cancelExport,
+    ] = useRequest({
+        url: `server://exports/${cancelExportId}/cancel/`,
+        method: 'POST',
+        body: {},
+        onSuccess: () => {
+            getExport();
+            setExportCount(oldCount => oldCount - 1);
+            if (cancelExportId === selectedExport) {
+                setSelectedExport(undefined);
+            }
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('export', 'cancelExportSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        autoTrigger: false,
+        onFailure: () => {
+            notify.send({
+                title: _ts('export', 'userExportsTitle'),
+                type: notify.type.ERROR,
+                message: _ts('export', 'cancelExportFailure'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    });
+
+
+    const [
         archivePending,
         ,
         ,
@@ -158,6 +200,11 @@ function ExportedFiles(props: Props) {
         deleteExport();
     }, [deleteExport]);
 
+    const handleExportCancel = useCallback((id) => {
+        setCancelExportId(id);
+        cancelExport();
+    }, [cancelExport]);
+
     const handleExportArchive = useCallback((id, value) => {
         setArchiveStatus(value);
         setArchiveExportId(id);
@@ -181,6 +228,9 @@ function ExportedFiles(props: Props) {
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
                         setActiveSort={setActiveSort}
+                        cancelExportId={cancelExportId}
+                        handleExportCancel={handleExportCancel}
+                        cancelPending={cancelPending}
                     />
                 ),
                 lazyMount: true,
