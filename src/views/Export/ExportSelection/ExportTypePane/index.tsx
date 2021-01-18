@@ -8,7 +8,6 @@ import List from '#rscv/List';
 
 import {
     ExportType,
-    TreeSelectableWidget,
     ReportStructure,
 } from '#typings';
 
@@ -56,10 +55,6 @@ interface Props {
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
-    onContextualWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
-    onTextWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    textWidgets: TreeSelectableWidget<string | number>[];
 }
 
 const reportStructureOptions: ReportStructureOption[] = [
@@ -101,22 +96,18 @@ const reportVariantKeySelector = (d: ReportStructureOption) => d.key;
 const reportVariantLabelSelector = (d: ReportStructureOption) => d.label;
 
 interface RenderWordProps {
-    reportStructure?: ReportStructure[];
-    contextualWidgets: TreeSelectableWidget<string | number>[];
-    textWidgets: TreeSelectableWidget<string | number>[];
     entryFilterOptions: {
         projectEntryLabel: [];
     };
-    reportStructureVariant: string;
-    showGroups: boolean;
-    onShowGroupsChange: (show: boolean) => void;
-    onReportStructureChange: (reports: ReportStructure[]) => void;
-    onContextualWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
-    onTextWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
-    onReportStructureVariantChange: (variant: string) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
+    onReportStructureChange: (reports: ReportStructure[]) => void;
+    onReportStructureVariantChange: (variant: string) => void;
+    onShowGroupsChange: (show: boolean) => void;
+    reportStructure?: ReportStructure[];
+    reportStructureVariant: string;
+    showGroups: boolean;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -242,11 +233,7 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
         reportStructure,
         reportStructureVariant,
         onReportStructureChange,
-        onContextualWidgetsChange,
-        onTextWidgetsChange,
         onReportStructureVariantChange,
-        contextualWidgets,
-        textWidgets,
         showGroups,
         onShowGroupsChange,
         decoupledEntries,
@@ -263,19 +250,15 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
             return (
                 <RenderWordPdfOptions
                     entryFilterOptions={entryFilterOptions}
-                    reportStructure={reportStructure}
-                    reportStructureVariant={reportStructureVariant}
-                    onReportStructureChange={onReportStructureChange}
-                    onContextualWidgetsChange={onContextualWidgetsChange}
-                    onTextWidgetsChange={onTextWidgetsChange}
-                    onReportStructureVariantChange={onReportStructureVariantChange}
-                    contextualWidgets={contextualWidgets}
-                    textWidgets={textWidgets}
-                    showGroups={showGroups}
-                    onShowGroupsChange={onShowGroupsChange}
                     includeSubSector={includeSubSector}
                     onIncludeSubSectorChange={onIncludeSubSectorChange}
+                    onReportStructureChange={onReportStructureChange}
+                    onReportStructureVariantChange={onReportStructureVariantChange}
+                    onShowGroupsChange={onShowGroupsChange}
                     showMatrix2dOptions={showMatrix2dOptions}
+                    reportStructure={reportStructure}
+                    reportStructureVariant={reportStructureVariant}
+                    showGroups={showGroups}
                 />
             );
         case 'excel':
@@ -301,11 +284,7 @@ function ExportTypePane(props: Props) {
         reportStructure,
         reportStructureVariant,
         onReportStructureChange,
-        onContextualWidgetsChange,
-        onTextWidgetsChange,
         onReportStructureVariantChange,
-        contextualWidgets,
-        textWidgets,
         showGroups,
         onShowGroupsChange,
         decoupledEntries,
@@ -348,11 +327,7 @@ function ExportTypePane(props: Props) {
                 reportStructure={reportStructure}
                 reportStructureVariant={reportStructureVariant}
                 onReportStructureChange={onReportStructureChange}
-                onContextualWidgetsChange={onContextualWidgetsChange}
-                onTextWidgetsChange={onTextWidgetsChange}
                 onReportStructureVariantChange={onReportStructureVariantChange}
-                contextualWidgets={contextualWidgets}
-                textWidgets={textWidgets}
                 showGroups={showGroups}
                 onShowGroupsChange={onShowGroupsChange}
                 decoupledEntries={decoupledEntries}
