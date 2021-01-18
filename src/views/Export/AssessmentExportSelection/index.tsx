@@ -13,7 +13,7 @@ import useRequest from '#utils/request';
 import notify from '#notify';
 import _ts from '#ts';
 
-import LeadsSelection from '../ExportSelection/LeadsSelection';
+import LeadsSelection from '../LeadsSelection';
 
 import styles from './styles.scss';
 

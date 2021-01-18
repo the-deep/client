@@ -26,7 +26,7 @@ import {
 import { notifyOnFailure } from '#utils/requestNotify';
 import { Header } from '#rscv/Table';
 
-import FilterForm from '../FilterForm';
+import FilterForm from './FilterForm';
 import styles from './styles.scss';
 
 export interface SelectedLead extends Lead {
@@ -70,7 +70,12 @@ function LeadsSelection(props: ComponentProps) {
 
     const sanitizedFilters = useMemo(() => {
         interface ProcessedFilters {
-            [key: string]: [string] | string;
+            'entries_filter': {
+                [key: string]: string | [string];
+            };
+            [key: string]: [string] | string | {
+                [key: string]: string | [string];
+            };
         }
         const processedFilters: Partial<ProcessedFilters> = getFiltersForRequest(filterValues);
         // Unprotected filter is sent to request to fetch leads
@@ -81,7 +86,14 @@ function LeadsSelection(props: ComponentProps) {
         if (filterOnlyUnprotected) {
             processedFilters.confidentiality = ['unprotected'];
         }
-        return processedFilters;
+        const {
+            entries_filter: entriesFilter,
+            ...others
+        } = processedFilters;
+        if (entriesFilter) {
+            return { ...others, entries_filter: Object.entries(entriesFilter) };
+        }
+        return { ...others };
     }, [filterOnlyUnprotected, filterValues, hasAssessment]);
 
     const leadsRequestBody = useMemo(() => ({
@@ -223,16 +235,17 @@ function LeadsSelection(props: ComponentProps) {
             label: _ts('export', 'sourceDetailLabel'),
             order: 4,
             sortable: true,
-            modifier: (a: SelectedLead) => a.sourceDetail.title,
+            modifier: (a: SelectedLead) => a?.sourceDetail?.title,
             comparator: (a: SelectedLead, b: SelectedLead) =>
-                compareString(a.sourceDetail.title, b.sourceDetail.title),
+                compareString(a?.sourceDetail?.title, b?.sourceDetail?.title) ||
+                compareString(a.title, b.title),
         },
         {
             key: 'authorsDetail',
             label: _ts('export', 'authoursDetailLabel'),
             order: 5,
             sortable: false,
-            modifier: (d: SelectedLead) => d.authorsDetail.map(a => a.title).join(', '),
+            modifier: (d: SelectedLead) => d?.authorsDetail.map(a => a.title).join(', '),
         },
         {
             key: 'publishedOn',

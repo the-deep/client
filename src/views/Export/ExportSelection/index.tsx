@@ -41,8 +41,8 @@ import {
     ReportStructure,
 } from '#typings';
 
-import LeadsSelection from './LeadsSelection';
-import ExportTypePane from '../ExportTypePane';
+import LeadsSelection from '../LeadsSelection';
+import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.scss';
 

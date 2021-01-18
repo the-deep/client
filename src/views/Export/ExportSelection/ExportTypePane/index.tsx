@@ -56,6 +56,10 @@ interface Props {
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
     showMatrix2dOptions: boolean;
+    onContextualWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
+    onTextWidgetsChange: (widgets: TreeSelectableWidget<string | number>[]) => void;
+    contextualWidgets: TreeSelectableWidget<string | number>[];
+    textWidgets: TreeSelectableWidget<string | number>[];
 }
 
 const reportStructureOptions: ReportStructureOption[] = [
