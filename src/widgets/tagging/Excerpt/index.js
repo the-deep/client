@@ -125,6 +125,7 @@ export default class Excerpt extends React.PureComponent {
         const {
             type,
             data,
+            imageDetails,
         } = formattedData;
 
         const {
@@ -147,12 +148,14 @@ export default class Excerpt extends React.PureComponent {
                 type,
                 value: data,
                 dropped: true,
+                imageDetails,
             });
         } else {
             onExcerptChange({
                 type,
                 value: data,
                 dropped: true,
+                imageDetails,
             });
         }
 
@@ -185,12 +188,16 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderExcerptImage = () => {
-        const { image } = this.props;
+        const {
+            image,
+            imageDetails,
+            imageRaw,
+        } = this.props;
 
         return (
             <Image
                 className={_cs(styles.image, 'image')}
-                src={image}
+                src={imageDetails?.file || imageRaw}
                 alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
                 zoomable
                 expandable

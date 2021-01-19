@@ -33,7 +33,7 @@ const entrySchema = [];
         fields: {
             analysisFramework: { type: 'uint', required: true },
 
-            image: { type: 'string' },
+            image: { type: 'number' },
             excerpt: { type: 'string' },
             tabularField: { type: 'number' },
 
