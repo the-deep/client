@@ -55,6 +55,7 @@ interface Props {
     onDecoupledEntriesChange: (value: boolean) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
+    showRowColumnSelection: boolean;
 }
 
 const reportStructureOptions: ReportStructureOption[] = [
@@ -111,6 +112,7 @@ interface RenderWordProps {
     onReportStructureVariantChange: (variant: string) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
+    showRowColumnSelection: boolean;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -124,6 +126,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         showGroups,
         includeSubSector,
         onIncludeSubSectorChange,
+        showRowColumnSelection,
     } = props;
 
     if (!reportStructure) {
@@ -152,14 +155,17 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                         value={includeSubSector}
                         onChange={onIncludeSubSectorChange}
                     />
-                    <SegmentInput
-                        label={_ts('export', 'orderMatrix2D')}
-                        keySelector={reportVariantKeySelector}
-                        labelSelector={reportVariantLabelSelector}
-                        value={reportStructureVariant}
-                        onChange={onReportStructureVariantChange}
-                        options={reportStructureOptions}
-                    />
+                    {console.warn('row column', showRowColumnSelection)}
+                    {showRowColumnSelection &&
+                        <SegmentInput
+                            label={_ts('export', 'orderMatrix2D')}
+                            keySelector={reportVariantKeySelector}
+                            labelSelector={reportVariantLabelSelector}
+                            value={reportStructureVariant}
+                            onChange={onReportStructureVariantChange}
+                            options={reportStructureOptions}
+                        />
+                    }
                 </div>
                 <TreeSelection
                     className={styles.right}
@@ -239,6 +245,7 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
         entryFilterOptions,
         includeSubSector,
         onIncludeSubSectorChange,
+        showRowColumnSelection,
     } = props;
 
     switch (activeExportTypeKey) {
@@ -259,6 +266,7 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
                     onShowGroupsChange={onShowGroupsChange}
                     includeSubSector={includeSubSector}
                     onIncludeSubSectorChange={onIncludeSubSectorChange}
+                    showRowColumnSelection={showRowColumnSelection}
                 />
             );
         case 'excel':
@@ -296,6 +304,7 @@ function ExportTypePane(props: Props) {
         entryFilterOptions,
         includeSubSector,
         onIncludeSubSectorChange,
+        showRowColumnSelection,
     } = props;
 
     const exportTypeRendererParams = useCallback((key: ExportType, data: ExportTypeItem) => {
@@ -341,6 +350,7 @@ function ExportTypePane(props: Props) {
                 onDecoupledEntriesChange={onDecoupledEntriesChange}
                 includeSubSector={includeSubSector}
                 onIncludeSubSectorChange={onIncludeSubSectorChange}
+                showRowColumnSelection={showRowColumnSelection}
             />
         </section>
     );

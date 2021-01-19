@@ -161,6 +161,16 @@ function EntriesExportSelection(props: Props) {
         widgets,
     } = analysisFramework;
 
+    console.warn('widgets', widgets);
+    const showRowColumnSelection = useMemo(
+        () => {
+            const isMatrix2dPresent = widgets.some(w => w.widgetId === 'matrix2dWidget');
+            return (isMatrix2dPresent);
+        },
+        [widgets],
+    );
+    console.warn('Rowcolumn', showRowColumnSelection);
+
     const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
@@ -479,6 +489,7 @@ function EntriesExportSelection(props: Props) {
                             onDecoupledEntriesChange={setDecoupledEntries}
                             onIncludeSubSectorChange={setIncludeSubSector}
                             includeSubSector={includeSubSector}
+                            showRowColumnSelection={showRowColumnSelection}
                         />
                     )}
                 </section>
