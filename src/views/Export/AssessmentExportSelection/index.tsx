@@ -2,17 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import ExportPreview from '#components/other/ExportPreview';
-import Cloak from '#components/general/Cloak';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-
-import {
-    viewsAcl,
-} from '#constants';
 
 import useRequest from '#utils/request';
 import notify from '#notify';
 import _ts from '#ts';
-
+import {
+    WidgetElement,
+} from '#typings';
 import LeadsSelection from '../LeadsSelection';
 
 import styles from './styles.scss';

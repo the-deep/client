@@ -182,7 +182,7 @@ function FilterForm(props: OwnProps) {
             ...f,
             widgetId: widgetsMap[f.widgetKey],
         }));
-        return filtersWithId ? [...filtersWithId] : [];
+        return filtersWithId ?? [];
     }, [entriesWidgets, entriesFilters]);
 
     const frameworkFilterRendererParams = useCallback((key, data) => ({
@@ -199,7 +199,6 @@ function FilterForm(props: OwnProps) {
     const [
         leadOptionsPending,
         leadOptions,
-        ,
     ] = useRequest<LeadOptions>({
         url: 'server://lead-options/',
         query: {
@@ -216,7 +215,6 @@ function FilterForm(props: OwnProps) {
     const [
         entryOptionsPending,
         entryOptions,
-        ,
     ] = useRequest<EntryOptions>({
         url: 'server://entry-options/',
         query: {
@@ -242,19 +240,15 @@ function FilterForm(props: OwnProps) {
     } = leadOptions || {};
 
     const isFilterEmpty = useMemo(() => {
-        let isFilterEmptyValue;
-
         if (filterOnlyUnprotected) {
             const newFilter = {
                 ...faramValues,
                 confidentiality: undefined,
             };
 
-            isFilterEmptyValue = doesObjectHaveNoData(newFilter, ['']);
-        } else {
-            isFilterEmptyValue = doesObjectHaveNoData(faramValues, ['']);
+            return doesObjectHaveNoData(newFilter, ['']);
         }
-        return isFilterEmptyValue;
+        return doesObjectHaveNoData(faramValues, ['']);
     }, [faramValues, filterOnlyUnprotected]);
 
     const isClearDisabled = isFilterEmpty && pristine;
