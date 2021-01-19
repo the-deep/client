@@ -7,7 +7,14 @@ import {
 } from '@togglecorp/fujs';
 import produce from 'immer';
 
-import { applyDiff, entryAccessor, createEntry, createEntryGroup, entryGroupAccessor } from '#entities/editEntries';
+import {
+    applyDiff,
+    entryAccessor,
+    createEntry,
+    createEntryGroup,
+    entryGroupAccessor,
+} from '#entities/editEntries';
+
 import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
@@ -124,11 +131,17 @@ export const editEntriesFormatAllEntriesAction = ({ leadId, modifiable }) => ({
     modifiable,
 });
 
-export const editEntriesAddEntryAction = ({ leadId, entry, dropped }) => ({
+export const editEntriesAddEntryAction = ({
+    leadId,
+    entry,
+    dropped,
+    imageDetails,
+}) => ({
     type: EEB__ADD_ENTRY,
     leadId,
     entry,
     dropped,
+    imageDetails,
 });
 
 export const editEntriesRemoveEntryAction = ({ leadId, key }) => ({
@@ -660,7 +673,12 @@ const resetEntryExcerpt = (state, action) => {
 };
 
 const addEntry = (state, action) => {
-    const { entry, leadId, dropped } = action;
+    const {
+        entry,
+        leadId,
+        dropped,
+        imageDetails,
+    } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -691,10 +709,12 @@ const addEntry = (state, action) => {
         entryType: excerptType,
         excerpt: excerptType === 'excerpt' ? excerptValue : undefined,
         droppedExcerpt: excerptType === 'excerpt' && dropped ? excerptValue : undefined,
-        image: excerptType === 'image' ? excerptValue : undefined,
+        imageRaw: (excerptType === 'image' && !dropped) ? excerptValue : undefined,
+        leadImage: (excerptType === 'image' && dropped) ? excerptValue : undefined,
         tabularField: excerptType === 'dataSeries' ? excerptValue : undefined,
         lead: leadId,
         order: maxEntryOrder + 1,
+        imageDetails,
     };
 
     // Get random key for new entry
