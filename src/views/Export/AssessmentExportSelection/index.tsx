@@ -156,43 +156,46 @@ function AssessmentExportSelection(props: OwnProps) {
     return (
         <div className={_cs(className, styles.exportSelection)}>
             <div className={styles.leftContainer}>
-                <LeadsSelection
-                    className={styles.leadsTable}
-                    projectId={projectId}
-                    setSelectedLeads={setSelectedLeads}
-                    filterOnlyUnprotected={filterOnlyUnprotected}
-                    hasAssessment
-                />
-                <Cloak
-                    {...viewsAcl.arys}
-                    render={
-                        <PrimaryButton
-                            className={styles.button}
-                            onClick={handleAssessmentExportClick}
-                            disabled={exportPending}
-                            pending={
-                                exportPending && exportClass === EXPORT_CLASS.assessmentExport
-                            }
-                        >
-                            {_ts('export', 'startAssessmentExportButtonLabel')}
-                        </PrimaryButton>
-                    }
-                />
-                <Cloak
-                    {...viewsAcl.arys}
-                    render={
-                        <PrimaryButton
-                            className={styles.button}
-                            onClick={handlePlannedAssessmentExportClick}
-                            disabled={exportPending}
-                            pending={
-                                exportPending && exportClass === EXPORT_CLASS.assessmentExport
-                            }
-                        >
-                            {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
-                        </PrimaryButton>
-                    }
-                />
+                <section className={styles.section}>
+                    <header className={styles.sectionHeader}>
+                        <h3 className={styles.heading}>
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectLeadsSectionHeading')}
+                            </span>
+                        </h3>
+                    </header>
+                    <div className={styles.sectionBody}>
+                        <LeadsSelection
+                            className={styles.leadsTable}
+                            projectId={projectId}
+                            setSelectedLeads={setSelectedLeads}
+                            filterOnlyUnprotected={filterOnlyUnprotected}
+                            hasAssessment
+                        />
+                    </div>
+                </section>
+                <div className={styles.footer}>
+                    <PrimaryButton
+                        className={styles.button}
+                        onClick={handleAssessmentExportClick}
+                        disabled={exportPending}
+                        pending={
+                            exportPending && exportClass === EXPORT_CLASS.assessmentExport
+                        }
+                    >
+                        {_ts('export', 'startAssessmentExportButtonLabel')}
+                    </PrimaryButton>
+                    <PrimaryButton
+                        className={styles.button}
+                        onClick={handlePlannedAssessmentExportClick}
+                        disabled={exportPending}
+                        pending={
+                            exportPending && exportClass === EXPORT_CLASS.assessmentExport
+                        }
+                    >
+                        {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
+                    </PrimaryButton>
+                </div>
             </div>
             <ExportPreview
                 className={styles.preview}

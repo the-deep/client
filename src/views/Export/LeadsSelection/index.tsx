@@ -109,7 +109,16 @@ function LeadsSelection(props: ComponentProps) {
         url: 'server://v2/leads/filter/',
         method: 'POST',
         query: {
-            fields: ['id', 'title', 'created_at', 'published_on', 'entries_count', 'source_detail', 'authors_detail'],
+            fields: [
+                'id',
+                'title',
+                'created_at',
+                'published_on',
+                'entries_count',
+                'filtered_entries_count',
+                'source_detail',
+                'authors_detail',
+            ],
             project: projectId,
             ordering: activeSort,
             is_preview: false,
@@ -259,7 +268,7 @@ function LeadsSelection(props: ComponentProps) {
             ),
         },
         {
-            key: 'entriesCount',
+            key: 'filteredEntriesCount',
             label: _ts('export', 'entriesCountLabel'),
             order: 7,
             sortable: true,

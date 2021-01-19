@@ -1249,7 +1249,8 @@
         "-19712331": "Original Date",
         "-12317797": "No of entries",
         "-87971232": "Lead Options",
-        "-79121234": "Entry Options"
+        "-79121234": "Entry Options",
+        "-77388797": "Select leads"
     },
     "links": {
         "browserExtension": {
@@ -1833,7 +1834,8 @@
             "publishedOnLabel": -19712331,
             "entriesCountLabel": -12317797,
             "leadOptions": -87971232,
-            "entryOptions": -79121234
+            "entryOptions": -79121234,
+            "selectLeadsSectionHeading": -77388797
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

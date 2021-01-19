@@ -410,7 +410,7 @@ function Table(props) {
                 ),
             },
             {
-                key: 'no_of_entries',
+                key: 'entries_count',
                 order: 13,
                 defaultSortOrder: 'dsc',
                 modifier: (row) => {
