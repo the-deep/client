@@ -11,7 +11,6 @@ import {
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
-import List from '#rscv/List';
 import Pager from '#rscv/Pager';
 import Badge from '#components/viewer/Badge';
 import RawTable from '#rscv/RawTable';
@@ -262,7 +261,7 @@ export default class DiscoverProjects extends React.PureComponent {
         switch (columnKey) {
             case 'title': {
                 return (
-                    <div className={styles.projectTitle} >
+                    <div>
                         {project.title}
                         {project.isPrivate &&
                             <Badge
@@ -273,21 +272,6 @@ export default class DiscoverProjects extends React.PureComponent {
                             />
                         }
                     </div>
-                );
-            }
-            case 'admins': {
-                const adminsList = project.memberships.filter(d => d.memberStatus === 'admin');
-                const rendererParams = (key, admin) => ({ admin });
-                const EmptyComponent = () => '-';
-
-                return (
-                    <List
-                        data={adminsList}
-                        keySelector={DiscoverProjects.membershipKeySelector}
-                        renderer={Admin}
-                        rendererParams={rendererParams}
-                        emptyComponent={EmptyComponent}
-                    />
                 );
             }
             case 'created_at':
@@ -329,8 +313,6 @@ export default class DiscoverProjects extends React.PureComponent {
                         precision={0}
                     />
                 );
-            case 'number_of_projects':
-                return project.memberships.length;
             case 'regions':
                 return project.regions.map(d => d.title).join(', ') || '-';
             case 'leads_activity':
