@@ -255,7 +255,7 @@ export default class Entry extends React.PureComponent {
             entry: {
                 entryType,
                 excerpt,
-                image,
+                imageDetails,
                 tabularField,
                 tabularFieldData,
             },
@@ -273,7 +273,7 @@ export default class Entry extends React.PureComponent {
 
                     entryType={entryType}
                     excerpt={excerpt}
-                    image={image}
+                    imageDetails={imageDetails}
                     tabularField={tabularField}
                     tabularFieldData={tabularFieldData}
                 />

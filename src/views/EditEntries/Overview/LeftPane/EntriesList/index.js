@@ -54,8 +54,11 @@ export default class EntriesList extends React.PureComponent {
 
         const entryData = entryAccessor.data(entry);
 
+        const imageDetails = entryAccessor.imageDetails(entry);
+
         const {
             entryType,
+            imageRaw,
             image,
             excerpt,
             order,
@@ -74,6 +77,8 @@ export default class EntriesList extends React.PureComponent {
             entryServerId: currentEntryServerId,
             entryType,
             image,
+            imageRaw,
+            imageDetails,
             excerpt,
             order,
             tabularField,

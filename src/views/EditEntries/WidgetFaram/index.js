@@ -462,9 +462,11 @@ function WidgetFaram(props) {
             droppedExcerpt,
             image,
             tabularField: tabularFieldFromEntry,
+            imageRaw,
         } = entryAccessor.data(entry) || {};
 
         const highlightHidden = entryAccessor.isHighlightHidden(entry);
+        const imageDetails = entryAccessor.imageDetails(entry);
 
         let widgetProps = {
             widgetName: widgetId,
@@ -482,6 +484,8 @@ function WidgetFaram(props) {
                 droppedExcerpt,
                 image,
                 tabularField: tabularFieldFromEntry,
+                imageRaw,
+                imageDetails,
                 tabularFieldData: tabularData,
                 entryState,
                 onEntryStateChange,
@@ -497,6 +501,7 @@ function WidgetFaram(props) {
                 onExcerptChange: handleExcerptChange,
                 onExcerptCreate: handleExcerptCreate,
                 onExcerptReset: handleExcerptReset,
+                imageDetails,
             };
         }
 

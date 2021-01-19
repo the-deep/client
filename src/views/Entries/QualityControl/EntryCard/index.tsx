@@ -52,12 +52,14 @@ interface AuthorListOutputProps {
     value: OrganizationFields[];
 }
 
-const entryTypeToValueMap: {
-    [key in EntryType]: 'excerpt' | 'image' | 'tabularFieldData';
-} = {
-    excerpt: 'excerpt',
-    image: 'image',
-    dataSeries: 'tabularFieldData',
+const getEntryValue = (entry: Entry, entryType: EntryType) => {
+    if (entryType === 'image') {
+        return entry.imageDetails?.file;
+    }
+    if (entryType === 'dataSeries') {
+        return entry.tabularFieldData;
+    }
+    return entry.excerpt;
 };
 
 const entryTypeToExcerptTypeMap: {
@@ -285,7 +287,7 @@ function EntryCard(props: EntryCardProps) {
                         <ExcerptOutput
                             className={styles.excerptOutput}
                             type={entryTypeToExcerptTypeMap[entry.entryType]}
-                            value={entry[entryTypeToValueMap[entry.entryType]]}
+                            value={getEntryValue(entry, entry.entryType)}
                         />
                     </div>
                 </section>

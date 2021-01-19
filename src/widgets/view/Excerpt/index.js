@@ -7,14 +7,14 @@ const propTypes = {
     className: PropTypes.string,
     entryType: PropTypes.string.isRequired,
     excerpt: PropTypes.string,
-    image: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     excerpt: '',
-    image: '',
+    imageDetails: undefined,
     tabularFieldData: undefined,
 };
 
@@ -37,7 +37,7 @@ export default class ExcerptWidget extends React.PureComponent {
             className,
             entryType,
             excerpt,
-            image,
+            imageDetails,
             tabularFieldData,
         } = this.props;
 
@@ -47,7 +47,7 @@ export default class ExcerptWidget extends React.PureComponent {
                 value = excerpt;
                 break;
             case IMAGE:
-                value = image;
+                value = imageDetails?.file;
                 break;
             case DATA_SERIES:
                 value = tabularFieldData;
