@@ -27,7 +27,7 @@ export interface GridLayoutElement {
 }
 
 export interface WidgetPropertiesElement<T> {
-    data: T;
+    data?: T;
     addedFrom: 'overview' | 'list';
     listGridLayout: GridLayoutElement;
     overviewGridLayout: GridLayoutElement;
@@ -86,10 +86,11 @@ export interface Matrix2dDimensionElement extends Matrix2dCellElement {
     subdimensions: Matrix2dSubdimensionElement[];
 }
 
-export type Matrix2dWidgetElement = WidgetElement<{
+export type Matrix2dWidgetData = {
     sectors: Matrix2dSectorElement[];
     dimensions: Matrix2dDimensionElement[];
-}>;
+}
+export type Matrix2dWidgetElement = WidgetElement<Matrix2dWidgetData>;
 
 
 export interface ExportableFields {

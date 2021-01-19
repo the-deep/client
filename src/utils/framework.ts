@@ -1,22 +1,23 @@
 import { isDefined, compareString } from '@togglecorp/fujs';
 import _ts from '#ts';
 import {
-    FrameworkFields,
-    MiniFrameworkElement,
-    Matrix2dWidgetElement,
-    Matrix2dFlatSectorElement,
-    Matrix2dFlatSubsectorElement,
-    Matrix2dFlatDimensionElement,
-    Matrix2dFlatSubdimensionElement,
-    Matrix1dWidgetElement,
-    MatrixTocElement,
-    ScaleWidget,
-    WidgetElement,
     ConditionalWidget,
     Entry,
-    TocCountMap,
+    FrameworkFields,
     Level,
+    Matrix1dWidgetElement,
+    Matrix2dFlatDimensionElement,
+    Matrix2dFlatSectorElement,
+    Matrix2dFlatSubdimensionElement,
+    Matrix2dFlatSubsectorElement,
+    Matrix2dWidgetData,
+    Matrix2dWidgetElement,
+    MatrixTocElement,
+    MiniFrameworkElement,
     ReportStructure,
+    ScaleWidget,
+    TocCountMap,
+    WidgetElement,
 } from '#typings';
 
 import { breadcrumb } from '#utils/safeCommon';
@@ -33,7 +34,7 @@ const transformLevelsDimensionFirst = (
     {
         dimensions: widgetDim,
         sectors: widgetSec,
-    }: Matrix2dWidgetElement['properties']['data'],
+    }: Matrix2dWidgetData,
     includeSubSector: boolean,
 ) => {
     const dimensionFirstLevels = widgetDim.map((d) => {
@@ -73,7 +74,7 @@ const transformLevelsDimensionFirst = (
 const transformLevelsSectorFirst = ({
     dimensions: widgetDim,
     sectors: widgetSec,
-}: Matrix2dWidgetElement['properties']['data']) => {
+}: Matrix2dWidgetData) => {
     const sectorFirstLevels = widgetSec.map((s) => {
         const { subsectors } = s;
         let sublevels: Level[] = [];
@@ -185,10 +186,10 @@ export const createReportStructure = (
         }
 
         if (widget.widgetId === 'matrix2dWidget' && reportStructureVariant === DIMENSION_FIRST) {
-            if (!widget.properties) {
+            const data = (widget as Matrix2dWidgetElement).properties?.data;
+            if (!data) {
                 return;
             }
-            const { properties: { data } } = widget as Matrix2dWidgetElement;
             const newLevels = transformLevelsDimensionFirst(data, includeSubSector);
             nodes.push({
                 title: widget.title,
@@ -198,10 +199,10 @@ export const createReportStructure = (
                 nodes: mapReportLevelsToNodes(newLevels),
             });
         } else if (includeSubSector && widget.widgetId === 'matrix2dWidget' && reportStructureVariant === SECTOR_FIRST) {
-            if (!widget.properties) {
+            const data = (widget as Matrix2dWidgetElement).properties?.data;
+            if (!data) {
                 return;
             }
-            const { properties: { data } } = widget as Matrix2dWidgetElement;
             const newLevels = transformLevelsSectorFirst(data);
             nodes.push({
                 title: widget.title,
@@ -547,9 +548,9 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
         .filter(w => w.widgetId === 'scaleWidget')
         .map((w) => {
             const attributeData = entry.attributes[w.id];
-            const { properties: { data: { scaleUnits } } } = w as WidgetElement<ScaleWidget>;
+            const { properties: { data } } = w as WidgetElement<ScaleWidget>;
             if (isWidgetData(attributeData)) {
-                const value = scaleUnits.find(v => v.key === attributeData.data.value);
+                const value = data?.scaleUnits.find(v => v.key === attributeData.data.value);
                 return value;
             }
             return undefined;
@@ -559,10 +560,11 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
     const scaleWidgetsInsideConditionals = widgets
         .filter(w => w.widgetId === 'conditionalWidget')
         .map((conditional) => {
-            const { id } = conditional;
             const {
-                widgets: widgetsInsideConditional = [],
-            } = (conditional as WidgetElement<ConditionalWidget>).properties.data;
+                properties,
+                id,
+            } = conditional as WidgetElement<ConditionalWidget>;
+            const widgetsInsideConditional = properties?.data?.widgets ?? [];
 
             return widgetsInsideConditional
                 .filter(w => w.widget && w.widget.widgetId === 'scaleWidget')
@@ -579,13 +581,14 @@ export function getScaleWidgetsData(framework: FrameworkFields, entry: Entry) {
                     if (attributeData && isWidgetData(attributeData)) {
                         const {
                             properties: {
-                                data: {
-                                    scaleUnits,
-                                },
+                                data: widgetData,
                             },
                         } = widget as WidgetElement<ScaleWidget>;
 
-                        return scaleUnits.find(v => v.key === attributeData.data.value);
+                        if (widgetData?.scaleUnits) {
+                            const { scaleUnits } = widgetData;
+                            return scaleUnits.find(v => v.key === attributeData.data.value);
+                        }
                     }
                     return undefined;
                 });
@@ -617,13 +620,11 @@ export function getTextWidgetsFromFramework(framework: FrameworkFields) {
         .filter(w => w.widgetId === 'conditionalWidget')
         .map((conditional) => {
             const {
+                properties,
                 title,
                 id,
-            } = conditional;
-
-            const {
-                widgets: widgetsInsideConditional = [],
-            } = ((conditional as WidgetElement<ConditionalWidget>).properties.data || {});
+            } = conditional as WidgetElement<ConditionalWidget>;
+            const widgetsInsideConditional = properties?.data?.widgets ?? [];
 
             return widgetsInsideConditional
                 .filter(w => w.widget && w.widget.widgetId === 'textWidget')
@@ -666,12 +667,11 @@ export function getContextualWidgetsFromFramework(framework: FrameworkFields) {
         .filter(w => w.widgetId === 'conditionalWidget')
         .map((conditional) => {
             const {
+                properties,
                 title,
                 id,
-            } = conditional;
-            const {
-                widgets: widgetsInsideConditional = [],
-            } = ((conditional as WidgetElement<ConditionalWidget>).properties.data || {});
+            } = conditional as WidgetElement<ConditionalWidget>;
+            const widgetsInsideConditional = properties?.data?.widgets ?? [];
 
             return widgetsInsideConditional
                 .filter(w => w.widget && isContextualWidget(w.widget.widgetId))
