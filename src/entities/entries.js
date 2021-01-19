@@ -10,7 +10,7 @@ import { getDateWithTimezone } from '#utils/common';
 // TODO: move this somewhere else
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
-const toDays = (date) => {
+export const toDays = (date) => {
     if (!date) {
         return undefined;
     }
@@ -18,7 +18,7 @@ const toDays = (date) => {
     return Math.round(new Date(date).getTime() / ONE_DAY);
 };
 
-const totMinutes = (time) => {
+export const totMinutes = (time) => {
     if (!time) {
         return undefined;
     }

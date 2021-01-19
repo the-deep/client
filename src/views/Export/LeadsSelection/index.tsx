@@ -12,7 +12,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import RawTable from '#rscv/RawTable';
 import Pager from '#rscv/Pager';
 import TableHeader from '#rscv/TableHeader';
-import { getFiltersForRequest } from '#entities/lead';
+import { getCombinedLeadFilters } from '#entities/lead';
 import useRequest from '#utils/request';
 
 import _ts from '#ts';
@@ -22,6 +22,7 @@ import {
     MultiResponse,
     WidgetElement,
     FaramValues,
+    GeoOptions,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 import { Header } from '#rscv/Table';
@@ -41,7 +42,7 @@ interface ComponentProps {
     entriesFilters?: FilterFields[];
     entriesWidgets?: WidgetElement<unknown>[];
     projectRegions?: unknown[];
-    entriesGeoOptions?: unknown;
+    entriesGeoOptions?: GeoOptions;
     hasAssessment?: boolean;
     setSelectedLeads: (v: number[]) => void;
 }
@@ -70,14 +71,14 @@ function LeadsSelection(props: ComponentProps) {
 
     const sanitizedFilters = useMemo(() => {
         interface ProcessedFilters {
-            'entries_filter': {
-                [key: string]: string | [string];
-            };
-            [key: string]: [string] | string | {
-                [key: string]: string | [string];
-            };
+            'entries_filter': ([string] | string)[];
+            [key: string]: [string] | string | ([string] | string)[];
         }
-        const processedFilters: Partial<ProcessedFilters> = getFiltersForRequest(filterValues);
+        const processedFilters: ProcessedFilters = getCombinedLeadFilters(
+            filterValues,
+            entriesWidgets,
+            entriesGeoOptions,
+        );
         // Unprotected filter is sent to request to fetch leads
         // if user cannot create export for confidential documents
         if (hasAssessment) {
@@ -86,15 +87,15 @@ function LeadsSelection(props: ComponentProps) {
         if (filterOnlyUnprotected) {
             processedFilters.confidentiality = ['unprotected'];
         }
-        const {
-            entries_filter: entriesFilter,
-            ...others
-        } = processedFilters;
-        if (entriesFilter) {
-            return { ...others, entries_filter: Object.entries(entriesFilter) };
-        }
-        return { ...others };
-    }, [filterOnlyUnprotected, filterValues, hasAssessment]);
+
+        return processedFilters;
+    }, [
+        filterOnlyUnprotected,
+        filterValues,
+        hasAssessment,
+        entriesGeoOptions,
+        entriesWidgets,
+    ]);
 
     const leadsRequestBody = useMemo(() => ({
         custom_filters: 'exclude_empty_filtered_entries',

@@ -39,6 +39,7 @@ import {
     ExportType,
     TreeSelectableWidget,
     ReportStructure,
+    GeoOptions,
 } from '#typings';
 
 import LeadsSelection from '../LeadsSelection';
@@ -120,23 +121,23 @@ export interface SelectedLead extends Lead {
 }
 
 interface PropsFromState {
-    projectRole: {
-        exportPermissions?: {
-            'create_only_unprotected'?: boolean;
-        };
-    };
     analysisFramework: FrameworkFields;
     entriesFilters: unknown;
     entryFilterOptions: {
         projectEntryLabel: [];
     };
-    geoOptions: unknown;
+    geoOptions: GeoOptions;
     projectDetails: {
         regions: unknown[];
     };
 }
 
 interface OwnProps {
+    projectRole: {
+        exportPermissions?: {
+            'create_only_unprotected'?: boolean;
+        };
+    };
     projectId: number;
 }
 

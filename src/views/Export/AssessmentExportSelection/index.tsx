@@ -41,6 +41,8 @@ interface OwnProps {
             'create_only_unprotected'?: boolean;
         };
     };
+    entriesWidgets?: WidgetElement<unknown>[];
+    entriesGeoOptions?: unknown;
 }
 
 interface ExportTriggerResponse {
