@@ -1241,7 +1241,8 @@
         "-78055212": "Are you sure you want to cancel this export?",
         "-18293311": "Failed to cancel export.",
         "-2707814": "Successfully cancelled export.",
-        "-40624719": "Generating the file"
+        "-40624719": "Generating the file",
+        "-14317189": "Rejected"
     },
     "links": {
         "browserExtension": {
@@ -1279,7 +1280,8 @@
             "numberOfEntries": -66570762,
             "numberOfLeads": -43947547,
             "emptyWithFilterMessage": -7027140,
-            "emptyMessage": -5727164
+            "emptyMessage": -5727164,
+            "rejectedLabel": -14317189
         },
         "discoverProjects.filter": {
             "status": 8,

@@ -132,9 +132,7 @@ function JoinProjectModal(props: Props) {
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <DangerButton
-                        onClick={closeModal}
-                    >
+                    <DangerButton onClick={closeModal}>
                         {_ts('discoverProjects.joinProject', 'cancel')}
                     </DangerButton>
                     <PrimaryButton

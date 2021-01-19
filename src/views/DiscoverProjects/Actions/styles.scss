@@ -1,22 +1,5 @@
-
-%base {
+.edit-link {
     display: inline-block;
     padding: var(--spacing-extra-small) var(--spacing-small);
-}
-
-%link {
-    @extend %base;
     color: var(--color-text-label);
 }
-
-.edit-link {
-    @extend %link;
-}
-
-.email-link {
-    @extend %link;
-}
-
-
-
-
