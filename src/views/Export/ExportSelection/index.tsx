@@ -2,7 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { _cs, listToMap } from '@togglecorp/fujs';
+import {
+    _cs,
+    listToMap,
+    isNotDefined,
+} from '@togglecorp/fujs';
 
 import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -412,6 +416,27 @@ function EntriesExportSelection(props: Props) {
     const showTextWidgetSelection = textWidgets.length > 0;
     const showContextualWidgetSelection = contextualWidgets.length > 0;
 
+    const showMatrix2dOptions = useMemo(
+        () => {
+            if (pending || isNotDefined(widgets)) {
+                return false;
+            }
+            return widgets.some((widget) => {
+                if (widget.widgetId === 'matrix2dWidget') {
+                    return true;
+                }
+                if (widget.widgetId === 'conditionalWidget') {
+                    const widgetsList = (widget.properties?.data?.widgets || [])
+                        .map(w => w?.widget);
+                    return widgetsList.some(w => w?.widgetId === 'matrix2dWidget');
+                }
+                return false;
+            });
+        },
+        [widgets],
+    );
+
+
     return (
         <div className={styles.export}>
             <div className={styles.left} >
@@ -479,6 +504,7 @@ function EntriesExportSelection(props: Props) {
                             onDecoupledEntriesChange={setDecoupledEntries}
                             onIncludeSubSectorChange={setIncludeSubSector}
                             includeSubSector={includeSubSector}
+                            showMatrix2dOptions={showMatrix2dOptions}
                         />
                     )}
                 </section>
