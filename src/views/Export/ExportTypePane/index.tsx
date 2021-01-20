@@ -55,7 +55,7 @@ interface Props {
     onDecoupledEntriesChange: (value: boolean) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
-    showRowColumnSelection: boolean;
+    showMatrix2dOptions: boolean;
 }
 
 const reportStructureOptions: ReportStructureOption[] = [
@@ -112,7 +112,7 @@ interface RenderWordProps {
     onReportStructureVariantChange: (variant: string) => void;
     includeSubSector: boolean;
     onIncludeSubSectorChange: (value: boolean) => void;
-    showRowColumnSelection: boolean;
+    showMatrix2dOptions: boolean;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -126,7 +126,7 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         showGroups,
         includeSubSector,
         onIncludeSubSectorChange,
-        showRowColumnSelection,
+        showMatrix2dOptions,
     } = props;
 
     if (!reportStructure) {
@@ -144,19 +144,18 @@ function RenderWordPdfOptions(props: RenderWordProps) {
     return (
         <>
             <div className={styles.reportStructure}>
-                <div className={styles.leftContainer}>
-                    <h4 className={styles.heading}>
-                        { _ts('export', 'reportStructureLabel')}
-                    </h4>
-                    <Checkbox
-                        className={styles.includeSubSector}
-                        key="checkbox"
-                        label={_ts('export', 'includeSubSector')}
-                        value={includeSubSector}
-                        onChange={onIncludeSubSectorChange}
-                    />
-                    {console.warn('row column', showRowColumnSelection)}
-                    {showRowColumnSelection &&
+                {showMatrix2dOptions && (
+                    <div className={styles.leftContainer}>
+                        <h4 className={styles.heading}>
+                            { _ts('export', 'reportStructureLabel')}
+                        </h4>
+                        <Checkbox
+                            className={styles.includeSubSector}
+                            key="checkbox"
+                            label={_ts('export', 'includeSubSector')}
+                            value={includeSubSector}
+                            onChange={onIncludeSubSectorChange}
+                        />
                         <SegmentInput
                             label={_ts('export', 'orderMatrix2D')}
                             keySelector={reportVariantKeySelector}
@@ -165,14 +164,20 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                             onChange={onReportStructureVariantChange}
                             options={reportStructureOptions}
                         />
-                    }
+                    </div>
+                )}
+                <div className={styles.right}>
+                    {!showMatrix2dOptions && (
+                        <h4 className={styles.heading}>
+                            { _ts('export', 'reportStructureLabel')}
+                        </h4>
+                    )}
+                    <TreeSelection
+                        label={_ts('export', 'structureLabel')}
+                        value={reportStructure}
+                        onChange={onReportStructureChange}
+                    />
                 </div>
-                <TreeSelection
-                    className={styles.right}
-                    label={_ts('export', 'structureLabel')}
-                    value={reportStructure}
-                    onChange={onReportStructureChange}
-                />
             </div>
             {showEntryGroupsSelection && (
                 <div className={styles.contentSettings}>
@@ -245,7 +250,7 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
         entryFilterOptions,
         includeSubSector,
         onIncludeSubSectorChange,
-        showRowColumnSelection,
+        showMatrix2dOptions,
     } = props;
 
     switch (activeExportTypeKey) {
@@ -266,7 +271,7 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
                     onShowGroupsChange={onShowGroupsChange}
                     includeSubSector={includeSubSector}
                     onIncludeSubSectorChange={onIncludeSubSectorChange}
-                    showRowColumnSelection={showRowColumnSelection}
+                    showMatrix2dOptions={showMatrix2dOptions}
                 />
             );
         case 'excel':
@@ -304,7 +309,7 @@ function ExportTypePane(props: Props) {
         entryFilterOptions,
         includeSubSector,
         onIncludeSubSectorChange,
-        showRowColumnSelection,
+        showMatrix2dOptions,
     } = props;
 
     const exportTypeRendererParams = useCallback((key: ExportType, data: ExportTypeItem) => {
@@ -350,7 +355,7 @@ function ExportTypePane(props: Props) {
                 onDecoupledEntriesChange={onDecoupledEntriesChange}
                 includeSubSector={includeSubSector}
                 onIncludeSubSectorChange={onIncludeSubSectorChange}
-                showRowColumnSelection={showRowColumnSelection}
+                showMatrix2dOptions={showMatrix2dOptions}
             />
         </section>
     );
