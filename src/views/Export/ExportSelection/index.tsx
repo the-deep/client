@@ -40,6 +40,8 @@ import {
     TreeSelectableWidget,
     ReportStructure,
     GeoOptions,
+    WidgetElement,
+    ConditionalWidget,
 } from '#typings';
 
 import LeadsSelection from '../LeadsSelection';
@@ -405,12 +407,13 @@ function EntriesExportSelection(props: Props) {
             if (pending || isNotDefined(widgets)) {
                 return false;
             }
-            return widgets.some((widget) => {
+            return widgets.some((widget: WidgetElement<unknown>) => {
                 if (widget.widgetId === 'matrix2dWidget') {
                     return true;
                 }
                 if (widget.widgetId === 'conditionalWidget') {
-                    const widgetsList = (widget.properties?.data?.widgets || [])
+                    const { properties: { data } } = widget as WidgetElement<ConditionalWidget>;
+                    const widgetsList = (data?.widgets || [])
                         .map(w => w?.widget);
                     return widgetsList.some(w => w?.widgetId === 'matrix2dWidget');
                 }

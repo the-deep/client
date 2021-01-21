@@ -275,17 +275,20 @@ function ExportedFiles(props: Props) {
             },
         }
     ), [
-        pending,
-        selectedExport,
-        userExports,
         activeSort,
+        archiveExportId,
+        archivePending,
+        cancelExportId,
+        cancelPending,
         deleteExportId,
         deletePending,
-        handleExportDelete,
-        archivePending,
-        archiveExportId,
         handleExportArchive,
+        handleExportCancel,
+        handleExportDelete,
         isArchived,
+        selectedExport,
+        userExports,
+        pending,
     ]);
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({

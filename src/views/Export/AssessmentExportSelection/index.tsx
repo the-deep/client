@@ -179,7 +179,6 @@ function AssessmentExportSelection(props: OwnProps) {
                     </header>
                     <div className={styles.sectionBody}>
                         <LeadsSelection
-                            className={styles.leadsTable}
                             projectId={projectId}
                             filterOnlyUnprotected={filterOnlyUnprotected}
                             selectedLeads={selectedLeads}
