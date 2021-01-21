@@ -386,20 +386,6 @@ function EntriesExportSelection(props: Props) {
         startExport(true);
     }, [setPreviewId, startExport]);
 
-    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
-        if (value) {
-            setSelectedLeads([...selectedLeads, key]);
-        } else {
-            setSelectedLeads(selectedLeads.filter(v => v !== key));
-        }
-    }, [selectedLeads]);
-
-    const handleSelectAllChange = useCallback(() => {
-        setSelectAll(v => !v);
-        setSelectedLeads([]);
-    },
-    []);
-
     const pending = analysisFrameworkPending || geoOptionsPending;
     const showTextWidgetSelection = textWidgets.length > 0;
     const showContextualWidgetSelection = contextualWidgets.length > 0;
@@ -415,7 +401,7 @@ function EntriesExportSelection(props: Props) {
                 }
                 if (widget.widgetId === 'conditionalWidget') {
                     const { properties: { data } } = widget as WidgetElement<ConditionalWidget>;
-                    const widgetsList = (data?.widgets || [])
+                    const widgetsList = (data?.widgets ?? [])
                         .map(w => w?.widget);
                     return widgetsList.some(w => w?.widgetId === 'matrix2dWidget');
                 }
@@ -456,9 +442,9 @@ function EntriesExportSelection(props: Props) {
                             entriesGeoOptions={geoOptions}
                             pending={analysisFrameworkPending || geoOptionsPending}
                             selectedLeads={selectedLeads}
-                            onSelectLeadChange={handleSelectLeadChange}
+                            onSelectLeadChange={setSelectedLeads}
                             selectAll={selectAll}
-                            onSelectAllChange={handleSelectAllChange}
+                            onSelectAllChange={setSelectAll}
                             filterValues={filterValues}
                             handleFilterValuesChange={onFilterChange}
                         />

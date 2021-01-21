@@ -40,10 +40,10 @@ interface ComponentProps {
     projectRegions?: unknown[];
     entriesGeoOptions?: GeoOptions;
     hasAssessment?: boolean;
-    onSelectLeadChange: (v: number, value: boolean) => void;
+    onSelectLeadChange: (values: number[]) => void;
     selectedLeads: number[];
     selectAll: boolean;
-    onSelectAllChange: () => void;
+    onSelectAllChange: (v: boolean) => void;
     filterValues: FaramValues;
     handleFilterValuesChange: (filter: FaramValues) => void;
 }
@@ -138,6 +138,19 @@ function LeadsSelection(props: ComponentProps) {
 
     const isDisabled = leadsResponse?.results.length === 0;
 
+    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
+        if (value) {
+            onSelectLeadChange([...selectedLeads, key]);
+        } else {
+            onSelectLeadChange(selectedLeads.filter(v => v !== key));
+        }
+    }, [onSelectLeadChange, selectedLeads]);
+
+    const handleSelectAllChange = useCallback(() => {
+        onSelectAllChange(!selectAll);
+        onSelectLeadChange([]);
+    }, [onSelectAllChange, onSelectLeadChange, selectAll]);
+
     const headers: Header<Lead>[] = useMemo(() => ([
         {
             key: 'select',
@@ -171,7 +184,7 @@ function LeadsSelection(props: ComponentProps) {
                     <AccentButton
                         title={title}
                         iconName={icon}
-                        onClick={() => onSelectLeadChange(key, !isSelected)}
+                        onClick={() => handleSelectLeadChange(key, !isSelected)}
                         smallVerticalPadding
                         transparent
                     />
@@ -239,7 +252,7 @@ function LeadsSelection(props: ComponentProps) {
             ),
         },
     ]), [
-        onSelectLeadChange,
+        handleSelectLeadChange,
         selectedLeads,
         selectAll,
     ]);
@@ -275,7 +288,7 @@ function LeadsSelection(props: ComponentProps) {
                     className={styles.selectAllCheckbox}
                     title={title}
                     iconName={icon}
-                    onClick={onSelectAllChange}
+                    onClick={handleSelectAllChange}
                     smallVerticalPadding
                     transparent
                     disabled={isDisabled}
@@ -289,7 +302,7 @@ function LeadsSelection(props: ComponentProps) {
                 sortable={headerData.sortable}
             />
         );
-    }, [activeSort, onSelectAllChange, isDisabled, selectAll]);
+    }, [activeSort, handleSelectAllChange, isDisabled, selectAll]);
 
     const handleTableHeaderClick = useCallback(
         (key) => {
@@ -330,14 +343,14 @@ function LeadsSelection(props: ComponentProps) {
                 hasAssessment={hasAssessment}
             />
             <RawTable
-                data={leadsResponse?.results || []}
+                data={leadsResponse?.results ?? []}
                 dataModifier={dataModifier}
                 headerModifier={headerModifier}
                 headers={headers}
                 onHeaderClick={handleTableHeaderClick}
                 keySelector={leadKeyExtractor}
                 className={styles.table}
-                pending={pending && (leadsResponse?.results || []).length < 1}
+                pending={pending && (leadsResponse?.results ?? []).length < 1}
             />
             <Pager
                 activePage={activePage}

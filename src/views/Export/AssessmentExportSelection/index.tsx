@@ -164,19 +164,6 @@ function AssessmentExportSelection(props: OwnProps) {
         startExport(true, exportItems.assessment);
     }, [startExport]);
 
-    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
-        if (value) {
-            setSelectedLeads([...selectedLeads, key]);
-        } else {
-            setSelectedLeads(selectedLeads.filter(v => v !== key));
-        }
-    }, [selectedLeads]);
-
-    const handleSelectAllChange = useCallback(() => {
-        setSelectAll(v => !v);
-        setSelectedLeads([]);
-    }, []);
-
     return (
         <div className={_cs(className, styles.exportSelection)}>
             <div className={styles.leftContainer}>
@@ -193,9 +180,9 @@ function AssessmentExportSelection(props: OwnProps) {
                             projectId={projectId}
                             filterOnlyUnprotected={filterOnlyUnprotected}
                             selectedLeads={selectedLeads}
-                            onSelectLeadChange={handleSelectLeadChange}
+                            onSelectLeadChange={setSelectedLeads}
                             selectAll={selectAll}
-                            onSelectAllChange={handleSelectAllChange}
+                            onSelectAllChange={setSelectAll}
                             filterValues={filterValues}
                             handleFilterValuesChange={onFilterChange}
                             hasAssessment

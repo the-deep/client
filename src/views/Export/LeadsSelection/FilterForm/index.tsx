@@ -240,17 +240,11 @@ function FilterForm(props: OwnProps) {
         hasEmmLeads,
     } = leadOptions || {};
 
-    const isFilterEmpty = useMemo(() => {
-        if (filterOnlyUnprotected) {
-            const newFilter = {
-                ...faramValues,
-                confidentiality: undefined,
-            };
-
-            return doesObjectHaveNoData(newFilter, ['']);
-        }
-        return doesObjectHaveNoData(faramValues, ['']);
-    }, [faramValues, filterOnlyUnprotected]);
+    const isFilterEmpty = useMemo(() => (
+        doesObjectHaveNoData(filterOnlyUnprotected
+            ? { ...faramValues, confidentiality: undefined }
+            : faramValues, [''])
+    ), [faramValues, filterOnlyUnprotected]);
 
     const isClearDisabled = isFilterEmpty && pristine;
 

@@ -121,60 +121,56 @@ const getEntryFilters = (filter, widgets, geoOptions) => {
 
         const widgetFilterKey = entryFilterKey.replace(/-(dimensions|sectors)$/, '');
         const widget = widgetsMapping[widgetFilterKey];
-        if (widget) {
-            const { widgetId } = widget;
-            switch (widgetId) {
-                case 'dateWidget': {
-                    const { startDate, endDate } = entryFilterOptions;
-                    entriesFilter.push([
-                        `${entryFilterKey}__gt`,
-                        toDays(startDate),
-                    ]);
-                    entriesFilter.push([
-                        `${entryFilterKey}__lt`,
-                        toDays(endDate),
-                    ]);
-                    break;
-                }
-                case 'timeWidget': {
-                    const { startTime, endTime } = entryFilterOptions;
-                    entriesFilter.push([
-                        `${entryFilterKey}__gt`,
-                        totMinutes(startTime),
-                    ]);
-                    entriesFilter.push([
-                        `${entryFilterKey}__lt`,
-                        totMinutes(endTime),
-                    ]);
-                    break;
-                }
-                case 'geoWidget': {
-                    const { areas, includeSubRegions } = entryFilterOptions;
-
-                    let options = areas;
-                    if (includeSubRegions) {
-                        let newOptions = new Set(areas);
-                        newOptions.forEach((option) => {
-                            const treeNode = treeMap[option];
-                            if (!treeNode) {
-                                return;
-                            }
-                            newOptions = union(
-                                newOptions,
-                                new Set(Object.values(treeNode.children)),
-                            );
-                        });
-                        options = [...newOptions];
-                    }
-                    entriesFilter.push([entryFilterKey, options]);
-                    break;
-                }
-                default:
-                    entriesFilter.push([entryFilterKey, entryFilterOptions]);
-                    break;
+        const widgetId = widget?.widgetId;
+        switch (widgetId) {
+            case 'dateWidget': {
+                const { startDate, endDate } = entryFilterOptions;
+                entriesFilter.push([
+                    `${entryFilterKey}__gt`,
+                    toDays(startDate),
+                ]);
+                entriesFilter.push([
+                    `${entryFilterKey}__lt`,
+                    toDays(endDate),
+                ]);
+                break;
             }
-        } else {
-            entriesFilter.push([entryFilterKey, entryFilterOptions]);
+            case 'timeWidget': {
+                const { startTime, endTime } = entryFilterOptions;
+                entriesFilter.push([
+                    `${entryFilterKey}__gt`,
+                    totMinutes(startTime),
+                ]);
+                entriesFilter.push([
+                    `${entryFilterKey}__lt`,
+                    totMinutes(endTime),
+                ]);
+                break;
+            }
+            case 'geoWidget': {
+                const { areas, includeSubRegions } = entryFilterOptions;
+
+                let options = areas;
+                if (includeSubRegions) {
+                    let newOptions = new Set(areas);
+                    newOptions.forEach((option) => {
+                        const treeNode = treeMap[option];
+                        if (!treeNode) {
+                            return;
+                        }
+                        newOptions = union(
+                            newOptions,
+                            new Set(Object.values(treeNode.children)),
+                        );
+                    });
+                    options = [...newOptions];
+                }
+                entriesFilter.push([entryFilterKey, options]);
+                break;
+            }
+            default:
+                entriesFilter.push([entryFilterKey, entryFilterOptions]);
+                break;
         }
     });
 
