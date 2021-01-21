@@ -10,6 +10,10 @@ import _ts from '#ts';
 import {
     WidgetElement,
 } from '#typings';
+
+import { getCombinedLeadFilters } from '#entities/lead';
+
+import { FaramValues } from '../ExportSelection';
 import LeadsSelection from '../LeadsSelection';
 
 import styles from './styles.scss';
@@ -58,14 +62,14 @@ function AssessmentExportSelection(props: OwnProps) {
     const [exportClass, setExportClass] = useState<string>();
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [exportItem, setExportItem] = useState<string>();
-    const [filters, setFilters] = useState<unknown>();
+    const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
-
+    const [filterValues, onFilterChange] = useState<FaramValues>({});
 
     useEffect(() => {
         setPreviewId(undefined);
-    }, [projectId, setPreviewId]);
+    }, [projectId]);
 
     const [
         exportPending,
@@ -75,7 +79,7 @@ function AssessmentExportSelection(props: OwnProps) {
     ] = useRequest<ExportTriggerResponse>({
         url: 'server://export-trigger/',
         method: 'POST',
-        body: { filters },
+        body: { filtersToExport },
         onSuccess: (response) => {
             if (isPreview) {
                 setPreviewId(response.exportTriggered);
@@ -119,9 +123,15 @@ function AssessmentExportSelection(props: OwnProps) {
             is_preview: preview,
         };
 
-        const newFilters = [...Object.entries(otherFilters)];
+        const processedFilters = getCombinedLeadFilters(
+            filterValues,
+        );
+        const newFilters = [
+            ...Object.entries(otherFilters),
+            ...Object.entries(processedFilters),
+        ];
 
-        setFilters(newFilters);
+        setFiltersToExport(newFilters);
         setIsPreview(preview);
         setExportItem(item);
 
@@ -138,6 +148,7 @@ function AssessmentExportSelection(props: OwnProps) {
         selectedLeads,
         projectId,
         getExport,
+        filterValues,
     ]);
 
     const handleAssessmentExportClick = useCallback(() => {
@@ -185,6 +196,8 @@ function AssessmentExportSelection(props: OwnProps) {
                             onSelectLeadChange={handleSelectLeadChange}
                             selectAll={selectAll}
                             onSelectAllChange={handleSelectAllChange}
+                            filterValues={filterValues}
+                            handleFilterValuesChange={onFilterChange}
                             hasAssessment
                         />
                     </div>

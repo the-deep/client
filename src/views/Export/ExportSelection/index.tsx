@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { _cs, isNotDefined } from '@togglecorp/fujs';
 
-import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TreeSelection from '#rsci/TreeSelection';
 import Button from '#rsca/Button';
@@ -11,7 +10,6 @@ import ExportPreview from '#components/other/ExportPreview';
 
 import {
     projectDetailsSelector,
-    entriesViewFilterSelector,
     analysisFrameworkForProjectSelector,
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -44,10 +42,13 @@ import {
     ConditionalWidget,
 } from '#typings';
 
+import { getCombinedLeadFilters } from '#entities/lead';
+
 import LeadsSelection from '../LeadsSelection';
 import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.scss';
+
 
 interface ExportReportStructure {
     id: string;
@@ -107,7 +108,6 @@ interface ExportTriggerResponse {
 
 const mapStateToProps = (state: AppState) => ({
     analysisFramework: analysisFrameworkForProjectSelector(state),
-    entriesFilters: entriesViewFilterSelector(state),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state),
     geoOptions: geoOptionsForProjectSelector(state),
     projectDetails: projectDetailsSelector(state),
@@ -122,9 +122,12 @@ export interface SelectedLead extends Lead {
     selected: boolean;
 }
 
+export interface FaramValues {
+    [key: string]: string | string[] | FaramValues;
+}
+
 interface PropsFromState {
     analysisFramework: FrameworkFields;
-    entriesFilters: unknown;
     entryFilterOptions: {
         projectEntryLabel: [];
     };
@@ -148,7 +151,6 @@ type Props = OwnProps &PropsFromState & PropsFromDispatch;
 function EntriesExportSelection(props: Props) {
     const {
         analysisFramework,
-        entriesFilters,
         projectId,
         geoOptions,
         entryFilterOptions,
@@ -170,12 +172,12 @@ function EntriesExportSelection(props: Props) {
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
-    // const [leads, setLeads] = useState<SelectedLead[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
+    const [filterValues, onFilterChange] = useState<FaramValues>({});
 
     const [
         showSourceSelect,
@@ -344,15 +346,15 @@ function EntriesExportSelection(props: Props) {
             exporting_widgets: contextualWidgetIds,
         };
 
-        const processedFilters = processEntryFilters(
-            entriesFilters,
-            analysisFramework,
+        const processedFilters = getCombinedLeadFilters(
+            filterValues,
+            widgets,
             geoOptions,
         );
 
         const newFilters = [
             ...Object.entries(otherFilters),
-            ...processedFilters,
+            ...Object.entries(processedFilters),
         ];
 
         setFiltersToExport(newFilters);
@@ -362,10 +364,8 @@ function EntriesExportSelection(props: Props) {
     }, [
         selectAll,
         activeExportTypeKey,
-        analysisFramework,
         contextualWidgets,
         decoupledEntries,
-        entriesFilters,
         geoOptions,
         projectId,
         reportStructure,
@@ -373,6 +373,8 @@ function EntriesExportSelection(props: Props) {
         showGroups,
         textWidgets,
         getExport,
+        filterValues,
+        widgets,
     ]);
 
     const handleEntryExport = useCallback(() => {
@@ -457,6 +459,8 @@ function EntriesExportSelection(props: Props) {
                             onSelectLeadChange={handleSelectLeadChange}
                             selectAll={selectAll}
                             onSelectAllChange={handleSelectAllChange}
+                            filterValues={filterValues}
+                            handleFilterValuesChange={onFilterChange}
                         />
                     )}
                 </section>

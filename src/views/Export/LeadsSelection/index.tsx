@@ -26,6 +26,7 @@ import {
 import { notifyOnFailure } from '#utils/requestNotify';
 import { Header } from '#rscv/Table';
 
+import { FaramValues } from '../ExportSelection';
 import FilterForm from './FilterForm';
 import styles from './styles.scss';
 
@@ -43,14 +44,12 @@ interface ComponentProps {
     selectedLeads: number[];
     selectAll: boolean;
     onSelectAllChange: () => void;
+    filterValues: FaramValues;
+    handleFilterValuesChange: (filter: FaramValues) => void;
 }
 
 const leadKeyExtractor = (d: Lead) => d.id;
 const maxItemsPerPage = 10;
-
-export interface FaramValues {
-    [key: string]: string | string[] | FaramValues;
-}
 
 function LeadsSelection(props: ComponentProps) {
     const {
@@ -66,11 +65,12 @@ function LeadsSelection(props: ComponentProps) {
         onSelectLeadChange,
         selectAll,
         onSelectAllChange,
+        filterValues,
+        handleFilterValuesChange,
     } = props;
 
     const [activeSort, setActiveSort] = useState<string>('-created_at');
     const [activePage, setActivePage] = useState<number>(1);
-    const [filterValues, onFilterChange] = useState<FaramValues>({});
 
     const sanitizedFilters = useMemo(() => {
         interface ProcessedFilters {
@@ -326,7 +326,7 @@ function LeadsSelection(props: ComponentProps) {
                 entriesWidgets={entriesWidgets}
                 geoOptions={entriesGeoOptions}
                 regions={projectRegions}
-                onChange={onFilterChange}
+                onChange={handleFilterValuesChange}
                 hasAssessment={hasAssessment}
             />
             <RawTable

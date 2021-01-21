@@ -32,7 +32,7 @@ import { notifyOnFailure } from '#utils/requestNotify';
 
 import FrameworkFilter from './FrameworkFilter';
 
-import { FaramValues } from '../index';
+import { FaramValues } from '../../ExportSelection';
 import styles from './styles.scss';
 
 const emptyList: EmmEntity[] = [];
