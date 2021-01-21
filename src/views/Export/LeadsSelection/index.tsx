@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
-import produce from 'immer';
+import React, { useCallback, useState, useMemo } from 'react';
+
 import {
     compareString,
     compareNumber,
@@ -21,7 +21,6 @@ import {
     Lead,
     MultiResponse,
     WidgetElement,
-    FaramValues,
     GeoOptions,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -29,10 +28,6 @@ import { Header } from '#rscv/Table';
 
 import FilterForm from './FilterForm';
 import styles from './styles.scss';
-
-export interface SelectedLead extends Lead {
-    selected: boolean;
-}
 
 interface ComponentProps {
     pending?: boolean;
@@ -44,11 +39,18 @@ interface ComponentProps {
     projectRegions?: unknown[];
     entriesGeoOptions?: GeoOptions;
     hasAssessment?: boolean;
-    setSelectedLeads: (v: number[]) => void;
+    onSelectLeadChange: (v: number, value: boolean) => void;
+    selectedLeads: number[];
+    selectAll: boolean;
+    onSelectAllChange: () => void;
 }
 
-const leadKeyExtractor = (d: SelectedLead) => d.id;
+const leadKeyExtractor = (d: Lead) => d.id;
 const maxItemsPerPage = 10;
+
+export interface FaramValues {
+    [key: string]: string | string[] | FaramValues;
+}
 
 function LeadsSelection(props: ComponentProps) {
     const {
@@ -60,11 +62,12 @@ function LeadsSelection(props: ComponentProps) {
         projectRegions,
         entriesGeoOptions,
         hasAssessment,
-        setSelectedLeads,
+        selectedLeads,
+        onSelectLeadChange,
+        selectAll,
+        onSelectAllChange,
     } = props;
 
-    const [leads, setLeads] = useState<SelectedLead[]>([]);
-    const [leadsCount, setLeadsCount] = useState<number>(0);
     const [activeSort, setActiveSort] = useState<string>('-created_at');
     const [activePage, setActivePage] = useState<number>(1);
     const [filterValues, onFilterChange] = useState<FaramValues>({});
@@ -105,6 +108,7 @@ function LeadsSelection(props: ComponentProps) {
 
     const [
         pending,
+        leadsResponse,
     ] = useRequest<MultiResponse<Lead>>({
         url: 'server://v2/leads/filter/',
         method: 'POST',
@@ -127,90 +131,47 @@ function LeadsSelection(props: ComponentProps) {
         },
         autoTrigger: true,
         body: leadsRequestBody,
-        onSuccess: (response) => {
-            const newLeads: SelectedLead[] = [];
-            (response.results || []).forEach((l) => {
-                newLeads.push({
-                    selected: true,
-                    ...l,
-                });
-            });
-            setLeadsCount(response.count);
-            setLeads(newLeads);
-        },
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
         },
     });
 
-    const areSomeNotSelected = leads.some(l => !l.selected);
-    const isDisabled = leads.length === 0;
-
-    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
-        setLeads((oldLeads) => {
-            const newLeads = produce(oldLeads, (safeLeads) => {
-                const index = safeLeads.findIndex(d => d.id === key);
-                if (index !== -1) {
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[index].selected = value;
-                }
-            });
-            return newLeads;
-        });
-    }, []);
-
-    const handleSelectAllLeads = useCallback((selectAll: boolean) => (
-        setLeads((oldLeads) => {
-            const newLeads = oldLeads.map(l => ({
-                ...l,
-                selected: selectAll,
-            }));
-            return newLeads;
-        })
-    ), []);
+    const isDisabled = leadsResponse?.results.length === 0;
 
     const headers: Header<Lead>[] = useMemo(() => ([
         {
             key: 'select',
-            labelModifier: () => {
-                const title = areSomeNotSelected
-                    ? _ts('export.leadsTable', 'selectAllLeadsTitle')
-                    : _ts('export.leadsTable', 'unselectAllLeadsTitle');
-
-                const icon = areSomeNotSelected
-                    ? 'checkboxOutlineBlank'
-                    : 'checkbox';
-
-                return (
-                    <AccentButton
-                        className={styles.selectAllCheckbox}
-                        title={title}
-                        iconName={icon}
-                        onClick={() => handleSelectAllLeads(areSomeNotSelected)}
-                        smallVerticalPadding
-                        transparent
-                        disabled={isDisabled}
-                    />
-                );
-            },
+            label: '',
             order: 1,
             sortable: false,
-            modifier: (d: SelectedLead) => {
+            modifier: (d: Lead) => {
                 const key = leadKeyExtractor(d);
+                const isSelected = selectedLeads.some(v => v === key);
 
-                const title = !d.selected
-                    ? _ts('export.leadsTable', 'selectLeadTitle')
-                    : _ts('export.leadsTable', 'unselectLeadTitle');
+                let title: string;
+                let icon: string;
+                if (selectAll) {
+                    title = !isSelected
+                        ? _ts('export.leadsTable', 'unselectLeadTitle')
+                        : _ts('export.leadsTable', 'selectLeadTitle');
+                    icon = !isSelected
+                        ? 'checkbox'
+                        : 'checkboxOutlineBlank';
+                } else {
+                    title = isSelected
+                        ? _ts('export.leadsTable', 'unselectLeadTitle')
+                        : _ts('export.leadsTable', 'selectLeadTitle');
 
-                const icon = !d.selected
-                    ? 'checkboxOutlineBlank'
-                    : 'checkbox';
+                    icon = isSelected
+                        ? 'checkbox'
+                        : 'checkboxOutlineBlank';
+                }
 
                 return (
                     <AccentButton
                         title={title}
                         iconName={icon}
-                        onClick={() => handleSelectLeadChange(key, !d.selected)}
+                        onClick={() => onSelectLeadChange(key, !isSelected)}
                         smallVerticalPadding
                         transparent
                     />
@@ -222,11 +183,11 @@ function LeadsSelection(props: ComponentProps) {
             label: _ts('export', 'createdAtLabel'),
             order: 2,
             sortable: true,
-            comparator: (a: SelectedLead, b: SelectedLead) => (
+            comparator: (a: Lead, b: Lead) => (
                 compareDate(a.createdAt, b.createdAt) ||
                 compareString(a.title, b.title)
             ),
-            modifier: (row: SelectedLead) => (
+            modifier: (row: Lead) => (
                 <FormattedDate
                     value={row.createdAt}
                     mode="dd-MM-yyyy hh:mm"
@@ -238,15 +199,15 @@ function LeadsSelection(props: ComponentProps) {
             label: _ts('export', 'titleLabel'),
             order: 3,
             sortable: true,
-            comparator: (a: SelectedLead, b: SelectedLead) => compareString(a.title, b.title),
+            comparator: (a: Lead, b: Lead) => compareString(a.title, b.title),
         },
         {
             key: 'sourceDetail',
             label: _ts('export', 'sourceDetailLabel'),
             order: 4,
             sortable: true,
-            modifier: (a: SelectedLead) => a?.sourceDetail?.title,
-            comparator: (a: SelectedLead, b: SelectedLead) =>
+            modifier: (a: Lead) => a?.sourceDetail?.title,
+            comparator: (a: Lead, b: Lead) =>
                 compareString(a?.sourceDetail?.title, b?.sourceDetail?.title) ||
                 compareString(a.title, b.title),
         },
@@ -255,14 +216,14 @@ function LeadsSelection(props: ComponentProps) {
             label: _ts('export', 'authoursDetailLabel'),
             order: 5,
             sortable: false,
-            modifier: (d: SelectedLead) => d?.authorsDetail.map(a => a.title).join(', '),
+            modifier: (d: Lead) => d?.authorsDetail.map(a => a.title).join(', '),
         },
         {
             key: 'publishedOn',
             label: _ts('export', 'publishedOnLabel'),
             order: 6,
             sortable: true,
-            comparator: (a: SelectedLead, b: SelectedLead) => (
+            comparator: (a: Lead, b: Lead) => (
                 compareDate(a.publishedOn, b.publishedOn) ||
                 compareString(a.title, b.title)
             ),
@@ -272,16 +233,15 @@ function LeadsSelection(props: ComponentProps) {
             label: _ts('export', 'entriesCountLabel'),
             order: 7,
             sortable: true,
-            comparator: (a: SelectedLead, b: SelectedLead) => (
+            comparator: (a: Lead, b: Lead) => (
                 compareNumber(a.entriesCount, b.entriesCount) ||
                 compareString(a.title, b.title)
             ),
         },
     ]), [
-        handleSelectLeadChange,
-        handleSelectAllLeads,
-        areSomeNotSelected,
-        isDisabled,
+        onSelectLeadChange,
+        selectedLeads,
+        selectAll,
     ]);
 
     const dataModifier = useCallback(
@@ -301,6 +261,27 @@ function LeadsSelection(props: ComponentProps) {
         } else if (activeSort === `-${headerData.key}`) {
             sortOrder = 'dsc';
         }
+        if (headerData.key === 'select') {
+            const title = !selectAll
+                ? _ts('export.leadsTable', 'unselectAllLeadsTitle')
+                : _ts('export.leadsTable', 'selectAllLeadsTitle');
+
+            const icon = selectAll
+                ? 'checkbox'
+                : 'checkboxOutlineBlank';
+
+            return (
+                <AccentButton
+                    className={styles.selectAllCheckbox}
+                    title={title}
+                    iconName={icon}
+                    onClick={onSelectAllChange}
+                    smallVerticalPadding
+                    transparent
+                    disabled={isDisabled}
+                />
+            );
+        }
         return (
             <TableHeader
                 label={headerData.label}
@@ -308,7 +289,7 @@ function LeadsSelection(props: ComponentProps) {
                 sortable={headerData.sortable}
             />
         );
-    }, [activeSort]);
+    }, [activeSort, onSelectAllChange, isDisabled, selectAll]);
 
     const handleTableHeaderClick = useCallback(
         (key) => {
@@ -335,10 +316,6 @@ function LeadsSelection(props: ComponentProps) {
         }, [headers, activeSort, setActiveSort],
     );
 
-    useEffect(() => {
-        setSelectedLeads(leads.filter(v => v.selected).map(v => v.id));
-    }, [setSelectedLeads, leads]);
-
     return (
         <div className={_cs(className, styles.leadsTable)}>
             <FilterForm
@@ -353,19 +330,19 @@ function LeadsSelection(props: ComponentProps) {
                 hasAssessment={hasAssessment}
             />
             <RawTable
-                data={leads}
+                data={leadsResponse?.results || []}
                 dataModifier={dataModifier}
                 headerModifier={headerModifier}
                 headers={headers}
                 onHeaderClick={handleTableHeaderClick}
                 keySelector={leadKeyExtractor}
                 className={styles.table}
-                pending={pending && leads.length < 1}
+                pending={pending && (leadsResponse?.results || []).length < 1}
             />
             <Pager
                 activePage={activePage}
                 className={styles.pager}
-                itemsCount={leadsCount}
+                itemsCount={leadsResponse?.count}
                 maxItemsPerPage={maxItemsPerPage}
                 onPageClick={setActivePage}
                 showItemsPerPageChange={false}

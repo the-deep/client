@@ -26,13 +26,13 @@ import {
     BasicElement,
     WidgetElement,
     FilterFields,
-    FaramValues,
     FaramErrors,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import FrameworkFilter from './FrameworkFilter';
 
+import { FaramValues } from '../index';
 import styles from './styles.scss';
 
 const emptyList: EmmEntity[] = [];

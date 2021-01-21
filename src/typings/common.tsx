@@ -74,10 +74,6 @@ export interface DatabaseEntityBase {
     versionId: number;
 }
 
-export interface FaramValues {
-    [key: string]: string | undefined | string[] | FaramValues;
-}
-
 export interface FaramErrors {
     [key: string]: string | undefined | string [] | FaramErrors;
 }

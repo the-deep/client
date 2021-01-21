@@ -3,5 +3,6 @@ export interface ProjectElement {
     title: string;
 }
 
+// TODO: add properties to GeoOptions
 export interface GeoOptions {
 }

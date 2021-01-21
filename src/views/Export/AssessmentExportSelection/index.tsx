@@ -54,12 +54,14 @@ function AssessmentExportSelection(props: OwnProps) {
     } = props;
 
     const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
-    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [exportClass, setExportClass] = useState<string>();
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [exportItem, setExportItem] = useState<string>();
     const [filters, setFilters] = useState<unknown>();
+    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+    const [selectAll, setSelectAll] = useState<boolean>(true);
+
 
     useEffect(() => {
         setPreviewId(undefined);
@@ -102,7 +104,7 @@ function AssessmentExportSelection(props: OwnProps) {
     const startExport = useCallback((preview: boolean, item: string) => {
         const otherFilters = {
             project: projectId,
-
+            include_leads: !selectAll,
             lead: selectedLeads,
 
 
@@ -132,6 +134,7 @@ function AssessmentExportSelection(props: OwnProps) {
         setExportClass(newExportClass);
         getExport();
     }, [
+        selectAll,
         selectedLeads,
         projectId,
         getExport,
@@ -150,6 +153,19 @@ function AssessmentExportSelection(props: OwnProps) {
         startExport(true, exportItems.assessment);
     }, [startExport]);
 
+    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
+        if (value) {
+            setSelectedLeads([...selectedLeads, key]);
+        } else {
+            setSelectedLeads(selectedLeads.filter(v => v !== key));
+        }
+    }, [selectedLeads]);
+
+    const handleSelectAllChange = useCallback(() => {
+        setSelectAll(v => !v);
+        setSelectedLeads([]);
+    }, []);
+
     return (
         <div className={_cs(className, styles.exportSelection)}>
             <div className={styles.leftContainer}>
@@ -165,8 +181,11 @@ function AssessmentExportSelection(props: OwnProps) {
                         <LeadsSelection
                             className={styles.leadsTable}
                             projectId={projectId}
-                            setSelectedLeads={setSelectedLeads}
                             filterOnlyUnprotected={filterOnlyUnprotected}
+                            selectedLeads={selectedLeads}
+                            onSelectLeadChange={handleSelectLeadChange}
+                            selectAll={selectAll}
+                            onSelectAllChange={handleSelectAllChange}
                             hasAssessment
                         />
                     </div>

@@ -173,6 +173,7 @@ function EntriesExportSelection(props: Props) {
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+    const [selectAll, setSelectAll] = useState<boolean>(true);
 
     const [
         showSourceSelect,
@@ -315,6 +316,7 @@ function EntriesExportSelection(props: Props) {
 
         const otherFilters = {
             project: projectId,
+            include_leads: !selectAll,
             lead: selectedLeads,
 
             export_type: exportType,
@@ -356,6 +358,7 @@ function EntriesExportSelection(props: Props) {
 
         getExport();
     }, [
+        selectAll,
         activeExportTypeKey,
         analysisFramework,
         contextualWidgets,
@@ -378,6 +381,20 @@ function EntriesExportSelection(props: Props) {
         setPreviewId(undefined);
         startExport(true);
     }, [setPreviewId, startExport]);
+
+    const handleSelectLeadChange = useCallback((key: number, value: boolean) => {
+        if (value) {
+            setSelectedLeads([...selectedLeads, key]);
+        } else {
+            setSelectedLeads(selectedLeads.filter(v => v !== key));
+        }
+    }, [selectedLeads]);
+
+    const handleSelectAllChange = useCallback(() => {
+        setSelectAll(v => !v);
+        setSelectedLeads([]);
+    },
+    []);
 
     const pending = analysisFrameworkPending || geoOptionsPending;
     const showTextWidgetSelection = textWidgets.length > 0;
@@ -433,7 +450,10 @@ function EntriesExportSelection(props: Props) {
                             entriesWidgets={widgets}
                             entriesGeoOptions={geoOptions}
                             pending={analysisFrameworkPending || geoOptionsPending}
-                            setSelectedLeads={setSelectedLeads}
+                            selectedLeads={selectedLeads}
+                            onSelectLeadChange={handleSelectLeadChange}
+                            selectAll={selectAll}
+                            onSelectAllChange={handleSelectAllChange}
                         />
                     )}
                 </section>
