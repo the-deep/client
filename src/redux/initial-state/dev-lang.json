@@ -1250,7 +1250,9 @@
         "-12317797": "No of entries",
         "-87971232": "Lead Options",
         "-79121234": "Entry Options",
-        "-77388797": "Select leads"
+        "-77388797": "Select leads",
+        "-77124728": "Hide all filters",
+        "-44015188": "Show all filters"
     },
     "links": {
         "browserExtension": {
@@ -1835,7 +1837,9 @@
             "entriesCountLabel": -12317797,
             "leadOptions": -87971232,
             "entryOptions": -79121234,
-            "selectLeadsSectionHeading": -77388797
+            "selectLeadsSectionHeading": -77388797,
+            "hideAllFiltersLabel": -77124728,
+            "showAllFiltersLabel": -44015188
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

@@ -84,6 +84,9 @@ function ExportedFiles(props: Props) {
             setUserExports(response.results);
             setExportCount(response.count);
         },
+        shouldPoll: response => (
+            (activeTab === 'pending' && response?.count && response.count > 0) ? 5000 : -1
+        ),
         onFailure: () => {
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
@@ -212,6 +215,8 @@ function ExportedFiles(props: Props) {
     }, [changeArchiveStatus]);
 
     const handleTabChange = useCallback((tab: TabElement) => {
+        setUserExports([]);
+        setExportCount(0);
         setSelectedExport(undefined);
         setActivePage(1);
         setActiveTab(tab);
@@ -223,7 +228,7 @@ function ExportedFiles(props: Props) {
                 component: () => (
                     <ExportsTable
                         exports={userExports}
-                        pending={pending}
+                        pending={pending && exportCount < 1}
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
@@ -240,7 +245,7 @@ function ExportedFiles(props: Props) {
                 component: () => (
                     <ExportsTable
                         exports={userExports}
-                        pending={pending}
+                        pending={pending && exportCount < 1}
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
@@ -260,7 +265,7 @@ function ExportedFiles(props: Props) {
                 component: () => (
                     <ExportsTable
                         exports={userExports}
-                        pending={pending}
+                        pending={pending && exportCount < 1}
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
@@ -275,6 +280,7 @@ function ExportedFiles(props: Props) {
             },
         }
     ), [
+        exportCount,
         activeSort,
         archiveExportId,
         archivePending,

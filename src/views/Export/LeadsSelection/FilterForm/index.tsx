@@ -174,6 +174,7 @@ function FilterForm(props: OwnProps) {
 
     const [faramValues, setFaramValues] = useState<FaramValues>(filterValues);
     const [faramErrors, setFaramErrors] = useState<FaramErrors>({});
+    const [showAllFilters, setShowAllFilters] = useState(false);
     const [pristine, setPristine] = useState(true);
 
     const filteredFrameworkFilters = useMemo(() => {
@@ -272,6 +273,10 @@ function FilterForm(props: OwnProps) {
     const pending = leadOptionsPending || entryOptionsPending;
     const showEntryLabelFilters = entryOptions && entryOptions.projectEntryLabel?.length > 0;
 
+    const handleFilterButtonClick = useCallback(() => {
+        setShowAllFilters(oldVal => !oldVal);
+    }, [setShowAllFilters]);
+
     return (
         <Faram
             className={_cs(styles.leadsFilters, className)}
@@ -283,134 +288,129 @@ function FilterForm(props: OwnProps) {
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
         >
-            <div className={styles.content}>
-                <h4 className={styles.heading}>
-                    {_ts('entries', 'leadFiltersGroupTitle')}
-                </h4>
-                <div className={styles.filter}>
-                    <SearchInput
-                        faramElementName="search"
-                        label={_ts('leads', 'placeholderSearch')}
-                        placeholder={_ts('leads', 'placeholderSearch')}
+            <div className={styles.filter}>
+                <SearchInput
+                    faramElementName="search"
+                    label={_ts('leads', 'placeholderSearch')}
+                    placeholder={_ts('leads', 'placeholderSearch')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                <DateFilter
+                    faramElementName="published_on"
+                    label={_ts('leads', 'filterDatePublished')}
+                    placeholder={_ts('leads', 'placeholderAnytime')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                {!hasAssessment && (
+                    <SelectInput
+                        faramElementName="exists"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'existsFilterLabel')}
+                        labelSelector={optionLabelSelector}
+                        options={existsFilterOptions}
+                        placeholder={_ts('leads', 'placeholderAny')}
+                        showHintAndError={false}
+                        disabled={hasAssessment}
+                        className={styles.leadsFilter}
+                    />
+                )}
+                <MultiSelectInput
+                    faramElementName="assignee"
+                    keySelector={optionKeySelector}
+                    label={_ts('leads', 'assigneeLabel')}
+                    labelSelector={optionLabelSelector}
+                    options={assignee}
+                    placeholder={_ts('leads', 'placeholderAnybody')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                <DateFilter
+                    faramElementName="created_at"
+                    label={_ts('leads', 'filterDateCreated')}
+                    placeholder={_ts('leads', 'placeholderAnytime')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                {!filterOnlyUnprotected && (
+                    <MultiSelectInput
+                        faramElementName="confidentiality"
+                        keySelector={optionKeySelector}
+                        label={_ts('leads', 'filterConfidentiality')}
+                        labelSelector={optionLabelSelector}
+                        options={confidentiality}
+                        placeholder={_ts('leads', 'placeholderAny')}
                         showHintAndError={false}
                         className={styles.leadsFilter}
                     />
-                    <DateFilter
-                        faramElementName="published_on"
-                        label={_ts('leads', 'filterDatePublished')}
-                        placeholder={_ts('leads', 'placeholderAnytime')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
-                    {!hasAssessment && (
-                        <SelectInput
-                            faramElementName="exists"
-                            keySelector={optionKeySelector}
-                            label={_ts('leads', 'existsFilterLabel')}
-                            labelSelector={optionLabelSelector}
-                            options={existsFilterOptions}
+                )}
+                <MultiSelectInput
+                    faramElementName="priority"
+                    keySelector={optionKeySelector}
+                    label={_ts('leads', 'filterPriority')}
+                    labelSelector={optionLabelSelector}
+                    options={priority}
+                    placeholder={_ts('leads', 'placeholderAny')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                <MultiSelectInput
+                    faramElementName="status"
+                    keySelector={optionKeySelector}
+                    label={_ts('leads', 'filterStatus')}
+                    labelSelector={optionLabelSelector}
+                    options={status}
+                    placeholder={_ts('leads', 'placeholderAny')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                <MultiSelectInput
+                    faramElementName="authoring_organization_types"
+                    keySelector={optionKeySelector}
+                    label={_ts('leads', 'filterOrganizationType')}
+                    labelSelector={optionLabelSelector}
+                    options={organizationTypes}
+                    placeholder={_ts('leads', 'placeholderAny')}
+                    showHintAndError={false}
+                    className={styles.leadsFilter}
+                />
+                {hasEmmLeads && (
+                    <React.Fragment>
+                        <SearchMultiSelectInput
+                            faramElementName="emm_risk_factors"
+                            keySelector={emmRiskFactorsKeySelector}
+                            label={_ts('leads', 'filterEmmRiskFactors')}
+                            labelSelector={emmRiskFactorsLabelSelector}
+                            options={emmRiskFactors}
                             placeholder={_ts('leads', 'placeholderAny')}
                             showHintAndError={false}
-                            disabled={hasAssessment}
                             className={styles.leadsFilter}
                         />
-                    )}
-                    <MultiSelectInput
-                        faramElementName="assignee"
-                        keySelector={optionKeySelector}
-                        label={_ts('leads', 'assigneeLabel')}
-                        labelSelector={optionLabelSelector}
-                        options={assignee}
-                        placeholder={_ts('leads', 'placeholderAnybody')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
-                    <DateFilter
-                        faramElementName="created_at"
-                        label={_ts('leads', 'filterDateCreated')}
-                        placeholder={_ts('leads', 'placeholderAnytime')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
-                    {!filterOnlyUnprotected && (
-                        <MultiSelectInput
-                            faramElementName="confidentiality"
-                            keySelector={optionKeySelector}
-                            label={_ts('leads', 'filterConfidentiality')}
-                            labelSelector={optionLabelSelector}
-                            options={confidentiality}
+                        <SearchMultiSelectInput
+                            faramElementName="emm_keywords"
+                            keySelector={emmTriggerKeySelector}
+                            label={_ts('leads', 'filterEmmTriggers')}
+                            labelSelector={emmTriggerLabelSelector}
+                            options={emmKeywords}
                             placeholder={_ts('leads', 'placeholderAny')}
                             showHintAndError={false}
                             className={styles.leadsFilter}
                         />
-                    )}
-                    <MultiSelectInput
-                        faramElementName="priority"
-                        keySelector={optionKeySelector}
-                        label={_ts('leads', 'filterPriority')}
-                        labelSelector={optionLabelSelector}
-                        options={priority}
-                        placeholder={_ts('leads', 'placeholderAny')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
-                    <MultiSelectInput
-                        faramElementName="status"
-                        keySelector={optionKeySelector}
-                        label={_ts('leads', 'filterStatus')}
-                        labelSelector={optionLabelSelector}
-                        options={status}
-                        placeholder={_ts('leads', 'placeholderAny')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
-                    <MultiSelectInput
-                        faramElementName="authoring_organization_types"
-                        keySelector={optionKeySelector}
-                        label={_ts('leads', 'filterOrganizationType')}
-                        labelSelector={optionLabelSelector}
-                        options={organizationTypes}
-                        placeholder={_ts('leads', 'placeholderAny')}
-                        showHintAndError={false}
-                        className={styles.leadsFilter}
-                    />
-                    {hasEmmLeads && (
-                        <React.Fragment>
-                            <SearchMultiSelectInput
-                                faramElementName="emm_risk_factors"
-                                keySelector={emmRiskFactorsKeySelector}
-                                label={_ts('leads', 'filterEmmRiskFactors')}
-                                labelSelector={emmRiskFactorsLabelSelector}
-                                options={emmRiskFactors}
-                                placeholder={_ts('leads', 'placeholderAny')}
-                                showHintAndError={false}
-                                className={styles.leadsFilter}
-                            />
-                            <SearchMultiSelectInput
-                                faramElementName="emm_keywords"
-                                keySelector={emmTriggerKeySelector}
-                                label={_ts('leads', 'filterEmmTriggers')}
-                                labelSelector={emmTriggerLabelSelector}
-                                options={emmKeywords}
-                                placeholder={_ts('leads', 'placeholderAny')}
-                                showHintAndError={false}
-                                className={styles.leadsFilter}
-                            />
-                            <SearchMultiSelectInput
-                                faramElementName="emm_entities"
-                                keySelector={emmEntitiesKeySelector}
-                                label={_ts('leads', 'filterEmmEntities')}
-                                labelSelector={emmEntitiesLabelSelector}
-                                options={emmEntities}
-                                placeholder={_ts('leads', 'placeholderAny')}
-                                showHintAndError={false}
-                                className={styles.leadsFilter}
-                            />
-                        </React.Fragment>
-                    )}
-                </div>
+                        <SearchMultiSelectInput
+                            faramElementName="emm_entities"
+                            keySelector={emmEntitiesKeySelector}
+                            label={_ts('leads', 'filterEmmEntities')}
+                            labelSelector={emmEntitiesLabelSelector}
+                            options={emmEntities}
+                            placeholder={_ts('leads', 'placeholderAny')}
+                            showHintAndError={false}
+                            className={styles.leadsFilter}
+                        />
+                    </React.Fragment>
+                )}
             </div>
-            { !hasAssessment && (
+            { showAllFilters && !hasAssessment && (
                 <FaramGroup faramElementName="entries_filter">
                     <div className={styles.content}>
                         <h4 className={styles.heading}>
@@ -519,6 +519,18 @@ function FilterForm(props: OwnProps) {
                 </FaramGroup>
             )}
             <div className={styles.actionButtons}>
+                {!hasAssessment && (
+                    <Button
+                        className={styles.button}
+                        onClick={handleFilterButtonClick}
+                        iconName={showAllFilters ? 'chevronUp' : 'chevronDown'}
+                    >
+                        {showAllFilters
+                            ? _ts('export', 'hideAllFiltersLabel')
+                            : _ts('export', 'showAllFiltersLabel')
+                        }
+                    </Button>
+                )}
                 <Button
                     className={styles.button}
                     disabled={pristine || pending}
