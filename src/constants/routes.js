@@ -276,13 +276,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'apiDocs');
 
-    homeScreen: {
+    landingPage: {
         order: 140,
         type: ROUTE.private,
         path: '/',
-        loader: () => import('../views/HomeScreen'),
+        loader: () => import('../views/LandingPage'),
         links: allLinks,
-    }, // _ts('pageTitle', 'homeScreen');
+    }, // _ts('pageTitle', 'landingPage');
 
     stringManagement: {
         order: 150,

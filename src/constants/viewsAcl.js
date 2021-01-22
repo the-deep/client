@@ -97,7 +97,7 @@ const acl = {
     weeklySnapshot: { hide: notLoggedIn },
     apiDocs: { hide: notDevAndAdmin },
     stringManagement: { hide: notDevAndAdmin },
-    homeScreen: { hide: notLoggedIn },
+    landingPage: { hide: notLoggedIn },
     adminPanel: { hide: notAdmin },
     visualization: { hide: notDev },
 
