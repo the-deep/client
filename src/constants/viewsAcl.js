@@ -67,7 +67,7 @@ const acl = {
 
     discoverProjects: { hide: notLoggedIn },
     projects: { hide: notLoggedIn },
-    dashboard: { hide: notProjectMember },
+    home: { hide: notProjectMember },
     workshop: { hide: notDevAndAdmin },
     connectors: { hide: notLoggedIn },
 

@@ -563,7 +563,6 @@
         "5557": "File selection",
         "5558": "Password reset",
         "5559": "Home",
-        "5560": "Dashboard",
         "5561": "Leads visualization",
         "5562": "Assessments",
         "5563": "Edit assessment",
@@ -583,14 +582,11 @@
         "7039": "Sub-columns",
         "7500": "Couldn't upload image",
         "7501": "Couldn't upload file",
-        "7627": "Administrator",
         "7628": "Discover Usergroups",
         "7629": "Discover Projects",
         "7630": "Leads activity",
         "7631": "Entries activity",
         "7632": "Discover",
-        "7633": "Contact administrator",
-        "7635": "DEEP: Inquiry for {projectName} project",
         "7636": "Join",
         "7637": "Cancel join request",
         "7638": "You have requested to join the {projectName} project - the project administrators have been notified.",
@@ -841,7 +837,6 @@
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
         "-47892955": "Can't drop here!",
-        "-96507602": "Error while trying to reset password.",
         "-27376433": "Anyplace",
         "-21403453": "Something went wrong with loading this page.",
         "-14465545": "Do you want to logout? This will clear out all of your local changes.",
@@ -957,7 +952,6 @@
         "-56943688": "Edit details",
         "-59011405": "No. of Pages",
         "-86287086": "No framework is currently selected.",
-        "-28816005": "Processing",
         "-31511044": "Authoring Organization",
         "-30790313": "Same as publishing organization",
         "-67237579": "Focus",
@@ -1242,7 +1236,11 @@
         "-18293311": "Failed to cancel export.",
         "-2707814": "Successfully cancelled export.",
         "-40624719": "Generating the file",
-        "-14317189": "Rejected"
+        "-14317189": "Rejected",
+        "-1749585": "Set up a new project",
+        "-52545948": "Recent Projects",
+        "-22564410": "Summary of My Projects",
+        "-42491012": "Projects Tagging Activity"
     },
     "links": {
         "browserExtension": {
@@ -1261,7 +1259,6 @@
             "descriptionTitle": 200,
             "createdAtTitle": 163,
             "createdByTitle": 538,
-            "adminsTitle": 7627,
             "frameworkTitle": 379,
             "regionsTitle": 336,
             "numberOfUsersTitle": 1119,
@@ -1271,8 +1268,6 @@
             "entriesActivityTitle": 7631,
             "statusTitle": 8,
             "actionsTitle": 16,
-            "contactAdminsTitle": 7633,
-            "contactAdminsSubject": 7635,
             "joinLabel": 7636,
             "cancelJoinRequest": 7637,
             "editProjectTooltip": 171,
@@ -1761,12 +1756,7 @@
             "documentTypeHeaderLabel": 623,
             "exportedAtHeaderLabel": 624,
             "exportTitleHeaderLabel": 13,
-            "statusHeaderLabel": 8,
             "exportTypeHeaderLabel": 627,
-            "exportDownloadHeaderLabel": 628,
-            "pendingStatusLabel": 629,
-            "errorStatusLabel": 630,
-            "completedStatusLabel": 631,
             "decoupledEntriesLabel": 634,
             "decoupledEntriesTitle": 635,
             "decoupledEntriesTitle2": 636,
@@ -2176,8 +2166,7 @@
             "submitForgetPassword": 826,
             "emailLabel": 184,
             "emailPlaceholder": 813,
-            "retryRecaptcha": 894,
-            "passwordResetError": -96507602
+            "retryRecaptcha": 894
         },
         "login": {
             "welcomeToText": 803,
@@ -2217,7 +2206,6 @@
             "register": 811,
             "passwordReset": 5558,
             "landingPage": 5559,
-            "dashboard": 5560,
             "discoverProjects": 7629,
             "discoverUserGroups": 7628,
             "leads": 641,
@@ -2251,7 +2239,8 @@
             "plannedArys": -41526057,
             "questionnaireBuilder": -7536745,
             "projectQuestionnaires": -91998400,
-            "frameworkQuestions": -25976066
+            "frameworkQuestions": -25976066,
+            "home": 5559
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2642,7 +2631,6 @@
         "components.exportPreview": {
             "previewNotAvailableLabel": 132,
             "serverErrorText": 500,
-            "connectionFailureText": 501,
             "previewHeading": -77224022
         },
         "components.regionAdminLevel": {
@@ -3051,12 +3039,16 @@
         "widgets.view.timeRange": {
             "toLabel": 1000
         },
-        "dashboard": {
-            "deepLabel": 876,
+        "home": {
             "alphaLabel": 1238,
             "betaLabel": 1237,
             "devLabel": 1240,
-            "nightlyLabel": 1239
+            "nightlyLabel": 1239,
+            "priivateProjectBadgeTooltip": -64655622,
+            "projectTaggingActivityHeading": -42491012,
+            "recentProjectsHeading": -52545948,
+            "setupNewProjectButtonLabel": -1749585,
+            "summaryOfMyProjectsHeading": -22564410
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671

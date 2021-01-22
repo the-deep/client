@@ -195,7 +195,7 @@ export default class Navbar extends React.PureComponent {
             : 'fourHundredFour';
 
         const navLinks = [
-            'dashboard',
+            'home',
             'leads',
             'entries',
             'arys',
