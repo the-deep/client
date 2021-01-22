@@ -101,10 +101,14 @@ function LeadsSelection(props: ComponentProps) {
     ]);
 
     const leadsRequestBody = useMemo(() => ({
-        custom_filters: 'exclude_empty_filtered_entries',
+        custom_filters: !hasAssessment ? 'exclude_empty_filtered_entries' : '',
         project: [projectId],
         ...sanitizedFilters,
-    }), [projectId, sanitizedFilters]);
+    }), [
+        projectId,
+        sanitizedFilters,
+        hasAssessment,
+    ]);
 
     const [
         pending,

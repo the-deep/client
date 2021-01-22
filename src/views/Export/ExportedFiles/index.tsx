@@ -32,10 +32,10 @@ const tabs: { [key in TabElement]: string} = {
     archived: _ts('export', 'archivedExportsLabel'),
 };
 
-const tabExportStatus: { [key in TabElement]: ExportStatus} = {
-    pending: 'started',
-    recent: 'success',
-    archived: 'success',
+const tabExportStatus: { [key in TabElement]: ExportStatus[]} = {
+    pending: ['started', 'pending'],
+    recent: ['success', 'failure'],
+    archived: ['success'],
 };
 
 function ExportedFiles(props: Props) {
@@ -52,14 +52,6 @@ function ExportedFiles(props: Props) {
     const [archiveExportId, setArchiveExportId] = useState<number>();
     const [archiveStatus, setArchiveStatus] = useState<boolean>();
 
-    const status = useMemo(() => (
-        activeTab === 'pending' ? (
-            ['started', 'pending']
-        ) : (
-            tabExportStatus[activeTab]
-        )
-    ), [activeTab]);
-
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
 
     const [
@@ -73,7 +65,7 @@ function ExportedFiles(props: Props) {
             project: projectId,
             ordering: activeSort,
             is_archived: isArchived,
-            status,
+            status: tabExportStatus[activeTab],
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },

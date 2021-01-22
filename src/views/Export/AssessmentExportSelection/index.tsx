@@ -79,7 +79,7 @@ function AssessmentExportSelection(props: OwnProps) {
     ] = useRequest<ExportTriggerResponse>({
         url: 'server://export-trigger/',
         method: 'POST',
-        body: { filtersToExport },
+        body: { filters: filtersToExport },
         onSuccess: (response) => {
             if (isPreview) {
                 setPreviewId(response.exportTriggered);
