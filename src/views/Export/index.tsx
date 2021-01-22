@@ -24,8 +24,13 @@ import styles from './styles.scss';
 
 type TabElement = 'exportSelection' | 'aryExportSelection' | 'exportedFiles';
 
-// TODO: Fix typescript lint
-const tabs: {[key in TabElement]: string} = {
+interface Tabs {
+    exportSelection: string;
+    aryExportSelection?: string;
+    exportedFiles: string;
+}
+
+const tabs: Tabs = {
     exportSelection: 'Export Entries',
     aryExportSelection: 'Export Assessments',
     exportedFiles: 'Exported Files',
@@ -38,11 +43,13 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 interface Permissions {
+    'create_only_unprotected'?: boolean;
     view?: boolean;
 }
 
 interface ProjectRole {
     assessmentPermissions?: Permissions;
+    exportPermissions?: Permissions;
 }
 
 interface Project {
@@ -58,9 +65,7 @@ interface PropsFromState {
 function Export(props: PropsFromState) {
     const {
         projectId,
-        projectRole: {
-            assessmentPermissions = {},
-        },
+        projectRole,
         currentUserActiveProject,
     } = props;
 
@@ -72,11 +77,16 @@ function Export(props: PropsFromState) {
         title,
     }), []);
 
+    const {
+        assessmentPermissions = {},
+    } = projectRole;
+
     const views = useMemo(() => (
         {
             exportSelection: {
                 component: () => (
                     <ExportSelection
+                        projectRole={projectRole}
                         projectId={projectId}
                     />
                 ),
@@ -85,6 +95,7 @@ function Export(props: PropsFromState) {
             aryExportSelection: {
                 component: () => (
                     <AssessmentExportSelection
+                        projectRole={projectRole}
                         projectId={projectId}
                     />
                 ),
@@ -99,7 +110,7 @@ function Export(props: PropsFromState) {
                 lazyMount: true,
             },
         }
-    ), [projectId]);
+    ), [projectId, projectRole]);
 
     const finalTabs = useMemo(() => {
         const newTabs = { ...tabs };

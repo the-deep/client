@@ -342,7 +342,7 @@ export default class Overview extends React.PureComponent {
                             />
                             <div className={styles.rightActionButtons}>
                                 <EntryVerify
-                                    title={entry.verificationLastChangedByDetails ? (
+                                    title={entry?.verificationLastChangedByDetails ? (
                                         _ts(
                                             'entries',
                                             'verificationLastChangedBy',

@@ -1242,7 +1242,17 @@
         "-18293311": "Failed to cancel export.",
         "-2707814": "Successfully cancelled export.",
         "-40624719": "Generating the file",
-        "-14317189": "Rejected"
+        "-14317189": "Rejected",
+        "-12897213": "Uploaded on",
+        "-17971234": "Publisher",
+        "-79711343": "Author",
+        "-19712331": "Original Date",
+        "-12317797": "No of entries",
+        "-87971232": "Lead Options",
+        "-79121234": "Entry Options",
+        "-77388797": "Select leads",
+        "-77124728": "Hide all filters",
+        "-44015188": "Show all filters"
     },
     "links": {
         "browserExtension": {
@@ -1756,7 +1766,7 @@
             "pdfLabel": 604,
             "xlsxLabel": 605,
             "jsonLabel": 606,
-            "createdAtLabel": 163,
+            "createdAtLabel": -12897213,
             "userExportsTitle": 621,
             "documentTypeHeaderLabel": 623,
             "exportedAtHeaderLabel": 624,
@@ -1820,7 +1830,16 @@
             "exportCancelLabel": 61,
             "cancelExportFailure": -18293311,
             "cancelExportSuccess": -2707814,
-            "downloadButtonTitle": 628
+            "downloadButtonTitle": 628,
+            "sourceDetailLabel": -17971234,
+            "authoursDetailLabel": -79711343,
+            "publishedOnLabel": -19712331,
+            "entriesCountLabel": -12317797,
+            "leadOptions": -87971232,
+            "entryOptions": -79121234,
+            "selectLeadsSectionHeading": -77388797,
+            "hideAllFiltersLabel": -77124728,
+            "showAllFiltersLabel": -44015188
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

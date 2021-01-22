@@ -32,10 +32,10 @@ const tabs: { [key in TabElement]: string} = {
     archived: _ts('export', 'archivedExportsLabel'),
 };
 
-const tabExportStatus: { [key in TabElement]: ExportStatus} = {
-    pending: 'started',
-    recent: 'success',
-    archived: 'success',
+const tabExportStatus: { [key in TabElement]: ExportStatus[]} = {
+    pending: ['started', 'pending'],
+    recent: ['success', 'failure'],
+    archived: ['success'],
 };
 
 function ExportedFiles(props: Props) {
@@ -52,14 +52,6 @@ function ExportedFiles(props: Props) {
     const [archiveExportId, setArchiveExportId] = useState<number>();
     const [archiveStatus, setArchiveStatus] = useState<boolean>();
 
-    const status = useMemo(() => (
-        activeTab === 'pending' ? (
-            ['started', 'pending']
-        ) : (
-            tabExportStatus[activeTab]
-        )
-    ), [activeTab]);
-
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
 
     const [
@@ -73,7 +65,7 @@ function ExportedFiles(props: Props) {
             project: projectId,
             ordering: activeSort,
             is_archived: isArchived,
-            status,
+            status: tabExportStatus[activeTab],
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
@@ -84,6 +76,9 @@ function ExportedFiles(props: Props) {
             setUserExports(response.results);
             setExportCount(response.count);
         },
+        shouldPoll: response => (
+            (activeTab === 'pending' && response?.count && response.count > 0) ? 5000 : -1
+        ),
         onFailure: () => {
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
@@ -212,6 +207,8 @@ function ExportedFiles(props: Props) {
     }, [changeArchiveStatus]);
 
     const handleTabChange = useCallback((tab: TabElement) => {
+        setUserExports([]);
+        setExportCount(0);
         setSelectedExport(undefined);
         setActivePage(1);
         setActiveTab(tab);
@@ -223,7 +220,7 @@ function ExportedFiles(props: Props) {
                 component: () => (
                     <ExportsTable
                         exports={userExports}
-                        pending={pending}
+                        pending={pending && exportCount < 1}
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
@@ -240,7 +237,7 @@ function ExportedFiles(props: Props) {
                 component: () => (
                     <ExportsTable
                         exports={userExports}
-                        pending={pending}
+                        pending={pending && exportCount < 1}
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
@@ -260,7 +257,7 @@ function ExportedFiles(props: Props) {
                 component: () => (
                     <ExportsTable
                         exports={userExports}
-                        pending={pending}
+                        pending={pending && exportCount < 1}
                         selectedExport={selectedExport}
                         setSelectedExport={setSelectedExport}
                         activeSort={activeSort}
@@ -275,17 +272,21 @@ function ExportedFiles(props: Props) {
             },
         }
     ), [
-        pending,
-        selectedExport,
-        userExports,
+        exportCount,
         activeSort,
+        archiveExportId,
+        archivePending,
+        cancelExportId,
+        cancelPending,
         deleteExportId,
         deletePending,
-        handleExportDelete,
-        archivePending,
-        archiveExportId,
         handleExportArchive,
+        handleExportCancel,
+        handleExportDelete,
         isArchived,
+        selectedExport,
+        userExports,
+        pending,
     ]);
 
     const tabRendererParams = useCallback((_: TabElement, title: string) => ({

@@ -1,27 +1,19 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import produce from 'immer';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import {
-    _cs,
-    listToMap,
-    isNotDefined,
-} from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 
-import { processEntryFilters } from '#entities/entries';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TreeSelection from '#rsci/TreeSelection';
 import Button from '#rsca/Button';
 import ExportPreview from '#components/other/ExportPreview';
 
 import {
-    entriesViewFilterSelector,
+    projectDetailsSelector,
     analysisFrameworkForProjectSelector,
-    leadPageFilterSelector,
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
-    activeProjectRoleSelector,
     entryFilterOptionsForProjectSelector,
 } from '#redux';
 
@@ -45,12 +37,18 @@ import {
     ExportType,
     TreeSelectableWidget,
     ReportStructure,
+    GeoOptions,
+    WidgetElement,
+    ConditionalWidget,
 } from '#typings';
 
-import LeadsTable from '../LeadsTable';
-import ExportTypePane from '../ExportTypePane';
+import { getCombinedLeadFilters } from '#entities/lead';
+
+import LeadsSelection from '../LeadsSelection';
+import ExportTypePane from './ExportTypePane';
 
 import styles from './styles.scss';
+
 
 interface ExportReportStructure {
     id: string;
@@ -110,11 +108,9 @@ interface ExportTriggerResponse {
 
 const mapStateToProps = (state: AppState) => ({
     analysisFramework: analysisFrameworkForProjectSelector(state),
-    entriesFilters: entriesViewFilterSelector(state),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state),
-    leadsFilters: leadPageFilterSelector(state),
     geoOptions: geoOptionsForProjectSelector(state),
-    projectRole: activeProjectRoleSelector(state),
+    projectDetails: projectDetailsSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
@@ -126,22 +122,27 @@ export interface SelectedLead extends Lead {
     selected: boolean;
 }
 
+export interface FaramValues {
+    [key: string]: string | string[] | FaramValues;
+}
+
 interface PropsFromState {
+    analysisFramework: FrameworkFields;
+    entryFilterOptions: {
+        projectEntryLabel: [];
+    };
+    geoOptions: GeoOptions;
+    projectDetails: {
+        regions: unknown[];
+    };
+}
+
+interface OwnProps {
     projectRole: {
         exportPermissions?: {
             'create_only_unprotected'?: boolean;
         };
     };
-    analysisFramework: FrameworkFields;
-    entriesFilters: unknown;
-    entryFilterOptions: {
-        projectEntryLabel: [];
-    };
-    leadsFilters: unknown;
-    geoOptions: unknown;
-}
-
-interface OwnProps {
     projectId: number;
 }
 
@@ -150,14 +151,13 @@ type Props = OwnProps &PropsFromState & PropsFromDispatch;
 function EntriesExportSelection(props: Props) {
     const {
         analysisFramework,
-        entriesFilters,
         projectId,
         geoOptions,
-        leadsFilters,
         entryFilterOptions,
         projectRole,
         setAnalysisFramework,
         setGeoOptions,
+        projectDetails,
     } = props;
 
     const {
@@ -172,11 +172,13 @@ function EntriesExportSelection(props: Props) {
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
-    const [leads, setLeads] = useState<SelectedLead[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [filtersToExport, setFiltersToExport] = useState<unknown>();
-    const [filterValues, setFilterValues] = useState<unknown>({});
+    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+    const [selectAll, setSelectAll] = useState<boolean>(true);
+    const [filterValues, onFilterChange] = useState<FaramValues>({});
+
     const [
         showSourceSelect,
         setSectorSelectVisible,
@@ -212,7 +214,7 @@ function EntriesExportSelection(props: Props) {
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
-        onFailure: (error, errorBody) => {
+        onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'afLabel'))({ error: errorBody });
         },
     });
@@ -232,7 +234,7 @@ function EntriesExportSelection(props: Props) {
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
-        onFailure: (error, errorBody) => {
+        onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'geoLabel'))({ error: errorBody });
         },
     });
@@ -260,36 +262,9 @@ function EntriesExportSelection(props: Props) {
         setReportStructure(structure);
     }, [analysisFramework, reportStructureVariant, includeSubSector]);
 
-    const handleSelectLeadChange = useCallback((key: number, value: boolean) => (
-        setLeads((oldLeads) => {
-            const newLeads = produce(oldLeads, (safeLeads) => {
-                const index = safeLeads.findIndex(d => d.id === key);
-                if (index !== -1) {
-                    // eslint-disable-next-line no-param-reassign
-                    safeLeads[index].selected = value;
-                }
-            });
-            return newLeads;
-        })
-    ), []);
-
-    const handleSelectAllLeads = useCallback((selectAll: boolean) => (
-        setLeads((oldLeads) => {
-            const newLeads = oldLeads.map(l => ({
-                ...l,
-                selected: selectAll,
-            }));
-            return newLeads;
-        })
-    ), []);
-
     const handleReportStructureVariantChange = useCallback((value: string) => {
         setReportStructureVariant(value);
     }, []);
-
-    const selectedLeads = useMemo(() =>
-        listToMap(leads, d => d.id, d => d.selected),
-    [leads]);
 
     const [
         exportPending,
@@ -345,10 +320,8 @@ function EntriesExportSelection(props: Props) {
 
         const otherFilters = {
             project: projectId,
-            lead: Object.entries(selectedLeads).reduce((acc: string[], [key, value]) => {
-                if (value) return [...acc, key];
-                return acc;
-            }, []),
+            include_leads: !selectAll,
+            lead: selectedLeads,
 
             export_type: exportType,
             // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
@@ -373,15 +346,15 @@ function EntriesExportSelection(props: Props) {
             exporting_widgets: contextualWidgetIds,
         };
 
-        const processedFilters = processEntryFilters(
-            entriesFilters,
-            analysisFramework,
+        const processedFilters = getCombinedLeadFilters(
+            filterValues,
+            widgets,
             geoOptions,
         );
 
         const newFilters = [
             ...Object.entries(otherFilters),
-            ...processedFilters,
+            ...Object.entries(processedFilters),
         ];
 
         setFiltersToExport(newFilters);
@@ -389,11 +362,10 @@ function EntriesExportSelection(props: Props) {
 
         getExport();
     }, [
+        selectAll,
         activeExportTypeKey,
-        analysisFramework,
         contextualWidgets,
         decoupledEntries,
-        entriesFilters,
         geoOptions,
         projectId,
         reportStructure,
@@ -401,6 +373,8 @@ function EntriesExportSelection(props: Props) {
         showGroups,
         textWidgets,
         getExport,
+        filterValues,
+        widgets,
     ]);
 
     const handleEntryExport = useCallback(() => {
@@ -421,19 +395,20 @@ function EntriesExportSelection(props: Props) {
             if (pending || isNotDefined(widgets)) {
                 return false;
             }
-            return widgets.some((widget) => {
+            return widgets.some((widget: WidgetElement<unknown>) => {
                 if (widget.widgetId === 'matrix2dWidget') {
                     return true;
                 }
                 if (widget.widgetId === 'conditionalWidget') {
-                    const widgetsList = (widget.properties?.data?.widgets || [])
+                    const { properties: { data } } = widget as WidgetElement<ConditionalWidget>;
+                    const widgetsList = (data?.widgets ?? [])
                         .map(w => w?.widget);
                     return widgetsList.some(w => w?.widgetId === 'matrix2dWidget');
                 }
                 return false;
             });
         },
-        [widgets],
+        [widgets, pending],
     );
 
 
@@ -457,19 +432,21 @@ function EntriesExportSelection(props: Props) {
                         />
                     </header>
                     {showSourceSelect && (
-                        <LeadsTable
+                        <LeadsSelection
                             className={styles.leadsTable}
                             projectId={projectId}
-                            filterValues={filterValues}
-                            onFilterChange={setFilterValues}
-                            onSelectLeadChange={handleSelectLeadChange}
-                            onSelectAllClick={handleSelectAllLeads}
                             filterOnlyUnprotected={filterOnlyUnprotected}
-                            leadsFilters={leadsFilters}
+                            projectRegions={projectDetails.regions}
                             entriesFilters={filters}
                             entriesWidgets={widgets}
                             entriesGeoOptions={geoOptions}
                             pending={analysisFrameworkPending || geoOptionsPending}
+                            selectedLeads={selectedLeads}
+                            onSelectLeadChange={setSelectedLeads}
+                            selectAll={selectAll}
+                            onSelectAllChange={setSelectAll}
+                            filterValues={filterValues}
+                            handleFilterValuesChange={onFilterChange}
                         />
                     )}
                 </section>

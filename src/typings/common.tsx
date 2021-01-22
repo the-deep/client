@@ -73,3 +73,7 @@ export interface DatabaseEntityBase {
     modifiedByName: string;
     versionId: number;
 }
+
+export interface FaramErrors {
+    [key: string]: string | undefined | string [] | FaramErrors;
+}

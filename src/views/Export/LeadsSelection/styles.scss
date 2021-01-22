@@ -4,9 +4,11 @@
         overflow: auto;
 
         :global {
-            .select {
-                max-width: 56px;
-                white-space: nowrap;
+            .body {
+                .select {
+                    text-align: center;
+                    white-space: nowrap;
+                }
             }
 
             .createdAt {

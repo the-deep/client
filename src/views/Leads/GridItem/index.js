@@ -422,7 +422,7 @@ export default class GridItem extends React.PureComponent {
                             <span className={styles.entries}>
                                 <Numeral
                                     className={styles.numericValue}
-                                    value={lead.noOfEntries}
+                                    value={lead.entriesCount}
                                     precision={0}
                                 />
                                 {_ts('leadsGrid', 'entriesLabel')}

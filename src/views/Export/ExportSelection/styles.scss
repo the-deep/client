@@ -23,6 +23,8 @@
                 padding: var(--spacing-medium);
 
                 .heading {
+                    text-transform: unset;
+
                     .sub-heading {
                         margin-left: var(--spacing-medium);
                         color: var(--color-text);

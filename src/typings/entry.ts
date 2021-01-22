@@ -1,4 +1,8 @@
-import { DatabaseEntityBase } from './common';
+import {
+    BasicElement,
+    KeyValueElement,
+    DatabaseEntityBase,
+} from './common';
 import { Lead } from './lead';
 
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
@@ -124,4 +128,9 @@ export interface TocCountMap {
     [key: string]: {
         [key: string]: TocItemCount;
     };
+}
+
+export interface EntryOptions {
+    createdBy: KeyValueElement;
+    projectEntryLabel: BasicElement[];
 }

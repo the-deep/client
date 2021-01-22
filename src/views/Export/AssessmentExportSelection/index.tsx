@@ -2,16 +2,19 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import ExportPreview from '#components/other/ExportPreview';
-import Cloak from '#components/general/Cloak';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-
-import {
-    viewsAcl,
-} from '#constants';
 
 import useRequest from '#utils/request';
 import notify from '#notify';
 import _ts from '#ts';
+import {
+    WidgetElement,
+} from '#typings';
+
+import { getCombinedLeadFilters } from '#entities/lead';
+
+import { FaramValues } from '../ExportSelection';
+import LeadsSelection from '../LeadsSelection';
 
 import styles from './styles.scss';
 
@@ -34,6 +37,13 @@ const exportItems: ExportItem = {
 interface OwnProps {
     className?: string;
     projectId: number;
+    projectRole: {
+        exportPermissions?: {
+            'create_only_unprotected'?: boolean;
+        };
+    };
+    entriesWidgets?: WidgetElement<unknown>[];
+    entriesGeoOptions?: unknown;
 }
 
 interface ExportTriggerResponse {
@@ -44,17 +54,22 @@ function AssessmentExportSelection(props: OwnProps) {
     const {
         className,
         projectId,
+        projectRole,
     } = props;
 
+    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [exportClass, setExportClass] = useState<string>();
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [exportItem, setExportItem] = useState<string>();
-    const [filters, setFilters] = useState<unknown>();
+    const [filtersToExport, setFiltersToExport] = useState<unknown>();
+    const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+    const [selectAll, setSelectAll] = useState<boolean>(true);
+    const [filterValues, onFilterChange] = useState<FaramValues>({});
 
     useEffect(() => {
         setPreviewId(undefined);
-    }, [projectId, setPreviewId]);
+    }, [projectId]);
 
     const [
         exportPending,
@@ -64,7 +79,7 @@ function AssessmentExportSelection(props: OwnProps) {
     ] = useRequest<ExportTriggerResponse>({
         url: 'server://export-trigger/',
         method: 'POST',
-        body: { filters },
+        body: { filters: filtersToExport },
         onSuccess: (response) => {
             if (isPreview) {
                 setPreviewId(response.exportTriggered);
@@ -93,12 +108,9 @@ function AssessmentExportSelection(props: OwnProps) {
     const startExport = useCallback((preview: boolean, item: string) => {
         const otherFilters = {
             project: projectId,
-            /*
-            lead: Object.entries(selectedLeads).reduce((acc: string[], [key, value]) => {
-                if (value) return [...acc, key];
-                return acc;
-            }, []),
-            */
+            include_leads: !selectAll,
+            lead: selectedLeads,
+
 
             export_type: 'excel',
             // NOTE: export_type for 'word' and 'pdf' is report so, we need to differentiate
@@ -111,9 +123,15 @@ function AssessmentExportSelection(props: OwnProps) {
             is_preview: preview,
         };
 
-        const newFilters = [...Object.entries(otherFilters)];
+        const processedFilters = getCombinedLeadFilters(
+            filterValues,
+        );
+        const newFilters = [
+            ...Object.entries(otherFilters),
+            ...Object.entries(processedFilters),
+        ];
 
-        setFilters(newFilters);
+        setFiltersToExport(newFilters);
         setIsPreview(preview);
         setExportItem(item);
 
@@ -126,8 +144,11 @@ function AssessmentExportSelection(props: OwnProps) {
         setExportClass(newExportClass);
         getExport();
     }, [
+        selectAll,
+        selectedLeads,
         projectId,
         getExport,
+        filterValues,
     ]);
 
     const handleAssessmentExportClick = useCallback(() => {
@@ -146,36 +167,50 @@ function AssessmentExportSelection(props: OwnProps) {
     return (
         <div className={_cs(className, styles.exportSelection)}>
             <div className={styles.leftContainer}>
-                <Cloak
-                    {...viewsAcl.arys}
-                    render={
-                        <PrimaryButton
-                            className={styles.button}
-                            onClick={handleAssessmentExportClick}
-                            disabled={exportPending}
-                            pending={
-                                exportPending && exportClass === EXPORT_CLASS.assessmentExport
-                            }
-                        >
-                            {_ts('export', 'startAssessmentExportButtonLabel')}
-                        </PrimaryButton>
-                    }
-                />
-                <Cloak
-                    {...viewsAcl.arys}
-                    render={
-                        <PrimaryButton
-                            className={styles.button}
-                            onClick={handlePlannedAssessmentExportClick}
-                            disabled={exportPending}
-                            pending={
-                                exportPending && exportClass === EXPORT_CLASS.assessmentExport
-                            }
-                        >
-                            {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
-                        </PrimaryButton>
-                    }
-                />
+                <section className={styles.section}>
+                    <header className={styles.sectionHeader}>
+                        <h3 className={styles.heading}>
+                            <span className={styles.subHeading}>
+                                {_ts('export', 'selectLeadsSectionHeading')}
+                            </span>
+                        </h3>
+                    </header>
+                    <div className={styles.sectionBody}>
+                        <LeadsSelection
+                            projectId={projectId}
+                            filterOnlyUnprotected={filterOnlyUnprotected}
+                            selectedLeads={selectedLeads}
+                            onSelectLeadChange={setSelectedLeads}
+                            selectAll={selectAll}
+                            onSelectAllChange={setSelectAll}
+                            filterValues={filterValues}
+                            handleFilterValuesChange={onFilterChange}
+                            hasAssessment
+                        />
+                    </div>
+                </section>
+                <div className={styles.footer}>
+                    <PrimaryButton
+                        className={styles.button}
+                        onClick={handleAssessmentExportClick}
+                        disabled={exportPending}
+                        pending={
+                            exportPending && exportClass === EXPORT_CLASS.assessmentExport
+                        }
+                    >
+                        {_ts('export', 'startAssessmentExportButtonLabel')}
+                    </PrimaryButton>
+                    <PrimaryButton
+                        className={styles.button}
+                        onClick={handlePlannedAssessmentExportClick}
+                        disabled={exportPending}
+                        pending={
+                            exportPending && exportClass === EXPORT_CLASS.assessmentExport
+                        }
+                    >
+                        {_ts('export', 'startPlannedAssessmentExportButtonLabel')}
+                    </PrimaryButton>
+                </div>
             </div>
             <ExportPreview
                 className={styles.preview}

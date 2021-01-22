@@ -1,6 +1,12 @@
 import { getDateWithTimezone } from '#utils/common';
-import { encodeDate } from '@togglecorp/fujs';
+import {
+    union,
+    encodeDate,
+    listToMap,
+} from '@togglecorp/fujs';
+import { generateRelation } from '#utils/forest';
 
+import { toDays, totMinutes } from '#entities/entries';
 // FIXME: this is duplicated in views/LeadAdd/utils
 export const LEAD_TYPE = {
     dropbox: 'dropbox',
@@ -92,4 +98,92 @@ export const getFiltersForRequest = (filters) => {
         }
     });
     return requestFilters;
+};
+
+const getEntryFilters = (filter, widgets, geoOptions) => {
+    const entriesFilter = [];
+    const widgetsMapping = listToMap(
+        widgets,
+        widget => widget.key,
+        widget => widget,
+    );
+
+    const flatGeoOptions = Object.values(geoOptions).flat();
+
+    const treeMap = generateRelation(
+        flatGeoOptions,
+        item => item.key,
+        item => item.parent,
+    );
+
+    Object.keys(filter).forEach((entryFilterKey) => {
+        const entryFilterOptions = filter[entryFilterKey];
+
+        const widgetFilterKey = entryFilterKey.replace(/-(dimensions|sectors)$/, '');
+        const widget = widgetsMapping[widgetFilterKey];
+        const widgetId = widget?.widgetId;
+        switch (widgetId) {
+            case 'dateWidget': {
+                const { startDate, endDate } = entryFilterOptions;
+                entriesFilter.push([
+                    `${entryFilterKey}__gt`,
+                    toDays(startDate),
+                ]);
+                entriesFilter.push([
+                    `${entryFilterKey}__lt`,
+                    toDays(endDate),
+                ]);
+                break;
+            }
+            case 'timeWidget': {
+                const { startTime, endTime } = entryFilterOptions;
+                entriesFilter.push([
+                    `${entryFilterKey}__gt`,
+                    totMinutes(startTime),
+                ]);
+                entriesFilter.push([
+                    `${entryFilterKey}__lt`,
+                    totMinutes(endTime),
+                ]);
+                break;
+            }
+            case 'geoWidget': {
+                const { areas, includeSubRegions } = entryFilterOptions;
+
+                let options = areas;
+                if (includeSubRegions) {
+                    let newOptions = new Set(areas);
+                    newOptions.forEach((option) => {
+                        const treeNode = treeMap[option];
+                        if (!treeNode) {
+                            return;
+                        }
+                        newOptions = union(
+                            newOptions,
+                            new Set(Object.values(treeNode.children)),
+                        );
+                    });
+                    options = [...newOptions];
+                }
+                entriesFilter.push([entryFilterKey, options]);
+                break;
+            }
+            default:
+                entriesFilter.push([entryFilterKey, entryFilterOptions]);
+                break;
+        }
+    });
+
+    return entriesFilter;
+};
+
+export const getCombinedLeadFilters = (filters, widgets = [], geoOptions = {}) => {
+    const { entries_filter: rawEntryFilters = {}, ...rawLeadFilters } = filters;
+    const entriesFilter = getEntryFilters(rawEntryFilters, widgets, geoOptions);
+    const leadsFilter = getFiltersForRequest(rawLeadFilters);
+
+    return {
+        ...leadsFilter,
+        entries_filter: entriesFilter,
+    };
 };

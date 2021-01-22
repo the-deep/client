@@ -183,7 +183,7 @@ const tableHeadersMap = {
         label: _ts('leads', 'tableHeaderStatus'),
         sortable: true,
     },
-    no_of_entries: {
+    entries_count: {
         label: _ts('leads', 'tableHeaderNoOfEntries'),
         sortable: true,
     },
