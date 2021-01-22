@@ -195,6 +195,7 @@ export default class Navbar extends React.PureComponent {
             : 'fourHundredFour';
 
         const navLinks = [
+            'home',
             'leads',
             'entries',
             'arys',
@@ -276,7 +277,7 @@ export default class Navbar extends React.PureComponent {
         return (
             <nav className={`${className} ${styles.navbar}`}>
                 <Link
-                    to={reverseRoute(pathNames.homeScreen, {})}
+                    to={reverseRoute(pathNames.landingPage, {})}
                     className={styles.brand}
                 >
                     <div className={styles.iconWrapper}>

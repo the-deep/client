@@ -419,7 +419,7 @@ export default class DiscoverProjects extends React.PureComponent {
             pendingProjectJoinCancel
         );
 
-        const exitPath = reverseRoute(pathNames.homeScreen);
+        const exitPath = reverseRoute(pathNames.landingPage);
         const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (

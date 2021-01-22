@@ -92,13 +92,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'projects');
 
-    dashboard: {
+    home: {
         order: 21,
         type: ROUTE.private,
-        path: '/projects/:projectId/dashboard/',
-        loader: () => import('../views/Dashboard'),
+        path: '/projects/:projectId/home/',
+        loader: () => import('../views/Home'),
         links: allLinks,
-    }, // _ts('pageTitle', 'dashboard');
+    }, // _ts('pageTitle', 'home');
 
     workshop: {
         order: 19,
@@ -276,13 +276,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'apiDocs');
 
-    homeScreen: {
+    landingPage: {
         order: 140,
         type: ROUTE.private,
         path: '/',
-        loader: () => import('../views/HomeScreen'),
+        loader: () => import('../views/LandingPage'),
         links: allLinks,
-    }, // _ts('pageTitle', 'homeScreen');
+    }, // _ts('pageTitle', 'landingPage');
 
     stringManagement: {
         order: 150,
