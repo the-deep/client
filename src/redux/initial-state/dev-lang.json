@@ -563,7 +563,6 @@
         "5557": "File selection",
         "5558": "Password reset",
         "5559": "Home",
-        "5560": "Dashboard",
         "5561": "Leads visualization",
         "5562": "Assessments",
         "5563": "Edit assessment",
@@ -1242,7 +1241,11 @@
         "-77124728": "Hide all filters",
         "-44015188": "Show all filters",
         "-39409676": "Swap columns/rows for matrix2D",
-        "-88313294": "File format"
+        "-88313294": "File format",
+        "-1749585": "Set up a new project",
+        "-52545948": "Recent Projects",
+        "-22564410": "Summary of My Projects",
+        "-42491012": "Projects Tagging Activity"
     },
     "links": {
         "browserExtension": {
@@ -2211,8 +2214,7 @@
             "login": 814,
             "register": 811,
             "passwordReset": 5558,
-            "homeScreen": 5559,
-            "dashboard": 5560,
+            "landingPage": 5559,
             "discoverProjects": 7629,
             "discoverUserGroups": 7628,
             "leads": 641,
@@ -2246,7 +2248,8 @@
             "plannedArys": -41526057,
             "questionnaireBuilder": -7536745,
             "projectQuestionnaires": -91998400,
-            "frameworkQuestions": -25976066
+            "frameworkQuestions": -25976066,
+            "home": 5559
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3045,12 +3048,16 @@
         "widgets.view.timeRange": {
             "toLabel": 1000
         },
-        "dashboard": {
-            "deepLabel": 876,
+        "home": {
             "alphaLabel": 1238,
             "betaLabel": 1237,
             "devLabel": 1240,
-            "nightlyLabel": 1239
+            "nightlyLabel": 1239,
+            "priivateProjectBadgeTooltip": -64655622,
+            "projectTaggingActivityHeading": -42491012,
+            "recentProjectsHeading": -52545948,
+            "setupNewProjectButtonLabel": -1749585,
+            "summaryOfMyProjectsHeading": -22564410
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
