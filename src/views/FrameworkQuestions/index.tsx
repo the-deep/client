@@ -668,7 +668,7 @@ class FrameworkQuestions extends React.PureComponent<Props, State> {
                         <>
                             <BackLink
                                 className={styles.backLink}
-                                defaultLink={reverseRoute(pathNames.homeScreen, {})}
+                                defaultLink={reverseRoute(pathNames.landingPage, {})}
                             />
                             <h2 className={styles.heading}>
                                 {framework

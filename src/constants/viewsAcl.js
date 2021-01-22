@@ -67,7 +67,7 @@ const acl = {
 
     discoverProjects: { hide: notLoggedIn },
     projects: { hide: notLoggedIn },
-    dashboard: { hide: notProjectMember },
+    home: { hide: notProjectMember },
     workshop: { hide: notDevAndAdmin },
     connectors: { hide: notLoggedIn },
 
@@ -97,7 +97,7 @@ const acl = {
     weeklySnapshot: { hide: notLoggedIn },
     apiDocs: { hide: notDevAndAdmin },
     stringManagement: { hide: notDevAndAdmin },
-    homeScreen: { hide: notLoggedIn },
+    landingPage: { hide: notLoggedIn },
     adminPanel: { hide: notAdmin },
     visualization: { hide: notDev },
 

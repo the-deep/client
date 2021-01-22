@@ -95,8 +95,8 @@ export default class FourHundredFour extends React.PureComponent {
                                 {_ts('fourHundredFour', 'message2')}
                             </p>
                             <BackLink
-                                defaultLink={pathNames.homeScreen}
-                                className={styles.homeScreenLink}
+                                defaultLink={pathNames.landingPage}
+                                className={styles.landingPageLink}
                             >
                                 {_ts('fourHundredFour', 'backToDeep')}
                             </BackLink>
