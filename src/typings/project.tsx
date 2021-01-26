@@ -7,11 +7,9 @@ export interface ProjectElement {
     isPrivate: boolean;
 }
 
-<<<<<<< HEAD
 // TODO: add properties to GeoOptions
 export interface GeoOptions {
 }
-=======
 export interface VisaulizationEnabledOptions {
     entry: boolean;
     assessment: boolean;
@@ -98,4 +96,9 @@ export interface ProjectStats {
     topTaggers: UserActivityStat[];
 }
 
->>>>>>> 5c76b7ce3 (Add project item (#1314))
+export interface ProjectsSummary {
+    projectsCount: number;
+    totalLeadsCount: number;
+    totalLeadsTaggedCount: number;
+    totalLeadsTaggedAndVerifiedCount: number;
+}
