@@ -1,25 +1,14 @@
 @import '~base-scss/utils';
 
 .workshop {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--spacing-large);
     overflow: auto;
 
-    .page {
-        background-color: var(--color-foreground);
-        padding: var(--spacing-extra-large);
-    }
-
-    .faram {
-        display: flex;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        justify-content: space-around;
-
-        > * {
-            margin: var(--spacing-small);
-            background-color: var(--color-foreground);
-            padding: var(--spacing-small);
-            width: auto;
-            @include shadow-small;
-        }
+    >* {
+        margin: var(--spacing-medium);
     }
 }
