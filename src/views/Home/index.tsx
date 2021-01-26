@@ -32,6 +32,8 @@ import {
 import _ts from '#ts';
 
 import ProjectItem from './ProjectItem';
+import Summary from './Summary';
+
 import styles from './styles.scss';
 
 interface RecentProjectItemProps {
@@ -175,7 +177,7 @@ function Home(props: ViewProps) {
                                         {_ts('home', 'summaryOfMyProjectsHeading')}
                                     </h2>
                                 </header>
-                                <div className={styles.content} />
+                                <Summary className={styles.content} />
                             </div>
                             <div className={styles.projectTaggingActivity}>
                                 <header className={styles.header}>
