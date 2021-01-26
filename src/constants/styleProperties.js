@@ -18,6 +18,21 @@ const styleProperties = {
         colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
         colorBackgroundReadNotification: '#f5f5f5',
         colorBackgroundDangerHint: '#fffafa',
+
+        // For new UI
+        duiBorderColorCard: '#f2f2f2',
+        duiBorderColorInnerCard: '#DFE7F2',
+        duiColorLabel: '#828282',
+        duiColorTextDark: '#333333',
+        duiColorAccent: '#1A3ED0',
+        duiColorComplement1: '#008EFF',
+        duiColorComplement2: '#00C9F0',
+        duiColorComplement3: '#FFB443',
+        duiColorTextOnAccent: '#FFFFFF',
+        duiColorNegative: '#dfe7f2',
+        duiColorBackgroundProgressBar: '#bdbdbd',
+        // TODO: write better name for this
+        duiColorDeep6: '#F5F8FB',
     },
 
     dimens: {
@@ -61,6 +76,11 @@ const styleProperties = {
         heightNagbar: '64px',
 
         heightActionBar: '42px',
+
+        duiBorderRadiusCard: '8px',
+        duiHeightProgressBar: '10px',
+        duiBorderRadiusProgressBar: '15px',
+        fontSizeExtremeLarge: '32px',
     },
 };
 
