@@ -93,3 +93,9 @@ export interface ProjectStats {
     topTaggers: UserActivityStat[];
 }
 
+export interface ProjectsSummary {
+    projectsCount: number;
+    totalLeadsCount: number;
+    totalLeadsTaggedCount: number;
+    totalLeadsTaggedAndVerifiedCount: number;
+}

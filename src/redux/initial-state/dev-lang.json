@@ -1251,7 +1251,10 @@
         "-61653142": "Sources tagged",
         "-16197909": "Sources tagged & validated",
         "-19582379": "Sources untagged",
-        "-25324892": "Total sources"
+        "-25324892": "Total sources",
+        "-678768686": "Total added sources",
+        "-686861344": "Sources tagged",
+        "-686861268": "Sources tagged & validated"
     },
     "links": {
         "browserExtension": {
@@ -3060,7 +3063,11 @@
             "recentProjectsHeading": -52545948,
             "setupNewProjectButtonLabel": -1749585,
             "summaryOfMyProjectsHeading": -22564410,
-            "projectDetails": 31
+            "projectDetails": 31,
+            "projects": 173,
+            "totalAddedSources": -678768686,
+            "sourcesTagged": -686861344,
+            "sourcesTaggedValidated": -686861268
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
