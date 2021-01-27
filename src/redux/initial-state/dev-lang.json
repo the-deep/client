@@ -1240,7 +1240,18 @@
         "-1749585": "Set up a new project",
         "-52545948": "Recent Projects",
         "-22564410": "Summary of My Projects",
-        "-42491012": "Projects Tagging Activity"
+        "-42491012": "Projects Tagging Activity",
+        "-540964": "Analytical framework",
+        "-63478773": "Team members",
+        "-80101084": "Project owner",
+        "-32033776": "Recently active",
+        "-40183150": "Private project",
+        "-67543367": "Public project",
+        "-56681141": "Project activity",
+        "-61653142": "Sources tagged",
+        "-16197909": "Sources tagged & validated",
+        "-19582379": "Sources untagged",
+        "-25324892": "Total sources"
     },
     "links": {
         "browserExtension": {
@@ -3048,7 +3059,8 @@
             "projectTaggingActivityHeading": -42491012,
             "recentProjectsHeading": -52545948,
             "setupNewProjectButtonLabel": -1749585,
-            "summaryOfMyProjectsHeading": -22564410
+            "summaryOfMyProjectsHeading": -22564410,
+            "projectDetails": 31
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -3524,6 +3536,22 @@
             "searchInputPlacehoder": -46164024,
             "showTableOfContents": -19695002
         },
-        "qualityControl": {}
+        "qualityControl": {},
+        "home.recentProjects": {
+            "analysisFrameworkLabel": -540964,
+            "editProjectButtonLabel": 171,
+            "privateProjectLabel": -40183150,
+            "projectOwnerLabel": -80101084,
+            "publicProjectLabel": -67543367,
+            "recentlyActiveUsersLabel": -32033776,
+            "teamMembersTitle": -63478773,
+            "endDateLabel": 334,
+            "startDateLabel": 185,
+            "projectActivityLabel": -56681141,
+            "totalSourcesLabel": -25324892,
+            "sourcesTaggedLabel": -61653142,
+            "sourcesTaggedValidatedLabel": -16197909,
+            "sourcesUntaggedLabel": -19582379
+        }
     }
 }
