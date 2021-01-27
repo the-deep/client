@@ -63,6 +63,25 @@
     }
 }
 
+.small-block {
+    display: flex;
+    flex-direction: column;
+
+    .label {
+        padding: var(--spacing-extra-small) 0;
+        color: var(--dui-color-label);
+        font-size: var(--font-size-medium-alt);
+        font-weight: var(--font-weight-normal);
+    }
+
+    .value {
+        padding: var(--spacing-extra-small) 0;
+        color: var(--dui-color-text-dark);
+        font-size: var(--font-size-medium-alt);
+        font-weight: var(--font-weight-bold);
+    }
+}
+
 .stretched {
     display: flex;
     align-items: center;
