@@ -1207,7 +1207,7 @@
         "-87098708": "Any Organization Type",
         "-89081134": "Organization Type",
         "-78970877": "Failed to export",
-        "-89798798": "Include sub sector",
+        "-89798798": "Include sub sector for matrix2D",
         "-68982194": "more",
         "-75616009": "Less",
         "-12398709": "Export deleted successfully",
@@ -1243,7 +1243,7 @@
         "-77388797": "Select leads",
         "-77124728": "Hide all filters",
         "-44015188": "Show all filters",
-        "-39409676": "Swap columns/rows"
+        "-39409676": "Swap columns/rows for matrix2D"
     },
     "links": {
         "browserExtension": {
