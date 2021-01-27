@@ -467,45 +467,24 @@ function EntriesExportSelection(props: Props) {
                         />
                     </header>
                     {showFormatSelect && (
-                        <ExportTypePane
-                            activeExportTypeKey={activeExportTypeKey}
-                            reportStructure={reportStructure}
-                            reportStructureVariant={reportStructureVariant}
-                            decoupledEntries={decoupledEntries}
-                            showGroups={showGroups}
-                            onExportTypeChange={setActiveExportTypeKey}
-                            onReportStructureChange={setReportStructure}
-                            entryFilterOptions={entryFilterOptions}
-                            onShowGroupsChange={setShowGroups}
-                            onReportStructureVariantChange={handleReportStructureVariantChange}
-                            onDecoupledEntriesChange={setDecoupledEntries}
-                            onIncludeSubSectorChange={setIncludeSubSector}
-                            includeSubSector={includeSubSector}
-                            showMatrix2dOptions={showMatrix2dOptions}
-                        />
-                    )}
-                </section>
-                {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf')
-                    && (showContextualWidgetSelection || showTextWidgetSelection)
-                    && (
-                        <section className={styles.section}>
-                            <header className={styles.sectionHeader}>
-                                <h3 className={styles.heading}>
-                                    {_ts('export', 'selectFrameworkSectionsStepHeading')}
-                                    <span className={styles.subHeading}>
-                                        {_ts('export', 'selectFrameworkSectionsHeading')}
-                                    </span>
-                                </h3>
-                                <Button
-                                    onClick={showFrameworkSections
-                                        ? setFrameworkSectionsHidden
-                                        : setFrameworkSectionsVisible
-                                    }
-                                    iconName={showFrameworkSections ? 'chevronUp' : 'chevronDown'}
-                                    transparent
-                                />
-                            </header>
-                            {showFrameworkSections && (
+                        <>
+                            <ExportTypePane
+                                activeExportTypeKey={activeExportTypeKey}
+                                reportStructure={reportStructure}
+                                reportStructureVariant={reportStructureVariant}
+                                decoupledEntries={decoupledEntries}
+                                showGroups={showGroups}
+                                onExportTypeChange={setActiveExportTypeKey}
+                                onReportStructureChange={setReportStructure}
+                                entryFilterOptions={entryFilterOptions}
+                                onShowGroupsChange={setShowGroups}
+                                onReportStructureVariantChange={handleReportStructureVariantChange}
+                                onDecoupledEntriesChange={setDecoupledEntries}
+                                onIncludeSubSectorChange={setIncludeSubSector}
+                                includeSubSector={includeSubSector}
+                                showMatrix2dOptions={showMatrix2dOptions}
+                            />
+                            {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf') && (
                                 <div className={styles.sectionBody}>
                                     {showContextualWidgetSelection && (
                                         <TreeSelection
@@ -525,9 +504,9 @@ function EntriesExportSelection(props: Props) {
                                     )}
                                 </div>
                             )}
-                        </section>
-                    )
-                }
+                        </>
+                    )}
+                </section>
                 <PrimaryButton
                     className={styles.exportButton}
                     onClick={handleEntryExport}

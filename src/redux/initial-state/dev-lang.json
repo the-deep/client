@@ -583,14 +583,11 @@
         "7039": "Sub-columns",
         "7500": "Couldn't upload image",
         "7501": "Couldn't upload file",
-        "7627": "Administrator",
         "7628": "Discover Usergroups",
         "7629": "Discover Projects",
         "7630": "Leads activity",
         "7631": "Entries activity",
         "7632": "Discover",
-        "7633": "Contact administrator",
-        "7635": "DEEP: Inquiry for {projectName} project",
         "7636": "Join",
         "7637": "Cancel join request",
         "7638": "You have requested to join the {projectName} project - the project administrators have been notified.",
@@ -841,7 +838,6 @@
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
         "-47892955": "Can't drop here!",
-        "-96507602": "Error while trying to reset password.",
         "-27376433": "Anyplace",
         "-21403453": "Something went wrong with loading this page.",
         "-14465545": "Do you want to logout? This will clear out all of your local changes.",
@@ -957,7 +953,6 @@
         "-56943688": "Edit details",
         "-59011405": "No. of Pages",
         "-86287086": "No framework is currently selected.",
-        "-28816005": "Processing",
         "-31511044": "Authoring Organization",
         "-30790313": "Same as publishing organization",
         "-67237579": "Focus",
@@ -1035,9 +1030,6 @@
         "-72739389": "Subtitle column",
         "-78292946": "Advanced settings",
         "-76993519": "Sub-column expansion",
-        "-51656640": "Row › Column",
-        "-74878255": "Column › Row",
-        "-49902146": "Ordering for Matrix 2D",
         "-64110623": "Pivoted",
         "-41526057": "Planned Assessments",
         "-85659768": "Assessment Registry",
@@ -1236,8 +1228,6 @@
         "-78169579": "Select source(s)",
         "-84787220": "Step 1:",
         "-27725338": "Step 2:",
-        "-50472183": "Step 3:",
-        "-66346353": "Select framework sections",
         "-78055212": "Are you sure you want to cancel this export?",
         "-18293311": "Failed to cancel export.",
         "-2707814": "Successfully cancelled export.",
@@ -1252,7 +1242,8 @@
         "-79121234": "Entry Options",
         "-77388797": "Select leads",
         "-77124728": "Hide all filters",
-        "-44015188": "Show all filters"
+        "-44015188": "Show all filters",
+        "-39409676": "Swap columns/rows"
     },
     "links": {
         "browserExtension": {
@@ -1271,7 +1262,6 @@
             "descriptionTitle": 200,
             "createdAtTitle": 163,
             "createdByTitle": 538,
-            "adminsTitle": 7627,
             "frameworkTitle": 379,
             "regionsTitle": 336,
             "numberOfUsersTitle": 1119,
@@ -1281,8 +1271,6 @@
             "entriesActivityTitle": 7631,
             "statusTitle": 8,
             "actionsTitle": 16,
-            "contactAdminsTitle": 7633,
-            "contactAdminsSubject": 7635,
             "joinLabel": 7636,
             "cancelJoinRequest": 7637,
             "editProjectTooltip": 171,
@@ -1771,12 +1759,7 @@
             "documentTypeHeaderLabel": 623,
             "exportedAtHeaderLabel": 624,
             "exportTitleHeaderLabel": 13,
-            "statusHeaderLabel": 8,
             "exportTypeHeaderLabel": 627,
-            "exportDownloadHeaderLabel": 628,
-            "pendingStatusLabel": 629,
-            "errorStatusLabel": 630,
-            "completedStatusLabel": 631,
             "decoupledEntriesLabel": 634,
             "decoupledEntriesTitle": 635,
             "decoupledEntriesTitle2": 636,
@@ -1793,9 +1776,6 @@
             "startPlannedAssessmentExportButtonLabel": -8007367,
             "geoLabel": -80682543,
             "startedStatusLabel": -40624719,
-            "dimensionFirstExportTypeLabel": -51656640,
-            "sectorFirstExportTypeLabel": -74878255,
-            "orderMatrix2D": -49902146,
             "textWidgetLabel": -1797082,
             "contextualWidgetLabel": -1797083,
             "contentSettingsText": -66927638,
@@ -1824,8 +1804,6 @@
             "selectFormatStylingHeading": -26654172,
             "selectSourcesHeading": -78169579,
             "selectFormatStylingStepHeading": -27725338,
-            "selectFrameworkSectionsHeading": -66346353,
-            "selectFrameworkSectionsStepHeading": -50472183,
             "exportCancelConfirmationMessage": -78055212,
             "exportCancelLabel": 61,
             "cancelExportFailure": -18293311,
@@ -1839,7 +1817,8 @@
             "entryOptions": -79121234,
             "selectLeadsSectionHeading": -77388797,
             "hideAllFiltersLabel": -77124728,
-            "showAllFiltersLabel": -44015188
+            "showAllFiltersLabel": -44015188,
+            "swapColumnRowsLabel": -39409676
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
@@ -2195,8 +2174,7 @@
             "submitForgetPassword": 826,
             "emailLabel": 184,
             "emailPlaceholder": 813,
-            "retryRecaptcha": 894,
-            "passwordResetError": -96507602
+            "retryRecaptcha": 894
         },
         "login": {
             "welcomeToText": 803,
@@ -2661,7 +2639,6 @@
         "components.exportPreview": {
             "previewNotAvailableLabel": 132,
             "serverErrorText": 500,
-            "connectionFailureText": 501,
             "previewHeading": -77224022
         },
         "components.regionAdminLevel": {
