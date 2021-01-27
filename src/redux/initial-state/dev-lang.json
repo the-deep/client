@@ -1247,7 +1247,11 @@
         "-32033776": "Recently active",
         "-40183150": "Private project",
         "-67543367": "Public project",
-        "-56681141": "Project activity"
+        "-56681141": "Project activity",
+        "-61653142": "Sources tagged",
+        "-16197909": "Sources tagged & validated",
+        "-19582379": "Sources untagged",
+        "-25324892": "Total sources"
     },
     "links": {
         "browserExtension": {
@@ -3543,7 +3547,11 @@
             "teamMembersTitle": -63478773,
             "endDateLabel": 334,
             "startDateLabel": 185,
-            "projectActivityLabel": -56681141
+            "projectActivityLabel": -56681141,
+            "totalSourcesLabel": -25324892,
+            "sourcesTaggedLabel": -61653142,
+            "sourcesTaggedValidatedLabel": -16197909,
+            "sourcesUntaggedLabel": -19582379
         }
     }
 }

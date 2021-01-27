@@ -123,24 +123,24 @@ function Home(props: ViewProps) {
             return undefined;
         }
         return ({
-            projectId: projectDetails?.id,
-            title: projectDetails?.title,
-            isPrivate: projectStats?.isPrivate,
-            description: projectDetails?.description,
-            startDate: projectDetails?.startDate,
-            endDate: projectDetails?.endDate,
-            projectOwnerName: projectDetails?.createdByName,
-            analysisFrameworkTitle: projectDetails?.analysisFrameworkTitle,
-            totalUsers: projectStats?.numberOfUsers,
-            totalSources: projectStats?.numberOfLeads,
+            projectId: projectDetails.id,
+            title: projectDetails.title,
+            isPrivate: projectStats.isPrivate,
+            description: projectDetails.description,
+            startDate: projectDetails.startDate,
+            endDate: projectDetails.endDate,
+            projectOwnerName: projectDetails.createdByName,
+            analysisFrameworkTitle: projectDetails.analysisFrameworkTitle,
+            totalUsers: projectStats.numberOfUsers,
+            totalSources: projectStats.numberOfLeads,
             // TODO: Use better activity after API is ready
-            totalSourcesTagged: projectStats?.numberOfLeads,
+            totalSourcesTagged: projectStats.numberOfLeads,
             // TODO: Use better activity after API is ready
-            totalSourcesValidated: projectStats?.numberOfLeads,
+            totalSourcesValidated: projectStats.numberOfLeads,
             // TODO: Use better activity after API is ready
-            projectActivity: projectStats?.entriesActivity,
+            projectActivity: projectStats.entriesActivity,
             // TODO: Use better activity after API is ready
-            recentlyActive: projectStats?.topTaggers,
+            recentlyActive: projectStats.topTaggers,
         });
     }, [projectDetails, projectStats, selectedProject]);
 

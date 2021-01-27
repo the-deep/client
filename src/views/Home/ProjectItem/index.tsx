@@ -55,7 +55,7 @@ function RecentlyActiveUser(props: RecentlyActiveUserProps) {
             <FormattedDate
                 className={styles.date}
                 // FIXME: Remove this fallback
-                date={date ?? Date.now()}
+                value={date ?? Date.now()}
                 mode="hh:mmaaa, MMM dd, yyyy"
                 emptyComponent={emptyComponent}
             />
@@ -105,9 +105,9 @@ function ProjectItem(props: RecentProjectItemProps) {
         projectOwnerName,
         analysisFrameworkTitle,
         totalUsers,
-        totalSources,
-        totalSourcesTagged,
-        totalSourcesValidated,
+        totalSources = 0,
+        totalSourcesTagged = 0,
+        totalSourcesValidated = 0,
         recentlyActive,
         projectActivity,
     } = props;
@@ -124,8 +124,6 @@ function ProjectItem(props: RecentProjectItemProps) {
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [projectActivity]);
 
-    console.warn('here', props);
-
     return (
         <div className={_cs(className, styles.projectItem)}>
             <header className={styles.header}>
@@ -136,7 +134,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     <div className={styles.dateContainer}>
                         <FormattedDate
                             title={_ts('home.recentProjects', 'startDateLabel')}
-                            date={startDate}
+                            value={startDate}
                             mode="MMM yyyy"
                             emptyComponent={emptyComponent}
                         />
@@ -145,7 +143,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                         )}
                         <FormattedDate
                             title={_ts('home.recentProjects', 'endDateLabel')}
-                            date={endDate}
+                            value={endDate}
                             mode="MMM yyyy"
                             emptyComponent={emptyComponent}
                         />
@@ -220,7 +218,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                     name="bookmarkIcon"
                                 />
                             )}
-                            label="Total Sources"
+                            label={_ts('home.recentProjects', 'totalSourcesLabel')}
                             value={totalSources}
                             variant="negativeAccent"
                         />
@@ -228,13 +226,13 @@ function ProjectItem(props: RecentProjectItemProps) {
                             <ProgressLine
                                 className={styles.progressBar}
                                 progress={(totalSourcesValidated / totalSources) * 100}
-                                title="Sources Tagged & Validated"
+                                title={_ts('home.recentProjects', 'sourcesTaggedValidatedLabel')}
                                 variant="complement1"
                             />
                             <ProgressLine
                                 className={styles.progressBar}
                                 progress={(totalSourcesTagged / totalSources) * 100}
-                                title="Sources Tagged"
+                                title={_ts('home.recentProjects', 'sourcesTaggedLabel')}
                                 variant="complement2"
                             />
                             <ProgressLine
@@ -242,7 +240,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                                 progress={
                                     ((totalSources - totalSourcesTagged) / totalSources) * 100
                                 }
-                                title="Sources Untagged"
+                                title={_ts('home.recentProjects', 'sourcesUntaggedLabel')}
                                 variant="complement3"
                             />
                         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     _cs,
+    isDefined,
     bound,
 } from '@togglecorp/fujs';
 
@@ -25,7 +26,7 @@ function ProgressLine(props: Props) {
         variant = 'complement1',
     } = props;
 
-    const progressWidth = `${bound(progress, 0, 100)}%`;
+    const progressWidth = `${bound(isDefined(progress) ? progress : 0, 0, 100)}%`;
 
     return (
         <div className={_cs(styles.progressBar, className)}>
