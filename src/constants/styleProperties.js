@@ -18,6 +18,41 @@ const styleProperties = {
         colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
         colorBackgroundReadNotification: '#f5f5f5',
         colorBackgroundDangerHint: '#fffafa',
+
+        duiColorBlack: '#000000',
+        duiColorGrey1: '#333333',
+        duiColorGrey2: '#4f4f4f',
+        duiColorGrey3: '#828282',
+        duiColorGrey4: '#bdbdbd',
+        duiColorGrey5: '#e0e0e0',
+        duiColorGrey6: '#f2f2f2',
+        duiColorWhite: '#ffffff',
+
+        duiColorBrand: '#00125b',
+        duiColorAccent: '#1a3ed0',
+        duiColorAccentHover: '#1030b2',
+        duiColorTextOnAccent: '#ffffff',
+
+        duiColorBackgroundPrimaryButton: 'var(--dui-color-accent)',
+        duiColorBackgroundHoverPrimaryButton: 'var(--dui-color-accent-hover)',
+        duiColorTextPrimaryButton: 'var(--dui-color-text-on-accent)',
+
+        duiColorComplement1: '#008eff',
+        duiColorComplement2: '#00c9f0',
+        duiColorComplement3: '#ffb443',
+
+        duiColorPositive: '#29bb75',
+        duiColorInformation: '#3fa2f7',
+        duiColorNegative: '#ff5c52',
+
+        duiColorBackground: '#f6f6f6',
+        duiColorBackgroundInformation: '#3fa2f7',
+        duiColorBackgroundNegative: '#ff5c52',
+
+        duiColorText: 'var(--dui-color-grey1)',
+
+        duiColorBackgroundDisabled: 'var(--dui-color-grey5)',
+        duiColorTextDisabled: 'var(--dui-color-grey4)',
     },
 
     dimens: {
@@ -61,6 +96,23 @@ const styleProperties = {
         heightNagbar: '64px',
 
         heightActionBar: '42px',
+
+        duiSpacingExtraSmall: '0.1rem',
+        duiSpacingSmall: '0.2rem',
+        duiSpacingMedium: '0.45rem',
+        duiSpacingLarge: '0.66rem',
+        duiSpacingExtraLarge: '1.1rem',
+
+        duiFontSizeSmall: '0.67rem',
+        duiFontSizeMedium: '0.86rem',
+        duiFontSizeLarge: '1rem',
+
+        duiFontWeightLight: '300',
+        duiFontWeightMedium: '400',
+        duiFontWeightBold: '700',
+
+        duiWidthSeparatorThin: '0.06em',
+        duiWidthSeparatorMedium: '0.1em',
     },
 };
 

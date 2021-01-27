@@ -1,14 +1,27 @@
-@import '~base-scss/utils';
-
 .workshop {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
+    background-color: var(--dui-color-background);
     padding: var(--spacing-large);
     overflow: auto;
 
-    >* {
-        margin: var(--spacing-medium);
+    .buttons {
+        .new {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            >* {
+                margin: var(--spacing-medium);
+            }
+        }
+
+        .old {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            >* {
+                margin: var(--spacing-medium);
+            }
+        }
     }
 }
