@@ -18,28 +18,6 @@
         }
     }
 
-    .export-type-options {
-        flex-grow: 1;
-        padding: var(--spacing-medium);
-        overflow: auto;
-
-        p {
-            margin: 0 0 var(--spacing-small) var(--spacing-small);
-            color: var(--color-text-label);
-        }
-
-        .info {
-            display: flex;
-            margin-top: var(--spacing-medium);
-
-            .icon {
-                flex-shrink: 0;
-                color: var(--color-info);
-                font-size: var(--font-size-large);
-            }
-        }
-    }
-
     .report-structure {
         display: flex;
 

@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 
 import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
 import TreeSelection from '#rsci/TreeSelection';
-import SegmentInput from '#rsci/SegmentInput';
 import List from '#rscv/List';
 
 import {
@@ -57,17 +56,6 @@ interface Props {
     showMatrix2dOptions: boolean;
 }
 
-const reportStructureOptions: ReportStructureOption[] = [
-    {
-        key: SECTOR_FIRST,
-        label: _ts('export', 'sectorFirstExportTypeLabel'),
-    },
-    {
-        key: DIMENSION_FIRST,
-        label: _ts('export', 'dimensionFirstExportTypeLabel'),
-    },
-];
-
 const exportTypes: ExportTypeItem[] = [
     {
         key: 'word',
@@ -92,8 +80,6 @@ const exportTypes: ExportTypeItem[] = [
 ];
 
 const exportTypeKeyExtractor = (d: ExportTypeItem) => d.key;
-const reportVariantKeySelector = (d: ReportStructureOption) => d.key;
-const reportVariantLabelSelector = (d: ReportStructureOption) => d.label;
 
 interface RenderWordProps {
     entryFilterOptions: {
@@ -124,6 +110,18 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         showMatrix2dOptions,
     } = props;
 
+    const swapOrderValue = useMemo(() => (
+        reportStructureVariant === DIMENSION_FIRST
+    ), [reportStructureVariant]);
+
+    const handleSwapOrderValueChange = useCallback((newValue) => {
+        if (newValue) {
+            onReportStructureVariantChange(DIMENSION_FIRST);
+        } else {
+            onReportStructureVariantChange(SECTOR_FIRST);
+        }
+    }, [onReportStructureVariantChange]);
+
     if (!reportStructure) {
         return (
             <p>
@@ -151,17 +149,16 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                             value={includeSubSector}
                             onChange={onIncludeSubSectorChange}
                         />
-                        <SegmentInput
-                            label={_ts('export', 'orderMatrix2D')}
-                            keySelector={reportVariantKeySelector}
-                            labelSelector={reportVariantLabelSelector}
-                            value={reportStructureVariant}
-                            onChange={onReportStructureVariantChange}
-                            options={reportStructureOptions}
+                        <Checkbox
+                            className={styles.includeSubSector}
+                            key="swap-checkbox"
+                            label={_ts('export', 'swapColumnRowsLabel')}
+                            value={swapOrderValue}
+                            onChange={handleSwapOrderValueChange}
                         />
                     </div>
                 )}
-                <div className={styles.right}>
+                <div>
                     {!showMatrix2dOptions && (
                         <h4 className={styles.heading}>
                             { _ts('export', 'reportStructureLabel')}
