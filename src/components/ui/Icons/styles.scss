@@ -1,0 +1,9 @@
+.icons {
+    display: flex;
+    align-items: center;
+    padding: var(--dui-spacing-small) calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small));
+
+    >* {
+        margin: 0 var(--dui-spacing-extra-small);
+    }
+}

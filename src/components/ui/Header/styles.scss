@@ -1,0 +1,17 @@
+.header {
+    display: flex;
+    align-items: center;
+    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+    .icons {
+        flex-shrink: 0;
+    }
+
+    .heading {
+        flex-grow: 1;
+    }
+
+    .actions {
+        flex-shrink: 0;
+    }
+}

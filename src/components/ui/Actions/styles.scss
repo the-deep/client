@@ -1,0 +1,11 @@
+.actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small));
+
+    >* {
+        flex-shrink: 0;
+        margin: var(--dui-spacing-extra-small);
+    }
+}

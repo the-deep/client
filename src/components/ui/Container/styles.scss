@@ -1,0 +1,20 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dui-color-background);
+    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
+
+    .header {
+        flex-shrink: 0;
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium);
+        overflow: auto;
+    }
+
+    .footer {
+        flex-shrink: 0;
+    }
+}
