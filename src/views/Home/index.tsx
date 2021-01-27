@@ -1,20 +1,28 @@
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
+    isDefined,
     reverseRoute,
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import SelectInput from '#rsci/SelectInput';
+import ListView from '#rscv/List/ListView';
 
 import Badge from '#components/viewer/Badge';
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import { pathNames } from '#constants';
+import useRequest from '#utils/request';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
     AppState,
     ProjectElement,
+    ProjectDetails,
+    ProjectStats,
+    UserActivityStat,
+    CountTimeSeries,
 } from '#typings';
 
 import {
@@ -23,11 +31,30 @@ import {
 
 import _ts from '#ts';
 
-import RecentProjects from './RecentProjects';
+import ProjectItem from './ProjectItem';
 import styles from './styles.scss';
+
+interface RecentProjectItemProps {
+    projectId: number;
+    title: string;
+    isPrivate: boolean;
+    description?: string;
+    projectOwnerName: string;
+    analysisFrameworkTitle?: string;
+    startDate?: string;
+    endDate?: string;
+    totalUsers: number;
+    totalSources: number;
+    totalSourcesTagged: number;
+    totalSourcesValidated: number;
+    projectActivity: CountTimeSeries[];
+    recentlyActive: UserActivityStat[];
+}
 
 const projectKeySelector = (option: ProjectElement) => (option.id);
 const projectLabelSelector = (option: ProjectElement) => (option.title);
+
+const recentProjectKeySelector = (option: RecentProjectItemProps) => option.projectId;
 
 const mapStateToProps = (state: AppState) => ({
     userProjects: currentUserProjectsSelector(state),
@@ -62,6 +89,77 @@ function Home(props: ViewProps) {
             )}
         </div>
     ), [selectedProject]);
+
+    const [
+        projectStatsPending,
+        projectStats,
+        ,
+        triggerProjectStats,
+    ] = useRequest<ProjectStats>({
+        url: `server://projects-stat/${selectedProject}/dashboard/`,
+        method: 'GET',
+        autoTrigger: isDefined(selectedProject),
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('home', 'projectDetails'))({ error: errorBody });
+        },
+    });
+
+    const [
+        projectDetailsPending,
+        projectDetails,
+        ,
+        triggerProjectDetails,
+    ] = useRequest<ProjectDetails>({
+        url: `server://projects/${selectedProject}/`,
+        method: 'GET',
+        autoTrigger: isDefined(selectedProject),
+        onFailure: (error, errorBody) => {
+            notifyOnFailure(_ts('home', 'projectDetails'))({ error: errorBody });
+        },
+    });
+
+    const projectDashboardData = useMemo(() => {
+        if (!selectedProject || !projectDetails || !projectStats) {
+            return undefined;
+        }
+        return ({
+            projectId: projectDetails.id,
+            title: projectDetails.title,
+            isPrivate: projectStats.isPrivate,
+            description: projectDetails.description,
+            startDate: projectDetails.startDate,
+            endDate: projectDetails.endDate,
+            projectOwnerName: projectDetails.createdByName,
+            analysisFrameworkTitle: projectDetails.analysisFrameworkTitle,
+            totalUsers: projectStats.numberOfUsers,
+            totalSources: projectStats.numberOfLeads,
+            // TODO: Use better activity after API is ready
+            totalSourcesTagged: projectStats.numberOfLeads,
+            // TODO: Use better activity after API is ready
+            totalSourcesValidated: projectStats.numberOfLeads,
+            // TODO: Use better activity after API is ready
+            projectActivity: projectStats.entriesActivity,
+            // TODO: Use better activity after API is ready
+            recentlyActive: projectStats.topTaggers,
+        });
+    }, [projectDetails, projectStats, selectedProject]);
+
+    const recentProjectsRendererParams = useCallback((key, data) => ({
+        ...data,
+    }), []);
+
+    const finalRecentProjects: RecentProjectItemProps[] = useMemo(() => {
+        if (projectDashboardData) {
+            return [projectDashboardData];
+        }
+        return [];
+    }, [projectDashboardData]);
+
+    const handleProjectChange = useCallback((newSelectedProject) => {
+        setSelectedProject(newSelectedProject);
+        triggerProjectDetails();
+        triggerProjectStats();
+    }, [triggerProjectDetails, triggerProjectStats]);
 
     return (
         <Page
@@ -104,7 +202,7 @@ function Home(props: ViewProps) {
                                     showLabel={false}
                                     className={styles.projectSelectInput}
                                     value={selectedProject}
-                                    onChange={setSelectedProject}
+                                    onChange={handleProjectChange}
                                 />
                                 <ButtonLikeLink
                                     type="primary"
@@ -113,9 +211,12 @@ function Home(props: ViewProps) {
                                     {_ts('home', 'setupNewProjectButtonLabel')}
                                 </ButtonLikeLink>
                             </header>
-                            <RecentProjects
-                                className={styles.recentProjects}
-                                selectedProject={selectedProject}
+                            <ListView
+                                data={finalRecentProjects}
+                                rendererParams={recentProjectsRendererParams}
+                                renderer={ProjectItem}
+                                keySelector={recentProjectKeySelector}
+                                pending={projectDetailsPending || projectStatsPending}
                             />
                         </div>
                     </div>

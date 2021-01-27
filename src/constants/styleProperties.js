@@ -66,6 +66,14 @@ const styleProperties = {
         duiRadiusBorderInputSection: '0',
         duiColorInputLabel: 'var(--dui-color-grey3)',
         duiColorInputLabelActive: 'var(--dui-color-accent)',
+        // For new UI
+        duiBorderColorCard: '#f2f2f2',
+        duiBorderColorInnerCard: '#DFE7F2',
+        duiColorLabel: '#828282',
+        duiColorTextDark: '#333333',
+        duiColorBackgroundProgressBar: '#bdbdbd',
+        // TODO: write better name for this
+        duiColorDeep6: '#F5F8FB',
     },
 
     dimens: {
@@ -135,6 +143,9 @@ const styleProperties = {
         duiBorderRadiusCard: '8px',
         duiBorderRadiusTag: '25px',
         duiOpacityDisabledElement: '0.3',
+        duiHeightProgressBar: '10px',
+        duiBorderRadiusProgressBar: '15px',
+        fontSizeExtremeLarge: '32px',
     },
 };
 
