@@ -24,7 +24,14 @@
             }
         }
 
-        .item {
+        .tagged {
+            --color-fill: var(--dui-color-accent);
+            flex-basis: calc(50% - (var(--spacing-large) / 2));
+            flex-shrink: 0;
+        }
+
+        .verified {
+            --color-fill: var(--dui-color-complement1);
             flex-basis: calc(50% - (var(--spacing-large) / 2));
             flex-shrink: 0;
         }
