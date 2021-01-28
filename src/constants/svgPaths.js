@@ -10,6 +10,8 @@ import tabularIcon from '#resources/img/tabular.svg';
 import suborgIcon from '#resources/img/suborg.svg';
 import bookmarkIcon from '#resources/img/bookmark.svg';
 import noteIcon from '#resources/img/note.svg';
+import checkmarkCircleFillIcon from '#resources/img/checkmark-circle-fill.svg';
+import documentIcon from '#resources/img/document.svg';
 
 const svgPaths = {
     deepLogo,
@@ -25,6 +27,8 @@ const svgPaths = {
 
     bookmarkIcon,
     noteIcon,
+    checkmarkCircleFillIcon,
+    documentIcon,
 };
 
 export default svgPaths;
