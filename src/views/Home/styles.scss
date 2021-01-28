@@ -17,7 +17,6 @@
 
         .content {
             border-radius: 5px;
-            background-color: var(--color-background);
             min-height: 320px;
         }
 
@@ -34,12 +33,12 @@
                 display: flex;
 
                 .summary-container {
-                    flex-basis: 50%;
+                    flex-basis: 30%;
                     margin: var(--spacing-large);
                 }
 
                 .project-tagging-activity {
-                    flex-basis: 50%;
+                    flex-basis: 70%;
                     margin: var(--spacing-large);
                 }
             }
