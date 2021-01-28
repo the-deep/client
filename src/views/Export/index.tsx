@@ -133,7 +133,7 @@ function Export(props: PropsFromState) {
     return (
         <Page
             className={styles.export}
-            headerClassName={styles.header}
+            headerClassName={styles.exportPageHeader}
             header={
                 <ScrollTabs
                     tabs={finalTabs}
