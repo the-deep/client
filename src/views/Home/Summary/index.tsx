@@ -86,16 +86,18 @@ function Summary(props: Props) {
             </div>
             <div className={styles.row}>
                 <InfoBoxWithDonut
-                    className={styles.item}
+                    className={styles.tagged}
                     percent={taggedPercent}
+                    variant="accent"
                     label={_ts('home', 'sourcesTagged')}
+                    image={`${svgPaths.documentIcon}#document`}
                 />
                 <InfoBoxWithDonut
-                    className={styles.item}
+                    className={styles.verified}
                     percent={verifiedPercent}
                     label={_ts('home', 'sourcesTaggedValidated')}
                     variant="complement"
-                    image={svgPaths.bookmarkIcon}
+                    image={`${svgPaths.checkmarkCircleFillIcon}#checkmark`}
                 />
             </div>
         </div>
