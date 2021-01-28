@@ -1,10 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Numeral from '#rscv/Numeral';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import CircularProgressBar from '#rsu/../v2/View/CircularProgressBar';
+import Icon from '#rscg/Icon';
 
+import InformationBox from '#components/viewer/InformationBox';
+import svgPaths from '#constants/svgPaths';
 
 import notify from '#notify';
 import _ts from '#ts';
@@ -14,6 +15,7 @@ import {
     ProjectsSummary,
 } from '#typings';
 
+import InfoBoxWithDonut from './InfoBoxWithDonut';
 import styles from './styles.scss';
 
 interface Props {
@@ -57,58 +59,44 @@ function Summary(props: Props) {
         <div className={_cs(className, styles.summary)}>
             {pending && <LoadingAnimation />}
             <div className={styles.row}>
-                <div className={styles.item}>
-                    <span>{summaryResponse?.projectsCount}</span>
-                    <span>{_ts('home', 'projects')}</span>
-                </div>
-                <div className={styles.item}>
-                    <span>{summaryResponse?.totalLeadsCount}</span>
-                    <span>{_ts('home', 'totalAddedSources')}</span>
-                </div>
+                <InformationBox
+                    className={styles.infoBox}
+                    icon={(
+                        <Icon
+                            className={styles.icon}
+                            name="noteIcon"
+                        />
+                    )}
+                    label={_ts('home', 'projects')}
+                    value={summaryResponse?.projectsCount}
+                    variant="accent"
+                />
+                <InformationBox
+                    className={styles.infoBox}
+                    icon={(
+                        <Icon
+                            className={styles.icon}
+                            name="bookmarkIcon"
+                        />
+                    )}
+                    label={_ts('home', 'totalAddedSources')}
+                    value={summaryResponse?.totalLeadsCount}
+                    variant="complement"
+                />
             </div>
             <div className={styles.row}>
-                <div className={styles.item}>
-                    <CircularProgressBar
-                        className={styles.chart}
-                        width={80}
-                        arcWidth={5}
-                        value={taggedPercent}
-                        imagePadding={10}
-                    />
-                    <div className={styles.content}>
-                        <span className={styles.value}>
-                            <Numeral
-                                value={taggedPercent}
-                                precision={2}
-                                suffix="%"
-                            />
-                        </span>
-                        <span className={styles.label}>
-                            {_ts('home', 'sourcesTagged')}
-                        </span>
-                    </div>
-                </div>
-                <div className={styles.item}>
-                    <CircularProgressBar
-                        className={styles.chart}
-                        width={80}
-                        arcWidth={5}
-                        value={verifiedPercent}
-                        imagePadding={10}
-                    />
-                    <div className={styles.content}>
-                        <span className={styles.value}>
-                            <Numeral
-                                value={verifiedPercent}
-                                precision={2}
-                                suffix="%"
-                            />
-                        </span>
-                        <span className={styles.label}>
-                            {_ts('home', 'sourcesTaggedValidated')}
-                        </span>
-                    </div>
-                </div>
+                <InfoBoxWithDonut
+                    className={styles.item}
+                    percent={taggedPercent}
+                    label={_ts('home', 'sourcesTagged')}
+                />
+                <InfoBoxWithDonut
+                    className={styles.item}
+                    percent={verifiedPercent}
+                    label={_ts('home', 'sourcesTaggedValidated')}
+                    variant="complement"
+                    image={svgPaths.bookmarkIcon}
+                />
             </div>
         </div>
     );
