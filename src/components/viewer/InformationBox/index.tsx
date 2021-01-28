@@ -12,7 +12,7 @@ interface ComponentProps {
     labelClassName?: string;
     icon?: React.ReactNode;
     label: string;
-    value: number;
+    value?: number;
     variant: 'accent' | 'complement' | 'negativeAccent';
 }
 
@@ -21,7 +21,7 @@ function InformationBox(props: ComponentProps) {
         className,
         icon,
         label,
-        value,
+        value = 0,
         valueClassName,
         labelClassName,
         iconContainerClassName,
