@@ -6,6 +6,7 @@ import OldButton from '#rsu/../v2/Action/Button';
 
 import Container from '#components/ui/Container';
 import Button from '#components/ui/Button';
+import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import Link from '#components/ui/Link';
 
 import styles from './styles.scss';
@@ -87,6 +88,22 @@ function Workshop(props: WorkshopProps) {
                 >
                     Go to Togglecorp website
                 </Link>
+            </Container>
+            <Container
+                heading="Button like link"
+                contentClassName={styles.buttonLikeLinks}
+            >
+                <ButtonLikeLink to="/">
+                    Add new project
+                </ButtonLikeLink>
+                <ButtonLikeLink
+                    to="/"
+                    icons={(
+                        <Icon name="add" />
+                    )}
+                >
+                    Create new lead
+                </ButtonLikeLink>
             </Container>
         </div>
     );

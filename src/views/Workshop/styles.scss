@@ -35,4 +35,15 @@
             width: fit-content;
         }
     }
+
+    .button-like-links {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        >* {
+            margin: var(--dui-spacing-medium);
+            width: fit-content;
+        }
+    }
 }
