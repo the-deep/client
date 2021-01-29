@@ -117,9 +117,27 @@ export interface ProjectStat {
     versionId: number;
 }
 
+export interface ProjectSummaryItem {
+    count: number;
+    id: number;
+    title: string;
+}
+
+interface ActivitySummaryItem {
+    project: number;
+    count: number;
+    date: string;
+}
+
+export interface RecentActivity {
+    projects: ProjectSummaryItem[];
+    activities: ActivitySummaryItem[];
+}
+
 export interface ProjectsSummary {
     projectsCount: number;
     totalLeadsCount: number;
     totalLeadsTaggedCount: number;
     totalLeadsTaggedAndVerifiedCount: number;
+    recentEntriesActivity: RecentActivity;
 }

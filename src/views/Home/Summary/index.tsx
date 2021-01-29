@@ -7,9 +7,7 @@ import Icon from '#rscg/Icon';
 import InformationBox from '#components/viewer/InformationBox';
 import svgPaths from '#constants/svgPaths';
 
-import notify from '#notify';
 import _ts from '#ts';
-import useRequest from '#utils/request';
 
 import {
     ProjectsSummary,
@@ -20,31 +18,17 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    selectedProject?: number;
+    pending: boolean;
+    summaryResponse?: ProjectsSummary;
 }
 
 
 function Summary(props: Props) {
     const {
         className,
-    } = props;
-
-    const [
         pending,
         summaryResponse,
-    ] = useRequest<ProjectsSummary>({
-        url: 'server://projects-stat/summary/',
-        method: 'GET',
-        autoTrigger: true,
-        onFailure: (_, { messageForNotification }) => {
-            notify.send({
-                title: _ts('home', 'summaryOfMyProjectsHeading'),
-                type: notify.type.ERROR,
-                message: messageForNotification,
-                duration: notify.duration.MEDIUM,
-            });
-        },
-    });
+    } = props;
 
     const {
         totalLeadsCount: total = 0,
