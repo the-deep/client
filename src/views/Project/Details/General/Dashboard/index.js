@@ -55,7 +55,7 @@ const requestOptions = {
         onMount: true,
         onPropsChanged: ['projectId'],
         method: methods.GET,
-        url: ({ props }) => `/projects-stat/${props.projectId}/dashboard/`,
+        url: ({ props }) => `/projects-stat/${props.projectId}/`,
         onSuccess: ({ response, props }) => {
             props.setProjectDashboardDetails({
                 project: response,
@@ -63,7 +63,7 @@ const requestOptions = {
             });
         },
         extras: {
-            schemaName: 'projectDashboardGetResponse',
+            schemaName: 'projectStat',
         },
     },
 };
@@ -291,7 +291,7 @@ export default class ProjectDashboard extends React.PureComponent {
         const { projectDashboard: {
             createdAt,
             createdBy,
-            createdById,
+            createdByName,
             status,
             isPrivate,
             numberOfLeads,
@@ -300,7 +300,7 @@ export default class ProjectDashboard extends React.PureComponent {
         } } = this.props;
 
         const linkToUser = reverseRoute(pathNames.userProfile, {
-            userId: createdById,
+            userId: createdBy,
         });
 
         const projectVisibility = isPrivate
@@ -330,9 +330,7 @@ export default class ProjectDashboard extends React.PureComponent {
                         {_ts('project.general.dashboard', 'createdByTitle')}
                     </div>
                     <div className={styles.stringValue}>
-                        <a href={linkToUser}>
-                            {createdBy}
-                        </a>
+                        {createdByName}
                     </div>
                 </div>
                 <div className={styles.infoItem}>

@@ -10,7 +10,7 @@ const projectSchema = [];
         extends: 'dbentity',
         fields: {
             data: { type: 'object' },
-            memberships: { type: 'array.projectMembership' },
+            memberships: { type: 'array.projectMembership', required: false },
             regions: { type: 'array.object' },
             organizations: { type: 'array.object' },
             title: { type: 'string', required: true },
@@ -36,6 +36,51 @@ const projectSchema = [];
             leadsActivity: { type: 'array.timevalue' },
             status: { type: 'uint' },
             statusTitle: { type: 'string' },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+{
+    const name = 'projectStat';
+    const schema = {
+        doc: {
+            name: 'Project Statistics',
+            description: 'Porject information with more details',
+        },
+        extends: 'dbentity',
+        fields: {
+            activityLog: { type: 'array.object' },
+            analysisFramework: { type: 'uint', required: false },
+            analysisFrameworkTitle: { type: 'string' },
+            assessmentTemplate: { type: 'uint', required: false },
+            assessmentTemplateTitle: { type: 'string' },
+            categoryEditor: { type: 'uint', required: false },
+            categoryEditorTitle: { type: 'string' },
+            createdAt: { type: 'string', required: true }, // date
+            createdByDetails: { type: 'object' },
+            description: { type: 'string', required: false },
+            endDate: { type: 'string' }, // date
+            entriesActivity: { type: 'array.timevalue' },
+            isDefault: { type: 'boolean' },
+            isPrivate: { type: 'boolean', required: true },
+            isVisualizationEnabled: { type: 'object' },
+            leadsActivity: { type: 'array.timevalue' },
+            memberStatus: { type: 'string' },
+            numberOfEntries: { type: 'uint' },
+            numberOfLeads: { type: 'uint' },
+            numberOfLeadsTagged: { type: 'uint' },
+            numberOfLeadsTaggedAndVerified: { type: 'uint' },
+            numberOfUsers: { type: 'uint' },
+            organizations: { type: 'array.object' },
+            regions: { type: 'array.object' },
+            role: { type: 'uint' },
+            startDate: { type: 'string' }, // date
+            status: { type: 'string' },
+            statusTitle: { type: 'string' },
+            title: { type: 'string', required: true },
+            topSourcers: { type: 'array.sourcers' },
+            topTaggers: { type: 'array.sourcers' },
+            userGroups: { type: 'array.userGroupBase' },
         },
     };
     projectSchema.push({ name, schema });
@@ -167,35 +212,6 @@ const projectSchema = [];
     projectSchema.push({ name, schema });
 }
 
-
-{
-    const name = 'projectDashboardGetResponse';
-    const schema = {
-        doc: {
-            name: 'Project Dashboard Get Response',
-            description: 'Response for GET /projects/{id}',
-        },
-        fields: {
-            topSourcers: { type: 'array.sourcers' },
-            topTaggers: { type: 'array.sourcers' },
-            createdBy: { type: 'string' },
-            createdById: { type: 'uint' },
-            status: { type: 'string' },
-            createdAt: { type: 'string', required: true }, // date
-            isPrivate: { type: 'boolean', required: true },
-            regions: { type: 'array.object' },
-            activityLog: { type: 'array.object' },
-            numberOfUsers: { type: 'uint' },
-            numberOfLeads: { type: 'uint' },
-            numberOfEntries: { type: 'uint' },
-            entriesActivity: { type: 'array.timevalue' },
-            leadsActivity: { type: 'array.timevalue' },
-        },
-    };
-    projectSchema.push({ name, schema });
-}
-
-
 {
     const name = 'projectPutResponse';
     const schema = {
@@ -242,18 +258,17 @@ const projectSchema = [];
     projectSchema.push({ name, schema });
 }
 {
-    const name = 'projectsGetResponse';
+    const name = 'projectStatsGetResponse';
     const schema = {
         doc: {
             name: 'Projects Get Response',
-            description: 'Response for GET /projects/',
+            description: 'Response for GET /projects/stat/',
         },
         fields: {
             count: { type: 'uint', required: true },
             next: { type: 'string' },
             previous: { type: 'string' },
-            results: { type: 'array.project', required: true },
-            // extra: { type: 'projectsExtra', required: true },
+            results: { type: 'array.projectStat', required: true },
         },
     };
     projectSchema.push({ name, schema });

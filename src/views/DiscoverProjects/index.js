@@ -139,7 +139,7 @@ const requestOptions = {
             });
         },
         extras: {
-            schemaName: 'projectsGetResponse',
+            schemaName: 'projectStatsGetResponse',
         },
     },
     projectJoinRequest: {
@@ -282,14 +282,7 @@ export default class DiscoverProjects extends React.PureComponent {
                     />
                 );
             case 'created_by':
-                return (
-                    <Link
-                        to={reverseRoute(pathNames.userProfile, { userId: project.createdBy })}
-                        className={styles.admin}
-                    >
-                        {project.createdByName}
-                    </Link>
-                );
+                return project.createdByName;
             case 'analysis_framework':
                 return project.analysisFrameworkTitle;
             case 'number_of_users':
