@@ -290,7 +290,6 @@ export default class ProjectDashboard extends React.PureComponent {
     renderBasicInfo = () => {
         const { projectDashboard: {
             createdAt,
-            createdBy,
             createdByName,
             status,
             isPrivate,
@@ -298,10 +297,6 @@ export default class ProjectDashboard extends React.PureComponent {
             numberOfEntries,
             numberOfUsers,
         } } = this.props;
-
-        const linkToUser = reverseRoute(pathNames.userProfile, {
-            userId: createdBy,
-        });
 
         const projectVisibility = isPrivate
             ? _ts('project.general.dashboard', 'privateVisibilityTitle')
