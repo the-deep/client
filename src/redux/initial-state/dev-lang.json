@@ -288,7 +288,7 @@
         "636": "Disaggregate data for any list values (i.e. multiple administrative areas or multiple select fields).",
         "637": "Your export has been started.\nPlease go to view all exports page for further information on export.",
         "638": "You don't have any matrices in your analysis framework.",
-        "639": "Reporting structure",
+        "639": "Framework sections",
         "640": "No export options available",
         "641": "Leads",
         "643": "Select",
@@ -1075,7 +1075,7 @@
         "-24599331": "Entry groups - quick add",
         "-19686228": "There are no entry groups in this lead.",
         "-1797082": "Free Text Widgets",
-        "-1797083": "Contextual Information",
+        "-1797083": "Additional metadata",
         "-48510558": "Free text",
         "-84489142": "Are you sure you want to delete label {title}? {entryCount} entries are tagged with this label.",
         "-46865311": "Are you sure you want to reset this excerpt to dropped text? You cannot undo this action.",
@@ -1207,7 +1207,7 @@
         "-87098708": "Any Organization Type",
         "-89081134": "Organization Type",
         "-78970877": "Failed to export",
-        "-89798798": "Include sub sector for matrix2D",
+        "-89798798": "Include sub-sector layer for matrix2D",
         "-68982194": "more",
         "-75616009": "Less",
         "-12398709": "Export deleted successfully",
@@ -1224,7 +1224,7 @@
         "-12312398": "Failed to unarchive export",
         "-80808108": "Unarchive",
         "-80870871": "Are you sure you want to unarchive this export?",
-        "-26654172": "Select format and styling",
+        "-26654172": "Customize exported document",
         "-78169579": "Select source(s)",
         "-84787220": "Step 1:",
         "-27725338": "Step 2:",
@@ -1243,7 +1243,8 @@
         "-77388797": "Select leads",
         "-77124728": "Hide all filters",
         "-44015188": "Show all filters",
-        "-39409676": "Swap columns/rows for matrix2D"
+        "-39409676": "Swap columns/rows for matrix2D",
+        "-88313294": "File format"
     },
     "links": {
         "browserExtension": {
@@ -1818,7 +1819,8 @@
             "selectLeadsSectionHeading": -77388797,
             "hideAllFiltersLabel": -77124728,
             "showAllFiltersLabel": -44015188,
-            "swapColumnRowsLabel": -39409676
+            "swapColumnRowsLabel": -39409676,
+            "fileFormatSelectionLabel": -88313294
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

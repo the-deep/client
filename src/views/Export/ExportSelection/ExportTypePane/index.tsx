@@ -3,7 +3,7 @@ import React, { useMemo, useCallback } from 'react';
 import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
 import TreeSelection from '#rsci/TreeSelection';
-import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
 
 import {
     ExportType,
@@ -137,38 +137,33 @@ function RenderWordPdfOptions(props: RenderWordProps) {
     return (
         <>
             <div className={styles.reportStructure}>
-                {showMatrix2dOptions && (
-                    <div className={styles.leftContainer}>
-                        <h4 className={styles.heading}>
-                            { _ts('export', 'reportStructureLabel')}
-                        </h4>
-                        <Checkbox
-                            className={styles.includeSubSector}
-                            key="checkbox"
-                            label={_ts('export', 'includeSubSector')}
-                            value={includeSubSector}
-                            onChange={onIncludeSubSectorChange}
-                        />
-                        <Checkbox
-                            className={styles.includeSubSector}
-                            key="swap-checkbox"
-                            label={_ts('export', 'swapColumnRowsLabel')}
-                            value={swapOrderValue}
-                            onChange={handleSwapOrderValueChange}
-                        />
-                    </div>
-                )}
-                <div>
-                    {!showMatrix2dOptions && (
-                        <h4 className={styles.heading}>
-                            { _ts('export', 'reportStructureLabel')}
-                        </h4>
-                    )}
+                <h4 className={styles.heading}>
+                    { _ts('export', 'reportStructureLabel')}
+                </h4>
+                <div className={styles.bottomContainer}>
                     <TreeSelection
-                        label={_ts('export', 'structureLabel')}
+                        showLabel={false}
                         value={reportStructure}
                         onChange={onReportStructureChange}
                     />
+                    {showMatrix2dOptions && (
+                        <div>
+                            <Checkbox
+                                className={styles.includeSubSector}
+                                key="checkbox"
+                                label={_ts('export', 'includeSubSector')}
+                                value={includeSubSector}
+                                onChange={onIncludeSubSectorChange}
+                            />
+                            <Checkbox
+                                className={styles.includeSubSector}
+                                key="swap-checkbox"
+                                label={_ts('export', 'swapColumnRowsLabel')}
+                                value={swapOrderValue}
+                                onChange={handleSwapOrderValueChange}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
             {showEntryGroupsSelection && (
@@ -310,8 +305,12 @@ function ExportTypePane(props: Props) {
 
     return (
         <section className={styles.exportTypes}>
-            <div className={styles.exportTypeSelectList}>
-                <List
+            <div className={styles.exportTypeContainer}>
+                <h4>
+                    {_ts('export', 'fileFormatSelectionLabel')}
+                </h4>
+                <ListView
+                    className={styles.exportTypeSelectList}
                     data={exportTypes}
                     rendererParams={exportTypeRendererParams}
                     renderer={ExportTypePaneButton}
