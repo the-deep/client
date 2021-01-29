@@ -16,12 +16,14 @@ import { pathNames } from '#constants';
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
+
 import {
     AppState,
     ProjectElement,
     UserActivityStat,
     CountTimeSeries,
     ProjectStat,
+    ProjectsSummary,
 } from '#typings';
 
 import {
@@ -32,6 +34,7 @@ import _ts from '#ts';
 
 import ProjectItem from './ProjectItem';
 import Summary from './Summary';
+import Activity from './Activity';
 
 import styles from './styles.scss';
 
@@ -116,9 +119,20 @@ function Home(props: ViewProps) {
         url: 'server://projects-stat/recent/',
         method: 'GET',
         autoTrigger: true,
-        onFailure: (error, errorBody) => {
-            notifyOnFailure(_ts('home', 'recentProjectsTitle'))({ error: errorBody });
-        },
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('home', 'recentProjectsTitle'))({ error: errorBody }),
+    });
+
+    const [
+        summaryPending,
+        summaryResponse,
+    ] = useRequest<ProjectsSummary>({
+        url: 'server://projects-stat/summary/',
+        method: 'GET',
+        autoTrigger: true,
+        schemaName: 'userExportsGetResponse',
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('home', 'summaryOfMyProjectsHeading'))({ error: errorBody }),
     });
 
     const [
@@ -130,7 +144,7 @@ function Home(props: ViewProps) {
         url: `server://projects-stat/${selectedProject}/`,
         method: 'GET',
         autoTrigger: isDefined(selectedProject),
-        onFailure: (error, errorBody) => {
+        onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('home', 'projectDetails'))({ error: errorBody });
         },
     });
@@ -142,7 +156,8 @@ function Home(props: ViewProps) {
         return getRecentProjectStat(projectStats);
     }, [projectStats, selectedProject]);
 
-    const recentProjectsRendererParams = useCallback((key, data) => ({
+    const recentProjectsRendererParams = useCallback((_, data) => ({
+        className: styles.projectItem,
         ...data,
     }), []);
 
@@ -174,7 +189,11 @@ function Home(props: ViewProps) {
                                         {_ts('home', 'summaryOfMyProjectsHeading')}
                                     </h2>
                                 </header>
-                                <Summary className={styles.content} />
+                                <Summary
+                                    pending={summaryPending}
+                                    summaryResponse={summaryResponse}
+                                    className={styles.content}
+                                />
                             </div>
                             <div className={styles.projectTaggingActivity}>
                                 <header className={styles.header}>
@@ -182,7 +201,11 @@ function Home(props: ViewProps) {
                                         {_ts('home', 'projectTaggingActivityHeading')}
                                     </h2>
                                 </header>
-                                <div className={styles.content} />
+                                <Activity
+                                    className={styles.content}
+                                    pending={summaryPending}
+                                    recentActivity={summaryResponse?.recentEntriesActivity}
+                                />
                             </div>
                         </div>
                         <div className={styles.leftBottomContainer}>
