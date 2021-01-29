@@ -34,6 +34,14 @@
                 .project-tagging-activity {
                     flex-basis: 70%;
                     margin: var(--spacing-large);
+
+                    .content {
+                        display: flex;
+                        flex-grow: 1;
+                        border-radius: var(--dui-border-radius-card);
+                        background-color: var(--color-foreground);
+                        padding: var(--spacing-large);
+                    }
                 }
             }
 
@@ -44,6 +52,10 @@
                     .heading {
                         flex-grow: 1;
                     }
+                }
+
+                .project-item {
+                    margin: var(--spacing-large) 0;
                 }
 
                 .project-select-input {
