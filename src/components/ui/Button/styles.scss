@@ -8,6 +8,7 @@
     --padding: var(--padding-v) calc(var(--padding-h) - var(--padding-internal-h));
     --font-size: var(--dui-font-size-medium);
     --border-radius: calc(var(--font-size) + var(--dui-spacing-medium));
+    --text-transform: none;
 
     display: flex;
     position: relative;
@@ -20,7 +21,7 @@
     cursor: pointer;
     padding: var(--padding);
     overflow: hidden;
-    text-transform: uppercase;
+    text-transform: var(--text-transform);
     color: var(--color-text);
     font-family: inherit;
     font-size: var(--font-size); 
@@ -54,6 +55,14 @@
         }
     }
 
+    &.primary {
+        --text-transform: uppercase;
+    }
+
+    &.secondary {
+        --text-transform: uppercase;
+    }
+
     &:not(:disabled) {
         &.primary {
             --color-border: var(--dui-color-background-primary-button);
@@ -81,6 +90,10 @@
             --color-border: var(--dui-color-accent);
             --color-background: transparent;
             --color-text: var(--dui-color-accent);
+
+            &:hover {
+                --color-background: var(--dui-color-background-tertiary-hover);
+            }
         }
     }
 

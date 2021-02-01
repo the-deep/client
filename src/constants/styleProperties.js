@@ -37,6 +37,8 @@ const styleProperties = {
         duiColorBackgroundHoverPrimaryButton: 'var(--dui-color-accent-hover)',
         duiColorTextPrimaryButton: 'var(--dui-color-text-on-accent)',
 
+        duiColorBackgroundTertiaryHover: '#f5f8fb',
+
         duiColorComplement1: '#008eff',
         duiColorComplement2: '#00c9f0',
         duiColorComplement3: '#ffb443',
