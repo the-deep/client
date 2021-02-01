@@ -348,7 +348,7 @@ export default class Overview extends React.PureComponent {
                                             'verificationLastChangedBy',
                                             {
                                                 userName: entry
-                                                    .verificationLastChangedByDetails.displayName,
+                                                    ?.verificationLastChangedByDetails.displayName,
                                             },
                                         )
                                     ) : undefined}

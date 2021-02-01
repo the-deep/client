@@ -36,7 +36,6 @@ function Summary(props: Props) {
         url: 'server://projects-stat/summary/',
         method: 'GET',
         autoTrigger: true,
-        schemaName: 'userExportsGetResponse',
         onFailure: (_, { messageForNotification }) => {
             notify.send({
                 title: _ts('home', 'summaryOfMyProjectsHeading'),

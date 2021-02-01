@@ -81,19 +81,40 @@ export interface ProjectOrganization {
     organizationTypeDisplay: string;
 }
 
-export interface ProjectStats {
+export interface ProjectStat {
+    analysisFramework?: number;
+    analysisFrameworkTitle?: string;
+    assessmentTemplate?: number;
+    assessmentTemplateTitle?: string;
     createdAt: string;
     createdBy: string;
-    createdById: number;
+    createdByName: string;
+    description?: string;
+    endDate?: string;
     entriesActivity: CountTimeSeries[];
+    id: number;
+    isDefault?: boolean;
+    isPrivate: boolean;
+    isVisualizationEnabled: VisaulizationEnabledOptions;
     leadsActivity: CountTimeSeries[];
+    memberStatus: 'admin' | 'member';
+    modifiedAt: string;
+    modifiedBy: number;
+    modifiedByName: string;
     numberOfEntries: number;
     numberOfLeads: number;
+    numberOfLeadsTagged: number;
+    numberOfLeadsTaggedAndVerified: number;
     numberOfUsers: number;
+    role: number;
+    startDate?: string;
     status: string;
-    isPrivate: boolean;
+    statusTitle: string;
+    title: string;
     topSourcers: UserActivityStat[];
     topTaggers: UserActivityStat[];
+    userGroups: BasicElement[];
+    versionId: number;
 }
 
 export interface ProjectsSummary {
