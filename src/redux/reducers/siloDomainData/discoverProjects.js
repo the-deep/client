@@ -10,7 +10,6 @@ export const DP__UNSET_FILTERS = 'siloDomainData/DP__UNSET_FILTERS';
 
 export const DP__SET_ACTIVE_PAGE = 'siloDomainData/DP__SET_ACTIVE_PAGE';
 export const DP__SET_ACTIVE_SORT = 'siloDomainData/DP__SET_ACTIVE_SORT';
-export const DP__SET_PROJECTS_PER_PAGE = 'siloDomainData/DP__SET_PROJECTS_PER_PAGE';
 
 export const DP__SET_PROJECT_OPTIONS = 'siloDomainData/DP__SET_PROJECT_OPTIONS';
 
@@ -46,11 +45,6 @@ export const setDiscoverProjectsActivePageAction = activePage => ({
 export const setDiscoverProjectsActiveSortAction = activeSort => ({
     type: DP__SET_ACTIVE_SORT,
     activeSort,
-});
-
-export const setDiscoverProjectsProjectPerPageAction = projectsPerPage => ({
-    type: DP__SET_PROJECTS_PER_PAGE,
-    projectsPerPage,
 });
 
 export const setDiscoverProjectsProjectOptionsAction = projectOptions => ({
@@ -131,17 +125,6 @@ const setActiveSort = (state, action) => {
     return update(state, settings);
 };
 
-const setProjectsPerPage = (state, action) => {
-    const { projectsPerPage } = action;
-    const settings = {
-        discoverProjectsView: {
-            projectsPerPage: { $set: projectsPerPage },
-            activePage: { $set: 1 },
-        },
-    };
-    return update(state, settings);
-};
-
 const setProjectOptions = (state, action) => {
     const { projectOptions } = action;
     const settings = {
@@ -161,7 +144,6 @@ const reducers = {
     [DP__UNSET_FILTERS]: unsetFilters,
     [DP__SET_ACTIVE_PAGE]: setActivePage,
     [DP__SET_ACTIVE_SORT]: setActiveSort,
-    [DP__SET_PROJECTS_PER_PAGE]: setProjectsPerPage,
     [DP__SET_PROJECT_OPTIONS]: setProjectOptions,
     [DP__SET_PROJECT_JOIN]: setProjectJoin,
 };
