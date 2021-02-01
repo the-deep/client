@@ -33,14 +33,12 @@ import {
     discoverProjectsProjectListSelector,
     discoverProjectsActivePageSelector,
     discoverProjectsActiveSortSelector,
-    discoverProjectsProjectsPerPageSelector,
     discoverProjectsFiltersSelector,
 
     setDiscoverProjectsProjectJoinAction,
     setDiscoverProjectsProjectListAction,
     setDiscoverProjectsActiveSortAction,
     setDiscoverProjectsActivePageAction,
-    setDiscoverProjectsProjectPerPageAction,
 } from '#redux';
 
 import notify from '#notify';
@@ -81,11 +79,9 @@ const propTypes = {
 
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
-    projectsPerPage: PropTypes.number.isRequired,
 
     setActiveSort: PropTypes.func.isRequired,
     setActivePage: PropTypes.func.isRequired,
-    setProjectPerPage: PropTypes.func.isRequired,
     setProjectJoin: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
@@ -100,7 +96,6 @@ const mapStateToProps = state => ({
     totalProjectsCount: discoverProjectsTotalProjectsCountSelector(state),
     activePage: discoverProjectsActivePageSelector(state),
     activeSort: discoverProjectsActiveSortSelector(state),
-    projectsPerPage: discoverProjectsProjectsPerPageSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -109,13 +104,14 @@ const mapDispatchToProps = dispatch => ({
 
     setActiveSort: params => dispatch(setDiscoverProjectsActiveSortAction(params)),
     setActivePage: params => dispatch(setDiscoverProjectsActivePageAction(params)),
-    setProjectPerPage: params => dispatch(setDiscoverProjectsProjectPerPageAction(params)),
 });
+
+const projectsPerPage = 25;
 
 const requestOptions = {
     projectListRequest: {
         url: '/projects-stat/',
-        query: ({ props: { filters, activePage, projectsPerPage, activeSort } }) => {
+        query: ({ props: { filters, activePage, activeSort } }) => {
             const sanitizedFilters = getFiltersForRequest(filters);
             const projectListRequestOffset = (activePage - 1) * projectsPerPage;
             const projectListRequestLimit = projectsPerPage;
@@ -125,9 +121,31 @@ const requestOptions = {
                 ordering: activeSort,
                 offset: projectListRequestOffset,
                 limit: projectListRequestLimit,
+                fields: [
+                    'id',
+                    'title',
+                    'description',
+                    'created_at',
+                    'modified_at',
+                    'is_private',
+                    'version_id',
+                    'created_by_name',
+                    'created_by',
+                    'analysis_framework',
+                    'analysis_framework_title',
+                    'regions',
+                    'number_of_users',
+                    'number_of_leads',
+                    'number_of_entries',
+                    'leads_activity',
+                    'entries_activity',
+                    'status',
+                    'member_status',
+                    'status_title',
+                ],
             });
         },
-        onPropsChanged: ['activeSort', 'filters', 'activePage', 'projectsPerPage'],
+        onPropsChanged: ['activeSort', 'filters', 'activePage'],
         method: methods.GET,
         onMount: true,
         onSuccess: ({ props, response }) => {
@@ -139,7 +157,7 @@ const requestOptions = {
             });
         },
         extras: {
-            schemaName: 'projectsGetResponse',
+            schemaName: 'projectStatsGetResponse',
         },
     },
     projectJoinRequest: {
@@ -226,13 +244,6 @@ export default class DiscoverProjects extends React.PureComponent {
         ${_ts('discoverProjects.table', 'numberOfLeads')}: ${d}
     `;
 
-    static projectsPerPageOptions = [
-        { label: '25', key: 25 },
-        { label: '50', key: 50 },
-        { label: '75', key: 75 },
-        { label: '100', key: 100 },
-    ];
-
     headerModifier = (headerData) => {
         const { activeSort } = this.props;
 
@@ -282,14 +293,7 @@ export default class DiscoverProjects extends React.PureComponent {
                     />
                 );
             case 'created_by':
-                return (
-                    <Link
-                        to={reverseRoute(pathNames.userProfile, { userId: project.createdBy })}
-                        className={styles.admin}
-                    >
-                        {project.createdByName}
-                    </Link>
-                );
+                return project.createdByName;
             case 'analysis_framework':
                 return project.analysisFrameworkTitle;
             case 'number_of_users':
@@ -359,10 +363,6 @@ export default class DiscoverProjects extends React.PureComponent {
         this.props.setActivePage(page);
     }
 
-    handleProjectsPerPageChange = (pageCount) => {
-        this.props.setProjectPerPage(pageCount);
-    }
-
     handleTableHeaderClick = (key) => {
         const headerData = headers.find(h => h.key === key);
         // prevents click on 'actions' column
@@ -404,7 +404,6 @@ export default class DiscoverProjects extends React.PureComponent {
             projectList,
             totalProjectsCount,
             activePage,
-            projectsPerPage,
             filters,
             requests: {
                 projectListRequest: { pending: pendingProjectList },
@@ -460,7 +459,6 @@ export default class DiscoverProjects extends React.PureComponent {
                         itemsCount={totalProjectsCount}
                         maxItemsPerPage={projectsPerPage}
                         onPageClick={this.handlePageClick}
-                        onItemsPerPageChange={this.handleProjectsPerPageChange}
                     />
                 }
             />
