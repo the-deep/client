@@ -1,0 +1,104 @@
+.button {
+    --padding-internal-h: var(--dui-spacing-small);
+    --padding-h: var(--dui-spacing-extra-large);
+    --padding-v: var(--dui-spacing-medium);
+    --color-border: transparent;
+    --color-text: transparent;
+    --color-background: transparent;
+    --padding: var(--padding-v) calc(var(--padding-h) - var(--padding-internal-h));
+    --font-size: var(--dui-font-size-medium);
+    --border-radius: calc(var(--font-size) + var(--dui-spacing-medium));
+    --text-transform: none;
+
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-around;
+    border: 0;
+    border: var(--dui-width-separator-thin) solid var(--color-border);
+    border-radius: var(--border-radius);
+    background-color: var(--color-background);
+    cursor: pointer;
+    padding: var(--padding);
+    overflow: hidden;
+    text-transform: var(--text-transform);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size); 
+    font-weight: var(--font-weight-bold);
+
+    .icons {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--padding-internal-h);
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--padding-internal-h);
+    }
+
+    .children {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--padding-internal-h);
+    }
+
+    &:disabled {
+        --color-border: var(--dui-color-background-disabled);
+        --color-background: var(--dui-color-background-disabled);
+        --color-text: var(--dui-color-text-disabled);
+
+        &.tertiary {
+            --color-border: var(--dui-color-text-disabled);
+        }
+    }
+
+    &.primary {
+        --text-transform: uppercase;
+    }
+
+    &.secondary {
+        --text-transform: uppercase;
+    }
+
+    &:not(:disabled) {
+        &.primary {
+            --color-border: var(--dui-color-background-primary-button);
+            --color-background: var(--dui-color-background-primary-button);
+            --color-text: var(--dui-color-text-primary-button);
+
+            &:hover {
+                --color-border: var(--dui-color-background-hover-primary-button);
+                --color-background: var(--dui-color-background-hover-primary-button);
+            }
+        }
+
+        &.secondary {
+            --color-border: var(--dui-color-grey6);
+            --color-background: var(--dui-color-grey6);
+            --color-text: var(--dui-color-black);
+
+            &:hover {
+                --color-border: var(--dui-color-grey5);
+                --color-background: var(--dui-color-grey5);
+            }
+        }
+
+        &.tertiary {
+            --color-border: var(--dui-color-accent);
+            --color-background: transparent;
+            --color-text: var(--dui-color-accent);
+
+            &:hover {
+                --color-background: var(--dui-color-background-tertiary-hover);
+            }
+        }
+    }
+
+    &.big {
+        --padding-v: var(--dui-spacing-large);
+        --font-size: var(--dui-font-size-large);
+    }
+}
