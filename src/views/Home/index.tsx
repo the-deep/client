@@ -172,7 +172,9 @@ function Home(props: ViewProps) {
 
     const handleProjectChange = useCallback((newSelectedProject) => {
         setSelectedProject(newSelectedProject);
-        triggerProjectStats();
+        if (isDefined(newSelectedProject)) {
+            triggerProjectStats();
+        }
     }, [triggerProjectStats]);
 
     return (
@@ -214,7 +216,6 @@ function Home(props: ViewProps) {
                                     {_ts('home', 'recentProjectsHeading')}
                                 </h2>
                                 <SelectInput
-                                    hideClearButton
                                     keySelector={projectKeySelector}
                                     labelSelector={projectLabelSelector}
                                     optionLabelSelector={optionLabelSelector}
