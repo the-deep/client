@@ -157,6 +157,7 @@ function FilterForm(props: OwnProps) {
                 ...leadSchema,
                 entries_filter: {
                     fields: {
+                        created_at: [],
                         created_by: [],
                         comment_assignee: [],
                         comment_created_by: [],
@@ -418,6 +419,13 @@ function FilterForm(props: OwnProps) {
                                 options={entryOptions?.createdBy}
                                 label={_ts('entries', 'createdByFilterLabel')}
                                 placeholder={_ts('entries', 'createdByPlaceholder')}
+                                showHintAndError={false}
+                                className={styles.leadsFilter}
+                            />
+                            <DateFilter
+                                faramElementName="created_at"
+                                label={_ts('entries', 'createdAtFilterLabel')}
+                                placeholder={_ts('leads', 'placeholderAnytime')}
                                 showHintAndError={false}
                                 className={styles.leadsFilter}
                             />

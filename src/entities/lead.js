@@ -169,6 +169,21 @@ const getEntryFilters = (filter, widgets, geoOptions) => {
                 break;
             }
             default:
+                if (entryFilterKey === 'created_at') {
+                    const { startDate, endDate: oldEndDate } = entryFilterOptions;
+                    const endDate = new Date(oldEndDate);
+                    endDate.setDate(endDate.getDate() + 1);
+
+                    entriesFilter.push([
+                        `${entryFilterKey}__gte`,
+                        getDateWithTimezone(startDate),
+                    ]);
+                    entriesFilter.push([
+                        `${entryFilterKey}__lt`,
+                        getDateWithTimezone(encodeDate(endDate)),
+                    ]);
+                    break;
+                }
                 entriesFilter.push([entryFilterKey, entryFilterOptions]);
                 break;
         }
