@@ -160,6 +160,7 @@ export const createEntry = ({
     key,
     serverId,
     versionId,
+    verified,
     data = {},
     isPristine = false,
     hasError = false,
@@ -197,6 +198,7 @@ export const createEntry = ({
         },
         serverData: {
             versionId: undefined,
+            verified: false,
         },
         data: {
             id: undefined, // serverId
@@ -213,6 +215,7 @@ export const createEntry = ({
         },
         serverData: {
             versionId: { $set: versionId },
+            verified: { $set: verified },
         },
         data: {
             $set: { id: serverId, ...pickedData },
@@ -302,6 +305,7 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
             const {
                 id: remoteServerId,
                 versionId: remoteVersionId,
+                verified: remoteVerified,
                 clientId: remoteKey,
             } = remoteItem;
 
@@ -321,6 +325,7 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     key: localId,
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
+                    verified: remoteVerified,
                     data: remoteItem,
                     isPristine: true,
                     hasError: false,
@@ -355,11 +360,16 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                 )
             ) {
                 // this item was updated on server
-                const { id: remoteServerId, versionId: remoteVersionId } = remoteItem;
+                const {
+                    id: remoteServerId,
+                    versionId: remoteVersionId,
+                    verified: remoteVerified,
+                } = remoteItem;
                 const newItem = create({
                     key: localId,
                     serverId: remoteServerId, // here
                     versionId: remoteVersionId,
+                    verified: remoteVerified,
                     data: remoteItem,
                     isPristine: true,
                     hasError: false,
@@ -372,6 +382,7 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     key: localId,
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
+                    verified: remoteVerified,
                     data: localValues,
                     isPristine: localPristine,
                     hasError: localError,
