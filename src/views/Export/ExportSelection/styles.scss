@@ -11,49 +11,18 @@
         overflow-y: auto;
 
         .section {
-            margin-top: var(--spacing-medium);
-            background-color: var(--color-foreground);
+            margin-bottom: var(--spacing-medium);
 
-            .section-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                border: var(--width-separator-thin) solid var(--color-separator);
-                background-color: var(--color-background-header);
-                padding: var(--spacing-medium);
-
-                .heading {
-                    text-transform: unset;
-
-                    .sub-heading {
-                        margin-left: var(--spacing-medium);
-                        color: var(--color-text);
-                    }
+            .heading {
+                .sub-heading {
+                    margin-left: var(--spacing-medium);
+                    color: var(--color-text);
                 }
-            }
-
-            .section-body {
-                padding: var(--spacing-medium);
-            }
-        }
-
-        .lead-filters {
-            display: flex;
-            flex-direction: column;
-
-            .leads-table {
-                display: flex;
-                position: relative;
-                flex-direction: column;
-                flex-grow: 1;
-                flex-shrink: 1;
-                overflow-y: auto;
             }
         }
 
         .export-button {
             align-self: flex-end;
-            margin: var(--spacing-small);
         }
     }
 

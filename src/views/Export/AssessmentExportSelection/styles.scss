@@ -27,24 +27,11 @@
         margin-top: var(--spacing-medium);
         background-color: var(--color-foreground);
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-background-header);
-            padding: var(--spacing-medium);
-
-            .heading {
-                .sub-heading {
-                    margin-left: var(--spacing-medium);
-                    color: var(--color-text);
-                }
+        .heading {
+            .sub-heading {
+                margin-left: var(--spacing-medium);
+                color: var(--color-text);
             }
-        }
-
-        .section-body {
-            padding: var(--spacing-medium);
         }
     }
 }
