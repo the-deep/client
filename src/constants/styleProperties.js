@@ -55,6 +55,11 @@ const styleProperties = {
 
         duiColorBackgroundDisabled: 'var(--dui-color-grey5)',
         duiColorTextDisabled: 'var(--dui-color-grey4)',
+
+        duiColorGradient1: '#cce8ff',
+        duiColorGradient2: '#99d2ff',
+        duiColorGradient3: '#66bbff',
+        duiColorGradient4: '#33a5ff',
     },
 
     dimens: {
@@ -121,8 +126,8 @@ const styleProperties = {
 
         duiWidthSeparatorThin: '0.06em',
         duiWidthSeparatorMedium: '0.1em',
-
         duiBorderRadiusCard: '8px',
+        duiBorderRadiusTag: '25px',
     },
 };
 

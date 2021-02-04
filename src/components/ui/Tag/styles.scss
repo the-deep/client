@@ -1,0 +1,49 @@
+.tag {
+    display: flex;
+    align-items: center;
+    border-radius: var(--dui-border-radius-tag);
+    background-color: var(--dui-color-background);
+    padding: var(--spacing-small) var(--spacing-medium);
+    text-align: center;
+
+    .action {
+        display: flex;
+        padding-left: var(--spacing-medium);
+    }
+}
+
+.default {
+    background-color: var(--dui-color-background);
+    color: var(--dui-color-text);
+}
+
+.complement1 {
+    background-color: var(--dui-color-complement1);
+    color: var(--dui-color-text-on-accent);
+}
+
+.complement2 {
+    background-color: var(--dui-color-complement2);
+    color: var(--dui-color-text-on-accent);
+}
+
+.accent {
+    background-color: var(--dui-color-accent);
+    color: var(--dui-color-text-on-accent);
+}
+.gradient1 {
+    background-color: var(--dui-color-gradient1);
+    color: var(--dui-color-text);
+}
+.gradient2 {
+    background-color: var(--dui-color-gradient2);
+    color: var(--dui-color-text);
+}
+.gradient3 {
+    background-color: var(--dui-color-gradient3);
+    color: var(--dui-color-text-on-accent);
+}
+.gradient4 {
+    background-color: var(--dui-color-gradient4);
+    color: var(--dui-color-text-on-accent);
+}

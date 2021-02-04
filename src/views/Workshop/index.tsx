@@ -3,6 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import OldButton from '#rsu/../v2/Action/Button';
+import Tag from '#components/ui/Tag';
 
 import Container from '#components/ui/Container';
 import Button from '#components/ui/Button';
@@ -99,6 +100,43 @@ function Workshop(props: WorkshopProps) {
                 >
                     Create new lead
                 </ButtonLikeLink>
+            </Container>
+            <Container
+                heading="Tags"
+                contentClassName={styles.tags}
+
+            >
+                <Tag
+                    label="Environment"
+                />
+                <Tag
+                    label="Socio-Cultural"
+                    variant="complement1"
+                />
+                <Tag
+                    label="Tagged"
+                    variant="complement2"
+                />
+                <Tag
+                    label="Water"
+                    variant="gradient1"
+                />
+                <Tag
+                    label="Earth"
+                    variant="gradient2"
+                />
+                <Tag
+                    label="Fire"
+                    variant="gradient3"
+                />
+                <Tag
+                    label="River"
+                    variant="gradient4"
+                />
+                <Tag
+                    label="Nepal"
+                    variant="accent"
+                />
             </Container>
         </div>
     );
