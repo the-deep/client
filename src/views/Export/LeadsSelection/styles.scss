@@ -1,6 +1,7 @@
 .leads-table {
     .table {
         border-top: var(--width-separator-thin) solid var(--color-separator);
+        min-height: 160px;
         overflow: auto;
 
         :global {

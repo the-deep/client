@@ -12,6 +12,7 @@ import {
 } from '#typings';
 
 import { getCombinedLeadFilters } from '#entities/lead';
+import ExpandableContainer from '#components/ui/ExpandableContainer';
 
 import { FaramValues } from '../ExportSelection';
 import LeadsSelection from '../LeadsSelection';
@@ -167,28 +168,29 @@ function AssessmentExportSelection(props: OwnProps) {
     return (
         <div className={_cs(className, styles.exportSelection)}>
             <div className={styles.leftContainer}>
-                <section className={styles.section}>
-                    <header className={styles.sectionHeader}>
+                <ExpandableContainer
+                    className={styles.section}
+                    heading={(
                         <h3 className={styles.heading}>
                             <span className={styles.subHeading}>
-                                {_ts('export', 'selectLeadsSectionHeading')}
+                                {_ts('export', 'selectSourcesHeading')}
                             </span>
                         </h3>
-                    </header>
-                    <div className={styles.sectionBody}>
-                        <LeadsSelection
-                            projectId={projectId}
-                            filterOnlyUnprotected={filterOnlyUnprotected}
-                            selectedLeads={selectedLeads}
-                            onSelectLeadChange={setSelectedLeads}
-                            selectAll={selectAll}
-                            onSelectAllChange={setSelectAll}
-                            filterValues={filterValues}
-                            handleFilterValuesChange={onFilterChange}
-                            hasAssessment
-                        />
-                    </div>
-                </section>
+                    )}
+                    defaultVisibility
+                >
+                    <LeadsSelection
+                        projectId={projectId}
+                        filterOnlyUnprotected={filterOnlyUnprotected}
+                        selectedLeads={selectedLeads}
+                        onSelectLeadChange={setSelectedLeads}
+                        selectAll={selectAll}
+                        onSelectAllChange={setSelectAll}
+                        filterValues={filterValues}
+                        handleFilterValuesChange={onFilterChange}
+                        hasAssessment
+                    />
+                </ExpandableContainer>
                 <div className={styles.footer}>
                     <PrimaryButton
                         className={styles.button}

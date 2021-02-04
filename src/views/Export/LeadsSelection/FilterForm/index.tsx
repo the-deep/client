@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 import {
     _cs,
@@ -98,6 +98,7 @@ interface OwnProps {
     regions?: unknown[];
     geoOptions?: unknown;
     hasAssessment?: boolean;
+    setFiltersPending?: (pending: boolean) => void;
 }
 
 const filterKeySelector = (d: FilterFields) => d.key;
@@ -128,6 +129,7 @@ function FilterForm(props: OwnProps) {
         regions,
         geoOptions,
         hasAssessment,
+        setFiltersPending,
     } = props;
 
     const schema = useMemo(() => {
@@ -229,6 +231,12 @@ function FilterForm(props: OwnProps) {
         },
     });
 
+    useEffect(() => {
+        if (setFiltersPending) {
+            setFiltersPending(leadOptionsPending || entryOptionsPending);
+        }
+    }, [setFiltersPending, leadOptionsPending, entryOptionsPending]);
+
     const {
         confidentiality,
         status,
@@ -307,7 +315,7 @@ function FilterForm(props: OwnProps) {
                         options={existsFilterOptions}
                         placeholder={_ts('leads', 'placeholderAny')}
                         showHintAndError={false}
-                        disabled={hasAssessment}
+                        disabled={pending}
                         className={styles.leadsFilter}
                     />
                 )}

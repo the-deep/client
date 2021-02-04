@@ -11,9 +11,10 @@
         .footer {
             display: flex;
             align-self: flex-end;
+            padding: var(--spacing-medium) 0;
 
             .button {
-                margin: var(--spacing-small);
+                margin-left: var(--spacing-small);
             }
         }
     }
@@ -27,24 +28,13 @@
         margin-top: var(--spacing-medium);
         background-color: var(--color-foreground);
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-background-header);
-            padding: var(--spacing-medium);
+        .heading {
+            text-transform: none;
 
-            .heading {
-                .sub-heading {
-                    margin-left: var(--spacing-medium);
-                    color: var(--color-text);
-                }
+            .sub-heading {
+                margin-left: var(--spacing-medium);
+                color: var(--color-text);
             }
-        }
-
-        .section-body {
-            padding: var(--spacing-medium);
         }
     }
 }

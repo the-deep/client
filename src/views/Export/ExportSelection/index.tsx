@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { _cs, isNotDefined } from '@togglecorp/fujs';
+import { isNotDefined } from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TreeSelection from '#rsci/TreeSelection';
-import Button from '#rsca/Button';
 import ExportPreview from '#components/other/ExportPreview';
 
 import {
@@ -26,7 +25,7 @@ import {
 import useRequest from '#utils/request';
 
 import { notifyOnFailure } from '#utils/requestNotify';
-import { useModalState } from '#hooks/stateManagement';
+import ExpandableContainer from '#components/ui/ExpandableContainer';
 import _ts from '#ts';
 import notify from '#notify';
 
@@ -178,22 +177,6 @@ function EntriesExportSelection(props: Props) {
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, onFilterChange] = useState<FaramValues>({});
-
-    const [
-        showSourceSelect,
-        setSectorSelectVisible,
-        setSectorSelectHidden,
-    ] = useModalState(true);
-    const [
-        showFormatSelect,
-        setFormatSelectVisible,
-        setFormatSelectHidden,
-    ] = useModalState(false);
-    const [
-        showFrameworkSections,
-        setFrameworkSectionsVisible,
-        setFrameworkSectionsHidden,
-    ] = useModalState(false);
 
     const [
         reportStructureVariant,
@@ -415,98 +398,82 @@ function EntriesExportSelection(props: Props) {
     return (
         <div className={styles.export}>
             <div className={styles.left} >
-                <section className={_cs(styles.section, styles.leadFilters)}>
-                    <header className={styles.sectionHeader}>
+                <ExpandableContainer
+                    className={styles.section}
+                    heading={(
                         <h3 className={styles.heading}>
                             {_ts('export', 'selectSourcesStepHeading')}
                             <span className={styles.subHeading}>
                                 {_ts('export', 'selectSourcesHeading')}
                             </span>
                         </h3>
-                        <Button
-                            transparent
-                            onClick={
-                                showSourceSelect ? setSectorSelectHidden : setSectorSelectVisible
-                            }
-                            iconName={showSourceSelect ? 'chevronUp' : 'chevronDown'}
-                        />
-                    </header>
-                    {showSourceSelect && (
-                        <LeadsSelection
-                            className={styles.leadsTable}
-                            projectId={projectId}
-                            filterOnlyUnprotected={filterOnlyUnprotected}
-                            projectRegions={projectDetails.regions}
-                            entriesFilters={filters}
-                            entriesWidgets={widgets}
-                            entriesGeoOptions={geoOptions}
-                            pending={analysisFrameworkPending || geoOptionsPending}
-                            selectedLeads={selectedLeads}
-                            onSelectLeadChange={setSelectedLeads}
-                            selectAll={selectAll}
-                            onSelectAllChange={setSelectAll}
-                            filterValues={filterValues}
-                            handleFilterValuesChange={onFilterChange}
-                        />
                     )}
-                </section>
-                <section className={styles.section}>
-                    <header className={styles.sectionHeader}>
+                    defaultVisibility
+                >
+                    <LeadsSelection
+                        projectId={projectId}
+                        filterOnlyUnprotected={filterOnlyUnprotected}
+                        projectRegions={projectDetails.regions}
+                        entriesFilters={filters}
+                        entriesWidgets={widgets}
+                        entriesGeoOptions={geoOptions}
+                        pending={analysisFrameworkPending || geoOptionsPending}
+                        selectedLeads={selectedLeads}
+                        onSelectLeadChange={setSelectedLeads}
+                        selectAll={selectAll}
+                        onSelectAllChange={setSelectAll}
+                        filterValues={filterValues}
+                        handleFilterValuesChange={onFilterChange}
+                    />
+                </ExpandableContainer>
+                <ExpandableContainer
+                    className={styles.section}
+                    heading={(
                         <h3 className={styles.heading}>
                             {_ts('export', 'selectFormatStylingStepHeading')}
                             <span className={styles.subHeading}>
                                 {_ts('export', 'selectFormatStylingHeading')}
                             </span>
                         </h3>
-                        <Button
-                            onClick={
-                                showFormatSelect ? setFormatSelectHidden : setFormatSelectVisible
-                            }
-                            iconName={showFormatSelect ? 'chevronUp' : 'chevronDown'}
-                            transparent
-                        />
-                    </header>
-                    {showFormatSelect && (
-                        <>
-                            <ExportTypePane
-                                activeExportTypeKey={activeExportTypeKey}
-                                reportStructure={reportStructure}
-                                reportStructureVariant={reportStructureVariant}
-                                decoupledEntries={decoupledEntries}
-                                showGroups={showGroups}
-                                onExportTypeChange={setActiveExportTypeKey}
-                                onReportStructureChange={setReportStructure}
-                                entryFilterOptions={entryFilterOptions}
-                                onShowGroupsChange={setShowGroups}
-                                onReportStructureVariantChange={handleReportStructureVariantChange}
-                                onDecoupledEntriesChange={setDecoupledEntries}
-                                onIncludeSubSectorChange={setIncludeSubSector}
-                                includeSubSector={includeSubSector}
-                                showMatrix2dOptions={showMatrix2dOptions}
-                            />
-                            {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf') && (
-                                <div className={styles.sectionBody}>
-                                    {showContextualWidgetSelection && (
-                                        <TreeSelection
-                                            label={_ts('export', 'contextualWidgetLabel')}
-                                            value={contextualWidgets}
-                                            onChange={setContextualWidgets}
-                                            direction="horizontal"
-                                        />
-                                    )}
-                                    {showTextWidgetSelection && (
-                                        <TreeSelection
-                                            label={_ts('export', 'textWidgetLabel')}
-                                            value={textWidgets}
-                                            onChange={setTextWidgets}
-                                            direction="horizontal"
-                                        />
-                                    )}
-                                </div>
-                            )}
-                        </>
                     )}
-                </section>
+                >
+                    <ExportTypePane
+                        activeExportTypeKey={activeExportTypeKey}
+                        reportStructure={reportStructure}
+                        reportStructureVariant={reportStructureVariant}
+                        decoupledEntries={decoupledEntries}
+                        showGroups={showGroups}
+                        onExportTypeChange={setActiveExportTypeKey}
+                        onReportStructureChange={setReportStructure}
+                        entryFilterOptions={entryFilterOptions}
+                        onShowGroupsChange={setShowGroups}
+                        onReportStructureVariantChange={handleReportStructureVariantChange}
+                        onDecoupledEntriesChange={setDecoupledEntries}
+                        onIncludeSubSectorChange={setIncludeSubSector}
+                        includeSubSector={includeSubSector}
+                        showMatrix2dOptions={showMatrix2dOptions}
+                    />
+                    {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf') && (
+                        <div>
+                            {showContextualWidgetSelection && (
+                                <TreeSelection
+                                    label={_ts('export', 'contextualWidgetLabel')}
+                                    value={contextualWidgets}
+                                    onChange={setContextualWidgets}
+                                    direction="horizontal"
+                                />
+                            )}
+                            {showTextWidgetSelection && (
+                                <TreeSelection
+                                    label={_ts('export', 'textWidgetLabel')}
+                                    value={textWidgets}
+                                    onChange={setTextWidgets}
+                                    direction="horizontal"
+                                />
+                            )}
+                        </div>
+                    )}
+                </ExpandableContainer>
                 <PrimaryButton
                     className={styles.exportButton}
                     onClick={handleEntryExport}

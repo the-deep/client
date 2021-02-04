@@ -49,6 +49,7 @@ export interface Lead extends DatabaseEntityBase {
     thumbnailHeight?: string;
 
     entriesCount: number;
+    filteredEntriesCount?: number;
     pageCount: number;
     wordCount?: number;
     confidentialityDisplay?: string;

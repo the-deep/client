@@ -115,6 +115,8 @@ const styleProperties = {
 
         duiWidthSeparatorThin: '0.06em',
         duiWidthSeparatorMedium: '0.1em',
+
+        duiBorderRadiusCard: '8px',
     },
 };
 
