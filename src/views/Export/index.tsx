@@ -90,7 +90,9 @@ function Export(props: PropsFromState) {
                         projectId={projectId}
                     />
                 ),
+                wrapContainer: true,
                 lazyMount: true,
+                mount: true,
             },
             aryExportSelection: {
                 component: () => (
@@ -99,7 +101,9 @@ function Export(props: PropsFromState) {
                         projectId={projectId}
                     />
                 ),
+                wrapContainer: true,
                 lazyMount: true,
+                mount: true,
             },
             exportedFiles: {
                 component: () => (
@@ -107,7 +111,7 @@ function Export(props: PropsFromState) {
                         projectId={projectId}
                     />
                 ),
-                lazyMount: true,
+                wrapContainer: true,
             },
         }
     ), [projectId, projectRole]);
@@ -147,6 +151,7 @@ function Export(props: PropsFromState) {
             mainContent={
                 <MultiViewContainer
                     containerClassName={styles.left}
+                    activeClassName={styles.active}
                     views={views}
                     active={activeTab}
                 />

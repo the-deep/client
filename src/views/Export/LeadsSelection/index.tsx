@@ -67,10 +67,12 @@ function LeadsSelection(props: ComponentProps) {
         onSelectAllChange,
         filterValues,
         handleFilterValuesChange,
+        pending,
     } = props;
 
     const [activeSort, setActiveSort] = useState<string>('-created_at');
     const [activePage, setActivePage] = useState<number>(1);
+    const [filterOptionsPending, setFilterOptionsPending] = useState(true);
 
     const sanitizedFilters = useMemo(() => {
         interface ProcessedFilters {
@@ -111,10 +113,10 @@ function LeadsSelection(props: ComponentProps) {
     ]);
 
     const [
-        pending,
+        leadsPending,
         leadsResponse,
     ] = useRequest<MultiResponse<Lead>>({
-        url: 'server://v2/leads/filter/',
+        url: (!pending && !filterOptionsPending) ? 'server://v2/leads/filter/' : undefined,
         method: 'POST',
         query: {
             fields: [
@@ -344,6 +346,7 @@ function LeadsSelection(props: ComponentProps) {
                 geoOptions={entriesGeoOptions}
                 regions={projectRegions}
                 onChange={handleFilterValuesChange}
+                setFiltersPending={setFilterOptionsPending}
                 hasAssessment={hasAssessment}
             />
             <RawTable
@@ -354,7 +357,7 @@ function LeadsSelection(props: ComponentProps) {
                 onHeaderClick={handleTableHeaderClick}
                 keySelector={leadKeyExtractor}
                 className={styles.table}
-                pending={pending && (leadsResponse?.results ?? []).length < 1}
+                pending={leadsPending && (leadsResponse?.results ?? []).length < 1}
             />
             <Pager
                 activePage={activePage}

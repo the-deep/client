@@ -189,11 +189,6 @@ function EntriesExportSelection(props: Props) {
         setFormatSelectVisible,
         setFormatSelectHidden,
     ] = useModalState(false);
-    const [
-        showFrameworkSections,
-        setFrameworkSectionsVisible,
-        setFrameworkSectionsHidden,
-    ] = useModalState(false);
 
     const [
         reportStructureVariant,
