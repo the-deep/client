@@ -173,7 +173,7 @@ function AssessmentExportSelection(props: OwnProps) {
                     heading={(
                         <h3 className={styles.heading}>
                             <span className={styles.subHeading}>
-                                {_ts('export', 'selectLeadsSectionHeading')}
+                                {_ts('export', 'selectSourcesHeading')}
                             </span>
                         </h3>
                     )}

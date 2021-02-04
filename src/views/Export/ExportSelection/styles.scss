@@ -14,6 +14,8 @@
             margin-bottom: var(--spacing-medium);
 
             .heading {
+                text-transform: none;
+
                 .sub-heading {
                     margin-left: var(--spacing-medium);
                     color: var(--color-text);

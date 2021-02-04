@@ -1,11 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-
-import {
-    compareString,
-    compareNumber,
-    compareDate,
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
@@ -104,9 +98,11 @@ function LeadsSelection(props: ComponentProps) {
 
     const leadsRequestBody = useMemo(() => ({
         custom_filters: !hasAssessment ? 'exclude_empty_filtered_entries' : '',
+        ordering: activeSort,
         project: [projectId],
         ...sanitizedFilters,
     }), [
+        activeSort,
         projectId,
         sanitizedFilters,
         hasAssessment,
@@ -130,8 +126,6 @@ function LeadsSelection(props: ComponentProps) {
                 'authors_detail',
             ],
             project: projectId,
-            ordering: activeSort,
-            is_preview: false,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
@@ -198,14 +192,10 @@ function LeadsSelection(props: ComponentProps) {
             },
         },
         {
-            key: 'createdAt',
+            key: 'created_at',
             label: _ts('export', 'createdAtLabel'),
             order: 2,
             sortable: true,
-            comparator: (a: Lead, b: Lead) => (
-                compareDate(a.createdAt, b.createdAt) ||
-                compareString(a.title, b.title)
-            ),
             modifier: (row: Lead) => (
                 <FormattedDate
                     value={row.createdAt}
@@ -218,17 +208,13 @@ function LeadsSelection(props: ComponentProps) {
             label: _ts('export', 'titleLabel'),
             order: 3,
             sortable: true,
-            comparator: (a: Lead, b: Lead) => compareString(a.title, b.title),
         },
         {
-            key: 'sourceDetail',
+            key: 'source',
             label: _ts('export', 'sourceDetailLabel'),
             order: 4,
             sortable: true,
             modifier: (a: Lead) => a?.sourceDetail?.title,
-            comparator: (a: Lead, b: Lead) =>
-                compareString(a?.sourceDetail?.title, b?.sourceDetail?.title) ||
-                compareString(a.title, b.title),
         },
         {
             key: 'authorsDetail',
@@ -238,24 +224,18 @@ function LeadsSelection(props: ComponentProps) {
             modifier: (d: Lead) => d?.authorsDetail.map(a => a.title).join(', '),
         },
         {
-            key: 'publishedOn',
+            key: 'published_on',
             label: _ts('export', 'publishedOnLabel'),
             order: 6,
             sortable: true,
-            comparator: (a: Lead, b: Lead) => (
-                compareDate(a.publishedOn, b.publishedOn) ||
-                compareString(a.title, b.title)
-            ),
+            modifier: (row: Lead) => row.publishedOn,
         },
         {
-            key: 'filteredEntriesCount',
+            key: 'filtered_entries_count',
             label: _ts('export', 'entriesCountLabel'),
             order: 7,
             sortable: true,
-            comparator: (a: Lead, b: Lead) => (
-                compareNumber(a.entriesCount, b.entriesCount) ||
-                compareString(a.title, b.title)
-            ),
+            modifier: (row: Lead) => row.filteredEntriesCount,
         },
     ]), [
         handleSelectLeadChange,

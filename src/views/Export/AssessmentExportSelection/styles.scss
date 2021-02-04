@@ -11,9 +11,10 @@
         .footer {
             display: flex;
             align-self: flex-end;
+            padding: var(--spacing-medium) 0;
 
             .button {
-                margin: var(--spacing-small);
+                margin-left: var(--spacing-small);
             }
         }
     }
@@ -28,6 +29,8 @@
         background-color: var(--color-foreground);
 
         .heading {
+            text-transform: none;
+
             .sub-heading {
                 margin-left: var(--spacing-medium);
                 color: var(--color-text);

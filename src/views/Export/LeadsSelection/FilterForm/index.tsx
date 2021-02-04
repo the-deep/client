@@ -315,7 +315,7 @@ function FilterForm(props: OwnProps) {
                         options={existsFilterOptions}
                         placeholder={_ts('leads', 'placeholderAny')}
                         showHintAndError={false}
-                        disabled={hasAssessment || pending}
+                        disabled={pending}
                         className={styles.leadsFilter}
                     />
                 )}
