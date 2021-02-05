@@ -20,10 +20,10 @@ import useRequest from '#utils/request';
 import _ts from '#ts';
 import {
     LeadOptions,
-    EntryOptions,
+    // EntryOptions,
     KeyValueElement,
     EmmEntity,
-    BasicElement,
+    // BasicElement,
     WidgetElement,
     FilterFields,
     FaramErrors,
@@ -102,8 +102,8 @@ interface OwnProps {
 }
 
 const filterKeySelector = (d: FilterFields) => d.key;
-const optionTitleSelector = (d: BasicElement) => d.title;
-const optionIdSelector = (d: BasicElement) => d.id;
+// const optionTitleSelector = (d: BasicElement) => d.title;
+// const optionIdSelector = (d: BasicElement) => d.id;
 const optionLabelSelector = (d: KeyValueElement) => d.value;
 const optionKeySelector = (d: KeyValueElement) => d.key;
 const emmRiskFactorsKeySelector = (d: KeyValueElement) => (isTruthyString(d.key) ? d.key : 'None');
@@ -216,8 +216,9 @@ function FilterForm(props: OwnProps) {
         },
     });
 
+    /*
     const [
-        entryOptionsPending,
+        ,
         entryOptions,
     ] = useRequest<EntryOptions>({
         url: 'server://entry-options/',
@@ -230,12 +231,13 @@ function FilterForm(props: OwnProps) {
             notifyOnFailure(_ts('export', 'entryOptions'))({ error: errorBody });
         },
     });
+     */
 
     useEffect(() => {
         if (setFiltersPending) {
-            setFiltersPending(leadOptionsPending || entryOptionsPending);
+            setFiltersPending(leadOptionsPending);
         }
-    }, [setFiltersPending, leadOptionsPending, entryOptionsPending]);
+    }, [setFiltersPending, leadOptionsPending]);
 
     const {
         confidentiality,
@@ -273,8 +275,9 @@ function FilterForm(props: OwnProps) {
         setPristine(true);
     }, [onChange]);
 
-    const pending = leadOptionsPending || entryOptionsPending;
-    const showEntryLabelFilters = entryOptions && entryOptions.projectEntryLabel?.length > 0;
+    const pending = leadOptionsPending;
+    // NOTE: Removed because project labels/groups are less used features
+    // const showEntryLabelFilters = entryOptions && entryOptions.projectEntryLabel?.length > 0;
 
     const handleFilterButtonClick = useCallback(() => {
         setShowAllFilters(oldVal => !oldVal);
@@ -415,7 +418,7 @@ function FilterForm(props: OwnProps) {
             </div>
             { showAllFilters && !hasAssessment && (
                 <FaramGroup faramElementName="entries_filter">
-                    <div className={styles.content}>
+                    <div>
                         <h4 className={styles.heading}>
                             {_ts('entries', 'entriesFiltersGroupTitle')}
                         </h4>
@@ -424,7 +427,7 @@ function FilterForm(props: OwnProps) {
                                 faramElementName="created_by"
                                 keySelector={optionKeySelector}
                                 labelSelector={optionLabelSelector}
-                                options={entryOptions?.createdBy}
+                                options={assignee}
                                 label={_ts('entries', 'createdByFilterLabel')}
                                 placeholder={_ts('entries', 'createdByPlaceholder')}
                                 showHintAndError={false}
@@ -441,7 +444,7 @@ function FilterForm(props: OwnProps) {
                                 faramElementName="comment_assignee"
                                 keySelector={optionKeySelector}
                                 labelSelector={optionLabelSelector}
-                                options={entryOptions?.createdBy}
+                                options={assignee}
                                 label={_ts('entries', 'commentAssignedToFilterLabel')}
                                 placeholder={_ts('entries', 'createdByPlaceholder')}
                                 showHintAndError={false}
@@ -451,7 +454,7 @@ function FilterForm(props: OwnProps) {
                                 faramElementName="comment_created_by"
                                 keySelector={optionKeySelector}
                                 labelSelector={optionLabelSelector}
-                                options={entryOptions?.createdBy}
+                                options={assignee}
                                 label={_ts('entries', 'commentCreatedByFilterLabel')}
                                 showHintAndError={false}
                                 placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
@@ -487,7 +490,8 @@ function FilterForm(props: OwnProps) {
                                 placeholder={_ts('entries', 'entryTypePlaceholder')}
                                 className={styles.leadsFilter}
                             />
-                            {showEntryLabelFilters && (
+                            {/*
+                                showEntryLabelFilters && (
                                 <>
                                     <MultiSelectInput
                                         faramElementName="project_entry_labels"
@@ -507,11 +511,12 @@ function FilterForm(props: OwnProps) {
                                         className={styles.leadsFilter}
                                     />
                                 </>
-                            )}
+                                )
+                              */}
                         </div>
                     </div>
                     { filteredFrameworkFilters.length > 0 && (
-                        <div className={styles.content}>
+                        <div>
                             <h4 className={styles.heading}>
                                 {_ts('entries', 'widgetsFiltersGroupTitle')}
                             </h4>
