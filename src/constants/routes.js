@@ -92,10 +92,18 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'projects');
 
-    home: {
+    dashboard: {
         order: 21,
         type: ROUTE.private,
-        path: '/projects/:projectId/home/',
+        path: '/projects/:projectId/dashboard/',
+        loader: () => import('../views/Dashboard'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'dashboard');
+
+    home: {
+        order: 23,
+        type: ROUTE.private,
+        path: '/home/',
         loader: () => import('../views/Home'),
         links: allLinks,
     }, // _ts('pageTitle', 'home');

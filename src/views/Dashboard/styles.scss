@@ -1,0 +1,22 @@
+.dashboard {
+    .main-content {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        .deep-logo {
+            margin: 0 0 var(--spacing-large);
+            width: 256px;
+            height: 256px;
+            color: var(--color-text-disabled);
+        }
+
+        .deep-text {
+            margin-top: var(--spacing-large);
+            text-transform: uppercase;
+            color: var(--color-accent);
+            font-size: var(--font-size-super-large);
+        }
+    }
+}
