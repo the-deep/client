@@ -1,0 +1,27 @@
+.pagination {
+    display: flex;
+    > * {
+        transition: background-color .3s ease-in;
+        &:not(:last-child) {
+            margin-right: 1rem;
+        }
+    }
+}
+
+.icon-left {
+    margin-right: 0.5rem;
+}
+
+.icon-right {
+    margin-left: 0.5rem;
+}
+
+.dots {
+    --padding-internal-h: var(--dui-spacing-extra-small);
+    --padding-h: var(--dui-spacing-medium);
+    --padding-v: var(--dui-spacing-medium);
+    --padding: var(--dui-spacing-medium);
+    --font-size: var(--dui-font-size-medium);
+    --border-radius: 50%;
+    --text-transform: none;
+}

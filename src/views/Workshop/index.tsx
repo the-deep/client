@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Tag from '#components/ui/Tag';
+import Pagination from '#components/ui/Pagination';
+import SimplePagination from '#components/ui/Pagination/SimplePagination';
 
 import Container from '#components/ui/Container';
 import Card from '#components/ui/Card';
@@ -39,6 +41,20 @@ function Workshop(props: WorkshopProps) {
     } = props;
 
     const [textAreaValue, setTextAreaValue] = useInputValue('');
+    const [activePage, setActivePage] = useState<number>(1);
+    const [simpleActivePage, setSimpleActivePage] = useState<number>(1);
+
+    const handlePageChange = (page?: number) => {
+        if (page) {
+            setActivePage(page);
+        }
+    };
+
+    const handleSimpleActivePageChange = (page?: number) => {
+        if (page) {
+            setSimpleActivePage(page);
+        }
+    };
 
     return (
         <div className={_cs(styles.workshop, className)}>
@@ -102,7 +118,6 @@ function Workshop(props: WorkshopProps) {
             <Container
                 heading="Tags"
                 contentClassName={styles.tags}
-
             >
                 <Tag>
                     Environment
@@ -187,6 +202,42 @@ function Workshop(props: WorkshopProps) {
                 >
                     <Icon name="openLink" />
                 </QuickActionLink>
+            </Container>
+            <Container
+                heading="Pagination"
+                contentClassName={styles.pagination}
+            >
+                <Pagination
+                    handleClick={handlePageChange}
+                    activePage={activePage}
+                    itemsCount={20}
+                    maxItemsPerPage={2}
+                    hideNextButton={false}
+                    hidePrevButton={false}
+                    boundaryCount={1}
+                    siblingCount={0}
+                />
+                <Pagination
+                    handleClick={handlePageChange}
+                    activePage={activePage}
+                    itemsCount={20}
+                    maxItemsPerPage={2}
+                    showFirstButton
+                    showLastButton
+                />
+                <SimplePagination
+                    handleClick={handleSimpleActivePageChange}
+                    activePage={simpleActivePage}
+                    itemsCount={20}
+                    maxItemsPerPage={5}
+                    showPages
+                />
+                <SimplePagination
+                    handleClick={handleSimpleActivePageChange}
+                    activePage={simpleActivePage}
+                    itemsCount={20}
+                    maxItemsPerPage={5}
+                />
             </Container>
         </div>
     );

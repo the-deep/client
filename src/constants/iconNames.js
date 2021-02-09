@@ -148,6 +148,8 @@ const iconNames = {
     paintBrush: 'fa fa-paint-brush',
     book: 'fa fa-book',
     externalLink: 'fa fa-external-link',
+    skipBack: 'ion-ios-skipbackward',
+    skipForward: 'ion-ios-skipforward',
 };
 
 export default iconNames;

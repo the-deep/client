@@ -68,4 +68,14 @@
             margin: var(--spacing-medium);
         }
     }
+
+    .pagination {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+
+        >* {
+            margin: var(--dui-spacing-medium);
+        }
+    }
 }
