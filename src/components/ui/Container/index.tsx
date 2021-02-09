@@ -15,6 +15,8 @@ interface Props {
     contentClassName?: string;
     footerContent?: React.ReactNode;
     footerActions?: React.ReactNode;
+
+    // Is sub container? (i.e. Container with small heading)
     sub?: boolean;
 }
 

@@ -80,12 +80,7 @@ function Workshop(props: WorkshopProps) {
                 <Link to="/">
                     Go to home
                 </Link>
-                <Link
-                    to="https://togglecorp.com"
-                    actions={(
-                        <Icon name="chevronRight" />
-                    )}
-                >
+                <Link to="https://togglecorp.com">
                     Go to Togglecorp website
                 </Link>
             </Container>

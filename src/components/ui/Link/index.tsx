@@ -5,6 +5,8 @@ import {
     LinkProps as RouterLinkProps,
 } from 'react-router-dom';
 
+import Icon from '#rscg/Icon';
+
 import styles from './styles.scss';
 
 export interface LinkProps extends RouterLinkProps {
@@ -26,8 +28,16 @@ function Link(props: LinkProps) {
         linkElementClassName,
         icons,
         actions,
+        to,
         ...otherProps
     } = props;
+
+    const isExternalLink = React.useMemo(() => {
+        const a = document.createElement('a');
+        a.href = to as string;
+
+        return a.hostname !== window.location.hostname;
+    }, [to]);
 
     return (
         <div className={_cs(className, styles.link, disabled && styles.disabled)}>
@@ -36,13 +46,26 @@ function Link(props: LinkProps) {
                     { icons }
                 </div>
             )}
-            <RouterLink
-                className={_cs(linkElementClassName, styles.linkElement)}
-                {...otherProps}
-            />
-            {actions && (
+            { isExternalLink ? (
+                // eslint-disable-next-line jsx-a11y/anchor-has-content
+                <a
+                    href={to as string}
+                    className={_cs(linkElementClassName, styles.linkElement)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    {...otherProps}
+                />
+            ) : (
+                <RouterLink
+                    to={to}
+                    className={_cs(linkElementClassName, styles.linkElement)}
+                    {...otherProps}
+                />
+            )}
+            {(actions || isExternalLink) && (
                 <div className={_cs(actionsClassName, styles.actions)}>
                     { actions }
+                    { isExternalLink && <Icon name="chevronRight" /> }
                 </div>
             )}
         </div>
