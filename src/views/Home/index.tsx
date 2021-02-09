@@ -5,6 +5,7 @@ import {
     isDefined,
     reverseRoute,
 } from '@togglecorp/fujs';
+import { Redirect } from 'react-router-dom';
 
 import Page from '#rscv/Page';
 import SelectInput from '#rsci/SelectInput';
@@ -15,7 +16,7 @@ import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import { pathNames } from '#constants';
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
-
+import featuresMapping from '#constants/features';
 
 import {
     AppState,
@@ -24,9 +25,12 @@ import {
     CountTimeSeries,
     ProjectStat,
     ProjectsSummary,
+    User,
 } from '#typings';
 
 import {
+    activeUserSelector,
+    activeProjectIdFromStateSelector,
     currentUserProjectsSelector,
 } from '#redux';
 
@@ -62,10 +66,14 @@ const recentProjectKeySelector = (option: RecentProjectItemProps) => option.proj
 
 const mapStateToProps = (state: AppState) => ({
     userProjects: currentUserProjectsSelector(state),
+    activeUser: activeUserSelector(state),
+    activeProject: activeProjectIdFromStateSelector(state),
 });
 
 interface ViewProps {
     userProjects: ProjectElement[];
+    activeUser: User;
+    activeProject?: number;
 }
 
 const getRecentProjectStat = (projectStat: ProjectStat) => ({
@@ -89,6 +97,10 @@ const getRecentProjectStat = (projectStat: ProjectStat) => ({
 function Home(props: ViewProps) {
     const {
         userProjects,
+        activeUser: {
+            accessibleFeatures = [],
+        },
+        activeProject,
     } = props;
 
     const [selectedProject, setSelectedProject] = useState<number | undefined>(undefined);
@@ -176,6 +188,19 @@ function Home(props: ViewProps) {
             triggerProjectStats();
         }
     }, [triggerProjectStats]);
+
+    const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
+
+    if (!accessNewUi) {
+        const routeTo = reverseRoute(pathNames.dashboard, { projectId: activeProject });
+        return (
+            <Redirect
+                to={{
+                    pathname: routeTo,
+                }}
+            />
+        );
+    }
 
     return (
         <Page

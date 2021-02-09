@@ -34,6 +34,7 @@ export const allLinks = {
             ![
                 'projects',
                 'home',
+                'dashboard',
                 'workshop',
                 'leadGroups',
                 'leads',

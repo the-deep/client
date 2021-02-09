@@ -1261,7 +1261,8 @@
         "-25324892": "Total sources",
         "-678768686": "Total added sources",
         "-686861344": "Sources tagged",
-        "-686861268": "Sources tagged & validated"
+        "-686861268": "Sources tagged & validated",
+        "-29389738": "Dashboard"
     },
     "links": {
         "browserExtension": {
@@ -2267,7 +2268,8 @@
             "questionnaireBuilder": -7536745,
             "projectQuestionnaires": -91998400,
             "frameworkQuestions": -25976066,
-            "home": 5559
+            "home": 5559,
+            "dashboard": -29389738
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3572,6 +3574,9 @@
             "sourcesTaggedLabel": -61653142,
             "sourcesTaggedValidatedLabel": -16197909,
             "sourcesUntaggedLabel": -19582379
+        },
+        "dashboard": {
+            "deepLabel": 876
         }
     }
 }

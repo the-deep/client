@@ -4,6 +4,7 @@ const featuresMapping = {
     privateProject: 'private_project',
     entryVizConfig: 'entry_visualization_configuration',
     questionnaire: 'questionnaire',
+    newUi: 'new_ui',
 };
 
 export default featuresMapping;
