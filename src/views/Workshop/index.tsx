@@ -118,7 +118,12 @@ function Workshop(props: WorkshopProps) {
                 <Tag variant="gradient1">
                     Water
                 </Tag>
-                <Tag variant="gradient2">
+                <Tag
+                    variant="gradient2"
+                    icons={(
+                        <Icon name="globe" />
+                    )}
+                >
                     Earth
                 </Tag>
                 <Tag variant="gradient3">
@@ -127,7 +132,12 @@ function Workshop(props: WorkshopProps) {
                 <Tag variant="gradient4">
                     River
                 </Tag>
-                <Tag variant="accent" >
+                <Tag
+                    variant="accent"
+                    actions={(
+                        <Icon name="add" />
+                    )}
+                >
                     Nepal
                 </Tag>
             </Container>
