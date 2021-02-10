@@ -2,6 +2,10 @@ import React, { ReactNode } from 'react';
 
 import { _cs } from '@togglecorp/fujs';
 
+import ElementFragments, {
+    ElementFragmentsProps,
+} from '#components/ui/ElementFragments';
+
 import styles from './styles.scss';
 
 export type TagVariant = (
@@ -15,39 +19,42 @@ export type TagVariant = (
     | 'gradient4'
 )
 
-interface Props {
+const tagVariantToClassName: {
+    [key in TagVariant]: string;
+} = {
+    default: styles.default,
+    accent: styles.accent,
+    complement1: styles.complement1,
+    complement2: styles.complement2,
+    gradient1: styles.gradient1,
+    gradient2: styles.gradient2,
+    gradient3: styles.gradient3,
+    gradient4: styles.gradient4,
+};
+
+interface Props extends ElementFragmentsProps {
     className?: string;
-    label: string;
-    action?: ReactNode;
-    actionClassName?: string;
     variant?: TagVariant;
 }
 
 function Tag(props: Props) {
     const {
         className,
-        label,
-        action,
-        actionClassName,
         variant = 'default',
+        ...otherProps
     } = props;
 
-    const style = _cs(
-        className,
-        styles.tag,
-        styles[variant],
-    );
-
     return (
-        <div className={style}>
-            <div>
-                {label}
-            </div>
-            { action && (
-                <div className={_cs(styles.action, actionClassName)}>
-                    {action}
-                </div>
+        <div className={
+            _cs(
+                className,
+                styles.tag,
+                tagVariantToClassName[variant],
             )}
+        >
+            <ElementFragments
+                {...otherProps}
+            />
         </div>
     );
 }

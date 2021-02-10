@@ -106,37 +106,30 @@ function Workshop(props: WorkshopProps) {
                 contentClassName={styles.tags}
 
             >
-                <Tag
-                    label="Environment"
-                />
-                <Tag
-                    label="Socio-Cultural"
-                    variant="complement1"
-                />
-                <Tag
-                    label="Tagged"
-                    variant="complement2"
-                />
-                <Tag
-                    label="Water"
-                    variant="gradient1"
-                />
-                <Tag
-                    label="Earth"
-                    variant="gradient2"
-                />
-                <Tag
-                    label="Fire"
-                    variant="gradient3"
-                />
-                <Tag
-                    label="River"
-                    variant="gradient4"
-                />
-                <Tag
-                    label="Nepal"
-                    variant="accent"
-                />
+                <Tag>
+                    Environment
+                </Tag>
+                <Tag variant="complement1">
+                    Socio-Cultural
+                </Tag>
+                <Tag variant="complement2">
+                    Tagged
+                </Tag>
+                <Tag variant="gradient1">
+                    Water
+                </Tag>
+                <Tag variant="gradient2">
+                    Earth
+                </Tag>
+                <Tag variant="gradient3">
+                    Fire
+                </Tag>
+                <Tag variant="gradient4">
+                    River
+                </Tag>
+                <Tag variant="accent" >
+                    Nepal
+                </Tag>
             </Container>
         </div>
     );
