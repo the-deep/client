@@ -1,0 +1,23 @@
+.heading {
+    display: flex;
+    align-items: center;
+    padding: var(--dui-spacing-small);
+    color: var(--dui-color-black);
+    font-weight: var(--dui-font-weight-bold);
+
+    &.large {
+        font-size: var(--dui-font-size-heading-large);
+    }
+
+    &.medium {
+        font-size: var(--dui-font-size-heading-medium);
+    }
+
+    &.small {
+        font-size: var(--dui-font-size-heading-small);
+    }
+
+    &.extra-small {
+        font-size: var(--dui-font-size-heading-extra-small);
+    }
+}

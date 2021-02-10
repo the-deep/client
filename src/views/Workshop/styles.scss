@@ -3,25 +3,47 @@
     padding: var(--spacing-large);
     overflow: auto;
 
-    .buttons {
-        .new {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
+    .new-buttons {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
 
-            >* {
-                margin: var(--spacing-medium);
-            }
+        >* {
+            margin: var(--dui-spacing-medium);
+            width: fit-content;
         }
+    }
 
-        .old {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
+    .old-buttons {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
 
-            >* {
-                margin: var(--spacing-medium);
-            }
+        >* {
+            margin: var(--dui-spacing-medium);
+            width: fit-content;
+        }
+    }
+
+    .links {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        >* {
+            margin: var(--dui-spacing-medium);
+            width: fit-content;
+        }
+    }
+
+    .button-like-links {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        >* {
+            margin: var(--dui-spacing-medium);
+            width: fit-content;
         }
     }
 }

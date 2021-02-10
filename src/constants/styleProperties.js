@@ -109,9 +109,15 @@ const styleProperties = {
         duiFontSizeMedium: '0.86rem',
         duiFontSizeLarge: '1rem',
 
+        duiFontSizeHeadingLarge: '1.57rem',
+        duiFontSizeHeadingMedium: '1.24rem',
+        duiFontSizeHeadingSmall: '1rem',
+        duiFontSizeHeadingExtraSmall: '0.8rem',
+
         duiFontWeightLight: '300',
+        duiFontWeightRegular: '400',
         duiFontWeightMedium: '400',
-        duiFontWeightBold: '700',
+        duiFontWeightBold: '600',
 
         duiWidthSeparatorThin: '0.06em',
         duiWidthSeparatorMedium: '0.1em',

@@ -1,0 +1,48 @@
+.link {
+    --color: transparent;
+    --decoration: none;
+    --padding-internal-h: var(--dui-spacing-small);
+    --padding-h: var(--dui-spacing-extra-large);
+    --padding-v: var(--dui-spacing-medium);
+    --padding: var(--padding-v) calc(var(--padding-h) - var(--padding-internal-h));
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: var(--padding);
+    text-decoration: var(--decoration);
+    color: var(--color);
+
+    &:not(.disabled) {
+        --color: var(--dui-color-accent);
+        cursor: pointer;
+
+        &:hover {
+            --color: var(--dui-color-complement1);
+            --decoration: underline;
+        }
+    }
+
+    &.disabled {
+        pointer-events: none;
+    }
+
+    .icons {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--padding-internal-h);
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--padding-internal-h);
+    }
+
+    .link-element {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--padding-internal-h);
+        text-transform: none;
+    }
+}

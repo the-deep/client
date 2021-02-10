@@ -1,0 +1,16 @@
+.footer {
+    display: flex;
+    align-items: center;
+    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+    .content {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        padding: var(--dui-spacing-small);
+    }
+
+    .actions {
+        flex-shrink: 0;
+    }
+}
