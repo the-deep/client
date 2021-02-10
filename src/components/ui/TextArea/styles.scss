@@ -1,0 +1,19 @@
+.text-area {
+    .input-section {
+        border: var(--width-separator-thin) solid var(--color-separator);
+    }
+
+    .raw-text-area {
+        margin: 0;
+        outline: none;
+        border: 0;
+        background-color: transparent;
+        padding: 0;
+        width: 100%;
+        resize: vertical;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+    }
+}
+

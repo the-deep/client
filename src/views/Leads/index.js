@@ -275,6 +275,19 @@ const requestOptions = {
     },
 };
 
+function IconWrapper(p) {
+    const {
+        isActive, // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+        ...otherProps
+    } = p;
+
+    return (
+        <Icon
+            {...otherProps}
+        />
+    );
+}
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requestOptions)
@@ -536,8 +549,7 @@ export default class Leads extends React.PureComponent {
                         useHash
                         replaceHistory
                         className={styles.tabs}
-                        // FIXME: isActive is passed inside Icon
-                        renderer={Icon}
+                        renderer={IconWrapper}
                         rendererParams={Leads.tabIconRendererParams}
                         onClick={this.handleTabClick}
                         defaultHash={view}

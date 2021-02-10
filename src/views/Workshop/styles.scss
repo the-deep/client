@@ -14,17 +14,6 @@
         }
     }
 
-    .old-buttons {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-
-        >* {
-            margin: var(--dui-spacing-medium);
-            width: fit-content;
-        }
-    }
-
     .links {
         display: flex;
         align-items: center;
@@ -45,7 +34,6 @@
             margin: var(--dui-spacing-medium);
             width: fit-content;
         }
-
     }
 
     .tags {
@@ -54,6 +42,16 @@
         justify-content: flex-start;
 
         >* {
+            margin: var(--spacing-medium);
+        }
+    }
+
+    .inputs {
+        display: flex;
+        align-items: center;
+
+        >* {
+            flex-basis: calc(50% - var(--spacing-medium) * 2);
             margin: var(--spacing-medium);
         }
     }
