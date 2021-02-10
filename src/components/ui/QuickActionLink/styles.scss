@@ -1,0 +1,10 @@
+.quick-action-link {
+    --padding: var(--dui-spacing-medium);
+
+    .children {
+        display: flex;
+        justify-content: center;
+        padding: 0;
+        width: 1rem;
+    }
+}

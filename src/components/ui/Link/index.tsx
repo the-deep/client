@@ -1,5 +1,8 @@
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isValidUrl,
+} from '@togglecorp/fujs';
 import {
     Link as RouterLink,
     LinkProps as RouterLinkProps,
@@ -32,12 +35,7 @@ function Link(props: LinkProps) {
         ...otherProps
     } = props;
 
-    const isExternalLink = React.useMemo(() => {
-        const a = document.createElement('a');
-        a.href = to as string;
-
-        return a.hostname !== window.location.hostname;
-    }, [to]);
+    const isExternalLink = React.useMemo(() => isValidUrl(to as string), [to]);
 
     return (
         <div className={_cs(className, styles.link, disabled && styles.disabled)}>
