@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 
 import { EntrySummary } from '#typings/entry';
 import Numeral from '#rscv/Numeral';
@@ -35,15 +35,9 @@ const clickableKeys = ['totalUnverifiedEntries', 'totalVerifiedEntries'];
 
 type FilterableKeys = 'totalUnverifiedEntries' | 'totalVerifiedEntries';
 
-const filterValues: { [key in FilterableKeys]: {
-    verified: boolean;
-}} = {
-    totalUnverifiedEntries: {
-        verified: false,
-    },
-    totalVerifiedEntries: {
-        verified: true,
-    },
+const filterValues: { [key in FilterableKeys]: boolean } = {
+    totalUnverifiedEntries: false,
+    totalVerifiedEntries: true,
 };
 
 interface PropsFromDispatch {
@@ -62,6 +56,10 @@ interface EntryStatProps {
     isClickable: boolean;
     handleClick: (v: {}) => void;
     className?: string;
+    entriesFilters: {
+        verified?: boolean;
+        'authoring_organization_types'?: number[];
+    };
 }
 
 function EntryStat({
@@ -71,6 +69,10 @@ function EntryStat({
     max,
     isClickable,
     handleClick,
+    entriesFilters: {
+        verified: oldVerificationValue,
+        authoring_organization_types: oldOrganizationType = [],
+    },
 }: EntryStatProps) {
     const weight = value / max;
     const saturation = Math.min(100, 100 * weight);
@@ -78,10 +80,15 @@ function EntryStat({
     const onClickHandler = () => {
         if (isClickable) {
             if (clickableKeys.includes(id)) {
-                const v = filterValues[id as FilterableKeys];
-                handleClick(v);
+                const verified = filterValues[id as FilterableKeys];
+                const newVerificationValue = isNotDefined(oldVerificationValue)
+                    ? verified : undefined;
+                handleClick({ verified: newVerificationValue });
             } else {
-                handleClick({ authoring_organization_types: [Number(id)] });
+                const newOrganizationType = oldOrganizationType.length > 0
+                    ? oldOrganizationType.filter(v => v !== Number(id))
+                    : [...oldOrganizationType, Number(id)];
+                handleClick({ authoring_organization_types: newOrganizationType });
             }
         }
     };
@@ -178,6 +185,7 @@ function EntriesStats(props: Props) {
     const statsRendererParams = (_: string, d: Stats) => ({
         ...d,
         max,
+        entriesFilters,
     } as EntryStatProps);
 
     return (
