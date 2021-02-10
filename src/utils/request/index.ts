@@ -20,7 +20,7 @@ import {
     Error,
     Err,
 } from './types';
-import RequestContext from './context';
+import RequestContext, { ContextInterface } from './context';
 
 import schema from '../../schema';
 
@@ -65,10 +65,12 @@ function isFetchable(
 }
 
 async function fetchResource<T>(
-    myUrl: string,
-    myOptions: RequestInit,
+    url: string,
+    options: RequestInit,
     delay: number,
 
+    transformUrlRef: React.MutableRefObject<ContextInterface['transformUrl']>,
+    transformOptionsRef: React.MutableRefObject<ContextInterface['transformOptions']>,
     requestOptionsRef: React.MutableRefObject<Omit<RequestOptions<T>, 'url' | 'query' | 'method' | 'body' | 'other'>>,
 
     setPendingSafe: (value: boolean, clientId: number) => void,
@@ -87,10 +89,12 @@ async function fetchResource<T>(
         await sleep(pollTime, { signal });
 
         await fetchResource(
-            myUrl,
-            myOptions,
+            url,
+            options,
             delay,
 
+            transformUrlRef,
+            transformOptionsRef,
             requestOptionsRef,
 
             setPendingSafe,
@@ -139,6 +143,9 @@ async function fetchResource<T>(
             }
         }
     }
+
+    const myUrl = transformUrlRef.current(url);
+    const myOptions = transformOptionsRef.current(url, options);
 
     let res;
     try {
@@ -196,10 +203,12 @@ async function fetchResource<T>(
     if (retryTime >= 0) {
         await sleep(retryTime, { signal });
         await fetchResource(
-            myUrl,
-            myOptions,
+            url,
+            options,
             delay,
 
+            transformUrlRef,
+            transformOptionsRef,
             requestOptionsRef,
 
             setPendingSafe,
@@ -413,22 +422,21 @@ function useRequest<T>(
 
             const controller = new AbortController();
 
-            const transformedUrl = transformUrlRef.current(extendedUrl);
-            const transformedOptions = transformOptionsRef.current(extendedUrl, {
-                ...other,
-                method,
-                body,
-            });
-
             if (method !== 'DELETE' && !schemaName) {
-                console.error(`Schema is not defined for ${transformedUrl} ${method}`);
+                console.error(`Schema is not defined for ${extendedUrl} ${method}`);
             }
 
             fetchResource(
-                transformedUrl,
-                transformedOptions,
+                extendedUrl,
+                {
+                    ...other,
+                    method,
+                    body,
+                },
                 delay,
 
+                transformUrlRef,
+                transformOptionsRef,
                 requestOptionsRef,
 
                 setPendingSafe,
