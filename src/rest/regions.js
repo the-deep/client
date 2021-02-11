@@ -19,6 +19,7 @@ const regionsUrlFields = ['id', 'code', 'title', 'public', 'created_at', 'modifi
 const adminLevelFields = [
     'code_prop',
     'geo_shape_file',
+    'geo_shape_file_details',
     'id',
     'level',
     'name_prop',

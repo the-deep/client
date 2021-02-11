@@ -10,7 +10,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     pending: PropTypes.bool,
-    displayPicture: PropTypes.number,
+    displayPictureUrl: PropTypes.string,
     actionButtonTitle: PropTypes.string,
     username: PropTypes.string,
     firstName: PropTypes.string,
@@ -22,7 +22,7 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     actionButtonTitle: '',
-    displayPicture: undefined,
+    displayPictureUrl: undefined,
     username: '',
     firstName: '',
     lastName: '',
@@ -51,7 +51,7 @@ export default class UserAddItem extends React.PureComponent {
             className,
             pending,
             actionButtonTitle,
-            displayPicture,
+            displayPictureUrl,
             username,
             firstName,
             lastName,
@@ -62,7 +62,7 @@ export default class UserAddItem extends React.PureComponent {
                 <div className={styles.top}>
                     <DisplayPicture
                         className={styles.picture}
-                        galleryId={displayPicture}
+                        url={displayPictureUrl}
                     />
                     <div className={styles.name}>
                         <div className={styles.text}>

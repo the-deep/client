@@ -220,7 +220,8 @@ export default class MultiDocumentUploader extends React.PureComponent {
     }
 
     rendererParamsForSelection = (key, item) => ({
-        galleryId: item.id,
+        // galleryId: item.id,
+        attachment: undefined, // FIXME: pass attachment
         disabled: this.props.disabled,
         readOnly: this.props.readOnly,
         showPageRange: this.props.showPageRange,

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { reverseRoute, _cs } from '@togglecorp/fujs';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
 import { currentUserProjectsSelector } from '#redux';
 import { pathNames } from '#constants';
 
@@ -149,9 +148,6 @@ function EntryCommentItem(props) {
 
     const {
         data: {
-            createdByDetail: {
-                displayPicture,
-            } = {},
             text,
         } = {},
         timestamp,
@@ -165,12 +161,6 @@ function EntryCommentItem(props) {
             notificationId={notificationId}
             seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}
-            icon={
-                <DisplayPicture
-                    className={styles.displayPicture}
-                    url={displayPicture}
-                />
-            }
             message={notificationText}
             timestamp={timestamp}
             description={text}

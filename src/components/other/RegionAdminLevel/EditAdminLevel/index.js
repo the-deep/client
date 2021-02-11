@@ -19,7 +19,6 @@ import FileInput from '#rsci/FileInput';
 import SelectInput from '#rsci/SelectInput';
 import Icon from '#rscg/Icon';
 
-import InternalGallery from '#components/viewer/InternalGallery';
 import {
     alterResponseErrorToFaramError,
     createParamsForAdminLevelsForRegionPOST,
@@ -50,6 +49,7 @@ const propTypes = {
         region: PropTypes.number,
         parent: PropTypes.number,
         geoShapeFile: PropTypes.number,
+        geoShapeFileDetails: PropTypes.object,
     }),
     onClose: PropTypes.func.isRequired,
     addAdminLevelForRegion: PropTypes.func.isRequired,
@@ -75,12 +75,18 @@ export default class EditAdminLevel extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        const {
+            geoShapeFileDetails,
+            ...faramValues
+        } = this.props.adminLevelDetail;
+
         this.state = {
             faramErrors: {},
-            faramValues: this.props.adminLevelDetail,
+            faramValues,
             pending: false,
             pristine: true,
             adminLevelsOfRegion: this.calculateOtherAdminLevels(props.adminLevelsOfRegion),
+            geoShapeFileDetails,
         };
 
         this.schema = {
@@ -287,7 +293,11 @@ export default class EditAdminLevel extends React.PureComponent {
             })
             .success((response) => {
                 this.setState({
-                    faramValues: { ...this.state.faramValues, geoShapeFile: response.id },
+                    faramValues: {
+                        ...this.state.faramValues,
+                        geoShapeFile: response.id,
+                    },
+                    geoShapeFileDetails: response,
                     pristine: false,
                 });
             })
@@ -307,6 +317,7 @@ export default class EditAdminLevel extends React.PureComponent {
             pending,
             pristine,
             adminLevelsOfRegion,
+            geoShapeFileDetails,
         } = this.state;
 
         return (
@@ -376,23 +387,24 @@ export default class EditAdminLevel extends React.PureComponent {
                             placeholder={_ts('components.editAdminLevel', 'parentAdminLevelPlaceholder')}
                             className={styles.selectInput}
                         />
-                        {
-                            faramValues.geoShapeFile ? (
-                                <div className={styles.currentUpload}>
-                                    <p>
-                                        {_ts('components.editAdminLevel', 'geoFileLabel')}
-                                    </p>
-                                    <InternalGallery
-                                        onlyFileName
-                                        galleryId={faramValues.geoShapeFile}
-                                    />
-                                </div>
-                            ) : (
-                                <p className={styles.noFileUpload}>
-                                    {_ts('components.editAdminLevel', 'noFileUploadedLabel')}
+                        {geoShapeFileDetails ? (
+                            <div className={styles.currentUpload}>
+                                <p>
+                                    {_ts('components.editAdminLevel', 'geoFileLabel')}
                                 </p>
-                            )
-                        }
+                                <a
+                                    href={geoShapeFileDetails.file}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {geoShapeFileDetails.title}
+                                </a>
+                            </div>
+                        ) : (
+                            <p className={styles.noFileUpload}>
+                                {_ts('components.editAdminLevel', 'noFileUploadedLabel')}
+                            </p>
+                        )}
                     </div>
                     <div className={styles.actionButtons}>
                         <div className={styles.leftContainer}>

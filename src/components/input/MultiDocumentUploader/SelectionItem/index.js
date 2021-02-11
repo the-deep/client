@@ -16,7 +16,7 @@ const propTypes = {
     selectionKey: PropTypes.string.isRequired,
     onRemoveClick: PropTypes.func.isRequired,
     onStartPageChange: PropTypes.func.isRequired,
-    galleryId: PropTypes.number.isRequired,
+    attachment: PropTypes.number.isRequired,
     onEndPageChange: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -72,7 +72,7 @@ export default class Selection extends React.PureComponent {
             showPageRange,
             startPage,
             endPage,
-            galleryId,
+            attachment,
         } = this.props;
 
         const className = _cs(
@@ -88,9 +88,10 @@ export default class Selection extends React.PureComponent {
                         className={styles.documentLink}
                         transparent
                         title={name}
+                        disabled={!attachment}
                         modal={
                             <InternalGalleryModal
-                                galleryId={galleryId}
+                                attachment={attachment}
                                 showUrl
                                 name={name}
                             />
