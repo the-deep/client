@@ -189,7 +189,7 @@ export default class UserProfile extends React.PureComponent {
                                         {/* FIXME: add a default image in img */}
                                         <DisplayPicture
                                             className={styles.displayPicture}
-                                            galleryId={userInformation.displayPicture}
+                                            url={userInformation.displayPictureUrl}
                                         />
                                         <div className={styles.detail}>
                                             <div className={styles.nameContainer}>

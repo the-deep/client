@@ -63,7 +63,7 @@ export default class UserDetailActionBar extends React.PureComponent {
         const {
             className,
             userDetails: {
-                displayPicture,
+                displayPictureUrl,
                 name,
             },
             onEditClick,
@@ -86,7 +86,7 @@ export default class UserDetailActionBar extends React.PureComponent {
                 <div className={styles.leftContainer}>
                     <DisplayPicture
                         className={_cs(styles.displayPicture, className)}
-                        url={displayPicture}
+                        url={displayPictureUrl}
                     />
                 </div>
                 <div className={styles.midContainer}>

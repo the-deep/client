@@ -9,13 +9,11 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    galleryId: PropTypes.number,
     url: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    galleryId: undefined,
     url: undefined,
 };
 
@@ -26,7 +24,6 @@ export default class DisplayPicture extends React.PureComponent {
     render() {
         const {
             className,
-            galleryId,
             url,
         } = this.props;
 
@@ -35,16 +32,6 @@ export default class DisplayPicture extends React.PureComponent {
                 <GalleryImage
                     className={_cs(className, styles.displayPicture)}
                     imageUrl={url}
-                    imageClassName={styles.image}
-                />
-            );
-        }
-
-        if (galleryId) {
-            return (
-                <InternalGallery
-                    className={_cs(className, styles.displayPicture)}
-                    galleryId={galleryId}
                     imageClassName={styles.image}
                 />
             );

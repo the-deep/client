@@ -103,8 +103,8 @@ DropItem.defaultProps = {
 const mapStateToProps = state => ({
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
-    activeUser: activeUserSelector(state),
-    userInformation: currentUserInformationSelector(state),
+    activeUser: activeUserSelector(state), // from auth
+    userInformation: currentUserInformationSelector(state), // from users
 });
 
 const propTypes = {
@@ -189,8 +189,8 @@ export default class NavDrop extends React.PureComponent {
         );
 
         const displayPicture = (
-            userInformation.displayPicture ||
-            activeUser.displayPicture
+            userInformation.displayPictureUrl ||
+            activeUser.displayPictureUrl
         );
 
         return (
@@ -199,7 +199,7 @@ export default class NavDrop extends React.PureComponent {
                 leftComponent={
                     <DisplayPicture
                         className={styles.displayPicture}
-                        galleryId={displayPicture}
+                        url={displayPicture}
                     />
                 }
                 title={userName}
