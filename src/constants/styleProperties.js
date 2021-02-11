@@ -36,6 +36,7 @@ const styleProperties = {
         duiColorBackgroundPrimaryButton: 'var(--dui-color-accent)',
         duiColorBackgroundHoverPrimaryButton: 'var(--dui-color-accent-hover)',
         duiColorTextPrimaryButton: 'var(--dui-color-text-on-accent)',
+        duiColorBackgroundInputSection: 'transparent',
 
         duiColorBackgroundTertiaryHover: '#f5f8fb',
 
@@ -46,12 +47,14 @@ const styleProperties = {
         duiColorPositive: '#29bb75',
         duiColorInformation: '#3fa2f7',
         duiColorNegative: '#ff5c52',
+        duiColorDanger: 'var(--dui-color-negative)',
 
         duiColorBackground: '#f6f6f6',
         duiColorBackgroundInformation: '#3fa2f7',
         duiColorBackgroundNegative: '#ff5c52',
 
         duiColorText: 'var(--dui-color-grey1)',
+        duiColorTextLabel: 'var(--dui-color-grey2)',
 
         duiColorBackgroundDisabled: 'var(--dui-color-grey5)',
         duiColorTextDisabled: 'var(--dui-color-grey4)',
@@ -60,6 +63,9 @@ const styleProperties = {
         duiColorGradient2: '#99d2ff',
         duiColorGradient3: '#66bbff',
         duiColorGradient4: '#33a5ff',
+        duiRadiusBorderInputSection: '0',
+        duiColorInputLabel: 'var(--dui-color-grey3)',
+        duiColorInputLabelActive: 'var(--dui-color-accent)',
     },
 
     dimens: {
@@ -128,6 +134,7 @@ const styleProperties = {
         duiWidthSeparatorMedium: '0.1em',
         duiBorderRadiusCard: '8px',
         duiBorderRadiusTag: '25px',
+        duiOpacityDisabledElement: '0.3',
     },
 };
 
