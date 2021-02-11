@@ -35,10 +35,21 @@ const clickableKeys = ['totalUnverifiedEntries', 'totalVerifiedEntries'];
 
 type FilterableKeys = 'totalUnverifiedEntries' | 'totalVerifiedEntries';
 
-const filterValues: { [key in FilterableKeys]: boolean } = {
-    totalUnverifiedEntries: false,
-    totalVerifiedEntries: true,
-};
+interface VerificationKeyValue {
+    key: FilterableKeys;
+    value: boolean;
+}
+
+const filterValues: VerificationKeyValue[] = [
+    {
+        key: 'totalUnverifiedEntries',
+        value: false,
+    },
+    {
+        key: 'totalVerifiedEntries',
+        value: true,
+    },
+];
 
 interface PropsFromDispatch {
     setEntriesViewFilter: typeof setEntriesViewFilterAction;
@@ -53,6 +64,7 @@ interface EntryStatProps {
     title: string;
     value: number;
     max: number;
+    isSelected: boolean;
     isClickable: boolean;
     handleClick: (v: {}) => void;
     className?: string;
@@ -67,6 +79,7 @@ function EntryStat({
     title,
     value = 0,
     max,
+    isSelected,
     isClickable,
     handleClick,
     entriesFilters: {
@@ -80,9 +93,9 @@ function EntryStat({
     const onClickHandler = () => {
         if (isClickable) {
             if (clickableKeys.includes(id)) {
-                const verified = filterValues[id as FilterableKeys];
-                const newVerificationValue = isNotDefined(oldVerificationValue)
-                    ? verified : undefined;
+                const verified = filterValues.find(f => f.key === id)?.value;
+                const newVerificationValue = isNotDefined(oldVerificationValue) ||
+                    oldVerificationValue !== verified ? verified : undefined;
                 handleClick({ verified: newVerificationValue });
             } else {
                 const newOrganizationType = oldOrganizationType.length > 0
@@ -95,27 +108,32 @@ function EntryStat({
 
     return (
         <div
-            className={_cs(
-                styles.stat,
-                isClickable && styles.clickable,
-            )}
-            style={{
-                filter: `grayscale(${100 - saturation}%)`,
-            }}
-            tabIndex={0}
-            role="button"
-            onKeyDown={noOp}
-            onClick={onClickHandler}
+            className={_cs(styles.statContainer)}
         >
-            <div className={styles.value}>
-                <Numeral
-                    value={value}
-                    precision={0}
-                />
+            <div
+                className={_cs(
+                    styles.stat,
+                    isClickable && styles.clickable,
+                )}
+                style={{
+                    filter: `grayscale(${100 - saturation}%)`,
+                }}
+                tabIndex={0}
+                role="button"
+                onKeyDown={noOp}
+                onClick={onClickHandler}
+            >
+                <div className={styles.value}>
+                    <Numeral
+                        value={value}
+                        precision={0}
+                    />
+                </div>
+                <div className={styles.title}>
+                    {title}
+                </div>
             </div>
-            <div className={styles.title}>
-                {title}
-            </div>
+            <div className={_cs(styles.line, isSelected && styles.selected)} />
         </div>
     );
 }
@@ -133,7 +151,10 @@ const defaultStats: EntrySummary = {
 interface ComponentProps {
     className?: string;
     stats?: EntrySummary;
-    entriesFilters: {};
+    entriesFilters: {
+        verified?: boolean;
+        'authoring_organization_types'?: number[];
+    };
 }
 
 type Props = ComponentProps & PropsFromDispatch;
@@ -151,6 +172,19 @@ function EntriesStats(props: Props) {
         ...staticStats
     } = stats;
 
+    const {
+        verified: oldVerificationValue,
+        authoring_organization_types: oldOrganizationType = [],
+    } = entriesFilters;
+
+    const verificationFilter = useMemo(() => (isNotDefined(oldVerificationValue)
+        ? [] : filterValues.filter(v => v.value === oldVerificationValue).map(v => v.key)
+    ), [oldVerificationValue]);
+
+    const selectedFilter = useMemo(() =>
+        [...oldOrganizationType, ...verificationFilter],
+    [oldOrganizationType, verificationFilter]);
+
     const handleClick = useCallback((filter: {}) => {
         setEntriesViewFilter({ filters: { ...entriesFilters, ...filter } });
     }, [setEntriesViewFilter, entriesFilters]);
@@ -159,6 +193,7 @@ function EntriesStats(props: Props) {
         const list = Object.keys(staticEntryStatTitles).map(k => ({
             id: k,
             isClickable: clickableKeys.includes(k),
+            isSelected: selectedFilter.some(f => f === k),
             handleClick,
             title: staticEntryStatTitles[k as keyof StaticEntrySummary],
             value: staticStats[k as keyof StaticEntrySummary],
@@ -167,6 +202,7 @@ function EntriesStats(props: Props) {
         const orgTypeItems = orgTypeCount.map(orgType => ({
             id: String(orgType.org.id),
             isClickable: true,
+            isSelected: selectedFilter.some(f => f === orgType.org.id),
             handleClick,
             title: orgType.org.shortName ?? orgType.org.title,
             value: orgType.count,
@@ -176,7 +212,13 @@ function EntriesStats(props: Props) {
             ...list,
             ...orgTypeItems,
         ];
-    }, [staticStats, orgTypeCount, handleClick]);
+    },
+    [
+        staticStats,
+        orgTypeCount,
+        handleClick,
+        selectedFilter,
+    ]);
 
     const max = useMemo(() => (
         Math.max(0, ...statsList.map(d => d.value ?? 0))

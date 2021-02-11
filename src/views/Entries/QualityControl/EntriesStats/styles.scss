@@ -3,36 +3,59 @@
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
+    flex-grow: 1;
     border-bottom: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
     padding: var(--width-separator-thin);
 }
 
-.stat {
+.stat-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     flex-grow: 1;
     justify-content: center;
-    margin: var(--width-separator-thin);
-    background-color: var(--color-accent);
-    padding: calc(var(--spacing-small) - var(--spacing-extra-small));
-    text-align: center;
-    color: var(--color-text-on-accent);
 
-    .title {
-        padding: 0 var(--spacing-extra-small);
-        text-transform: uppercase;
-        font-size: var(--font-size-medium);
-        font-weight: var(--font-weight-bold);
+    .stat {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+        margin: var(--width-separator-thin);
+        background-color: var(--color-accent);
+        padding: calc(var(--spacing-small) - var(--spacing-extra-small));
+        text-align: center;
+        color: var(--color-text-on-accent);
+
+        .title {
+            padding: 0 var(--spacing-extra-small);
+            text-transform: uppercase;
+            font-size: var(--font-size-medium);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .value {
+            padding: var(--spacing-extra-small);
+            font-family: var(--font-family-monospace);
+            font-size: var(--font-size-extra-large);
+            font-weight: var(--font-weight-bold);
+        }
     }
 
-    .value {
-        padding: var(--spacing-extra-small);
-        font-family: var(--font-family-monospace);
-        font-size: var(--font-size-extra-large);
-        font-weight: var(--font-weight-bold);
+    .line {
+        transition: opacity .1s;
+        opacity: 0;
+        margin: var(--width-separator-thin);
+        background-color: var(--color-primary);
+        height: var(--spacing-extra-small-alt);
+    }
+
+    .selected {
+        opacity: 1;
     }
 }
+
+
+
 
 .clickable {
     cursor: pointer;
