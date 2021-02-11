@@ -1141,7 +1141,7 @@ class LeadDetail extends React.PureComponent {
                                 { values.attachment &&
                                     <InternalGallery
                                         onlyFileName
-                                        galleryId={values.attachment.id}
+                                        attachment={values.attachment}
                                     />
                                 }
                             </div>

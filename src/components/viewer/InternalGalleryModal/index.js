@@ -13,7 +13,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     name: PropTypes.string.isRequired,
-    galleryId: PropTypes.number.isRequired,
+    attachment: PropTypes.number.isRequired,
     closeModal: PropTypes.func.isRequired,
 };
 
@@ -28,7 +28,7 @@ export default class Selection extends React.PureComponent {
     render() {
         const {
             className,
-            galleryId,
+            attachment,
             name,
             closeModal,
             ...otherProps
@@ -48,7 +48,7 @@ export default class Selection extends React.PureComponent {
                 />
                 <ModalBody className={styles.body} >
                     <InternalGallery
-                        galleryId={galleryId}
+                        attachment={attachment}
                         {...otherProps}
                     />
                 </ModalBody>

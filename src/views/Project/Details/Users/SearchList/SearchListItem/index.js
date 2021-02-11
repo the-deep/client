@@ -32,7 +32,7 @@ const propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     username: PropTypes.string,
-    displayPicture: PropTypes.number,
+    displayPictureUrl: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
     onItemRemove: PropTypes.func.isRequired,
     usergroupTitle: PropTypes.string,
@@ -98,7 +98,7 @@ const defaultProps = {
     username: undefined,
     firstName: undefined,
     lastName: undefined,
-    displayPicture: undefined,
+    displayPictureUrl: undefined,
     usergroupTitle: undefined,
 };
 
@@ -154,7 +154,7 @@ export default class SearchListItem extends React.PureComponent {
             username,
             lastName,
             firstName,
-            displayPicture,
+            displayPictureUrl,
             usergroupTitle,
             requests: {
                 usergroupMembershipRequest,
@@ -204,7 +204,7 @@ export default class SearchListItem extends React.PureComponent {
             return (
                 <UserAddItem
                     className={classNameFromProps}
-                    displayPicture={displayPicture}
+                    displayPictureUrl={displayPictureUrl}
                     pending={userMembershipRequest.pending}
                     firstName={firstName}
                     lastName={lastName}

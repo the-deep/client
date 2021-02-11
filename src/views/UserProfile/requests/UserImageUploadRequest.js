@@ -23,7 +23,7 @@ export default class UserImageUploadRequest {
                 this.props.setState({ pending: false });
             })
             .success((response) => {
-                this.props.handleImageUploadSuccess(response.id);
+                this.props.handleImageUploadSuccess(response);
             })
             .failure((response) => {
                 console.warn('Failure', response);
