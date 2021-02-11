@@ -20,7 +20,7 @@ import {
     Error,
     Err,
 } from './types';
-import RequestContext from './context';
+import RequestContext, { ContextInterface } from './context';
 
 import schema from '../../schema';
 
@@ -31,22 +31,19 @@ import schema from '../../schema';
 type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 interface RequestOptions<T> {
-    // TODO:
-    // re-trigger if autoRetrigger
+    // FIXME: create separate hook for autoTrigger
+    autoTrigger?: boolean;
+    autoTriggerDisabled?: boolean; // NOTE: disabling will cancel on-going requests
+
+    // NOTE: re-trigger if autoRetrigger
     url: string | undefined;
     query?: UrlParams;
-
     body?: RequestInit['body'] | object;
     method?: Methods;
     other?: RequestInit;
 
+    // NOTE: don't ever retrigger
     mockResponse?: T;
-
-    // TODO: add this
-    autoTrigger?: boolean;
-
-    // NOTE:
-    // don't ever retrigger
     schemaName?: string;
     delay?: number;
     preserveResponse?: boolean;
@@ -68,10 +65,12 @@ function isFetchable(
 }
 
 async function fetchResource<T>(
-    myUrl: string,
-    myOptions: RequestInit,
+    url: string,
+    options: RequestInit,
     delay: number,
 
+    transformUrlRef: React.MutableRefObject<ContextInterface['transformUrl']>,
+    transformOptionsRef: React.MutableRefObject<ContextInterface['transformOptions']>,
     requestOptionsRef: React.MutableRefObject<Omit<RequestOptions<T>, 'url' | 'query' | 'method' | 'body' | 'other'>>,
 
     setPendingSafe: (value: boolean, clientId: number) => void,
@@ -90,10 +89,12 @@ async function fetchResource<T>(
         await sleep(pollTime, { signal });
 
         await fetchResource(
-            myUrl,
-            myOptions,
+            url,
+            options,
             delay,
 
+            transformUrlRef,
+            transformOptionsRef,
             requestOptionsRef,
 
             setPendingSafe,
@@ -143,6 +144,9 @@ async function fetchResource<T>(
         }
     }
 
+    const myUrl = transformUrlRef.current(url);
+    const myOptions = transformOptionsRef.current(url, options);
+
     let res;
     try {
         res = await fetch(myUrl, { ...myOptions, signal });
@@ -155,7 +159,7 @@ async function fetchResource<T>(
             exception: e,
             value: { nonFieldErrors: ['Network error'] },
         };
-        handleError(message);
+        await handleError(message);
         return;
     }
 
@@ -171,7 +175,7 @@ async function fetchResource<T>(
             exception: e,
             value: { nonFieldErrors: ['JSON parse error'] },
         };
-        handleError(message);
+        await handleError(message);
         return;
     }
 
@@ -182,7 +186,7 @@ async function fetchResource<T>(
             value: (resBody as { errors: Err }).errors,
             errorCode: (resBody as { errors: Err; errorCode: number }).errorCode,
         };
-        handleError(message);
+        await handleError(message);
         return;
     }
 
@@ -199,10 +203,12 @@ async function fetchResource<T>(
     if (retryTime >= 0) {
         await sleep(retryTime, { signal });
         await fetchResource(
-            myUrl,
-            myOptions,
+            url,
+            options,
             delay,
 
+            transformUrlRef,
+            transformOptionsRef,
             requestOptionsRef,
 
             setPendingSafe,
@@ -234,7 +240,7 @@ async function fetchResource<T>(
     }
 
     if (pollTime >= 0) {
-        handlePoll(pollTime);
+        await handlePoll(pollTime);
     }
 }
 
@@ -259,15 +265,26 @@ function useRequest<T>(
 
     const {
         autoTrigger = false,
+        autoTriggerDisabled = false,
     } = requestOptions;
 
-    // NOTE: timestamp is used to re-trigger fetch
-    const [timestamp, setTimestamp] = useState(() => {
+    // NOTE: runId is used to re-trigger fetch (can also be an increment)
+    const [runId, setRunId] = useState(() => {
         if (autoTrigger) {
-            return new Date().getTime();
+            return (autoTriggerDisabled ? -1 : new Date().getTime());
         }
         return -1;
     });
+    // NOTE: when autoTriggerDisabled=false and autoTrigger=true, then set runId
+    // so that the request can auto trigger
+    useEffect(
+        () => {
+            if (autoTrigger) {
+                setRunId(autoTriggerDisabled ? -1 : new Date().getTime());
+            }
+        },
+        [autoTriggerDisabled, autoTrigger],
+    );
 
     const [requestOptionsFromState, setRequestOptionsFromState] = useState(requestOptions);
 
@@ -284,7 +301,7 @@ function useRequest<T>(
 
     // NOTE: the initial value is the condition to fetch a url
     const [pending, setPending] = useState(() => (
-        timestamp >= 0 && isFetchable(extendedUrl, method, body)
+        runId >= 0 && isFetchable(extendedUrl, method, body)
     ));
     const [response, setResponse] = useState<T | undefined>();
     const [error, setError] = useState<Error | undefined>();
@@ -334,7 +351,7 @@ function useRequest<T>(
             // is not modified before request is triggered
             setTimeout(() => {
                 ReactDOM.unstable_batchedUpdates(() => {
-                    setTimestamp(new Date().getTime());
+                    setRunId(new Date().getTime());
                     setRequestOptionsFromState(requestOptionsRef.current);
                 });
             }, 0);
@@ -364,7 +381,7 @@ function useRequest<T>(
         () => {
             const { mockResponse } = requestOptionsRef.current;
             if (mockResponse) {
-                if (timestamp < 0 || !isFetchable(extendedUrl, method, body)) {
+                if (runId < 0 || !isFetchable(extendedUrl, method, body)) {
                     return () => {};
                 }
                 clientIdRef.current += 1;
@@ -382,7 +399,7 @@ function useRequest<T>(
                 return () => {};
             }
 
-            if (timestamp < 0 || !isFetchable(extendedUrl, method, body)) {
+            if (runId < 0 || !isFetchable(extendedUrl, method, body)) {
                 setResponseSafe(undefined, clientIdRef.current);
                 setErrorSafe(undefined, clientIdRef.current);
                 setPendingSafe(false, clientIdRef.current);
@@ -405,22 +422,21 @@ function useRequest<T>(
 
             const controller = new AbortController();
 
-            const transformedUrl = transformUrlRef.current(extendedUrl);
-            const transformedOptions = transformOptionsRef.current(extendedUrl, {
-                ...other,
-                method,
-                body,
-            });
-
             if (method !== 'DELETE' && !schemaName) {
-                console.error(`Schema is not defined for ${transformedUrl} ${method}`);
+                console.error(`Schema is not defined for ${extendedUrl} ${method}`);
             }
 
             fetchResource(
-                transformedUrl,
-                transformedOptions,
+                extendedUrl,
+                {
+                    ...other,
+                    method,
+                    body,
+                },
                 delay,
 
+                transformUrlRef,
+                transformOptionsRef,
                 requestOptionsRef,
 
                 setPendingSafe,
@@ -439,7 +455,7 @@ function useRequest<T>(
         [
             extendedUrl, method, body, other,
             setPendingSafe, setResponseSafe, setErrorSafe, callSideEffectSafe,
-            timestamp,
+            runId,
         ],
     );
 

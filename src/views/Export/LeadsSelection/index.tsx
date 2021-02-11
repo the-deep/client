@@ -112,7 +112,7 @@ function LeadsSelection(props: ComponentProps) {
         leadsPending,
         leadsResponse,
     ] = useRequest<MultiResponse<Lead>>({
-        url: (!pending && !filterOptionsPending) ? 'server://v2/leads/filter/' : undefined,
+        url: 'server://v2/leads/filter/',
         method: 'POST',
         query: {
             fields: [
@@ -130,6 +130,7 @@ function LeadsSelection(props: ComponentProps) {
             limit: maxItemsPerPage,
         },
         autoTrigger: true,
+        autoTriggerDisabled: pending || filterOptionsPending,
         body: leadsRequestBody,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });
