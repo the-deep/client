@@ -45,5 +45,16 @@
             margin: var(--dui-spacing-medium);
             width: fit-content;
         }
+
+    }
+
+    .tags {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        >* {
+            margin: var(--spacing-medium);
+        }
     }
 }
