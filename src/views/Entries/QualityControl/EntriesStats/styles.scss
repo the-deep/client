@@ -3,59 +3,47 @@
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
-    flex-grow: 1;
     border-bottom: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--color-foreground);
     padding: var(--width-separator-thin);
 }
 
-.stat-container {
+.stat {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     flex-grow: 1;
     justify-content: center;
+    margin: var(--width-separator-thin);
+    border: 4px dotted transparent;
+    border-style: double;
+    background-color: var(--color-accent);
+    padding: calc(var(--spacing-small) - var(--spacing-extra-small));
+    text-align: center;
+    color: var(--color-text-on-accent);
 
-    .stat {
-        display: flex;
-        align-items: center;
-        flex-grow: 1;
-        justify-content: center;
-        margin: var(--width-separator-thin);
-        background-color: var(--color-accent);
-        padding: calc(var(--spacing-small) - var(--spacing-extra-small));
-        text-align: center;
-        color: var(--color-text-on-accent);
-
-        .title {
-            padding: 0 var(--spacing-extra-small);
-            text-transform: uppercase;
-            font-size: var(--font-size-medium);
-            font-weight: var(--font-weight-bold);
-        }
-
-        .value {
-            padding: var(--spacing-extra-small);
-            font-family: var(--font-family-monospace);
-            font-size: var(--font-size-extra-large);
-            font-weight: var(--font-weight-bold);
-        }
+    .title {
+        padding: 0 var(--spacing-extra-small);
+        text-transform: uppercase;
+        font-size: var(--font-size-medium);
+        font-weight: var(--font-weight-bold);
     }
 
-    .line {
-        transition: opacity .1s;
-        opacity: 0;
-        margin: var(--width-separator-thin);
-        background-color: var(--color-primary);
-        height: var(--spacing-extra-small-alt);
+    .value {
+        padding: var(--spacing-extra-small);
+        font-family: var(--font-family-monospace);
+        font-size: var(--font-size-extra-large);
+        font-weight: var(--font-weight-bold);
     }
 
-    .selected {
-        opacity: 1;
+    .checkmark {
+        position: absolute;
+        top: var(--spacing-extra-small);
+        right: var(--spacing-extra-small);
+        z-index: 1;
+        color: var(--color-text-on-dark);
+        font-size: var(--font-size-large);
     }
 }
-
-
-
 
 .clickable {
     cursor: pointer;

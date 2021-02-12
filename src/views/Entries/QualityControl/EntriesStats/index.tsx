@@ -6,6 +6,7 @@ import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { EntrySummary } from '#typings/entry';
 import Numeral from '#rscv/Numeral';
 import ListView from '#rscv/List/ListView';
+import Icon from '#rscg/Icon';
 import _ts from '#ts';
 
 import { setEntriesViewFilterAction } from '#redux';
@@ -108,32 +109,33 @@ function EntryStat({
 
     return (
         <div
-            className={_cs(styles.statContainer)}
+            className={_cs(
+                styles.stat,
+                isClickable && styles.clickable,
+            )}
+            style={{
+                filter: `grayscale(${100 - saturation}%)`,
+            }}
+            tabIndex={0}
+            role="button"
+            onKeyDown={noOp}
+            onClick={onClickHandler}
         >
-            <div
-                className={_cs(
-                    styles.stat,
-                    isClickable && styles.clickable,
-                )}
-                style={{
-                    filter: `grayscale(${100 - saturation}%)`,
-                }}
-                tabIndex={0}
-                role="button"
-                onKeyDown={noOp}
-                onClick={onClickHandler}
-            >
-                <div className={styles.value}>
-                    <Numeral
-                        value={value}
-                        precision={0}
-                    />
-                </div>
-                <div className={styles.title}>
-                    {title}
-                </div>
+            <div className={styles.value}>
+                <Numeral
+                    value={value}
+                    precision={0}
+                />
             </div>
-            <div className={_cs(styles.line, isSelected && styles.selected)} />
+            <div className={styles.title}>
+                {title}
+            </div>
+            {isSelected && (
+                <Icon
+                    className={styles.checkmark}
+                    name="checkCircle"
+                />
+            )}
         </div>
     );
 }
