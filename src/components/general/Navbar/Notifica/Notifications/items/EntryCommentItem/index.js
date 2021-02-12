@@ -6,10 +6,13 @@ import { reverseRoute, _cs } from '@togglecorp/fujs';
 import { currentUserProjectsSelector } from '#redux';
 import { pathNames } from '#constants';
 
+import Avatar from '#components/ui/Avatar';
 import _ts from '#ts';
 
 import Notification, { NOTIFICATION_STATUS_SEEN } from '../Notification';
 import LinkItem from '../LinkItem';
+
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -149,6 +152,9 @@ function EntryCommentItem(props) {
     const {
         data: {
             text,
+            createdByDetail: {
+                name,
+            } = {},
         } = {},
         timestamp,
         id: notificationId,
@@ -165,6 +171,7 @@ function EntryCommentItem(props) {
             timestamp={timestamp}
             description={text}
             descriptionLabel={_ts('entryComments.notifications', 'expandButtonLabel')}
+            icon={<Avatar name={name} />}
         />
     );
 }

@@ -1,16 +1,10 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- * @co-author thenav56 <navinayer56@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#components/ui/Avatar';
 import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';
@@ -205,9 +199,9 @@ export default class UserEdit extends React.PureComponent {
                 <HiddenInput faramElementName="displayPicture" />
                 {
                     showGalleryImage && (
-                        <DisplayPicture
+                        <Avatar
                             className={styles.galleryImage}
-                            url={displayPictureUrl}
+                            src={displayPictureUrl}
                         />
                     )
                 }

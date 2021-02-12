@@ -10,9 +10,7 @@
         padding-right: var(--spacing-small);
 
         .display-picture {
-            border: var(--width-separator-thin) solid var(--color-accent);
-            width: var(--width-navbar-avatar);
-            height: var(--height-navbar-avatar);
+            --size: var(--width-navbar-avatar);
         }
     }
 
