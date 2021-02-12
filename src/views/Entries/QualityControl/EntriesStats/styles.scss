@@ -14,6 +14,8 @@
     flex-grow: 1;
     justify-content: center;
     margin: var(--width-separator-thin);
+    border: 4px dotted transparent;
+    border-style: double;
     background-color: var(--color-accent);
     padding: calc(var(--spacing-small) - var(--spacing-extra-small));
     text-align: center;
@@ -31,6 +33,15 @@
         font-family: var(--font-family-monospace);
         font-size: var(--font-size-extra-large);
         font-weight: var(--font-weight-bold);
+    }
+
+    .checkmark {
+        position: absolute;
+        top: var(--spacing-extra-small);
+        right: var(--spacing-extra-small);
+        z-index: 1;
+        color: var(--color-text-on-dark);
+        font-size: var(--font-size-large);
     }
 }
 
