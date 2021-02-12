@@ -331,9 +331,23 @@ function QualityControl(props: Props) {
         onClose: handleRemoveSelection,
     }), [handleRemoveSelection]);
 
-    const searchValues = useMemo(() =>
+    const searchValues: MatrixKeyId[] = useMemo(() =>
         flatten(matrixToc, childrenSelector).filter((v: MatrixTocElement) => v.key),
     [matrixToc]);
+
+    const handleIndividualSelection = useCallback((id: string) => {
+        setSearchValue(id);
+        const currentIndex = tocFilters.findIndex(f => idSelector(f) === id);
+        const newTocFilters = [...tocFilters];
+
+        if (currentIndex === -1) {
+            const newObj = searchValues.find(f => idSelector(f) === id);
+            if (newObj) {
+                newTocFilters.push(newObj);
+            }
+        }
+        setTocFilters({ tocFilters: newTocFilters });
+    }, [setTocFilters, tocFilters, searchValues]);
 
     const handleToggleExpand = useCallback(() => {
         if (defaultCollapseLevel === collapseLevel.max) {
@@ -375,9 +389,9 @@ function QualityControl(props: Props) {
                                 />
                             </div>
                             <SelectInput
-                                onChange={setSearchValue}
+                                onChange={handleIndividualSelection}
                                 options={searchValues}
-                                value={searchValue}
+                                value={undefined}
                                 placeholder={_ts('entries.qualityControl', 'searchInputPlacehoder')}
                                 keySelector={idSelector}
                                 labelSelector={labelSelector}
