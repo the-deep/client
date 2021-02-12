@@ -234,7 +234,7 @@ function EntryCard(props: EntryCardProps) {
                                     name="book"
                                 />
                                 <div className={styles.value}>
-                                    {lead.pageCount}
+                                    {`${lead.pageCount}p`}
                                 </div>
                             </div>
                         )}
