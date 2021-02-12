@@ -25,7 +25,6 @@ const EntryItem = (props) => {
         entryServerId,
         entryKey,
         entryType,
-        image,
         imageRaw,
         imageDetails,
         excerpt,
@@ -93,7 +92,6 @@ const EntryItem = (props) => {
             >
                 <EntryPreview
                     entryType={entryType}
-                    image={image}
                     imageRaw={imageRaw}
                     imageDetails={imageDetails}
                     excerpt={excerpt}
@@ -146,7 +144,6 @@ EntryItem.propTypes = {
     entryServerId: PropTypes.number,
     entryKey: PropTypes.string.isRequired,
     entryType: PropTypes.string.isRequired,
-    image: PropTypes.number,
     imageRaw: PropTypes.string,
     imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     excerpt: PropTypes.string,
@@ -164,7 +161,6 @@ EntryItem.defaultProps = {
     pending: false,
     isMarkedAsDeleted: false,
     entryServerId: undefined,
-    image: undefined,
     imageRaw: undefined,
     imageDetails: undefined,
     excerpt: undefined,

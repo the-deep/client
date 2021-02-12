@@ -13,7 +13,8 @@ const EntryItem = (props) => {
         entryKey,
         entryId,
         entryType,
-        image,
+        imageRaw,
+        imageDetails,
         excerpt,
         order,
         tabularField,
@@ -46,7 +47,8 @@ const EntryItem = (props) => {
             >
                 <EntryPreview
                     entryType={entryType}
-                    image={image}
+                    imageRaw={imageRaw}
+                    imageDetails={imageDetails}
                     excerpt={excerpt}
                     order={order}
                     tabularFieldId={tabularFieldId}
@@ -60,7 +62,8 @@ EntryItem.propTypes = {
     className: PropTypes.string,
 
     entryType: PropTypes.string.isRequired,
-    image: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     excerpt: PropTypes.string,
     order: PropTypes.number.isRequired,
     tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -71,7 +74,8 @@ EntryItem.propTypes = {
 };
 EntryItem.defaultProps = {
     className: undefined,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,

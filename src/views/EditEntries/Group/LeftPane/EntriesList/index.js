@@ -67,10 +67,11 @@ export default class EntriesList extends React.PureComponent {
         const pending = (status === ENTRY_STATUS.requesting);
         */
         const entryData = entryAccessor.data(entry);
+        const imageDetails = entryAccessor.imageDetails(entry);
 
         const {
             entryType,
-            image,
+            imageRaw,
             excerpt,
             order,
             tabularField: tabularFieldId,
@@ -82,7 +83,8 @@ export default class EntriesList extends React.PureComponent {
             entryKey: currentEntryKey,
             entryId: currentEntryServerId,
             entryType,
-            image,
+            imageRaw,
+            imageDetails,
             excerpt,
             order,
             tabularField,

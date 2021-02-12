@@ -54,7 +54,6 @@ const EntryPreview = (props) => {
 };
 EntryPreview.propTypes = {
     entryType: PropTypes.string,
-    image: PropTypes.string,
     excerpt: PropTypes.string,
     order: PropTypes.number,
     tabularFieldId: PropTypes.number,
@@ -62,7 +61,6 @@ EntryPreview.propTypes = {
     className: PropTypes.string,
 };
 EntryPreview.defaultProps = {
-    image: undefined,
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,

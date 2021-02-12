@@ -200,7 +200,6 @@ export default class Overview extends React.PureComponent {
             dropped,
             imageDetails,
         } = excerptData;
-        console.warn('i am here', imageDetails);
 
         this.props.addEntry({
             leadId,
