@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#components/ui/Avatar';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _cs from '#cs';
 
@@ -60,9 +60,10 @@ export default class UserAddItem extends React.PureComponent {
         return (
             <div className={_cs(className, styles.user)}>
                 <div className={styles.top}>
-                    <DisplayPicture
+                    <Avatar
                         className={styles.picture}
                         url={displayPictureUrl}
+                        name={`${firstName} ${lastName}`}
                     />
                     <div className={styles.name}>
                         <div className={styles.text}>

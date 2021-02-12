@@ -6,7 +6,7 @@ import {
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#components/ui/Avatar';
 import FormattedDate from '#rscv/FormattedDate';
 import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';
@@ -84,9 +84,10 @@ export default class UserDetailActionBar extends React.PureComponent {
         return (
             <div className={styles.userDetailActionBar}>
                 <div className={styles.leftContainer}>
-                    <DisplayPicture
+                    <Avatar
                         className={_cs(styles.displayPicture, className)}
-                        url={displayPictureUrl}
+                        src={displayPictureUrl}
+                        name={name}
                     />
                 </div>
                 <div className={styles.midContainer}>

@@ -7,16 +7,15 @@
     overflow: hidden;
 
 
-    .picture {
-        margin: 0 var(--spacing-small);
-        width: var(--width-user-item-picture);
-        height: var(--height-user-item-picture);
-    }
-
     .top {
         display: flex;
+        align-items: center;
         flex-grow: 1;
 
+        .picture {
+            margin: 0 var(--spacing-small);
+            --size: var(--width-user-item-picture);
+        }
         .name {
             display: flex;
             flex-direction: column;

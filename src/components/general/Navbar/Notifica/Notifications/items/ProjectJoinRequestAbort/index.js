@@ -3,6 +3,8 @@ import React from 'react';
 
 import { reverseRoute } from '@togglecorp/fujs';
 
+import Avatar from '#components/ui/Avatar';
+
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
@@ -60,6 +62,7 @@ function ProjectJoinRequestAbortItem(props) {
             notificationId={notificationId}
             seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}
+            icon={<Avatar name={requestorName} />}
             message={
                 <div>
                     {_ts('notifications', 'projectJoinRequestAbortText', {

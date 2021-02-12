@@ -8,24 +8,22 @@
     padding: var(--spacing-small) 0;
 
     .left {
+        display: flex;
         flex-basis: var(--size-default-icon);
         flex-shrink: 0;
         margin: var(--spacing-medium);
-        border: var(--width-separator-thin) solid var(--color-accent);
-        border-radius: 50%;
         height: var(--size-default-icon);
         overflow: hidden;
 
         >* {
             width: 100%;
             height: 100%;
+            --size: var(--size-default-icon);
         }
 
-        .default-icon {
+        .display-icon {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--font-size-super-large);
+            border: 1px solid green;
         }
     }
 
