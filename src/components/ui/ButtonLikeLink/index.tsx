@@ -1,4 +1,5 @@
 import React from 'react';
+import { isValidUrl } from '@togglecorp/fujs';
 import {
     Link as RouterLink,
     LinkProps as RouterLinkProps,
@@ -26,6 +27,7 @@ function ButtonLikeLink(props: ButtonLikeLinkProps) {
         icons,
         actions,
         big,
+        to,
         ...linkProps
     } = props;
 
@@ -45,10 +47,27 @@ function ButtonLikeLink(props: ButtonLikeLinkProps) {
         big,
     });
 
+    const isExternalLink = React.useMemo(() => isValidUrl(to as string), [to]);
+
+    if (isExternalLink) {
+        return (
+            <a
+                href={to as string}
+                className={className}
+                target="_blank"
+                rel="noopener noreferrer"
+                {...linkProps}
+            >
+                {children}
+            </a>
+        );
+    }
+
     return (
         <RouterLink
             className={className}
             title={title}
+            to={to}
             {...linkProps}
         >
             { children }

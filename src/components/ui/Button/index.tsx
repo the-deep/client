@@ -8,12 +8,14 @@ export type ButtonVariant = (
     'primary'
     | 'secondary'
     | 'tertiary'
+    | 'inverted'
 );
 
 const buttonVariantToStyleMap: { [key in ButtonVariant]: string; } = {
     primary: styles.primary,
     secondary: styles.secondary,
     tertiary: styles.tertiary,
+    inverted: styles.inverted,
 };
 
 export interface ButtonProps<N> extends Omit<

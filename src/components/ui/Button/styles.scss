@@ -86,6 +86,17 @@
             }
         }
 
+        &.inverted {
+            --color-border: transparent;
+            --color-background: var(--dui-color-background-information);
+            --color-text: var(--dui-color-accent);
+
+            &:hover {
+                --color-border: transparent;
+                --color-background: var(--dui-color-background-negative);
+            }
+        }
+
         &.tertiary {
             --color-border: var(--dui-color-accent);
             --color-background: transparent;

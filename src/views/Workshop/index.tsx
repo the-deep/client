@@ -6,6 +6,8 @@ import Tag from '#components/ui/Tag';
 
 import Container from '#components/ui/Container';
 import Button from '#components/ui/Button';
+import QuickActionButton from '#components/ui/QuickActionButton';
+import QuickActionLink from '#components/ui/QuickActionLink';
 import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
@@ -151,6 +153,37 @@ function Workshop(props: WorkshopProps) {
                     onChange={setTextAreaValue}
                     disabled
                 />
+            </Container>
+            <Container
+                heading="Quick Action Button"
+                sub
+                contentClassName={styles.quickActionButtons}
+            >
+                <QuickActionButton>
+                    <Icon name="add" />
+                </QuickActionButton>
+                <QuickActionButton>
+                    <Icon name="edit" />
+                </QuickActionButton>
+                <QuickActionButton>
+                    <Icon name="delete" />
+                </QuickActionButton>
+            </Container>
+            <Container
+                heading="Quick Action Link"
+                sub
+                contentClassName={styles.quickActionButtons}
+            >
+                <QuickActionLink
+                    to="/"
+                >
+                    <Icon name="add" />
+                </QuickActionLink>
+                <QuickActionLink
+                    to="https://togglecorp.com"
+                >
+                    <Icon name="openLink" />
+                </QuickActionLink>
             </Container>
         </div>
     );

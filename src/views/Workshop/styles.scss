@@ -14,7 +14,20 @@
         }
     }
 
-    .links {
+    .links,
+    .quick-action-buttons {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        background-color: var(--dui-color-white);
+
+        >* {
+            margin: var(--dui-spacing-medium);
+            width: fit-content;
+        }
+    }
+
+    .old-buttons {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
