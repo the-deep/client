@@ -9,7 +9,7 @@ import {
 import { reverseRoute, _cs } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
-
+import Avatar from '#components/ui/Avatar';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
@@ -150,6 +150,7 @@ function ProjectJoinRequestItem(props) {
             notificationId={notificationId}
             seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}
+            icon={<Avatar name={requestorName} />}
             message={
                 <div>
                     {_ts('notifications.projectJoinRequest', 'message', {

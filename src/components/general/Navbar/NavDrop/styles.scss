@@ -8,9 +8,7 @@
 
     .display-picture {
         flex-shrink: 0;
-        padding: 0 var(--spacing-small);
-        width: var(--width-navbar-avatar);
-        height: var(--height-navbar-avatar);
+        --size: var(--width-navbar-avatar);
     }
 
     :global {
