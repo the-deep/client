@@ -132,9 +132,11 @@ const EntryGroupItem = (props) => {
 
             const entryKey = entryAccessor.key(entry);
             const entryData = entryAccessor.data(entry);
+            const imageDetails = entryAccessor.imageDetails(entry);
+
             const {
                 entryType,
-                image,
+                imageRaw,
                 excerpt,
                 order: entryOrder,
                 tabularField: tabularFieldId,
@@ -147,7 +149,8 @@ const EntryGroupItem = (props) => {
 
                 entryKey,
                 entryType,
-                image,
+                imageDetails,
+                imageRaw,
                 excerpt,
                 order: entryOrder,
                 tabularFieldId,

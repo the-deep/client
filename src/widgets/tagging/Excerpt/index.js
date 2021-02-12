@@ -18,7 +18,8 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     droppedExcerpt: PropTypes.string,
-    image: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularField: PropTypes.number,
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onExcerptChange: PropTypes.func,
@@ -36,7 +37,8 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     droppedExcerpt: undefined,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
     tabularField: undefined,
     tabularFieldData: undefined,
     disabled: false,
@@ -130,7 +132,7 @@ export default class Excerpt extends React.PureComponent {
 
         const {
             entryType,
-            image,
+            imageRaw,
             excerpt,
             tabularField,
             onExcerptChange,
@@ -139,7 +141,7 @@ export default class Excerpt extends React.PureComponent {
 
         const hasEntry = !!entryType;
         const hasExcerpt =
-            (entryType === IMAGE && !!image) ||
+            (entryType === IMAGE && (!!imageDetails?.file || !!imageRaw)) ||
             (entryType === TEXT && !!excerpt) ||
             (entryType === DATA_SERIES && !!tabularField);
 
@@ -189,7 +191,6 @@ export default class Excerpt extends React.PureComponent {
 
     renderExcerptImage = () => {
         const {
-            image,
             imageDetails,
             imageRaw,
         } = this.props;

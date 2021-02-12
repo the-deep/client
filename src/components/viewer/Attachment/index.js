@@ -94,7 +94,7 @@ export default class Attachment extends React.PureComponent {
 
                     return (
                         <InternalGallery
-                            attachmetn={attachment}
+                            attachment={attachment}
                             notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
                             showUrl
                         />

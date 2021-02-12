@@ -21,7 +21,8 @@ const LabelItem = (props) => {
 
         entryKey,
         entryType,
-        image,
+        imageRaw,
+        imageDetails,
         excerpt,
         order: entryOrder,
         tabularFieldId,
@@ -114,7 +115,8 @@ const LabelItem = (props) => {
                         {selected && (
                             <EntryPreview
                                 entryType={entryType}
-                                image={image}
+                                imageRaw={imageRaw}
+                                imageDetails={imageDetails}
                                 excerpt={excerpt}
                                 order={entryOrder}
                                 tabularFieldId={tabularFieldId}
@@ -134,9 +136,11 @@ LabelItem.propTypes = {
 
     selected: PropTypes.bool,
 
-    entryType: PropTypes.string,
-    image: PropTypes.string,
+    entryKey: PropTypes.string,
     excerpt: PropTypes.string,
+    entryType: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     order: PropTypes.number,
     tabularFieldId: PropTypes.number,
     tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -155,7 +159,9 @@ LabelItem.defaultProps = {
     color: undefined,
     selected: false,
     disabled: false,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
+    entryKey: undefined,
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,
