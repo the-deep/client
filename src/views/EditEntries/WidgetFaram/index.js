@@ -482,7 +482,6 @@ function WidgetFaram(props) {
                 entryType,
                 excerpt,
                 droppedExcerpt,
-                image,
                 tabularField: tabularFieldFromEntry,
                 imageRaw,
                 imageDetails,
