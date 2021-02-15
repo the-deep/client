@@ -6,11 +6,15 @@ import Footer from '#components/ui/Footer';
 
 import styles from './styles.scss';
 
-interface Props {
+export interface ContainerProps {
     className?: string;
     heading?: React.ReactNode;
     headerIcons?: React.ReactNode;
     headerActions?: React.ReactNode;
+    headerDescription?: React.ReactNode;
+    headerClassName?: string;
+    headerDescriptionClassName?: string;
+    headingClassName?: string;
     children?: React.ReactNode;
     contentClassName?: string;
     footerContent?: React.ReactNode;
@@ -20,13 +24,17 @@ interface Props {
     sub?: boolean;
 }
 
-function Container(props: Props) {
+function Container(props: ContainerProps) {
     const {
         className,
         heading,
         children,
         headerActions,
         headerIcons,
+        headerDescription,
+        headerDescriptionClassName,
+        headerClassName,
+        headingClassName,
         contentClassName,
         footerContent,
         footerActions,
@@ -39,9 +47,12 @@ function Container(props: Props) {
                 <Header
                     icons={headerIcons}
                     actions={headerActions}
-                    className={styles.header}
+                    className={_cs(styles.header, headerClassName)}
                     heading={heading}
                     headingSize={sub ? 'medium' : 'large'}
+                    description={headerDescription}
+                    descriptionClassName={headerDescriptionClassName}
+                    headingClassName={headingClassName}
                 />
             )}
             <div className={_cs(styles.content, contentClassName)}>

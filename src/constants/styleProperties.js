@@ -46,12 +46,13 @@ const styleProperties = {
 
         duiColorPositive: '#29bb75',
         duiColorInformation: '#3fa2f7',
-        duiColorNegative: '#ff5c52',
+        duiColorNegative: '#f5f8fb',
         duiColorDanger: 'var(--dui-color-negative)',
 
         duiColorBackground: '#f6f6f6',
         duiColorBackgroundInformation: '#f5f8fb',
         duiColorBackgroundNegative: '#dfe7f2',
+        duiColorBackgroundCard: 'var(--dui-color-white)',
 
         duiColorText: 'var(--dui-color-grey1)',
         duiColorTextLabel: 'var(--dui-color-grey2)',

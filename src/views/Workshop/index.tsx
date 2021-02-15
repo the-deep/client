@@ -5,6 +5,7 @@ import Icon from '#rscg/Icon';
 import Tag from '#components/ui/Tag';
 
 import Container from '#components/ui/Container';
+import Card from '#components/ui/Card';
 import Button from '#components/ui/Button';
 import QuickActionButton from '#components/ui/QuickActionButton';
 import QuickActionLink from '#components/ui/QuickActionLink';
@@ -142,11 +143,13 @@ function Workshop(props: WorkshopProps) {
                 heading="input"
                 contentClassName={styles.inputs}
             >
-                <TextArea
-                    label="Textarea"
-                    value={textAreaValue}
-                    onChange={setTextAreaValue}
-                />
+                <Card>
+                    <TextArea
+                        label="Textarea"
+                        value={textAreaValue}
+                        onChange={setTextAreaValue}
+                    />
+                </Card>
                 <TextArea
                     label="Textarea"
                     value={textAreaValue}
