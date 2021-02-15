@@ -12,7 +12,8 @@ import SelectInput from '#rsci/SelectInput';
 import ListView from '#rscv/List/ListView';
 
 import Badge from '#components/viewer/Badge';
-import ButtonLikeLink from '#components/general/ButtonLikeLink';
+import Header from '#components/ui/Header';
+import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import { pathNames } from '#constants';
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -236,29 +237,33 @@ function Home(props: ViewProps) {
                             </div>
                         </div>
                         <div className={styles.leftBottomContainer}>
-                            <header className={styles.header}>
-                                <h2 className={styles.heading}>
-                                    {_ts('home', 'recentProjectsHeading')}
-                                </h2>
-                                <SelectInput
-                                    keySelector={projectKeySelector}
-                                    labelSelector={projectLabelSelector}
-                                    optionLabelSelector={optionLabelSelector}
-                                    options={userProjects}
-                                    placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                                    showHintAndError={false}
-                                    showLabel={false}
-                                    className={styles.projectSelectInput}
-                                    value={selectedProject}
-                                    onChange={handleProjectChange}
-                                />
-                                <ButtonLikeLink
-                                    type="primary"
-                                    to={reverseRoute(pathNames.projects, {})}
-                                >
-                                    {_ts('home', 'setupNewProjectButtonLabel')}
-                                </ButtonLikeLink>
-                            </header>
+                            <Header
+                                heading={_ts('home', 'recentProjectsHeading')}
+                                headingSize="large"
+                                className={styles.header}
+                                actions={(
+                                    <>
+                                        <SelectInput
+                                            keySelector={projectKeySelector}
+                                            labelSelector={projectLabelSelector}
+                                            optionLabelSelector={optionLabelSelector}
+                                            options={userProjects}
+                                            placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                                            showHintAndError={false}
+                                            showLabel={false}
+                                            className={styles.projectSelectInput}
+                                            value={selectedProject}
+                                            onChange={handleProjectChange}
+                                        />
+                                        <ButtonLikeLink
+                                            variant="primary"
+                                            to={reverseRoute(pathNames.projects, {})}
+                                        >
+                                            {_ts('home', 'setupNewProjectButtonLabel')}
+                                        </ButtonLikeLink>
+                                    </>
+                                )}
+                            />
                             <ListView
                                 data={finalRecentProjects}
                                 rendererParams={recentProjectsRendererParams}

@@ -8,7 +8,7 @@ import {
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';
 import Icon from '#rscg/Icon';
-import ButtonLikeLink from '#components/general/ButtonLikeLink';
+import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import TextOutput from '#components/general/TextOutput';
 import InformationBox from '#components/viewer/InformationBox';
 import ProgressLine from '#components/viz/ProgressLine';
@@ -165,8 +165,13 @@ function ProjectItem(props: RecentProjectItemProps) {
                     />
                     <ButtonLikeLink
                         className={styles.link}
-                        type="primary"
+                        variant="tertiary"
                         to={reverseRoute(pathNames.projects, { projectId })}
+                        icons={(
+                            <Icon
+                                name="edit"
+                            />
+                        )}
                     >
                         {_ts('home.recentProjects', 'editProjectButtonLabel')}
                     </ButtonLikeLink>
