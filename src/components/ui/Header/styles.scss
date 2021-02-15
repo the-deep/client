@@ -7,8 +7,19 @@
         flex-shrink: 0;
     }
 
-    .heading {
+    .mid-container {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .description {
+            padding: var(--dui-spacing-small);
+            font-size: 1em;
+        }
     }
 
     .actions {

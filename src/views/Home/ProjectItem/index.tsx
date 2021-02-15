@@ -12,6 +12,7 @@ import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import TextOutput from '#components/general/TextOutput';
 import InformationBox from '#components/viewer/InformationBox';
 import ProgressLine from '#components/viz/ProgressLine';
+import ContainerCard from '#components/ui/ContainerCard';
 
 import {
     AreaChart,
@@ -125,30 +126,31 @@ function ProjectItem(props: RecentProjectItemProps) {
     ), [projectActivity]);
 
     return (
-        <div className={_cs(className, styles.projectItem)}>
-            <header className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <h2>
-                        {title}
-                    </h2>
-                    <div className={styles.dateContainer}>
-                        <FormattedDate
-                            title={_ts('home.recentProjects', 'startDateLabel')}
-                            value={startDate}
-                            mode="MMM yyyy"
-                            emptyComponent={emptyComponent}
-                        />
-                        {startDate && endDate && (
-                            <div className={styles.separator}>-</div>
-                        )}
-                        <FormattedDate
-                            title={_ts('home.recentProjects', 'endDateLabel')}
-                            value={endDate}
-                            mode="MMM yyyy"
-                            emptyComponent={emptyComponent}
-                        />
-                    </div>
-                </div>
+        <ContainerCard
+            className={_cs(className, styles.projectItem)}
+            heading={title}
+            headerDescriptionClassName={styles.dateContainer}
+            sub
+            headerDescription={(
+                <>
+                    <FormattedDate
+                        title={_ts('home.recentProjects', 'startDateLabel')}
+                        value={startDate}
+                        mode="MMM yyyy"
+                        emptyComponent={emptyComponent}
+                    />
+                    {startDate && endDate && (
+                        <div className={styles.separator}>-</div>
+                    )}
+                    <FormattedDate
+                        title={_ts('home.recentProjects', 'endDateLabel')}
+                        value={endDate}
+                        mode="MMM yyyy"
+                        emptyComponent={emptyComponent}
+                    />
+                </>
+            )}
+            headerActions={(
                 <div className={styles.headerRight}>
                     <div className={styles.privacyLabel}>
                         {isPrivate ? (
@@ -169,7 +171,8 @@ function ProjectItem(props: RecentProjectItemProps) {
                         {_ts('home.recentProjects', 'editProjectButtonLabel')}
                     </ButtonLikeLink>
                 </div>
-            </header>
+            )}
+        >
             <div className={styles.body}>
                 <div className={styles.bodyLeft}>
                     {description}
@@ -279,7 +282,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     </div>
                 </div>
             </div>
-        </div>
+        </ContainerCard>
     );
 }
 

@@ -1,0 +1,17 @@
+.container-card {
+    padding: 0;
+
+    .header {
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--dui-spacing-large);
+    }
+
+    .container {
+        background-color: transparent;
+        padding: 0;
+
+        .content {
+            padding: var(--dui-spacing-large);
+        }
+    }
+}
