@@ -35,6 +35,7 @@ import _ts from '#ts';
 import ProjectItem from './ProjectItem';
 import Summary from './Summary';
 import Activity from './Activity';
+import Assignment from './Assignment';
 
 import styles from './styles.scss';
 
@@ -242,7 +243,9 @@ function Home(props: ViewProps) {
                             />
                         </div>
                     </div>
-                    <div className={styles.rightContainer} />
+                    <div className={styles.rightContainer}>
+                        <Assignment />
+                    </div>
                 </>
             )}
         />

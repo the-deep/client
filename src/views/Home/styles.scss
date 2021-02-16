@@ -67,6 +67,7 @@
         .right-container {
             flex-basis: 20%;
             background-color: var(--color-foreground);
+            padding: var(--spacing-medium) var(--spacing-large);
         }
     }
 }
