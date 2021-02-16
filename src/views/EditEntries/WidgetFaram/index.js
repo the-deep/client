@@ -1,11 +1,12 @@
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 import memoize from 'memoize-one';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
+import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -35,6 +36,7 @@ import {
 
 import WidgetErrorWrapper from '#components/general/WidgetErrorWrapper';
 import WidgetContentWrapper from '#components/general/WidgetContentWrapper';
+import { useModalState } from '#hooks/stateManagement';
 
 import {
     calculateEntryColor,
@@ -103,87 +105,176 @@ const mapDispatchToProps = dispatch => ({
     resetExcerpt: params => dispatch(editEntriesResetExcerptAction(params)),
 });
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class WidgetFaram extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+const getWidgets = memoize((widgets, widgetType) => (
+    widgets.filter(
+        w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
+    )
+));
 
-    static keySelector = widget => widget.key
+const keySelector = d => d.key;
 
-    getWidgets = memoize((widgets, widgetType) => (
-        widgets.filter(
-            w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
-        )
-    ))
+function WidgetFaram(props) {
+    const {
+        entry = {},
+        widgets,
+        className: classNameFromProps,
+        schema,
+        computeSchema,
+        pending,
+        disabled,
+        widgetType,
+        analysisFramework,
+        lead,
+        leadId,
+        actionComponent: ActionComponent,
+        projectRole: { entryPermissions = {} },
+        entryState,
+        onEntryStateChange,
+        tabularData,
 
-    // Permission
+        setExcerpt: setExcerptFromProps,
+        setEntryData: setEntryDataFromProps,
+        setEntryHighlightHidden: setEntryHighlightHiddenFromProps,
+        resetExcerpt: resetExcerptFromProps,
+        addEntry: addEntryFromProps,
+    } = props;
 
-    setExcerpt = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
+    const [
+        isExcerptFrozen,
+        freezeExcerpt,
+        unFreezeExcerpt,
+    ] = useModalState(false);
+
+    const error = entryAccessor.error(entry);
+
+    const filteredWidgets = useMemo(() => (
+        getWidgets(widgets, widgetType)
+    ), [widgets, widgetType]);
+
+    const {
+        data: { attributes } = {},
+    } = entry;
+
+    const shouldDisableEntryChange = useCallback(entryId => (
+        !entryPermissions.modify && !!entryId
+    ), [entryPermissions]);
+
+    const shouldDisableEntryCreate = useMemo(() => (
+        !entryPermissions.create
+    ), [entryPermissions]);
+
+    const setExcerpt = useCallback((val) => {
+        if (shouldDisableEntryChange(val.id)) {
             console.warn('No permission to edit entry excerpt');
             return;
         }
-        const { setExcerpt } = this.props;
-        setExcerpt(val);
-    }
+        setExcerptFromProps(val);
+    }, [setExcerptFromProps, shouldDisableEntryChange]);
 
-    setEntryData = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
+    const setEntryData = useCallback((val) => {
+        if (shouldDisableEntryChange(val.id)) {
             console.warn('No permission to edit entry');
             return;
         }
-        const { setEntryData } = this.props;
-        setEntryData(val);
-    }
+        setEntryDataFromProps(val);
+    }, [setEntryDataFromProps, shouldDisableEntryChange]);
 
-    setEntryHighlightHidden = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
+    const setEntryHighlightHidden = useCallback((val) => {
+        if (shouldDisableEntryChange(val.id)) {
             console.warn('No permission to change highlight visibility');
             return;
         }
-        const { setEntryHighlightHidden } = this.props;
-        setEntryHighlightHidden(val);
-    }
+        setEntryHighlightHiddenFromProps(val);
+    }, [setEntryHighlightHiddenFromProps, shouldDisableEntryChange]);
 
-    resetExcerpt = (val) => {
-        if (this.shouldDisableEntryChange(val.id)) {
+    const resetExcerpt = useCallback((val) => {
+        if (shouldDisableEntryChange(val.id)) {
             console.warn('No permission to edit entry excerpt');
             return;
         }
-        const { resetExcerpt } = this.props;
-        resetExcerpt(val);
-    }
+        resetExcerptFromProps(val);
+    }, [resetExcerptFromProps, shouldDisableEntryChange]);
 
-    addEntry = (val) => {
-        if (this.shouldDisableEntryCreate()) {
+    const addEntry = useCallback((val) => {
+        if (shouldDisableEntryCreate()) {
             console.warn('No permission to create entry');
             return;
         }
-        const { addEntry } = this.props;
-        addEntry(val);
-    }
+        addEntryFromProps(val);
+    }, [addEntryFromProps, shouldDisableEntryCreate]);
 
-    shouldDisableEntryChange = (entryId) => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.modify && !!entryId;
-    }
+    const handleHighlightHiddenChange = useCallback((value) => {
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
 
-    shouldDisableEntryCreate = () => {
-        const { projectRole: { entryPermissions = {} } } = this.props;
-        return !entryPermissions.create;
-    }
+        setEntryHighlightHidden({
+            leadId,
+            key: entryKey,
+            id: entryId,
+            value,
+        });
+    }, [setEntryHighlightHidden, entry, leadId]);
+
+    const handleExcerptReset = useCallback(() => {
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
+
+        resetExcerpt({
+            leadId,
+            key: entryKey,
+            id: entryId,
+        });
+    }, [resetExcerpt, entry, leadId]);
+
+    // can only create entry
+    const handleExcerptCreate = useCallback((excerptData) => {
+        const { type, value, dropped } = excerptData;
+
+        addEntry({
+            leadId,
+            entry: {
+                analysisFramework: analysisFramework.id,
+                excerptType: type,
+                excerptValue: value,
+                attributes: calculateFirstTimeAttributes(
+                    {},
+                    analysisFramework,
+                    lead,
+                ),
+            },
+            dropped,
+        });
+    }, [
+        addEntry,
+        analysisFramework,
+        lead,
+        leadId,
+    ]);
+
+    const handleExcerptChange = useCallback((excerptData) => {
+        const entryKey = entryAccessor.key(entry);
+        const entryId = entryAccessor.serverId(entry);
+
+        const { type, value, dropped } = excerptData;
+
+        if (!entryKey) {
+            console.warn('There is no entry key while changing excerpt.');
+            // this.handleExcerptCreate({ type, value });
+        } else {
+            setExcerpt({
+                leadId,
+                key: entryKey,
+                id: entryId,
+                excerptType: type,
+                excerptValue: value,
+                dropped,
+            });
+        }
+    }, [entry, leadId, setExcerpt]);
 
     // can edit/create entry
     // create when 'newEntry' is on info or entryKey is undefined
-    handleChange = (faramValues, faramErrors, faramInfo) => {
-        const {
-            analysisFramework,
-            lead,
-            leadId,
-            entry,
-        } = this.props;
-
-
+    const handleChange = useCallback((faramValues, faramErrors, faramInfo) => {
         const entryKey = entryAccessor.key(entry);
         const entryId = entryAccessor.serverId(entry);
 
@@ -200,25 +291,25 @@ export default class WidgetFaram extends React.PureComponent {
             } = faramInfo;
 
             // Create attribute using faramElementName and value
-            let attributes = value;
+            let newAttributes = value;
             [...faramElementName].reverse().forEach((key) => {
-                attributes = { [key]: attributes };
+                newAttributes = { [key]: newAttributes };
             });
 
-            attributes = calculateFirstTimeAttributes(
-                attributes,
+            newAttributes = calculateFirstTimeAttributes(
+                newAttributes,
                 analysisFramework,
                 lead,
             );
-            const color = calculateEntryColor(attributes, analysisFramework);
+            const color = calculateEntryColor(newAttributes, analysisFramework);
 
-            this.addEntry({
+            addEntry({
                 leadId,
                 entry: {
                     excerptType,
                     excerptValue,
                     lead: leadId,
-                    attributes,
+                    attributes: newAttributes,
                     color,
                     analysisFramework: analysisFramework.id,
                 },
@@ -231,29 +322,28 @@ export default class WidgetFaram extends React.PureComponent {
             const excerptValue = '';
             const excerptType = 'excerpt';
 
-            const attributes = calculateFirstTimeAttributes(
+            const newAttributes = calculateFirstTimeAttributes(
                 faramValues,
                 analysisFramework,
                 lead,
             );
-            const color = calculateEntryColor(attributes, analysisFramework);
+            const color = calculateEntryColor(newAttributes, analysisFramework);
 
-            this.addEntry({
+            addEntry({
                 leadId,
                 entry: {
                     excerptType,
                     excerptValue,
                     lead: leadId,
-                    attributes,
+                    attributes: newAttributes,
                     color,
                     analysisFramework: analysisFramework.id,
                 },
                 dropped: false,
             });
         } else {
-            console.info('yes changed weehaa');
             const color = calculateEntryColor(faramValues, analysisFramework);
-            this.setEntryData({
+            setEntryData({
                 leadId,
                 key: entryKey,
                 id: entryId,
@@ -263,98 +353,16 @@ export default class WidgetFaram extends React.PureComponent {
                 color,
             });
         }
-    }
+    }, [
+        setEntryData,
+        addEntry,
+        analysisFramework,
+        entry,
+        lead,
+        leadId,
+    ]);
 
-    // can only edit entry
-    handleHighlightHiddenChange = (value) => {
-        const {
-            entry,
-            leadId,
-        } = this.props;
-
-        const entryKey = entryAccessor.key(entry);
-        const entryId = entryAccessor.serverId(entry);
-
-        this.setEntryHighlightHidden({
-            leadId,
-            key: entryKey,
-            id: entryId,
-            value,
-        });
-    }
-
-    handleExcerptReset = () => {
-        const {
-            entry,
-            leadId,
-        } = this.props;
-
-        const entryKey = entryAccessor.key(entry);
-        const entryId = entryAccessor.serverId(entry);
-
-        this.resetExcerpt({
-            leadId,
-            key: entryKey,
-            id: entryId,
-        });
-    }
-
-    handleExcerptChange = (excerptData) => {
-        const {
-            leadId,
-            entry,
-        } = this.props;
-
-        const entryKey = entryAccessor.key(entry);
-        const entryId = entryAccessor.serverId(entry);
-
-        const { type, value, dropped } = excerptData;
-
-        if (!entryKey) {
-            console.warn('There is no entry key while changing excerpt.');
-            // this.handleExcerptCreate({ type, value });
-        } else {
-            this.setExcerpt({
-                leadId,
-                key: entryKey,
-                id: entryId,
-                excerptType: type,
-                excerptValue: value,
-                dropped,
-            });
-        }
-    }
-
-    // can only create entry
-    handleExcerptCreate = (excerptData) => {
-        const {
-            leadId,
-            analysisFramework,
-            lead,
-        } = this.props;
-
-        const { type, value, dropped } = excerptData;
-
-        this.addEntry({
-            leadId,
-            entry: {
-                analysisFramework: analysisFramework.id,
-                excerptType: type,
-                excerptValue: value,
-                attributes: calculateFirstTimeAttributes(
-                    {},
-                    analysisFramework,
-                    lead,
-                ),
-            },
-            dropped,
-        });
-    }
-
-    // Grid View Layout
-
-    layoutSelector = (widget = {}) => {
-        const { widgetType } = this.props;
+    const layoutSelector = useCallback((widget = {}) => {
         const {
             properties: {
                 listGridLayout,
@@ -362,15 +370,9 @@ export default class WidgetFaram extends React.PureComponent {
             } = {},
         } = widget;
         return (widgetType === VIEW.list ? listGridLayout : overviewGridLayout);
-    }
+    }, [widgetType]);
 
-    renderWidgetHeader = (widget) => {
-        const {
-            actionComponent: ActionComponent,
-            entry,
-            widgetType,
-        } = this.props;
-
+    const renderWidgetHeader = useCallback((widget) => {
         const {
             id,
             title,
@@ -386,24 +388,28 @@ export default class WidgetFaram extends React.PureComponent {
         const entryKey = entryAccessor.key(entry);
         const isExcerptWidget = widgetId === 'excerptWidget';
 
-        const Header = ({ hasError, error }) => (
+        const Header = ({
+            hasError: hasErrorForHeader,
+            error: errorForHeader,
+        }) => (
             <div
                 className={_cs(
                     styles.header,
-                    hasError ? styles.error : '',
+                    hasErrorForHeader ? styles.error : '',
                     isExcerptWidget && styles.excerptWidgetHeader,
+                    isExcerptWidget && isExcerptFrozen && styles.frozenHeader,
                 )}
-                title={error}
+                title={errorForHeader}
             >
                 <h5
-                    title={error || title}
+                    title={errorForHeader || title}
                     className={_cs(
                         styles.heading,
                         isExcerptWidget && styles.excerptWidgetHeading,
                     )}
                 >
-                    { hasError && <Icon name="warning" /> }
-                    { hasError ? `${title} : ${error}` : title }
+                    { hasErrorForHeader && <Icon name="warning" /> }
+                    { hasErrorForHeader ? `${title} : ${errorForHeader}` : title }
                 </h5>
                 { ActionComponent && entry && isViewPage && (
                     <div className={styles.actionButtons}>
@@ -414,6 +420,14 @@ export default class WidgetFaram extends React.PureComponent {
                             widgetId={widgetId}
                         />
                     </div>
+                )}
+                {isExcerptWidget && !isViewPage && (
+                    <Button
+                        className={styles.pinButton}
+                        onClick={isExcerptFrozen ? unFreezeExcerpt : freezeExcerpt}
+                        iconName="pin"
+                        transparent
+                    />
                 )}
             </div>
         );
@@ -426,16 +440,16 @@ export default class WidgetFaram extends React.PureComponent {
                 />
             </FaramGroup>
         );
-    }
+    }, [
+        isExcerptFrozen,
+        freezeExcerpt,
+        unFreezeExcerpt,
+        widgetType,
+        ActionComponent,
+        entry,
+    ]);
 
-    renderWidgetContent = (widget) => {
-        const {
-            widgetType,
-            entry,
-            tabularData,
-            onEntryStateChange,
-            entryState,
-        } = this.props;
+    const renderWidgetContent = useCallback((widget) => {
         const {
             id,
             widgetId,
@@ -446,7 +460,7 @@ export default class WidgetFaram extends React.PureComponent {
             excerpt,
             droppedExcerpt,
             image,
-            tabularField,
+            tabularField: tabularFieldFromEntry,
         } = entryAccessor.data(entry) || {};
 
         const highlightHidden = entryAccessor.isHighlightHidden(entry);
@@ -458,7 +472,7 @@ export default class WidgetFaram extends React.PureComponent {
         };
 
         if (levelOneWidgets.includes(widgetId)) {
-            const entryKey = entryAccessor.key(this.props.entry);
+            const entryKey = entryAccessor.key(entry);
 
             widgetProps = {
                 ...widgetProps,
@@ -466,7 +480,7 @@ export default class WidgetFaram extends React.PureComponent {
                 excerpt,
                 droppedExcerpt,
                 image,
-                tabularField,
+                tabularField: tabularFieldFromEntry,
                 tabularFieldData: tabularData,
                 entryState,
                 onEntryStateChange,
@@ -478,10 +492,10 @@ export default class WidgetFaram extends React.PureComponent {
             widgetProps = {
                 ...widgetProps,
                 highlightHidden,
-                onHighlightHiddenChange: this.handleHighlightHiddenChange,
-                onExcerptChange: this.handleExcerptChange,
-                onExcerptCreate: this.handleExcerptCreate,
-                onExcerptReset: this.handleExcerptReset,
+                onHighlightHiddenChange: handleHighlightHiddenChange,
+                onExcerptChange: handleExcerptChange,
+                onExcerptCreate: handleExcerptCreate,
+                onExcerptReset: handleExcerptReset,
             };
         }
 
@@ -495,10 +509,14 @@ export default class WidgetFaram extends React.PureComponent {
         const droppableWidgets = widgetType === VIEW.overview ?
             droppableOverviewWidgets : droppableListWidgets;
         const isDroppable = !!droppableWidgets[widgetId];
+        const isExcerptWidget = widgetId === 'excerptWidget';
 
         return (
             <WidgetContentWrapper
-                className={styles.content}
+                className={_cs(
+                    styles.content,
+                    isExcerptWidget && isExcerptFrozen && styles.frozenContent,
+                )}
                 blockDrop={!isDroppable}
             >
                 <FaramGroup faramElementName={String(id)}>
@@ -510,54 +528,47 @@ export default class WidgetFaram extends React.PureComponent {
                 </FaramGroup>
             </WidgetContentWrapper>
         );
-    }
+    }, [
+        isExcerptFrozen,
+        onEntryStateChange,
+        handleExcerptChange,
+        entryState,
+        handleHighlightHiddenChange,
+        handleExcerptReset,
+        handleExcerptCreate,
+        tabularData,
+        entry,
+        widgetType,
+    ]);
 
-    render() {
-        const {
-            entry = {},
-            widgets,
-            className: classNameFromProps,
-            schema,
-            computeSchema,
-            pending,
-            disabled,
-            widgetType,
-        } = this.props;
-
-        const error = entryAccessor.error(entry);
-
-        const className = _cs(
-            styles.widgetFaram,
-            classNameFromProps,
-            'widget-faram',
-        );
-
-        const filteredWidgets = this.getWidgets(widgets, widgetType);
-
-        const {
-            data: { attributes } = {},
-        } = entry;
-
-        return (
-            <Faram
-                className={className}
-                onChange={this.handleChange}
-                schema={schema}
-                computeSchema={computeSchema}
-                value={attributes}
-                error={error}
-                disabled={pending || disabled}
-            >
-                { pending && <LoadingAnimation /> }
-                <GridViewLayout
-                    data={filteredWidgets}
-                    layoutSelector={this.layoutSelector}
-                    itemHeaderModifier={this.renderWidgetHeader}
-                    itemContentModifier={this.renderWidgetContent}
-                    keySelector={WidgetFaram.keySelector}
-                    itemClassName={styles.widget}
-                />
-            </Faram>
-        );
-    }
+    return (
+        <Faram
+            className={_cs(
+                styles.widgetFaram,
+                classNameFromProps,
+                'widget-faram',
+            )}
+            onChange={handleChange}
+            schema={schema}
+            computeSchema={computeSchema}
+            value={attributes}
+            error={error}
+            disabled={pending || disabled}
+        >
+            { pending && <LoadingAnimation /> }
+            <GridViewLayout
+                data={filteredWidgets}
+                layoutSelector={layoutSelector}
+                itemHeaderModifier={renderWidgetHeader}
+                itemContentModifier={renderWidgetContent}
+                keySelector={keySelector}
+                itemClassName={styles.widget}
+            />
+        </Faram>
+    );
 }
+
+WidgetFaram.propTypes = propTypes;
+WidgetFaram.defaultProps = defaultProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(WidgetFaram);

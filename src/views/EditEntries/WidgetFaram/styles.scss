@@ -23,6 +23,11 @@
                 }
             }
 
+            .pin-button {
+                padding: 0 var(--spacing-small);
+                color: var(--color-text-on-accent);
+            }
+
             &.excerpt-widget-header {
                 background-color: var(--color-primary);
             }
@@ -46,8 +51,23 @@
                     }
                 }
             }
+
+            &.frozen-header {
+                position: sticky;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
         }
 
+        .content {
+            &.frozen-content {
+                position: sticky;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
+        }
 
         &:hover {
             .header {
