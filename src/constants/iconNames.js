@@ -150,6 +150,7 @@ const iconNames = {
     externalLink: 'fa fa-external-link',
     skipBack: 'ion-ios-skipbackward',
     skipForward: 'ion-ios-skipforward',
+    ellipsis: 'ion-android-more-horizontal',
 };
 
 export default iconNames;

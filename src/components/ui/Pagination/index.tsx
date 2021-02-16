@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import ListView from '#rsu/../v2/View/ListView';
 import Icon from '#rscg/Icon';
 import Button, { ButtonVariant } from '#components/ui/Button';
-import usePagination from './usePagination';
+import usePagination, { PageItem } from './usePagination';
 
 import styles from './styles.scss';
 
@@ -29,28 +29,30 @@ interface Page {
 
 const pageKeySelector = (d: Page) => d.id;
 
+const pageTypeToIconNameMap: {
+    [key in PageItem]: string;
+} = {
+    next: 'next',
+    previous: 'prev',
+    first: 'skipBack',
+    last: 'skipForward',
+    'start-ellipsis': 'ellipsis',
+    'end-ellipsis': 'ellipsis',
+};
+
 function Pagination(props: Props) {
     const { handleClick, ...others } = props;
 
     const pages = usePagination(others);
 
     const getPaginationButtonValue = useCallback((id) => {
-        switch (id) {
-            case 'previous':
-                return <Icon name="prev" />;
-            case 'next':
-                return <Icon name="next" />;
-            case 'first':
-                return <Icon name="skipBack" />;
-            case 'last':
-                return <Icon name="skipForward" />;
-            case 'start-ellipsis':
-                return <span>&hellip;</span>;
-            case 'end-ellipsis':
-                return <span>&hellip;</span>;
-            default:
-                return id;
+        const pageKeys = Object.keys(pageTypeToIconNameMap);
+
+        if (pageKeys.findIndex(p => p === id) === -1) {
+            return id;
         }
+
+        return <Icon name={pageTypeToIconNameMap[id]} />;
     }, []);
 
     const pageRendererParams = (_: string, value: Page) => {

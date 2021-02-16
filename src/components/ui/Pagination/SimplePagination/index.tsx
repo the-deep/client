@@ -2,12 +2,13 @@ import React, { useCallback } from 'react';
 import ListView from '#rsu/../v2/View/ListView';
 import Icon from '#rscg/Icon';
 import Button, { ButtonVariant } from '#components/ui/Button';
+import ElementFragments from '#components/ui/ElementFragments';
 import useSimplePagination from '../useSimplePagination';
 
 import styles from './styles.scss';
 
 interface Props {
-    handleClick?: (page?: number) => void;
+    onChange?: (page?: number) => void;
     activePage: number;
     itemsCount: number;
     maxItemsPerPage: number;
@@ -25,25 +26,23 @@ interface Page {
 const pageKeySelector = (d: Page) => d.id;
 
 function Pagination(props: Props) {
-    const { handleClick, ...others } = props;
+    const { onChange, ...others } = props;
 
     const pages = useSimplePagination(others);
 
-    const getPaginationButtonValue = useCallback((id) => {
+    const getPaginationButtonElement = useCallback((id) => {
         switch (id) {
             case 'previous':
                 return (
-                    <div>
-                        <Icon name="prev" className={styles.iconLeft} />
+                    <ElementFragments icons={<Icon name="prev" />}>
                         Previous
-                    </div>
+                    </ElementFragments>
                 );
             case 'next':
                 return (
-                    <div>
+                    <ElementFragments actions={<Icon name="next" />}>
                         Next
-                        <Icon name="next" className={styles.iconRight} />
-                    </div>
+                    </ElementFragments>
                 );
             default:
                 return '';
@@ -53,15 +52,15 @@ function Pagination(props: Props) {
     const pageRendererParams = (_: string, value: Page) => {
         const { selected, page, disabled, id } = value;
         const variant: ButtonVariant = selected ? 'primary' : 'secondary';
-        const children = getPaginationButtonValue(id);
+        const children = getPaginationButtonElement(id);
 
         return ({
             variant,
             name: page,
             disabled,
             children,
-            onClick: handleClick,
-            className: props.showPages ? styles.dots : '',
+            onChange,
+            className: props.showPages ? styles.dots : styles.pageButton,
         });
     };
 

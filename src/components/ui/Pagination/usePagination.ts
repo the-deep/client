@@ -17,6 +17,8 @@ interface Props {
     siblingCount?: number;
 }
 
+export type PageItem = 'first' | 'last' | 'previous' | 'next' | 'start-ellipsis' | 'end-ellipsis' | number;
+
 function usePagination(props: Props) {
     const {
         activePage: activePageFromProps = 1,
@@ -53,10 +55,11 @@ function usePagination(props: Props) {
             activePage + siblingCount,
             boundaryCount + (siblingCount * 2) + 2,
         ),
+
         endPages.length > 0 ? endPages[0] - 2 : totalPages - 1,
     );
 
-    const startEllipsis = useMemo(() => {
+    const startEllipsis = useMemo((): PageItem[] => {
         if (leftSiblings > boundaryCount + 2) {
             return ['start-ellipsis'];
         } else if (boundaryCount + 1 < totalPages - boundaryCount) {
@@ -65,7 +68,7 @@ function usePagination(props: Props) {
         return [];
     }, [boundaryCount, leftSiblings, totalPages]);
 
-    const endEllipsis = useMemo(() => {
+    const endEllipsis = useMemo((): PageItem[] => {
         if (rightSiblings < totalPages - boundaryCount - 1) {
             return ['end-ellipsis'];
         } else if (totalPages - boundaryCount > boundaryCount) {
@@ -74,7 +77,7 @@ function usePagination(props: Props) {
         return [];
     }, [boundaryCount, rightSiblings, totalPages]);
 
-    const getPageNumber = useCallback((type: string) => {
+    const getPageNumber = useCallback((type: PageItem) => {
         switch (type) {
             case 'first':
                 return 1;
@@ -89,21 +92,21 @@ function usePagination(props: Props) {
         }
     }, [activePage, totalPages]);
 
-    const itemsList = [
-        ...(showFirstButton ? ['first'] : []),
-        ...(hidePrevButton ? [] : ['previous']),
-        ...startPages,
-        ...startEllipsis,
-        ...range(leftSiblings, rightSiblings),
-        ...endEllipsis,
-        ...endPages,
-        ...(hideNextButton ? [] : ['next']),
-        ...(showLastButton ? ['last'] : []),
+    const itemsList: PageItem[] = [
+        ...((showFirstButton ? ['first'] : []) as PageItem[]),
+        ...((hidePrevButton ? [] : ['previous']) as PageItem[]),
+        ...(startPages as PageItem[]),
+        ...(startEllipsis as PageItem[]),
+        ...(range(leftSiblings, rightSiblings) as PageItem[]),
+        ...(endEllipsis as PageItem[]),
+        ...(endPages as PageItem[]),
+        ...((hideNextButton ? [] : ['next']) as PageItem[]),
+        ...((showLastButton ? ['last'] : []) as PageItem[]),
     ];
 
     const items = itemsList.map((item: string | number) => ({
         id: item.toString(),
-        page: typeof item === 'number' ? item : getPageNumber(item),
+        page: typeof item === 'number' ? item : getPageNumber(item as PageItem),
         selected: item === activePage,
         disabled: disabled || ((item === 'next' || item === 'last') &&
             (activePage >= totalPages)) || ((item === 'first' || item ===
