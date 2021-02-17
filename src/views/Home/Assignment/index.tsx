@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+
+import { isDefined } from '@togglecorp/fujs';
+
 
 import ListView from '#rsu/../v2/View/ListView';
 import FormattedDate from '#rscv/FormattedDate';
@@ -50,89 +53,55 @@ interface Data {
 interface Props {
 }
 
-const data = [
-    {
-        key: 1,
-        assignee: 'Ewan',
-        sourceTitle: '150 Somalia Migrants....',
-        sourceURL: '#',
-        projectName: 'Chilli',
-        date: '2020-07-06T22:00:00',
-    },
-    {
-        key: 2,
-        assignee: 'Aditya',
-        sourceTitle: 'Red Cross rescues....',
-        sourceURL: '#',
-        projectName: 'Burger',
-        date: '2020-07-06T22:00:00',
-    },
-    {
-        key: 3,
-        assignee: 'Sameer',
-        sourceTitle: 'Poverty in Israel....',
-        sourceURL: '#',
-        projectName: 'Pizza',
-        date: '2020-07-06T22:00:00',
-    },
-    {
-        key: 4,
-        assignee: 'Aditya',
-        sourceTitle: 'Red Cross rescues....',
-        sourceURL: '#',
-        projectName: 'Burger',
-        date: '2020-07-06T22:00:00',
-    },
-    {
-        key: 5,
-        assignee: 'Sameer',
-        sourceTitle: 'Poverty in Israel....',
-        sourceURL: '#',
-        projectName: 'Pizza',
-        date: '2020-07-06T22:00:00',
-    },
-
-
-];
+interface AssignmentRendererProps extends Assignment {
+    handleClick: (id: number) => void;
+}
 
 const emptyLink = '#';
 const maxItemsPerPage = 5;
 
-function assignmentRenderer(info: Assignment) {
-    console.warn('info', info);
+function assignmentRenderer(props: AssignmentRendererProps) {
+    const {
+        id,
+        handleClick: handleClickFromProps,
+    } = props;
+    const handleClick = useCallback(() => {
+        handleClickFromProps(id);
+    }, [id, handleClickFromProps]);
+
     return (
         <div className={styles.assignmentItem}>
             <a
                 className={styles.link}
                 href={emptyLink}
             >
-                {info.createdByDetails.displayName}
+                {props.createdByDetails.displayName}
             </a>
-            <span> assigned you</span>
+            <span> {_ts('assignment', 'assignedYou')} </span>
             <a
                 className={styles.link}
                 href={emptyLink}
             >
-                {info.contentObjectDetails?.title}
+                {props.contentObjectDetails?.title}
             </a>
-            <span> in </span>
+            <span> {_ts('assignment', 'in')} </span>
             <a
                 href={emptyLink}
                 className={styles.link}
             >
-                {info.projectDetails.title}
+                {props.projectDetails.title}
             </a>
             <div className={styles.inline}>
                 <FormattedDate
                     className={styles.date}
-                    date={info.createdAt}
+                    value={props.createdAt}
                     mode="hh:mm aaa, MMM dd, yyyy"
                 />
                 <Button
                     transparent
                     iconName="checkCircle"
                     className={styles.icon}
-                    // onClick={handleClick}
+                    onClick={handleClick}
                 />
             </div>
         </div>
@@ -141,53 +110,116 @@ function assignmentRenderer(info: Assignment) {
 
 const keySelector = (info: Assignment) => info.id;
 
-const rendererParams = (id: number, info: Assignment) => info;
 
 function Assignments(props: Props) {
     const [activePage, setActivePage] = useState<number>(1);
     const [assignmentCount, setAssignmentCount] = useState<number>(0);
+    const [selectedAssignment, setSelectedAssignment] = useState<number>();
     const [
         pending,
-        response,
-    ] = useRequest<MultiResponse<Assignment>>({
-        url: 'server://assignments/',
-        method: 'GET',
-        query: {
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
+        assignmentsResponse,
+        ,
+        getAssignments,
+    ] = useRequest<MultiResponse<Assignment>>(
+        {
+            url: 'server://assignments/',
+            method: 'GET',
+            query: {
+                is_done: 3,
+                offset: (activePage - 1) * maxItemsPerPage,
+                limit: maxItemsPerPage,
+            },
+            autoTrigger: true,
+            onFailure: (_, errorBody) =>
+                notifyOnFailure(_ts('assignment', 'assignmentListFetchFailed'))({ error: errorBody }),
         },
-        autoTrigger: true,
-        onSuccess: () => {
-            setAssignmentCount(response?.count);
+    );
+
+    const [
+        markAsDonePending,
+        ,
+        ,
+        triggerMarkAsDone,
+    ] = useRequest<MultiResponse<Assignment>>(
+        {
+            url: `server://assignments/${selectedAssignment}/`,
+            method: 'PUT',
+            body: { is_done: true },
+            autoTrigger: false,
+            onSuccess: () => {
+                getAssignments();
+            },
+            onFailure: (_, errorBody) =>
+                notifyOnFailure(_ts('assignment', 'markAsDoneFailed'))({ error: errorBody }),
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('home', 'summaryOfMyProjectsHeading'))({ error: errorBody }),
-    });
-    console.warn('response', response);
+    );
+
+    useEffect(() => {
+        if (isDefined(selectedAssignment)) {
+            triggerMarkAsDone();
+        }
+    }, [selectedAssignment, triggerMarkAsDone]);
+
+    const [
+        bulkPending,
+        ,
+        ,
+        triggerBulkAsDone,
+    ] = useRequest<unknown>(
+        {
+            url: 'server://assignments/bulk-mark-as-done/',
+            method: 'POST',
+            body: { is_done: true },
+            onSuccess: () => {
+                getAssignments();
+            },
+            onFailure: (_, errorBody) =>
+                notifyOnFailure(_ts('assignment', 'markBulkAsDoneFailed'))({ error: errorBody }),
+        },
+    );
+
+    const rendererParams = (id: number, info: Assignment) => (
+        {
+            ...info,
+            handleClick: setSelectedAssignment,
+        }
+    );
+
     return (
         <div className={styles.assignment}>
             <header className={styles.header}>
                 <h2 className={styles.heading}>
-                    My Assignments
+                    {_ts('assignment', 'myAssignments')}
                 </h2>
+                {assignmentsResponse && assignmentsResponse.count > 0 && (
+                    <Button
+                        transparent
+                        className={styles.markButton}
+                        onClick={triggerBulkAsDone}
+                        disabled={bulkPending}
+                    >
+                        {_ts('assignment', 'markAllAsDone')}
+                    </Button>
+                )}
             </header>
             <div className={styles.content}>
-                <div className={styles.contentContainer}>
-                    <ListView
-                        data={response?.results}
-                        keySelector={keySelector}
-                        renderer={assignmentRenderer}
-                        rendererParams={rendererParams}
-                    />
-                    <Pager
-                        activePage={activePage}
-                        className={styles.pager}
-                        itemsCount={assignmentCount}
-                        maxItemsPerPage={maxItemsPerPage}
-                        onPageClick={setActivePage}
-                        showItemsPerPageChange={false}
-                    />
-                </div>
+                {assignmentsResponse && assignmentsResponse?.count > 0 && (
+                    <div className={styles.contentContainer}>
+                        <ListView
+                            data={assignmentsResponse?.results}
+                            keySelector={keySelector}
+                            renderer={assignmentRenderer}
+                            rendererParams={rendererParams}
+                        />
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={assignmentsResponse?.count}
+                            maxItemsPerPage={maxItemsPerPage}
+                            onPageClick={setActivePage}
+                            showItemsPerPageChange={false}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

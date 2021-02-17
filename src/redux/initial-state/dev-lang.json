@@ -1260,7 +1260,14 @@
         "-678768686": "Total added sources",
         "-686861344": "Sources tagged",
         "-686861268": "Sources tagged & validated",
-        "-29389738": "Dashboard"
+        "-29389738": "Dashboard",
+        "-78996564": "in",
+        "-71574522": "assigned you",
+        "-97734054": "Mark all as Done",
+        "-8788826": "My Assignments",
+        "-49181354": "Failed to fetch Assignment List",
+        "-97660055": "Failed to mark the assignment as Done",
+        "-88394931": "Failed to mark bulk assignments as  Done"
     },
     "links": {
         "browserExtension": {
@@ -3573,6 +3580,15 @@
         },
         "dashboard": {
             "deepLabel": 876
+        },
+        "assignment": {
+            "in": -78996564,
+            "assignedYou": -71574522,
+            "markAllAsDone": -97734054,
+            "myAssignments": -8788826,
+            "assignmentListFetchFailed": -49181354,
+            "markAsDoneFailed": -97660055,
+            "markBulkAsDoneFailed": -88394931
         }
     }
 }
