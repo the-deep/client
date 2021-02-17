@@ -5,9 +5,9 @@ import { isDefined } from '@togglecorp/fujs';
 
 import ListView from '#rsu/../v2/View/ListView';
 import FormattedDate from '#rscv/FormattedDate';
-import Icon from '#rscg/Icon';
 import Pager from '#rscv/Pager';
 import Button from '#rsca/Button';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -41,29 +41,23 @@ interface Assignment {
     };
 }
 
-interface Data {
-    key: number;
-    assignee: string;
-    sourceTitle: string;
-    sourceURL: string;
-    projectName: string;
-    date: string;
-}
-
-interface Props {
+interface BulkResponse {
+    assignmentUpdated: number;
 }
 
 interface AssignmentRendererProps extends Assignment {
     handleClick: (id: number) => void;
+    markAsDonePending: boolean;
 }
 
 const emptyLink = '#';
 const maxItemsPerPage = 5;
 
-function assignmentRenderer(props: AssignmentRendererProps) {
+function AssignmentRenderer(props: AssignmentRendererProps) {
     const {
         id,
         handleClick: handleClickFromProps,
+        markAsDonePending,
     } = props;
     const handleClick = useCallback(() => {
         handleClickFromProps(id);
@@ -89,7 +83,7 @@ function assignmentRenderer(props: AssignmentRendererProps) {
                 href={emptyLink}
                 className={styles.link}
             >
-                {props.projectDetails.title}
+                {props.projectDetails?.title}
             </a>
             <div className={styles.inline}>
                 <FormattedDate
@@ -102,6 +96,7 @@ function assignmentRenderer(props: AssignmentRendererProps) {
                     iconName="checkCircle"
                     className={styles.icon}
                     onClick={handleClick}
+                    disabled={markAsDonePending}
                 />
             </div>
         </div>
@@ -111,10 +106,9 @@ function assignmentRenderer(props: AssignmentRendererProps) {
 const keySelector = (info: Assignment) => info.id;
 
 
-function Assignments(props: Props) {
+function Assignments() {
     const [activePage, setActivePage] = useState<number>(1);
-    const [assignmentCount, setAssignmentCount] = useState<number>(0);
-    const [selectedAssignment, setSelectedAssignment] = useState<number>();
+    const [selectedAssignment, setSelectedAssignment] = useState<number | undefined>();
     const [
         pending,
         assignmentsResponse,
@@ -125,7 +119,7 @@ function Assignments(props: Props) {
             url: 'server://assignments/',
             method: 'GET',
             query: {
-                is_done: 3,
+                is_done: 3, // 1: Unknown | 2: True | 3: False
                 offset: (activePage - 1) * maxItemsPerPage,
                 limit: maxItemsPerPage,
             },
@@ -165,7 +159,7 @@ function Assignments(props: Props) {
         ,
         ,
         triggerBulkAsDone,
-    ] = useRequest<unknown>(
+    ] = useRequest<BulkResponse>(
         {
             url: 'server://assignments/bulk-mark-as-done/',
             method: 'POST',
@@ -178,12 +172,11 @@ function Assignments(props: Props) {
         },
     );
 
-    const rendererParams = (id: number, info: Assignment) => (
-        {
-            ...info,
-            handleClick: setSelectedAssignment,
-        }
-    );
+    const rendererParams = useCallback((_: number, info: Assignment) => ({
+        ...info,
+        handleClick: setSelectedAssignment,
+        markAsDonePending,
+    }), [setSelectedAssignment, markAsDonePending]);
 
     return (
         <div className={styles.assignment}>
@@ -191,7 +184,7 @@ function Assignments(props: Props) {
                 <h2 className={styles.heading}>
                     {_ts('assignment', 'myAssignments')}
                 </h2>
-                {assignmentsResponse && assignmentsResponse.count > 0 && (
+                {assignmentsResponse && assignmentsResponse?.count > 0 && (
                     <Button
                         transparent
                         className={styles.markButton}
@@ -203,12 +196,15 @@ function Assignments(props: Props) {
                 )}
             </header>
             <div className={styles.content}>
+                {pending && (
+                    <LoadingAnimation />
+                )}
                 {assignmentsResponse && assignmentsResponse?.count > 0 && (
                     <div className={styles.contentContainer}>
                         <ListView
                             data={assignmentsResponse?.results}
                             keySelector={keySelector}
-                            renderer={assignmentRenderer}
+                            renderer={AssignmentRenderer}
                             rendererParams={rendererParams}
                         />
                         <Pager
