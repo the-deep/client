@@ -3,64 +3,63 @@
     flex-direction: column;
 
     .header{
-        display: flex;
-
-        .heading {
-            flex-grow: 1;
-            font-size: var(--font-size-extra-large);
-            font-weight: var(--font-weight-bold);
-        }
+        padding: var(--dui-spacing-small) 0;
 
         .mark-button {
-            flex-shrink: 0;
+            padding: 0;
         }
     }
 
-    .content {
+    .content-container {
         display: flex;
         flex-direction: column;
-        margin-top: var(--spacing-small-alt);
         border-radius: 10px;
         background-color: var(--dui-color-negative);
-        padding: var(--spacing-medium)
-            var(--spacing-small);
-        height: 300px;
+        height: 420px;
+        overflow-y: auto;
 
-        .content-container {
-            padding: 0
-                var(--spacing-large)
-                var(--spacing-small)
-                var(--spacing-small-alt);
+        .list {
+            flex-grow: 1;
             overflow-y: auto;
 
             .assignment-item {
-                margin: var(--spacing-medium-alt) 0;
-                border-bottom: var(--width-separator-thin)
-                    solid
-                    var(--dui-border-color-card);
-                padding-bottom: var(--spacing-medium);
+                border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
+                padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
 
-                .link {
-                    text-decoration: underline;
-                    color: var(--dui-color-accent);
-                    font-weight: var(--font-weight-bold);
+                .text {
+                    padding: var(--dui-spacing-small);
+
+                    .link {
+                        text-decoration: underline;
+                        color: var(--dui-color-accent);
+                        font-weight: var(--font-weight-bold);
+                    }
                 }
 
-                .date {
-                    display: block;
-                    flex-grow: 1;
-                }
+                .date-container {
+                    display: flex;
 
-                .icon {
-                    flex-shrink: 0;
-                    color: var(--dui-color-accent);
+                    .date {
+                        display: block;
+                        flex-grow: 1;
+                        padding: var(--dui-spacing-small);
+                    }
+
+                    .button {
+                        flex-shrink: 0;
+                        padding: var(--dui-spacing-small);
+                        color: var(--dui-color-accent);
+                        font-size: var(--dui-font-size-large);
+                    }
                 }
             }
         }
-    }
 
-    .inline {
-        display: flex;
+        .footer {
+            display: flex;
+            flex-shrink: 0;
+            justify-content: flex-end;
+            padding: var(--dui-spacing-medium);
+        }
     }
-
 }

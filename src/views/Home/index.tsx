@@ -144,7 +144,6 @@ function Home(props: ViewProps) {
         url: 'server://projects-stat/summary/',
         method: 'GET',
         autoTrigger: true,
-        schemaName: 'userExportsGetResponse',
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('home', 'summaryOfMyProjectsHeading'))({ error: errorBody }),
     });

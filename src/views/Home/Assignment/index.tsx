@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
 import { isDefined } from '@togglecorp/fujs';
-
 
 import ListView from '#rsu/../v2/View/ListView';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import Button from '#rsca/Button';
+import Header from '#components/ui/Header';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
+import Card from '#components/ui/Card';
 
 import {
     ProjectElement,
@@ -59,33 +59,36 @@ function AssignmentRenderer(props: AssignmentRendererProps) {
         handleClick: handleClickFromProps,
         markAsDonePending,
     } = props;
+
     const handleClick = useCallback(() => {
         handleClickFromProps(id);
     }, [id, handleClickFromProps]);
 
     return (
         <div className={styles.assignmentItem}>
-            <a
-                className={styles.link}
-                href={emptyLink}
-            >
-                {props.createdByDetails.displayName}
-            </a>
-            <span> {_ts('assignment', 'assignedYou')} </span>
-            <a
-                className={styles.link}
-                href={emptyLink}
-            >
-                {props.contentObjectDetails?.title}
-            </a>
-            <span> {_ts('assignment', 'in')} </span>
-            <a
-                href={emptyLink}
-                className={styles.link}
-            >
-                {props.projectDetails?.title}
-            </a>
-            <div className={styles.inline}>
+            <span className={styles.text}>
+                <a
+                    className={styles.link}
+                    href={emptyLink}
+                >
+                    {props.createdByDetails.displayName}
+                </a>
+                <span> {_ts('assignment', 'assignedYou')} </span>
+                <a
+                    className={styles.link}
+                    href={emptyLink}
+                >
+                    {props.contentObjectDetails?.title}
+                </a>
+                <span> {_ts('assignment', 'in')} </span>
+                <a
+                    href={emptyLink}
+                    className={styles.link}
+                >
+                    {props.projectDetails?.title}
+                </a>
+            </span>
+            <div className={styles.dateContainer}>
                 <FormattedDate
                     className={styles.date}
                     value={props.createdAt}
@@ -94,7 +97,7 @@ function AssignmentRenderer(props: AssignmentRendererProps) {
                 <Button
                     transparent
                     iconName="checkCircle"
-                    className={styles.icon}
+                    className={styles.button}
                     onClick={handleClick}
                     disabled={markAsDonePending}
                 />
@@ -179,12 +182,12 @@ function Assignments() {
     }), [setSelectedAssignment, markAsDonePending]);
 
     return (
-        <div className={styles.assignment}>
-            <header className={styles.header}>
-                <h2 className={styles.heading}>
-                    {_ts('assignment', 'myAssignments')}
-                </h2>
-                {assignmentsResponse && assignmentsResponse?.count > 0 && (
+        <Card className={styles.assignment}>
+            {pending && <LoadingAnimation />}
+            <Header
+                className={styles.header}
+                heading={_ts('assignment', 'myAssignments')}
+                actions={assignmentsResponse && assignmentsResponse.count > 0 && (
                     <Button
                         transparent
                         className={styles.markButton}
@@ -194,22 +197,20 @@ function Assignments() {
                         {_ts('assignment', 'markAllAsDone')}
                     </Button>
                 )}
-            </header>
-            <div className={styles.content}>
-                {pending && (
-                    <LoadingAnimation />
-                )}
-                {assignmentsResponse && assignmentsResponse?.count > 0 && (
-                    <div className={styles.contentContainer}>
-                        <ListView
-                            data={assignmentsResponse?.results}
-                            keySelector={keySelector}
-                            renderer={AssignmentRenderer}
-                            rendererParams={rendererParams}
-                        />
+            />
+            <div className={styles.contentContainer}>
+                <ListView
+                    className={styles.list}
+                    data={assignmentsResponse?.results}
+                    keySelector={keySelector}
+                    renderer={AssignmentRenderer}
+                    rendererParams={rendererParams}
+                />
+                {assignmentsResponse && assignmentsResponse.count > 0 && (
+                    <div className={styles.footer}>
                         <Pager
                             activePage={activePage}
-                            itemsCount={assignmentsResponse?.count}
+                            itemsCount={assignmentsResponse.count}
                             maxItemsPerPage={maxItemsPerPage}
                             onPageClick={setActivePage}
                             showItemsPerPageChange={false}
@@ -217,7 +218,7 @@ function Assignments() {
                     </div>
                 )}
             </div>
-        </div>
+        </Card>
     );
 }
 
