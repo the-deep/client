@@ -51,22 +51,6 @@
                     }
                 }
             }
-
-            &.frozen-header {
-                position: sticky;
-                top: 0;
-                left: 0;
-                z-index: 1;
-            }
-        }
-
-        .content {
-            &.frozen-content {
-                position: sticky;
-                top: 0;
-                left: 0;
-                z-index: 1;
-            }
         }
 
         &:hover {
@@ -75,6 +59,14 @@
                     opacity: 1;
                 }
             }
+        }
+
+        &.frozen-entry {
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            border: var(--width-separator-thin) solid var(--color-separator);
         }
     }
 }

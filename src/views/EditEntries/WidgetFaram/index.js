@@ -37,6 +37,7 @@ import {
 import WidgetErrorWrapper from '#components/general/WidgetErrorWrapper';
 import WidgetContentWrapper from '#components/general/WidgetContentWrapper';
 import { useModalState } from '#hooks/stateManagement';
+import _ts from '#ts';
 
 import {
     calculateEntryColor,
@@ -196,7 +197,7 @@ function WidgetFaram(props) {
     }, [resetExcerptFromProps, shouldDisableEntryChange]);
 
     const addEntry = useCallback((val) => {
-        if (shouldDisableEntryCreate()) {
+        if (shouldDisableEntryCreate) {
             console.warn('No permission to create entry');
             return;
         }
@@ -397,7 +398,6 @@ function WidgetFaram(props) {
                     styles.header,
                     hasErrorForHeader ? styles.error : '',
                     isExcerptWidget && styles.excerptWidgetHeader,
-                    isExcerptWidget && isExcerptFrozen && styles.frozenHeader,
                 )}
                 title={errorForHeader}
             >
@@ -425,6 +425,7 @@ function WidgetFaram(props) {
                     <Button
                         className={styles.pinButton}
                         onClick={isExcerptFrozen ? unFreezeExcerpt : freezeExcerpt}
+                        title={isExcerptFrozen ? _ts('editEntry', 'unPinExcerpt') : _ts('editEntry', 'pinExcerpt')}
                         iconName="pin"
                         transparent
                     />
@@ -509,14 +510,10 @@ function WidgetFaram(props) {
         const droppableWidgets = widgetType === VIEW.overview ?
             droppableOverviewWidgets : droppableListWidgets;
         const isDroppable = !!droppableWidgets[widgetId];
-        const isExcerptWidget = widgetId === 'excerptWidget';
 
         return (
             <WidgetContentWrapper
-                className={_cs(
-                    styles.content,
-                    isExcerptWidget && isExcerptFrozen && styles.frozenContent,
-                )}
+                className={styles.content}
                 blockDrop={!isDroppable}
             >
                 <FaramGroup faramElementName={String(id)}>
@@ -529,7 +526,6 @@ function WidgetFaram(props) {
             </WidgetContentWrapper>
         );
     }, [
-        isExcerptFrozen,
         onEntryStateChange,
         handleExcerptChange,
         entryState,
@@ -539,6 +535,19 @@ function WidgetFaram(props) {
         tabularData,
         entry,
         widgetType,
+    ]);
+
+    const itemRendererParams = useCallback((key, widget) => {
+        const {
+            widgetId,
+        } = widget;
+        const isExcerptWidget = widgetId === 'excerptWidget';
+
+        return ({
+            className: (isExcerptWidget && isExcerptFrozen) ? styles.frozenEntry : '',
+        });
+    }, [
+        isExcerptFrozen,
     ]);
 
     return (
@@ -559,6 +568,7 @@ function WidgetFaram(props) {
             <GridViewLayout
                 data={filteredWidgets}
                 layoutSelector={layoutSelector}
+                itemRendererParams={itemRendererParams}
                 itemHeaderModifier={renderWidgetHeader}
                 itemContentModifier={renderWidgetContent}
                 keySelector={keySelector}
