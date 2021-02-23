@@ -23,6 +23,7 @@ import Cloak from '#components/general/Cloak';
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
+import EntryReviewModal from '#components/general/EntryReviewModal';
 import { pathNames } from '#constants';
 
 import {
@@ -408,6 +409,18 @@ export default class Entry extends React.PureComponent {
                                     {commentCount}
                                 </div>
                             }
+                        </ModalButton>
+                        <ModalButton
+                            className={
+                                _cs(
+                                    styles.button,
+                                )
+                            }
+                            modal={
+                                <EntryReviewModal />
+                            }
+                        >
+                            {_ts('entries', 'reviewEntry')}
                         </ModalButton>
                         <Cloak
                             hide={Entry.shouldHideEntryDelete}
