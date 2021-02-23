@@ -1321,7 +1321,10 @@
         "-67231440": "Edit user membership",
         "-31585106": "Edit usergroup membership",
         "-30397704": "Pillar Analysis Entries",
-        "-33611896": "Pillar Analysis successfully updated."
+        "-33611896": "Pillar Analysis successfully updated.",
+        "-72934872": "Review",
+        "-79798712": "Entry Comments and Review",
+        "-797971971": "Approved by"
     },
     "links": {
         "browserExtension": {
@@ -1821,7 +1824,8 @@
             "resetVizLink": -77593412,
             "copiedToClipboard": -47914300,
             "copiedToClipboardSuccessfully": -26634816,
-            "resetPublicUrlConfirmationMessage": -30655961
+            "resetPublicUrlConfirmationMessage": -30655961,
+            "reviewEntry": -72934872
         },
         "export": {
             "headerExport": 600,
@@ -3759,6 +3763,13 @@
             "leadAdded": -98563490,
             "recentActivitiesHeading": -14680704,
             "recentActivitiesFetchFailed": -46268038
+        },
+        "recentActivities": {
+            "recentActivitiesHeading": -14680704
+        },
+        "entryReview": {
+            "reviewHeading": -79798712,
+            "approvedBy": -797971971
         }
     }
 }

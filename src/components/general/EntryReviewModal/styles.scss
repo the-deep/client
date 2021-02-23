@@ -1,0 +1,35 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: var(--entry-comment-modal-width);
+    max-height: var(--entry-comment-modal-max-height);
+    overflow-y: auto;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--color-foreground);
+        cursor: move;
+        user-select: none;
+        padding: var(--spacing-small);
+        overflow-y: auto;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small);
+    }
+}
+
+.confirm {
+    display: flex;
+}
