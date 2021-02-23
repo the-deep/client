@@ -1330,7 +1330,10 @@
         "-70102939": "Assigned group role",
         "-70810293": "User Groups",
         "-79283838": "Manage My User Groups",
-        "-88838184": "Add a user group"
+        "-88838184": "Add a user group",
+        "-72934872": "Review",
+        "-79798712": "Entry Comments and Review",
+        "-797971971": "Approved by"
     },
     "links": {
         "browserExtension": {
@@ -1843,7 +1846,8 @@
             "resetVizLink": -77593412,
             "copiedToClipboard": -47914300,
             "copiedToClipboardSuccessfully": -26634816,
-            "resetPublicUrlConfirmationMessage": -30655961
+            "resetPublicUrlConfirmationMessage": -30655961,
+            "reviewEntry": -72934872
         },
         "export": {
             "headerExport": 600,
@@ -3796,6 +3800,10 @@
         },
         "recentActivities": {
             "recentActivitiesHeading": -14680704
+        },
+        "entryReview": {
+            "reviewHeading": -79798712,
+            "approvedBy": -797971971
         }
     }
 }
