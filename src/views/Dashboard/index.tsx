@@ -60,7 +60,7 @@ function Dashboard(props: ComponentProps) {
                         className={styles.deepLogo}
                     />
                     <div className={styles.deepText} >
-                        {_ts('dashboard', 'deepLabel')} {_ts('dashboard', envText)}
+                        {_ts('dashboard', 'deepLabel')} {_ts('home', envText)}
                     </div>
                 </>
             }
