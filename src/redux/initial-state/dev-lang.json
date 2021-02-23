@@ -1269,7 +1269,10 @@
         "-8788826": "My Assignments",
         "-49181354": "Failed to fetch Assignment List",
         "-97660055": "Failed to mark the assignment as Done",
-        "-88394931": "Failed to mark bulk assignments as  Done"
+        "-88394931": "Failed to mark bulk assignments as  Done",
+        "-72934872": "Review",
+        "-79798712": "Entry Comments and Review",
+        "-797971971": "Approved by"
     },
     "links": {
         "browserExtension": {
@@ -1772,7 +1775,8 @@
             "showFiltersLabel": -60218291,
             "hideFiltersLabel": -90290386,
             "more": -68982194,
-            "less": -75616009
+            "less": -75616009,
+            "reviewEntry": -72934872
         },
         "export": {
             "headerExport": 600,
@@ -3593,6 +3597,10 @@
             "assignmentListFetchFailed": -49181354,
             "markAsDoneFailed": -97660055,
             "markBulkAsDoneFailed": -88394931
+        },
+        "entryReview": {
+            "reviewHeading": -79798712,
+            "approvedBy": -797971971
         }
     }
 }
