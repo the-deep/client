@@ -1242,7 +1242,9 @@
         "-77124728": "Hide all filters",
         "-44015188": "Show all filters",
         "-39409676": "Swap columns/rows for matrix2D",
-        "-88313294": "File format"
+        "-88313294": "File format",
+        "-92373553": "Pin excerpt box",
+        "-26426769": "Unpin excerpt box"
     },
     "links": {
         "browserExtension": {
@@ -1649,7 +1651,9 @@
             "entryVerificationStatusChange": -28899891,
             "entryVerificationStatusChangeSuccess": -53772993,
             "verifiedLabel": -83960265,
-            "unverifiedLabel": -45171916
+            "unverifiedLabel": -45171916,
+            "unPinExcerpt": -26426769,
+            "pinExcerpt": -92373553
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
