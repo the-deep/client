@@ -1269,7 +1269,11 @@
         "-8788826": "My Assignments",
         "-49181354": "Failed to fetch Assignment List",
         "-97660055": "Failed to mark the assignment as Done",
-        "-88394931": "Failed to mark bulk assignments as  Done"
+        "-88394931": "Failed to mark bulk assignments as  Done",
+        "-55670188": "Analysis",
+        "-69223329": "Analyses overview",
+        "-75339790": "Entries analyzed",
+        "-65511645": "Sources analyzed"
     },
     "links": {
         "browserExtension": {
@@ -2276,7 +2280,8 @@
             "projectQuestionnaires": -91998400,
             "frameworkQuestions": -25976066,
             "home": 5559,
-            "dashboard": -29389738
+            "dashboard": -29389738,
+            "analysisModule": -55670188
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3593,6 +3598,13 @@
             "assignmentListFetchFailed": -49181354,
             "markAsDoneFailed": -97660055,
             "markBulkAsDoneFailed": -88394931
+        },
+        "analysis": {
+            "analysesOverview": -69223329,
+            "entriesAnalyzedLabel": -65511645,
+            "sourcesAnalyzedLabel": -75339790,
+            "totalEntriesLabel": -89597029,
+            "totalSourcesLabel": -25324892
         }
     }
 }

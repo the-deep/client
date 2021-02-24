@@ -207,6 +207,7 @@ export default class Navbar extends React.PureComponent {
             'arys',
             'projectQuestionnaires',
             'export',
+            'analysisModule',
         ];
 
         const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);

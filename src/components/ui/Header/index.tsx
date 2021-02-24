@@ -1,9 +1,9 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Actions from '#components/ui/Actions';
-import Heading from '#components/ui/Heading';
-import Icons from '#components/ui/Icons';
+import Actions from '#dui/Actions';
+import Heading from '#dui/Heading';
+import Icons from '#dui/Icons';
 
 import styles from './styles.scss';
 
@@ -50,9 +50,11 @@ function Header(props: Props) {
                 >
                     { heading }
                 </Heading>
-                <div className={_cs(styles.description, descriptionClassName)}>
-                    {description}
-                </div>
+                {description && (
+                    <div className={_cs(styles.description, descriptionClassName)}>
+                        {description}
+                    </div>
+                )}
             </div>
             { actions && (
                 <Actions className={_cs(styles.actions, actionsClassName)}>

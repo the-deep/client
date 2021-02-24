@@ -1,8 +1,8 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Header from '#components/ui/Header';
-import Footer from '#components/ui/Footer';
+import Header from '#dui/Header';
+import Footer from '#dui/Footer';
 
 import styles from './styles.scss';
 

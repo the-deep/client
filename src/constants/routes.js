@@ -84,6 +84,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'projectQuestionnaires');
 
+    analysisModule: {
+        order: 19,
+        type: ROUTE.private,
+        path: '/projects/:projectId/analysis-module/',
+        loader: () => import('../views/AnalysisModule'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'analysisModule');
+
     projects: {
         order: 20,
         type: ROUTE.private,

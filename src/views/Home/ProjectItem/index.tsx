@@ -8,11 +8,11 @@ import {
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';
 import Icon from '#rscg/Icon';
-import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import TextOutput from '#components/general/TextOutput';
 import InformationBox from '#components/viewer/InformationBox';
 import ProgressLine from '#components/viz/ProgressLine';
-import ContainerCard from '#components/ui/ContainerCard';
+import ContainerCard from '#dui/ContainerCard';
+import ButtonLikeLink from '#dui/ButtonLikeLink';
 
 import {
     AreaChart,
