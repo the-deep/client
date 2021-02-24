@@ -8,6 +8,10 @@ import verticalbarIcon from '#resources/img/verticalbar.svg';
 import wordcloudIcon from '#resources/img/wordcloud.svg';
 import tabularIcon from '#resources/img/tabular.svg';
 import suborgIcon from '#resources/img/suborg.svg';
+import bookmarkIcon from '#resources/img/bookmark.svg';
+import noteIcon from '#resources/img/note.svg';
+import checkmarkCircleFillIcon from '#resources/img/checkmark-circle-fill.svg';
+import documentIcon from '#resources/img/document.svg';
 
 const svgPaths = {
     deepLogo,
@@ -20,6 +24,11 @@ const svgPaths = {
     wordcloudIcon,
     tabularIcon,
     suborgIcon,
+
+    bookmarkIcon,
+    noteIcon,
+    checkmarkCircleFillIcon,
+    documentIcon,
 };
 
 export default svgPaths;

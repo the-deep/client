@@ -563,7 +563,6 @@
         "5557": "File selection",
         "5558": "Password reset",
         "5559": "Home",
-        "5560": "Dashboard",
         "5561": "Leads visualization",
         "5562": "Assessments",
         "5563": "Edit assessment",
@@ -767,8 +766,8 @@
         "-17852758": "Search Users/Usergroups",
         "-1045504": "Go back",
         "-72172702": "Workshop",
-        "-7863682": "Entries activity - Last 30 days",
-        "-88399268": "Leads activity - Last 30 days",
+        "-7863682": "Entries activity - Last 3 months",
+        "-88399268": "Leads activity - Last 3 months",
         "-13293319": "Project status",
         "-24496925": "Top sourcers",
         "-62830931": "Top taggers",
@@ -1244,7 +1243,33 @@
         "-39409676": "Swap columns/rows for matrix2D",
         "-88313294": "File format",
         "-92373553": "Pin excerpt box",
-        "-26426769": "Unpin excerpt box"
+        "-26426769": "Unpin excerpt box",
+        "-1749585": "Set up a new project",
+        "-52545948": "Recent Projects",
+        "-22564410": "Summary of My Projects",
+        "-42491012": "Projects Tagging Activity",
+        "-540964": "Analytical framework",
+        "-63478773": "Team members",
+        "-80101084": "Project owner",
+        "-32033776": "Recently active",
+        "-40183150": "Private project",
+        "-67543367": "Public project",
+        "-56681141": "Project activity",
+        "-61653142": "Sources tagged",
+        "-16197909": "Sources tagged & validated",
+        "-19582379": "Sources untagged",
+        "-25324892": "Total sources",
+        "-678768686": "Total added sources",
+        "-686861344": "Sources tagged",
+        "-686861268": "Sources tagged & validated",
+        "-29389738": "Dashboard",
+        "-78996564": "in",
+        "-71574522": "assigned you",
+        "-97734054": "Mark all as Done",
+        "-8788826": "My Assignments",
+        "-49181354": "Failed to fetch Assignment List",
+        "-97660055": "Failed to mark the assignment as Done",
+        "-88394931": "Failed to mark bulk assignments as  Done"
     },
     "links": {
         "browserExtension": {
@@ -2215,8 +2240,7 @@
             "login": 814,
             "register": 811,
             "passwordReset": 5558,
-            "homeScreen": 5559,
-            "dashboard": 5560,
+            "landingPage": 5559,
             "discoverProjects": 7629,
             "discoverUserGroups": 7628,
             "leads": 641,
@@ -2250,7 +2274,9 @@
             "plannedArys": -41526057,
             "questionnaireBuilder": -7536745,
             "projectQuestionnaires": -91998400,
-            "frameworkQuestions": -25976066
+            "frameworkQuestions": -25976066,
+            "home": 5559,
+            "dashboard": -29389738
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3049,12 +3075,21 @@
         "widgets.view.timeRange": {
             "toLabel": 1000
         },
-        "dashboard": {
-            "deepLabel": 876,
+        "home": {
             "alphaLabel": 1238,
             "betaLabel": 1237,
             "devLabel": 1240,
-            "nightlyLabel": 1239
+            "nightlyLabel": 1239,
+            "priivateProjectBadgeTooltip": -64655622,
+            "projectTaggingActivityHeading": -42491012,
+            "recentProjectsHeading": -52545948,
+            "setupNewProjectButtonLabel": -1749585,
+            "summaryOfMyProjectsHeading": -22564410,
+            "projectDetails": 31,
+            "projects": 173,
+            "totalAddedSources": -678768686,
+            "sourcesTagged": -686861344,
+            "sourcesTaggedValidated": -686861268
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -3530,6 +3565,34 @@
             "searchInputPlacehoder": -46164024,
             "showTableOfContents": -19695002
         },
-        "qualityControl": {}
+        "qualityControl": {},
+        "home.recentProjects": {
+            "analysisFrameworkLabel": -540964,
+            "editProjectButtonLabel": 171,
+            "privateProjectLabel": -40183150,
+            "projectOwnerLabel": -80101084,
+            "publicProjectLabel": -67543367,
+            "recentlyActiveUsersLabel": -32033776,
+            "teamMembersTitle": -63478773,
+            "endDateLabel": 334,
+            "startDateLabel": 185,
+            "projectActivityLabel": -56681141,
+            "totalSourcesLabel": -25324892,
+            "sourcesTaggedLabel": -61653142,
+            "sourcesTaggedValidatedLabel": -16197909,
+            "sourcesUntaggedLabel": -19582379
+        },
+        "dashboard": {
+            "deepLabel": 876
+        },
+        "assignment": {
+            "in": -78996564,
+            "assignedYou": -71574522,
+            "markAllAsDone": -97734054,
+            "myAssignments": -8788826,
+            "assignmentListFetchFailed": -49181354,
+            "markAsDoneFailed": -97660055,
+            "markBulkAsDoneFailed": -88394931
+        }
     }
 }

@@ -42,6 +42,7 @@ import {
     validLinks,
     hideNavbar,
 } from '#constants';
+import featuresMapping from '#constants/features';
 
 import {
     envText,
@@ -77,6 +78,7 @@ const propTypes = {
     setActiveProject: PropTypes.func.isRequired,
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
+        accessibleFeatures: PropTypes.object,
     }),
     userProjects: PropTypes.arrayOf(
         PropTypes.shape({
@@ -189,6 +191,11 @@ export default class Navbar extends React.PureComponent {
     }
 
     setLinksForLocation = (location) => {
+        const {
+            activeUser: {
+                accessibleFeatures = [],
+            },
+        } = this.props;
         this.currentMatch = Navbar.getCurrentMatch(location);
         this.currentPath = this.currentMatch
             ? getFirstKeyByValue(pathNames, this.currentMatch.path)
@@ -201,6 +208,11 @@ export default class Navbar extends React.PureComponent {
             'projectQuestionnaires',
             'export',
         ];
+
+        const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
+        if (accessNewUi) {
+            navLinks.unshift('home');
+        }
 
         const dropLinks = [
             'userProfile',
@@ -276,7 +288,7 @@ export default class Navbar extends React.PureComponent {
         return (
             <nav className={`${className} ${styles.navbar}`}>
                 <Link
-                    to={reverseRoute(pathNames.homeScreen, {})}
+                    to={reverseRoute(pathNames.landingPage, {})}
                     className={styles.brand}
                 >
                     <div className={styles.iconWrapper}>

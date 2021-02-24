@@ -54,7 +54,7 @@ export default class HomeScreen extends React.PureComponent {
 
         if (activeProject && currentUserProjects.length > 0) {
             const params = { projectId: activeProject };
-            const routeTo = reverseRoute(pathNames.dashboard, params);
+            const routeTo = reverseRoute(pathNames.home, params);
             return (
                 <Redirect
                     to={{
@@ -76,7 +76,7 @@ export default class HomeScreen extends React.PureComponent {
 
         return (
             <Page
-                mainContentClassName={styles.homeScreen}
+                mainContentClassName={styles.landingPage}
                 mainContent={
                     <React.Fragment>
                         <Icon

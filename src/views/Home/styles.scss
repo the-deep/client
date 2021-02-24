@@ -1,0 +1,89 @@
+.home {
+    background-color: #f6f6f6;
+
+    .main-content {
+        display: flex;
+        overflow: auto;
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-medium) 0;
+
+            .heading {
+                text-transform: unset;
+            }
+        }
+
+        .content {
+            border-radius: 5px;
+            min-height: 320px;
+        }
+
+        --width-right-content: 360px;
+
+        .left-container {
+            flex-basis: calc(100% - var(--width-right-content));
+
+            .left-top-container {
+                display: flex;
+
+                .summary-container {
+                    flex-basis: 30%;
+                    margin: var(--spacing-large);
+                }
+
+                .project-tagging-activity {
+                    flex-basis: 70%;
+                    margin: var(--spacing-large);
+
+                    .content {
+                        display: flex;
+                        flex-grow: 1;
+                        border-radius: var(--dui-border-radius-card);
+                        background-color: var(--color-foreground);
+                        padding: var(--spacing-large);
+                    }
+                }
+            }
+
+            .left-bottom-container {
+                margin: var(--spacing-large);
+
+                .header {
+                    .heading {
+                        flex-grow: 1;
+                    }
+                }
+
+                .project-item {
+                    margin: var(--spacing-large) 0;
+                }
+
+                .project-select-input {
+                    margin: 0 var(--spacing-medium);
+                }
+            }
+        }
+
+        .right-container {
+            flex-basis: var(--width-right-content);
+            flex-shrink: 0;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium) var(--spacing-large);
+        }
+    }
+}
+
+.select-option {
+    display: flex;
+    justify-content: space-between;
+
+    .badge {
+        padding-right: 0;
+
+        &.active {
+            color: var(--color-text-on-accent);
+        }
+    }
+}

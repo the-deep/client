@@ -1,0 +1,9 @@
+.activity {
+    display: flex;
+
+    .container {
+        display: flex;
+        flex-grow: 1;
+        min-height: 260px;
+    }
+}

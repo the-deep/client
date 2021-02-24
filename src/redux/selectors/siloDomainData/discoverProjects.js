@@ -26,11 +26,6 @@ export const discoverProjectsActiveSortSelector = createSelector(
     discoverProjects => discoverProjects.activeSort || '-leads_activity',
 );
 
-export const discoverProjectsProjectsPerPageSelector = createSelector(
-    pageSelector,
-    discoverProjects => discoverProjects.projectsPerPage || 25,
-);
-
 export const discoverProjectsTotalProjectsCountSelector = createSelector(
     pageSelector,
     discoverProjects => discoverProjects.totalProjectsCount || 0,

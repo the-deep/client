@@ -46,12 +46,13 @@ const styleProperties = {
 
         duiColorPositive: '#29bb75',
         duiColorInformation: '#3fa2f7',
-        duiColorNegative: '#ff5c52',
+        duiColorNegative: '#f5f8fb',
         duiColorDanger: 'var(--dui-color-negative)',
 
         duiColorBackground: '#f6f6f6',
         duiColorBackgroundInformation: '#f5f8fb',
         duiColorBackgroundNegative: '#dfe7f2',
+        duiColorBackgroundCard: 'var(--dui-color-white)',
 
         duiColorText: 'var(--dui-color-grey1)',
         duiColorTextLabel: 'var(--dui-color-grey2)',
@@ -66,6 +67,14 @@ const styleProperties = {
         duiRadiusBorderInputSection: '0',
         duiColorInputLabel: 'var(--dui-color-grey3)',
         duiColorInputLabelActive: 'var(--dui-color-accent)',
+        // For new UI
+        duiBorderColorCard: '#f2f2f2',
+        duiBorderColorInnerCard: '#DFE7F2',
+        duiColorLabel: '#828282',
+        duiColorTextDark: '#333333',
+        duiColorBackgroundProgressBar: '#bdbdbd',
+        // TODO: write better name for this
+        duiColorDeep6: '#F5F8FB',
     },
 
     dimens: {
@@ -135,6 +144,9 @@ const styleProperties = {
         duiBorderRadiusCard: '8px',
         duiBorderRadiusTag: '25px',
         duiOpacityDisabledElement: '0.3',
+        duiHeightProgressBar: '10px',
+        duiBorderRadiusProgressBar: '15px',
+        fontSizeExtremeLarge: '32px',
     },
 };
 

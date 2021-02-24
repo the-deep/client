@@ -153,13 +153,14 @@ async function fetchResource<T>(
     } catch (e) {
         if (!signal.aborted) {
             console.error(`An error occurred while fetching ${myUrl}`, e);
+
+            const message = {
+                reason: 'network',
+                exception: e,
+                value: { nonFieldErrors: ['Network error'] },
+            };
+            await handleError(message);
         }
-        const message = {
-            reason: 'network',
-            exception: e,
-            value: { nonFieldErrors: ['Network error'] },
-        };
-        await handleError(message);
         return;
     }
 

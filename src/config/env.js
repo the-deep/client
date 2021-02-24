@@ -13,10 +13,10 @@ export const commitHash = process.env.REACT_APP_DEEP_COMMIT_SHA;
 // _ts('components.navbar', 'alphaLabel')
 // _ts('components.navbar', 'nightlyLabel')
 // _ts('components.navbar', 'devLabel')
-// _ts('dashboard', 'betaLabel')
-// _ts('dashboard', 'alphaLabel')
-// _ts('dashboard', 'nightlyLabel')
-// _ts('dashboard', 'devLabel')
+// _ts('home', 'betaLabel')
+// _ts('home', 'alphaLabel')
+// _ts('home', 'nightlyLabel')
+// _ts('home', 'devLabel')
 export const envText = (
     (isBeta && 'betaLabel') ||
     (isAlpha && 'alphaLabel') ||

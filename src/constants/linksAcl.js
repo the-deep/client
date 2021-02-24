@@ -33,6 +33,7 @@ export const allLinks = {
         disable: ({ pathKey, hasProjects }) => (
             ![
                 'projects',
+                'home',
                 'dashboard',
                 'workshop',
                 'leadGroups',

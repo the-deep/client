@@ -100,6 +100,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'dashboard');
 
+    home: {
+        order: 23,
+        type: ROUTE.private,
+        path: '/home/',
+        loader: () => import('../views/Home'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'home');
+
     workshop: {
         order: 19,
         type: ROUTE.private,
@@ -276,13 +284,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'apiDocs');
 
-    homeScreen: {
+    landingPage: {
         order: 140,
         type: ROUTE.private,
         path: '/',
-        loader: () => import('../views/HomeScreen'),
+        loader: () => import('../views/LandingPage'),
         links: allLinks,
-    }, // _ts('pageTitle', 'homeScreen');
+    }, // _ts('pageTitle', 'landingPage');
 
     stringManagement: {
         order: 150,
