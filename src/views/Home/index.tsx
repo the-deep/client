@@ -40,6 +40,7 @@ import _ts from '#ts';
 import ProjectItem from './ProjectItem';
 import Summary from './Summary';
 import Activity from './Activity';
+import Assignment from './Assignment';
 
 import styles from './styles.scss';
 
@@ -143,7 +144,6 @@ function Home(props: ViewProps) {
         url: 'server://projects-stat/summary/',
         method: 'GET',
         autoTrigger: true,
-        schemaName: 'userExportsGetResponse',
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('home', 'summaryOfMyProjectsHeading'))({ error: errorBody }),
     });
@@ -273,7 +273,9 @@ function Home(props: ViewProps) {
                             />
                         </div>
                     </div>
-                    <div className={styles.rightContainer} />
+                    <div className={styles.rightContainer}>
+                        <Assignment />
+                    </div>
                 </>
             )}
         />

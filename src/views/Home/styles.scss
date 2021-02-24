@@ -20,8 +20,10 @@
             min-height: 320px;
         }
 
+        --width-right-content: 360px;
+
         .left-container {
-            flex-basis: 80%;
+            flex-basis: calc(100% - var(--width-right-content));
 
             .left-top-container {
                 display: flex;
@@ -65,8 +67,10 @@
         }
 
         .right-container {
-            flex-basis: 20%;
+            flex-basis: var(--width-right-content);
+            flex-shrink: 0;
             background-color: var(--color-foreground);
+            padding: var(--spacing-medium) var(--spacing-large);
         }
     }
 }
