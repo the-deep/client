@@ -1,3 +1,5 @@
+import { matchPath } from 'react-router-dom';
+
 import {
     mapObjectToObject,
     mapObjectToArray,
@@ -90,6 +92,7 @@ export const routes = {
         path: '/projects/:projectId/analysis-module/',
         loader: () => import('../views/AnalysisModule'),
         links: allLinks,
+        showSubNavbar: true,
     }, // _ts('pageTitle', 'analysisModule');
 
     projects: {
@@ -371,6 +374,25 @@ export const routes = {
 export const pathNames = mapObjectToObject(routes, route => route.path);
 export const validLinks = mapObjectToObject(routes, route => route.links);
 export const hideNavbar = mapObjectToObject(routes, route => !!route.hideNavbar);
+export const showSubNavbar = mapObjectToObject(routes, route => !!route.showSubNavbar);
+
+export const getCurrentMatch = (location) => {
+    const links = Object.keys(pathNames);
+    const paths = Object.values(pathNames);
+
+    for (let i = 0; i < links.length; i += 1) {
+        const match = matchPath(location.pathname, {
+            path: paths[i],
+            exact: true,
+        });
+
+        if (match) {
+            return match;
+        }
+    }
+
+    return null;
+};
 export const routesOrder = mapObjectToArray(
     routes,
     (route, key) => ({

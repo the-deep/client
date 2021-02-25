@@ -1,29 +1,26 @@
+import React, { useRef, useEffect, useMemo, useCallback, useState, useContext } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import {
     withRouter,
     Link,
-    matchPath,
 } from 'react-router-dom';
 import {
     _cs,
     isTruthy,
+    isDefined,
     reverseRoute,
     getFirstKeyByValue,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Confirm from '#rscv/Modal/Confirm';
-import { BgRestBuilder } from '#rsu/rest';
+import useRequest from '#utils/request';
 import SelectInput from '#rsci/SelectInput';
 
 import Badge from '#components/viewer/Badge';
 
-import {
-    createUrlForSetUserProject,
-    createParamsForSetUserProject,
-} from '#rest';
 import {
     setActiveProjectAction,
 
@@ -41,8 +38,11 @@ import {
     pathNames,
     validLinks,
     hideNavbar,
+    showSubNavbar,
+    getCurrentMatch,
 } from '#constants';
 import featuresMapping from '#constants/features';
+import NavbarContext from '#components/NavbarContext';
 
 import {
     envText,
@@ -57,6 +57,17 @@ import Notifica from './Notifica';
 import HelpLink from './HelpLink';
 import ThemeMenu from './ThemeMenu';
 import styles from './styles.scss';
+
+export const SubNavbar = ({
+    children,
+}) => {
+    const { parentNode } = useContext(NavbarContext);
+    if (!parentNode) {
+        return null;
+    }
+    return ReactDOM.createPortal(children, parentNode);
+};
+
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
@@ -78,7 +89,7 @@ const propTypes = {
     setActiveProject: PropTypes.func.isRequired,
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
-        accessibleFeatures: PropTypes.object,
+        accessibleFeatures: PropTypes.array,
     }),
     userProjects: PropTypes.arrayOf(
         PropTypes.shape({
@@ -101,120 +112,80 @@ const defaultProps = {
     userProjects: [],
 };
 
-@withRouter
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Navbar extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
+const projectKeySelector = (option = {}) => option.id;
+const projectLabelSelector = (option = {}) => option.title;
 
-    static projectKeySelector = (option = {}) => (option.id)
-    static projectLabelSelector = (option = {}) => (option.title)
+const getValidLinks = (navLinks, currentPath) => {
+    const currentValidLinks = validLinks[currentPath];
+    return navLinks
+        .map(link => ({ key: link, ...currentValidLinks[link] }))
+        .filter(d => !!d);
+};
 
-    static getCurrentMatch = (location) => {
-        const links = Object.keys(pathNames);
-        const paths = Object.values(pathNames);
+const shouldHideThemeMenu = ({ isDevMode }) => !isDevMode;
 
-        for (let i = 0; i < links.length; i += 1) {
-            const match = matchPath(location.pathname, {
-                path: paths[i],
-                exact: true,
-            });
+function Navbar(props) {
+    const {
+        className,
+        activeProject,
+        activeCountry,
+        userProjects,
+        stopSiloTasks,
+        logout,
+        activeUser: {
+            userId,
+            accessibleFeatures,
+        },
+        location,
+        setActiveProject,
+    } = props;
 
-            if (match) {
-                return match;
-            }
+    const subNavbarRef = useRef(null);
+
+    const { setParentNode } = useContext(NavbarContext);
+
+    useEffect(
+        () => {
+            setParentNode(subNavbarRef.current);
+        },
+        [setParentNode, location],
+    );
+
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState();
+
+    const handleLogoutModalClose = useCallback((confirm) => {
+        if (confirm) {
+            stopSiloTasks();
+            logout();
         }
+        setShowLogoutConfirm(false);
+    }, [logout, stopSiloTasks]);
 
-        return null;
-    }
+    const currentMatch = useMemo(() => getCurrentMatch(location), [location]);
 
-    static getValidLinks = (navLinks, currentPath) => {
-        const currentValidLinks = validLinks[currentPath];
-        return navLinks
-            .map(link => ({ key: link, ...currentValidLinks[link] }))
-            .filter(d => !!d);
-    }
+    const currentPath = useMemo(() => (
+        isDefined(currentMatch)
+            ? getFirstKeyByValue(pathNames, currentMatch.path) : 'fourHundredFour'
+    ), [currentMatch]);
 
-    static shouldHideThemeMenu = ({ isDevMode }) => !isDevMode;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            showLogoutConfirm: false,
-        };
-
-        this.setLinksForLocation(props.location);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            activeProject: oldActiveProject,
-            location: oldLocation,
-        } = this.props;
-        const {
-            activeProject: newActiveProject,
-            activeUser: newActiveUser,
-            location: newLocation,
-            userProjects,
-        } = nextProps;
-
-        // Set user project in server
-        if (oldActiveProject !== newActiveProject && isTruthy(newActiveUser.userId)) {
-            if (this.setUserProjectRequest) {
-                this.setUserProjectRequest.stop();
-            }
-
-            const validProjectId = userProjects.findIndex(
-                project => Navbar.projectKeySelector(project) === newActiveProject,
-            ) !== -1;
-
-            this.setUserProjectRequest = new BgRestBuilder()
-                .url(createUrlForSetUserProject(newActiveUser.userId))
-                .params(() => createParamsForSetUserProject(
-                    validProjectId ? newActiveProject : null,
-                ))
-                .delay(1000) // more delay
-                .build();
-            this.setUserProjectRequest.start();
-        }
-
-        if (oldLocation !== newLocation) {
-            this.setLinksForLocation(newLocation);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.setUserProjectRequest) {
-            this.setUserProjectRequest.stop();
-        }
-    }
-
-    setLinksForLocation = (location) => {
-        const {
-            activeUser: {
-                accessibleFeatures = [],
-            },
-        } = this.props;
-        this.currentMatch = Navbar.getCurrentMatch(location);
-        this.currentPath = this.currentMatch
-            ? getFirstKeyByValue(pathNames, this.currentMatch.path)
-            : 'fourHundredFour';
-
+    const validNavLinks = useMemo(() => {
         const navLinks = [
             'leads',
             'entries',
             'arys',
             'projectQuestionnaires',
             'export',
-            'analysisModule',
         ];
 
         const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
         if (accessNewUi) {
             navLinks.unshift('home');
+            navLinks.push('analysisModule');
         }
+        return getValidLinks(navLinks, currentPath);
+    }, [currentPath, accessibleFeatures]);
 
+    const validDropLinks = useMemo(() => {
         const dropLinks = [
             'userProfile',
             'projects',
@@ -226,30 +197,36 @@ export default class Navbar extends React.PureComponent {
             'stringManagement',
             'workshop',
         ];
+        return getValidLinks(dropLinks, currentPath);
+    }, [currentPath]);
 
-        this.validNavLinks = Navbar.getValidLinks(navLinks, this.currentPath);
-        this.validDropLinks = Navbar.getValidLinks(dropLinks, this.currentPath);
-    }
+    const handleLogoutClick = useCallback(() => {
+        setShowLogoutConfirm(true);
+    }, []);
 
-    handleProjectChange = (key) => {
+    const validActiveProjectId = useMemo(() => {
+        const validProjectId = userProjects.findIndex(
+            project => projectKeySelector(project) === activeProject,
+        ) !== -1;
+        return validProjectId;
+    }, [activeProject, userProjects]);
+
+    const [,, triggerChangeActiveProject] = useRequest({
+        url: `server://users/${userId}/`,
+        method: 'PATCH',
+        body: ({
+            lastActiveProject: validActiveProjectId,
+        }),
+    });
+
+    const handleProjectChange = useCallback((key) => {
         if (isTruthy(key)) {
-            this.props.setActiveProject({ activeProject: key });
+            setActiveProject({ activeProject: key });
+            triggerChangeActiveProject();
         }
-    }
+    }, [setActiveProject, triggerChangeActiveProject]);
 
-    handleLogoutClick = () => {
-        this.setState({ showLogoutConfirm: true });
-    }
-
-    handleLogoutModalClose = (confirm) => {
-        if (confirm) {
-            this.props.stopSiloTasks();
-            this.props.logout();
-        }
-        this.setState({ showLogoutConfirm: false });
-    }
-
-    optionLabelSelector = (option = {}) => (
+    const optionLabelSelector = useCallback((option = {}) => (
         <div className={styles.selectOption}>
             {option.title}
             {option.isPrivate && (
@@ -258,7 +235,7 @@ export default class Navbar extends React.PureComponent {
                     className={
                         _cs(
                             styles.badge,
-                            this.props.activeProject === option.id && styles.active,
+                            activeProject === option.id && styles.active,
                         )
                     }
                     noBorder
@@ -266,28 +243,20 @@ export default class Navbar extends React.PureComponent {
                 />
             )}
         </div>
-    )
+    ), [activeProject]);
 
-    render() {
-        const {
-            className,
-            activeProject,
-            activeCountry,
-            userProjects,
-        } = this.props;
-        const { showLogoutConfirm } = this.state;
+    // Hide navbar
+    if (hideNavbar[currentPath]) {
+        return <span className="no-nav" />;
+    }
 
-        // Hide navbar
-        if (hideNavbar[this.currentPath]) {
-            return <span className="no-nav" />;
-        }
+    const currentValidLinks = validLinks[currentPath];
+    const projectSelectInputLink = currentValidLinks.projectSelect;
+    const adminPanelLink = currentValidLinks.adminPanel;
 
-        const currentValidLinks = validLinks[this.currentPath];
-        const projectSelectInputLink = currentValidLinks.projectSelect;
-        const adminPanelLink = currentValidLinks.adminPanel;
-
-        return (
-            <nav className={`${className} ${styles.navbar}`}>
+    return (
+        <nav className={_cs(className, styles.navbar)}>
+            <div className={styles.topNavbar}>
                 <Link
                     to={reverseRoute(pathNames.landingPage, {})}
                     className={styles.brand}
@@ -309,29 +278,31 @@ export default class Navbar extends React.PureComponent {
                     </span>
                 </Link>
 
-                <div className={styles.projectSelectInputWrapper}>
-                    <Cloak
-                        {...projectSelectInputLink}
-                        render={
-                            <SelectInput
-                                hideClearButton
-                                keySelector={Navbar.projectKeySelector}
-                                labelSelector={Navbar.projectLabelSelector}
-                                optionLabelSelector={this.optionLabelSelector}
-                                onChange={this.handleProjectChange}
-                                options={userProjects}
-                                placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                                showHintAndError={false}
-                                showLabel={false}
-                                className={styles.projectSelectInput}
-                                value={activeProject}
-                            />
-                        }
-                    />
-                </div>
+                {!showSubNavbar[currentPath] && (
+                    <div className={styles.projectSelectInputWrapper}>
+                        <Cloak
+                            {...projectSelectInputLink}
+                            render={
+                                <SelectInput
+                                    hideClearButton
+                                    keySelector={projectKeySelector}
+                                    labelSelector={projectLabelSelector}
+                                    optionLabelSelector={optionLabelSelector}
+                                    onChange={handleProjectChange}
+                                    options={userProjects}
+                                    placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                                    showHintAndError={false}
+                                    showLabel={false}
+                                    className={styles.projectSelectInput}
+                                    value={activeProject}
+                                />
+                            }
+                        />
+                    </div>
+                )}
 
                 <NavMenu
-                    links={this.validNavLinks}
+                    links={validNavLinks}
                     className={styles.mainMenu}
                     projectId={activeProject}
                     countryId={activeCountry}
@@ -340,12 +311,12 @@ export default class Navbar extends React.PureComponent {
                 <div className={styles.actions}>
                     <HelpLink
                         className={styles.helpLink}
-                        currentPath={this.currentPath}
+                        currentPath={currentPath}
                     />
                     <Community className={styles.communityDropdown} />
                     <Notifica className={styles.notificationDropdown} />
                     <Cloak
-                        hide={Navbar.shouldHideThemeMenu}
+                        hide={shouldHideThemeMenu}
                         render={
                             <ThemeMenu
                                 className={styles.themeMenu}
@@ -355,19 +326,52 @@ export default class Navbar extends React.PureComponent {
                 </div>
                 <NavDrop
                     className={styles.userMenu}
-                    links={this.validDropLinks}
+                    links={validDropLinks}
                     adminPanelLink={adminPanelLink}
-                    onLogout={this.handleLogoutClick}
+                    onLogout={handleLogoutClick}
                 />
                 <Confirm
                     show={showLogoutConfirm}
-                    onClose={this.handleLogoutModalClose}
+                    onClose={handleLogoutModalClose}
                 >
                     <p>
                         {_ts('components.navbar', 'logoutConfirmationText')}
                     </p>
                 </Confirm>
-            </nav>
-        );
-    }
+            </div>
+            {showSubNavbar[currentPath] && (
+                <div className={styles.subNavbar}>
+                    <div className={styles.projectSelectInputWrapper}>
+                        <Cloak
+                            {...projectSelectInputLink}
+                            render={
+                                <SelectInput
+                                    hideClearButton
+                                    keySelector={projectKeySelector}
+                                    labelSelector={projectLabelSelector}
+                                    optionLabelSelector={optionLabelSelector}
+                                    onChange={handleProjectChange}
+                                    options={userProjects}
+                                    placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                                    showHintAndError={false}
+                                    showLabel={false}
+                                    className={styles.projectSelectInput}
+                                    value={activeProject}
+                                />
+                            }
+                        />
+                    </div>
+                    <div
+                        className={styles.subNavbarRightComponents}
+                        ref={subNavbarRef}
+                    />
+                </div>
+            )}
+        </nav>
+    );
 }
+
+Navbar.propTypes = propTypes;
+Navbar.defaultProps = defaultProps;
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Navbar));

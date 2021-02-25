@@ -1276,7 +1276,8 @@
         "-65511645": "Sources analyzed",
         "-70983044": "Add pillar analysis",
         "-81726696": "All analyses",
-        "-57723792": "No analysis created"
+        "-57723792": "No analysis created",
+        "-90678740": "Setup a new analysis"
     },
     "links": {
         "browserExtension": {
@@ -3613,7 +3614,8 @@
             "addPillarAnalysis": -70983044,
             "allAnalysesLabel": -81726696,
             "noAnalysisCreatedLabel": -57723792,
-            "startDateLabel": 185
+            "startDateLabel": 185,
+            "setupNewAnalysisButtonLabel": -90678740
         }
     }
 }

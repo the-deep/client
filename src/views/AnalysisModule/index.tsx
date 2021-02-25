@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { connect } from 'react-redux';
 
 import InformationBox from '#components/viewer/InformationBox';
 import Container from '#dui/Container';
@@ -7,17 +8,21 @@ import Icon from '#rscg/Icon';
 import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
+import Button from '#dui/Button';
 
 import useRequest from '#utils/request';
+import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
+    AppState,
     AnalysisElement,
     MultiResponse,
 } from '#typings';
 
 import svgPaths from '#constants/svgPaths';
 import _ts from '#ts';
+import { activeProjectIdFromStateSelector } from '#redux';
 
 import Analysis from './Analysis';
 import styles from './styles.scss';
@@ -30,16 +35,28 @@ function EmptyAnalysisContainer() {
     );
 }
 
+const mapStateToProps = (state: AppState) => ({
+    activeProject: activeProjectIdFromStateSelector(state),
+});
+
 const analysisKeySelector = (d: AnalysisElement) => d.id;
 const maxItemsPerPage = 5;
 
-function AnalysisModule() {
+interface AnalysisModuleProps {
+    activeProject: number;
+}
+
+function AnalysisModule(props: AnalysisModuleProps) {
+    const {
+        activeProject,
+    } = props;
+
     const [activePage, setActivePage] = useState(1);
     const [analyses, setAnalyses] = useState<AnalysisElement[]>([]);
     const [analysisCount, setAnalysisCount] = useState(0);
 
     const [pendingAnalyses] = useRequest<MultiResponse<AnalysisElement>>({
-        url: 'server://analysis/',
+        url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
         query: {
             // project: projectId,
@@ -63,6 +80,18 @@ function AnalysisModule() {
 
     return (
         <div className={styles.analysisModule}>
+            <SubNavbar>
+                <div className={styles.subNavbar}>
+                    <Button
+                        variant="primary"
+                        icons={(
+                            <Icon name="add" />
+                        )}
+                    >
+                        {_ts('analysis', 'setupNewAnalysisButtonLabel')}
+                    </Button>
+                </div>
+            </SubNavbar>
             <Container
                 className={styles.summary}
                 contentClassName={styles.summaryContent}
@@ -146,4 +175,4 @@ function AnalysisModule() {
     );
 }
 
-export default AnalysisModule;
+export default connect(mapStateToProps)(AnalysisModule);
