@@ -17,6 +17,7 @@ export interface ContainerProps {
     headingClassName?: string;
     children?: React.ReactNode;
     contentClassName?: string;
+    footerClassName?: string;
     footerContent?: React.ReactNode;
     footerActions?: React.ReactNode;
 
@@ -38,6 +39,7 @@ function Container(props: ContainerProps) {
         contentClassName,
         footerContent,
         footerActions,
+        footerClassName,
         sub = false,
     } = props;
 
@@ -61,7 +63,7 @@ function Container(props: ContainerProps) {
             {(footerContent || footerActions) && (
                 <Footer
                     actions={footerActions}
-                    className={styles.footer}
+                    className={_cs(styles.footer, footerClassName)}
                 >
                     { footerContent }
                 </Footer>

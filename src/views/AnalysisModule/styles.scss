@@ -59,6 +59,26 @@
         .analyses-container {
             display: flex;
             flex-direction: column;
+            margin: var(--dui-spacing-large);
+
+            .analysis-list {
+                flex-grow: 1;
+                min-height: 320px;
+            }
+
+            .empty-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--dui-color-white);
+                min-height: 320px;
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+
+        .footer {
+            margin: var(--dui-spacing-large);
+            background-color: var(--dui-color-white);
         }
     }
 }

@@ -1273,7 +1273,10 @@
         "-55670188": "Analysis",
         "-69223329": "Analyses overview",
         "-75339790": "Entries analyzed",
-        "-65511645": "Sources analyzed"
+        "-65511645": "Sources analyzed",
+        "-70983044": "Add pillar analysis",
+        "-81726696": "All analyses",
+        "-57723792": "No analysis created"
     },
     "links": {
         "browserExtension": {
@@ -3604,7 +3607,13 @@
             "entriesAnalyzedLabel": -65511645,
             "sourcesAnalyzedLabel": -75339790,
             "totalEntriesLabel": -89597029,
-            "totalSourcesLabel": -25324892
+            "totalSourcesLabel": -25324892,
+            "analysisModule": -55670188,
+            "endDateLabel": 334,
+            "addPillarAnalysis": -70983044,
+            "allAnalysesLabel": -81726696,
+            "noAnalysisCreatedLabel": -57723792,
+            "startDateLabel": 185
         }
     }
 }
