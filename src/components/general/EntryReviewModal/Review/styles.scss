@@ -1,0 +1,14 @@
+.review {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .types {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .submit-button {
+        align-self: flex-end;
+    }
+}
