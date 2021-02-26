@@ -377,10 +377,9 @@ export const hideNavbar = mapObjectToObject(routes, route => !!route.hideNavbar)
 export const showSubNavbar = mapObjectToObject(routes, route => !!route.showSubNavbar);
 
 export const getCurrentMatch = (location) => {
-    const links = Object.keys(pathNames);
     const paths = Object.values(pathNames);
 
-    for (let i = 0; i < links.length; i += 1) {
+    for (let i = 0; i < paths.length; i += 1) {
         const match = matchPath(location.pathname, {
             path: paths[i],
             exact: true,

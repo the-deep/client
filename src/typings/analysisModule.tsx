@@ -1,9 +1,7 @@
-export interface AnalysisElement {
-    id: number;
-    title: string;
+import { BasicElement } from './';
+
+export interface AnalysisElement extends BasicElement {
 }
 
-export interface PillarAnalysisElement {
-    id: number;
-    title: string;
+export interface PillarAnalysisElement extends BasicElement {
 }

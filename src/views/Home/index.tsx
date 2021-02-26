@@ -120,7 +120,7 @@ function Home(props: ViewProps) {
                         )
                     }
                     noBorder
-                    tooltip={_ts('home', 'priivateProjectBadgeTooltip')}
+                    tooltip={_ts('home', 'privateProjectBadgeTooltip')}
                 />
             )}
         </div>

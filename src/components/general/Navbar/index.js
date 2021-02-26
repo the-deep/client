@@ -204,27 +204,25 @@ function Navbar(props) {
         setShowLogoutConfirm(true);
     }, []);
 
-    const validActiveProjectId = useMemo(() => {
-        const validProjectId = userProjects.findIndex(
-            project => projectKeySelector(project) === activeProject,
-        ) !== -1;
-        return validProjectId;
-    }, [activeProject, userProjects]);
-
-    const [,, triggerChangeActiveProject] = useRequest({
+    const [,,, triggerChangeActiveProject] = useRequest({
         url: `server://users/${userId}/`,
         method: 'PATCH',
         body: ({
-            lastActiveProject: validActiveProjectId,
+            lastActiveProject: activeProject,
         }),
     });
 
     const handleProjectChange = useCallback((key) => {
         if (isTruthy(key)) {
-            setActiveProject({ activeProject: key });
-            triggerChangeActiveProject();
+            const isValidProject = userProjects.findIndex(
+                project => projectKeySelector(project) === key,
+            ) !== -1;
+            if (isValidProject) {
+                setActiveProject({ activeProject: key });
+                triggerChangeActiveProject();
+            }
         }
-    }, [setActiveProject, triggerChangeActiveProject]);
+    }, [setActiveProject, triggerChangeActiveProject, userProjects]);
 
     const optionLabelSelector = useCallback((option = {}) => (
         <div className={styles.selectOption}>
@@ -239,7 +237,7 @@ function Navbar(props) {
                         )
                     }
                     noBorder
-                    tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                    tooltip={_ts('project', 'privateProjectBadgeTooltip')}
                 />
             )}
         </div>
