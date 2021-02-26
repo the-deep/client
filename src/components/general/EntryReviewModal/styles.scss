@@ -12,13 +12,22 @@
         background-color: var(--color-foreground);
         cursor: move;
         user-select: none;
-        padding: var(--spacing-small);
+        padding: 0 var(--spacing-small);
         overflow-y: auto;
     }
 
     .content {
         display: flex;
         flex-direction: column;
+        padding: 0 var(--spacing-small);
+
+        .review {
+            flex: 1 0 auto;
+        }
+
+        .comments {
+            flex: 1 0 auto;
+        }
     }
 
     .footer {

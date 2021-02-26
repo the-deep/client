@@ -14,6 +14,7 @@ import useDragMove from '#hooks/useDragMove';
 import _ts from '#ts';
 
 import Comment from './Comment';
+import Review from './Review';
 import styles from './styles.scss';
 
 interface Position {
@@ -157,7 +158,13 @@ function EntryReviewModal(props: Props) {
                     />
                 </div>
                 <div className={styles.content}>
+                    <Review
+                        className={styles.review}
+                        isAssigned={false}
+                        isControlled={false}
+                    />
                     <ListView
+                        className={styles.comments}
                         data={comments}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
