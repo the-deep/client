@@ -5,15 +5,6 @@
     border-radius: var(--dui-border-radius-card);
     background-color: var(--color-foreground);
 
-    .date-container {
-        display: flex;
-        align-items: center;
-
-        .separator {
-            margin: 0 var(--spacing-small);
-        }
-    }
-
     .header-right {
         display: flex;
         align-items: center;

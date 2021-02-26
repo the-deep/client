@@ -6,6 +6,7 @@ import {
 } from '@togglecorp/fujs';
 
 import FormattedDate from '#rscv/FormattedDate';
+import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
 import Icon from '#rscg/Icon';
 import TextOutput from '#components/general/TextOutput';
@@ -132,23 +133,10 @@ function ProjectItem(props: RecentProjectItemProps) {
             headerDescriptionClassName={styles.dateContainer}
             sub
             headerDescription={(
-                <>
-                    <FormattedDate
-                        title={_ts('home.recentProjects', 'startDateLabel')}
-                        value={startDate}
-                        mode="MMM yyyy"
-                        emptyComponent={emptyComponent}
-                    />
-                    {startDate && endDate && (
-                        <div className={styles.separator}>-</div>
-                    )}
-                    <FormattedDate
-                        title={_ts('home.recentProjects', 'endDateLabel')}
-                        value={endDate}
-                        mode="MMM yyyy"
-                        emptyComponent={emptyComponent}
-                    />
-                </>
+                <DateRangeOutput
+                    startDate={startDate}
+                    endDate={endDate}
+                />
             )}
             headerActions={(
                 <div className={styles.headerRight}>

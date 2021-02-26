@@ -1,17 +1,15 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import FormattedDate from '#rscv/FormattedDate';
 import ContainerCard from '#dui/ContainerCard';
 import Button from '#dui/Button';
 import Icon from '#rscg/Icon';
 import QuickActionButton from '#dui/QuickActionButton';
+import DateRangeOutput from '#dui/DateRangeOutput';
 
 import _ts from '#ts';
 
 import styles from './styles.scss';
-
-const emptyComponent = () => null;
 
 interface ComponentProps {
     className?: string;
@@ -34,23 +32,10 @@ function Analysis(props: ComponentProps) {
             heading={title}
             sub
             headerDescription={(
-                <>
-                    <FormattedDate
-                        title={_ts('analysis', 'startDateLabel')}
-                        value={startDate}
-                        mode="MMM yyyy"
-                        emptyComponent={emptyComponent}
-                    />
-                    {startDate && endDate && (
-                        <div className={styles.separator}>-</div>
-                    )}
-                    <FormattedDate
-                        title={_ts('analysis', 'endDateLabel')}
-                        value={endDate}
-                        mode="MMM yyyy"
-                        emptyComponent={emptyComponent}
-                    />
-                </>
+                <DateRangeOutput
+                    startDate={startDate}
+                    endDate={endDate}
+                />
             )}
             headerActions={(
                 <div className={styles.headerRight}>
