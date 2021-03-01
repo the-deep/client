@@ -1,0 +1,28 @@
+.comment {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    .display-picture {
+        align-self: flex-start;
+        flex: 0 0 auto;
+        width: var(--width-navbar-avatar);
+        height: var(--height-navbar-avatar);
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        padding-left: var(--spacing-small);
+
+        .detail {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+
+            .name {
+                font-weight: var(--font-weight-bold);
+            }
+        }
+    }
+}
