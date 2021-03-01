@@ -150,7 +150,7 @@ export default class ProjectPanel extends React.PureComponent {
                         <Badge
                             icon="locked"
                             title={_ts('project', 'privateProjectBadgeTitle')}
-                            tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                            tooltip={_ts('project', 'privateProjectBadgeTooltip')}
                         />
                     }
                 </div>

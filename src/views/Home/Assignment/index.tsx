@@ -5,12 +5,12 @@ import ListView from '#rsu/../v2/View/ListView';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import Button from '#rsca/Button';
-import Header from '#components/ui/Header';
+import Header from '#dui/Header';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
-import Card from '#components/ui/Card';
+import Card from '#dui/Card';
 
 import {
     ProjectElement,

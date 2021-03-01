@@ -2,16 +2,16 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
-import Tag from '#components/ui/Tag';
+import Tag from '#dui/Tag';
 
-import Container from '#components/ui/Container';
-import Card from '#components/ui/Card';
-import Button from '#components/ui/Button';
-import QuickActionButton from '#components/ui/QuickActionButton';
-import QuickActionLink from '#components/ui/QuickActionLink';
-import ButtonLikeLink from '#components/ui/ButtonLikeLink';
-import Link from '#components/ui/Link';
-import TextArea from '#components/ui/TextArea';
+import Container from '#dui/Container';
+import Card from '#dui/Card';
+import Button from '#dui/Button';
+import QuickActionButton from '#dui/QuickActionButton';
+import QuickActionLink from '#dui/QuickActionLink';
+import ButtonLikeLink from '#dui/ButtonLikeLink';
+import Link from '#dui/Link';
+import TextArea from '#dui/TextArea';
 
 import styles from './styles.scss';
 

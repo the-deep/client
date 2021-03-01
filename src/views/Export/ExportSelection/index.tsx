@@ -25,7 +25,7 @@ import {
 import useRequest from '#utils/request';
 
 import { notifyOnFailure } from '#utils/requestNotify';
-import ExpandableContainer from '#components/ui/ExpandableContainer';
+import ExpandableContainer from '#dui/ExpandableContainer';
 import _ts from '#ts';
 import notify from '#notify';
 

@@ -39,7 +39,7 @@ const ProjectListItem = ({
                     className={styles.badge}
                     icon="locked"
                     title={_ts('project', 'privateProjectBadgeTitle')}
-                    tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                    tooltip={_ts('project', 'privateProjectBadgeTooltip')}
                 />
             }
         </Link>

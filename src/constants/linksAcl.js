@@ -45,6 +45,7 @@ export const allLinks = {
                 'arys',
                 'export',
                 'userExports',
+                'analysisModule',
             ].includes(pathKey) || !hasProjects
         ),
     },

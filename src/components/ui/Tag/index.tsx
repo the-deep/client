@@ -4,7 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import ElementFragments, {
     ElementFragmentsProps,
-} from '#components/ui/ElementFragments';
+} from '#dui/ElementFragments';
 
 import styles from './styles.scss';
 

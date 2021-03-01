@@ -1,0 +1,23 @@
+.analysis-item {
+    display: flex;
+    flex-direction: column;
+    border: var(--width-separator-thin) solid var(--dui-border-color-card);
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--color-foreground);
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        .button {
+            margin: 0 var(--dui-spacing-medium);
+        }
+    }
+
+    .body {
+        display: flex;
+        align-items: flex-start;
+        padding: var(--dui-spacing-small);
+    }
+}
