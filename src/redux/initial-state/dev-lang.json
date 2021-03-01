@@ -1297,7 +1297,9 @@
         "-35701649": "Select Analysis Date",
         "-80223054": "All Analyses",
         "-24200085": "All Analyses",
-        "-98549020": "Select Analysis Date"
+        "-98549020": "Select Analysis Date",
+        "-88197654": "Analysis Edit/Create",
+        "-90678740": "Setup a new analysis"
     },
     "links": {
         "browserExtension": {
@@ -3677,7 +3679,8 @@
             "editAnalysisModalHeading": -30091387,
             "pillarAssignments": -31952614,
             "selectAnalysisDate": -35701649,
-            "allAnalyses": -80223054
+            "allAnalyses": -80223054,
+            "setupNewAnalysisButtonLabel": -90678740
         }
     }
 }
