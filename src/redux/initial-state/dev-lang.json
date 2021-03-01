@@ -1278,7 +1278,8 @@
         "-70983044": "Add pillar analysis",
         "-81726696": "All analyses",
         "-57723792": "No analysis created",
-        "-90678740": "Setup a new analysis"
+        "-90678740": "Setup a new analysis",
+        "-45423653": "{count} Pillar Analyses"
     },
     "links": {
         "browserExtension": {
@@ -3617,7 +3618,8 @@
             "allAnalysesLabel": -81726696,
             "noAnalysisCreatedLabel": -57723792,
             "startDateLabel": 185,
-            "setupNewAnalysisButtonLabel": -90678740
+            "setupNewAnalysisButtonLabel": -90678740,
+            "pillarAnalysisCount": -45423653
         }
     }
 }
