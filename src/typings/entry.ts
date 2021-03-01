@@ -141,3 +141,31 @@ export interface EntryOptions {
     createdBy: KeyValueElement[];
     projectEntryLabel: BasicElement[];
 }
+
+
+export interface EntryComment {
+    id: number;
+    textHistory: {
+        createdAt: string;
+        text: string;
+    }[];
+    lead: number;
+    createdByDetail: {
+        id: number;
+        name: string;
+        email: string;
+        organization: string;
+        displayPicture: string;
+    };
+    mentionedUsersDetail: {
+        id: number;
+        name: string;
+        email: string;
+        organization: string;
+    }[];
+    commentTypeDisplay: string;
+    commentType: number;
+    createdBy: number;
+    entry: number;
+    mentionedUsers: number[];
+}

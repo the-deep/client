@@ -3,7 +3,6 @@
     flex-direction: column;
     width: var(--entry-comment-modal-width);
     max-height: var(--entry-comment-modal-max-height);
-    overflow-y: auto;
 
     .header {
         display: flex;
@@ -13,7 +12,6 @@
         cursor: move;
         user-select: none;
         padding: 0 var(--spacing-small);
-        overflow-y: auto;
     }
 
     .content {
@@ -27,6 +25,8 @@
 
         .comments {
             flex: 1 0 auto;
+            max-height: 25vh;
+            overflow-y: auto;
         }
     }
 
