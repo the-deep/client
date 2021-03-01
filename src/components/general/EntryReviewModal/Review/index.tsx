@@ -96,7 +96,7 @@ function Review(props: Props) {
             <TextArea
                 faramElementName="comment"
                 label="Comment"
-                rows={4}
+                rows={3}
                 autoFocus
             />
             <MultiSelectInput
