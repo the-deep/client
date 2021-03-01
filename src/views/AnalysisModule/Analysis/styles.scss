@@ -87,4 +87,9 @@
             font-weight: var(--font-weight-bold);
         }
     }
+    .body {
+        display: flex;
+        align-items: flex-start;
+        padding: var(--dui-spacing-small);
+    }
 }
