@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Actions from '#components/ui/Actions';
+import Actions from '#dui/Actions';
 
 import styles from './styles.scss';
 

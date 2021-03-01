@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import {
     useButtonFeatures,
-} from '#components/ui/Button';
+} from '#dui/Button';
 
 type PropsFromButton = Parameters<typeof useButtonFeatures>[0];
 export interface ButtonLikeLinkProps extends PropsFromButton, RouterLinkProps {

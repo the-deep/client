@@ -1270,7 +1270,15 @@
         "-49181354": "Failed to fetch Assignment List",
         "-97660055": "Failed to mark the assignment as Done",
         "-88394931": "Failed to mark bulk assignments as  Done",
-        "-39611284": "Lead assigned to"
+        "-39611284": "Lead assigned to",
+        "-55670188": "Analysis",
+        "-69223329": "Analyses overview",
+        "-75339790": "Entries analyzed",
+        "-65511645": "Sources analyzed",
+        "-70983044": "Add pillar analysis",
+        "-81726696": "All analyses",
+        "-57723792": "No analysis created",
+        "-90678740": "Setup a new analysis"
     },
     "links": {
         "browserExtension": {
@@ -2278,7 +2286,8 @@
             "projectQuestionnaires": -91998400,
             "frameworkQuestions": -25976066,
             "home": 5559,
-            "dashboard": -29389738
+            "dashboard": -29389738,
+            "analysisModule": -55670188
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2433,7 +2442,7 @@
             "noAfText": 359,
             "project": 31,
             "privateProjectBadgeTitle": -92759559,
-            "priivateProjectBadgeTooltip": -64655622,
+            "privateProjectBadgeTooltip": -64655622,
             "afClone": 12502,
             "afCloneSuccess": -8045218,
             "afCloneFatal": -48269508,
@@ -3082,7 +3091,7 @@
             "betaLabel": 1237,
             "devLabel": 1240,
             "nightlyLabel": 1239,
-            "priivateProjectBadgeTooltip": -64655622,
+            "privateProjectBadgeTooltip": -64655622,
             "projectTaggingActivityHeading": -42491012,
             "recentProjectsHeading": -52545948,
             "setupNewProjectButtonLabel": -1749585,
@@ -3595,6 +3604,20 @@
             "assignmentListFetchFailed": -49181354,
             "markAsDoneFailed": -97660055,
             "markBulkAsDoneFailed": -88394931
+        },
+        "analysis": {
+            "analysesOverview": -69223329,
+            "entriesAnalyzedLabel": -65511645,
+            "sourcesAnalyzedLabel": -75339790,
+            "totalEntriesLabel": -89597029,
+            "totalSourcesLabel": -25324892,
+            "analysisModule": -55670188,
+            "endDateLabel": 334,
+            "addPillarAnalysis": -70983044,
+            "allAnalysesLabel": -81726696,
+            "noAnalysisCreatedLabel": -57723792,
+            "startDateLabel": 185,
+            "setupNewAnalysisButtonLabel": -90678740
         }
     }
 }
