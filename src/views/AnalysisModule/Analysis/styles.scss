@@ -1,7 +1,10 @@
 .analysis-item {
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
     flex-grow: 1;
+=======
+>>>>>>> bc57cab00 (Feature/analysis module setup 2 (#1399))
     border: var(--width-separator-thin) solid var(--dui-border-color-card);
     border-radius: var(--dui-border-radius-card);
     background-color: var(--color-foreground);
@@ -16,6 +19,7 @@
         }
     }
 
+<<<<<<< HEAD
     .pillar-content {
         padding: 0 !important;
 
@@ -90,5 +94,11 @@
         .value {
             font-weight: var(--font-weight-bold);
         }
+=======
+    .body {
+        display: flex;
+        align-items: flex-start;
+        padding: var(--dui-spacing-small);
+>>>>>>> bc57cab00 (Feature/analysis module setup 2 (#1399))
     }
 }

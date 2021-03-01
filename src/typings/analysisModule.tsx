@@ -1,6 +1,7 @@
 import { BasicElement } from './';
 
 export interface AnalysisElement extends BasicElement {
+<<<<<<< HEAD
     title: string;
     teamLead: number;
     teamLeadName: string;
@@ -8,10 +9,13 @@ export interface AnalysisElement extends BasicElement {
     startDate?: string;
     endDate?: string;
     createdOn?: string;
+=======
+>>>>>>> bc57cab00 (Feature/analysis module setup 2 (#1399))
 }
 
 export interface PillarAnalysisElement extends BasicElement {
 }
+<<<<<<< HEAD
 
 export interface AnalysisPillars {
     id: number;
@@ -23,3 +27,5 @@ export interface AnalysisPillars {
     informationGap?: string;
     filters?: unknown; // To be assigned a type when filters are passed from API
 }
+=======
+>>>>>>> bc57cab00 (Feature/analysis module setup 2 (#1399))
