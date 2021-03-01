@@ -1,8 +1,8 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Header from '#components/ui/Header';
-import Footer from '#components/ui/Footer';
+import Header from '#dui/Header';
+import Footer from '#dui/Footer';
 
 import styles from './styles.scss';
 
@@ -17,6 +17,7 @@ export interface ContainerProps {
     headingClassName?: string;
     children?: React.ReactNode;
     contentClassName?: string;
+    footerClassName?: string;
     footerContent?: React.ReactNode;
     footerActions?: React.ReactNode;
 
@@ -38,6 +39,7 @@ function Container(props: ContainerProps) {
         contentClassName,
         footerContent,
         footerActions,
+        footerClassName,
         sub = false,
     } = props;
 
@@ -61,7 +63,7 @@ function Container(props: ContainerProps) {
             {(footerContent || footerActions) && (
                 <Footer
                     actions={footerActions}
-                    className={styles.footer}
+                    className={_cs(styles.footer, footerClassName)}
                 >
                     { footerContent }
                 </Footer>

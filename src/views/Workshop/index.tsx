@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 
 import Icon from '#rscg/Icon';
-import Tag from '#components/ui/Tag';
+import Tag from '#dui/Tag';
 
 import Container from '#components/ui/Container';
 import Card from '#components/ui/Card';
@@ -20,7 +20,6 @@ import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
 import Timeline from '#components/viz/Timeline';
-
 import { shortMonthNamesMap } from '#utils/common';
 
 import styles from './styles.scss';

@@ -4,6 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Icon from '#rscg/Icon';
 
+import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 import InformationBox from '#components/viewer/InformationBox';
 import svgPaths from '#constants/svgPaths';
 
@@ -13,7 +14,6 @@ import {
     ProjectsSummary,
 } from '#typings';
 
-import InfoBoxWithDonut from './InfoBoxWithDonut';
 import styles from './styles.scss';
 
 interface Props {
