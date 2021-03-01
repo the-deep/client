@@ -285,7 +285,8 @@ export default class Entry extends React.PureComponent {
                 <Widget
                     widget={widget}
                     widgetName={widgetId}
-                    widgetType={VIEW.list}
+                    wid
+                    getType={VIEW.list}
                 />
             );
         }
@@ -414,7 +415,9 @@ export default class Entry extends React.PureComponent {
                                 )
                             }
                             modal={
-                                <EntryReviewModal />
+                                <EntryReviewModal
+                                    entryId={entryId}
+                                />
                             }
                         >
                             {_ts('entries', 'reviewEntry')}

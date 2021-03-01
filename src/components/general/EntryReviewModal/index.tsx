@@ -5,17 +5,22 @@ import {
     bound,
 } from '@togglecorp/fujs';
 
+import Pager from '#rscv/Pager';
 import DangerButton from '#rsca/Button/DangerButton';
 import Confirm from '#rscv/Modal/Confirm';
 import FloatingContainer from '#rscv/FloatingContainer';
-import ListView from '#rscv/List/ListView';
+import ListView from '#rsu/../v2/View/ListView';
 
-import useDragMove from '#hooks/useDragMove';
+import useRequest from '#utils/request';
+import { MultiResponse, EntryComment } from '#typings';
+import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
+import useDragMove from '#hooks/useDragMove';
 
 import Comment from './Comment';
 import Review from './Review';
 import styles from './styles.scss';
+
 
 interface Position {
     top: number;
@@ -25,6 +30,7 @@ interface Position {
 interface Props {
     className?: string;
     parentBCR: Position;
+    entryId: number;
     closeModal: () => void;
 }
 
@@ -34,62 +40,56 @@ interface Comment {
     id: number;
     text: string;
 }
-const commentKeySelector = (d: Comment) => d.id;
-const comments: Comment[] = [
-    {
-        id: 1,
-        text: 'Facilisis sed odio morbi quis commodo odio aenean sed adipiscing.',
-    },
-    {
-        id: 2,
-        text: 'Praesent elementum facilisis leo, vel fringilla est ullamcorper eget nulla!',
-    },
-    {
-        id: 3,
-        text: 'Sollicitudin tempor id eu nisl nunc mi ipsum, faucibus vitae.',
-    },
-    {
-        id: 4,
-        text: 'Facilisis sed odio morbi quis commodo odio aenean sed adipiscing.',
-    },
-    {
-        id: 5,
-        text: 'Ac ut consequat semper viverra nam libero justo, laoreet sit!',
-    },
-];
+
+const commentKeySelector = (d: EntryComment) => d.id;
+const maxItemsPerPage = 50;
 
 function EntryReviewModal(props: Props) {
     const {
         className,
         parentBCR,
         closeModal,
+        entryId,
     } = props;
+
+    const [activePage, setActivePage] = useState<number>(1);
+    const [
+        commentsPending,
+        commentsResponse,
+    ] = useRequest<MultiResponse<EntryComment>>({
+        url: `server://v2/entries/${entryId}/review-comments/`,
+        method: 'GET',
+        query: {
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        },
+        autoTrigger: true,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
+        },
+    });
 
     const containerRef = useRef<HTMLDivElement>(null);
     const [pristine, setPristine] = useState<boolean>(true);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
     const handleInvalidate = useCallback((container) => {
-        const { top, left } = parentBCR;
-
-        const contentRect = container.getBoundingClientRect();
+        const { width, height, top, left } = container.getBoundingClientRect();
 
         const windowRect = {
             width: window.innerWidth,
             height: window.innerHeight,
         };
-
-        let topCalc = top;
-        let leftCalc = left - contentRect.width;
+        let topCalc = top === 0 ? parentBCR.top : top;
+        let leftCalc = left === 0 ? parentBCR.left - width : left;
 
         if (leftCalc < 0) {
             leftCalc = WINDOW_PADDING;
         }
 
-        if ((topCalc + contentRect.height) > (windowRect.height - WINDOW_PADDING)) {
-            topCalc -= ((contentRect.height + topCalc + WINDOW_PADDING) - windowRect.height);
+        if ((topCalc + height) > (windowRect.height - WINDOW_PADDING)) {
+            topCalc -= ((height + topCalc + WINDOW_PADDING) - windowRect.height);
         }
-
         const optionsContainerPosition = {
             top: `${topCalc}px`,
             left: `${leftCalc}px`,
@@ -114,7 +114,7 @@ function EntryReviewModal(props: Props) {
         }
     }, [closeModal]);
 
-    const commentRendererParams = useCallback((_, comment: Comment) => comment, []);
+    const commentRendererParams = useCallback((_, comment: EntryComment) => ({ comment }), []);
 
     const handleMouseMove = useCallback((e) => {
         if (containerRef.current) {
@@ -132,6 +132,7 @@ function EntryReviewModal(props: Props) {
     }, []);
 
     const { handlePointerDown } = useDragMove({ onDragMove: handleMouseMove });
+
     return (
         <>
             <FloatingContainer
@@ -165,11 +166,21 @@ function EntryReviewModal(props: Props) {
                     />
                     <ListView
                         className={styles.comments}
-                        data={comments}
+                        data={commentsResponse?.results}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
                         renderer={Comment}
+                        pending={commentsPending}
                     />
+                    {commentsResponse && commentsResponse?.count > 50 && (
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={commentsResponse?.count}
+                            maxItemsPerPage={maxItemsPerPage}
+                            onPageClick={setActivePage}
+                            showItemsPerPageChange={false}
+                        />
+                    )}
                 </div>
                 <div className={styles.footer}>Approved By</div>
             </FloatingContainer>
@@ -187,3 +198,4 @@ function EntryReviewModal(props: Props) {
 }
 
 export default EntryReviewModal;
+
