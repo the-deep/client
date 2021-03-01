@@ -74,7 +74,6 @@ function PillarListItem(props: PillarListRendererProps) {
     );
 }
 
-
 function Analysis(props: ComponentProps) {
     const {
         title,
