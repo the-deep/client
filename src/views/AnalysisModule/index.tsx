@@ -84,6 +84,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
+        analysisId: data.id,
     }), []);
 
     return (
