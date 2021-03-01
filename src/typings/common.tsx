@@ -77,3 +77,8 @@ export interface DatabaseEntityBase {
 export interface FaramErrors {
     [key: string]: string | undefined | string [] | FaramErrors;
 }
+
+export interface NavbarContextProps {
+    parentNode: HTMLDivElement | null | undefined;
+    setParentNode: (node: HTMLDivElement | null | undefined) => void;
+}

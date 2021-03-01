@@ -1,17 +1,23 @@
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import {
     Switch,
     Route,
     withRouter,
 } from 'react-router-dom';
 import { connect } from 'react-redux';
+import {
+    _cs,
+    isDefined,
+    getFirstKeyByValue,
+} from '@togglecorp/fujs';
 
 import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
 import PrivateRoute from '#rscg/PrivateRoute';
 import Toast from '#rscv/Toast';
 
 import RouteSynchronizer from '#components/general/RouteSynchronizer';
+import NavbarContext from '#components/NavbarContext';
 import Navbar from '#components/general/Navbar';
 
 import { mapObjectToObject } from '#utils/common';
@@ -21,6 +27,8 @@ import {
     pathNames,
     routesOrder,
     routes,
+    getCurrentMatch,
+    showSubNavbar,
 } from '#constants';
 
 import { setTheme } from '#theme';
@@ -70,24 +78,24 @@ const views = mapObjectToObject(
 );
 
 // NOTE: withRouter is required here so that link change are updated
-@withRouter
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Multiplexer extends React.PureComponent {
-    static propTypes = propTypes;
+function Multiplexer(props) {
+    const {
+        currentThemeId,
+        lastNotify,
+        notifyHide,
+        authenticated,
+        location,
+    } = props;
 
-    componentDidMount() {
-        const { currentThemeId } = this.props;
-        // window.onunload = this.props.removeSelfTabStatus;
-
+    useEffect(() => {
         setTheme(currentThemeId);
-    }
+    }, [currentThemeId]);
 
-    handleToastClose = () => {
-        const { notifyHide } = this.props;
+    const handleToastClose = useCallback(() => {
         notifyHide();
-    }
+    }, [notifyHide]);
 
-    renderRoute = (routeId) => {
+    const renderRoute = useCallback((routeId) => {
         const view = views[routeId];
         if (!view) {
             console.error(`Cannot find view associated with routeID: ${routeId}`);
@@ -96,7 +104,6 @@ export default class Multiplexer extends React.PureComponent {
 
         const path = pathNames[routeId];
         const { redirectTo, type } = routes[routeId];
-        const { authenticated } = this.props;
 
         switch (type) {
             case ROUTE.exclusivelyPublic:
@@ -134,27 +141,48 @@ export default class Multiplexer extends React.PureComponent {
                 console.error(`Invalid route type ${type}`);
                 return null;
         }
-    }
+    }, [authenticated]);
 
-    render() {
-        const {
-            lastNotify,
-        } = this.props;
+    const [parentNode, setParentNode] = useState(null);
+    const currentMatch = useMemo(() => getCurrentMatch(location), [location]);
 
-        return (
-            <>
-                <BrowserWarning />
-                <Navbar className="navbar" />
-                <Toast
-                    notification={lastNotify}
-                    onClose={this.handleToastClose}
-                />
-                <div className="deep-main-content">
-                    <Switch>
-                        { routesOrder.map(this.renderRoute) }
-                    </Switch>
-                </div>
-            </>
-        );
-    }
+    const currentPath = useMemo(() => (
+        isDefined(currentMatch)
+            ? getFirstKeyByValue(pathNames, currentMatch.path) : 'fourHundredFour'
+    ), [currentMatch]);
+
+    return (
+        <NavbarContext.Provider
+            value={{
+                parentNode,
+                setParentNode,
+            }}
+        >
+            <BrowserWarning />
+            <Navbar
+                className={_cs(
+                    'navbar',
+                    showSubNavbar[currentPath] && 'show-sub-navbar',
+                )}
+            />
+            <Toast
+                notification={lastNotify}
+                onClose={handleToastClose}
+            />
+            <div
+                className={_cs(
+                    'deep-main-content',
+                    showSubNavbar[currentPath] && 'show-sub-navbar',
+                )}
+            >
+                <Switch>
+                    { routesOrder.map(renderRoute) }
+                </Switch>
+            </div>
+        </NavbarContext.Provider>
+    );
 }
+
+Multiplexer.propTypes = propTypes;
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Multiplexer));

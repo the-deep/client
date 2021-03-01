@@ -6,13 +6,14 @@ import {
 } from '@togglecorp/fujs';
 
 import FormattedDate from '#rscv/FormattedDate';
+import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
 import Icon from '#rscg/Icon';
-import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import TextOutput from '#components/general/TextOutput';
 import InformationBox from '#components/viewer/InformationBox';
 import ProgressLine from '#components/viz/ProgressLine';
-import ContainerCard from '#components/ui/ContainerCard';
+import ContainerCard from '#dui/ContainerCard';
+import ButtonLikeLink from '#dui/ButtonLikeLink';
 
 import {
     AreaChart,
@@ -132,23 +133,10 @@ function ProjectItem(props: RecentProjectItemProps) {
             headerDescriptionClassName={styles.dateContainer}
             sub
             headerDescription={(
-                <>
-                    <FormattedDate
-                        title={_ts('home.recentProjects', 'startDateLabel')}
-                        value={startDate}
-                        mode="MMM yyyy"
-                        emptyComponent={emptyComponent}
-                    />
-                    {startDate && endDate && (
-                        <div className={styles.separator}>-</div>
-                    )}
-                    <FormattedDate
-                        title={_ts('home.recentProjects', 'endDateLabel')}
-                        value={endDate}
-                        mode="MMM yyyy"
-                        emptyComponent={emptyComponent}
-                    />
-                </>
+                <DateRangeOutput
+                    startDate={startDate}
+                    endDate={endDate}
+                />
             )}
             headerActions={(
                 <div className={styles.headerRight}>
