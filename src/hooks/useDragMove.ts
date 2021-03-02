@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, SyntheticEvent } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface Props {
     onPointerDown?: (e: PointerEvent) => void;

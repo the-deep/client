@@ -10,9 +10,10 @@ import DangerButton from '#rsca/Button/DangerButton';
 import Confirm from '#rscv/Modal/Confirm';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rsu/../v2/View/ListView';
+import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
 
 import useRequest from '#utils/request';
-import { MultiResponse, EntryComment } from '#typings';
+import { MultiResponse, EntryComment, EntryReviewSummary } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 import useDragMove from '#hooks/useDragMove';
@@ -31,14 +32,17 @@ interface Props {
     className?: string;
     parentBCR: Position;
     entryId: number;
+    projectId: number;
     closeModal: () => void;
+    activeUser: {
+        userId: number;
+    };
 }
 
 const WINDOW_PADDING = 24;
 
-interface Comment {
-    id: number;
-    text: string;
+interface MultiResponseWithSummary<T> extends MultiResponse<T> {
+    summary: EntryReviewSummary;
 }
 
 const commentKeySelector = (d: EntryComment) => d.id;
@@ -50,13 +54,17 @@ function EntryReviewModal(props: Props) {
         parentBCR,
         closeModal,
         entryId,
+        projectId,
+        activeUser,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
     const [
         commentsPending,
         commentsResponse,
-    ] = useRequest<MultiResponse<EntryComment>>({
+        ,
+        getComments,
+    ] = useRequest<MultiResponseWithSummary<EntryComment>>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'GET',
         query: {
@@ -133,6 +141,9 @@ function EntryReviewModal(props: Props) {
 
     const { handlePointerDown } = useDragMove({ onDragMove: handleMouseMove });
 
+    const isApproved = commentsResponse?.summary.approvedBy
+        .some(v => v.id === activeUser.userId) ?? false;
+
     return (
         <>
             <FloatingContainer
@@ -161,8 +172,13 @@ function EntryReviewModal(props: Props) {
                 <div className={styles.content}>
                     <Review
                         className={styles.review}
-                        isAssigned={false}
-                        isControlled={false}
+                        entryId={entryId}
+                        pristine={pristine}
+                        setPristine={setPristine}
+                        onSuccess={getComments}
+                        projectId={projectId}
+                        isApproved={isApproved}
+                        isControlled={commentsResponse?.summary.verified ?? false}
                     />
                     <ListView
                         className={styles.comments}
@@ -171,18 +187,29 @@ function EntryReviewModal(props: Props) {
                         rendererParams={commentRendererParams}
                         renderer={Comment}
                         pending={commentsPending}
+                        emptyComponent={null}
                     />
-                    {commentsResponse && commentsResponse?.count > 50 && (
+                    {commentsResponse && commentsResponse.count > maxItemsPerPage && (
                         <Pager
                             activePage={activePage}
-                            itemsCount={commentsResponse?.count}
+                            itemsCount={commentsResponse.count}
                             maxItemsPerPage={maxItemsPerPage}
                             onPageClick={setActivePage}
                             showItemsPerPageChange={false}
                         />
                     )}
                 </div>
-                <div className={styles.footer}>Approved By</div>
+                <div className={styles.footer}>
+                    { commentsResponse && commentsResponse.summary.approvedBy.length > 0 && (
+                        <>
+                            {_ts('entryReview', 'approvedBy')}
+                            <CommaSeparateItems
+                                className={styles.approvedBy}
+                                items={commentsResponse.summary.approvedBy}
+                            />
+                        </>
+                    ) }
+                </div>
             </FloatingContainer>
             <Confirm
                 className={styles.confirm}
@@ -198,4 +225,3 @@ function EntryReviewModal(props: Props) {
 }
 
 export default EntryReviewModal;
-

@@ -8,21 +8,36 @@ import RadioInput from '#rsci/RadioInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
+import useRequest from '#utils/request';
+import { notifyOnFailure } from '#utils/requestNotify';
+import _ts from '#ts';
+
 import {
-    FaramErrors,
+    FaramErrors, MultiResponse,
 } from '#typings';
 
 import styles from './styles.scss';
 
+interface Review {
+    text?: string;
+    comment_type?: number; // eslint-disable-line camelcase
+    mentioned_users?: number[]; // eslint-disable-line camelcase
+}
+
 interface Props {
     className?: string;
     isControlled: boolean;
-    isAssigned: boolean;
+    isApproved: boolean;
+    onSuccess: () => void;
+    entryId: number;
+    projectId: number;
+    pristine: boolean;
+    setPristine: (value: boolean) => void;
 }
-interface FaramValues {}
+
 interface Member {
     id: number;
-    name: string;
+    displayName: string;
 }
 
 interface ReviewType {
@@ -30,14 +45,8 @@ interface ReviewType {
     label: string;
 }
 
-const members: Member[] = [
-    { id: 1, name: 'sameer' },
-    { id: 2, name: 'navin' },
-    { id: 3, name: 'rishi' },
-];
-
 const memberKeySelector = (d: Member) => d.id;
-const memberNameSelector = (d: Member) => d.name;
+const memberNameSelector = (d: Member) => d.displayName;
 const reviewTypeKeySelector = (d: ReviewType) => d.id;
 const reviewTypeLabelSelector = (d: ReviewType) => d.label;
 
@@ -45,41 +54,81 @@ function Review(props: Props) {
     const {
         className,
         isControlled,
-        isAssigned,
+        isApproved,
+        entryId,
+        projectId,
+        pristine,
+        setPristine,
+        onSuccess,
     } = props;
 
     const schema: ObjectSchema = {
         fields: {
-            comment: [],
-            assignees: [],
-            reviewType: [requiredCondition],
+            text: [],
+            comment_type: [requiredCondition],
+            mentioned_users: [requiredCondition],
         },
     };
-    const [faramValues, setFaramValues] = useState<FaramValues>();
+
+    const [faramValues, setFaramValues] = useState<Review | undefined>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
-    const [pristine, setPristine] = useState<boolean>(true);
+
+    const [
+        reviewPending,
+        ,
+        ,
+        postReview,
+    ] = useRequest<unknown>({
+        url: `server://v2/entries/${entryId}/review-comments/`,
+        method: 'POST',
+        body: faramValues,
+        onSuccess: () => {
+            onSuccess();
+            setFaramValues(undefined);
+        },
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
+        },
+    });
+
+    const [
+        projectMembersPending,
+        projectMembersResponse,
+    ] = useRequest<MultiResponse<Member>>({
+        url: `server://v2/projects/${projectId}/members/`,
+        method: 'GET',
+        query: {
+            fields: ['id', 'display_name'],
+        },
+        autoTrigger: true,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
+        },
+    });
 
     const reviewTypes: ReviewType[] = useMemo(() => ([
-        { id: 1, label: 'comment' },
-        isAssigned ? { id: 2, label: 'remove assignment' } : { id: 2, label: 'assign' },
-        isControlled ? { id: 3, label: 'remove control' } : { id: 3, label: 'control' },
-    ]), [isAssigned, isControlled]);
+        { id: 0, label: _ts('entryReview', 'comment') },
+        isApproved ? { id: 2, label: _ts('entryReview', 'unapprove') }
+            : { id: 1, label: _ts('entryReview', 'approve') },
+        isControlled ? { id: 4, label: _ts('entryReview', 'uncontrol') }
+            : { id: 3, label: _ts('entryReview', 'control') },
+    ]), [isApproved, isControlled]);
 
     const handleFaramChange = useCallback((newFaramValues, newFaramErrors) => {
         setPristine(false);
         setFaramValues(newFaramValues);
         setFaramErrors(newFaramErrors);
-    }, []);
+    }, [setPristine]);
 
-    const handleFaramValidationSuccess = useCallback((_, finalValues) => {
+    const handleFaramValidationSuccess = useCallback(() => {
         setPristine(true);
-    }, []);
+        postReview();
+    }, [setPristine, postReview]);
 
     const handleFaramValidationFailure = useCallback((newFaramErrors) => {
         setFaramErrors(newFaramErrors);
     }, []);
 
-    const pending = false;
     return (
         <Faram
             className={_cs(className, styles.review)}
@@ -89,26 +138,27 @@ function Review(props: Props) {
             schema={schema}
             value={faramValues}
             error={faramErrors}
+            disabled={reviewPending || projectMembersPending}
         >
             <NonFieldErrors
                 faramElement
             />
             <TextArea
-                faramElementName="comment"
-                label="Comment"
+                faramElementName="text"
+                label={_ts('entryReview', 'comment')}
                 rows={3}
                 autoFocus
             />
             <MultiSelectInput
-                faramElementName="assignees"
-                label="Assignees"
-                options={members}
+                faramElementName="mentioned_users"
+                label={_ts('entryReview', 'assignees')}
+                options={projectMembersResponse?.results}
                 keySelector={memberKeySelector}
                 labelSelector={memberNameSelector}
             />
             <RadioInput
                 className={styles.types}
-                faramElementName="reviewType"
+                faramElementName="comment_type"
                 options={reviewTypes}
                 keySelector={reviewTypeKeySelector}
                 labelSelector={reviewTypeLabelSelector}
@@ -117,9 +167,9 @@ function Review(props: Props) {
                 className={styles.submitButton}
                 type="submit"
                 disabled={pristine}
-                pending={pending}
+                pending={reviewPending}
             >
-                Review
+                {_ts('entryReview', 'review')}
             </PrimaryButton>
         </Faram>
     );
