@@ -1,0 +1,48 @@
+.modal {
+    display: flex;
+    flex-direction: column;
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    border-radius: var(--dui-border-radius-modal);
+    background-color: var(--dui-color-background-modal);
+    min-width: var(--dui-width-min-modal);
+    max-width: var(--dui-width-max-modal);
+    max-height: var(--dui-height-max-modal);
+    overflow: auto;
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+
+        .title-container {
+            flex-grow: 1;
+            padding: var(--dui-spacing-medium);
+        }
+
+        .actions {
+            flex-shrink: 0;
+            padding: var(--dui-spacing-medium);
+
+            .close-button {
+                border: none;
+                background-color: transparent;
+                padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small));
+                color: var(--dui-color-text);
+                font-size: var(--dui-font-size-large);
+            }
+        }
+    }
+
+    .modal-body {
+        flex-grow: 1;
+        padding: var(--dui-spacing-extra-large);
+        overflow: auto;
+    }
+
+    .modal-footer {
+        flex-shrink: 0;
+        padding: var(--dui-spacing-extra-large);
+    }
+}
+
