@@ -16,10 +16,6 @@
         padding-left: var(--spacing-small);
 
         .detail {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-
             .name {
                 font-weight: var(--font-weight-bold);
             }
