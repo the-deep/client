@@ -1,6 +1,7 @@
 .container {
     display: flex;
     flex-direction: column;
+    z-index: 1;
     width: var(--entry-comment-modal-width);
     max-height: var(--entry-comment-modal-max-height);
 
@@ -33,12 +34,17 @@
     .footer {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         justify-content: flex-start;
         background-color: var(--color-foreground);
         padding: var(--spacing-small);
+
+        .approved-by {
+            padding-left: var(--spacing-small);
+        }
     }
 }
 
 .confirm {
-    display: flex;
+    z-index: 2;
 }
