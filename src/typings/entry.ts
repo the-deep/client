@@ -142,6 +142,12 @@ export interface EntryOptions {
     projectEntryLabel: BasicElement[];
 }
 
+interface UserDetail {
+    id: number;
+    name: string;
+    email: string;
+    organization: string;
+}
 
 export interface EntryComment {
     id: number;
@@ -150,22 +156,17 @@ export interface EntryComment {
         text: string;
     }[];
     lead: number;
-    createdByDetail: {
-        id: number;
-        name: string;
-        email: string;
-        organization: string;
-        displayPicture: string;
-    };
-    mentionedUsersDetail: {
-        id: number;
-        name: string;
-        email: string;
-        organization: string;
-    }[];
+    createdByDetail: UserDetail & { displayPicture: string };
+    mentionedUsersDetail: UserDetail[];
     commentTypeDisplay: string;
     commentType: number;
     createdBy: number;
     entry: number;
     mentionedUsers: number[];
+}
+
+export interface EntryReviewSummary {
+    approvedBy: UserDetail[];
+    verified: boolean;
+    verificationLastChangedBy: UserDetail & { displayPicture: string };
 }
