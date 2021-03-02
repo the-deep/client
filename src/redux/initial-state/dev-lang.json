@@ -1466,8 +1466,22 @@
         "-82831919": "Review",
         "-91820939": "Analytical Framework",
         "-72934872": "Review",
-        "-79798712": "Entry Comments and Review",
-        "-797971971": "Approved by"
+        "-79798712": "Entry Comment and Review",
+        "-797971971": "Approved by",
+        "-979879781": "Comment",
+        "-711221123": "Unapprove",
+        "-123180842": "Approve",
+        "-123169797": "Uncontrol",
+        "-7170880113": "Control",
+        "-7978018129": "Review",
+        "-80808123": "{commentType} on",
+        "-1231098742": "and assigned it to",
+        "-980808112": "commented",
+        "-9808108113": "approved",
+        "-1231870823": "unapproved",
+        "-1231231455": "controlled",
+        "-123808108": "uncontrolled",
+        "-1208084875": "Assignees"
     },
     "links": {
         "browserExtension": {
@@ -4255,7 +4269,21 @@
         },
         "entryReview": {
             "reviewHeading": -79798712,
-            "approvedBy": -797971971
+            "approvedBy": -797971971,
+            "comment": -979879781,
+            "unapprove": -711221123,
+            "approve": -123180842,
+            "uncontrol": -123169797,
+            "control": -7170880113,
+            "review": -7978018129,
+            "commentType": -80808123,
+            "assignedItTo": -1231098742,
+            "commented": -980808112,
+            "approved": -9808108113,
+            "unapproved": -1231870823,
+            "controlled": -1231231455,
+            "uncontrolled": -123808108,
+            "assignees": -1208084875
         }
     }
 }
