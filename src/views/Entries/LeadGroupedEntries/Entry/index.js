@@ -37,6 +37,7 @@ import {
     deleteEntryAction,
     editEntryAction,
     patchEntryVerificationAction,
+    activeUserSelector,
 } from '#redux';
 
 import {
@@ -71,6 +72,7 @@ const propTypes = {
     setEntryVerification: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
+    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -107,6 +109,10 @@ const requestOptions = {
     onFatal: notifyOnFatal(_ts('entries', 'deleteEntryFailure')),
 };
 
+const mapStateToProps = state => ({
+    activeUser: activeUserSelector(state),
+});
+
 const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
@@ -129,7 +135,7 @@ const emptySchema = { fields: {} };
 
 const entryLabelKeySelector = d => d.labelId;
 
-@connect(null, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
@@ -318,6 +324,7 @@ export default class Entry extends React.PureComponent {
             onEntryEdit,
             projectId,
             leadId,
+            activeUser,
         } = this.props;
 
         const {
@@ -420,6 +427,8 @@ export default class Entry extends React.PureComponent {
                             modal={
                                 <EntryReviewModal
                                     entryId={entryId}
+                                    projectId={projectId}
+                                    activeUser={activeUser}
                                 />
                             }
                         >
