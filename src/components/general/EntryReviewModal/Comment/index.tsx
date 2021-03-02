@@ -1,13 +1,12 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import {
-    _cs,
-} from '@togglecorp/fujs';
 
 import FormattedDate from '#rscv/FormattedDate';
 import DisplayPicture from '#components/viewer/DisplayPicture';
+import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
 
 import { EntryComment } from '#typings';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -16,42 +15,12 @@ interface Props {
 }
 
 const commentTypeToTextMap: {[id: number]: string} = {
-    0: 'commented',
-    1: 'approved',
-    2: 'unapproved',
-    3: 'controlled',
-    4: 'uncontrolled',
+    0: _ts('entryReview', 'commented'),
+    1: _ts('entryReview', 'approved'),
+    2: _ts('entryReview', 'unapproved'),
+    3: _ts('entryReview', 'controlled'),
+    4: _ts('entryReview', 'uncontrolled'),
 };
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface SeparateNamesProps {
-    users: User[];
-}
-
-function SeparateNames(props: SeparateNamesProps) {
-    const { users } = props;
-    if (users.length < 1) {
-        return null;
-    }
-
-    const list = users.map((user: User) => (
-        <span key={user.id} className={styles.name}>{user.name}</span>
-    ));
-
-    const out: ReactNode[] = [];
-    list.forEach((user, i) => {
-        if (list.length > 1 && i === list.length - 1) {
-            out.push(' and ');
-        }
-        out.push(user);
-        if (list.length > 2 && i < list.length - 2) out.push(', ');
-    });
-    return <span>{out}</span>;
-}
 
 function Comment(props: Props) {
     const {
@@ -76,24 +45,27 @@ function Comment(props: Props) {
             <div
                 className={styles.content}
             >
-                <div className={styles.detail}>
+                <span className={styles.detail}>
                     <span className={styles.name}>{createdByDetail.name}</span>
                     <span>
-                        &nbsp; {commentTypeToTextMap[commentType]} on &nbsp;
+                        &nbsp;
+                        {_ts('entryReview', 'commentType', { commentType: commentTypeToTextMap[commentType] })}
+                        &nbsp;
                         <FormattedDate
                             value={latest.createdAt}
                             mode="dd-MMM-yyyy"
                         />
-                         &nbsp; and assigned it to &nbsp;
+                        &nbsp;
+                        {_ts('entryReview', 'assignedItTo')}
+                        &nbsp;
                     </span>
                     <span>
-                        <SeparateNames
-                            users={mentionedUsersDetail}
+                        <CommaSeparateItems
+                            items={mentionedUsersDetail}
                         />
                     </span>
-                </div>
+                </span>
                 <ReactMarkdown
-                    className={styles.commentText}
                     source={latest.text}
                 />
             </div>
