@@ -9,6 +9,7 @@ import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#dui/Button';
+import Modal from '#dui/Modal';
 
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
