@@ -9,10 +9,12 @@ import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#dui/Button';
+import Modal from '#dui/Modal';
 
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
+import { useModalState } from '#hooks/stateManagement';
 
 import {
     AppState,
@@ -51,6 +53,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
         activeProject,
     } = props;
 
+    const [
+        showAnaylsisAddModal,
+        setModalShow,
+        setModalHidden,
+    ] = useModalState(false);
+
     const [activePage, setActivePage] = useState(1);
     const [analyses, setAnalyses] = useState<AnalysisElement[]>([]);
     const [analysisCount, setAnalysisCount] = useState(0);
@@ -84,6 +92,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 <div className={styles.subNavbar}>
                     <Button
                         variant="primary"
+                        onClick={setModalShow}
                         icons={(
                             <Icon name="add" />
                         )}
@@ -171,6 +180,14 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     emptyComponent={EmptyAnalysisContainer}
                 />
             </Container>
+            {showAnaylsisAddModal && (
+                <Modal
+                    heading={_ts('analysis', 'addAnalysisModalHeading')}
+                    onClose={setModalHidden}
+                >
+                    Here
+                </Modal>
+            )}
         </div>
     );
 }
