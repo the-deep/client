@@ -1,0 +1,9 @@
+.pillar-analysis-row {
+    display: flex;
+    align-items: center;
+    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+    .input {
+        padding: var(--dui-spacing-small);
+    }
+}
