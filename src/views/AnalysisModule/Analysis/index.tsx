@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import ContainerCard from '#dui/ContainerCard';
@@ -12,10 +12,12 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 interface ComponentProps {
+    analysisId: number;
     className?: string;
     title: string;
     startDate?: string;
     endDate?: string;
+    onEdit: (anaylsisId: number) => void;
 }
 
 function Analysis(props: ComponentProps) {
@@ -24,7 +26,13 @@ function Analysis(props: ComponentProps) {
         className,
         startDate,
         endDate,
+        onEdit,
+        analysisId,
     } = props;
+
+    const handleEditClick = useCallback(() => {
+        onEdit(analysisId);
+    }, [analysisId, onEdit]);
 
     return (
         <ContainerCard
@@ -50,6 +58,7 @@ function Analysis(props: ComponentProps) {
                     </Button>
                     <QuickActionButton
                         className={styles.button}
+                        onClick={handleEditClick}
                     >
                         <Icon name="edit" />
                     </QuickActionButton>

@@ -1277,7 +1277,11 @@
         "-70983044": "Add pillar analysis",
         "-81726696": "All analyses",
         "-57723792": "No analysis created",
-        "-90678740": "Setup a new analysis"
+        "-90678740": "Setup a new analysis",
+        "-30091387": "Edit analysis",
+        "-49556": "Pillars",
+        "-35552020": "Team lead",
+        "-76422871": "Add an analyst"
     },
     "links": {
         "browserExtension": {
@@ -3616,6 +3620,23 @@
             "noAnalysisCreatedLabel": -57723792,
             "startDateLabel": 185,
             "setupNewAnalysisButtonLabel": -90678740
+        },
+        "analysis.editModal": {
+            "addAnalysisModalHeading": -90678740,
+            "analysisTitleLabel": 13,
+            "analysisTitlePlaceholder": 13,
+            "createButtonLabel": 179,
+            "frameworkTitle": 13,
+            "matrixPillarsPlaceholder": -49556,
+            "pillarAnalysisAssigneeLabel": 6,
+            "pillarAnalysisAssigneePlaceholder": 17,
+            "pillarAnalysisTitleLabel": 13,
+            "pillarAnalysisPillarTitle": -49556,
+            "teamLeadLabel": -35552020,
+            "teamLeadPlaceholder": 17,
+            "usersTitle": 1119,
+            "pillarAnalysisTitlePlaceholder": 14,
+            "addAnAnalystButtonLabel": -76422871
         }
     }
 }
