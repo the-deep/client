@@ -12,6 +12,8 @@ import styles from './styles.scss';
 const propTypes = {
     pending: PropTypes.bool,
     onUploadPending: PropTypes.func.isRequired,
+    onUpload: PropTypes.func.isRequired,
+    files: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -43,6 +45,8 @@ export default class AdditionalDocuments extends React.PureComponent {
     render() {
         const {
             pending,
+            onUpload,
+            files,
         } = this.props;
 
         return (
@@ -55,9 +59,11 @@ export default class AdditionalDocuments extends React.PureComponent {
                                 label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
                                 className={styles.baksa}
                                 faramElementName="executiveSummary"
-                                showPageRange
+                                // showPageRange
                                 acceptFileTypes={acceptFileTypes}
                                 onPending={this.handleExecutiveSummaryPending}
+                                onUpload={onUpload}
+                                files={files}
                             />
                             <MultiDocumentUploader
                                 label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
@@ -66,20 +72,26 @@ export default class AdditionalDocuments extends React.PureComponent {
                                 showUrlInput
                                 acceptFileTypes={acceptFileTypes}
                                 onPending={this.handleAssessmentDataPending}
+                                onUpload={onUpload}
+                                files={files}
                             />
                             <MultiDocumentUploader
                                 label={_ts('editAssessment.metadata', 'questionnaireTitle')}
                                 className={styles.baksa}
                                 faramElementName="questionnaire"
-                                showPageRange
+                                // showPageRange
                                 acceptFileTypes={acceptFileTypes}
                                 onPending={this.handleQuestionnairePending}
+                                onUpload={onUpload}
+                                files={files}
                             />
                             <MultiDocumentUploader
                                 label={_ts('editAssessment.metadata', 'miscTitle')}
                                 className={styles.baksa}
                                 faramElementName="misc"
                                 onPending={this.handleMiscPending}
+                                onUpload={onUpload}
+                                files={files}
                             />
                         </div>
                     </FaramGroup>
