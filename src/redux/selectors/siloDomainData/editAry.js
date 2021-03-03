@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { isTruthy } from '@togglecorp/fujs';
+import { isTruthy, listToMap } from '@togglecorp/fujs';
 
 import {
     createSchema,
@@ -56,6 +56,11 @@ const editAryFromRouteSelector = createSelector(
 export const editAryServerIdSelector = createSelector(
     editAryFromRouteSelector,
     ary => ary.serverId,
+);
+
+export const editAryFilesSelecotr = createSelector(
+    editAryFromRouteSelector,
+    ary => ary.files || emptyObject,
 );
 
 export const editAryVersionIdSelector = createSelector(

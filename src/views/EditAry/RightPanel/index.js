@@ -16,7 +16,9 @@ import {
     editAryIsPristineSelector,
 
     changeAryForEditAryAction,
+    setFilesForEditAryAction,
 
+    editAryFilesSelecotr,
     editAryFaramValuesSelector,
     editAryFaramErrorsSelector,
     editAryShouldShowHNO,
@@ -76,6 +78,8 @@ const mapStateToProps = state => ({
     activeLeadGroupId: leadGroupIdFromRouteSelector(state),
     editAryIsPristine: editAryIsPristineSelector(state),
 
+    files: editAryFilesSelecotr(state),
+
     editAryFaramValues: editAryFaramValuesSelector(state),
     editAryFaramErrors: editAryFaramErrorsSelector(state),
 
@@ -88,6 +92,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     changeAry: params => dispatch(changeAryForEditAryAction(params)),
+    setFiles: params => dispatch(setFilesForEditAryAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -122,6 +127,8 @@ export default class RightPanel extends React.PureComponent {
                     className: styles.metadata,
                     pending: this.props.pending,
                     onUploadPending: this.props.onUploadPending,
+                    onUpload: this.handleFileAdd,
+                    files: this.props.files,
                 }),
                 component: AdditionalDocuments,
             },
@@ -240,6 +247,20 @@ export default class RightPanel extends React.PureComponent {
             default:
                 return false;
         }
+    }
+
+    handleFileAdd = (file) => {
+        const {
+            activeLeadId,
+            activeLeadGroupId,
+            setFiles,
+        } = this.props;
+
+        setFiles({
+            leadId: activeLeadId,
+            leadGroupId: activeLeadGroupId,
+            files: [file],
+        });
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {

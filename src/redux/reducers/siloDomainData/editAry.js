@@ -1,5 +1,5 @@
 import { analyzeErrors } from '@togglecorp/faram';
-import { isTruthy } from '@togglecorp/fujs';
+import { isTruthy, listToMap } from '@togglecorp/fujs';
 import produce from 'immer';
 
 import update from '#rsu/immutable-update';
@@ -18,6 +18,7 @@ const getNamespacedId = (leadId, leadGroupId) => {
 
 export const EDIT_ARY__SET_ARY = 'siloDomainData/EDIT_ARY__SET_ARY';
 export const EDIT_ARY__SAVE_ARY = 'siloDomainData/EDIT_ARY__SAVE_ARY';
+export const EDIT_ARY__SET_FILES = 'siloDomainData/EDIT_ARY__SET_FILES';
 export const EDIT_ARY__CHANGE_ARY = 'siloDomainData/EDIT_ARY__CHANGE_ARY';
 export const EDIT_ARY__REMOVE_ARY = 'siloDomainData/EDIT_ARY__REMOVE_ARY';
 export const EDIT_ARY__SET_ERROR_ARY = 'siloDomainData/EDIT_ARY__SET_ERROR_ARY';
@@ -52,6 +53,12 @@ export const setAryForEditAryAction = ({
 export const saveAryForEditAryAction = ({ leadId, leadGroupId }) => ({
     type: EDIT_ARY__SAVE_ARY,
     id: getNamespacedId(leadId, leadGroupId),
+});
+
+export const setFilesForEditAryAction = ({ leadId, leadGroupId, files }) => ({
+    type: EDIT_ARY__SET_FILES,
+    id: getNamespacedId(leadId, leadGroupId),
+    files,
 });
 
 export const changeAryForEditAryAction = ({
@@ -130,6 +137,35 @@ const setAry = (state, action) => {
                     summary,
                     score,
                     questionnaire,
+                } },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
+const setFiles = (state, action) => {
+    const {
+        id,
+        files,
+    } = action;
+
+    const settings = {
+        editAry: {
+            [id]: { $auto: {
+                files: { $apply: (oldFiles) => {
+                    const newFilesMap = listToMap(
+                        files,
+                        item => item.id,
+                        item => item,
+                    );
+                    if (!oldFiles) {
+                        return newFilesMap;
+                    }
+                    return {
+                        ...oldFiles,
+                        ...newFilesMap,
+                    };
                 } },
             } },
         },
@@ -229,6 +265,7 @@ const reducers = {
     [EDIT_ARY__REMOVE_ARY]: removeAry,
     [EDIT_ARY__SET_ERROR_ARY]: setErrorAry,
     [EDIT_ARY__SAVE_ARY]: saveAry,
+    [EDIT_ARY__SET_FILES]: setFiles,
 };
 
 export default reducers;
