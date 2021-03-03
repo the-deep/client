@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 
 import InformationBox from '#components/viewer/InformationBox';
@@ -9,7 +9,6 @@ import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#dui/Button';
-import Modal from '#dui/Modal';
 
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
@@ -27,6 +26,7 @@ import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';
 
 import Analysis from './Analysis';
+import AnalysisEditModal from './AnalysisEditModal';
 import styles from './styles.scss';
 
 function EmptyAnalysisContainer() {
@@ -63,6 +63,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [analyses, setAnalyses] = useState<AnalysisElement[]>([]);
     const [analysisCount, setAnalysisCount] = useState(0);
     const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
+    const [analysisToEdit, setAnalysisToEdit] = useState();
 
     const [
         pendingAnalyses,
@@ -106,16 +107,30 @@ function AnalysisModule(props: AnalysisModuleProps) {
         deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
     }, [deleteAnalysisTrigger]);
+    const anaylsisObjectToEdit = useMemo(() => (
+        analyses?.find(a => a.id === analysisToEdit)
+    ), [analyses, analysisToEdit]);
+
+    const handleAnalysisEditClick = useCallback((analysisId) => {
+        setAnalysisToEdit(analysisId);
+        setModalShow();
+    }, [setModalShow]);
+
+    const handleNewAnalysisCreateClick = useCallback(() => {
+        setAnalysisToEdit(undefined);
+        setModalShow();
+    }, [setModalShow]);
 
     const analysisRendererParams = useCallback((key, data) => ({
+        analysisId: key,
+        onEdit: handleAnalysisEditClick,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
-        analysisId: data.id,
         setAnalysisDeleteId: handleAnalysisToDelete,
         teamLeadName: data.teamLeadName,
         createdOn: data.createdOn,
-    }), [handleAnalysisToDelete]);
+    }), [handleAnalysisToDelete, handleAnalysisEditClick]);
 
     return (
         <div className={styles.analysisModule}>
@@ -123,7 +138,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 <div className={styles.subNavbar}>
                     <Button
                         variant="primary"
-                        onClick={setModalShow}
+                        onClick={handleNewAnalysisCreateClick}
                         icons={(
                             <Icon name="add" />
                         )}
@@ -212,12 +227,11 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 />
             </Container>
             {showAnaylsisAddModal && (
-                <Modal
-                    heading={_ts('analysis', 'addAnalysisModalHeading')}
-                    onClose={setModalHidden}
-                >
-                    Here
-                </Modal>
+                <AnalysisEditModal
+                    onModalClose={setModalHidden}
+                    projectId={activeProject}
+                    value={anaylsisObjectToEdit}
+                />
             )}
         </div>
     );

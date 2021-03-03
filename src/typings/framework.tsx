@@ -177,6 +177,7 @@ export interface MatrixTocElement {
     id: string;
     key?: string;
     title: string;
+    altTitle?: string;
     verified?: number;
     unverified?: number;
     children?: MatrixTocElement[] | [];
