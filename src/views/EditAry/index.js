@@ -29,6 +29,7 @@ import {
     setAryForEditAryAction,
     setGeoOptionsAction,
     setErrorAryForEditAryAction,
+    setFilesForEditAryAction,
     removeAryForEditAryAction,
     editAryHasErrorsSelector,
     editAryIsPristineSelector,
@@ -105,6 +106,7 @@ const mapDispatchToProps = dispatch => ({
     removeAry: params => dispatch(removeAryForEditAryAction(params)),
     setAryTemplate: params => dispatch(setAryTemplateAction(params)),
     setAry: params => dispatch(setAryForEditAryAction(params)),
+    setFiles: params => dispatch(setFilesForEditAryAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
 });
 
@@ -122,6 +124,13 @@ const requestOptions = {
         onPropsChanged: ['activeLeadId', 'activeLeadGroupId'],
         onSuccess: ({ props, response, params }) => {
             const oldVersionId = props.editAryVersionId;
+
+            // NOTE: we always update files (because the cached link may change)
+            props.setFiles({
+                leadId: response.lead,
+                leadGroupId: response.leadGroup,
+                files: response.galleryFilesDetails,
+            });
 
             let shouldSetValue = true;
             let isValueOverriden = false;
@@ -236,6 +245,11 @@ const requestOptions = {
         method: ({ params: { value } }) => (value.id ? methods.PUT : methods.POST),
         body: ({ params }) => params.value,
         onSuccess: ({ props, response }) => {
+            props.setFiles({
+                leadId: response.lead,
+                leadGroupId: response.leadGroup,
+                files: response.galleryFilesDetails,
+            });
             props.setAry({
                 leadId: response.lead,
                 leadGroupId: response.leadGroup,
@@ -246,6 +260,7 @@ const requestOptions = {
                 summary: response.summary,
                 score: response.score,
                 questionnaire: response.questionnaire,
+                files: response.galleryFilesDetails,
             });
 
             // FIXME: use strings
@@ -322,6 +337,8 @@ export default class EditAry extends React.PureComponent {
                 override: true,
             });
         } else {
+            // NOTE: no need to clear out the ary files here
+
             setAry({
                 leadId: activeLeadId,
                 leadGroupId: activeLeadGroupId,

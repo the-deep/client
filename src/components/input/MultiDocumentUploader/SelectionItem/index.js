@@ -9,6 +9,7 @@ import modalize from '#rscg/Modalize';
 import _ts from '#ts';
 
 import InternalGalleryModal from '#components/viewer/InternalGalleryModal';
+import ExternalGalleryModal from '#components/viewer/ExternalGalleryModal';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -21,13 +22,15 @@ const propTypes = {
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     name: PropTypes.string.isRequired,
-    showPageRange: PropTypes.bool.isRequired,
+    // showPageRange: PropTypes.bool.isRequired,
     startPage: PropTypes.number.isRequired,
     endPage: PropTypes.number,
+    type: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    type: 'url',
     disabled: false,
     readOnly: false,
     endPage: undefined,
@@ -68,11 +71,17 @@ export default class Selection extends React.PureComponent {
             className: classNameFromProps,
             disabled,
             readOnly,
+            // showPageRange,
+
+            type,
+
             name,
-            showPageRange,
+            url,
+
+            attachment,
+
             startPage,
             endPage,
-            attachment,
         } = this.props;
 
         const className = _cs(
@@ -84,21 +93,38 @@ export default class Selection extends React.PureComponent {
         return (
             <div className={className}>
                 <div className={styles.top}>
-                    <ModalButton
-                        className={styles.documentLink}
-                        transparent
-                        title={name}
-                        disabled={!attachment}
-                        modal={
-                            <InternalGalleryModal
-                                attachment={attachment}
-                                showUrl
-                                name={name}
-                            />
-                        }
-                    >
-                        { name }
-                    </ModalButton>
+                    { type === 'file' && attachment && (
+                        <ModalButton
+                            className={styles.documentLink}
+                            transparent
+                            title={attachment.title}
+                            modal={
+                                <InternalGalleryModal
+                                    attachment={attachment}
+                                    showUrl
+                                    name={attachment.title}
+                                />
+                            }
+                        >
+                            { attachment.title }
+                        </ModalButton>
+                    )}
+                    {type === 'url' && (
+                        <ModalButton
+                            className={styles.documentLink}
+                            transparent
+                            title={name}
+                            modal={
+                                <ExternalGalleryModal
+                                    url={url}
+                                    showUrl
+                                    name={name}
+                                />
+                            }
+                        >
+                            {name}
+                        </ModalButton>
+                    )}
                     <DangerButton
                         className={styles.removeButton}
                         iconName="close"
@@ -108,7 +134,7 @@ export default class Selection extends React.PureComponent {
                         transparent
                     />
                 </div>
-                { showPageRange && (
+                { type === 'file' && (
                     <div className={styles.pageRange}>
                         <NumberInput
                             className={styles.startPageInput}
