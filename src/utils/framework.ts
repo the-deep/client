@@ -1,4 +1,4 @@
-import { isDefined, doesObjectHaveNoData, compareString } from '@togglecorp/fujs';
+import { isDefined, compareString } from '@togglecorp/fujs';
 import _ts from '#ts';
 import {
     FrameworkFields,
@@ -336,16 +336,12 @@ export const getMatrix2dStructures = (framework: MiniFrameworkElement | undefine
 };
 
 export const getMatrix1dToc = (
-    framework: FrameworkFields | undefined,
-    tocCount: TocCountMap,
+    widgets: WidgetElement<unknown>[] | undefined,
+    tocCount?: TocCountMap | undefined,
 ): MatrixTocElement[] => {
-    if (!framework || doesObjectHaveNoData(framework)) {
+    if (!widgets || widgets.length < 1) {
         return emptyArray;
     }
-
-    const {
-        widgets,
-    } = framework;
 
     const matrix1dList = widgets.filter(d => d.widgetId === 'matrix1dWidget');
 
@@ -380,6 +376,7 @@ export const getMatrix1dToc = (
                     id: cellKey,
                     key,
                     title: value,
+                    altTitle: `${title} > ${rowTitle} > ${value}`,
                     verified: count?.verifiedCount,
                     unverified: count?.unverifiedCount,
                     uniqueId: `${key}-${cellKey}`,
@@ -392,6 +389,7 @@ export const getMatrix1dToc = (
                 id: rowKey,
                 key,
                 title: rowTitle,
+                altTitle: `${title} > ${rowTitle}`,
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedCells,
@@ -411,17 +409,13 @@ export const getMatrix1dToc = (
 };
 
 export const getMatrix2dToc = (
-    framework: FrameworkFields | undefined,
-    tocCount: TocCountMap,
+    widgets: WidgetElement<unknown>[] | undefined,
+    tocCount?: TocCountMap | undefined,
 
 ): MatrixTocElement[] => {
-    if (!framework || doesObjectHaveNoData(framework)) {
+    if (!widgets || widgets.length < 1) {
         return emptyArray;
     }
-
-    const {
-        widgets,
-    } = framework;
 
     const matrix2dList = widgets.filter(d => d.widgetId === 'matrix2dWidget');
 
@@ -457,6 +451,7 @@ export const getMatrix2dToc = (
                         id: subDimensionId,
                         key: dimensionKey,
                         title: subDimensionTitle,
+                        altTitle: `${title} > ${dimensionTitle} > ${subDimensionTitle}`,
                         verified: count?.verifiedCount,
                         unverified: count?.unverifiedCount,
                         uniqueId: `${dimensionKey}-${subDimensionId}`,
@@ -470,6 +465,7 @@ export const getMatrix2dToc = (
                 id: dimensionId,
                 key: dimensionKey,
                 title: dimensionTitle,
+                altTitle: `${title} > ${dimensionTitle}`,
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedSubDimensions,
@@ -491,6 +487,7 @@ export const getMatrix2dToc = (
                         id: subSectorId,
                         key: sectorKey,
                         title: subSectorTitle,
+                        altTitle: `${title} > ${sectorTitle} > ${subSectorTitle}`,
                         verified: count?.verifiedCount,
                         unverified: count?.unverifiedCount,
                         uniqueId: `${sectorKey}-${subSectorId}`,
@@ -504,6 +501,7 @@ export const getMatrix2dToc = (
                 id: sectorId,
                 key: sectorKey,
                 title: sectorTitle,
+                altTitle: `${title} > ${sectorTitle}`,
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedSubSectors,
