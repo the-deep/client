@@ -28,12 +28,13 @@ import AnalysisPillar from './AnalysisPillar';
 import styles from './styles.scss';
 
 interface ComponentProps {
+    analysisId: number;
     className?: string;
     title: string;
     startDate?: string;
     endDate?: string;
     activeProject: number;
-    analysisId: number;
+    onEdit: (anaylsisId: number) => void;
     onDelete: (value: number) => void;
     teamLeadName: string;
     createdOn: string | number;
@@ -85,7 +86,12 @@ function Analysis(props: ComponentProps) {
         onDelete,
         teamLeadName,
         createdOn,
+        onEdit,
     } = props;
+
+    const handleEditClick = useCallback(() => {
+        onEdit(analysisId);
+    }, [analysisId, onEdit]);
 
     const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
     const [activePage, setActivePage] = useState<number>(1);
@@ -182,6 +188,7 @@ function Analysis(props: ComponentProps) {
                     </Button>
                     <QuickActionButton
                         className={styles.button}
+                        onClick={handleEditClick}
                     >
                         <Icon name="edit" />
                     </QuickActionButton>
