@@ -62,8 +62,14 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [activePage, setActivePage] = useState(1);
     const [analyses, setAnalyses] = useState<AnalysisElement[]>([]);
     const [analysisCount, setAnalysisCount] = useState(0);
+    const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
 
-    const [pendingAnalyses] = useRequest<MultiResponse<AnalysisElement>>({
+    const [
+        pendingAnalyses,
+        ,
+        ,
+        getAnalysisTrigger,
+    ] = useRequest<MultiResponse<AnalysisElement>>({
         url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
         query: {
@@ -80,11 +86,33 @@ function AnalysisModule(props: AnalysisModuleProps) {
             notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
     });
 
+    const [
+        ,
+        ,
+        ,
+        deleteAnalysisTrigger,
+    ] = useRequest(
+        {
+            url: `server://projects/${activeProject}/analysis/${analysisIdToDelete}/`,
+            method: 'DELETE',
+            onSuccess: () => {
+                getAnalysisTrigger();
+            },
+            autoTrigger: false,
+        },
+    );
+
+    const handleAnalysisToDelete = useCallback((toDeleteKey) => {
+        deleteAnalysisTrigger();
+        setAnalysisIdToDelete(toDeleteKey);
+    }, []);
+
     const analysisRendererParams = useCallback((key, data) => ({
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
         analysisId: data.id,
+        setAnalysisDeleteId: handleAnalysisToDelete,
     }), []);
 
     return (
