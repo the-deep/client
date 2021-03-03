@@ -34,6 +34,7 @@ interface ComponentProps {
     endDate?: string;
     activeProject: number;
     analysisId: number;
+    setAnalysisDeleteId: () => number;
 }
 
 interface AnalysisPillars {
@@ -63,8 +64,6 @@ const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
         assigneeName,
         setDeleteId,
     } = props;
-
-    console.warn('props', props);
 
     const handleDeletePillar = useCallback(() => {
         setDeleteId(pillarId);
@@ -140,6 +139,7 @@ function Analysis(props: ComponentProps) {
         endDate,
         activeProject,
         analysisId,
+        setAnalysisDeleteId,
     } = props;
 
     const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
@@ -164,14 +164,12 @@ function Analysis(props: ComponentProps) {
             onSuccess: (response) => {
                 setAnalysisPillar(response.results);
                 setPillarCount(response.count);
-                console.warn('Pillar fetch successful');
             },
         },
     );
 
-    console.warn('delete id', pillarAnalysisToDelete);
     const [
-        deletePending,
+        ,
         ,
         ,
         deletePillarTrigger,
@@ -181,13 +179,11 @@ function Analysis(props: ComponentProps) {
             method: 'DELETE',
             onSuccess: () => {
                 pillarGetTrigger();
-                console.warn('Delete Success');
             },
             autoTrigger: false,
         },
     );
 
-    console.warn('pillars', analysisPillar);
     const handleClick = useCallback(() => {
         setIsExpanded(!isExpanded);
     }, [isExpanded]);
@@ -205,6 +201,10 @@ function Analysis(props: ComponentProps) {
         analysis: data.analysis,
         setDeleteId: handlePillarAnalysisToDelete,
     }), [handlePillarAnalysisToDelete]);
+
+    const handleDeleteAnalysis = useCallback(() => {
+        setAnalysisDeleteId(analysisId);
+    }, [analysisId]);
 
     return (
         <ContainerCard
@@ -240,6 +240,7 @@ function Analysis(props: ComponentProps) {
                     </QuickActionButton>
                     <QuickActionButton
                         className={styles.button}
+                        onClick={handleDeleteAnalysis}
                     >
                         <Icon name="delete" />
                     </QuickActionButton>
