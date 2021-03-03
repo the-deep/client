@@ -34,7 +34,7 @@ interface ComponentProps {
     endDate?: string;
     activeProject: number;
     analysisId: number;
-    setAnalysisDeleteId: () => number;
+    setAnalysisDeleteId: (value: number) => void;
 }
 
 interface AnalysisPillars {
@@ -49,7 +49,7 @@ interface AnalysisPillars {
 
 interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id'> {
     pillarId: AnalysisPillars['id'];
-    setDeleteId: () => number;
+    setDeleteId: (value: number) => void;
 }
 
 const mapStateToProps = (state: AppState) => ({
