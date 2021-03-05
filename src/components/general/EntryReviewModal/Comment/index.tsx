@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 import ReactMarkdown from 'react-markdown';
 
 import FormattedDate from '#rscv/FormattedDate';
@@ -11,6 +12,7 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 interface Props {
+    className?: string;
     comment: EntryComment;
 }
 
@@ -24,6 +26,7 @@ const commentTypeToTextMap: {[id: number]: string} = {
 
 function Comment(props: Props) {
     const {
+        className,
         comment: {
             textHistory,
             createdByDetail,
@@ -36,7 +39,7 @@ function Comment(props: Props) {
 
     return (
         <div
-            className={styles.comment}
+            className={_cs(styles.comment, className)}
         >
             <DisplayPicture
                 className={styles.displayPicture}

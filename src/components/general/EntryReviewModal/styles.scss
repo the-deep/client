@@ -9,25 +9,29 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground);
         cursor: move;
+        padding: var(--spacing-small) var(--spacing-medium);
         user-select: none;
-        padding: 0 var(--spacing-small);
     }
 
     .content {
         display: flex;
+        position: relative;
         flex-direction: column;
-        padding: 0 var(--spacing-small);
+        background-color: var(--color-foreground-alt);
+        padding: calc(var(--spacing-medium) - var(--spacing-small));
+        height: 420px;
+        max-height: 96vh;
+        overflow-y: auto;
 
         .review {
-            flex: 1 0 auto;
+            margin: var(--spacing-small);
         }
 
-        .comments {
-            flex: 1 0 auto;
-            max-height: 25vh;
-            overflow-y: auto;
+        .comment {
+            margin: var(--spacing-small);
         }
     }
 
@@ -36,8 +40,9 @@
         align-items: center;
         flex-wrap: wrap;
         justify-content: flex-start;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground);
-        padding: var(--spacing-small);
+        padding: var(--spacing-small) var(--spacing-medium);
 
         .approved-by {
             padding-left: var(--spacing-small);
