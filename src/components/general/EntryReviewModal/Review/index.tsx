@@ -142,6 +142,7 @@ function Review(props: Props) {
         >
             <NonFieldErrors
                 faramElement
+                persistent={false}
             />
             <TextArea
                 faramElementName="text"
