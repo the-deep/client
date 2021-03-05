@@ -32,7 +32,7 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
-    widgets: PropTypes.array.isRequired,
+    framework: PropTypes.object.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
     lead: PropTypes.object.isRequired,
@@ -56,7 +56,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
     getEntryParams = (_, entry) => {
         const {
             projectId,
-            widgets,
+            framework,
             lead: {
                 id: leadId,
             },
@@ -66,7 +66,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
             entry,
             leadId,
             projectId,
-            widgets,
+            framework,
         });
     }
 

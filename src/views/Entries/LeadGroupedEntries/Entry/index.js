@@ -16,6 +16,8 @@ import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import EntryEditButton from '#components/general/EntryEditButton';
+import EntryOpenLink from '#components/general/EntryOpenLink';
 
 import Cloak from '#components/general/Cloak';
 import ButtonLikeLink from '#components/general/ButtonLikeLink';
@@ -32,6 +34,7 @@ import {
 import {
     entriesSetEntryCommentsCountAction,
     deleteEntryAction,
+    editEntryAction,
     patchEntryVerificationAction,
 } from '#redux';
 
@@ -59,10 +62,11 @@ const propTypes = {
     entry: PropTypes.object.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
-    widgets: PropTypes.array.isRequired,
+    framework: PropTypes.object.isRequired,
     projectId: PropTypes.number,
     leadId: PropTypes.number,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    onEntryEdit: PropTypes.func.isRequired,
     setEntryVerification: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
@@ -105,6 +109,7 @@ const requestOptions = {
 const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
+    onEntryEdit: params => dispatch(editEntryAction(params)),
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
 });
 
@@ -192,6 +197,19 @@ export default class Entry extends React.PureComponent {
         } = this.props;
 
         deleteEntryRequest.do();
+    }
+
+    handleEntryEdit = (entry) => {
+        const {
+            leadId,
+            onEntryEdit,
+        } = this.props;
+
+        onEntryEdit({
+            entry,
+            entryId: entry.id,
+            leadId,
+        });
     }
 
     entryLabelsRendererParams = (key, data) => ({
@@ -288,29 +306,32 @@ export default class Entry extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            widgets,
+            framework,
             requests: {
                 deleteEntryRequest: {
                     pending: deletePending,
                 },
             },
-            entry: {
-                id: entryId,
-                createdBy,
-                attributes,
-                unresolvedCommentCount: commentCount,
-                projectLabels,
-                verified,
-                verificationLastChangedByDetails,
-                versionId,
-            },
+            entry,
+            onEntryEdit,
             projectId,
             leadId,
         } = this.props;
 
+        const {
+            id: entryId,
+            createdBy,
+            attributes,
+            unresolvedCommentCount: commentCount,
+            projectLabels,
+            verified,
+            verificationLastChangedByDetails,
+            versionId,
+        } = entry;
+
         const { entryVerificationPending } = this.state;
 
-        const filteredWidgets = this.getWidgets(widgets);
+        const filteredWidgets = this.getWidgets(framework?.widgets);
         const entriesPageLink = reverseRoute(
             pathNames.editEntries,
             {
@@ -353,12 +374,18 @@ export default class Entry extends React.PureComponent {
                             onPendingChange={this.handleEntryVerificationPendingChange}
                             handleEntryVerify={this.handleEntryVerificationChange}
                         />
-                        <ButtonLikeLink
-                            className={styles.editEntryLink}
-                            to={`${entriesPageLink}?entry_id=${entryId}`}
-                        >
-                            <Icon name="edit" />
-                        </ButtonLikeLink>
+                        <EntryOpenLink
+                            className={styles.button}
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            projectId={entry.project}
+                        />
+                        <EntryEditButton
+                            className={styles.button}
+                            entry={entry}
+                            framework={framework}
+                            onEditSuccess={this.handleEntryEdit}
+                        />
                         <ModalButton
                             className={
                                 _cs(

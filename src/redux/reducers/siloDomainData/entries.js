@@ -11,6 +11,7 @@ export const E__SET_ACTIVE_PAGE = 'siloDomainData/E__SET_ACTIVE_PAGE';
 export const E__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/E__SET_ENTRY_COMMENTS_COUNT';
 export const E__PATCH_ENTRY_VERIFICATION = 'siloDomainData/E__PATCH_ENTRY_VERIFICATION';
 export const E__DELETE_ENTRY = 'siloDomainData/E__DELETE_ENTRY';
+export const E__EDIT_ENTRY = 'siloDomainData/E__EDIT_ENTRY';
 export const E__QC__SET_ACTIVE_PAGE = 'siloDomainData/E__QC__SET_ACTIVE_PAGE';
 export const E__QC__SET_ENTRIES_COUNT = 'siloDomainData/E__QC__SET_ENTRIES_COUNT';
 export const E__QC__SET_SELECTED_MATRIX_KEY = 'siloDomainData/E__QC__SET_SELECTED_MATRIX_KEY';
@@ -61,6 +62,13 @@ export const patchEntryVerificationAction = ({ versionId, entryId, leadId, statu
 
 export const deleteEntryAction = ({ entryId, leadId }) => ({
     type: E__DELETE_ENTRY,
+    entryId,
+    leadId,
+});
+
+export const editEntryAction = ({ entry, entryId, leadId }) => ({
+    type: E__EDIT_ENTRY,
+    entry,
     entryId,
     leadId,
 });
@@ -261,6 +269,62 @@ const deleteEntry = (state, action) => {
     return newState;
 };
 
+const editEntry = (state, action) => {
+    const {
+        entry,
+        entryId,
+        leadId,
+    } = action;
+
+    const { activeProject: projectId } = state;
+    const {
+        entriesView: {
+            [projectId]: {
+                entries: leadGroupedEntries = [],
+            } = {},
+        } = {},
+    } = state;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.entriesView) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView = {
+            };
+        }
+        if (!safeState.entriesView[projectId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView[projectId] = {
+                totalEntriesCount: 0,
+            };
+        }
+        if (!safeState.entriesView[projectId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.entriesView[projectId].entries = [];
+        }
+        const safeLeads = safeState.entriesView[projectId].entries;
+        const leadIndex = leadGroupedEntries.findIndex(l => leadId === l.id);
+        if (leadIndex > -1) {
+            if (!safeLeads[leadIndex].entries) {
+                // eslint-disable-next-line no-param-reassign
+                safeLeads[leadIndex].entries = [];
+            }
+
+            const entryIndex = safeLeads[leadIndex].entries.findIndex(e => entryId === e.id);
+            const safeEntries = safeLeads[leadIndex].entries;
+
+            if (entryIndex > -1) {
+                // eslint-disable-next-line no-param-reassign
+                safeEntries[entryIndex] = {
+                    ...entry,
+                    lead: safeEntries[entryIndex].lead,
+                };
+            }
+        }
+    });
+
+    return newState;
+};
+
 const entryViewSetFilter = (state, action) => {
     const { filters } = action;
     const { activeProject } = state;
@@ -384,6 +448,7 @@ const reducers = {
     [E__SET_ACTIVE_PAGE]: entriesViewSetActivePage,
     [E__PATCH_ENTRY_VERIFICATION]: patchEntryVerification,
     [E__DELETE_ENTRY]: deleteEntry,
+    [E__EDIT_ENTRY]: editEntry,
     [E__QC__SET_ACTIVE_PAGE]: qualityControlViewSetActivePage,
     [E__QC__SET_ENTRIES_COUNT]: qualityControlViewSetEntriesCount,
     [E__QC__SET_SELECTED_MATRIX_KEY]: qualityControlViewSetMatrixKey,

@@ -508,16 +508,14 @@ export default class Entries extends React.PureComponent {
     rendererParams = (key, datum) => {
         const {
             projectId,
-            framework: {
-                widgets,
-            },
+            framework,
         } = this.props;
 
         return ({
             headerClassName: styles.leadGroupedHeader,
             lead: datum,
             projectId,
-            widgets,
+            framework,
         });
     }
 
