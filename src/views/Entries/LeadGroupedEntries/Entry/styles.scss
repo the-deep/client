@@ -41,6 +41,7 @@
             .button {
                 display: flex;
                 align-items: center;
+                align-self: stretch;
                 margin-right: var(--spacing-small);
                 padding: var(--spacing-extra-small) var(--spacing-small);
 
