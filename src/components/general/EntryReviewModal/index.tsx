@@ -9,7 +9,8 @@ import Pager from '#rscv/Pager';
 import DangerButton from '#rsca/Button/DangerButton';
 import Confirm from '#rscv/Modal/Confirm';
 import FloatingContainer from '#rscv/FloatingContainer';
-import ListView from '#rsu/../v2/View/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import List from '#rsu/../v2/View/List';
 import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
 
 import useRequest from '#utils/request';
@@ -122,7 +123,10 @@ function EntryReviewModal(props: Props) {
         }
     }, [closeModal]);
 
-    const commentRendererParams = useCallback((_, comment: EntryComment) => ({ comment }), []);
+    const commentRendererParams = useCallback((_, comment: EntryComment) => ({
+        comment,
+        className: styles.comment,
+    }), []);
 
     const handleMouseMove = useCallback((e) => {
         if (containerRef.current) {
@@ -170,6 +174,7 @@ function EntryReviewModal(props: Props) {
                     />
                 </div>
                 <div className={styles.content}>
+                    {commentsPending && (<LoadingAnimation />)}
                     <Review
                         className={styles.review}
                         entryId={entryId}
@@ -180,14 +185,11 @@ function EntryReviewModal(props: Props) {
                         isApproved={isApproved}
                         isControlled={commentsResponse?.summary.verified ?? false}
                     />
-                    <ListView
-                        className={styles.comments}
+                    <List
                         data={commentsResponse?.results}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
                         renderer={Comment}
-                        pending={commentsPending}
-                        emptyComponent={null}
                     />
                     {commentsResponse && commentsResponse.count > maxItemsPerPage && (
                         <Pager
