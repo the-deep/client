@@ -105,7 +105,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const handleAnalysisToDelete = useCallback((toDeleteKey) => {
         deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
-    }, []);
+    }, [deleteAnalysisTrigger]);
 
     const analysisRendererParams = useCallback((key, data) => ({
         title: data.title,
@@ -113,7 +113,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
         endDate: data.endDate,
         analysisId: data.id,
         setAnalysisDeleteId: handleAnalysisToDelete,
-    }), []);
+        teamLeadName: data.teamLeadName,
+    }), [handleAnalysisToDelete]);
 
     return (
         <div className={styles.analysisModule}>

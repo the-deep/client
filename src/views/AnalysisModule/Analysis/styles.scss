@@ -1,9 +1,35 @@
 .analysis-item {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     border: var(--width-separator-thin) solid var(--dui-border-color-card);
     border-radius: var(--dui-border-radius-card);
     background-color: var(--color-foreground);
+
+    .content {
+        .content-item {
+            margin: var(--spacing-medium) 0;
+
+            .sub-heading {
+                color: var(--color-text-placeholder);
+            }
+
+            .pillar-list-content {
+                display: flex;
+
+                .analyst {
+                    flex-basis: 1;
+                    margin-right: var(--spacing-small);
+                    font-weight: var(--font-weight-bold);
+                }
+
+                .analysis-pillar {
+                    flex-basis: 1;
+                    margin-left: var(--spacing-small);
+                }
+            }
+        }
+    }
 
     .header-right {
         display: flex;
@@ -13,6 +39,9 @@
         .button {
             margin: 0 var(--dui-spacing-medium);
         }
+    }
+    .bold-text {
+        font-weight: var(--font-weight-bold);
     }
 
     .body {
@@ -49,11 +78,9 @@
         .pillar-analysis-content {
             padding: var(--dui-spacing-large);
         }
-        .bold-text {
-            font-weight: var(--font-weight-bold);
-        }
         .pillar {
             display: flex;
+            flex-grow: 1;
             margin: var(--spacing-small) 0;
             background: white;
 
@@ -67,7 +94,13 @@
                 .left {
                     display: flex;
 
+                    .title {
+                        display: flex;
+                        flex-grow: 1;
+                    }
+
                     .tag {
+                        flex-shrink: 0;
                         margin-left: var(--spacing-large);
                     }
                 }
@@ -84,6 +117,14 @@
                     display: block;
                 }
             }
+        }
+    }
+    .pillar-list {
+        display: flex;
+        flex-grow: 1;
+
+        .bold-text {
+            margin-right: var(--spacing-small);
         }
     }
 }

@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
-    isDefined,
 } from '@togglecorp/fujs';
 
 import ContainerCard from '#dui/ContainerCard';
@@ -20,6 +19,7 @@ import useRequest from '#utils/request';
 import {
     AppState,
     MultiResponse,
+    AnalysisElement,
 } from '#typings';
 
 import _ts from '#ts';
@@ -35,6 +35,8 @@ interface ComponentProps {
     activeProject: number;
     analysisId: number;
     setAnalysisDeleteId: (value: number) => void;
+    analyses: AnalysisElement;
+    teamLeadName: string;
 }
 
 interface AnalysisPillars {
@@ -52,12 +54,16 @@ interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id'> {
     setDeleteId: (value: number) => void;
 }
 
+interface PillerListRendererProps extends Omit<AnalysisPillars, 'id'>{
+    pillarId: AnalysisPillars['id'];
+}
+
 const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
 });
 
 const MAX_ITEMS_PER_PAGE = 50;
-const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
+function AnalysisPillarRenderer(props: AnalysisPillarRendererProps) {
     const {
         pillarId,
         title,
@@ -65,9 +71,12 @@ const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
         setDeleteId,
     } = props;
 
+    const [isCompleted, setIsCompleted] = useState(false);
+    // setIsCompleted to be used when the status is passed by API
+
     const handleDeletePillar = useCallback(() => {
         setDeleteId(pillarId);
-    }, [pillarId]);
+    }, [pillarId, setDeleteId]);
 
     return (
         <Container
@@ -77,10 +86,12 @@ const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
                     {title}
                     <Tag
                         className={styles.tag}
-                        variant="accent"
+                        variant={isCompleted ? 'accent' : 'gradient1'}
                     >
-                        Analysis Completed
-
+                        {isCompleted
+                            ? _ts('analysis', 'completeLabel')
+                            : _ts('analysis', 'inProgressLabel')
+                        }
                     </Tag>
                 </div>
             )}
@@ -108,9 +119,8 @@ const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
             headerDescription={(
                 <div className={styles.subHeading}>
                     <span className={styles.boldText}>
-                        Creation Date
+                        {_ts('analysis', 'creationDate')}
                     </span>
-                    &nbsp;
                     June 5, 2021
                 </div>
             )}
@@ -118,7 +128,7 @@ const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
             <div className={styles.pillarBody}>
                 <div className={styles.left}>
                     <div className={styles.item}>
-                        Analyst &nbsp;
+                        {_ts('analysis', 'analyst')}
                         <span className={styles.boldText}>
                             {assigneeName}
                         </span>
@@ -127,9 +137,28 @@ const AnalysisPillarRenderer = (props: AnalysisPillarRendererProps) => {
             </div>
         </Container>
     );
-};
+}
 
 const keySelector = (item: AnalysisPillars) => (item.id);
+
+const pillarListRenderer = (props: PillerListRendererProps) => {
+    const {
+        title,
+        assigneeName,
+    } = props;
+
+    return (
+        <div className={styles.pillarListContent}>
+            <div className={styles.analyst}>
+                {assigneeName}
+            </div>
+            <div className={styles.analysisPillar}>
+                {title}
+            </div>
+        </div>
+    );
+};
+
 
 function Analysis(props: ComponentProps) {
     const {
@@ -140,16 +169,18 @@ function Analysis(props: ComponentProps) {
         activeProject,
         analysisId,
         setAnalysisDeleteId,
+        analyses,
+        teamLeadName,
     } = props;
 
+    console.warn('analyses', analyses);
     const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
-    const [pillarCount, setPillarCount] = useState<number>();
     const [activePage, setActivePage] = useState<number>(1);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const [pillarAnalysisToDelete, setPillarAnalysisToDelete] = useState<number | undefined>();
     const [
         pillarPending,
-        ,
+        pillarResponse,
         ,
         pillarGetTrigger,
     ] = useRequest<MultiResponse<AnalysisPillars>>(
@@ -163,7 +194,6 @@ function Analysis(props: ComponentProps) {
             autoTrigger: true,
             onSuccess: (response) => {
                 setAnalysisPillar(response.results);
-                setPillarCount(response.count);
             },
         },
     );
@@ -188,12 +218,12 @@ function Analysis(props: ComponentProps) {
         setIsExpanded(!isExpanded);
     }, [isExpanded]);
 
-    const handlePillarAnalysisToDelete = useCallback((toDeleteKey) => {
+    const handlePillarAnalysisToDelete = useCallback((toDeleteKey: number) => {
         setPillarAnalysisToDelete(toDeleteKey);
         deletePillarTrigger();
     }, [deletePillarTrigger]);
 
-    const analysisPillarRendererParams = useCallback((key, data) => ({
+    const analysisPillarRendererParams = useCallback((_, data) => ({
         pillarId: data.id,
         title: data.title,
         assigneeName: data.assigneeName,
@@ -204,7 +234,13 @@ function Analysis(props: ComponentProps) {
 
     const handleDeleteAnalysis = useCallback(() => {
         setAnalysisDeleteId(analysisId);
-    }, [analysisId]);
+    }, [analysisId, setAnalysisDeleteId]);
+
+    const pillarListRendererParams = useCallback((key, data) => ({
+        pillarId: data.id,
+        assigneeName: data.assigneeName,
+        title: data.title,
+    }), []);
 
     return (
         <ContainerCard
@@ -249,7 +285,22 @@ function Analysis(props: ComponentProps) {
             contentClassName={styles.pillarContent}
         >
             <div className={styles.content}>
-                Content
+                <div className={styles.contentItem}>
+                    <h3 className={styles.subHeading}> Team Lead </h3>
+                    <span className={styles.boldText}>
+                        {teamLeadName}
+                    </span>
+                </div>
+
+                <div className={styles.contentItem}>
+                    <h3 className={styles.subHeading}> Pillar Assignments </h3>
+                    <ListView
+                        data={analysisPillar}
+                        renderer={pillarListRenderer}
+                        rendererParams={pillarListRendererParams}
+                        keySelector={keySelector}
+                    />
+                </div>
             </div>
             <div
                 className={styles.pillarAnalyses}
@@ -264,7 +315,7 @@ function Analysis(props: ComponentProps) {
                     )}
                     onClick={handleClick}
                 >
-                    {_ts('analysis', 'pillarAnalysisCount', { count: pillarCount })}
+                    {_ts('analysis', 'pillarAnalysisCount', { count: pillarResponse?.count })}
                 </Button>
                 {isExpanded && (
                     <>
@@ -278,10 +329,10 @@ function Analysis(props: ComponentProps) {
                                 pending={pillarPending}
                             />
                         </div>
-                        {isDefined(pillarCount) && pillarCount >= MAX_ITEMS_PER_PAGE && (
+                        {pillarResponse && pillarResponse.count > MAX_ITEMS_PER_PAGE && (
                             <Pager
                                 activePage={activePage}
-                                itemsCount={pillarCount}
+                                itemsCount={pillarResponse.count}
                                 maxItemsPerPage={MAX_ITEMS_PER_PAGE}
                                 onPageClick={setActivePage}
                                 showItemsPerPageChange={false}
