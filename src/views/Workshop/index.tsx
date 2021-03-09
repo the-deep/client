@@ -5,10 +5,7 @@ import {
     Bar,
     XAxis,
     YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
+    LabelList,
 } from 'recharts';
 
 import Icon from '#rscg/Icon';
@@ -47,6 +44,31 @@ const chartData = [
         value: 18,
     },
 ];
+
+const renderCustomizedLabel = (props: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    value: number;
+}) => {
+    const { x, y, width, value } = props;
+    const radius = 10;
+
+    return (
+        <g>
+            <text
+                x={x + (width / 2)}
+                y={y - radius}
+                fill="#313131"
+                textAnchor="middle"
+                dominantBaseline="middle"
+            >
+                {value}%
+            </text>
+        </g>
+    );
+};
 
 function useInputValue(initialValue: string | undefined): [
     string | undefined,
@@ -230,14 +252,20 @@ function Workshop(props: WorkshopProps) {
                         width={400}
                         height={300}
                         data={chartData}
+                        barSize={20}
                     >
                         <XAxis dataKey="name" />
-                        <YAxis dataKey="value" />
+                        <YAxis dataKey="value" domain={[0, 100]} />
                         <Bar
                             dataKey="value"
                             fill="#8884d8"
                             background={{ fill: '#eee' }}
-                        />
+                        >
+                            <LabelList
+                                dataKey="value"
+                                content={renderCustomizedLabel}
+                            />
+                        </Bar>
                     </BarChart>
                 </div>
             </Container>
