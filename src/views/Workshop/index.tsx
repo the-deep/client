@@ -1,5 +1,15 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from 'recharts';
 
 import Icon from '#rscg/Icon';
 import Tag from '#components/ui/Tag';
@@ -14,6 +24,29 @@ import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
 
 import styles from './styles.scss';
+
+const chartData = [
+    {
+        name: 'Pillar 1',
+        value: 40,
+    },
+    {
+        name: 'Pillar 2',
+        value: 30,
+    },
+    {
+        name: 'Pillar 3',
+        value: 20,
+    },
+    {
+        name: 'Pillar 4',
+        value: 27,
+    },
+    {
+        name: 'Pillar 5',
+        value: 18,
+    },
+];
 
 function useInputValue(initialValue: string | undefined): [
     string | undefined,
@@ -187,6 +220,26 @@ function Workshop(props: WorkshopProps) {
                 >
                     <Icon name="openLink" />
                 </QuickActionLink>
+            </Container>
+            <Container
+                heading="Rechart with background"
+
+            >
+                <div className="chart-container">
+                    <BarChart
+                        width={400}
+                        height={300}
+                        data={chartData}
+                    >
+                        <XAxis dataKey="name" />
+                        <YAxis dataKey="value" />
+                        <Bar
+                            dataKey="value"
+                            fill="#8884d8"
+                            background={{ fill: '#eee' }}
+                        />
+                    </BarChart>
+                </div>
             </Container>
         </div>
     );
