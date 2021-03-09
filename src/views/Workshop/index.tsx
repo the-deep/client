@@ -19,6 +19,9 @@ import QuickActionLink from '#components/ui/QuickActionLink';
 import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
+import Timeline from '#components/viz/Timeline';
+
+import { shortMonthNamesMap } from '#utils/common';
 
 import styles from './styles.scss';
 
@@ -84,6 +87,37 @@ function useInputValue(initialValue: string | undefined): [
     return [value, setInputValue];
 }
 
+interface TimelineItem {
+    label: string;
+    value: number;
+}
+
+const data: TimelineItem[] = [
+    {
+        label: 'Analysis 1 - Syria',
+        value: new Date('2021-10-12').getTime(),
+    },
+    {
+        label: 'Analysis 2 - Syria',
+        value: new Date('2021-12-12').getTime(),
+    },
+    {
+        label: 'Analysis 3 - Syria',
+        value: new Date('2022-04-10').getTime(),
+    },
+];
+
+const labelSelector = (d: TimelineItem) => d.label;
+const valueSelector = (d: TimelineItem) => d.value;
+const keySelector = (d: TimelineItem) => d.label;
+const tickLabelSelector = (d: number) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    return `${year}-${shortMonthNamesMap[month]}`;
+};
+
 interface WorkshopProps {
     className?: string;
 }
@@ -97,6 +131,15 @@ function Workshop(props: WorkshopProps) {
 
     return (
         <div className={_cs(styles.workshop, className)}>
+            <Container heading="Timeline">
+                <Timeline
+                    data={data}
+                    labelSelector={labelSelector}
+                    valueSelector={valueSelector}
+                    keySelector={keySelector}
+                    tickLabelSelector={tickLabelSelector}
+                />
+            </Container>
             <Container
                 heading="Buttons"
                 contentClassName={styles.newButtons}
