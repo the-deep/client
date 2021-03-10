@@ -114,6 +114,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         analysisId: data.id,
         setAnalysisDeleteId: handleAnalysisToDelete,
         teamLeadName: data.teamLeadName,
+        createdOn: data.createdOn,
     }), [handleAnalysisToDelete]);
 
     return (
