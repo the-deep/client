@@ -1,6 +1,9 @@
 import { BasicElement } from './';
 
 export interface AnalysisElement extends BasicElement {
+    title: string;
+    teamLead: number;
+    analysisPillar: PillarAnalysisElement[];
 }
 
 export interface PillarAnalysisElement extends BasicElement {

@@ -112,8 +112,8 @@ const requestOptions = {
     projectMembersGet: {
         url: ({ props: { projectId } }) => `/projects/${projectId}/members/`,
         method: methods.GET,
-        fields: ['id', 'display_name'],
         query: {
+            fields: ['id', 'display_name'],
         },
         onMount: true,
         onPropsChanged: ['project'],
