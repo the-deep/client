@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
@@ -9,8 +9,6 @@ import Button from '#dui/Button';
 import Icon from '#rscg/Icon';
 import QuickActionButton from '#dui/QuickActionButton';
 import DateRangeOutput from '#dui/DateRangeOutput';
-import Container from '#dui/Container';
-import Tag from '#dui/Tag';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 
@@ -19,11 +17,12 @@ import useRequest from '#utils/request';
 import {
     AppState,
     MultiResponse,
-    AnalysisElement,
+    AnalysisPillars,
 } from '#typings';
 
 import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';
+import AnalysisPillar from './AnalysisPillar';
 
 import styles from './styles.scss';
 
@@ -35,113 +34,26 @@ interface ComponentProps {
     activeProject: number;
     analysisId: number;
     setAnalysisDeleteId: (value: number) => void;
-    analyses: AnalysisElement;
     teamLeadName: string;
+    createdOn: string | number;
 }
 
-interface AnalysisPillars {
-    id: number;
-    assigneeName: string;
-    title: string;
-    mainStatement: string;
-    informationGap: string;
-    filters?: string;
-    analysis: number;
-}
-
-interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id'> {
+interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
     pillarId: AnalysisPillars['id'];
     setDeleteId: (value: number) => void;
 }
 
-interface PillerListRendererProps extends Omit<AnalysisPillars, 'id'>{
-    pillarId: AnalysisPillars['id'];
-}
+type PillarListRendererProps = Omit<AnalysisPillars, 'id' | 'analysis'>
 
 const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
 });
 
 const MAX_ITEMS_PER_PAGE = 50;
-function AnalysisPillarRenderer(props: AnalysisPillarRendererProps) {
-    const {
-        pillarId,
-        title,
-        assigneeName,
-        setDeleteId,
-    } = props;
-
-    const [isCompleted, setIsCompleted] = useState(false);
-    // setIsCompleted to be used when the status is passed by API
-
-    const handleDeletePillar = useCallback(() => {
-        setDeleteId(pillarId);
-    }, [pillarId, setDeleteId]);
-
-    return (
-        <Container
-            className={styles.pillar}
-            heading={(
-                <div className={styles.left}>
-                    {title}
-                    <Tag
-                        className={styles.tag}
-                        variant={isCompleted ? 'accent' : 'gradient1'}
-                    >
-                        {isCompleted
-                            ? _ts('analysis', 'completeLabel')
-                            : _ts('analysis', 'inProgressLabel')
-                        }
-                    </Tag>
-                </div>
-            )}
-            headerClassName={styles.heading}
-            headerActions={(
-                <div className={styles.headerRight}>
-                    <QuickActionButton
-                        className={styles.button}
-                    >
-                        <Icon name="edit" />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        className={styles.button}
-                    >
-                        <Icon name="copy" />
-                    </QuickActionButton>
-                    <QuickActionButton
-                        className={styles.button}
-                        onClick={handleDeletePillar}
-                    >
-                        <Icon name="delete" />
-                    </QuickActionButton>
-                </div>
-            )}
-            headerDescription={(
-                <div className={styles.subHeading}>
-                    <span className={styles.boldText}>
-                        {_ts('analysis', 'creationDate')}
-                    </span>
-                    June 5, 2021
-                </div>
-            )}
-        >
-            <div className={styles.pillarBody}>
-                <div className={styles.left}>
-                    <div className={styles.item}>
-                        {_ts('analysis', 'analyst')}
-                        <span className={styles.boldText}>
-                            {assigneeName}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </Container>
-    );
-}
 
 const keySelector = (item: AnalysisPillars) => (item.id);
 
-const pillarListRenderer = (props: PillerListRendererProps) => {
+function PillarListItem(props: PillarListRendererProps) {
     const {
         title,
         assigneeName,
@@ -157,7 +69,7 @@ const pillarListRenderer = (props: PillerListRendererProps) => {
             </div>
         </div>
     );
-};
+}
 
 
 function Analysis(props: ComponentProps) {
@@ -169,15 +81,18 @@ function Analysis(props: ComponentProps) {
         activeProject,
         analysisId,
         setAnalysisDeleteId,
-        analyses,
         teamLeadName,
+        createdOn,
     } = props;
 
-    console.warn('analyses', analyses);
     const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
     const [activePage, setActivePage] = useState<number>(1);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const [pillarAnalysisToDelete, setPillarAnalysisToDelete] = useState<number | undefined>();
+    const queryOptions = useMemo(() => ({
+        offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
+        limit: MAX_ITEMS_PER_PAGE,
+    }), [activePage]);
     const [
         pillarPending,
         pillarResponse,
@@ -187,10 +102,7 @@ function Analysis(props: ComponentProps) {
         {
             url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/`,
             method: 'GET',
-            query: {
-                offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
-                limit: MAX_ITEMS_PER_PAGE,
-            },
+            query: queryOptions,
             autoTrigger: true,
             onSuccess: (response) => {
                 setAnalysisPillar(response.results);
@@ -227,26 +139,28 @@ function Analysis(props: ComponentProps) {
         pillarId: data.id,
         title: data.title,
         assigneeName: data.assigneeName,
-        createdOn: data.createdOn,
+        createdOn,
         analysis: data.analysis,
         setDeleteId: handlePillarAnalysisToDelete,
-    }), [handlePillarAnalysisToDelete]);
+    }), [handlePillarAnalysisToDelete, createdOn]);
 
     const handleDeleteAnalysis = useCallback(() => {
         setAnalysisDeleteId(analysisId);
     }, [analysisId, setAnalysisDeleteId]);
 
-    const pillarListRendererParams = useCallback((key, data) => ({
-        pillarId: data.id,
-        assigneeName: data.assigneeName,
-        title: data.title,
-    }), []);
+    const pillarListRendererParams = useCallback((_: number, data) => {
+        const returnValue: PillarListRendererProps = {
+            assigneeName: data.assigneeName,
+            title: data.title,
+        };
+
+        return returnValue;
+    }, []);
 
     return (
         <ContainerCard
             className={_cs(className, styles.analysisItem)}
             heading={title}
-            sub
             headerDescription={(
                 <DateRangeOutput
                     startDate={startDate}
@@ -286,17 +200,21 @@ function Analysis(props: ComponentProps) {
         >
             <div className={styles.content}>
                 <div className={styles.contentItem}>
-                    <h3 className={styles.subHeading}> Team Lead </h3>
+                    <h3 className={styles.subHeading}>
+                        {_ts('analysis', 'teamLead')}
+                    </h3>
                     <span className={styles.boldText}>
                         {teamLeadName}
                     </span>
                 </div>
 
                 <div className={styles.contentItem}>
-                    <h3 className={styles.subHeading}> Pillar Assignments </h3>
+                    <h3 className={styles.subHeading}>
+                        {_ts('analysis', 'pillarAssignments')}
+                    </h3>
                     <ListView
                         data={analysisPillar}
-                        renderer={pillarListRenderer}
+                        renderer={PillarListItem}
                         rendererParams={pillarListRendererParams}
                         keySelector={keySelector}
                     />
@@ -324,7 +242,7 @@ function Analysis(props: ComponentProps) {
                                 className={styles.pillarList}
                                 data={analysisPillar}
                                 keySelector={keySelector}
-                                renderer={AnalysisPillarRenderer}
+                                renderer={AnalysisPillar}
                                 rendererParams={analysisPillarRendererParams}
                                 pending={pillarPending}
                             />

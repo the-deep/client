@@ -1281,7 +1281,10 @@
         "-45423653": "{count} Pillar Analyses",
         "-91078285": "Analysis Complete",
         "-33667410": "In Progress",
-        "-10701106": "Creation Date"
+        "-10701106": "Creation Date",
+        "-30498150": "Analyst",
+        "-50636670": "Team Lead",
+        "-31952614": "Pillar Assignments"
     },
     "links": {
         "browserExtension": {
@@ -3623,7 +3626,10 @@
             "pillarAnalysisCount": -45423653,
             "completeLabel": -91078285,
             "inProgressLabel": -33667410,
-            "creationDate": -10701106
+            "creationDate": -10701106,
+            "analyst": -30498150,
+            "teamLead": -50636670,
+            "pillarAssignments": -31952614
         }
     }
 }
