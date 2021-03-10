@@ -1,9 +1,63 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
+import ListView from '#rsu/../v2/View/ListView';
 import styles from './styles.scss';
 
 export type MinMax = [number, number];
+
+interface TimeElementProps {
+    label: React.ReactNode;
+    left: number;
+}
+
+function TimeElement(props: TimeElementProps) {
+    const {
+        left,
+        label,
+    } = props;
+
+    return (
+        <div
+            className={styles.timelineItem}
+            style={{
+                left: `${left}%`,
+            }}
+        >
+            <div className={styles.bar} />
+            <div className={styles.head} />
+            <div className={styles.label}>
+                { label }
+            </div>
+        </div>
+    );
+}
+
+interface AxisTickProps {
+    left: number;
+    tickLabel: React.ReactNode;
+}
+
+function AxisTick(props: AxisTickProps) {
+    const {
+        left,
+        tickLabel,
+    } = props;
+
+    return (
+        <div
+            className={styles.tick}
+            style={{
+                left: `${left}%`,
+            }}
+        >
+            <div className={styles.bar} />
+            <div className={styles.label}>
+                {tickLabel}
+            </div>
+        </div>
+    );
+}
 
 export interface TimelineProps<T> {
     className?: string;
@@ -15,7 +69,6 @@ export interface TimelineProps<T> {
     domain?: MinMax;
 }
 
-
 const scale = (domain: MinMax, range: MinMax, value: number) => {
     const [minDomain, maxDomain] = domain;
     const [minRange, maxRange] = range;
@@ -23,6 +76,9 @@ const scale = (domain: MinMax, range: MinMax, value: number) => {
     const newValue = (normalizedValue * (maxRange - minRange)) + minRange;
     return newValue;
 };
+
+const axisTickKeySelector = (d: number) => d;
+const range: MinMax = [0, 100];
 
 function Timeline<T>(props: TimelineProps<T>) {
     const {
@@ -35,12 +91,18 @@ function Timeline<T>(props: TimelineProps<T>) {
         domain: domainFromProps,
     } = props;
 
-    const domain: MinMax = React.useMemo(() => domainFromProps ?? [
-        Math.min(...data.map(valueSelector)),
-        Math.max(...data.map(valueSelector)),
-    ], [domainFromProps, data, valueSelector]);
-
-    const range: MinMax = [0, 100];
+    const domain: MinMax = React.useMemo(() => {
+        if (domainFromProps) {
+            return domainFromProps;
+        }
+        if (data.length > 0) {
+            return [
+                Math.min(...data.map(valueSelector)),
+                Math.max(...data.map(valueSelector)),
+            ];
+        }
+        return [0, 0];
+    }, [domainFromProps, data, valueSelector]);
     const axisTicks = React.useMemo(() => {
         const [minDomain, maxDomain] = domain;
         const maxTicks = 5;
@@ -48,57 +110,39 @@ function Timeline<T>(props: TimelineProps<T>) {
         const domainLength = maxDomain - minDomain;
         const increment = domainLength / (maxTicks - 1);
 
-        const ticks = [];
-        for (let i = 0; i < maxTicks; i += 1) {
-            ticks.push(Math.round(minDomain + (i * increment)));
-        }
-
-        return ticks;
+        return Array.from(
+            { length: maxTicks },
+            (v, i) => Math.round(minDomain + (i * increment)),
+        );
     }, [domain]);
+
+    const timeElementRendererParams = useCallback((key, datum) => ({
+        left: scale(domain, range, valueSelector(datum)),
+        label: labelSelector(datum),
+    }), [labelSelector, valueSelector, domain]);
+
+    const axisTickRendererParams = useCallback((key, datum) => ({
+        left: scale(domain, range, datum),
+        tickLabel: tickLabelSelector(datum),
+    }), [tickLabelSelector, domain]);
 
     return (
         <div className={_cs(className, styles.timeline)}>
             <div className={styles.container}>
-                <div className={styles.timelineItemList}>
-                    { data.map((d) => {
-                        const value = valueSelector(d);
-                        const key = keySelector(d);
-                        const left = scale(domain, range, value);
-                        const label = labelSelector(d);
-
-                        return (
-                            <div
-                                key={key}
-                                className={styles.timelineItem}
-                                style={{
-                                    left: `${left}%`,
-                                }}
-                            >
-                                <div className={styles.bar} />
-                                <div className={styles.head} />
-                                <div className={styles.label}>
-                                    { label }
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-                <div className={styles.axis}>
-                    { axisTicks.map(d => (
-                        <div
-                            key={d}
-                            className={styles.tick}
-                            style={{
-                                left: `${scale(domain, range, d)}%`,
-                            }}
-                        >
-                            <div className={styles.bar} />
-                            <div className={styles.label}>
-                                { tickLabelSelector(d) }
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <ListView
+                    className={styles.timelineItemList}
+                    data={data}
+                    renderer={TimeElement}
+                    keySelector={keySelector}
+                    rendererParams={timeElementRendererParams}
+                />
+                <ListView
+                    className={styles.axis}
+                    data={axisTicks}
+                    renderer={AxisTick}
+                    keySelector={axisTickKeySelector}
+                    rendererParams={axisTickRendererParams}
+                />
             </div>
         </div>
     );

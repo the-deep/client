@@ -53,6 +53,7 @@ const styleProperties = {
         duiColorBackgroundInformation: '#f5f8fb',
         duiColorBackgroundNegative: '#dfe7f2',
         duiColorBackgroundCard: 'var(--dui-color-white)',
+        duiColorSeparator: 'var(--color-separator)',
 
         duiColorText: 'var(--dui-color-grey1)',
         duiColorTextLabel: 'var(--dui-color-grey2)',
