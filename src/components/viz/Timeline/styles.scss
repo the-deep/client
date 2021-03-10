@@ -5,13 +5,13 @@
     --height-axis-tick-bar: 12px;
     --width-axis: 2px;
     --width-axis-tick: 2px;
-    --color-axis: var(--color-separator);
-    --color-axis-label: var(--color-text-label);
+    --color-axis: var(--dui-color-separator);
+    --color-axis-label: var(--dui-color-text-label);
 
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-large);
+    padding: var(--dui-spacing-large);
     width: 100%;
 
 
@@ -38,14 +38,14 @@
                 transform: translateX(-50%);
 
                 .bar {
-                    background-color: var(--color-primary);
+                    background-color: var(--dui-color-accent);
                     width: var(--width-timeline-item-bar);
                     height: var(--height-timeline-item-bar);
                 }
 
                 .head {
                     border-radius: 50%;
-                    background-color: var(--color-primary);
+                    background-color: var(--dui-color-accent);
                     width: calc(var(--radius-head) * 2);
                     height: calc(var(--radius-head) * 2);
                 }
@@ -55,7 +55,7 @@
                     bottom: -.3em;
                     left: calc(var(--radius-head) + var(--spacing-medium));
                     white-space: nowrap;
-                    font-weight: var(--font-weight-bold);
+                    font-weight: var(--dui-font-weight-bold);
                 }
 
                 &:last-child {
