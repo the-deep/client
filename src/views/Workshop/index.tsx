@@ -1,5 +1,12 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    LabelList,
+} from 'recharts';
 
 import Icon from '#rscg/Icon';
 import Tag from '#components/ui/Tag';
@@ -14,6 +21,54 @@ import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
 
 import styles from './styles.scss';
+
+const chartData = [
+    {
+        name: 'Pillar 1',
+        value: 40,
+    },
+    {
+        name: 'Pillar 2',
+        value: 30,
+    },
+    {
+        name: 'Pillar 3',
+        value: 20,
+    },
+    {
+        name: 'Pillar 4',
+        value: 27,
+    },
+    {
+        name: 'Pillar 5',
+        value: 18,
+    },
+];
+
+const renderCustomizedLabel = (props: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    value: number;
+}) => {
+    const { x, y, width, value } = props;
+    const radius = 10;
+
+    return (
+        <g>
+            <text
+                x={x + (width / 2)}
+                y={y - radius}
+                fill="#313131"
+                textAnchor="middle"
+                dominantBaseline="middle"
+            >
+                {value}%
+            </text>
+        </g>
+    );
+};
 
 function useInputValue(initialValue: string | undefined): [
     string | undefined,
@@ -187,6 +242,32 @@ function Workshop(props: WorkshopProps) {
                 >
                     <Icon name="openLink" />
                 </QuickActionLink>
+            </Container>
+            <Container
+                heading="Rechart with background"
+
+            >
+                <div className="chart-container">
+                    <BarChart
+                        width={400}
+                        height={300}
+                        data={chartData}
+                        barSize={20}
+                    >
+                        <XAxis dataKey="name" />
+                        <YAxis dataKey="value" domain={[0, 100]} />
+                        <Bar
+                            dataKey="value"
+                            fill="#8884d8"
+                            background={{ fill: '#eee' }}
+                        >
+                            <LabelList
+                                dataKey="value"
+                                content={renderCustomizedLabel}
+                            />
+                        </Bar>
+                    </BarChart>
+                </div>
             </Container>
         </div>
     );
