@@ -23,6 +23,8 @@ import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
+    PillarAnalysisElement,
+    AnalysisElement,
     MatrixTocElement,
     MultiResponse,
     FrameworkFields,
@@ -45,17 +47,28 @@ const addAttribute = attributes => ([
 
 interface AnalysisEditModalProps {
     className?: string;
+    onSuccess: (value: AnalysisElement, isEditMode: boolean) => void;
     onModalClose: () => void;
-    // TODO
-    value?: unknown;
+    value?: AnalysisElement;
     projectId: number;
 }
+
+const analysisPillarKeySelector = (d: PillarAnalysisElement & { key: string }) => d.key;
 
 const analysisSchema = {
     fields: {
         title: [requiredCondition],
         teamLead: [requiredCondition],
-        analysisPillar: [],
+        analysisPillar: {
+            keySelector: analysisPillarKeySelector,
+            member: {
+                fields: {
+                    title: [requiredCondition],
+                    assignee: [requiredCondition],
+                    filters: [requiredCondition],
+                },
+            },
+        },
     },
 };
 
@@ -63,11 +76,11 @@ const userKeySelector = (u: UserMini) => u.id;
 const userLabelSelector = (u: UserMini) => u.displayName;
 
 const childrenSelector = (d: MatrixTocElement) => d.children;
-const analysisPillarKeySelector = d => d.key;
 
 function AnalysisEditModal(props: AnalysisEditModalProps) {
     const {
         className,
+        onSuccess,
         onModalClose,
         value,
         projectId,
@@ -136,6 +149,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     }, []);
 
     const onValidationFailure = useCallback((errors) => {
+        setFaramErrors(errors);
         setPristine(true);
     }, []);
 
@@ -144,12 +158,18 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         ,
         ,
         triggerAnalysisEdit,
-    ] = useRequest<Partial<FrameworkFields>>({
+    ] = useRequest<AnalysisElement>({
         url: isDefined(value)
             ? `server://projects/${projectId}/analysis/${value.id}/`
             : `server://projects/${projectId}/analysis/`,
         method: isDefined(value) ? 'PATCH' : 'POST',
         body: bodyToSend,
+        onSuccess: (response) => {
+            if (response) {
+                onSuccess(response, isDefined(value));
+            }
+            onModalClose();
+        },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('analysis.editModal', 'anaylsisEditModal'))({ error: errorBody }),
     });
@@ -180,7 +200,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 onValidationFailure={onValidationFailure}
                 value={faramValues}
                 error={faramErrors}
-                disabled={pendingUsersList || pendingFramework}
+                disabled={pendingUsersList || pendingFramework || pendingAnalysisEdit}
             >
                 <TextInput
                     className={styles.input}
@@ -222,7 +242,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     <Button
                         variant="primary"
                         type="submit"
-                        disabled={pristine}
+                        disabled={pristine || pendingAnalysisEdit}
                     >
                         {_ts('analysis.editModal', 'createButtonLabel')}
                     </Button>

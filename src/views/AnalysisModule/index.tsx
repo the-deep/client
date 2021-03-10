@@ -13,7 +13,10 @@ import Button from '#dui/Button';
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
-import { useModalState } from '#hooks/stateManagement';
+import {
+    useModalState,
+    useArrayEdit,
+} from '#hooks/stateManagement';
 
 import {
     AppState,
@@ -54,13 +57,18 @@ function AnalysisModule(props: AnalysisModuleProps) {
     } = props;
 
     const [
-        showAnaylsisAddModal,
+        showAnalysisAddModal,
         setModalShow,
         setModalHidden,
     ] = useModalState(false);
 
     const [activePage, setActivePage] = useState(1);
-    const [analyses, setAnalyses] = useState<AnalysisElement[]>([]);
+    const [analyses, setAnalyses] = useState<AnalysisElement[] | undefined>([]);
+    const [
+        addAnalysis,
+        ,
+        modifyAnalysis,
+    ] = useArrayEdit(setAnalyses, analysisKeySelector);
     const [analysisCount, setAnalysisCount] = useState(0);
     const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
     const [analysisToEdit, setAnalysisToEdit] = useState();
@@ -107,9 +115,20 @@ function AnalysisModule(props: AnalysisModuleProps) {
         deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
     }, [deleteAnalysisTrigger]);
-    const anaylsisObjectToEdit = useMemo(() => (
+
+    const analysisObjectToEdit = useMemo(() => (
         analyses?.find(a => a.id === analysisToEdit)
     ), [analyses, analysisToEdit]);
+
+    const handleAnalysisEditSuccess = useCallback((analysis, isEditMode) => {
+        if (isEditMode) {
+            modifyAnalysis(analysis.id, analysis);
+        } else {
+            addAnalysis(analysis);
+            setAnalysisCount(oldVal => oldVal + 1);
+        }
+        setModalHidden();
+    }, [setModalHidden, modifyAnalysis, addAnalysis]);
 
     const handleAnalysisEditClick = useCallback((analysisId) => {
         setAnalysisToEdit(analysisId);
@@ -122,6 +141,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     }, [setModalShow]);
 
     const analysisRendererParams = useCallback((key, data) => ({
+        className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
         title: data.title,
@@ -226,11 +246,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     emptyComponent={EmptyAnalysisContainer}
                 />
             </Container>
-            {showAnaylsisAddModal && (
+            {showAnalysisAddModal && (
                 <AnalysisEditModal
+                    onSuccess={handleAnalysisEditSuccess}
                     onModalClose={setModalHidden}
                     projectId={activeProject}
-                    value={anaylsisObjectToEdit}
+                    value={analysisObjectToEdit}
                 />
             )}
         </div>
