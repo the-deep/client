@@ -70,7 +70,7 @@ function PillarAnalysisRow(props: PillarAnalysisRowProps) {
                 />
                 <MultiSelectInput
                     className={styles.input}
-                    faramElementName="matrixPillars"
+                    faramElementName="filters"
                     options={matrixPillars}
                     label={_ts('analysis.editModal', 'pillarAnalysisPillarTitle')}
                     placeholder={_ts('analysis.editModal', 'matrixPillarsPlaceholder')}
