@@ -46,8 +46,14 @@
     .item {
         margin: var(--spacing-medium) 0;
 
-        .bold-text {
-            display: block;
+        .text-output {
+            align-items: flex-start;
+            flex-direction: column;
+
+            .value {
+                display: block;
+                font-weight: var(--font-weight-bold);
+            }
         }
     }
 
