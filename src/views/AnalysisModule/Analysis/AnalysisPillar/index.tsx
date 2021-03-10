@@ -5,7 +5,7 @@ import QuickActionButton from '#dui/QuickActionButton';
 import Container from '#dui/Container';
 import Tag from '#dui/Tag';
 import FormattedDate from '#rscv/FormattedDate';
-
+import TextOutput from '#components/general/TextOutput';
 
 import {
     AnalysisPillars,
@@ -29,7 +29,6 @@ function AnalysisPillar(props: ComponentProps) {
         createdOn,
     } = props;
 
-    console.warn('props', props);
     const [isCompleted, setIsCompleted] = useState(false);
     // setIsCompleted to be used when the status is passed by API
 
@@ -90,10 +89,13 @@ function AnalysisPillar(props: ComponentProps) {
             <div className={styles.pillarBody}>
                 <div className={styles.left}>
                     <div className={styles.item}>
-                        {_ts('analysis', 'analyst')}
-                        <span className={styles.boldText}>
-                            {assigneeName}
-                        </span>
+                        <TextOutput
+                            className={styles.textOutput}
+                            label={_ts('analysis', 'analyst')}
+                            value={assigneeName}
+                            valueClassName={styles.value}
+                            noColon
+                        />
                     </div>
                 </div>
             </div>
