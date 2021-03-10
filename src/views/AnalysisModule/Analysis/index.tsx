@@ -11,6 +11,7 @@ import QuickActionButton from '#dui/QuickActionButton';
 import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
+import TextOutput from '#components/general/TextOutput';
 
 import useRequest from '#utils/request';
 
@@ -61,12 +62,13 @@ function PillarListItem(props: PillarListRendererProps) {
 
     return (
         <div className={styles.pillarListContent}>
-            <div className={styles.analyst}>
-                {assigneeName}
-            </div>
-            <div className={styles.analysisPillar}>
-                {title}
-            </div>
+            <TextOutput
+                labelClassName={styles.analyst}
+                valueClassName={styles.analysisPillar}
+                label={assigneeName}
+                value={title}
+                noColon
+            />
         </div>
     );
 }
@@ -200,12 +202,14 @@ function Analysis(props: ComponentProps) {
         >
             <div className={styles.content}>
                 <div className={styles.contentItem}>
-                    <h3 className={styles.subHeading}>
-                        {_ts('analysis', 'teamLead')}
-                    </h3>
-                    <span className={styles.boldText}>
-                        {teamLeadName}
-                    </span>
+                    <TextOutput
+                        className={styles.textOutput}
+                        labelClassName={styles.label}
+                        valueClassName={styles.value}
+                        label={_ts('analysis', 'teamLead')}
+                        value={teamLeadName}
+                        noColon
+                    />
                 </div>
 
                 <div className={styles.contentItem}>

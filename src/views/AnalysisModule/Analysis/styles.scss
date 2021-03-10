@@ -36,6 +36,7 @@
                     .analyst {
                         flex-basis: 1;
                         margin-right: var(--spacing-small);
+                        font-weight: var(--font-weight-bold);
                     }
 
                     .analysis-pillar {
@@ -80,5 +81,14 @@
 
     .bold-text {
         font-weight: var(--font-weight-bold);
+    }
+    .text-output {
+        align-items: flex-start;
+        flex-direction: column;
+        font-size: var(--font-size-medium);
+
+        .value {
+            font-weight: var(--font-weight-bold);
+        }
     }
 }
