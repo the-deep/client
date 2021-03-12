@@ -59,7 +59,7 @@ function Comment(props: Props) {
                             mode="dd-MMM-yyyy"
                         />
                         &nbsp;
-                        {_ts('entryReview', 'assignedItTo')}
+                        {mentionedUsersDetail.length > 0 && _ts('entryReview', 'assignedItTo')}
                         &nbsp;
                     </span>
                     <span>
