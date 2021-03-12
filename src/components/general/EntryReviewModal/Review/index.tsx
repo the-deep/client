@@ -50,17 +50,11 @@ const memberNameSelector = (d: Member) => d.displayName;
 const reviewTypeKeySelector = (d: ReviewType) => d.id;
 const reviewTypeLabelSelector = (d: ReviewType) => d.label;
 
-const schema: ObjectSchema = {
-    fields: {
-        text: [],
-        comment_type: [requiredCondition],
-        mentioned_users: [requiredCondition],
-    },
-};
-
 const memberFieldQuery = {
     fields: ['id', 'display_name'],
 };
+
+const commentRequiredTypes = [0, 2, 4];
 
 function Review(props: Props) {
     const {
@@ -76,6 +70,15 @@ function Review(props: Props) {
 
     const [faramValues, setFaramValues] = useState<Review | undefined>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
+
+    const commentRequired = commentRequiredTypes.some(v => v === faramValues?.['comment_type']) ? [requiredCondition] : [];
+    const schema: ObjectSchema = {
+        fields: {
+            text: commentRequired,
+            comment_type: [requiredCondition],
+            mentioned_users: commentRequired,
+        },
+    };
 
     const [
         reviewPending,
@@ -152,19 +155,19 @@ function Review(props: Props) {
                 rows={3}
                 autoFocus
             />
-            <MultiSelectInput
-                faramElementName="mentioned_users"
-                label={_ts('entryReview', 'assignees')}
-                options={projectMembersResponse?.results}
-                keySelector={memberKeySelector}
-                labelSelector={memberNameSelector}
-            />
             <RadioInput
                 className={styles.types}
                 faramElementName="comment_type"
                 options={reviewTypes}
                 keySelector={reviewTypeKeySelector}
                 labelSelector={reviewTypeLabelSelector}
+            />
+            <MultiSelectInput
+                faramElementName="mentioned_users"
+                label={_ts('entryReview', 'assignees')}
+                options={projectMembersResponse?.results}
+                keySelector={memberKeySelector}
+                labelSelector={memberNameSelector}
             />
             <PrimaryButton
                 className={styles.submitButton}
