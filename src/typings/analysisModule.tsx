@@ -3,7 +3,11 @@ import { BasicElement } from './';
 export interface AnalysisElement extends BasicElement {
     title: string;
     teamLead: number;
+    teamLeadName: string;
     analysisPillar: PillarAnalysisElement[];
+    startDate?: string;
+    endDate?: string;
+    createdOn?: string;
 }
 
 export interface PillarAnalysisElement extends BasicElement {

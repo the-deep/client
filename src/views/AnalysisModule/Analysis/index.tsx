@@ -34,10 +34,10 @@ interface ComponentProps {
     startDate?: string;
     endDate?: string;
     activeProject: number;
-    onEdit: (anaylsisId: number) => void;
+    onEdit: (analysisId: number) => void;
     onDelete: (value: number) => void;
     teamLeadName: string;
-    createdOn: string | number;
+    createdOn: string;
 }
 
 interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
