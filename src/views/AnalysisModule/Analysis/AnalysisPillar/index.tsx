@@ -16,7 +16,7 @@ import styles from './styles.scss';
 
 interface ComponentProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
     pillarId: AnalysisPillars['id'];
-    setDeleteId: (value: number) => void;
+    onDelete: (value: number) => void;
     createdOn: string | number;
 }
 
@@ -25,16 +25,16 @@ function AnalysisPillar(props: ComponentProps) {
         pillarId,
         title,
         assigneeName,
-        setDeleteId,
+        onDelete,
         createdOn,
     } = props;
 
-    const [isCompleted, setIsCompleted] = useState(false);
+    const [completed, setCompleted] = useState(false);
     // setIsCompleted to be used when the status is passed by API
 
     const handleDeletePillar = useCallback(() => {
-        setDeleteId(pillarId);
-    }, [pillarId, setDeleteId]);
+        onDelete(pillarId);
+    }, [pillarId, onDelete]);
 
     return (
         <Container
@@ -44,9 +44,9 @@ function AnalysisPillar(props: ComponentProps) {
                     {title}
                     <Tag
                         className={styles.tag}
-                        variant={isCompleted ? 'accent' : 'gradient1'}
+                        variant={completed ? 'accent' : 'gradient1'}
                     >
-                        {isCompleted
+                        {completed
                             ? _ts('analysis', 'completeLabel')
                             : _ts('analysis', 'inProgressLabel')
                         }

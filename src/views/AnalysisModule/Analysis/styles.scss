@@ -27,7 +27,9 @@
 
                 .sub-heading {
                     display: flex;
-                    color: var(--color-text-placeholder);
+                    padding: var(--spacing-extra-small) 0;
+                    color: var(--dui-color-text-dark);
+                    font-size: var(--font-size-medium-alt);
                 }
 
                 .pillar-list-content {
