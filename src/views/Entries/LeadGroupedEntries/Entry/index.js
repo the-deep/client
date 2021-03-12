@@ -16,12 +16,12 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
+import ToggleEntryControlButton from '#components/general/ToggleEntryControlButton';
 
 import Cloak from '#components/general/Cloak';
 import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import EntryReviewButton from '#components/general/EntryReviewButton';
-import { pathNames } from '#constants';
 
 import {
     fetchWidgetViewComponent,
@@ -328,16 +328,6 @@ export default class Entry extends React.PureComponent {
         const { entryVerificationPending } = this.state;
 
         const filteredWidgets = this.getWidgets(framework?.widgets);
-        /*
-        const entriesPageLink = reverseRoute(
-            pathNames.editEntries,
-            {
-                projectId,
-                leadId,
-            },
-        );
-        */
-
         const defaultAssignees = this.getDefaultAssignees(createdBy);
         const pending = deletePending || entryVerificationPending;
 
@@ -353,6 +343,10 @@ export default class Entry extends React.PureComponent {
                             renderer={EntryLabelBadge}
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
+                        />
+                        <ToggleEntryControlButton
+                            entryId={entryId}
+                            initialValue={verified}
                         />
                         <EntryVerify
                             className={styles.entryVerify}
