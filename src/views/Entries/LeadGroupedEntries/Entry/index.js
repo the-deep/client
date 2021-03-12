@@ -294,8 +294,7 @@ export default class Entry extends React.PureComponent {
                 <Widget
                     widget={widget}
                     widgetName={widgetId}
-                    wid
-                    getType={VIEW.list}
+                    widgetType={VIEW.list}
                 />
             );
         }

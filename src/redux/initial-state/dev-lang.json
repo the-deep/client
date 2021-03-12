@@ -1286,7 +1286,8 @@
         "-1231870823": "unapproved",
         "-1231231455": "controlled",
         "-123808108": "uncontrolled",
-        "-1208084875": "Assignees"
+        "-1208084875": "Assignees",
+        "-25993351": "Entry Comments and Review"
     },
     "links": {
         "browserExtension": {
@@ -3107,7 +3108,8 @@
             "projects": 173,
             "totalAddedSources": -678768686,
             "sourcesTagged": -686861344,
-            "sourcesTaggedValidated": -686861268
+            "sourcesTaggedValidated": -686861268,
+            "recentProjectsTitle": -52545948
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -3628,7 +3630,8 @@
             "unapproved": -1231870823,
             "controlled": -1231231455,
             "uncontrolled": -123808108,
-            "assignees": -1208084875
+            "assignees": -1208084875,
+            "commentAndReviewHeading": -25993351
         }
     }
 }
