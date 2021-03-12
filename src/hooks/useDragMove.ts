@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Props {
     onPointerDown?: (e: PointerEvent) => void;
@@ -8,30 +8,32 @@ interface Props {
 }
 function useDragMove(props: Props) {
     const { onPointerDown, onPointerUp, onPointerMove, onDragMove } = props;
-    const [isDragging, setIsDragging] = useState<boolean>(false);
+    const isDraggingRef = useRef<boolean>(false);
 
     const handlePointerDown = useCallback((e) => {
-        setIsDragging(true);
+        isDraggingRef.current = true;
+
         if (onPointerDown) {
             onPointerDown(e);
         }
     }, [onPointerDown]);
 
     const handlePointerUp = useCallback((e) => {
-        setIsDragging(false);
+        isDraggingRef.current = false;
+
         if (onPointerUp) {
             onPointerUp(e);
         }
     }, [onPointerUp]);
 
     const handlePointerMove = useCallback((e) => {
-        if (isDragging) {
+        if (isDraggingRef.current) {
             onDragMove(e);
         }
         if (onPointerMove) {
             onPointerMove(e);
         }
-    }, [onDragMove, onPointerMove, isDragging]);
+    }, [onDragMove, onPointerMove]);
 
     useEffect(() => {
         window.addEventListener('pointermove', handlePointerMove);
@@ -42,7 +44,7 @@ function useDragMove(props: Props) {
         };
     }, [handlePointerMove, handlePointerUp]);
 
-    return { isDragging, handlePointerDown };
+    return { handlePointerDown };
 }
 
 export default useDragMove;
