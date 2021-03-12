@@ -111,7 +111,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const handleAnalysisToDelete = useCallback((toDeleteKey) => {
+    const handleAnalysisDeleteClick = useCallback((toDeleteKey) => {
         deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
     }, [deleteAnalysisTrigger]);
@@ -144,13 +144,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
         className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
+        onDelete: handleAnalysisDeleteClick,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
-        setAnalysisDeleteId: handleAnalysisToDelete,
         teamLeadName: data.teamLeadName,
         createdOn: data.createdOn,
-    }), [handleAnalysisToDelete, handleAnalysisEditClick]);
+    }), [handleAnalysisEditClick, handleAnalysisDeleteClick]);
 
     return (
         <div className={styles.analysisModule}>

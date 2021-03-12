@@ -26,6 +26,10 @@ function createId<T extends string | number>(...args: [T, T, ...T[]]) {
     return args.join('-');
 }
 
+function breadcrumb(...args: string[]) {
+    return args.join(' › ');
+}
+
 // NOTE: This function generates dimension first level
 const transformLevelsDimensionFirst = (
     {
@@ -376,7 +380,7 @@ export const getMatrix1dToc = (
                     id: cellKey,
                     key,
                     title: value,
-                    altTitle: `${title} > ${rowTitle} > ${value}`,
+                    altTitle: breadcrumb(title, rowTitle, value),
                     verified: count?.verifiedCount,
                     unverified: count?.unverifiedCount,
                     uniqueId: `${key}-${cellKey}`,
@@ -389,7 +393,7 @@ export const getMatrix1dToc = (
                 id: rowKey,
                 key,
                 title: rowTitle,
-                altTitle: `${title} > ${rowTitle}`,
+                altTitle: breadcrumb(title, rowTitle),
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedCells,
@@ -451,7 +455,7 @@ export const getMatrix2dToc = (
                         id: subDimensionId,
                         key: dimensionKey,
                         title: subDimensionTitle,
-                        altTitle: `${title} > ${dimensionTitle} > ${subDimensionTitle}`,
+                        altTitle: breadcrumb(title, dimensionTitle, subDimensionTitle),
                         verified: count?.verifiedCount,
                         unverified: count?.unverifiedCount,
                         uniqueId: `${dimensionKey}-${subDimensionId}`,
@@ -465,7 +469,7 @@ export const getMatrix2dToc = (
                 id: dimensionId,
                 key: dimensionKey,
                 title: dimensionTitle,
-                altTitle: `${title} > ${dimensionTitle}`,
+                altTitle: breadcrumb(title, dimensionTitle),
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedSubDimensions,
@@ -487,7 +491,7 @@ export const getMatrix2dToc = (
                         id: subSectorId,
                         key: sectorKey,
                         title: subSectorTitle,
-                        altTitle: `${title} > ${sectorTitle} > ${subSectorTitle}`,
+                        altTitle: breadcrumb(title, sectorTitle, subSectorTitle),
                         verified: count?.verifiedCount,
                         unverified: count?.unverifiedCount,
                         uniqueId: `${sectorKey}-${subSectorId}`,
@@ -501,7 +505,7 @@ export const getMatrix2dToc = (
                 id: sectorId,
                 key: sectorKey,
                 title: sectorTitle,
-                altTitle: `${title} > ${sectorTitle}`,
+                altTitle: breadcrumb(title, sectorTitle),
                 verified: count?.verifiedCount,
                 unverified: count?.unverifiedCount,
                 children: transformedSubSectors,

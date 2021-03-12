@@ -19,6 +19,7 @@ import SelectInput from '#rsci/SelectInput';
 import Icon from '#rscg/Icon';
 import List from '#rscv/List';
 
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -77,6 +78,14 @@ const userLabelSelector = (u: UserMini) => u.displayName;
 
 const childrenSelector = (d: MatrixTocElement) => d.children;
 
+const frameworkQueryFields = {
+    fields: ['widgets', 'id'],
+};
+
+const usersQueryFields = {
+    fields: ['display_name', 'id'],
+};
+
 function AnalysisEditModal(props: AnalysisEditModalProps) {
     const {
         className,
@@ -109,12 +118,11 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     ] = useRequest<Partial<FrameworkFields>>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
-        query: {
-            fields: ['widgets', 'id'],
-        },
+        query: frameworkQueryFields,
         autoTrigger: true,
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analysis.editModal', 'frameworkTitle'))({ error: errorBody }),
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('analysis.editModal', 'frameworkTitle'))({ error: errorBody });
+        },
     });
 
     const matrixPillars = useMemo(
@@ -133,9 +141,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         usersListResponse,
     ] = useRequest<MultiResponse<UserMini>>({
         url: `server://projects/${projectId}/members/`,
-        query: {
-            fields: ['id', 'display_name'],
-        },
+        query: usersQueryFields,
         method: 'GET',
         autoTrigger: true,
         onFailure: (_, errorBody) =>
@@ -170,8 +176,10 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             }
             onModalClose();
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analysis.editModal', 'anaylsisEditModal'))({ error: errorBody }),
+        onFailure: (_, errorBody) => {
+            setFaramErrors(errorBody?.faramErrors);
+            notifyOnFailure(_ts('analysis.editModal', 'anaylsisEditModal'))({ error: errorBody });
+        },
     });
 
     const onValidationSuccess = useCallback((finalValues) => {
@@ -190,7 +198,11 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     return (
         <Modal
             className={_cs(styles.analysisEditModal, className)}
-            heading={_ts('analysis.editModal', 'addAnalysisModalHeading')}
+            heading={
+                isDefined(value)
+                    ? _ts('analysis.editModal', 'editAnalysisModalHeading')
+                    : _ts('analysis.editModal', 'addAnalysisModalHeading')
+            }
             onClose={onModalClose}
         >
             <Faram
@@ -202,6 +214,10 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 error={faramErrors}
                 disabled={pendingUsersList || pendingFramework || pendingAnalysisEdit}
             >
+                <NonFieldErrors
+                    faramElement
+                    persistent={false}
+                />
                 <TextInput
                     className={styles.input}
                     faramElementName="title"
@@ -221,6 +237,10 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     faramElementName="analysisPillar"
                     keySelector={analysisPillarKeySelector}
                 >
+                    <NonFieldErrors
+                        persistent={false}
+                        faramElement
+                    />
                     <List
                         faramElement
                         renderer={PillarAnalysisRow}
@@ -244,7 +264,11 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                         type="submit"
                         disabled={pristine || pendingAnalysisEdit}
                     >
-                        {_ts('analysis.editModal', 'createButtonLabel')}
+                        {
+                            isDefined(value)
+                                ? _ts('analysis.editModal', 'editButtonLabel')
+                                : _ts('analysis.editModal', 'createButtonLabel')
+                        }
                     </Button>
                 </footer>
             </Faram>
