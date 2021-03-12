@@ -1269,7 +1269,8 @@
         "-8788826": "My Assignments",
         "-49181354": "Failed to fetch Assignment List",
         "-97660055": "Failed to mark the assignment as Done",
-        "-88394931": "Failed to mark bulk assignments as  Done"
+        "-88394931": "Failed to mark bulk assignments as  Done",
+        "-39611284": "Lead assigned to"
     },
     "links": {
         "browserExtension": {
@@ -1772,7 +1773,8 @@
             "showFiltersLabel": -60218291,
             "hideFiltersLabel": -90290386,
             "more": -68982194,
-            "less": -75616009
+            "less": -75616009,
+            "leadAssigneeFilterLabel": -39611284
         },
         "export": {
             "headerExport": 600,

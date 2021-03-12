@@ -95,6 +95,7 @@ const staticFiltersLabelMap = {
     lead_priority: _ts('entries', 'leadPriorityFilterLabel'),
     lead_confidentiality: _ts('entries', 'leadConfidentialityFilterLabel'),
     lead_published_on: _ts('entries', 'leadPublishedOnFilterLabel'),
+    lead_assignee: _ts('entries', 'leadAssigneeFilterLabel'),
 
     search: _ts('entries', 'searchFilterLabel'),
     created_by: _ts('entries', 'createdByFilterLabel'),
@@ -299,6 +300,18 @@ function FilterEntriesForm(props) {
                                     options={leadConfidentiality}
                                     placeholder={_ts('entries', 'leadConfidentialityFilterPlaceholder')}
                                     disabled={pending}
+                                />
+                                <MultiSelectInput
+                                    className={styles.entriesFilter}
+                                    keySelector={optionKeySelector}
+                                    labelSelector={optionLabelSelector}
+                                    options={createdBy}
+                                    label={staticFiltersLabelMap.lead_assignee}
+                                    onChange={(value) => { handleFilterChange('lead_assignee', value); }}
+                                    showHintAndError={false}
+                                    value={filters.lead_assignee}
+                                    disabled={pending}
+                                    placeholder={_ts('entries', 'createdByPlaceholder')}
                                 />
                                 <DateFilter
                                     className={styles.entriesFilter}
