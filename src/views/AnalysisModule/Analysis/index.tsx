@@ -34,14 +34,14 @@ interface ComponentProps {
     endDate?: string;
     activeProject: number;
     analysisId: number;
-    setAnalysisDeleteId: (value: number) => void;
+    onDelete: (value: number) => void;
     teamLeadName: string;
     createdOn: string | number;
 }
 
 interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
     pillarId: AnalysisPillars['id'];
-    setDeleteId: (value: number) => void;
+    onDelete: (value: number) => void;
 }
 
 type PillarListRendererProps = Omit<AnalysisPillars, 'id' | 'analysis'>
@@ -82,14 +82,14 @@ function Analysis(props: ComponentProps) {
         endDate,
         activeProject,
         analysisId,
-        setAnalysisDeleteId,
+        onDelete,
         teamLeadName,
         createdOn,
     } = props;
 
     const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
     const [activePage, setActivePage] = useState<number>(1);
-    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [expanded, setExpanded] = useState<boolean>(false);
     const [pillarAnalysisToDelete, setPillarAnalysisToDelete] = useState<number | undefined>();
     const queryOptions = useMemo(() => ({
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
@@ -129,8 +129,8 @@ function Analysis(props: ComponentProps) {
     );
 
     const handleClick = useCallback(() => {
-        setIsExpanded(!isExpanded);
-    }, [isExpanded]);
+        setExpanded(!expanded);
+    }, [expanded]);
 
     const handlePillarAnalysisToDelete = useCallback((toDeleteKey: number) => {
         setPillarAnalysisToDelete(toDeleteKey);
@@ -143,12 +143,12 @@ function Analysis(props: ComponentProps) {
         assigneeName: data.assigneeName,
         createdOn,
         analysis: data.analysis,
-        setDeleteId: handlePillarAnalysisToDelete,
+        onDelete: handlePillarAnalysisToDelete,
     }), [handlePillarAnalysisToDelete, createdOn]);
 
     const handleDeleteAnalysis = useCallback(() => {
-        setAnalysisDeleteId(analysisId);
-    }, [analysisId, setAnalysisDeleteId]);
+        onDelete(analysisId);
+    }, [analysisId, onDelete]);
 
     const pillarListRendererParams = useCallback((_: number, data) => {
         const returnValue: PillarListRendererProps = {
@@ -230,7 +230,7 @@ function Analysis(props: ComponentProps) {
                 <Button
                     className={styles.accordionButton}
                     icons={(
-                        <Icon name={isExpanded
+                        <Icon name={expanded
                             ? 'chevronUp'
                             : 'chevronDown'}
                         />
@@ -239,7 +239,7 @@ function Analysis(props: ComponentProps) {
                 >
                     {_ts('analysis', 'pillarAnalysisCount', { count: pillarResponse?.count })}
                 </Button>
-                {isExpanded && (
+                {expanded && (
                     <>
                         <div className={styles.pillarAnalysisContent}>
                             <ListView
@@ -251,6 +251,7 @@ function Analysis(props: ComponentProps) {
                                 pending={pillarPending}
                             />
                         </div>
+                        {/* TODO:To be replaced with new Pager Component */}
                         {pillarResponse && pillarResponse.count > MAX_ITEMS_PER_PAGE && (
                             <Pager
                                 activePage={activePage}
