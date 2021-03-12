@@ -1289,7 +1289,8 @@
         "-30091387": "Edit analysis",
         "-49556": "Pillars",
         "-35552020": "Team lead",
-        "-76422871": "Add an analyst"
+        "-76422871": "Add an analyst",
+        "-88197654": "Analysis Edit/Create"
     },
     "links": {
         "browserExtension": {
@@ -3635,8 +3636,7 @@
             "creationDate": -10701106,
             "analyst": -30498150,
             "teamLead": -50636670,
-            "pillarAssignments": -31952614,
-            "setupNewAnalysisButtonLabel": -90678740
+            "pillarAssignments": -31952614
         },
         "analysis.editModal": {
             "addAnalysisModalHeading": -90678740,
@@ -3653,7 +3653,10 @@
             "teamLeadPlaceholder": 17,
             "usersTitle": 1119,
             "pillarAnalysisTitlePlaceholder": 14,
-            "addAnAnalystButtonLabel": -76422871
+            "addAnAnalystButtonLabel": -76422871,
+            "anaylsisEditModal": -88197654,
+            "editButtonLabel": 363,
+            "editAnalysisModalHeading": -30091387
         }
     }
 }
