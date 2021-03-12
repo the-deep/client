@@ -1,0 +1,114 @@
+.timeline {
+    --radius-head: 5px;
+    --height-timeline-item-bar: 70px;
+    --width-timeline-item-bar: 2px;
+    --height-axis-tick-bar: 12px;
+    --width-axis: 2px;
+    --width-axis-tick: 2px;
+    --color-axis: var(--dui-color-separator);
+    --color-axis-label: var(--dui-color-text-label);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--dui-spacing-large);
+    width: 100%;
+
+
+    .container {
+        display: flex;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+        width: calc(100% - 2 * var(--radius-head));
+        height: calc(2 * (var(--height-timeline-item-bar) + var(--radius-head)) + var(--width-axis));
+
+        .timeline-item-list {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+
+            .timeline-item {
+                display: flex;
+                position: absolute;
+                top: 0;
+                align-items: center;
+                flex-direction: column;
+                transform: translateX(-50%);
+
+                .bar {
+                    background-color: var(--dui-color-accent);
+                    width: var(--width-timeline-item-bar);
+                    height: var(--height-timeline-item-bar);
+                }
+
+                .head {
+                    border-radius: 50%;
+                    background-color: var(--dui-color-accent);
+                    width: calc(var(--radius-head) * 2);
+                    height: calc(var(--radius-head) * 2);
+                }
+
+                .label {
+                    position: absolute;
+                    bottom: -.3em;
+                    left: calc(var(--radius-head) + var(--spacing-medium));
+                    white-space: nowrap;
+                    font-weight: var(--dui-font-weight-bold);
+                }
+
+                &:last-child {
+                    .label {
+                        right: calc(var(--radius-head) + var(--spacing-medium));
+                        left: unset;
+                    }
+                }
+
+                &:nth-child(odd) {
+                    top: unset;
+                    bottom: 0;
+                    transform: rotateX(180deg) translateX(-50%);
+
+                    .label {
+                        transform: rotateX(180deg);
+                    }
+                }
+            }
+        }
+
+        .axis {
+            display: flex;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            background-color: var(--color-axis);
+            width: 100%;
+            height: var(--width-axis);
+
+            .tick {
+                position: absolute;
+
+                .bar {
+                    background-color: var(--color-axis);
+                    width: var(--width-axis-tick);
+                    height: var(--height-axis-tick-bar);
+                }
+
+                .label {
+                    position: absolute;
+                    left: 0;
+                    white-space: nowrap;
+                    color: var(--color-axis-label);
+                }
+
+                &:last-child {
+                    .label {
+                        right: 0;
+                        left: unset;
+                    }
+                }
+            }
+        }
+    }
+}
