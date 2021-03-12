@@ -93,3 +93,17 @@ export function useArrayEdit<T, K extends string | number>(
     }, [setValues, keySelector]);
     return [addItem, removeItem, modifyItem, mergeItems];
 }
+
+export function useInputValue(initialValue: string | undefined): [
+    string | undefined,
+    (v: string | undefined, n: string | undefined, e: React.FormEvent<HTMLTextAreaElement>) => void
+] {
+    const [value, setValue] = useState<string | undefined>(initialValue);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+    const setInputValue = useCallback((newValue: string | undefined, name, e) => {
+        setValue(newValue);
+    }, [setValue]);
+
+    return [value, setInputValue];
+}
