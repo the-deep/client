@@ -1,7 +1,7 @@
-import React, { ReactNode } from 'react';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import React from 'react';
+import { _cs } from '@togglecorp/fujs';
+
+import { joinList } from '#utils/common';
 
 import styles from './styles.scss';
 
@@ -21,18 +21,19 @@ function CommaSeparateItems(props: Props) {
     }
 
     const list = items.map((item: Item) => (
-        <span key={item.id} className={styles.item}>{item.name}</span>
+        <span
+            key={item.id}
+            className={styles.item}
+        >
+            {item.name}
+        </span>
     ));
 
-    const out: ReactNode[] = [];
-    list.forEach((item, i) => {
-        if (list.length > 1 && i === list.length - 1) {
-            out.push(' and ');
-        }
-        out.push(item);
-        if (list.length > 2 && i < list.length - 2) out.push(', ');
-    });
-    return <span className={_cs(className, styles.items)}>{out}</span>;
+    return (
+        <span className={_cs(className, styles.items)}>
+            { joinList(list) }
+        </span>
+    );
 }
 
 export default CommaSeparateItems;
