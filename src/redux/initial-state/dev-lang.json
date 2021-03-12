@@ -1347,7 +1347,8 @@
         "-1231870823": "unapproved",
         "-1231231455": "controlled",
         "-123808108": "uncontrolled",
-        "-1208084875": "Assignees"
+        "-1208084875": "Assignees",
+        "-25993351": "Entry Comments and Review"
     },
     "links": {
         "browserExtension": {
@@ -3831,7 +3832,8 @@
             "unapproved": -1231870823,
             "controlled": -1231231455,
             "uncontrolled": -123808108,
-            "assignees": -1208084875
+            "assignees": -1208084875,
+            "commentAndReviewHeading": -25993351
         }
     }
 }
