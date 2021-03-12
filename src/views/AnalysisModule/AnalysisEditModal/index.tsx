@@ -103,6 +103,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             ...value,
             analysisPillar: value?.analysisPillar?.map(ap => ({
                 ...ap,
+                // NOTE: This is done for maintaining unique key while operating items
+                // on a list. We might need TODO work on this if we decide to use
+                // UUID globally throughout DEEP
                 key: randomString(16),
             })),
         };
