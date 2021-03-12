@@ -20,6 +20,8 @@ import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
 
+import { useInputValue } from '#hooks/stateManagement';
+
 import styles from './styles.scss';
 
 const chartData = [
@@ -69,20 +71,6 @@ const renderCustomizedLabel = (props: {
         </g>
     );
 };
-
-function useInputValue(initialValue: string | undefined): [
-    string | undefined,
-    (v: string | undefined, n: string | undefined, e: React.FormEvent<HTMLTextAreaElement>) => void
-] {
-    const [value, setValue] = React.useState<string | undefined>(initialValue);
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    const setInputValue = React.useCallback((newValue: string | undefined, name, e) => {
-        setValue(newValue);
-    }, [setValue]);
-
-    return [value, setInputValue];
-}
 
 interface WorkshopProps {
     className?: string;
