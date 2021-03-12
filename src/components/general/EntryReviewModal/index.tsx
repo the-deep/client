@@ -165,7 +165,7 @@ function EntryReviewModal(props: Props) {
                     onPointerDown={handlePointerDown}
                 >
                     <h3>
-                        Entry Comments and Review
+                        {_ts('entryReview', 'commentAndReviewHeading')}
                     </h3>
                     <DangerButton
                         iconName="close"

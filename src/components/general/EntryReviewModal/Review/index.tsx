@@ -50,6 +50,18 @@ const memberNameSelector = (d: Member) => d.displayName;
 const reviewTypeKeySelector = (d: ReviewType) => d.id;
 const reviewTypeLabelSelector = (d: ReviewType) => d.label;
 
+const schema: ObjectSchema = {
+    fields: {
+        text: [],
+        comment_type: [requiredCondition],
+        mentioned_users: [requiredCondition],
+    },
+};
+
+const memberFieldQuery = {
+    fields: ['id', 'display_name'],
+};
+
 function Review(props: Props) {
     const {
         className,
@@ -61,14 +73,6 @@ function Review(props: Props) {
         setPristine,
         onSuccess,
     } = props;
-
-    const schema: ObjectSchema = {
-        fields: {
-            text: [],
-            comment_type: [requiredCondition],
-            mentioned_users: [requiredCondition],
-        },
-    };
 
     const [faramValues, setFaramValues] = useState<Review | undefined>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
@@ -97,9 +101,7 @@ function Review(props: Props) {
     ] = useRequest<MultiResponse<Member>>({
         url: `server://v2/projects/${projectId}/members/`,
         method: 'GET',
-        query: {
-            fields: ['id', 'display_name'],
-        },
+        query: memberFieldQuery,
         autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
