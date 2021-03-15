@@ -53,7 +53,32 @@
 
     .all-analyses {
         .header {
-            margin: var(--dui-spacing-large);
+            margin: var(--dui-spacing-medium)
+                var(--dui-spacing-extra-large);
+
+            .heading {
+                text-transform: uppercase;
+                color: var(--dui-color-brand);
+                font-size: var(--dui-font-size-heading-medium);
+                font-weight: var(--font-weight-bold);
+
+                .light-text {
+                    margin-left: var(--dui-spacing-medium);
+                    font-weight: var(--font-weight-normal);
+                }
+            }
+            .date-filter {
+                display: flex;
+                position: relative;
+                align-items: center;
+                border: var(--dui-width-separator-thin) solid var(--dui-color-accent);
+                border-radius: calc(var(--dui-font-size-medium) + var(--dui-spacing-medium));
+                padding: var(--dui-spacing-medium) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
+                overflow: hidden;
+                font-size: var(--dui-font-size-medium);
+                font-weight: var(--font-weight-bold);
+            }
+
         }
 
         .analyses-container {
