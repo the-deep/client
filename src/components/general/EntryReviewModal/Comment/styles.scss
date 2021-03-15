@@ -16,11 +16,19 @@
     .content {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         padding-left: var(--spacing-small);
 
-        .detail {
-            .name {
-                font-weight: var(--font-weight-bold);
+        .heading {
+            display: flex;
+            align-items: flex-start;
+            flex: 1 0 auto;
+            justify-content: space-between;
+
+            .detail {
+                .name {
+                    font-weight: var(--font-weight-bold);
+                }
             }
         }
     }
