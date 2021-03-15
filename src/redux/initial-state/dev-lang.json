@@ -1350,7 +1350,9 @@
         "-1231231455": "controlled",
         "-123808108": "uncontrolled",
         "-1208084875": "Assignees",
-        "-25993351": "Entry Comments and Review"
+        "-25993351": "Entry Comments and Review",
+        "-797172973": "Edit Comment",
+        "-780818101": "Update Comment"
     },
     "links": {
         "browserExtension": {
@@ -3834,7 +3836,11 @@
             "controlled": -1231231455,
             "uncontrolled": -123808108,
             "assignees": -1208084875,
-            "commentAndReviewHeading": -25993351
+            "commentAndReviewHeading": -25993351,
+            "editComment": -797172973,
+            "editCommentCancel": 61,
+            "editCommentUpdate": -780818101
+
         }
     }
 }

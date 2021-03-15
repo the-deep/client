@@ -154,6 +154,7 @@ export interface EntryComment {
     commentTypeDisplay: string;
     commentType: number;
     createdBy: number;
+    createdAt: string;
     entry: number;
     mentionedUsers: number[];
 }
