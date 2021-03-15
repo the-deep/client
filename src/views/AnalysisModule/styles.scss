@@ -38,18 +38,22 @@
             }
 
             .pie-chart-container {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
                 margin: var(--dui-spacing-large);
                 width: calc(30% - var(--dui-spacing-large) * 2);
-                height: var(--height-charts);
             }
 
             .analyses-timeline-container {
+                display: flex;
                 margin: var(--dui-spacing-large);
                 width: calc(40% - var(--dui-spacing-large) * 2);
-                height: var(--height-charts);
             }
         }
     }
+
+
 
     .all-analyses {
         .header {

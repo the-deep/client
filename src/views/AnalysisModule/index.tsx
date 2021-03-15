@@ -11,6 +11,17 @@ import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#dui/Button';
 import DateFilter from '#rsci/DateFilter';
+import Timeline from '#components/viz/Timeline';
+import { shortMonthNamesMap } from '#utils/common';
+
+import {
+    PieChart,
+    Pie,
+    ResponsiveContainer,
+    Tooltip,
+    Legend,
+    Cell,
+} from 'recharts';
 
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
@@ -20,6 +31,7 @@ import {
     useModalState,
     useArrayEdit,
 } from '#hooks/stateManagement';
+
 
 import {
     AppState,
@@ -50,6 +62,17 @@ const mapStateToProps = (state: AppState) => ({
 const analysisKeySelector = (d: AnalysisElement) => d.id;
 const maxItemsPerPage = 5;
 
+const colorScheme = [
+    '#003f5c',
+    '#2f4b7c',
+    '#665191',
+    '#a05195',
+    '#d45087',
+    '#f95d6a',
+    '#ff7c43',
+    '#ffa600',
+];
+
 interface AnalysisModuleProps {
     activeProject: number;
 }
@@ -58,6 +81,26 @@ type Filter = {
     startDate?: string;
     endDate?: string;
 };
+interface AnalysisList {
+    id: number;
+    title: string;
+    createdOn: string;
+}
+
+interface AuthoringOrganizations {
+    count: number;
+    organizationId: number;
+    organizationTitle: string;
+}
+
+interface AnalysisOverview {
+    analysisList: AnalysisList[];
+    entriesTotal: number;
+    analyzedEntriesCount: number;
+    sourcesTotal: number;
+    analyzedSourceCount: number;
+    authoringOrganizations: AuthoringOrganizations[];
+}
 
 function AnalysisModule(props: AnalysisModuleProps) {
     const {
@@ -113,6 +156,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
             notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
     });
 
+
     const [
         ,
         ,
@@ -128,6 +172,44 @@ function AnalysisModule(props: AnalysisModuleProps) {
             autoTrigger: false,
         },
     );
+
+    const [
+        ,
+        overviewResponse,
+        ,
+        ,
+    ] = useRequest<MultiResponse<AnalysisOverview>>(
+        {
+            url: `server://projects/${activeProject}/analysis-overview/`,
+            method: 'GET',
+            autoTrigger: true,
+            onFailure: (_, errorBody) =>
+                notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
+        },
+    );
+
+    const labelSelector = (item: AuthoringOrganizations) => item.organizationTitle;
+    const valueSelector = (item: AuthoringOrganizations) => item.count;
+    const keySelector = (item: AuthoringOrganizations) => item.organizationId;
+    const piechartData: AuthoringOrganizations = overviewResponse?.authoringOrganizations ?? [];
+    const tickFormatter = (title: string) => ({ title });
+
+    const timelineData = (analysesResponse?.results ?? []).map(d => ({
+        key: d.id,
+        value: new Date(d.createdOn).getTime(),
+        label: d.title,
+    }));
+    const timelineLabelSelector = item => item.label;
+    const timelineValueSelector = item => item.value;
+    const timelineKeySelector = item => item.key;
+    const timelineTickSelector = (d: number) => {
+        const date = new Date(d);
+        const year = date.getFullYear();
+        const month = date.getMonth();
+
+        return `${year}-${shortMonthNamesMap[month]}`;
+    };
+
 
     const handleAnalysisToDeleteClick = useCallback((toDeleteKey) => {
         deleteAnalysisTrigger();
@@ -235,8 +317,39 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         />
                     </div>
                 </div>
-                <Card className={styles.pieChartContainer} />
-                <Card className={styles.analysesTimelineContainer} />
+                <Card className={styles.pieChartContainer}>
+                    <ResponsiveContainer>
+                        <PieChart
+                            className={styles.pieChart}
+                        >
+                            <Pie
+                                data={piechartData}
+                                dataKey={valueSelector}
+                                nameKey={labelSelector}
+                                outerRadius={50}
+                                paddingAngle={2}
+                            >
+                                {piechartData.map((_: any, index: number) => (
+                                    <Cell
+                                        key={keySelector}
+                                        fill={colorScheme[index % colorScheme.length]}
+                                    />
+                                ))}
+                            </Pie>
+                            <Legend verticalAlign="bottom" />
+                            <Tooltip labelFormatter={tickFormatter} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </Card>
+                <Card className={styles.analysesTimelineContainer}>
+                    <Timeline
+                        data={timelineData ?? []}
+                        labelSelector={timelineLabelSelector}
+                        valueSelector={timelineValueSelector}
+                        keySelector={timelineKeySelector}
+                        tickLabelSelector={timelineTickSelector}
+                    />
+                </Card>
             </Container>
             <Container
                 className={styles.allAnalyses}
