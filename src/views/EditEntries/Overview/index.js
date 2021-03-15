@@ -10,6 +10,7 @@ import memoize from 'memoize-one';
 
 import modalize from '#rscg/Modalize';
 import EntryCommentModal from '#components/general/EntryCommentModal';
+import EntryReviewButton from '#components/general/EntryReviewButton';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import SelectInput from '#rsci/SelectInput';
@@ -411,6 +412,9 @@ export default class Overview extends React.PureComponent {
                                         }
                                     </ModalButton>
                                 )}
+                                <EntryReviewButton
+                                    entryId={entryAccessor.serverId(entry)}
+                                />
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
                                     render={
