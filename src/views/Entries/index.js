@@ -604,7 +604,6 @@ export default class Entries extends React.PureComponent {
                                     filters={framework.filters}
                                     hideMatrixFilters={view === QC_VIEW}
                                     geoOptions={geoOptions}
-                                    applyOnChange
                                 />
                         }
                         <ScrollTabs
