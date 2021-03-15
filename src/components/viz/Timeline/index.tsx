@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+} from '@togglecorp/fujs';
 
 import ListView from '#rsu/../v2/View/ListView';
 import styles from './styles.scss';
@@ -91,6 +93,7 @@ function Timeline<T>(props: TimelineProps<T>) {
         domain: domainFromProps,
     } = props;
 
+
     const domain: MinMax = React.useMemo(() => {
         if (domainFromProps) {
             return domainFromProps;
@@ -103,6 +106,7 @@ function Timeline<T>(props: TimelineProps<T>) {
         }
         return [0, 0];
     }, [domainFromProps, data, valueSelector]);
+
     const axisTicks = React.useMemo(() => {
         const [minDomain, maxDomain] = domain;
         const maxTicks = 5;
@@ -126,12 +130,21 @@ function Timeline<T>(props: TimelineProps<T>) {
         tickLabel: tickLabelSelector(datum),
     }), [tickLabelSelector, domain]);
 
+    const renderData = React.useMemo(() => (
+        data.sort((a, b) => (valueSelector(a) - valueSelector(b)))
+    ), [data, valueSelector]);
+
+    if (data.length === 0) {
+        return null;
+    }
+
+
     return (
         <div className={_cs(className, styles.timeline)}>
             <div className={styles.container}>
                 <ListView
                     className={styles.timelineItemList}
-                    data={data}
+                    data={renderData}
                     renderer={TimeElement}
                     keySelector={keySelector}
                     rendererParams={timeElementRendererParams}
