@@ -1,0 +1,14 @@
+.edit-comment {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .buttons {
+        display: flex;
+        justify-content: flex-end;
+
+        .cancel-button {
+            margin-right: var(--spacing-small);
+        }
+    }
+}
