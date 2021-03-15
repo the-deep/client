@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
+import { connect } from 'react-redux';
 import {
     _cs,
     isDefined,
@@ -14,10 +15,15 @@ import List from '#rsu/../v2/View/List';
 import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
 
 import useRequest from '#utils/request';
-import { MultiResponse, EntryComment, EntryReviewSummary } from '#typings';
+import { MultiResponse, EntryComment, EntryReviewSummary, AppState } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 import useDragMove from '#hooks/useDragMove';
+
+import {
+    activeUserSelector,
+    projectIdFromRouteSelector,
+} from '#redux';
 
 import Comment from './Comment';
 import Review from './Review';
@@ -31,10 +37,10 @@ interface Position {
 
 interface Props {
     className?: string;
-    parentBCR: Position;
+    parentBCR?: Position;
     entryId: number;
     projectId: number;
-    closeModal: () => void;
+    closeModal?: () => void;
     activeUser: {
         userId: number;
     };
@@ -48,6 +54,11 @@ interface MultiResponseWithSummary<T> extends MultiResponse<T> {
 
 const commentKeySelector = (d: EntryComment) => d.id;
 const maxItemsPerPage = 50;
+
+const mapStateToProps = (state: AppState) => ({
+    activeUser: activeUserSelector(state),
+    projectId: projectIdFromRouteSelector(state),
+});
 
 function EntryReviewModal(props: Props) {
     const {
@@ -89,8 +100,8 @@ function EntryReviewModal(props: Props) {
             width: window.innerWidth,
             height: window.innerHeight,
         };
-        let topCalc = top === 0 ? parentBCR.top : top;
-        let leftCalc = left === 0 ? parentBCR.left - width : left;
+        let topCalc = parentBCR && top === 0 ? parentBCR.top : top;
+        let leftCalc = parentBCR && left === 0 ? parentBCR.left - width : left;
 
         if (leftCalc < 0) {
             leftCalc = WINDOW_PADDING;
@@ -227,4 +238,4 @@ function EntryReviewModal(props: Props) {
     );
 }
 
-export default EntryReviewModal;
+export default connect(mapStateToProps)(EntryReviewModal);

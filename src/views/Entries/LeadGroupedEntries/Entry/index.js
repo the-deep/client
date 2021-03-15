@@ -20,7 +20,7 @@ import EntryOpenLink from '#components/general/EntryOpenLink';
 import Cloak from '#components/general/Cloak';
 import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
-import EntryReviewModal from '#components/general/EntryReviewModal';
+import EntryReviewButton from '#components/general/EntryReviewButton';
 import { pathNames } from '#constants';
 
 import {
@@ -34,7 +34,6 @@ import {
     deleteEntryAction,
     editEntryAction,
     patchEntryVerificationAction,
-    activeUserSelector,
 } from '#redux';
 
 import {
@@ -69,7 +68,6 @@ const propTypes = {
     setEntryVerification: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
-    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -106,10 +104,6 @@ const requestOptions = {
     onFatal: notifyOnFatal(_ts('entries', 'deleteEntryFailure')),
 };
 
-const mapStateToProps = state => ({
-    activeUser: activeUserSelector(state),
-});
-
 const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
@@ -132,7 +126,7 @@ const emptySchema = { fields: {} };
 
 const entryLabelKeySelector = d => d.labelId;
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 @RequestClient(requestOptions)
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
@@ -318,7 +312,6 @@ export default class Entry extends React.PureComponent {
             },
             entry,
             leadId,
-            activeUser,
         } = this.props;
 
         const {
@@ -414,22 +407,10 @@ export default class Entry extends React.PureComponent {
                                 </div>
                             }
                         </ModalButton>
-                        <ModalButton
-                            className={
-                                _cs(
-                                    styles.button,
-                                )
-                            }
-                            modal={
-                                <EntryReviewModal
-                                    entryId={entryId}
-                                    projectId={projectId}
-                                    activeUser={activeUser}
-                                />
-                            }
-                        >
-                            {_ts('entries', 'reviewEntry')}
-                        </ModalButton>
+                        <EntryReviewButton
+                            className={styles.review}
+                            entryId={entryId}
+                        />
                         <Cloak
                             hide={Entry.shouldHideEntryDelete}
                             render={
