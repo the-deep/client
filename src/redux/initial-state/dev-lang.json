@@ -1276,7 +1276,7 @@
         "-75339790": "Entries analyzed",
         "-65511645": "Sources analyzed",
         "-70983044": "Add pillar analysis",
-        "-81726696": "All analyses",
+        "-81726696": "All analyses    {count}",
         "-57723792": "No analysis created",
         "-90678740": "Setup a new analysis",
         "-45423653": "{count} Pillar Analyses",
@@ -1294,7 +1294,10 @@
         "-25536744": "Information gap",
         "-62584276": "Main statement",
         "-52946834": "Pillar analysis",
-        "-90678740": "Setup a new analysis"
+        "-90678740": "Setup a new analysis",
+        "-90678740": "Setup a new analysis",
+        "-35701649": "Select Analysis Date",
+        "-80223054": "All Analyses"
     },
     "links": {
         "browserExtension": {
@@ -3668,7 +3671,11 @@
             "saveButtonLabel": 25,
             "closeButtonLabel": -39430073,
             "mainStatementLabel": -62584276,
-            "infoGapLabel": -25536744
+            "infoGapLabel": -25536744,
+            "editAnalysisModalHeading": -30091387,
+            "pillarAssignments": -31952614,
+            "selectAnalysisDate": -35701649,
+            "allAnalyses": -80223054
         }
     }
 }

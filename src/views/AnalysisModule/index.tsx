@@ -10,6 +10,7 @@ import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#dui/Button';
 import Modal from '#dui/Modal';
+import DateFilter from '#rsci/DateFilter';
 
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
@@ -73,10 +74,11 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [analysisCount, setAnalysisCount] = useState(0);
     const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
     const [analysisToEdit, setAnalysisToEdit] = useState();
+    const [filter, setFilter] = useState();
 
     const [
         pendingAnalyses,
-        ,
+        analysesResponse,
         ,
         getAnalysisTrigger,
     ] = useRequest<MultiResponse<AnalysisElement>>({
@@ -113,6 +115,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
     );
 
     const handleAnalysisDeleteClick = useCallback((toDeleteKey) => {
+    const handleChange = (item: any) => {
+        setFilter(item);
+        console.warn('filter', filter);
+    };
+
+    const handleAnalysisToDelete = useCallback((toDeleteKey) => {
         deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
     }, [deleteAnalysisTrigger]);
@@ -224,7 +232,22 @@ function AnalysisModule(props: AnalysisModuleProps) {
             <Container
                 className={styles.allAnalyses}
                 contentClassName={styles.analysesContainer}
-                heading={_ts('analysis', 'allAnalysesLabel')}
+                heading={(
+                    <div className={styles.heading}>
+                        {_ts('analysis', 'allAnalyses')}
+                        <span className={styles.lightText}>
+                            {analysesResponse?.count}
+                        </span>
+                    </div>
+                )}
+                headerActions={(
+                    <DateFilter
+                        className={styles.dateFilter}
+                        placeholder={_ts('analysis', 'selectAnalysisDate')}
+                        value={undefined}
+                        onChange={handleChange}
+                    />
+                )}
                 headerClassName={styles.header}
                 footerClassName={styles.footer}
                 footerActions={(
