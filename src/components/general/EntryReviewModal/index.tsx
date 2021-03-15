@@ -126,7 +126,8 @@ function EntryReviewModal(props: Props) {
     const commentRendererParams = useCallback((_, comment: EntryComment) => ({
         comment,
         className: styles.comment,
-    }), []);
+        activeUser,
+    }), [activeUser]);
 
     const handleMouseMove = useCallback((e) => {
         if (containerRef.current) {
