@@ -22,6 +22,7 @@ export interface AppState {
     domainData: any;
     siloDomainData: any;
     route: any;
+    auth: any;
 }
 
 export interface AppProps {

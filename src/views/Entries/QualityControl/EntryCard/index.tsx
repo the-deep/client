@@ -16,6 +16,7 @@ import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import ListItem, { DefaultIcon } from '#rscv/ListItem';
+import EntryReviewButton from '#components/general/EntryReviewButton';
 
 import useRequest from '#utils/request';
 import { getScaleWidgetsData } from '#utils/framework';
@@ -359,6 +360,9 @@ function EntryCard(props: EntryCardProps) {
                             commentCount={entry.unresolvedCommentCount}
                             assignee={lead.assigneeDetails.id}
                             disabled={isDeleted}
+                        />
+                        <EntryReviewButton
+                            entryId={entry.id}
                         />
                         <EntryEditButton
                             entry={entry}

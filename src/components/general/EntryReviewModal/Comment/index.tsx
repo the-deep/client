@@ -84,7 +84,7 @@ function Comment(props: Props) {
                             {_ts('entryReview', 'commentType', { commentType: commentTypeToTextMap[commentType] })}
                             &nbsp;
                             <FormattedDate
-                                value={latest ? latest.createdAt : createdAt}
+                                value={createdAt}
                                 mode="dd-MMM-yyyy"
                             />
                             &nbsp;
@@ -96,6 +96,17 @@ function Comment(props: Props) {
                                 items={mentionedUsersDetail}
                             />
                         </span>
+                        {textHistory.length > 1 && (
+                            <span className={styles.modified}>
+                                &nbsp;
+                                {_ts('entryReview', 'lastModified')}
+                                &nbsp;
+                                <FormattedDate
+                                    value={latest.createdAt}
+                                    mode="dd-MMM-yyyy"
+                                />
+                            </span>
+                        )}
                     </span>
                     {isEditable && (
                         <PrimaryButton
@@ -113,9 +124,11 @@ function Comment(props: Props) {
                         onEditCancel={handleCancel}
                     />
                 ) : (
-                    <ReactMarkdown
-                        source={latest ? latest.text : undefined}
-                    />
+                    <div>
+                        <ReactMarkdown
+                            source={latest ? latest.text : undefined}
+                        />
+                    </div>
                 )}
             </div>
         </div>
