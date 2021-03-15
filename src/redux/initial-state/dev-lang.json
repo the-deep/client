@@ -1348,7 +1348,8 @@
         "-1208084875": "Assignees",
         "-25993351": "Entry Comments and Review",
         "-797172973": "Edit Comment",
-        "-780818101": "Update Comment"
+        "-780818101": "Update Comment",
+        "-8791231793": "last modified on"
     },
     "links": {
         "browserExtension": {
@@ -3822,8 +3823,8 @@
             "commentAndReviewHeading": -25993351,
             "editComment": -797172973,
             "editCommentCancel": 61,
-            "editCommentUpdate": -780818101
-
+            "editCommentUpdate": -780818101,
+            "lastModified": -8791231793
         }
     }
 }

@@ -16,6 +16,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
 import EntryVerify from '#components/general/EntryVerify';
+import EntryReviewButton from '#components/general/EntryReviewButton';
 
 import {
     entryAccessor,
@@ -276,6 +277,9 @@ function WidgetFaramContainer(props) {
                         </div>
                     }
                 </ModalButton>
+                <EntryReviewButton
+                    entryId={entryAccessor.serverId(entry)}
+                />
                 <Cloak
                     hide={shouldHideEntryEdit}
                     render={
