@@ -29,6 +29,10 @@
                 .name {
                     font-weight: var(--font-weight-bold);
                 }
+
+                .modified {
+                    color: var(--color-text-disabled);
+                }
             }
         }
     }
