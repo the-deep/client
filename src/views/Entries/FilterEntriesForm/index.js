@@ -222,7 +222,10 @@ function FilterEntriesForm(props) {
         handleFilterChange,
     ]);
 
-    const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
+    const isFilterEmpty = useMemo(
+        () => doesObjectHaveNoData(filters, ['']),
+        [filters],
+    );
 
     const {
         createdBy,
@@ -234,9 +237,11 @@ function FilterEntriesForm(props) {
     } = entryFilterOptions;
 
     const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
-    const selectedVerification = verificationStatusOptions.find(
-        v => v.key === filters.verified,
-    );
+    const selectedVerification = useMemo(() => (
+        verificationStatusOptions.find(
+            v => v.key === filters.verified,
+        )
+    ), [filters]);
 
     const handleFilterButtonClick = useCallback(() => {
         setShowFilters(oldVal => !oldVal);
