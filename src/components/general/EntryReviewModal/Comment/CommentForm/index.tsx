@@ -39,7 +39,7 @@ function CommentForm(props: Props) {
     const [pristine, setPristine] = useState<boolean>(true);
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [faramValues, setFaramValues] = useState<Comment | undefined>({
-        text: comment.textHistory[0].text,
+        text: comment.textHistory[0]?.text,
         comment_type: comment.commentType,
     });
 
