@@ -148,9 +148,10 @@ function Analysis(props: ComponentProps) {
         title: data.title,
         assigneeName: data.assigneeName,
         createdOn,
-        analysis: data.analysis,
+        analysis: analysisId,
         onDelete: handlePillarAnalysisToDelete,
-    }), [handlePillarAnalysisToDelete, createdOn]);
+        projectId: activeProject,
+    }), [handlePillarAnalysisToDelete, createdOn, activeProject, analysisId]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);

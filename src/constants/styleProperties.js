@@ -129,11 +129,14 @@ const styleProperties = {
 
         heightActionBar: '42px',
 
+        duiHeightNavbarIcon: '48px',
+
         duiSpacingExtraSmall: '0.1rem',
         duiSpacingSmall: '0.2rem',
         duiSpacingMedium: '0.45rem',
         duiSpacingLarge: '0.66rem',
         duiSpacingExtraLarge: '1.1rem',
+        duiSpacingSuperLarge: '2rem',
 
         duiFontSizeSmall: '0.67rem',
         duiFontSizeMedium: '0.86rem',
