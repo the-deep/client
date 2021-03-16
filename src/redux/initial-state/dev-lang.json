@@ -1289,7 +1289,10 @@
         "-49556": "Pillars",
         "-35552020": "Team lead",
         "-76422871": "Add an analyst",
-        "-88197654": "Analysis Edit/Create"
+        "-88197654": "Analysis Edit/Create",
+        "-25536744": "Information gap",
+        "-62584276": "Main statement",
+        "-52946834": "Pillar analysis"
     },
     "links": {
         "browserExtension": {
@@ -2297,7 +2300,8 @@
             "frameworkQuestions": -25976066,
             "home": 5559,
             "dashboard": -29389738,
-            "analysisModule": -55670188
+            "analysisModule": -55670188,
+            "pillarAnalysis": -52946834
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3110,7 +3114,8 @@
             "projects": 173,
             "totalAddedSources": -678768686,
             "sourcesTagged": -686861344,
-            "sourcesTaggedValidated": -686861268
+            "sourcesTaggedValidated": -686861268,
+            "recentProjectsTitle": -52545948
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -3655,6 +3660,12 @@
             "anaylsisEditModal": -88197654,
             "editButtonLabel": 363,
             "editAnalysisModalHeading": -30091387
+        },
+        "pillarAnalysis": {
+            "saveButtonLabel": 25,
+            "closeButtonLabel": -39430073,
+            "mainStatementLabel": -62584276,
+            "infoGapLabel": -25536744
         }
     }
 }

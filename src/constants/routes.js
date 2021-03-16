@@ -89,14 +89,23 @@ export const routes = {
     analysisModule: {
         order: 19,
         type: ROUTE.private,
-        path: '/projects/:projectId/analysis-module/',
+        path: '/projects/:projectId/analysis/',
         loader: () => import('../views/AnalysisModule'),
         links: allLinks,
         showSubNavbar: true,
     }, // _ts('pageTitle', 'analysisModule');
 
-    projects: {
+    pillarAnalysis: {
         order: 20,
+        type: ROUTE.private,
+        path: '/projects/:projectId/analysis/:analysisId/pillar/:pillarId/',
+        loader: () => import('../views/PillarAnalysis'),
+        links: allLinks,
+        hideNavbar: true,
+    }, // _ts('pageTitle', 'pillarAnalysis');
+
+    projects: {
+        order: 21,
         type: ROUTE.private,
         path: '/projects/:projectId?/',
         loader: () => import('../views/Project'),
@@ -104,7 +113,7 @@ export const routes = {
     }, // _ts('pageTitle', 'projects');
 
     dashboard: {
-        order: 21,
+        order: 22,
         type: ROUTE.private,
         path: '/projects/:projectId/dashboard/',
         loader: () => import('../views/Dashboard'),
