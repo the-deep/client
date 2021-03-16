@@ -1,0 +1,17 @@
+.toggle-entry-control-button {
+    display: flex;
+
+    .icon {
+        font-size: var(--dui-font-size-large);
+    }
+
+    &.verified {
+        .icon {
+            color: var(--color-success);
+        }
+    }
+}
+
+.comment-modal {
+    width: 400px;
+}

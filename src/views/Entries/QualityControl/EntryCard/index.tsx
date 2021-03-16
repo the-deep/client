@@ -9,7 +9,7 @@ import EntryCommentButton from '#components/general/EntryCommentButton';
 import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
-import EntryVerify from '#components/general/EntryVerify';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
@@ -203,6 +203,19 @@ function EntryCard(props: EntryCardProps) {
         };
     }, []);
 
+    const handleEntryVerificationChange = useCallback((verified) => {
+        if (onEntryChange) {
+            const entryToPatch = {
+                ...entry,
+                verified,
+            };
+
+            onEntryChange(entryToPatch);
+        }
+    }, [entry, onEntryChange]);
+
+    const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
+
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
             {loading && <LoadingAnimation />}
@@ -370,24 +383,15 @@ function EntryCard(props: EntryCardProps) {
                             disabled={isDeleted}
                             onEditSuccess={onEntryChange}
                         />
-                        <EntryVerify
-                            title={entry.verificationLastChangedByDetails ? (
-                                _ts(
-                                    'entries',
-                                    'verificationLastChangedBy',
-                                    {
-                                        userName: entry
-                                            .verificationLastChangedByDetails.displayName,
-                                    },
-                                )
+                        <ToggleEntryVerification
+                            tooltip={entryLastChangedBy ? (
+                                _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                             ) : undefined}
-                            value={entry.verified}
                             entryId={entry.id}
-                            leadId={entry.lead}
-                            versionId={entry.versionId}
+                            value={entry.verified}
+                            onChange={handleEntryVerificationChange}
+                            onPendingStatusChange={setVerifyChangePending}
                             disabled={isDeleted}
-                            handleEntryVerify={onEntryChange}
-                            onPendingChange={setVerifyChangePending}
                         />
                     </div>
                 </div>
