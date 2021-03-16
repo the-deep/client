@@ -19,15 +19,13 @@ import {
     ReportStructure,
 } from '#typings';
 
+import { breadcrumb } from '#utils/safeCommon';
+
 export const SECTOR_FIRST = 'sectorFirst' as const;
 export const DIMENSION_FIRST = 'dimensionFirst' as const;
 
 function createId<T extends string | number>(...args: [T, T, ...T[]]) {
     return args.join('-');
-}
-
-function breadcrumb(...args: string[]) {
-    return args.join(' › ');
 }
 
 // NOTE: This function generates dimension first level

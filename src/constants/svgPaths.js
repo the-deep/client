@@ -12,9 +12,11 @@ import bookmarkIcon from '#resources/img/bookmark.svg';
 import noteIcon from '#resources/img/note.svg';
 import checkmarkCircleFillIcon from '#resources/img/checkmark-circle-fill.svg';
 import documentIcon from '#resources/img/document.svg';
+import newDeepLogo from '#resources/img/deep-logo-new.svg';
 
 const svgPaths = {
     deepLogo,
+    newDeepLogo,
     defaultUser,
     dateIcon,
     stringIcon,
