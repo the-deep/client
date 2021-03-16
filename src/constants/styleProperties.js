@@ -129,7 +129,7 @@ const styleProperties = {
 
         heightActionBar: '42px',
 
-        duiHeightNavbarIcon: '48px',
+        duiHeightNavbarIcon: '3rem',
 
         duiSpacingExtraSmall: '0.1rem',
         duiSpacingSmall: '0.2rem',
