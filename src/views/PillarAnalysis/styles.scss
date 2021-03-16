@@ -1,0 +1,46 @@
+.pillar-analysis {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .header {
+        flex-shrink: 0;
+
+        .breadcrumb {
+            font-size: var(--dui-font-size-large);
+            font-weight: var(--dui-font-weight-bold);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+            .button {
+                margin: var(--dui-spacing-small);
+            }
+        }
+    }
+
+    .content {
+        position: relative;
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium) calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
+        overflow-y: auto;
+
+        .inputs-container {
+            display: flex;
+
+            .input-container {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                padding: 0 var(--dui-spacing-large);
+
+                .input-header {
+                    padding: var(--dui-spacing-medium) 0;
+                }
+            }
+        }
+    }
+}

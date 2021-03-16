@@ -1,21 +1,27 @@
 import React, { useCallback, useState } from 'react';
+import {
+    reverseRoute,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import QuickActionButton from '#dui/QuickActionButton';
 import Container from '#dui/Container';
 import Tag from '#dui/Tag';
 import FormattedDate from '#rscv/FormattedDate';
+import QuickActionLink from '#dui/QuickActionLink';
 import TextOutput from '#components/general/TextOutput';
 
 import {
     AnalysisPillars,
 } from '#typings';
+import { pathNames } from '#constants';
 
 import _ts from '#ts';
 import styles from './styles.scss';
 
-interface ComponentProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
+interface ComponentProps extends Omit<AnalysisPillars, 'id'> {
     pillarId: AnalysisPillars['id'];
+    projectId: number;
     onDelete: (value: number) => void;
     createdOn: string | number;
 }
@@ -27,6 +33,8 @@ function AnalysisPillar(props: ComponentProps) {
         assigneeName,
         onDelete,
         createdOn,
+        projectId,
+        analysis,
     } = props;
 
     const [completed, setCompleted] = useState(false);
@@ -35,6 +43,12 @@ function AnalysisPillar(props: ComponentProps) {
     const handleDeletePillar = useCallback(() => {
         onDelete(pillarId);
     }, [pillarId, onDelete]);
+
+    const editLink = reverseRoute(pathNames.pillarAnalysis, {
+        projectId,
+        analysisId: analysis,
+        pillarId,
+    });
 
     return (
         <Container
@@ -56,11 +70,11 @@ function AnalysisPillar(props: ComponentProps) {
             headerClassName={styles.heading}
             headerActions={(
                 <div className={styles.headerRight}>
-                    <QuickActionButton
-                        className={styles.button}
+                    <QuickActionLink
+                        to={editLink}
                     >
                         <Icon name="edit" />
-                    </QuickActionButton>
+                    </QuickActionLink>
                     <QuickActionButton
                         className={styles.button}
                     >

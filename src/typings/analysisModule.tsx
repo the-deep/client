@@ -16,6 +16,7 @@ export interface PillarAnalysisElement extends BasicElement {
 export interface AnalysisPillars {
     id: number;
     analysis: number;
+    analysisName: number;
     assigneeName: string;
     title: string;
     mainStatement?: string;
