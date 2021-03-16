@@ -72,6 +72,7 @@ function Review(props: Props) {
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
 
     const commentRequired = commentRequiredTypes.some(v => v === faramValues?.['comment_type']) ? [requiredCondition] : [];
+
     const schema: ObjectSchema = {
         fields: {
             text: commentRequired,
@@ -91,6 +92,7 @@ function Review(props: Props) {
         body: faramValues,
         onSuccess: () => {
             onSuccess();
+            setFaramErrors(undefined);
             setFaramValues(undefined);
         },
         onFailure: (_, errorBody) => {
@@ -123,9 +125,18 @@ function Review(props: Props) {
         setPristine(false);
         setFaramValues(newFaramValues);
         setFaramErrors(newFaramErrors);
+        if (newFaramValues?.['comment_type']) {
+            setFaramErrors(undefined);
+        }
     }, [setPristine]);
 
-    const handleFaramValidationSuccess = useCallback(() => {
+    const handleFaramValidationSuccess = useCallback((_, newFaramValues) => {
+        if (newFaramValues?.text === '') {
+            setFaramValues(oldFaramValues => ({
+                ...oldFaramValues,
+                text: undefined,
+            }));
+        }
         setPristine(true);
         postReview();
     }, [setPristine, postReview]);
