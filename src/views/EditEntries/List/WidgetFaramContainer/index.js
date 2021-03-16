@@ -15,8 +15,8 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
-import EntryVerify from '#components/general/EntryVerify';
 import EntryReviewButton from '#components/general/EntryReviewButton';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import {
     entryAccessor,
@@ -124,7 +124,7 @@ function WidgetFaramContainer(props) {
         markAsDeletedEntry,
     } = props;
 
-    const [verifyPending, setVerifyChangePending] = useState(false);
+    const [verifyPending, setVerifyPending] = useState(false);
 
     const {
         serverData: {
@@ -176,15 +176,15 @@ function WidgetFaramContainer(props) {
         setEntryCommentsCount({ entry: entryForPatch, leadId });
     }, [setEntryCommentsCount, leadId]);
 
-    const handleVerificationChange = useCallback((newEntry) => {
+    const handleVerificationChange = useCallback((verified) => {
         const entryForPatch = {
-            versionId: newEntry.versionId,
-            verified: newEntry.verified,
-            id: newEntry.id,
+            id: entryAccessor.serverId(entry),
+            verified,
+            versionId: entry.versionId,
         };
 
         setEntryVerificationStatus({ entry: entryForPatch, leadId });
-    }, [setEntryVerificationStatus, leadId]);
+    }, [entry, setEntryVerificationStatus, leadId]);
 
     const entryServerId = entryAccessor.serverId(entry);
     const entryKey = entryAccessor.key(entry);
@@ -213,6 +213,8 @@ function WidgetFaramContainer(props) {
         groups: data.groups,
     }), []);
 
+    const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
+
     return (
         <div
             className={_cs(
@@ -235,25 +237,15 @@ function WidgetFaramContainer(props) {
                     keySelector={entryLabelKeySelector}
                     emptyComponent={null}
                 />
-                <EntryVerify
-                    title={entry.verificationLastChangedByDetails ? (
-                        _ts(
-                            'entries',
-                            'verificationLastChangedBy',
-                            {
-                                userName: entry
-                                    .verificationLastChangedByDetails.displayName,
-                            },
-                        )
+                <ToggleEntryVerification
+                    tooltip={entryLastChangedBy ? (
+                        _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                     ) : undefined}
                     entryId={entryAccessor.serverId(entry)}
-                    leadId={leadId}
-                    versionId={entryAccessor.versionId(entry)}
-                    disabled={disableVerifiedButton}
                     value={verified}
-                    handleEntryVerify={handleVerificationChange}
-                    className={styles.entryVerifyButton}
-                    onPendingChange={setVerifyChangePending}
+                    onChange={handleVerificationChange}
+                    disabled={disableVerifiedButton}
+                    onPendingStatusChange={setVerifyPending}
                 />
                 {labels.length > 0 && (
                     <ModalButton
