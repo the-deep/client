@@ -9,7 +9,6 @@ import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#dui/Button';
-import Modal from '#dui/Modal';
 import DateFilter from '#rsci/DateFilter';
 
 import useRequest from '#utils/request';
@@ -53,6 +52,8 @@ interface AnalysisModuleProps {
     activeProject: number;
 }
 
+type Filter = unknown;
+
 function AnalysisModule(props: AnalysisModuleProps) {
     const {
         activeProject,
@@ -74,7 +75,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [analysisCount, setAnalysisCount] = useState(0);
     const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
     const [analysisToEdit, setAnalysisToEdit] = useState();
-    const [filter, setFilter] = useState();
+    const [filter, setFilter] = useState<Filter | undefined>(undefined);
 
     const [
         pendingAnalyses,
@@ -114,8 +115,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const handleAnalysisDeleteClick = useCallback((toDeleteKey) => {
-    const handleChange = (item: any) => {
+    const handleChange = (item: Filter) => {
         setFilter(item);
         console.warn('filter', filter);
     };
@@ -153,13 +153,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
         className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
-        onDelete: handleAnalysisDeleteClick,
+        onDelete: handleAnalysisToDelete,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
         teamLeadName: data.teamLeadName,
         createdOn: data.createdOn,
-    }), [handleAnalysisEditClick, handleAnalysisDeleteClick]);
+    }), [handleAnalysisEditClick, handleAnalysisToDelete]);
 
     return (
         <div className={styles.analysisModule}>
