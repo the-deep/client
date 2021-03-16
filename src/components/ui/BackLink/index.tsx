@@ -28,7 +28,7 @@ function BackLink(props: Props) {
         ...otherProps
     } = props;
 
-    const goBack = useCallback((e) => {
+    const handleBackLinkClick = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
         window.history.back();
@@ -40,7 +40,7 @@ function BackLink(props: Props) {
         <Link
             className={className}
             to={defaultLink || '/'}
-            onClick={isFirstPage ? undefined : goBack}
+            onClick={isFirstPage ? undefined : handleBackLinkClick}
             {...otherProps}
         >
             {children}

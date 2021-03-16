@@ -44,12 +44,12 @@ function PillarAnalysis(props: PageProps) {
         projectId,
     } = props;
 
-    const [value, setValue] = useState<string | undefined>('');
+    const [value, setValue] = useState<string | undefined>();
     const [
         pendingPillarAnalysis,
         pillarAnalysis,
         ,
-        getPillarAnalysis,
+        ,
     ] = useRequest<PillarAnalysisElement>({
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
         method: 'GET',
