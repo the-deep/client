@@ -79,23 +79,19 @@ function Comment(props: Props) {
                 <div className={styles.heading}>
                     <span className={styles.detail}>
                         <span className={styles.name}>{createdByDetail.name}</span>
-                        <span>
-                            &nbsp;
-                            {_ts('entryReview', 'commentType', { commentType: commentTypeToTextMap[commentType] })}
-                            &nbsp;
-                            <FormattedDate
-                                value={createdAt}
-                                mode="dd-MMM-yyyy"
-                            />
-                            &nbsp;
-                            {mentionedUsersDetail.length > 0 && _ts('entryReview', 'assignedItTo')}
-                            &nbsp;
-                        </span>
-                        <span>
-                            <CommaSeparateItems
-                                items={mentionedUsersDetail}
-                            />
-                        </span>
+                        &nbsp;
+                        {_ts('entryReview', 'commentType', { commentType: commentTypeToTextMap[commentType] })}
+                        &nbsp;
+                        <FormattedDate
+                            value={createdAt}
+                            mode="dd-MMM-yyyy"
+                        />
+                        &nbsp;
+                        {mentionedUsersDetail.length > 0 && _ts('entryReview', 'assignedItTo')}
+                        &nbsp;
+                        <CommaSeparateItems
+                            items={mentionedUsersDetail}
+                        />
                         {textHistory.length > 1 && (
                             <span className={styles.modified}>
                                 &nbsp;
@@ -126,7 +122,7 @@ function Comment(props: Props) {
                 ) : (
                     <div>
                         <ReactMarkdown
-                            source={latest ? latest.text : undefined}
+                            source={latest?.text}
                         />
                     </div>
                 )}
