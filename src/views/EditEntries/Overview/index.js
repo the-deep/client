@@ -43,7 +43,7 @@ import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
-import EntryVerify from '#components/general/EntryVerify';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import {
     calculateFirstTimeAttributes,
@@ -244,16 +244,17 @@ export default class Overview extends React.PureComponent {
         setEntryCommentsCount({ entry, leadId });
     }
 
-    handleVerificationChange = (newEntry) => {
+    handleVerificationChange = (verified) => {
         const {
+            entry: entryFromProps,
             leadId,
             setEntryVerificationStatus,
         } = this.props;
 
         const entry = {
-            versionId: newEntry.versionId,
-            verified: newEntry.verified,
-            id: newEntry.id,
+            id: entryAccessor.serverId(entryFromProps),
+            verified,
+            versionId: entryFromProps.versionId,
         };
 
         setEntryVerificationStatus({ entry, leadId });
@@ -299,6 +300,7 @@ export default class Overview extends React.PureComponent {
         const disableVerifiedButton = !entry?.localData?.isPristine
             || isFalsy(entryAccessor.serverId(entry));
 
+        const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
         return (
             <ResizableH
                 className={styles.overview}
@@ -342,24 +344,15 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.rightActionButtons}>
-                                <EntryVerify
-                                    title={entry?.verificationLastChangedByDetails ? (
-                                        _ts(
-                                            'entries',
-                                            'verificationLastChangedBy',
-                                            {
-                                                userName: entry
-                                                    ?.verificationLastChangedByDetails.displayName,
-                                            },
-                                        )
+                                <ToggleEntryVerification
+                                    tooltip={entryLastChangedBy ? (
+                                        _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                                     ) : undefined}
                                     entryId={entryAccessor.serverId(entry)}
-                                    leadId={leadId}
-                                    versionId={entryAccessor.versionId(entry)}
-                                    disabled={disableVerifiedButton}
                                     value={verified}
-                                    handleEntryVerify={this.handleVerificationChange}
-                                    onPendingChange={this.handleEntryVerifyPendingChange}
+                                    onChange={this.handleVerificationChange}
+                                    onPendingStatusChange={this.handleEntryVerifyPendingChange}
+                                    disabled={disableVerifiedButton}
                                 />
                                 {labels.length > 0 && (
                                     <ModalButton
