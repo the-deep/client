@@ -130,7 +130,7 @@ async function fetchResource<T>(
                         faramErrors
                         && faramErrors.$internal
                         && faramErrors.$internal.join(' ')
-                    ) || 'There was some error while performing this action. Please try again.';
+                    ) || 'There was some error while performing this action';
 
                     const requestError = {
                         faramErrors,

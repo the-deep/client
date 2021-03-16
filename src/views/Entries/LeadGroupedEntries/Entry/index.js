@@ -16,10 +16,9 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
-import ToggleEntryControlButton from '#components/general/ToggleEntryControlButton';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import Cloak from '#components/general/Cloak';
-import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
 import EntryReviewButton from '#components/general/EntryReviewButton';
 
@@ -166,7 +165,7 @@ export default class Entry extends React.PureComponent {
         setEntryCommentsCount({ entry, projectId, leadId });
     }
 
-    handleEntryVerificationChange = (entry) => {
+    handleEntryControlChange = (verified) => {
         const {
             setEntryVerification,
             entry: {
@@ -178,8 +177,7 @@ export default class Entry extends React.PureComponent {
         setEntryVerification({
             entryId,
             leadId,
-            status: entry.verified,
-            versionId: entry.versionId,
+            status: verified,
         });
     }
 
@@ -331,6 +329,7 @@ export default class Entry extends React.PureComponent {
 
         const defaultAssignees = this.getDefaultAssignees(createdBy);
         const pending = deletePending || entryVerificationPending;
+        const entryLastChangedBy = verificationLastChangedByDetails?.displayName;
 
         return (
             <div className={_cs(classNameFromProps, styles.entryContainer)}>
@@ -345,27 +344,13 @@ export default class Entry extends React.PureComponent {
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
                         />
-                        <ToggleEntryControlButton
-                            entryId={entryId}
-                            initialValue={verified}
-                        />
-                        <EntryVerify
-                            className={styles.entryVerify}
-                            title={verificationLastChangedByDetails ? (
-                                _ts(
-                                    'entries',
-                                    'verificationLastChangedBy',
-                                    {
-                                        userName: verificationLastChangedByDetails.displayName,
-                                    },
-                                )
+                        <ToggleEntryVerification
+                            tooltip={entryLastChangedBy ? (
+                                _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                             ) : undefined}
-                            value={verified}
                             entryId={entryId}
-                            versionId={versionId}
-                            leadId={leadId}
-                            onPendingChange={this.handleEntryVerificationPendingChange}
-                            handleEntryVerify={this.handleEntryVerificationChange}
+                            value={verified}
+                            onChange={this.handleEntryControlChange}
                         />
                         <EntryOpenLink
                             className={styles.button}
