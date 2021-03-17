@@ -361,6 +361,7 @@ export default class Overview extends React.PureComponent {
                                         _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                                     ) : undefined}
                                     entryId={entryAccessor.serverId(entry)}
+                                    projectId={entry.project}
                                     value={verified}
                                     onChange={this.handleVerificationChange}
                                     onPendingStatusChange={this.handleEntryVerifyPendingChange}
