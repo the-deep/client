@@ -37,7 +37,7 @@ interface ComponentProps {
     onEdit: (analysisId: number) => void;
     onDelete: (value: number) => void;
     teamLeadName: string;
-    createdOn: string;
+    createdAt: string;
 }
 
 interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
@@ -85,7 +85,7 @@ function Analysis(props: ComponentProps) {
         analysisId,
         onDelete,
         teamLeadName,
-        createdOn,
+        createdAt,
         onEdit,
     } = props;
 
@@ -147,11 +147,10 @@ function Analysis(props: ComponentProps) {
         pillarId: data.id,
         title: data.title,
         assigneeName: data.assigneeName,
-        createdOn,
-        analysis: analysisId,
+        createdAt,
+        analysis: data.analysis,
         onDelete: handlePillarAnalysisToDelete,
-        projectId: activeProject,
-    }), [handlePillarAnalysisToDelete, createdOn, activeProject, analysisId]);
+    }), [handlePillarAnalysisToDelete, createdAt]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);
