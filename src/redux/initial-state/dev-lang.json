@@ -1356,7 +1356,11 @@
         "-8791231793": "last modified on",
         "-10291009": "Verify",
         "-95647689": "Unverify",
-        "-41523534": "Unverify entry"
+        "-41523534": "Unverify entry",
+        "-55703725": "Approve",
+        "-30598208": "Unapprove",
+        "-66805221": "Unapprove entry",
+        "-52512618": "Unapprove"
     },
     "links": {
         "browserExtension": {
@@ -3850,7 +3854,10 @@
             "unverifiedLabel": -45171916,
             "unverifyLabel": -95647689,
             "verifiedLabel": -83960265,
-            "verifyLabel": -10291009
+            "verifyLabel": -10291009,
+            "approveLabel": -55703725,
+            "unapproveEntryLabel": -66805221,
+            "unapproveLabel": -30598208
         }
     }
 }
