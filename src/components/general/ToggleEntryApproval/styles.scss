@@ -1,11 +1,11 @@
-.toggle-entry-verification {
+.toggle-entry-approval {
     display: flex;
 
     .icon {
         font-size: var(--dui-font-size-large);
     }
 
-    &.verified {
+    &.approved {
         .icon {
             color: var(--color-success);
         }
