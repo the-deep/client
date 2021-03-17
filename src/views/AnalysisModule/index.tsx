@@ -1,19 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { encodeDate } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
-
-import InformationBox from '#components/viewer/InformationBox';
-import Container from '#dui/Container';
-import Card from '#dui/Card';
-import Icon from '#rscg/Icon';
-import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
-import ListView from '#rscv/List/ListView';
-import Pager from '#rscv/Pager';
-import Button from '#dui/Button';
-import DateFilter from '#rsci/DateFilter';
-import Timeline from '#components/viz/Timeline';
-import { shortMonthNamesMap } from '#utils/common';
-
+import colorBrewer from 'colorbrewer';
 import {
     PieChart,
     Pie,
@@ -23,10 +11,26 @@ import {
     Cell,
 } from 'recharts';
 
+import InformationBox from '#components/viewer/InformationBox';
+
+import Card from '#dui/Card';
+import Container from '#dui/Container';
+import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
+
+import Icon from '#rscg/Icon';
+import ListView from '#rscv/List/ListView';
+import Pager from '#rscv/Pager';
+import Button from '#dui/Button';
+import DateFilter from '#rsci/DateFilter';
+import Timeline from '#components/viz/Timeline';
+
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
-import { getDateWithTimezone } from '#utils/common';
+import {
+    getDateWithTimezone,
+    shortMonthNamesMap,
+} from '#utils/common';
 import {
     useModalState,
     useArrayEdit,
@@ -61,17 +65,7 @@ const mapStateToProps = (state: AppState) => ({
 
 const analysisKeySelector = (d: AnalysisElement) => d.id;
 const maxItemsPerPage = 5;
-
-const colorScheme = [
-    '#003f5c',
-    '#2f4b7c',
-    '#665191',
-    '#a05195',
-    '#d45087',
-    '#f95d6a',
-    '#ff7c43',
-    '#ffa600',
-];
+const colorScheme = colorBrewer.Dark2[8];
 
 interface AnalysisModuleProps {
     activeProject: number;
@@ -84,7 +78,7 @@ type Filter = {
 interface AnalysisList {
     id: number;
     title: string;
-    createdOn: string;
+    createdAt: string;
 }
 
 interface AuthoringOrganizations {
@@ -101,6 +95,28 @@ interface AnalysisOverview {
     analyzedSourceCount: number;
     authoringOrganizations: AuthoringOrganizations[];
 }
+
+interface TimelineData {
+    key: number;
+    value: number;
+    label: string;
+}
+
+const labelSelector = (item: AuthoringOrganizations) => item.organizationTitle;
+const valueSelector = (item: AuthoringOrganizations) => item.count;
+const tickFormatter = (title: string) => ({ title });
+
+const timelineLabelSelector = (item: TimelineData) => item.label;
+const timelineValueSelector = (item: TimelineData) => item.value;
+const timelineKeySelector = (item: TimelineData) => item.key;
+
+const timelineTickSelector = (d: number) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    return `${year}-${shortMonthNamesMap[month]}`;
+};
 
 function AnalysisModule(props: AnalysisModuleProps) {
     const {
@@ -178,7 +194,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         overviewResponse,
         ,
         ,
-    ] = useRequest<MultiResponse<AnalysisOverview>>(
+    ] = useRequest<AnalysisOverview>(
         {
             url: `server://projects/${activeProject}/analysis-overview/`,
             method: 'GET',
@@ -188,28 +204,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const labelSelector = (item: AuthoringOrganizations) => item.organizationTitle;
-    const valueSelector = (item: AuthoringOrganizations) => item.count;
-    const keySelector = (item: AuthoringOrganizations) => item.organizationId;
-    const piechartData: AuthoringOrganizations = overviewResponse?.authoringOrganizations ?? [];
-    const tickFormatter = (title: string) => ({ title });
+    const piechartData: AuthoringOrganizations[] = overviewResponse?.authoringOrganizations ?? [];
 
-    const timelineData = (analysesResponse?.results ?? []).map(d => ({
+    const timelineData: TimelineData[] = (analysesResponse?.results?.map(d => ({
         key: d.id,
-        value: new Date(d.createdOn).getTime(),
+        value: new Date(d?.createdAt).getTime(),
         label: d.title,
-    }));
-    const timelineLabelSelector = item => item.label;
-    const timelineValueSelector = item => item.value;
-    const timelineKeySelector = item => item.key;
-    const timelineTickSelector = (d: number) => {
-        const date = new Date(d);
-        const year = date.getFullYear();
-        const month = date.getMonth();
-
-        return `${year}-${shortMonthNamesMap[month]}`;
-    };
-
+    }))) ?? [];
 
     const handleAnalysisToDeleteClick = useCallback((toDeleteKey) => {
         deleteAnalysisTrigger();
@@ -329,9 +330,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
                                 outerRadius={50}
                                 paddingAngle={2}
                             >
-                                {piechartData.map((_: any, index: number) => (
+                                {piechartData.map((
+                                    entry: AuthoringOrganizations,
+                                    index: number,
+                                ) => (
                                     <Cell
-                                        key={keySelector}
+                                        key={entry.organizationId}
                                         fill={colorScheme[index % colorScheme.length]}
                                     />
                                 ))}
@@ -343,7 +347,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 </Card>
                 <Card className={styles.analysesTimelineContainer}>
                     <Timeline
-                        data={timelineData ?? []}
+                        data={timelineData}
                         labelSelector={timelineLabelSelector}
                         valueSelector={timelineValueSelector}
                         keySelector={timelineKeySelector}

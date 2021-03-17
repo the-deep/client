@@ -1,25 +1,26 @@
-import { BasicElement } from './';
-
-export interface AnalysisElement extends BasicElement {
+export interface AnalysisElement {
+    id: number;
     title: string;
     teamLead: number;
     teamLeadName: string;
-    analysisPillar: PillarAnalysisElement[];
+    analysisPillar: AnalysisPillars[];
     startDate?: string;
     endDate?: string;
-    createdOn?: string;
-}
-
-export interface PillarAnalysisElement extends BasicElement {
+    createdAt: string;
 }
 
 export interface AnalysisPillars {
     id: number;
-    analysis: number;
-    analysisName: number;
     assigneeName: string;
+    analysisTitle: string;
     title: string;
     mainStatement?: string;
     informationGap?: string;
-    filters?: unknown; // To be assigned a type when filters are passed from API
+    createdAt: string;
+    assignee: number;
+    analysis: number;
+}
+
+export interface PillarAnalysisElement extends AnalysisPillars{
+    filters?: unknown;
 }

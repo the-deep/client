@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import {
     _cs,
+    compareNumber,
 } from '@togglecorp/fujs';
 
 import ListView from '#rsu/../v2/View/ListView';
@@ -131,7 +132,7 @@ function Timeline<T>(props: TimelineProps<T>) {
     }), [tickLabelSelector, domain]);
 
     const renderData = React.useMemo(() => (
-        data.sort((a, b) => (valueSelector(a) - valueSelector(b)))
+        [...data].sort((a, b) => (compareNumber(valueSelector(a), valueSelector(b))))
     ), [data, valueSelector]);
 
     if (data.length === 0) {
