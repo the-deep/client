@@ -131,20 +131,17 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                             pending={reviewRequestPending}
                             disabled={disabled}
                         >
-                            {/* TODO: use strings */}
-                            { value ? 'Unverify' : 'Verify' }
+                            { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
                         </Button>
                     }
                 >
-                    {/* FIXME: use strings */}
-                    { value ? 'Verified' : 'Not verified' }
+                    { value ? _ts('entryReview', 'verifiedLabel') : _ts('entryReview', 'unverifiedLabel') }
                 </ElementFragments>
             </div>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
-                        // TODO: use strings
-                        title="Unverify entry"
+                        title={_ts('entryReview', 'unverifyEntryLabel')}
                         rightComponent={
                             <Button
                                 onClick={setCommentModalHidden}
@@ -164,8 +161,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                     </ModalBody>
                     <ModalFooter>
                         <PrimaryButton onClick={handleSubmitCommentButtonClick}>
-                            {/* TODO: use strings */}
-                            Submit
+                            {_ts('entryReview', 'submitButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Modal>
