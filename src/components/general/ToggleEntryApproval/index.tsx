@@ -19,7 +19,7 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-interface ToggleEntryVerificationProps {
+interface ToggleEntryApprovalProps {
     className?: string;
     entryId: DatabaseEntityBase['id'];
     projectId: DatabaseEntityBase['id'];
@@ -36,7 +36,7 @@ const UNAPPROVE = 2;
 
 const approveFormData = { commentType: APPROVE };
 
-function ToggleEntryApproval(props: ToggleEntryVerificationProps) {
+function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
     const {
         className,
         entryId,
