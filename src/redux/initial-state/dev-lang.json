@@ -1379,7 +1379,10 @@
         "-25993351": "Entry Comments and Review",
         "-797172973": "Edit Comment",
         "-780818101": "Update Comment",
-        "-8791231793": "last modified on"
+        "-8791231793": "last modified on",
+        "-10291009": "Verify",
+        "-95647689": "Unverify",
+        "-41523534": "Unverify entry"
     },
     "links": {
         "browserExtension": {
@@ -3922,7 +3925,13 @@
             "editComment": -797172973,
             "editCommentCancel": 61,
             "editCommentUpdate": -780818101,
-            "lastModified": -8791231793
+            "lastModified": -8791231793,
+            "submitButtonLabel": 826,
+            "unverifyEntryLabel": -41523534,
+            "unverifiedLabel": -45171916,
+            "unverifyLabel": -95647689,
+            "verifiedLabel": -83960265,
+            "verifyLabel": -10291009
         }
     }
 }
