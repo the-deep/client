@@ -1,5 +1,5 @@
 import useRequest from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
+import { notifyError } from '#utils/requestNotify';
 import {
     MultiResponse,
     DatabaseEntityBase,
@@ -30,9 +30,7 @@ function useProjectmemberListQuery(projectId: DatabaseEntityBase['id']): [
         method: 'GET',
         query: memberFieldQuery,
         autoTrigger: true,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
-        },
+        onFailure: notifyError(_ts('entryReview', 'reviewHeading')),
     });
 
     return [
