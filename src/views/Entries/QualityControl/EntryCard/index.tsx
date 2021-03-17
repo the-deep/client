@@ -10,6 +10,7 @@ import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
+import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
@@ -385,6 +386,7 @@ function EntryCard(props: EntryCardProps) {
                             tooltip={entryLastChangedBy ? (
                                 _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                             ) : undefined}
+                            projectId={entry.project}
                             entryId={entry.id}
                             value={entry.verified}
                             onChange={handleEntryVerificationChange}
