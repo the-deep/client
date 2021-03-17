@@ -31,7 +31,10 @@ interface ToggleEntryVerificationProps {
     approvalCount: number;
 }
 
-const approveFormData = { commentType: 1 };
+const APPROVE = 1;
+const UNAPPROVE = 2;
+
+const approveFormData = { commentType: APPROVE };
 
 function ToggleEntryApproval(props: ToggleEntryVerificationProps) {
     const {
@@ -53,7 +56,7 @@ function ToggleEntryApproval(props: ToggleEntryVerificationProps) {
     ] = useModalState(false);
 
     const [unapproveFormData, setUnapproveFormData] = React.useState({
-        commentType: 2,
+        commentType: UNAPPROVE,
     });
 
     const url = `server://v2/entries/${entryId}/review-comments/`;
@@ -112,49 +115,55 @@ function ToggleEntryApproval(props: ToggleEntryVerificationProps) {
         let text = '';
 
         if (value && approvalCount <= 1) {
-            text = 'Approved only by you';
+            text = _ts('entryReview', 'approvedOnlyByUserLabel');
+            // 'Approved only by you';
         } else if (value && approvalCount > 1) {
-            text = `Approved by you and ${approvalCount} other users`;
+            text = _ts('entryReview', 'approvedByUserAndOthersLabel', {
+                userCount: approvalCount - 1,
+            });
+            // `Approved by you and ${approvalCount} other users`;
         } else if (!value && approvalCount === 0) {
-            text = 'Not approved';
+            text = _ts('entryReview', 'notApprovedLabel');
+            // 'Not approved';
         } else {
-            text = `Not approved by you (Approved by ${approvalCount} other users)`;
+            text = _ts('entryReview', 'notApprovedByUserButApprovedByOthersLabel', {
+                userCount: approvalCount,
+            });
+            // `Not approved by you (Approved by ${approvalCount} other users)`;
         }
 
         return text;
     }, [value, approvalCount]);
 
     return (
-        <>
-            <div
-                title={tooltip}
-                className={
-                    _cs(
-                        className,
-                        styles.toggleEntryApproval,
-                        value && styles.approved,
-                    )
+        <div
+            title={tooltip}
+            className={
+                _cs(
+                    className,
+                    styles.toggleEntryApproval,
+                    value && styles.approved,
+                )
+            }
+        >
+            <ElementFragments
+                icons={value ? (
+                    <IoCheckmarkCircle className={styles.icon} />
+                ) : (
+                    <AiFillQuestionCircle className={styles.icon} />
+                )}
+                actions={
+                    <Button
+                        onClick={handleClick}
+                        pending={reviewRequestPending}
+                        disabled={disabled}
+                    >
+                        { value ? _ts('entryReview', 'unapproveLabel') : _ts('entryReview', 'approveLabel') }
+                    </Button>
                 }
             >
-                <ElementFragments
-                    icons={value ? (
-                        <IoCheckmarkCircle className={styles.icon} />
-                    ) : (
-                        <AiFillQuestionCircle className={styles.icon} />
-                    )}
-                    actions={
-                        <Button
-                            onClick={handleClick}
-                            pending={reviewRequestPending}
-                            disabled={disabled}
-                        >
-                            { value ? _ts('entryReview', 'unapproveLabel') : _ts('entryReview', 'approveLabel') }
-                        </Button>
-                    }
-                >
-                    { approvalStatus }
-                </ElementFragments>
-            </div>
+                { approvalStatus }
+            </ElementFragments>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
@@ -174,7 +183,7 @@ function ToggleEntryApproval(props: ToggleEntryVerificationProps) {
                     />
                 </Modal>
             )}
-        </>
+        </div>
     );
 }
 
