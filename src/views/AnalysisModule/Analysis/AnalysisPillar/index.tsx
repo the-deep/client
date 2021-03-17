@@ -23,7 +23,7 @@ interface ComponentProps extends Omit<AnalysisPillars, 'id'> {
     pillarId: AnalysisPillars['id'];
     projectId: number;
     onDelete: (value: number) => void;
-    createdOn: string | number;
+    createdAt: string | number;
 }
 
 function AnalysisPillar(props: ComponentProps) {
@@ -32,9 +32,9 @@ function AnalysisPillar(props: ComponentProps) {
         title,
         assigneeName,
         onDelete,
-        createdOn,
         projectId,
         analysis,
+        createdAt,
     } = props;
 
     const [completed, setCompleted] = useState(false);
@@ -94,7 +94,7 @@ function AnalysisPillar(props: ComponentProps) {
                         {_ts('analysis', 'creationDate')}
                     </span>
                     <FormattedDate
-                        value={createdOn}
+                        value={createdAt}
                         mode=" MMM dd yyyy"
                     />
                 </div>

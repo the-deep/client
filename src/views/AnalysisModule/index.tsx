@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
+import { encodeDate } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 
 import InformationBox from '#components/viewer/InformationBox';
@@ -14,6 +15,7 @@ import DateFilter from '#rsci/DateFilter';
 import useRequest from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
+import { getDateWithTimezone } from '#utils/common';
 import {
     useModalState,
     useArrayEdit,
@@ -52,7 +54,10 @@ interface AnalysisModuleProps {
     activeProject: number;
 }
 
-type Filter = unknown;
+type Filter = {
+    startDate?: string;
+    endDate?: string;
+};
 
 function AnalysisModule(props: AnalysisModuleProps) {
     const {
@@ -77,6 +82,19 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [analysisToEdit, setAnalysisToEdit] = useState();
     const [filter, setFilter] = useState<Filter | undefined>(undefined);
 
+    const analysisQueryOptions = useMemo(() => {
+        const endDate = filter?.endDate ? new Date(filter?.endDate) : new Date();
+        endDate.setDate(endDate.getDate() + 1);
+        // A day added to include 24 hours of endDate
+
+        return ({
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+            created_at__gte: filter?.startDate ? getDateWithTimezone(filter.startDate) : undefined,
+            created_at__lt: filter?.endDate ? getDateWithTimezone(encodeDate(endDate)) : undefined,
+        });
+    }, [activePage, filter]);
+
     const [
         pendingAnalyses,
         analysesResponse,
@@ -85,11 +103,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     ] = useRequest<MultiResponse<AnalysisElement>>({
         url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
-        query: {
-            // project: projectId,
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-        },
+        query: analysisQueryOptions,
         onSuccess: (response) => {
             setAnalyses(response.results);
             setAnalysisCount(response.count);
@@ -115,12 +129,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const handleChange = (item: Filter) => {
-        setFilter(item);
-        console.warn('filter', filter);
-    };
-
-    const handleAnalysisToDelete = useCallback((toDeleteKey) => {
+    const handleAnalysisToDeleteClick = useCallback((toDeleteKey) => {
         deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
     }, [deleteAnalysisTrigger]);
@@ -153,13 +162,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
         className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
-        onDelete: handleAnalysisToDelete,
+        onDelete: handleAnalysisToDeleteClick,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
         teamLeadName: data.teamLeadName,
-        createdOn: data.createdOn,
-    }), [handleAnalysisEditClick, handleAnalysisToDelete]);
+        createdAt: data.createdAt,
+    }), [handleAnalysisEditClick, handleAnalysisToDeleteClick]);
 
     return (
         <div className={styles.analysisModule}>
@@ -244,8 +253,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
                     <DateFilter
                         className={styles.dateFilter}
                         placeholder={_ts('analysis', 'selectAnalysisDate')}
-                        value={undefined}
-                        onChange={handleChange}
+                        value={filter}
+                        onChange={setFilter}
                     />
                 )}
                 headerClassName={styles.header}
