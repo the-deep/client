@@ -227,6 +227,7 @@ function WidgetFaramContainer(props) {
                         _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                     ) : undefined}
                     entryId={entryAccessor.serverId(entry)}
+                    projectId={entry.project}
                     value={verified}
                     onChange={handleVerificationChange}
                     disabled={disableVerifiedButton}
