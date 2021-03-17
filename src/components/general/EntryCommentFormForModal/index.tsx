@@ -40,26 +40,29 @@ export interface EntryCommentFormForModalProps<T> {
 
 function EntryCommentFormForModal<T extends {}>(props: EntryCommentFormForModalProps<T>) {
     const {
-        initialValue = {},
+        initialValue,
         disabled,
         onValidationSuccess,
         projectId,
         className,
     } = props;
 
-    const [faramValues, setFaramValues] = React.useState<T | {}>(initialValue);
+    const [faramValues, setFaramValues] = React.useState<T | undefined>(initialValue);
     const [faramErrors, setFaramErrors] = React.useState<FaramErrors>({});
     const [
         projectMembersPending,
         projectMembersResponse,
     ] = useProjectMemberListQuery(projectId);
 
-    const handleFaramChange = React.useCallback((newFaramValues, newFaramErrors) => {
+    const handleFaramChange = React.useCallback((
+        newFaramValues: T,
+        newFaramErrors: FaramErrors,
+    ) => {
         setFaramValues(newFaramValues);
         setFaramErrors(newFaramErrors);
     }, []);
 
-    const handleFaramValidationSuccess = React.useCallback((_, newFaramValues) => {
+    const handleFaramValidationSuccess = React.useCallback((_, newFaramValues: T) => {
         onValidationSuccess(newFaramValues);
     }, [onValidationSuccess]);
 
