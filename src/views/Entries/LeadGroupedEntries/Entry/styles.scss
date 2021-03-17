@@ -16,6 +16,10 @@
             right: var(--spacing-medium);
             align-items: center;
 
+            >* {
+                margin: 0 var(--spacing-small);
+            }
+
             .entry-labels {
                 display: inline-flex;
                 align-items: center;

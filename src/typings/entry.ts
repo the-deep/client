@@ -88,6 +88,10 @@ export interface EntryFields extends DatabaseEntityBase {
     tabularField?: number;
     image?: number;
     imageRaw?: string;
+
+    approvedBy: UserFields['id'][];
+    approvedByCount: number;
+    isApprovedByCurrentUser: boolean;
 }
 
 export interface LeadWithGroupedEntriesFields {
