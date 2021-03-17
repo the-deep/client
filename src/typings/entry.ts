@@ -88,6 +88,9 @@ export interface EntryFields extends DatabaseEntityBase {
     projectLabel: ProjectLabelFields[];
     verified: boolean;
     verificationLastChangedByDetails: UserFields;
+    approvedBy: UserFields['id'][];
+    approvedByCount: number;
+    isApprovedByCurrentUser: boolean;
 }
 
 export interface LeadWithGroupedEntriesFields {

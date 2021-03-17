@@ -17,6 +17,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
+import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
 
 import Cloak from '#components/general/Cloak';
 import EntryCommentModal from '#components/general/EntryCommentModal';
@@ -33,6 +34,7 @@ import {
     deleteEntryAction,
     editEntryAction,
     patchEntryVerificationAction,
+    patchEntryApprovalAction,
 } from '#redux';
 
 import {
@@ -65,6 +67,7 @@ const propTypes = {
     setEntryCommentsCount: PropTypes.func.isRequired,
     onEntryEdit: PropTypes.func.isRequired,
     setEntryVerification: PropTypes.func.isRequired,
+    setEntryApproval: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
 };
@@ -108,6 +111,7 @@ const mapDispatchToProps = dispatch => ({
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
     onEntryEdit: params => dispatch(editEntryAction(params)),
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
+    setEntryApproval: params => dispatch(patchEntryApprovalAction(params)),
 });
 
 const widgetLayoutSelector = (widget) => {
@@ -165,11 +169,12 @@ export default class Entry extends React.PureComponent {
         setEntryCommentsCount({ entry, projectId, leadId });
     }
 
-    handleEntryControlChange = (verified) => {
+    handleEntryVerificationChange = (verified) => {
         const {
             setEntryVerification,
             entry: {
                 id: entryId,
+                versionId,
             },
             leadId,
         } = this.props;
@@ -178,6 +183,26 @@ export default class Entry extends React.PureComponent {
             entryId,
             leadId,
             status: verified,
+            versionId,
+        });
+    }
+
+    handleEntryApprovalChange = (approved, count) => {
+        const {
+            setEntryApproval,
+            entry: {
+                id: entryId,
+                versionId,
+            },
+            leadId,
+        } = this.props;
+
+        setEntryApproval({
+            entryId,
+            leadId,
+            status: approved,
+            versionId,
+            approvedCount: count,
         });
     }
 
@@ -309,7 +334,7 @@ export default class Entry extends React.PureComponent {
                 },
             },
             entry,
-            leadId,
+            projectId,
         } = this.props;
 
         const {
@@ -319,8 +344,9 @@ export default class Entry extends React.PureComponent {
             unresolvedCommentCount: commentCount,
             projectLabels,
             verified,
+            isApprovedByCurrentUser,
+            approvedByCount,
             verificationLastChangedByDetails,
-            versionId,
         } = entry;
 
         const { entryVerificationPending } = this.state;
@@ -343,13 +369,21 @@ export default class Entry extends React.PureComponent {
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
                         />
+                        <ToggleEntryApproval
+                            entryId={entryId}
+                            projectId={projectId}
+                            value={isApprovedByCurrentUser}
+                            approvalCount={approvedByCount}
+                            onChange={this.handleEntryApprovalChange}
+                        />
                         <ToggleEntryVerification
                             tooltip={entryLastChangedBy ? (
                                 _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
                             ) : undefined}
                             entryId={entryId}
+                            projectId={projectId}
                             value={verified}
-                            onChange={this.handleEntryControlChange}
+                            onChange={this.handleEntryVerificationChange}
                         />
                         <EntryOpenLink
                             className={styles.button}
