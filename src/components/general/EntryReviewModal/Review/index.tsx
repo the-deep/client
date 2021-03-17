@@ -7,14 +7,16 @@ import MultiSelectInput from '#rsci/MultiSelectInput';
 import RadioInput from '#rsci/RadioInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import useProjectMemberListQuery, {
+    memberKeySelector,
+    memberNameSelector,
+} from '#hooks/useProjectMemberListQuery';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
-import {
-    FaramErrors, MultiResponse,
-} from '#typings';
+import { FaramErrors } from '#typings';
 
 import styles from './styles.scss';
 
@@ -35,24 +37,13 @@ interface Props {
     setPristine: (value: boolean) => void;
 }
 
-interface Member {
-    id: number;
-    displayName: string;
-}
-
 interface ReviewType {
     id: number;
     label: string;
 }
 
-const memberKeySelector = (d: Member) => d.id;
-const memberNameSelector = (d: Member) => d.displayName;
 const reviewTypeKeySelector = (d: ReviewType) => d.id;
 const reviewTypeLabelSelector = (d: ReviewType) => d.label;
-
-const memberFieldQuery = {
-    fields: ['id', 'display_name'],
-};
 
 const commentRequiredTypes = [0, 2, 4];
 
@@ -103,15 +94,7 @@ function Review(props: Props) {
     const [
         projectMembersPending,
         projectMembersResponse,
-    ] = useRequest<MultiResponse<Member>>({
-        url: `server://v2/projects/${projectId}/members/`,
-        method: 'GET',
-        query: memberFieldQuery,
-        autoTrigger: true,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
-        },
-    });
+    ] = useProjectMemberListQuery(projectId);
 
     const reviewTypes: ReviewType[] = useMemo(() => ([
         { id: 0, label: _ts('entryReview', 'comment') },
