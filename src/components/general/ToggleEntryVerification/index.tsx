@@ -31,8 +31,10 @@ interface ToggleEntryVerificationProps {
     disabled?: boolean;
 }
 
-// Verify
-const verifyFormData = { commentType: 3 };
+const VERIFY = 3;
+const UNVERIFY = 4;
+
+const verifyFormData = { commentType: VERIFY };
 
 function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     const {
@@ -53,8 +55,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     ] = useModalState(false);
 
     const [unverifyFormData, setUnverifyFormData] = React.useState({
-        // Unverify
-        commentType: 4,
+        commentType: UNVERIFY,
     });
 
     const url = `server://v2/entries/${entryId}/review-comments/`;
@@ -108,36 +109,34 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     }, [setUnverifyFormData, triggerReviewRequest]);
 
     return (
-        <>
-            <div
-                title={tooltip}
-                className={
-                    _cs(
-                        className,
-                        styles.toggleEntryVerification,
-                        value && styles.verified,
-                    )
+        <div
+            title={tooltip}
+            className={
+                _cs(
+                    className,
+                    styles.toggleEntryVerification,
+                    value && styles.verified,
+                )
+            }
+        >
+            <ElementFragments
+                icons={value ? (
+                    <IoCheckmarkCircle className={styles.icon} />
+                ) : (
+                    <AiFillQuestionCircle className={styles.icon} />
+                )}
+                actions={
+                    <Button
+                        onClick={handleClick}
+                        pending={reviewRequestPending}
+                        disabled={disabled}
+                    >
+                        { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
+                    </Button>
                 }
             >
-                <ElementFragments
-                    icons={value ? (
-                        <IoCheckmarkCircle className={styles.icon} />
-                    ) : (
-                        <AiFillQuestionCircle className={styles.icon} />
-                    )}
-                    actions={
-                        <Button
-                            onClick={handleClick}
-                            pending={reviewRequestPending}
-                            disabled={disabled}
-                        >
-                            { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
-                        </Button>
-                    }
-                >
-                    { value ? _ts('entryReview', 'verifiedLabel') : _ts('entryReview', 'unverifiedLabel') }
-                </ElementFragments>
-            </div>
+                { value ? _ts('entryReview', 'verifiedLabel') : _ts('entryReview', 'unverifiedLabel') }
+            </ElementFragments>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
@@ -157,7 +156,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                     />
                 </Modal>
             )}
-        </>
+        </div>
     );
 }
 
