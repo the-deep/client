@@ -619,9 +619,10 @@ export function getTextWidgetsFromFramework(framework: FrameworkFields) {
                 title,
                 id,
             } = conditional;
+
             const {
                 widgets: widgetsInsideConditional = [],
-            } = (conditional as WidgetElement<ConditionalWidget>).properties.data;
+            } = ((conditional as WidgetElement<ConditionalWidget>).properties.data || {});
 
             return widgetsInsideConditional
                 .filter(w => w.widget && w.widget.widgetId === 'textWidget')
@@ -669,7 +670,7 @@ export function getContextualWidgetsFromFramework(framework: FrameworkFields) {
             } = conditional;
             const {
                 widgets: widgetsInsideConditional = [],
-            } = (conditional as WidgetElement<ConditionalWidget>).properties.data;
+            } = ((conditional as WidgetElement<ConditionalWidget>).properties.data || {});
 
             return widgetsInsideConditional
                 .filter(w => w.widget && isContextualWidget(w.widget.widgetId))

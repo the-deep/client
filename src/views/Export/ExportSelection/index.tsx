@@ -226,7 +226,7 @@ function EntriesExportSelection(props: Props) {
         setActiveExportTypeKey('word');
         setPreviewId(undefined);
         setReportStructure([]);
-        setDecoupledEntries(true);
+        setDecoupledEntries(false);
     }, [projectId, setPreviewId]);
 
     useEffect(() => {
