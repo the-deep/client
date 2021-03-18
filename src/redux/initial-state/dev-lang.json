@@ -1303,7 +1303,9 @@
         "-99774780": "The generated link can be publicly accessed by anyone without authentication and contains only non-confidential data.",
         "-79488121": "Share",
         "-99801867": "Share public link",
-        "-8913126": "Enable public link"
+        "-8913126": "Enable public link",
+        "-98563490": "added a lead on",
+        "-76639539": "added a comment on"
     },
     "links": {
         "browserExtension": {
@@ -3703,6 +3705,10 @@
         "components.dateRangeOutput": {
             "endDateLabel": 334,
             "startDateLabel": 185
+        },
+        "recentActivity": {
+            "entryCommentAdded": -76639539,
+            "leadAdded": -98563490
         }
     }
 }

@@ -41,6 +41,7 @@ import ProjectItem from './ProjectItem';
 import Summary from './Summary';
 import Activity from './Activity';
 import Assignment from './Assignment';
+import RecentActivity from './RecentActivity';
 
 import styles from './styles.scss';
 
@@ -275,6 +276,7 @@ function Home(props: ViewProps) {
                     </div>
                     <div className={styles.rightContainer}>
                         <Assignment />
+                        <RecentActivity />
                     </div>
                 </>
             )}
