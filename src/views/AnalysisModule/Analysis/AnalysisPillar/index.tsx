@@ -23,7 +23,7 @@ interface ComponentProps extends Omit<AnalysisPillars, 'id'> {
     pillarId: AnalysisPillars['id'];
     projectId: number;
     onDelete: (value: number) => void;
-    createdAt: string | number;
+    createdAt: string;
 }
 
 function AnalysisPillar(props: ComponentProps) {

@@ -208,7 +208,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const timelineData: TimelineData[] = (analysesResponse?.results?.map(d => ({
         key: d.id,
-        value: new Date(d?.createdAt).getTime(),
+        value: new Date(d.createdAt).getTime(),
         label: d.title,
     }))) ?? [];
 
