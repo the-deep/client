@@ -175,12 +175,12 @@ function Navbar(props) {
             'arys',
             'projectQuestionnaires',
             'export',
+            'analysisModule',
         ];
 
         const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
         if (accessNewUi) {
             navLinks.unshift('home');
-            navLinks.push('analysisModule');
         }
         return getValidLinks(navLinks, currentPath);
     }, [currentPath, accessibleFeatures]);

@@ -23,6 +23,7 @@ export const allLinks = {
     adminPanel: viewsAcl.adminPanel,
 
     projectQuestionnaires: viewsAcl.projectQuestionnaires,
+    analysisModule: viewsAcl.analysisModule,
 
     leadsViz: viewsAcl.leadsViz,
     workshop: viewsAcl.workshop,
