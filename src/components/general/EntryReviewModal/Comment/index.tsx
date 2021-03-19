@@ -41,16 +41,16 @@ function Comment(props: Props) {
 
     const {
         textHistory,
-        createdByDetail,
+        createdByDetails,
         commentType,
-        mentionedUsersDetail,
+        mentionedUsersDetails,
         createdAt,
     } = comment;
     const [latest] = textHistory;
 
     const isEditable = useMemo(() =>
-        activeUser.userId === createdByDetail.id && latest && !editMode,
-    [activeUser, createdByDetail, latest, editMode]);
+        activeUser.userId === createdByDetails.id && latest && !editMode,
+    [activeUser, createdByDetails, latest, editMode]);
 
     const handleEditClick = useCallback(() => {
         setEditMode(true);
@@ -71,14 +71,14 @@ function Comment(props: Props) {
         >
             <DisplayPicture
                 className={styles.displayPicture}
-                url={createdByDetail.displayPicture}
+                url={createdByDetails.displayPicture}
             />
             <div
                 className={styles.content}
             >
                 <div className={styles.heading}>
                     <span className={styles.detail}>
-                        <span className={styles.name}>{createdByDetail.name}</span>
+                        <span className={styles.name}>{createdByDetails.name}</span>
                         &nbsp;
                         {_ts('entryReview', 'commentType', { commentType: commentTypeToTextMap[commentType] })}
                         &nbsp;
@@ -87,10 +87,10 @@ function Comment(props: Props) {
                             mode="dd-MMM-yyyy"
                         />
                         &nbsp;
-                        {mentionedUsersDetail.length > 0 && _ts('entryReview', 'assignedItTo')}
+                        {mentionedUsersDetails.length > 0 && _ts('entryReview', 'assignedItTo')}
                         &nbsp;
                         <CommaSeparateItems
-                            items={mentionedUsersDetail}
+                            items={mentionedUsersDetails}
                         />
                         {textHistory.length > 1 && (
                             <span className={styles.modified}>
