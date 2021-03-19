@@ -29,8 +29,10 @@ import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
     getDateWithTimezone,
-    shortMonthNamesMap,
 } from '#utils/common';
+import {
+    shortMonthNamesMap,
+} from '#utils/safeCommon';
 import {
     useModalState,
     useArrayEdit,
@@ -320,9 +322,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 </div>
                 <Card className={styles.pieChartContainer}>
                     <ResponsiveContainer>
-                        <PieChart
-                            className={styles.pieChart}
-                        >
+                        <PieChart>
                             <Pie
                                 data={piechartData}
                                 dataKey={valueSelector}
@@ -335,7 +335,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                                     index: number,
                                 ) => (
                                     <Cell
-                                        key={entry.organizationId}
+                                        key={entry.organizationTypeId}
                                         fill={colorScheme[index % colorScheme.length]}
                                     />
                                 ))}
@@ -368,7 +368,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 )}
                 headerActions={(
                     <DateFilter
-                        className={styles.dateFilter}
                         placeholder={_ts('analysis', 'selectAnalysisDate')}
                         value={filter}
                         onChange={setFilter}
