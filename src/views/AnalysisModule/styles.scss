@@ -1,0 +1,108 @@
+.analysis-module {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .summary {
+        .header {
+            margin: var(--dui-spacing-large);
+        }
+
+        .summary-content {
+            display: flex;
+            --height-charts: 260px;
+
+            .info-boxes {
+                display: flex;
+                flex-direction: column;
+                width: calc(30% - (var(--dui-spacing-large) * 2));
+
+                .info-box {
+                    flex-shrink: 0;
+                    margin: var(--dui-spacing-large);
+                    width: calc(50% - var(--dui-spacing-large) * 2);
+
+                    .icon {
+                        background-color: transparent;
+                        height: var(--font-size-extreme-large);
+                        color: var(--dui-color-text-on-accent);
+                    }
+                }
+
+                .bottom-info-box,
+                .top-info-box {
+                    display: flex;
+                    flex-grow: 1;
+                    flex-wrap: wrap;
+                }
+            }
+
+            .pie-chart-container {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                margin: var(--dui-spacing-large);
+                width: calc(30% - var(--dui-spacing-large) * 2);
+            }
+
+            .analyses-timeline-container {
+                display: flex;
+                margin: var(--dui-spacing-large);
+                width: calc(40% - var(--dui-spacing-large) * 2);
+            }
+        }
+    }
+
+    .all-analyses {
+        .header {
+            margin: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+
+            .heading {
+                text-transform: uppercase;
+                color: var(--dui-color-brand);
+                font-size: var(--dui-font-size-heading-medium);
+                font-weight: var(--font-weight-bold);
+
+                .light-text {
+                    margin-left: var(--dui-spacing-medium);
+                    font-weight: var(--font-weight-normal);
+                }
+            }
+        }
+
+        .analyses-container {
+            display: flex;
+            flex-direction: column;
+
+            .analysis-list {
+                flex-grow: 1;
+                padding: 0;
+                min-height: 320px;
+
+                .analysis {
+                    margin: var(--dui-spacing-large);
+                }
+            }
+
+            .empty-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--dui-color-white);
+                min-height: 320px;
+                font-weight: var(--dui-font-weight-bold);
+            }
+        }
+
+        .footer {
+            margin: var(--dui-spacing-large);
+            background-color: var(--dui-color-white);
+        }
+    }
+}
+
+.sub-navbar {
+    display: flex;
+    justify-content: flex-end;
+}
+

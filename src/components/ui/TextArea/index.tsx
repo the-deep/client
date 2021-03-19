@@ -1,7 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import InputContainer, { InputContainerProps } from '#components/ui/InputContainer';
+import InputContainer, { InputContainerProps } from '#dui/InputContainer';
 
 import styles from './styles.scss';
 

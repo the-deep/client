@@ -12,6 +12,15 @@
         }
     }
 
+    &.no-colon {
+        .label {
+            &:after{
+                margin-right: unset;
+                content: unset;
+            }
+        }
+    }
+
     .icon-label {
         flex-shrink: 0;
         margin-right: var(--spacing-small);

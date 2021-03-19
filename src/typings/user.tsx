@@ -14,3 +14,9 @@ export interface User {
     displayName: string;
     accessibleFeatures: AccessibleFeature[];
 }
+
+export interface UserMini {
+    id: number;
+    email: string;
+    displayName: string;
+}

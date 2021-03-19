@@ -1,6 +1,7 @@
 .info-box-with-donut {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     justify-content: space-between;
     border-radius: 5px;
     background-color: var(--color-foreground);

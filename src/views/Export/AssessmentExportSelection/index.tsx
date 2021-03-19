@@ -12,7 +12,7 @@ import {
 } from '#typings';
 
 import { getCombinedLeadFilters } from '#entities/lead';
-import ExpandableContainer from '#components/ui/ExpandableContainer';
+import ExpandableContainer from '#dui/ExpandableContainer';
 
 import { FaramValues } from '../ExportSelection';
 import LeadsSelection from '../LeadsSelection';

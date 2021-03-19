@@ -27,6 +27,13 @@ const styleProperties = {
         duiColorGrey5: '#e0e0e0',
         duiColorGrey6: '#f2f2f2',
         duiColorWhite: '#ffffff',
+        duiColorBackdrop: 'rgba(255, 255, 255, .5)',
+
+        duiRadiusModal: '5px',
+        duiHeightMaxModal: '96vh',
+        duiWidthMaxModal: '96vw',
+        duiWidthMinModal: '360px',
+
 
         duiColorBrand: '#00125b',
         duiColorAccent: '#1a3ed0',
@@ -53,7 +60,7 @@ const styleProperties = {
         duiColorBackgroundInformation: '#f5f8fb',
         duiColorBackgroundNegative: '#dfe7f2',
         duiColorBackgroundCard: 'var(--dui-color-white)',
-        duiColorSeparator: 'var(--color-separator)',
+        duiColorBackgroundModal: 'var(--dui-color-white)',
 
         duiColorText: 'var(--dui-color-grey1)',
         duiColorTextLabel: 'var(--dui-color-grey2)',
@@ -70,6 +77,7 @@ const styleProperties = {
         duiColorInputLabelActive: 'var(--dui-color-accent)',
         // For new UI
         duiBorderColorCard: '#f2f2f2',
+        duiColorSeparator: 'rgba(0, 0, 0, .1)',
         duiBorderColorInnerCard: '#DFE7F2',
         duiColorLabel: '#828282',
         duiColorTextDark: '#333333',
@@ -117,14 +125,18 @@ const styleProperties = {
         widthQuestionIcon: '48px',
         heightQuestionIcon: '48px',
         heightNagbar: '64px',
+        heightSubNavbar: '48px',
 
         heightActionBar: '42px',
+
+        duiHeightNavbarIcon: '3rem',
 
         duiSpacingExtraSmall: '0.1rem',
         duiSpacingSmall: '0.2rem',
         duiSpacingMedium: '0.45rem',
         duiSpacingLarge: '0.66rem',
         duiSpacingExtraLarge: '1.1rem',
+        duiSpacingSuperLarge: '2rem',
 
         duiFontSizeSmall: '0.67rem',
         duiFontSizeMedium: '0.86rem',
@@ -143,6 +155,7 @@ const styleProperties = {
         duiWidthSeparatorThin: '0.06em',
         duiWidthSeparatorMedium: '0.1em',
         duiBorderRadiusCard: '8px',
+        duiBorderRadiusModal: '8px',
         duiBorderRadiusTag: '25px',
         duiOpacityDisabledElement: '0.3',
         duiHeightProgressBar: '10px',

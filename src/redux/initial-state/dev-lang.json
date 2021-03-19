@@ -1270,7 +1270,36 @@
         "-49181354": "Failed to fetch Assignment List",
         "-97660055": "Failed to mark the assignment as Done",
         "-88394931": "Failed to mark bulk assignments as  Done",
-        "-39611284": "Lead assigned to"
+        "-39611284": "Lead assigned to",
+        "-55670188": "Analysis",
+        "-69223329": "Analyses overview",
+        "-75339790": "Entries analyzed",
+        "-65511645": "Sources analyzed",
+        "-70983044": "Add pillar analysis",
+        "-57723792": "No analysis created",
+        "-90678740": "Setup a new analysis",
+        "-45423653": "{count} Pillar Analyses",
+        "-91078285": "Analysis Complete",
+        "-33667410": "In Progress",
+        "-10701106": "Creation Date",
+        "-30498150": "Analyst",
+        "-50636670": "Team Lead",
+        "-31952614": "Pillar Assignments",
+        "-30091387": "Edit analysis",
+        "-49556": "Pillars",
+        "-35552020": "Team lead",
+        "-76422871": "Add an analyst",
+        "-88197654": "Analysis Edit/Create",
+        "-25536744": "Information gap",
+        "-62584276": "Main statement",
+        "-52946834": "Pillar analysis",
+        "-90678740": "Setup a new analysis",
+        "-35701649": "Select Analysis Date",
+        "-80223054": "All Analyses",
+        "-24200085": "All Analyses",
+        "-98549020": "Select Analysis Date",
+        "-88197654": "Analysis Edit/Create",
+        "-90678740": "Setup a new analysis"
     },
     "links": {
         "browserExtension": {
@@ -2278,7 +2307,9 @@
             "projectQuestionnaires": -91998400,
             "frameworkQuestions": -25976066,
             "home": 5559,
-            "dashboard": -29389738
+            "dashboard": -29389738,
+            "analysisModule": -55670188,
+            "pillarAnalysis": -52946834
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2433,7 +2464,7 @@
             "noAfText": 359,
             "project": 31,
             "privateProjectBadgeTitle": -92759559,
-            "priivateProjectBadgeTooltip": -64655622,
+            "privateProjectBadgeTooltip": -64655622,
             "afClone": 12502,
             "afCloneSuccess": -8045218,
             "afCloneFatal": -48269508,
@@ -3082,7 +3113,7 @@
             "betaLabel": 1237,
             "devLabel": 1240,
             "nightlyLabel": 1239,
-            "priivateProjectBadgeTooltip": -64655622,
+            "privateProjectBadgeTooltip": -64655622,
             "projectTaggingActivityHeading": -42491012,
             "recentProjectsHeading": -52545948,
             "setupNewProjectButtonLabel": -1749585,
@@ -3091,7 +3122,8 @@
             "projects": 173,
             "totalAddedSources": -678768686,
             "sourcesTagged": -686861344,
-            "sourcesTaggedValidated": -686861268
+            "sourcesTaggedValidated": -686861268,
+            "recentProjectsTitle": -52545948
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -3595,6 +3627,60 @@
             "assignmentListFetchFailed": -49181354,
             "markAsDoneFailed": -97660055,
             "markBulkAsDoneFailed": -88394931
+        },
+        "analysis": {
+            "analysesOverview": -69223329,
+            "entriesAnalyzedLabel": -65511645,
+            "sourcesAnalyzedLabel": -75339790,
+            "totalEntriesLabel": -89597029,
+            "totalSourcesLabel": -25324892,
+            "analysisModule": -55670188,
+            "endDateLabel": 334,
+            "addPillarAnalysis": -70983044,
+            "allAnalysesLabel": -81726696,
+            "noAnalysisCreatedLabel": -57723792,
+            "startDateLabel": 185,
+            "setupNewAnalysisButtonLabel": -90678740,
+            "pillarAnalysisCount": -45423653,
+            "completeLabel": -91078285,
+            "inProgressLabel": -33667410,
+            "creationDate": -10701106,
+            "analyst": -30498150,
+            "teamLead": -50636670,
+            "pillarAssignments": -31952614,
+            "allAnalyses": -80223054,
+            "selectAnalysisDate": -35701649
+        },
+        "analysis.editModal": {
+            "addAnalysisModalHeading": -90678740,
+            "analysisTitleLabel": 13,
+            "analysisTitlePlaceholder": 13,
+            "createButtonLabel": 179,
+            "frameworkTitle": 13,
+            "matrixPillarsPlaceholder": -49556,
+            "pillarAnalysisAssigneeLabel": 6,
+            "pillarAnalysisAssigneePlaceholder": 17,
+            "pillarAnalysisTitleLabel": 13,
+            "pillarAnalysisPillarTitle": -49556,
+            "teamLeadLabel": -35552020,
+            "teamLeadPlaceholder": 17,
+            "usersTitle": 1119,
+            "pillarAnalysisTitlePlaceholder": 14,
+            "addAnAnalystButtonLabel": -76422871,
+            "anaylsisEditModal": -88197654,
+            "editButtonLabel": 363,
+            "editAnalysisModalHeading": -30091387
+        },
+        "pillarAnalysis": {
+            "saveButtonLabel": 25,
+            "closeButtonLabel": -39430073,
+            "mainStatementLabel": -62584276,
+            "infoGapLabel": -25536744,
+            "editAnalysisModalHeading": -30091387,
+            "pillarAssignments": -31952614,
+            "selectAnalysisDate": -35701649,
+            "allAnalyses": -80223054,
+            "setupNewAnalysisButtonLabel": -90678740
         }
     }
 }

@@ -12,8 +12,8 @@ import SelectInput from '#rsci/SelectInput';
 import ListView from '#rscv/List/ListView';
 
 import Badge from '#components/viewer/Badge';
-import Header from '#components/ui/Header';
-import ButtonLikeLink from '#components/ui/ButtonLikeLink';
+import Header from '#dui/Header';
+import ButtonLikeLink from '#dui/ButtonLikeLink';
 import { pathNames } from '#constants';
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -120,7 +120,7 @@ function Home(props: ViewProps) {
                         )
                     }
                     noBorder
-                    tooltip={_ts('home', 'priivateProjectBadgeTooltip')}
+                    tooltip={_ts('home', 'privateProjectBadgeTooltip')}
                 />
             )}
         </div>

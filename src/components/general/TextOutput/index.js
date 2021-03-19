@@ -22,6 +22,7 @@ const propTypes = {
     isNumericValue: PropTypes.bool,
     alwaysVisible: PropTypes.bool,
     searchValue: PropTypes.string,
+    noColon: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -34,6 +35,7 @@ const defaultProps = {
     isNumericValue: false,
     alwaysVisible: false,
     searchValue: undefined,
+    noColon: false,
 };
 
 export default class TextOutput extends React.PureComponent {
@@ -52,6 +54,7 @@ export default class TextOutput extends React.PureComponent {
             valueClassName,
             alwaysVisible,
             searchValue,
+            noColon,
             ...otherProps
         } = this.props;
 
@@ -84,6 +87,7 @@ export default class TextOutput extends React.PureComponent {
                 _cs(
                     classNameFromProps,
                     styles[type],
+                    noColon && styles.noColon,
                 )}
             >
                 { iconLabel ? (

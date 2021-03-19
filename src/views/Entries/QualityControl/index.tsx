@@ -150,8 +150,8 @@ function QualityControl(props: Props) {
 
     const matrixToc = useMemo(
         () => [
-            ...getMatrix1dToc(framework, tocCount),
-            ...getMatrix2dToc(framework, tocCount),
+            ...getMatrix1dToc(framework?.widgets, tocCount),
+            ...getMatrix2dToc(framework?.widgets, tocCount),
         ],
         [framework, tocCount],
     );

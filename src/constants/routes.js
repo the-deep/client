@@ -1,3 +1,5 @@
+import { matchPath } from 'react-router-dom';
+
 import {
     mapObjectToObject,
     mapObjectToArray,
@@ -84,8 +86,26 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'projectQuestionnaires');
 
-    projects: {
+    analysisModule: {
+        order: 19,
+        type: ROUTE.private,
+        path: '/projects/:projectId/analysis/',
+        loader: () => import('../views/AnalysisModule'),
+        links: allLinks,
+        showSubNavbar: true,
+    }, // _ts('pageTitle', 'analysisModule');
+
+    pillarAnalysis: {
         order: 20,
+        type: ROUTE.private,
+        path: '/projects/:projectId/analysis/:analysisId/pillar/:pillarId/',
+        loader: () => import('../views/PillarAnalysis'),
+        links: allLinks,
+        hideNavbar: true,
+    }, // _ts('pageTitle', 'pillarAnalysis');
+
+    projects: {
+        order: 21,
         type: ROUTE.private,
         path: '/projects/:projectId?/',
         loader: () => import('../views/Project'),
@@ -93,7 +113,7 @@ export const routes = {
     }, // _ts('pageTitle', 'projects');
 
     dashboard: {
-        order: 21,
+        order: 22,
         type: ROUTE.private,
         path: '/projects/:projectId/dashboard/',
         loader: () => import('../views/Dashboard'),
@@ -363,6 +383,24 @@ export const routes = {
 export const pathNames = mapObjectToObject(routes, route => route.path);
 export const validLinks = mapObjectToObject(routes, route => route.links);
 export const hideNavbar = mapObjectToObject(routes, route => !!route.hideNavbar);
+export const showSubNavbar = mapObjectToObject(routes, route => !!route.showSubNavbar);
+
+export const getCurrentMatch = (location) => {
+    const paths = Object.values(pathNames);
+
+    for (let i = 0; i < paths.length; i += 1) {
+        const match = matchPath(location.pathname, {
+            path: paths[i],
+            exact: true,
+        });
+
+        if (match) {
+            return match;
+        }
+    }
+
+    return null;
+};
 export const routesOrder = mapObjectToArray(
     routes,
     (route, key) => ({

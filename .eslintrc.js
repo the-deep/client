@@ -25,6 +25,7 @@ module.exports = {
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 alias: {
                     '#components': './src/components',
+                    '#dui': './src/components/ui',
                     '#config': './src/config',
                     '#constants': './src/constants',
                     '#cs': './src/cs',

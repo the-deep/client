@@ -279,7 +279,7 @@ export default class DiscoverProjects extends React.PureComponent {
                                 className={styles.badge}
                                 icon="locked"
                                 title={_ts('project', 'privateProjectBadgeTitle')}
-                                tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                                tooltip={_ts('project', 'privateProjectBadgeTooltip')}
                             />
                         }
                     </div>
