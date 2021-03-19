@@ -48,9 +48,7 @@ const notQuestionnaireViewable = ({ isLoggedIn, accessQuestionnaire }) => (
 );
 
 const notAnalysisModuleViewable = ({ isLoggedIn, accessAnalysisModule }) => (
-    // NOTE: Make this work with newUI after rebase
-    // !isLoggedIn || !accessAnalysisModule
-    !isLoggedIn
+    !isLoggedIn || !accessAnalysisModule
 );
 
 

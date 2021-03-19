@@ -65,6 +65,7 @@ const allAccessibleFeatures = {
     accessPrivateProject: featureList => featureList.includes(featuresMapping.privateProject),
     accessQuestionnaire: featureList => featureList.includes(featuresMapping.questionnaire),
     accessNewUi: featureList => featureList.includes(featuresMapping.newUi),
+    accessAnalysisModule: featureList => featureList.includes(featuresMapping.analysisModule),
     accessEntryVisualizationConfiguration: featureList =>
         featureList.includes(featuresMapping.entryVizConfig),
 };
@@ -127,6 +128,7 @@ export default class Cloak extends React.Component {
             accessEntryVisualizationConfiguration,
             accessQuestionnaire,
             accessNewUi,
+            accessAnalysisModule,
         } = this.getAccessibleFeatures(accessibleFeatures);
 
         const params = {
@@ -151,6 +153,7 @@ export default class Cloak extends React.Component {
             accessPrivateProject,
             accessQuestionnaire,
             accessNewUi,
+            accessAnalysisModule,
             accessEntryVisualizationConfiguration,
         };
 
