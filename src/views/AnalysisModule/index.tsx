@@ -83,8 +83,8 @@ interface AnalysisList {
 
 interface AuthoringOrganizations {
     count: number;
-    organizationId: number;
-    organizationTitle: string;
+    organizationTypeId: number;
+    organizationTypeTitle: string;
 }
 
 interface AnalysisOverview {
@@ -102,7 +102,7 @@ interface TimelineData {
     label: string;
 }
 
-const labelSelector = (item: AuthoringOrganizations) => item.organizationTitle;
+const labelSelector = (item: AuthoringOrganizations) => item.organizationTypeTitle;
 const valueSelector = (item: AuthoringOrganizations) => item.count;
 const tickFormatter = (title: string) => ({ title });
 
