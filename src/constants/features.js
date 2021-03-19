@@ -5,6 +5,7 @@ const featuresMapping = {
     entryVizConfig: 'entry_visualization_configuration',
     questionnaire: 'questionnaire',
     newUi: 'new_ui',
+    analysisModule: 'analysis',
 };
 
 export default featuresMapping;
