@@ -160,8 +160,8 @@ export interface EntryComment {
         text: string;
     }[];
     lead: number;
-    createdByDetail: UserDetail & { displayPicture: string };
-    mentionedUsersDetail: UserDetail[];
+    createdByDetails: UserDetail & { displayPicture: string };
+    mentionedUsersDetails: UserDetail[];
     commentTypeDisplay: string;
     commentType: number;
     createdBy: number;
