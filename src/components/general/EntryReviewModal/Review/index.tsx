@@ -28,7 +28,7 @@ interface Review {
 
 interface Props {
     className?: string;
-    isControlled: boolean;
+    isVerified: boolean;
     isApproved: boolean;
     onSuccess: () => void;
     entryId: number;
@@ -50,7 +50,7 @@ const commentRequiredTypes = [0, 2, 4];
 function Review(props: Props) {
     const {
         className,
-        isControlled,
+        isVerified,
         isApproved,
         entryId,
         projectId,
@@ -100,9 +100,9 @@ function Review(props: Props) {
         { id: 0, label: _ts('entryReview', 'comment') },
         isApproved ? { id: 2, label: _ts('entryReview', 'unapprove') }
             : { id: 1, label: _ts('entryReview', 'approve') },
-        isControlled ? { id: 4, label: _ts('entryReview', 'uncontrol') }
-            : { id: 3, label: _ts('entryReview', 'control') },
-    ]), [isApproved, isControlled]);
+        isVerified ? { id: 4, label: _ts('entryReview', 'unverify') }
+            : { id: 3, label: _ts('entryReview', 'verify') },
+    ]), [isApproved, isVerified]);
 
     const handleFaramChange = useCallback((newFaramValues, newFaramErrors) => {
         setPristine(false);
