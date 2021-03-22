@@ -10,6 +10,7 @@ import {
 
 import Icon from '#rscg/Icon';
 import Tag from '#dui/Tag';
+import Tabs, { Tab, TabList, TabPanel } from '#dui/Tabs';
 import Container from '#components/ui/Container';
 import Card from '#components/ui/Card';
 import Button from '#components/ui/Button';
@@ -19,7 +20,7 @@ import ButtonLikeLink from '#components/ui/ButtonLikeLink';
 import Link from '#components/ui/Link';
 import TextArea from '#components/ui/TextArea';
 import Timeline from '#components/viz/Timeline';
-import { shortMonthNamesMap } from '#utils/common';
+import { shortMonthNamesMap } from '#utils/safeCommon';
 
 import styles from './styles.scss';
 
@@ -126,6 +127,7 @@ function Workshop(props: WorkshopProps) {
     } = props;
 
     const [textAreaValue, setTextAreaValue] = useInputValue('');
+    const [activeTab, setActiveTab] = React.useState('tab-one');
 
     return (
         <div className={_cs(styles.workshop, className)}>
@@ -286,7 +288,6 @@ function Workshop(props: WorkshopProps) {
             </Container>
             <Container
                 heading="Rechart with background"
-
             >
                 <div className="chart-container">
                     <BarChart
@@ -309,6 +310,32 @@ function Workshop(props: WorkshopProps) {
                         </Bar>
                     </BarChart>
                 </div>
+            </Container>
+            <Container
+                heading="Tabs"
+            >
+                <Tabs
+                    value={activeTab}
+                    onChange={setActiveTab}
+                >
+                    <TabList>
+                        <Tab name="tab-one">
+                            Tab one
+                        </Tab>
+                        <Tab
+                            name="tab-two"
+                            disabled
+                        >
+                            Tab Two
+                        </Tab>
+                    </TabList>
+                    <TabPanel name="tab-one">
+                        Tab one content
+                    </TabPanel>
+                    <TabPanel name="tab-two">
+                        Tab two content
+                    </TabPanel>
+                </Tabs>
             </Container>
         </div>
     );

@@ -154,7 +154,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                     <ButtonLikeLink
                         className={styles.link}
                         variant="tertiary"
-                        to={reverseRoute(pathNames.projects, { projectId })}
+                        to={reverseRoute(pathNames.editProject, { projectId })}
                         icons={(
                             <Icon
                                 name="edit"

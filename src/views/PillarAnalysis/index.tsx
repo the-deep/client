@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import Button from '#dui/Button';
-import FullPageHeader from '#components/general/FullPageHeader';
+import FullPageHeader from '#dui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
 import TextArea from '#dui/TextArea';
@@ -14,6 +14,7 @@ import _ts from '#ts';
 
 import {
     PillarAnalysisElement,
+    ProjectDetails,
     AppState,
 } from '#typings';
 
@@ -21,6 +22,7 @@ import {
     projectIdFromRouteSelector,
     analysisIdFromRouteSelector,
     pillarAnalysisIdFromRouteSelector,
+    activeProjectFromStateSelector,
 } from '#redux';
 
 import styles from './styles.scss';
@@ -29,12 +31,14 @@ const mapStateToProps = (state: AppState) => ({
     pillarId: pillarAnalysisIdFromRouteSelector(state),
     analysisId: analysisIdFromRouteSelector(state),
     projectId: projectIdFromRouteSelector(state),
+    activeProject: activeProjectFromStateSelector(state),
 });
 
 interface PageProps {
     pillarId: number;
     projectId: number;
     analysisId: number;
+    activeProject: ProjectDetails;
 }
 
 function PillarAnalysis(props: PageProps) {
@@ -42,6 +46,7 @@ function PillarAnalysis(props: PageProps) {
         pillarId,
         analysisId,
         projectId,
+        activeProject,
     } = props;
 
     const [value, setValue] = useState<string | undefined>();
@@ -62,6 +67,7 @@ function PillarAnalysis(props: PageProps) {
                 className={styles.header}
                 actionsClassName={styles.actions}
                 contentClassName={styles.breadcrumb}
+                heading={activeProject?.title}
                 actions={(
                     <>
                         <Button
