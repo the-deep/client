@@ -1357,14 +1357,15 @@
         "-10291009": "Verify",
         "-95647689": "Unverify",
         "-41523534": "Unverify entry",
-        "-55703725": "Approve",
-        "-30598208": "Unapprove",
+        "-55703725": "Not approved",
+        "-30598208": "Approved",
         "-66805221": "Unapprove entry",
         "-52512618": "Unapprove",
         "-70288448": "Approved only by you",
         "-15568595": "Approved by you and {userCount} other users",
         "-4503674": "Not approved",
-        "-44367329": "Not approved by you (Approved by {userCount} other users)"
+        "-44367329": "Not approved by you (Approved by {userCount} other users)",
+        "-46401322": "{n} peer approval(s)"
     },
     "links": {
         "browserExtension": {
@@ -3865,7 +3866,8 @@
             "approvedByUserAndOthersLabel": -15568595,
             "approvedOnlyByUserLabel": -70288448,
             "notApprovedByUserButApprovedByOthersLabel": -44367329,
-            "notApprovedLabel": -4503674
+            "notApprovedLabel": -4503674,
+            "peerApprovalLabel": -46401322
         }
     }
 }
