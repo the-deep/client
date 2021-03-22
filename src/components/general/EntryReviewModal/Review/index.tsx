@@ -22,8 +22,8 @@ import styles from './styles.scss';
 
 interface Review {
     text?: string;
-    comment_type?: number; // eslint-disable-line camelcase
-    mentioned_users?: number[]; // eslint-disable-line camelcase
+    commentType?: number; // eslint-disable-line camelcase
+    mentionedUsers?: number[]; // eslint-disable-line camelcase
 }
 
 interface Props {
@@ -59,16 +59,18 @@ function Review(props: Props) {
         onSuccess,
     } = props;
 
-    const [faramValues, setFaramValues] = useState<Review | undefined>();
+    const [faramValues, setFaramValues] = useState<Review | undefined>({
+        commentType: 0,
+    });
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
 
-    const commentRequired = commentRequiredTypes.some(v => v === faramValues?.['comment_type']) ? [requiredCondition] : [];
+    const commentRequired = commentRequiredTypes.some(v => v === faramValues?.['commentType']) ? [requiredCondition] : [];
 
     const schema: ObjectSchema = {
         fields: {
             text: commentRequired,
-            comment_type: [requiredCondition],
-            mentioned_users: commentRequired,
+            commentType: [requiredCondition],
+            mentionedUsers: commentRequired,
         },
     };
 
@@ -108,7 +110,7 @@ function Review(props: Props) {
         setPristine(false);
         setFaramValues(newFaramValues);
         setFaramErrors(newFaramErrors);
-        if (newFaramValues?.['comment_type']) {
+        if (newFaramValues?.['commentType']) {
             setFaramErrors(undefined);
         }
     }, [setPristine]);
@@ -151,13 +153,13 @@ function Review(props: Props) {
             />
             <RadioInput
                 className={styles.types}
-                faramElementName="comment_type"
+                faramElementName="commentType"
                 options={reviewTypes}
                 keySelector={reviewTypeKeySelector}
                 labelSelector={reviewTypeLabelSelector}
             />
             <MultiSelectInput
-                faramElementName="mentioned_users"
+                faramElementName="mentionedUsers"
                 label={_ts('entryReview', 'assignees')}
                 options={projectMembersResponse?.results}
                 keySelector={memberKeySelector}
