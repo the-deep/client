@@ -9,7 +9,6 @@ import {
 import modalize from '#rscg/Modalize';
 import ListView from '#rscv/List/ListView';
 import EntryGroupModal from '#components/general/EntryGroupModal';
-import EntryCommentModal from '#components/general/EntryCommentModal';
 import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -111,12 +110,6 @@ function WidgetFaramContainer(props) {
 
     const [verifyPending, setVerifyPending] = useState(false);
 
-    const {
-        serverData: {
-            unresolvedCommentCount,
-        },
-    } = entry;
-
     const shouldHideEntryDelete = useCallback(({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(entry)
     ), [entry]);
@@ -147,20 +140,6 @@ function WidgetFaramContainer(props) {
         });
     }, [markAsDeletedEntry, entry, leadId]);
 
-    const handleCommentsCountChange = useCallback((
-        newUnresolvedCommentCount,
-        resolvedCommentCount,
-        entryId,
-    ) => {
-        const entryForPatch = {
-            unresolvedCommentCount: newUnresolvedCommentCount,
-            resolvedCommentCount,
-            entryId,
-        };
-
-        setEntryCommentsCount({ entry: entryForPatch, leadId });
-    }, [setEntryCommentsCount, leadId]);
-
     const handleVerificationChange = useCallback((verified) => {
         const entryForPatch = {
             id: entryAccessor.serverId(entry),
@@ -171,13 +150,8 @@ function WidgetFaramContainer(props) {
         setEntryVerificationStatus({ entry: entryForPatch, leadId });
     }, [entry, setEntryVerificationStatus, leadId]);
 
-    const entryServerId = entryAccessor.serverId(entry);
     const entryKey = entryAccessor.key(entry);
     const verified = entryAccessor.verified(entry);
-
-    const defaultAssignees = useMemo(() => [
-        entryAccessor.createdBy(entry),
-    ], [entry]);
 
     const entryLabelsForEntry = useMemo(() => (
         getEntryGroupsForEntry(
@@ -214,89 +188,66 @@ function WidgetFaramContainer(props) {
                     {/* FIXME: use strings */}
                     {`Entry ${index + 1}`}
                 </h3>
-                <ListView
-                    data={entryLabelsForEntry}
-                    className={styles.entryLabels}
-                    rendererParams={entryLabelsRendererParams}
-                    renderer={EntryLabelBadge}
-                    keySelector={entryLabelKeySelector}
-                    emptyComponent={null}
-                />
-                <ToggleEntryVerification
-                    tooltip={entryLastChangedBy ? (
-                        _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
-                    ) : undefined}
-                    entryId={entryAccessor.serverId(entry)}
-                    projectId={entry.project}
-                    value={verified}
-                    onChange={handleVerificationChange}
-                    disabled={disableVerifiedButton}
-                    onPendingStatusChange={setVerifyPending}
-                />
-                {labels.length > 0 && (
-                    <ModalButton
-                        iconName="album"
-                        modal={
-                            <EntryGroupModal
-                                entryGroups={entryGroups}
-                                labels={labels}
-                                selectedEntryKey={entryKey}
-                                selectedEntryServerId={entryAccessor.serverId(entry)}
-                                leadId={leadId}
+                <div className={styles.actions}>
+                    <ListView
+                        data={entryLabelsForEntry}
+                        className={styles.entryLabels}
+                        rendererParams={entryLabelsRendererParams}
+                        renderer={EntryLabelBadge}
+                        keySelector={entryLabelKeySelector}
+                        emptyComponent={null}
+                    />
+                    <ToggleEntryVerification
+                        tooltip={entryLastChangedBy ? (
+                            _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                        ) : undefined}
+                        entryId={entryAccessor.serverId(entry)}
+                        projectId={entry.project}
+                        value={verified}
+                        onChange={handleVerificationChange}
+                        disabled={disableVerifiedButton}
+                        onPendingStatusChange={setVerifyPending}
+                    />
+                    {labels.length > 0 && (
+                        <ModalButton
+                            iconName="album"
+                            modal={
+                                <EntryGroupModal
+                                    entryGroups={entryGroups}
+                                    labels={labels}
+                                    selectedEntryKey={entryKey}
+                                    selectedEntryServerId={entryAccessor.serverId(entry)}
+                                    leadId={leadId}
+                                />
+                            }
+                        />
+                    )}
+                    <EntryReviewButton entryId={entryAccessor.serverId(entry)} />
+                    <Cloak
+                        hide={shouldHideEntryEdit}
+                        render={
+                            <WarningButton
+                                className={styles.button}
+                                onClick={handleEdit}
+                                title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
+                                iconName="edit"
+                                // NOTE: no need to disable edit on save pending
                             />
                         }
                     />
-                )}
-                <ModalButton
-                    disabled={isFalsy(entryServerId)}
-                    className={
-                        _cs(
-                            styles.entryCommentButton,
-                            unresolvedCommentCount > 0 && styles.accented,
-                        )
-                    }
-                    modal={
-                        <EntryCommentModal
-                            entryServerId={entryServerId}
-                            onCommentsCountChange={handleCommentsCountChange}
-                            defaultAssignees={defaultAssignees}
-                        />
-                    }
-                    iconName="chat"
-                >
-                    {unresolvedCommentCount > 0 &&
-                        <div className={styles.commentCount}>
-                            {unresolvedCommentCount}
-                        </div>
-                    }
-                </ModalButton>
-                <EntryReviewButton
-                    entryId={entryAccessor.serverId(entry)}
-                />
-                <Cloak
-                    hide={shouldHideEntryEdit}
-                    render={
-                        <WarningButton
-                            className={styles.button}
-                            onClick={handleEdit}
-                            title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
-                            iconName="edit"
-                            // NOTE: no need to disable edit on save pending
-                        />
-                    }
-                />
-                <Cloak
-                    hide={shouldHideEntryDelete}
-                    render={
-                        <DangerButton
-                            className={styles.button}
-                            iconName="delete"
-                            title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
-                            onClick={handleEntryDelete}
-                            disabled={pending}
-                        />
-                    }
-                />
+                    <Cloak
+                        hide={shouldHideEntryDelete}
+                        render={
+                            <DangerButton
+                                className={styles.button}
+                                iconName="delete"
+                                title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
+                                onClick={handleEntryDelete}
+                                disabled={pending}
+                            />
+                        }
+                    />
+                </div>
             </header>
             <WidgetFaram
                 className={_cs('widget', styles.widget)}

@@ -1,10 +1,10 @@
 .toggle-entry-verification {
     display: flex;
     align-items: center;
-    padding: calc(var(--spacing-medium) - var(--spacing-small));
+    padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
 
     .icon {
-        font-size: var(--dui-font-size-large);
+        font-size: var(--dui-font-size-medium);
     }
 
     &.verified {
