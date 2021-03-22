@@ -31,9 +31,8 @@ function EntryReviewButton(props: Props) {
                     entryId={entryId}
                 />
             }
-        >
-            {_ts('entries', 'reviewEntry')}
-        </ModalButton>
+            iconName="chat"
+        />
     );
 }
 
