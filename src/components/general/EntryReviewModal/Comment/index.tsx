@@ -25,8 +25,8 @@ const commentTypeToTextMap: {[id: number]: string} = {
     0: _ts('entryReview', 'commented'),
     1: _ts('entryReview', 'approved'),
     2: _ts('entryReview', 'unapproved'),
-    3: _ts('entryReview', 'controlled'),
-    4: _ts('entryReview', 'uncontrolled'),
+    3: _ts('entryReview', 'verified'),
+    4: _ts('entryReview', 'unverified'),
 };
 
 function Comment(props: Props) {
