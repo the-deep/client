@@ -195,7 +195,7 @@ function EntryReviewModal(props: Props) {
                         onSuccess={getComments}
                         projectId={projectId}
                         isApproved={isApproved}
-                        isControlled={commentsResponse?.summary.verified ?? false}
+                        isVerified={commentsResponse?.summary.verified ?? false}
                     />
                     <List
                         data={commentsResponse?.results}
