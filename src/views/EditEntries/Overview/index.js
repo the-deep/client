@@ -9,7 +9,6 @@ import {
 import memoize from 'memoize-one';
 
 import modalize from '#rscg/Modalize';
-import EntryCommentModal from '#components/general/EntryCommentModal';
 import EntryReviewButton from '#components/general/EntryReviewButton';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
@@ -55,6 +54,7 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 
 const propTypes = {
+    className: PropTypes.string,
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -73,6 +73,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: undefined,
     entry: undefined,
     widgets: [],
     entries: [],
@@ -125,7 +126,6 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         this.state = {
-            mountModalButton: false,
             entryVerifyPending: false,
         };
 
@@ -142,12 +142,6 @@ export default class Overview extends React.PureComponent {
         }
 
         this.showInitial = !!entryLocalId && showComment === 'true';
-    }
-
-    componentDidMount() {
-        this.entryCommentTimeout = setTimeout(() => {
-            this.setState({ mountModalButton: true });
-        }, 200);
     }
 
     componentWillUnmount() {
@@ -266,6 +260,7 @@ export default class Overview extends React.PureComponent {
 
     render() {
         const {
+            className,
             entry,
             leadId,
             lead,
@@ -285,25 +280,22 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         const {
-            mountModalButton,
             entryVerifyPending,
         } = this.state;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
 
-        const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
         const verified = entryAccessor.verified(entry);
 
-        const defaultAssignees = this.getDefaultAssignees(entry);
         const disableVerifiedButton = !entry?.localData?.isPristine
             || isFalsy(entryAccessor.serverId(entry));
 
         const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
         return (
             <ResizableH
-                className={styles.overview}
+                className={_cs(className, styles.overview)}
                 leftChild={
                     <LeftPane
                         className={styles.leftPanel}
@@ -372,37 +364,7 @@ export default class Overview extends React.PureComponent {
                                         }
                                     />
                                 )}
-                                {mountModalButton && (
-                                    <ModalButton
-                                        className={
-                                            _cs(
-                                                styles.entryCommentButton,
-                                                unresolvedCommentCount > 0 && styles.accented,
-                                            )
-                                        }
-                                        disabled={isFalsy(entryAccessor.serverId(entry))}
-                                        initialShowModal={this.showInitial}
-                                        modal={
-                                            <EntryCommentModal
-                                                entryServerId={entryAccessor.serverId(entry)}
-                                                onCommentsCountChange={
-                                                    this.handleCommentsCountChange
-                                                }
-                                                defaultAssignees={defaultAssignees}
-                                            />
-                                        }
-                                        iconName="chat"
-                                    >
-                                        {unresolvedCommentCount > 0 &&
-                                            <div className={styles.commentCount}>
-                                                {unresolvedCommentCount}
-                                            </div>
-                                        }
-                                    </ModalButton>
-                                )}
-                                <EntryReviewButton
-                                    entryId={entryAccessor.serverId(entry)}
-                                />
+                                <EntryReviewButton entryId={entryAccessor.serverId(entry)} />
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
                                     render={

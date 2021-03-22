@@ -129,7 +129,7 @@
             flex-shrink: 0;
             opacity: 0;
             border-top: var(--width-separator-thin) solid var(--color-separator);
-            padding: calc(var(--spacing-medium) - var(--spacing-small));
+            padding: calc(var(--spacing-large) - var(--spacing-small)) calc(var(--spacing-medium) - var(--spacing-small));
             width: 100%;
 
             .actions-extra {
@@ -197,20 +197,35 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: var(--spacing-small);
+                    padding: var(--spacing-small) calc(var(--spacing-small) - var(--spacing-extra-small));
 
                     .expand-button {
                         display: flex;
                         outline: none;
-                        padding-right: 0;
-                        padding-left: 0;
+                        padding-right: var(--spacing-extra-small);
+                        padding-left: var(--spacing-extra-small);
                     }
                 }
 
                 .bottom {
                     display: flex;
                     align-items: center;
-                    padding: var(--spacing-small);
+                    padding: var(--spacing-small) calc(var(--spacing-small) - var(--spacing-extra-small));
+
+                    .delete-button {
+                        margin: 0 var(--spacing-extra-small);
+                    }
+
+                    .other-actions {
+                        display: flex;
+                        align-items: center;
+                        flex-grow: 1;
+                        justify-content: flex-end;
+
+                        >* {
+                            margin: 0 var(--spacing-extra-small);
+                        }
+                    }
                 }
             }
         }
