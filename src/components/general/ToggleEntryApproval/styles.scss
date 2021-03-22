@@ -1,5 +1,12 @@
 .toggle-entry-approval {
     display: flex;
+    align-items: center;
+
+    .toggle-button {
+        display: flex;
+        align-items: center;
+        padding: calc(var(--spacing-medium) - var(--spacing-small));
+    }
 
     .icon {
         font-size: var(--dui-font-size-large);
@@ -7,7 +14,7 @@
 
     &.approved {
         .icon {
-            color: var(--color-success);
+            color: var(--color-primary);
         }
     }
 }
