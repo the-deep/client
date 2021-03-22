@@ -109,34 +109,30 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     }, [setUnverifyFormData, triggerReviewRequest]);
 
     return (
-        <div
-            title={tooltip}
-            className={
-                _cs(
-                    className,
-                    styles.toggleEntryVerification,
-                    value && styles.verified,
-                )
-            }
-        >
-            <ElementFragments
-                icons={value ? (
-                    <IoCheckmarkCircle className={styles.icon} />
-                ) : (
-                    <AiFillQuestionCircle className={styles.icon} />
-                )}
-                actions={
-                    <Button
-                        onClick={handleClick}
-                        pending={reviewRequestPending}
-                        disabled={disabled}
-                    >
-                        { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
-                    </Button>
+        <>
+            <Button
+                title={tooltip}
+                className={
+                    _cs(
+                        className,
+                        styles.toggleEntryVerification,
+                        value && styles.verified,
+                    )
                 }
+                onClick={handleClick}
+                pending={reviewRequestPending}
+                disabled={disabled}
             >
-                { value ? _ts('entryReview', 'verifiedLabel') : _ts('entryReview', 'unverifiedLabel') }
-            </ElementFragments>
+                <ElementFragments
+                    icons={value ? (
+                        <IoCheckmarkCircle className={styles.icon} />
+                    ) : (
+                        <AiFillQuestionCircle className={styles.icon} />
+                    )}
+                >
+                    { value ? _ts('entryReview', 'verifiedLabel') : _ts('entryReview', 'unverifiedLabel') }
+                </ElementFragments>
+            </Button>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
@@ -156,7 +152,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                     />
                 </Modal>
             )}
-        </div>
+        </>
     );
 }
 
