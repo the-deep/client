@@ -21,6 +21,7 @@ import EntryReviewButton from '#components/general/EntryReviewButton';
 
 import { useLazyRequest } from '#utils/request';
 import { getScaleWidgetsData } from '#utils/framework';
+import { useModalState } from '#hooks/stateManagement';
 
 import LeadPreview from '#views/Leads/LeadPreview';
 import LeadEditModal from '#components/general/LeadEditModal';
@@ -130,16 +131,7 @@ function EntryCard(props: EntryCardProps) {
         onEntryChange,
     } = props;
 
-    const [isVisible, setVisibility] = useState(false);
-
-    const handleShow = useCallback(() => {
-        setVisibility(true);
-    }, []);
-
-    const handleHide = useCallback(() => {
-        setVisibility(false);
-    }, []);
-
+    const [moreActionsVisible, setMoreActionsVisible, setMoreActionsHidden] = useModalState(false);
     const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
 
     const {
@@ -207,6 +199,18 @@ function EntryCard(props: EntryCardProps) {
             const entryToPatch = {
                 ...entry,
                 verified,
+            };
+
+            onEntryChange(entryToPatch);
+        }
+    }, [entry, onEntryChange]);
+
+    const handleEntryApprovalChange = useCallback((approved, approvalCount) => {
+        if (onEntryChange) {
+            const entryToPatch = {
+                ...entry,
+                isApprovedByCurrentUser: approved,
+                approvedByCount: approvalCount,
             };
 
             onEntryChange(entryToPatch);
@@ -304,12 +308,13 @@ function EntryCard(props: EntryCardProps) {
                 </section>
                 <div className={styles.emptyContainer} />
                 <div className={styles.actionsWrapper}>
-                    {isVisible && (
-                        <section className={styles.bottom}>
+                    {moreActionsVisible && (
+                        <div className={styles.actionsExtra}>
                             <div className={styles.row}>
                                 <div className={styles.source}>
                                     { leadSource && (
                                         <Icon
+                                            className={styles.icon}
                                             name="world"
                                         />
                                     )}
@@ -345,55 +350,70 @@ function EntryCard(props: EntryCardProps) {
                                 keySelector={widgetKeySelector}
                                 emptyComponent={EmptyComponent}
                             />
-                        </section>
+                        </div>
                     )}
-                    <Button
-                        className={styles.expandButton}
-                        onClick={isVisible ? handleHide : handleShow}
-                        transparent
-                        iconName={isVisible ? 'chevronDown' : 'chevronUp'}
-                    >
-                        {isVisible ? (_ts('entries', 'less')) : (_ts('entries', 'more'))}
-                    </Button>
                     <div className={styles.actions}>
-                        <EntryDeleteButton
-                            entryId={entry.id}
-                            onPendingChange={handleDeletePendingChange}
-                            onDeleteSuccess={handleDeleteSuccess}
-                            disabled={isDeleted}
-                        />
-                        <EntryOpenLink
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                            disabled={isDeleted}
-                        />
-                        <EntryCommentButton
-                            entryId={entry.id}
-                            commentCount={entry.unresolvedCommentCount}
-                            assignee={lead.assigneeDetails.id}
-                            disabled={isDeleted}
-                        />
-                        <EntryReviewButton
-                            entryId={entry.id}
-                        />
-                        <EntryEditButton
-                            entry={entry}
-                            framework={framework}
-                            disabled={isDeleted}
-                            onEditSuccess={onEntryChange}
-                        />
-                        <ToggleEntryVerification
-                            tooltip={entryLastChangedBy ? (
-                                _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
-                            ) : undefined}
-                            projectId={entry.project}
-                            entryId={entry.id}
-                            value={entry.verified}
-                            onChange={handleEntryVerificationChange}
-                            onPendingStatusChange={setVerifyChangePending}
-                            disabled={isDeleted}
-                        />
+                        <div className={styles.top}>
+                            <Button
+                                className={styles.expandButton}
+                                onClick={moreActionsVisible ? (
+                                    setMoreActionsHidden
+                                ) : (
+                                    setMoreActionsVisible
+                                )}
+                                transparent
+                                iconName={moreActionsVisible ? 'chevronDown' : 'chevronUp'}
+                            >
+                                {moreActionsVisible ? (_ts('entries', 'less')) : (_ts('entries', 'more'))}
+                            </Button>
+                            <ToggleEntryApproval
+                                entryId={entry.id}
+                                projectId={entry.project}
+                                value={entry.isApprovedByCurrentUser}
+                                approvalCount={entry.approvedByCount}
+                                onChange={handleEntryApprovalChange}
+                            />
+                        </div>
+                        <div className={styles.bottom}>
+                            <EntryDeleteButton
+                                entryId={entry.id}
+                                onPendingChange={handleDeletePendingChange}
+                                onDeleteSuccess={handleDeleteSuccess}
+                                disabled={isDeleted}
+                            />
+                            <EntryOpenLink
+                                entryId={entry.id}
+                                leadId={entry.lead}
+                                projectId={entry.project}
+                                disabled={isDeleted}
+                            />
+                            <EntryCommentButton
+                                entryId={entry.id}
+                                commentCount={entry.unresolvedCommentCount}
+                                assignee={lead.assigneeDetails.id}
+                                disabled={isDeleted}
+                            />
+                            <EntryReviewButton
+                                entryId={entry.id}
+                            />
+                            <EntryEditButton
+                                entry={entry}
+                                framework={framework}
+                                disabled={isDeleted}
+                                onEditSuccess={onEntryChange}
+                            />
+                            <ToggleEntryVerification
+                                tooltip={entryLastChangedBy ? (
+                                    _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                                ) : undefined}
+                                projectId={entry.project}
+                                entryId={entry.id}
+                                value={entry.verified}
+                                onChange={handleEntryVerificationChange}
+                                onPendingStatusChange={setVerifyChangePending}
+                                disabled={isDeleted}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
