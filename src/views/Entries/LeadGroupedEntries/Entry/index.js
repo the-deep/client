@@ -2,15 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 import { connect } from 'react-redux';
-import {
-    _cs,
-    isFalsy,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
-import modalize from '#rscg/Modalize';
-import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -20,7 +15,6 @@ import ToggleEntryVerification from '#components/general/ToggleEntryVerification
 import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
 
 import Cloak from '#components/general/Cloak';
-import EntryCommentModal from '#components/general/EntryCommentModal';
 import EntryReviewButton from '#components/general/EntryReviewButton';
 
 import {
@@ -51,8 +45,6 @@ import _ts from '#ts';
 import EntryLabelBadge from '#components/general/EntryLabel';
 
 import styles from './styles.scss';
-
-const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -339,9 +331,7 @@ export default class Entry extends React.PureComponent {
 
         const {
             id: entryId,
-            createdBy,
             attributes,
-            unresolvedCommentCount: commentCount,
             projectLabels,
             verified,
             isApprovedByCurrentUser,
@@ -353,7 +343,6 @@ export default class Entry extends React.PureComponent {
 
         const filteredWidgets = this.getWidgets(framework?.widgets);
 
-        const defaultAssignees = this.getDefaultAssignees(createdBy);
         const pending = deletePending || entryVerificationPending;
         const entryLastChangedBy = verificationLastChangedByDetails?.displayName;
 
@@ -370,61 +359,24 @@ export default class Entry extends React.PureComponent {
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
                         />
-                        <ToggleEntryApproval
-                            entryId={entryId}
-                            projectId={projectId}
-                            value={isApprovedByCurrentUser}
-                            approvalCount={approvedByCount}
-                            onChange={this.handleEntryApprovalChange}
-                        />
-                        <ToggleEntryVerification
-                            tooltip={entryLastChangedBy ? (
-                                _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
-                            ) : undefined}
-                            entryId={entryId}
-                            projectId={projectId}
-                            value={verified}
-                            onChange={this.handleEntryVerificationChange}
-                        />
-                        <EntryOpenLink
-                            className={styles.button}
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                        />
-                        <EntryEditButton
-                            className={styles.button}
-                            entry={entry}
-                            framework={framework}
-                            onEditSuccess={this.handleEntryEdit}
-                        />
-                        <ModalButton
-                            className={
-                                _cs(
-                                    styles.button,
-                                    commentCount > 0 && styles.accented,
-                                )
-                            }
-                            disabled={isFalsy(entryId)}
-                            modal={
-                                <EntryCommentModal
-                                    entryServerId={entryId}
-                                    onCommentsCountChange={this.handleCommentsCountChange}
-                                    defaultAssignees={defaultAssignees}
-                                />
-                            }
-                            iconName="chat"
-                        >
-                            {commentCount > 0 &&
-                                <div className={styles.commentCount}>
-                                    {commentCount}
-                                </div>
-                            }
-                        </ModalButton>
-                        <EntryReviewButton
-                            className={styles.review}
-                            entryId={entryId}
-                        />
+                        <div className={styles.toggleButtons}>
+                            <ToggleEntryApproval
+                                entryId={entryId}
+                                projectId={projectId}
+                                value={isApprovedByCurrentUser}
+                                approvalCount={approvedByCount}
+                                onChange={this.handleEntryApprovalChange}
+                            />
+                            <ToggleEntryVerification
+                                tooltip={entryLastChangedBy ? (
+                                    _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                                ) : undefined}
+                                entryId={entryId}
+                                projectId={projectId}
+                                value={verified}
+                                onChange={this.handleEntryVerificationChange}
+                            />
+                        </div>
                         <Cloak
                             hide={Entry.shouldHideEntryDelete}
                             render={
@@ -437,6 +389,22 @@ export default class Entry extends React.PureComponent {
                                     className={styles.deleteButton}
                                 />
                             }
+                        />
+                        <EntryOpenLink
+                            className={styles.button}
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            projectId={entry.project}
+                        />
+                        <EntryReviewButton
+                            className={styles.review}
+                            entryId={entryId}
+                        />
+                        <EntryEditButton
+                            className={styles.button}
+                            entry={entry}
+                            framework={framework}
+                            onEditSuccess={this.handleEntryEdit}
                         />
                     </div>
                 </header>
