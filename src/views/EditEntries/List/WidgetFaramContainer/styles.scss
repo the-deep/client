@@ -10,13 +10,23 @@
         flex-shrink: 0;
         z-index: 1;
         background-color: var(--color-background-header);
-        padding: var(--spacing-small);
+        padding: var(--spacing-small) calc(var(--spacing-small) - var(--spacing-extra-small));
         width: 100%;
 
         .heading {
             align-self: center;
             flex-grow: 1;
+            padding: 0 var(--spacing-extra-small);
             color: var(--color-text);
+        }
+
+        .actions {
+            display: flex;
+            flex-shrink: 0;
+
+            >* {
+                margin: 0 var(--spacing-extra-small);
+            }
         }
 
         .entry-labels {
@@ -24,8 +34,6 @@
             align-items: center;
 
             .entry-label {
-                margin-right: var(--spacing-small);
-
                 .title {
                     text-transform: none;
                 }
@@ -38,29 +46,9 @@
 
         .button {
             flex-shrink: 0;
-            margin-left: var(--spacing-small);
             border-radius: 0;
             box-shadow: none;
             padding: var(--spacing-extra-small-alt) var(--spacing-small-alt);
-        }
-
-        .entry-comment-button {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            margin-left: var(--spacing-small);
-            border-radius: 0;
-            box-shadow: none;
-            padding: var(--spacing-extra-small-alt) var(--spacing-small-alt);
-
-            .comment-count {
-                padding-left: var(--spacing-small);
-            }
-
-            &.accented {
-                border-color: var(--color-danger);
-                color: var(--color-danger);
-            }
         }
     }
 
