@@ -5,7 +5,6 @@ import Icon from '#rscg/Icon';
 
 import ExcerptOutput from '#widgetComponents/ExcerptOutput';
 import DateOutput from '#components/viewer/DateOutput';
-import EntryCommentButton from '#components/general/EntryCommentButton';
 import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
@@ -379,43 +378,38 @@ function EntryCard(props: EntryCardProps) {
                         </div>
                         <div className={styles.bottom}>
                             <EntryDeleteButton
+                                className={styles.deleteButton}
                                 entryId={entry.id}
                                 onPendingChange={handleDeletePendingChange}
                                 onDeleteSuccess={handleDeleteSuccess}
                                 disabled={isDeleted}
                             />
-                            <EntryOpenLink
-                                entryId={entry.id}
-                                leadId={entry.lead}
-                                projectId={entry.project}
-                                disabled={isDeleted}
-                            />
-                            <EntryCommentButton
-                                entryId={entry.id}
-                                commentCount={entry.unresolvedCommentCount}
-                                assignee={lead.assigneeDetails.id}
-                                disabled={isDeleted}
-                            />
-                            <EntryReviewButton
-                                entryId={entry.id}
-                            />
-                            <EntryEditButton
-                                entry={entry}
-                                framework={framework}
-                                disabled={isDeleted}
-                                onEditSuccess={onEntryChange}
-                            />
-                            <ToggleEntryVerification
-                                tooltip={entryLastChangedBy ? (
-                                    _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
-                                ) : undefined}
-                                projectId={entry.project}
-                                entryId={entry.id}
-                                value={entry.verified}
-                                onChange={handleEntryVerificationChange}
-                                onPendingStatusChange={setVerifyChangePending}
-                                disabled={isDeleted}
-                            />
+                            <div className={styles.otherActions}>
+                                <ToggleEntryVerification
+                                    tooltip={entryLastChangedBy ? (
+                                        _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                                    ) : undefined}
+                                    projectId={entry.project}
+                                    entryId={entry.id}
+                                    value={entry.verified}
+                                    onChange={handleEntryVerificationChange}
+                                    onPendingStatusChange={setVerifyChangePending}
+                                    disabled={isDeleted}
+                                />
+                                <EntryReviewButton entryId={entry.id} />
+                                <EntryOpenLink
+                                    entryId={entry.id}
+                                    leadId={entry.lead}
+                                    projectId={entry.project}
+                                    disabled={isDeleted}
+                                />
+                                <EntryEditButton
+                                    entry={entry}
+                                    framework={framework}
+                                    disabled={isDeleted}
+                                    onEditSuccess={onEntryChange}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
