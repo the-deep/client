@@ -178,7 +178,7 @@ function Navbar(props) {
             'analysisModule',
         ];
 
-        const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
+        const accessNewUi = accessibleFeatures?.find(f => f.key === featuresMapping.newUi);
         if (accessNewUi) {
             navLinks.unshift('home');
         }

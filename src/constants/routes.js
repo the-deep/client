@@ -104,6 +104,15 @@ export const routes = {
         hideNavbar: true,
     }, // _ts('pageTitle', 'pillarAnalysis');
 
+    editProject: {
+        order: 21,
+        type: ROUTE.private,
+        path: '/project/:projectId?/',
+        loader: () => import('../views/ProjectEdit'),
+        links: allLinks,
+        hideNavbar: true,
+    }, // _ts('pageTitle', 'editProject');
+
     projects: {
         order: 21,
         type: ROUTE.private,

@@ -1,25 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
 import { _cs } from '@togglecorp/fujs';
+
 import Icon from '#rscg/Icon';
 import Heading from '#dui/Heading';
 import ElementFragments from '#dui/ElementFragments';
 
-import {
-    activeProjectFromStateSelector,
-} from '#redux';
-
-import {
-    ProjectDetails,
-    AppState,
-} from '#typings';
-
 import styles from './styles.scss';
-
-const mapStateToProps = (state: AppState) => ({
-    activeProject: activeProjectFromStateSelector(state),
-});
 
 interface FullPageHeaderProps {
     className?: string;
@@ -27,7 +13,7 @@ interface FullPageHeaderProps {
     actionsClassName?: string;
     children?: React.ReactNode;
     actions?: React.ReactNode;
-    activeProject: ProjectDetails;
+    heading?: React.ReactNode;
 }
 
 function FullPageHeader(props: FullPageHeaderProps) {
@@ -36,7 +22,7 @@ function FullPageHeader(props: FullPageHeaderProps) {
         children,
         contentClassName,
         actionsClassName,
-        activeProject,
+        heading,
         actions,
     } = props;
 
@@ -55,7 +41,7 @@ function FullPageHeader(props: FullPageHeaderProps) {
                             size="medium"
                             className={styles.projectTitleContainer}
                         >
-                            {activeProject?.title}
+                            {heading}
                         </Heading>
                     </>
                 )}
@@ -70,4 +56,4 @@ function FullPageHeader(props: FullPageHeaderProps) {
     );
 }
 
-export default connect(mapStateToProps)(FullPageHeader);
+export default FullPageHeader;

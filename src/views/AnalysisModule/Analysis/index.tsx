@@ -1,8 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { connect } from 'react-redux';
-import {
-    _cs,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import ContainerCard from '#dui/ContainerCard';
 import Button from '#dui/Button';
