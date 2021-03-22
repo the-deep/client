@@ -1,0 +1,12 @@
+.confirm {
+    display: flex;
+
+    .footer {
+        display: flex;
+        justify-content: flex-end;
+
+        .button {
+            margin-left: var(--spacing-small);
+        }
+    }
+}
