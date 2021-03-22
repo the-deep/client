@@ -110,7 +110,6 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
         triggerReviewRequest();
     }, [setUnapproveFormData, triggerReviewRequest]);
 
-    // FIXME: use strings
     const approvalStatus = React.useMemo(() => {
         let text = '';
 
@@ -137,7 +136,7 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
 
     return (
         <div
-            title={tooltip}
+            title={tooltip ?? approvalStatus}
             className={
                 _cs(
                     className,
@@ -147,22 +146,26 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
             }
         >
             <ElementFragments
-                icons={value ? (
-                    <IoCheckmarkCircle className={styles.icon} />
-                ) : (
-                    <AiFillQuestionCircle className={styles.icon} />
-                )}
                 actions={
                     <Button
+                        className={styles.toggleButton}
                         onClick={handleClick}
                         pending={reviewRequestPending}
                         disabled={disabled}
                     >
-                        { value ? _ts('entryReview', 'unapproveLabel') : _ts('entryReview', 'approveLabel') }
+                        <ElementFragments
+                            icons={value ? (
+                                <IoCheckmarkCircle className={styles.icon} />
+                            ) : (
+                                <AiFillQuestionCircle className={styles.icon} />
+                            )}
+                        >
+                            { value ? _ts('entryReview', 'unapproveLabel') : _ts('entryReview', 'approveLabel') }
+                        </ElementFragments>
                     </Button>
                 }
             >
-                { approvalStatus }
+                {_ts('entryReview', 'peerApprovalLabel', { n: approvalCount })}
             </ElementFragments>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
