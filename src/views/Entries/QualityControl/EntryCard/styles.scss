@@ -31,8 +31,7 @@
         border-top: var(--width-separator-thick) solid var(--color-info);
         box-shadow: 0 3px 9px -5px rgba(0, 0, 0, .5);
         background-color: var(--color-foreground);
-        //padding: calc(var(--spacing-large) - var(--spacing-medium));
-        width: 346px;
+        width: 378px;
         overflow: hidden;
 
         &.verified {
@@ -48,7 +47,7 @@
             border-top-color: var(--color-danger);
         }
 
-        .top {
+        >.top {
             flex-shrink: 0;
             padding: 0 calc(var(--spacing-large) - var(--spacing-medium));
 
@@ -128,120 +127,105 @@
             outline: none;
         }
 
-        .bottom {
-            display: flex;
-            position: absolute;
-            bottom: calc(var(--spacing-extra-large-alt) + var(--spacing-medium-alt));
-            left: 0;
-            flex-direction: column;
-            transition: 0.2s all ease-in-out;
-            border-top: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-foreground);
-            padding: var(--spacing-medium) 0;
-            width: 100%;
-
-
-            .row {
-                display: flex;
-                flex-shrink: 0;
-                padding: 0 calc(var(--spacing-large) - var(--spacing-small));
-
-                .source {
-                    display: flex;
-                    align-items: center;
-                    flex-grow: 1;
-                    padding: 0 calc(var(--spacing-medium) - var(--spacing-small));
-                    overflow: auto;
-
-                    .icon {
-                        flex-shrink: 0;
-                        margin: var(--spacing-small);
-                    }
-
-                    .value {
-                        flex-grow: 1;
-                        padding: var(--spacing-small);
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        font-size: var(--font-size-small);
-                    }
-                }
-
-                .confidentiality {
-                    flex-shrink: 0;
-                    padding: var(--spacing-small) var(--spacing-medium);
-                    font-weight: var(--font-weight-bold);
-                }
-            }
-
-            .scale-widgets {
-                display: flex;
-                align-items: center;
-                flex-shrink: 0;
-                flex-wrap: wrap;
-                padding: 0 calc(var(--spacing-large) - var(--spacing-small));
-
-                --width-marker-radius: 10px;
-            }
-
-            .entry-details-row {
-                display: flex;
-                align-items: center;
-                flex-shrink: 0;
-                padding: 0 calc(var(--spacing-large) - var(--spacing-small));
-                overflow: auto;
-
-                .created-by {
-                    flex-grow: 1;
-                    padding: var(--spacing-small);
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-
-                .created-at {
-                    flex-shrink: 0;
-                }
-            }
-        }
-
         .empty-container {
             height: var(--height-action-bar);
         }
 
         .actions-wrapper {
-            display: flex;
             position: absolute;
-            right: -100%;
             bottom: 0;
-            flex-grow: 1;
-            justify-content: flex-end;
-            transition: 0.2s all ease-in-out;
+            flex-shrink: 0;
+            opacity: 0;
             border-top: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-foreground);
-            padding: var(--spacing-small) calc(var(--spacing-large) - var(--spacing-small));
+            padding: calc(var(--spacing-medium) - var(--spacing-small));
             width: 100%;
-            height: var(--height-action-bar);
+
+            .actions-extra {
+                .row {
+                    display: flex;
+                    flex-shrink: 0;
+
+                    .source {
+                        display: flex;
+                        align-items: center;
+                        flex-grow: 1;
+                        overflow: auto;
+
+                        .icon {
+                            flex-shrink: 0;
+                            margin: var(--spacing-small);
+                        }
+
+                        .value {
+                            flex-grow: 1;
+                            padding: var(--spacing-small);
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            font-size: var(--font-size-small);
+                        }
+                    }
+
+                    .confidentiality {
+                        flex-shrink: 0;
+                        padding: var(--spacing-small);
+                        font-weight: var(--font-weight-bold);
+                    }
+                }
+
+                .scale-widgets {
+                    display: flex;
+                    align-items: center;
+                    flex-shrink: 0;
+                    flex-wrap: wrap;
+                }
+
+                .entry-details-row {
+                    display: flex;
+                    align-items: center;
+                    flex-shrink: 0;
+                    overflow: auto;
+
+                    .created-by {
+                        flex-grow: 1;
+                        padding: var(--spacing-small);
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .created-at {
+                        flex-shrink: 0;
+                    }
+                }
+            }
 
             .actions {
-                display: flex;
-                flex-grow: 1;
-                justify-content: flex-end;
-            }
+                .top {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: var(--spacing-small);
 
-            button {
-                flex-shrink: 0;
-                justify-content: flex-start;
-                margin: 0 var(--spacing-extra-small);
+                    .expand-button {
+                        display: flex;
+                        outline: none;
+                        padding-right: 0;
+                        padding-left: 0;
+                    }
+                }
+
+                .bottom {
+                    display: flex;
+                    align-items: center;
+                    padding: var(--spacing-small);
+                }
             }
         }
-    }
 
-    &:hover {
-        .entry-card {
+        &:hover {
             .actions-wrapper {
-                right: 0;
+                opacity: 1;
             }
         }
     }
