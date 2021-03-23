@@ -144,7 +144,6 @@ const requestOptions = {
             props: { setNotifications },
             response: { results },
         }) => {
-            console.info(results);
             setNotifications({ notifications: results });
         },
         extras: {
