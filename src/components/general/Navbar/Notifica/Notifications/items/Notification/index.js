@@ -23,6 +23,7 @@ const propTypes = {
     message: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.element,
+        PropTypes.node,
     ]),
     actions: PropTypes.element,
     timestamp: PropTypes.string,
