@@ -20,7 +20,10 @@ export const NOTIFICATION_STATUS_SEEN = 'seen';
 const propTypes = {
     className: PropTypes.string,
     icon: PropTypes.element,
-    message: PropTypes.element,
+    message: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element,
+    ]),
     actions: PropTypes.element,
     timestamp: PropTypes.string,
     seenStatus: PropTypes.bool,

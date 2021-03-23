@@ -26,7 +26,8 @@ interface Props {
 }
 interface Comment {
     text?: string;
-    comment_type?: number; // eslint-disable-line camelcase
+    commentType?: number;
+    mentionedUsers?: number[];
 }
 function CommentForm(props: Props) {
     const {
@@ -40,7 +41,8 @@ function CommentForm(props: Props) {
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [faramValues, setFaramValues] = useState<Comment | undefined>({
         text: comment.textHistory[0]?.text,
-        comment_type: comment.commentType,
+        commentType: comment.commentType,
+        mentionedUsers: comment.mentionedUsers,
     });
 
     const schema: ObjectSchema = {
