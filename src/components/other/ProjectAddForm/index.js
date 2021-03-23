@@ -68,6 +68,8 @@ const projectAddSchema = {
     },
 };
 
+const shouldHidePrivate = ({ accessPrivateProject }) => !accessPrivateProject;
+
 function ProjectAddForm(props) {
     const {
         className,
@@ -157,7 +159,7 @@ function ProjectAddForm(props) {
                 autoFocus
             />
             <Cloak
-                hide={ProjectAddForm.shouldHidePrivate}
+                hide={shouldHidePrivate}
                 render={
                     <SegmentInput
                         options={projectVisibilityOptions}
