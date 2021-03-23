@@ -16,13 +16,11 @@ import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import Button from '#rsu/../v2/Action/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import modalize from '#rscg/Modalize';
 import Message from '#rscv/Message';
 
 import {
@@ -43,7 +41,7 @@ import {
 
 import _ts from '#ts';
 
-import StakeholdersModal from './StakeholdersModal';
+import AddStakeholdersButton from '#components/general/AddStakeholdersButton';
 import ActivityLog from './ActivityLog';
 import Dashboard from './Dashboard';
 import requestOptions from './requests';
@@ -76,14 +74,6 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     requests: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
-
-const StakeholderButton = props => (
-    <Button
-        transparent
-        {...props}
-    />
-);
-const ModalButton = modalize(StakeholderButton);
 
 const defaultProps = {
     className: '',
@@ -401,16 +391,8 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                         {_ts('project.detail.general', 'projectStakeholdersHeading')}
                                     </h3>
                                     <div className={styles.actions}>
-                                        <ModalButton
-                                            className={styles.editStakeholdersButton}
-                                            iconName="edit"
+                                        <AddStakeholdersButton
                                             disabled={readOnly}
-                                            modal={
-                                                <StakeholdersModal
-                                                    faramElementName="organizations"
-                                                    fields={fields}
-                                                />
-                                            }
                                         />
                                     </div>
                                 </header>

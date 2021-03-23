@@ -1,0 +1,89 @@
+.project-details {
+    display: flex;
+    flex-direction: column;
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+        .main {
+            display: flex;
+            flex-basis: 50%;
+            flex-direction: column;
+            flex-shrink: 0;
+            justify-content: space-between;
+            padding-right: var(--dui-spacing-large);
+
+            .input {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                padding-left: var(--dui-spacing-large);
+            }
+
+            .dates {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .stakeholders {
+                display: flex;
+                max-height: 30vh;
+                overflow-y: scroll;
+
+                .heading {
+                    font-size: var(--dui-font-size-heading-extra-small);
+                }
+
+                .items {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    .organizations {
+                        display: flex;
+                        flex: 1 0 30%;
+                        flex-direction: column;
+                        margin: var(--dui-spacing-medium);
+                        max-width: 50%;
+                    }
+                }
+            }
+
+            .project-tags {
+                display: flex;
+                justify-content: space-between;
+
+                .tags {
+                    display: flex;
+                    flex: 1 0 50%;
+                    background-color: white;
+
+                    .heading {
+                        font-size: var(--dui-font-size-heading-extra-small);
+                    }
+
+                    .items {
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .first-tag {
+                        margin-right: var(--dui-spacing-medium);
+                    }
+                }
+            }
+
+            .createdByDetails {
+                display: flex;
+                justify-content: space-between;
+                margin-top: var(--dui-spacing-small);
+            }
+        }
+
+        .map {
+            display: flex;
+            flex-grow: 1;
+            padding-left: var(--dui-spacing-large);
+        }
+    }
+}

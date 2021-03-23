@@ -59,6 +59,7 @@ export interface ProjectDetails {
 
     memberships: Membership[];
     userGroups: BasicElement[];
+    organizations: ProjectOrganization[];
 }
 export interface CountTimeSeries {
     date: string;
