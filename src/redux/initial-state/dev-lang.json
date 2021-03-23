@@ -1299,7 +1299,11 @@
         "-98549020": "Select Analysis Date",
         "-22196585": "Create a project",
         "-48980925": "Save and get started",
-        "-59904873": "Project details"
+        "-59904873": "Project details",
+        "-99774780": "The generated link can be publicly accessed by anyone without authentication and contains only non-confidential data.",
+        "-79488121": "Share",
+        "-99801867": "Share public link",
+        "-8913126": "Enable public link"
     },
     "links": {
         "browserExtension": {
@@ -1803,7 +1807,12 @@
             "hideFiltersLabel": -90290386,
             "more": -68982194,
             "less": -75616009,
-            "leadAssigneeFilterLabel": -39611284
+            "leadAssigneeFilterLabel": -39611284,
+            "shareButtonLabel": -79488121,
+            "entriesPublicLinkHelpText": -99774780,
+            "shareModalHeading": -99801867,
+            "shareVizLink": -99801867,
+            "getPublicLinkLabel": -8913126
         },
         "export": {
             "headerExport": 600,
