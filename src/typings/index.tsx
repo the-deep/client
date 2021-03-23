@@ -8,3 +8,4 @@ export * from './entry';
 export * from './export';
 export * from './analysisModule';
 export * from './user';
+export * from './organization';
