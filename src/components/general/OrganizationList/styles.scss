@@ -1,0 +1,45 @@
+.organization-list {
+    .heading {
+        font-size: var(--dui-font-size-heading-extra-small);
+        font-weight: var(--dui-font-weight-medium);
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+
+        .organization-details {
+            display: flex;
+            align-items: center;
+            flex-basis: 50%;
+
+            .logo-container {
+                display: flex;
+                align-items: flex-start;
+                flex-shrink: 0;
+                justify-content: center;
+                padding: var(--spacing-extra-small) var(--spacing-small);
+
+                .img {
+                    width: 36px;
+                    height: 36px;
+                    object-fit: contain;
+                    object-position: center center;
+                }
+
+                .icon {
+                    opacity: 0.7;
+                    font-size: 36px;
+                }
+            }
+
+            .title {
+                flex-grow: 1;
+                padding: var(--spacing-extra-small) var(--spacing-small);
+                color: var(--color-text-label);
+                font-size: var(--font-size-small);
+            }
+        }
+    }
+}
