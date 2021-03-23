@@ -160,7 +160,6 @@ function EntryReview(props: EntryReviewProps) {
                 });
                 break;
             case REVIEW_TYPE_UNAPPROVE:
-                message = 'bla bla';
                 message = _ts('notifications.entryReviewComment', 'unapprove', {
                     assigner,
                     entry: entryLinkItemWithReview,
