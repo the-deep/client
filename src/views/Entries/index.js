@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import {
     _cs,
+    isDefined,
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
@@ -21,6 +22,7 @@ import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Button from '#rsca/Button';
 import Pager from '#rscv/Pager';
 import Page from '#rscv/Page';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -32,6 +34,7 @@ import notify from '#notify';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
+import modalize from '#rscg/Modalize';
 
 import {
     setEntriesAction,
@@ -41,6 +44,7 @@ import {
     analysisFrameworkForProjectSelector,
     unsetEntriesViewFilterAction,
     activeProjectFromStateSelector,
+    activeProjectRoleSelector,
 
     setGeoOptionsAction,
 
@@ -56,8 +60,11 @@ import QualityControl from './QualityControl';
 import EntriesViz from './EntriesViz';
 import FilterEntriesForm from './FilterEntriesForm';
 import LeadGroupedEntries from './LeadGroupedEntries';
+import ShareModal from './ShareModal';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 export const FooterContainer = ({
     parentFooterRef,
@@ -162,6 +169,7 @@ Tab.defaultProps = {
 
 const mapStateToProps = state => ({
     activePage: entriesViewActivePageSelector(state),
+    projectRole: activeProjectRoleSelector(state),
     entriesFilter: entriesViewFilterSelector(state),
     framework: analysisFrameworkForProjectSelector(state),
     leadGroupedEntriesList: entriesForProjectSelector(state),
@@ -182,6 +190,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activePage: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types, react/no-unused-prop-types
     entriesFilter: PropTypes.object.isRequired,
@@ -206,6 +215,7 @@ const propTypes = {
 
 const defaultProps = {
     framework: {},
+    projectRole: {},
     totalEntriesCount: 0,
     geoOptions: {},
 };
@@ -373,6 +383,8 @@ export default class Entries extends React.PureComponent {
         });
 
         this.state = {
+            entriesVizShareUrl: undefined,
+            entriesVizDataPending: true,
             successFramework: false,
             successGeoOptions: false,
 
@@ -396,6 +408,8 @@ export default class Entries extends React.PureComponent {
                 // lazyMount: true,
                 rendererParams: () => ({
                     projectId: this.props.projectId,
+                    onShareLinkChange: this.handleShareLinkChange,
+                    onEntriesVizPendingChange: this.handleEntriesVizPendingChange,
                 }),
             },
             [QC_VIEW]: {
@@ -490,6 +504,14 @@ export default class Entries extends React.PureComponent {
         }, this.startEntriesRequest);
     }
 
+    handleShareLinkChange = (entriesVizShareUrl) => {
+        this.setState({ entriesVizShareUrl });
+    }
+
+    handleEntriesVizPendingChange = (entriesVizDataPending) => {
+        this.setState({ entriesVizDataPending });
+    }
+
     handleScroll = (e) => {
         const headers = e.target.getElementsByClassName(styles.leadGroupedHeader);
         for (let i = 0; i < headers.length; i += 1) {
@@ -580,14 +602,24 @@ export default class Entries extends React.PureComponent {
             requests: {
                 projectFrameworkRequest: { pending: pendingFramework },
             },
+            projectRole: {
+                setupPermissions = {},
+            },
+            projectId,
         } = this.props;
 
-        const { view } = this.state;
+        const {
+            view,
+            entriesVizDataPending,
+            entriesVizShareUrl,
+        } = this.state;
 
         const {
             tabs,
             showTabs,
         } = this.getTabs(framework, isVisualizationEnabled);
+
+        const hasModifyPermissions = setupPermissions?.modify;
 
         return (
             <Page
@@ -595,6 +627,26 @@ export default class Entries extends React.PureComponent {
                 headerClassName={styles.header}
                 header={
                     <React.Fragment>
+                        {(
+                            view === VIZ_VIEW
+                            && (hasModifyPermissions || isDefined(entriesVizShareUrl))
+                            && !entriesVizDataPending
+                        ) && (
+                            <ModalButton
+                                className={styles.shareButton}
+                                iconName="share"
+                                modal={(
+                                    <ShareModal
+                                        isProjectAdmin={hasModifyPermissions}
+                                        publicUrl={entriesVizShareUrl}
+                                        projectId={projectId}
+                                        onShareLinkChange={this.handleShareLinkChange}
+                                    />
+                                )}
+                            >
+                                { _ts('entries', 'shareButtonLabel') }
+                            </ModalButton>
+                        )}
                         {
                             (view === LIST_VIEW || view === QC_VIEW) &&
                                 <FilterEntriesForm

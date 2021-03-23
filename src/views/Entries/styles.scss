@@ -12,6 +12,11 @@
             flex-shrink: initial;
         }
 
+        .share-button {
+            align-self: center;
+            margin: 0 var(--spacing-small);
+        }
+
         .tabs {
             align-self: flex-end;
             flex-shrink: 0;
