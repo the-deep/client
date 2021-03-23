@@ -31,6 +31,7 @@ import { getDateWithTimezone } from '#utils/common';
 
 import _ts from '#ts';
 
+import EntryReview from './items/EntryReview';
 import ProjectJoinRequestItem from './items/ProjectJoinRequest';
 import ProjectJoinRequestAbortItem from './items/ProjectJoinRequestAbort';
 import ProjectJoinResponseItem from './items/ProjectJoinResponse';
@@ -50,6 +51,9 @@ const notificationItems = {
     entry_comment_assignee_change: EntryCommentItem,
     entry_comment_modify: EntryCommentItem,
     entry_comment_reply_modify: EntryCommentItem,
+
+    entry_review_comment_add: EntryReview,
+    entry_review_comment_modify: EntryReview,
 };
 
 const NotificationItem = ({
@@ -140,6 +144,7 @@ const requestOptions = {
             props: { setNotifications },
             response: { results },
         }) => {
+            console.info(results);
             setNotifications({ notifications: results });
         },
         extras: {
