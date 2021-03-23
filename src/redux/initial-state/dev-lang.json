@@ -1365,7 +1365,15 @@
         "-15568595": "Approved by you and {userCount} other users",
         "-4503674": "Not approved",
         "-44367329": "Not approved by you (Approved by {userCount} other users)",
-        "-46401322": "{n} peer approval(s)"
+        "-46401322": "{n} peer approval(s)",
+        "-52742063": "comment",
+        "-97072562": "{assigner} assigned you to a new {comment}.",
+        "-56701570": "{assigner} approved an {entry} in project {projectName}.",
+        "-10980487": "{assigner} verified an {entry} in project {projectName}.",
+        "-96661189": "{assigner} unverified an {entry} in project {projectName}.",
+        "-33405531": "A review {comment} that you were previously assigned is updated.",
+        "-77891125": "{assigner} unapproved an {entry} in project {projectName}.",
+        "-62878959": "entry"
     },
     "links": {
         "browserExtension": {
@@ -3868,6 +3876,19 @@
             "notApprovedByUserButApprovedByOthersLabel": -44367329,
             "notApprovedLabel": -4503674,
             "peerApprovalLabel": -46401322
+        },
+        "notifications.entryCommentItem": {
+            "comment": -52742063
+        },
+        "notifications.entryReviewComment": {
+            "commentAdd": -97072562,
+            "approve": -56701570,
+            "commentLabel": -52742063,
+            "commentUpdate": -33405531,
+            "unapprove": -77891125,
+            "unverify": -96661189,
+            "verify": -10980487,
+            "entryLabel": -62878959
         }
     }
 }
