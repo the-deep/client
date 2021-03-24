@@ -6,6 +6,7 @@
         display: flex;
         flex-grow: 1;
         padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+
         .main {
             display: flex;
             flex-basis: 50%;
@@ -26,6 +27,18 @@
                 justify-content: space-between;
             }
 
+            .features {
+                display: flex;
+                background-color: white;
+
+                .heading {
+                    font-size: var(--dui-font-size-heading-extra-small);
+                }
+
+                .items {
+                    display: flex;
+                }
+            }
             .stakeholders {
                 display: flex;
                 max-height: 30vh;
@@ -85,5 +98,11 @@
             flex-grow: 1;
             padding-left: var(--dui-spacing-large);
         }
+    }
+
+    .footer {
+        display: flex;
+        justify-content: flex-end;
+        padding-right: var(--dui-spacing-extra-large);
     }
 }

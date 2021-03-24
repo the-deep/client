@@ -29,7 +29,7 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 interface ViewProps {
-    projectId?: string;
+    projectId: number;
     activeProject: ProjectDetails;
 }
 
@@ -99,7 +99,7 @@ function ProjectEdit(props: ViewProps) {
                 </FullPageHeader>
                 <TabPanel name="general">
                     <ProjectDetailsForm
-                        project={activeProject}
+                        projectId={projectId}
                     />
                 </TabPanel>
                 <TabPanel name="users">
