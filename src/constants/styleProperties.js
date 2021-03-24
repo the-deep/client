@@ -81,6 +81,7 @@ const styleProperties = {
         duiBorderColorInnerCard: '#DFE7F2',
         duiColorLabel: '#828282',
         duiColorTextDark: '#333333',
+        duiColorOutline: 'rgba(0, 0, 0, .3)',
         duiColorBackgroundProgressBar: '#bdbdbd',
         // TODO: write better name for this
         duiColorDeep6: '#F5F8FB',

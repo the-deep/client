@@ -1,0 +1,26 @@
+.tab {
+    --text-color: var(--dui-color-text);
+    --color-separator: var(--dui-color-separator);
+    --active-text-color: transparent;
+
+    border: 0;
+    border-bottom: var(--width-separator-medium) solid var(--color-separator);
+    border-radius: 0;
+    padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+    color: var(--text-color);
+    font-weight: var(--font-weight-bold);
+
+    &.active {
+        --color-separator: var(--dui-color-accent);
+        --text-color: var(--dui-color-accent);
+    }
+
+    &.disabled {
+        --text-color: var(--dui-color-text-disabled);
+        pointer-events: none;
+    }
+}
+
+.tab-list {
+    display: flex;
+}

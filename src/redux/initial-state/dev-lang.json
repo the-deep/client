@@ -1293,13 +1293,13 @@
         "-25536744": "Information gap",
         "-62584276": "Main statement",
         "-52946834": "Pillar analysis",
-        "-90678740": "Setup a new analysis",
         "-35701649": "Select Analysis Date",
         "-80223054": "All Analyses",
         "-24200085": "All Analyses",
         "-98549020": "Select Analysis Date",
-        "-88197654": "Analysis Edit/Create",
-        "-90678740": "Setup a new analysis"
+        "-22196585": "Create a project",
+        "-48980925": "Save and get started",
+        "-59904873": "Project details"
     },
     "links": {
         "browserExtension": {
@@ -2309,7 +2309,8 @@
             "home": 5559,
             "dashboard": -29389738,
             "analysisModule": -55670188,
-            "pillarAnalysis": -52946834
+            "pillarAnalysis": -52946834,
+            "editProject": 31
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3681,6 +3682,18 @@
             "selectAnalysisDate": -35701649,
             "allAnalyses": -80223054,
             "setupNewAnalysisButtonLabel": -90678740
+        },
+        "projectEdit": {
+            "closeButtonLabel": -39430073,
+            "createProjectLabel": -22196585,
+            "saveButtonLabel": -48980925,
+            "usersLabel": 1119,
+            "frameworkLabel": 379,
+            "projectDetailsLabel": -59904873
+        },
+        "components.dateRangeOutput": {
+            "endDateLabel": 334,
+            "startDateLabel": 185
         }
     }
 }
