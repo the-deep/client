@@ -54,8 +54,8 @@ export interface ProjectDetails {
 
     memberStatus: 'admin' | 'member';
     role: number;
-    status: number;
-    statusTitle: string;
+    status: string;
+    statusDisplay: string;
 
     memberships: Membership[];
     userGroups: BasicElement[];
@@ -110,7 +110,7 @@ export interface ProjectStat {
     role: number;
     startDate?: string;
     status: string;
-    statusTitle: string;
+    statusDisplay: string;
     title: string;
     topSourcers: UserActivityStat[];
     topTaggers: UserActivityStat[];

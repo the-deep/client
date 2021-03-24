@@ -26,7 +26,7 @@ function OrganizationField(props: Props) {
         try {
             const data = e.dataTransfer.getData('text');
             const parsedData = JSON.parse(data);
-            if (!parsedData && !parsedData.organizationId) {
+            if (!parsedData || !parsedData.organizationId) {
                 throw new Error('Invalid data');
             }
 

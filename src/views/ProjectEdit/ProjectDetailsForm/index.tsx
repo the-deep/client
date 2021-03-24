@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import Faram, { requiredCondition, dateCondition } from '@togglecorp/faram';
 import { formatDateToString, listToGroupList } from '@togglecorp/fujs';
 
-
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Checkbox from '#rsci/Checkbox';
 import ListView from '#rsu/../v2/View/ListView';
 import Icon from '#rscg/Icon';
@@ -42,11 +42,13 @@ function ProjectDetailsForm(props: Props) {
             endDate: [dateCondition],
             description: [],
             organizations: [],
+            hasAssessments: [],
         },
     };
 
     const [pristine, setPristine] = useState<boolean>(false);
     const [faramValues, setFaramValues] = useState<ProjectDetails>();
+    const [finalValues, setFinalValues] = useState<Partial<ProjectDetails>>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
 
     const [
@@ -62,15 +64,32 @@ function ProjectDetailsForm(props: Props) {
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
 
+    const [
+        projectPatchPending,
+        ,
+        ,
+        projectPatch,
+    ] = useRequest<ProjectDetails>({
+        url: `server://projects/${projectId}/`,
+        method: 'PATCH',
+        body: finalValues,
+        onSuccess: (response) => {
+            setFaramValues(response);
+        },
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+    });
+
     const handleFaramChange = useCallback((newValues, newErrors) => {
         setPristine(false);
         setFaramValues(newValues);
         setFaramErrors(newErrors);
     }, []);
 
-    const handleFaramValidationSuccess = useCallback((f, v) => {
-        console.warn('f', f, v);
-    }, []);
+    const handleFaramValidationSuccess = useCallback((_, values) => {
+        setFinalValues(values);
+        projectPatch();
+    }, [projectPatch]);
 
     const organizationListRendererParams = useCallback((key) => {
         const values = listToGroupList(
@@ -95,6 +114,7 @@ function ProjectDetailsForm(props: Props) {
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
         >
+            {(projectGetPending || projectPatchPending) && <LoadingAnimation />}
             <NonFieldErrors faramElement />
             <div className={styles.content}>
                 <div className={styles.main}>
@@ -107,13 +127,13 @@ function ProjectDetailsForm(props: Props) {
                     />
                     <div className={styles.dates}>
                         <DateInput
-                            className={styles.input}
+                            className={styles.dateInput}
                             faramElementName="startDate"
                             label={_ts('projectEdit', 'projectStartDate')}
                             placeholder={_ts('projectEdit', 'projectStartDate')}
                         />
                         <DateInput
-                            className={styles.input}
+                            className={styles.dateInput}
                             faramElementName="endDate"
                             label={_ts('projectEdit', 'projectEndDate')}
                             placeholder={_ts('projectEdit', 'projectEndDate')}
@@ -180,7 +200,7 @@ function ProjectDetailsForm(props: Props) {
                         heading={_ts('projectEdit', 'projectAdditionalFeatures')}
                     >
                         <Checkbox
-                            faramElementName="has_assessments"
+                            faramElementName="hasAssessments"
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />
                     </Container>
@@ -225,7 +245,7 @@ function ProjectDetailsForm(props: Props) {
                 className={styles.footer}
                 actions={(
                     <Button
-                        disabled={pristine || projectGetPending}
+                        disabled={pristine || projectGetPending || projectPatchPending}
                         type="submit"
                         variant="primary"
                     >
