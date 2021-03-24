@@ -20,7 +20,10 @@ const requestOptions = {
                 return r.status === 'pending' || r.status === 'started';
             },
         }),
-        onSuccess: ({ response }) => {
+        onSuccess: ({ response, props }) => {
+            if (response.publicUrl && props.onShareLinkChange) {
+                props.onShareLinkChange(response.publicUrl);
+            }
             if (response.status === 'failure') {
                 notify.send({
                     title: _ts('entries.visualization', 'entriesViz'),

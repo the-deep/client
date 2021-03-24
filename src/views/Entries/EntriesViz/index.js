@@ -24,6 +24,10 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
     setDefaultRequestParams: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onShareLinkChange: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onEntriesVizPendingChange: PropTypes.func.isRequired,
 };
 
 @RequestCoordinator
@@ -40,6 +44,27 @@ export default class EntriesViz extends React.PureComponent {
         this.props.setDefaultRequestParams({
             setState: params => this.setState(params),
         });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            requests: {
+                projectVizGetRequest: {
+                    pending: newPendingStatus,
+                },
+            },
+        } = nextProps;
+        const {
+            requests: {
+                projectVizGetRequest: {
+                    pending: oldPendingStatus,
+                },
+            },
+            onEntriesVizPendingChange,
+        } = this.props;
+        if (oldPendingStatus !== newPendingStatus) {
+            onEntriesVizPendingChange(newPendingStatus);
+        }
     }
 
     getVizRendererUrl = memoize(dataUrl => (

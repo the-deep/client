@@ -110,6 +110,7 @@ const iconNames = {
     sortAlphabeticalDescending: 'fa fa-sort-alpha-desc',
     spinner: 'fa fa-spinner fa-spin fa-3x fa-fw',
     pin: 'ion-pin',
+    share: 'ion-android-share-alt',
     substract: 'ion-ios-minus-empty',
     swap: 'ion-arrow-swap',
     table: 'fa fa-table',

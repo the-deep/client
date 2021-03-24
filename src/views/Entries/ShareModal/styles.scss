@@ -1,0 +1,13 @@
+.share-modal {
+    display: block;
+
+    .body {
+        position: relative;
+
+        .info-text {
+            .icon {
+                margin: 0 var(--spacing-small);
+            }
+        }
+    }
+}
