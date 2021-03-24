@@ -97,7 +97,10 @@ function ProjectEdit(props: ViewProps) {
                         </Tab>
                     </TabList>
                 </FullPageHeader>
-                <TabPanel name="general">
+                <TabPanel
+                    className={styles.tabPanel}
+                    name="general"
+                >
                     <ProjectDetailsForm
                         projectId={projectId}
                     />

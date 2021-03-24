@@ -1,6 +1,7 @@
 .project-details {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 
     .content {
         display: flex;
@@ -18,13 +19,19 @@
             .input {
                 display: flex;
                 flex-direction: column;
-                flex-grow: 1;
                 padding-left: var(--dui-spacing-large);
             }
 
             .dates {
                 display: flex;
                 justify-content: space-between;
+
+                .date-input {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    padding-left: var(--dui-spacing-large);
+                }
             }
 
             .features {
