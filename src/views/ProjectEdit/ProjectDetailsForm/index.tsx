@@ -2,19 +2,20 @@ import React, { useState, useCallback } from 'react';
 import Faram, { requiredCondition, dateCondition } from '@togglecorp/faram';
 import { formatDateToString, listToGroupList } from '@togglecorp/fujs';
 
+
+import Checkbox from '#rsci/Checkbox';
 import ListView from '#rsu/../v2/View/ListView';
 import Icon from '#rscg/Icon';
-import Button from '#dui/Button';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
-import SelectInput from '#rsci/SelectInput';
+import Button from '#dui/Button';
+import Footer from '#dui/Footer';
 import Container from '#dui/Container';
+import Tag from '#dui/Tag';
 import OrganizationList from '#components/general/OrganizationList';
 import AddStakeholdersButton, { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
-import Tag from '#dui/Tag';
-
 
 import {
     FaramErrors,
@@ -27,41 +28,38 @@ import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
 
-interface Feature {
-    id: string;
-    title: string;
+interface Props {
+    projectId: number;
 }
-
-const additionalFeatures: Feature[] = [];
-const featureKeySelector = (d: Feature) => d.id;
-const featureLabelSelector = (d: Feature) => d.title;
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
-function ProjectDetailsForm() {
+function ProjectDetailsForm(props: Props) {
+    const { projectId } = props;
     const schema = {
         fields: {
             title: [requiredCondition],
             startDate: [dateCondition],
             endDate: [dateCondition],
+            description: [],
+            organizations: [],
         },
     };
 
-    const pending = false;
     const [pristine, setPristine] = useState<boolean>(false);
     const [faramValues, setFaramValues] = useState<ProjectDetails>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
 
     const [
-        projectPending,
+        projectGetPending,
     ] = useRequest<ProjectDetails>({
-        url: 'server://projects/10/', // TODO: use dynamic
+        url: `server://projects/${projectId}/`,
         method: 'GET',
         autoTrigger: true,
         onSuccess: (response) => {
             setFaramValues(response);
         },
         onFailure: (_, errorBody) =>
-            notifyOnFailure('projectEdit')({ error: errorBody }), // TODO: use translations
+            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
 
     const handleFaramChange = useCallback((newValues, newErrors) => {
@@ -92,7 +90,7 @@ function ProjectDetailsForm() {
             schema={schema}
             value={faramValues}
             error={faramErrors}
-            disabled={pending}
+            disabled={projectGetPending}
             onValidationSuccess={handleFaramValidationSuccess}
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
@@ -103,66 +101,65 @@ function ProjectDetailsForm() {
                     <TextInput
                         className={styles.input}
                         faramElementName="title"
-                        label="Project title *"
-                        placeholder="Project title *"
+                        label={_ts('projectEdit', 'projectTitle')}
+                        placeholder={_ts('projectEdit', 'projectTitle')}
                         autoFocus
                     />
                     <div className={styles.dates}>
                         <DateInput
                             className={styles.input}
                             faramElementName="startDate"
-                            label="Start date *"
-                            placeholder="Start date *"
+                            label={_ts('projectEdit', 'projectStartDate')}
+                            placeholder={_ts('projectEdit', 'projectStartDate')}
                         />
                         <DateInput
                             className={styles.input}
                             faramElementName="endDate"
-                            label="End date *"
-                            placeholder="End date *"
+                            label={_ts('projectEdit', 'projectEndDate')}
+                            placeholder={_ts('projectEdit', 'projectEndDate')}
                         />
                     </div>
                     <TextArea
                         className={styles.input}
                         faramElementName="description"
-                        label="Description *"
-                        placeholder="Description *"
-                        rows="3"
+                        label={_ts('projectEdit', 'projectDescription')}
+                        placeholder={_ts('projectEdit', 'projectDescription')}
+                        rows="2"
                     />
                     <div className={styles.projectTags}>
                         <Container
                             className={styles.tags}
                             headingClassName={styles.heading}
                             contentClassName={styles.items}
-                            heading="Project status"
+                            heading={_ts('projectEdit', 'projectStatus')}
                         >
                             <Tag
                                 className={styles.firstTag}
                                 variant={faramValues?.status ? 'complement1' : 'default'}
                             >
-                                Active
+                                {_ts('projectEdit', 'activeProject')}
                             </Tag>
-                            <Tag variant={faramValues?.status ? 'complement1' : 'default'}>
-                                Inactive
+                            <Tag variant={faramValues?.status ? 'default' : 'complement1'}>
+                                {_ts('projectEdit', 'inactiveProject')}
                             </Tag>
                         </Container>
                         <Container
                             className={styles.tags}
                             headingClassName={styles.heading}
                             contentClassName={styles.items}
-                            heading="Project visibility"
+                            heading={_ts('projectEdit', 'projectVisibility')}
                         >
                             <Tag
                                 className={styles.firstTag}
                                 variant={faramValues?.isPrivate ? 'default' : 'complement1'}
                             >
-                                Public
+                                {_ts('projectEdit', 'publicProject')}
                             </Tag>
                             {faramValues?.isPrivate ? (
                                 <Tag
-                                    className={styles.activeStatus}
                                     variant="complement1"
                                 >
-                                    Private
+                                    {_ts('projectEdit', 'publicProject')}
                                 </Tag>
                             ) : (
                                 <Button
@@ -171,23 +168,26 @@ function ProjectDetailsForm() {
                                     )}
                                     variant="tertiary"
                                 >
-                                    Request a private project
+                                    {_ts('projectEdit', 'requestPrivateProject')}
                                 </Button>
                             )}
                         </Container>
                     </div>
-                    <SelectInput
-                        className={styles.input}
-                        faramElementName="additionalFeatures"
-                        label="Additional features"
-                        options={additionalFeatures}
-                        keySelector={featureKeySelector}
-                        labelSelector={featureLabelSelector}
-                    />
+                    <Container
+                        className={styles.features}
+                        headingClassName={styles.heading}
+                        contentClassName={styles.items}
+                        heading={_ts('projectEdit', 'projectAdditionalFeatures')}
+                    >
+                        <Checkbox
+                            faramElementName="has_assessments"
+                            label={_ts('projectEdit', 'projectAssessmentRegistry')}
+                        />
+                    </Container>
                     <Container
                         className={styles.stakeholders}
                         headingClassName={styles.heading}
-                        heading="Stakeholders"
+                        heading={_ts('projectEdit', 'projectStakeholders')}
                         headerActions={<AddStakeholdersButton />}
                     >
                         <ListView
@@ -204,14 +204,14 @@ function ProjectDetailsForm() {
                         <TextInput
                             className={styles.input}
                             faramElementName="createdByName"
-                            label="Created by"
+                            label={_ts('projectEdit', 'projectCreatedBy')}
                             disabled
                         />
                         {faramValues?.createdAt && (
                             <DateInput
                                 className={styles.input}
                                 value={formatDateToString(new Date(faramValues?.createdAt), 'dd-MM-yyyy')}
-                                label="Created on"
+                                label={_ts('projectEdit', 'projectCreatedOn')}
                                 disabled
                             />
                         )}
@@ -221,6 +221,18 @@ function ProjectDetailsForm() {
                     map
                 </div>
             </div>
+            <Footer
+                className={styles.footer}
+                actions={(
+                    <Button
+                        disabled={pristine || projectGetPending}
+                        type="submit"
+                        variant="primary"
+                    >
+                        {_ts('projectEdit', 'projectSave')}
+                    </Button>
+                )}
+            />
         </Faram>
     );
 }

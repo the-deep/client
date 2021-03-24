@@ -1316,7 +1316,12 @@
         "-77593412": "Reset",
         "-47914300": "Copied To Clipboard",
         "-26634816": "Successfully Copied to Clipboard",
-        "-30655961": "Resetting the URL will disable the previous URL and generate a new URL for this project. Are you sure you want to continue?"
+        "-30655961": "Resetting the URL will disable the previous URL and generate a new URL for this project. Are you sure you want to continue?",
+        "-708081234": "Project status",
+        "-708101013": "Request a private project",
+        "-69797123": "Additional features",
+        "-779713983": "Created on",
+        "-71037102": "Project visibility"
     },
     "links": {
         "browserExtension": {
@@ -3738,7 +3743,24 @@
             "saveButtonLabel": -48980925,
             "usersLabel": 1119,
             "frameworkLabel": 379,
-            "projectDetailsLabel": -59904873
+            "projectDetailsLabel": -59904873,
+            "projectTitle": 180,
+            "projectStartDate": 185,
+            "projectEndDate": 334,
+            "projectDescription": 200,
+            "projectStatus": -708081234,
+            "activeProject": -57442233,
+            "inactiveProject": -80991835,
+            "projectVisibility": -71037102,
+            "publicProject": -59389,
+            "privateProject": -92759559,
+            "requestPrivateProject": -708101013,
+            "projectAdditionalFeatures": -69797123,
+            "projectAssessmentRegistry": -85659768,
+            "projectStakeholders": -35334807,
+            "projectCreatedBy": 538,
+            "projectCreatedOn": -779713983,
+            "projectSave": 25
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,
