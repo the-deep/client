@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { isDefined } from '@togglecorp/fujs';
 
 import ListView from '#rsu/../v2/View/ListView';
-import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import Button from '#rsca/Button';
 import Header from '#dui/Header';
@@ -12,102 +11,20 @@ import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import Card from '#dui/Card';
 
-import {
-    ProjectElement,
-    MultiResponse,
-} from '#typings';
+import { MultiResponse } from '#typings';
+import { Assignment } from '#typings/home';
 
 import _ts from '#ts';
 
+import AssignmentItem from './AssignmentItem';
 import styles from './styles.scss';
-
-interface Assignment {
-    id: number;
-    createdAt: string;
-    projectDetails: ProjectElement;
-    createdByDetails: {
-        id: number;
-        displayName: string;
-        email: string;
-    };
-    contentObjectDetails: {
-        id: number;
-        title: string;
-    };
-    isDone: boolean;
-    contentObjectType: {
-        id: number;
-        title: string;
-    };
-}
 
 interface BulkResponse {
     assignmentUpdated: number;
 }
 
-interface AssignmentRendererProps extends Assignment {
-    handleClick: (id: number) => void;
-    markAsDonePending: boolean;
-}
-
-const emptyLink = '#';
 const maxItemsPerPage = 5;
-
-function AssignmentRenderer(props: AssignmentRendererProps) {
-    const {
-        id,
-        handleClick: handleClickFromProps,
-        markAsDonePending,
-    } = props;
-
-    const handleClick = useCallback(() => {
-        handleClickFromProps(id);
-    }, [id, handleClickFromProps]);
-
-    return (
-        <div className={styles.assignmentItem}>
-            <span className={styles.text}>
-                <a
-                    className={styles.link}
-                    href={emptyLink}
-                >
-                    {props.createdByDetails.displayName}
-                </a>
-                <span> {_ts('assignment', 'assignedYou')} </span>
-                <a
-                    className={styles.link}
-                    href={emptyLink}
-                >
-                    {props.contentObjectDetails?.title}
-                </a>
-                <span> {_ts('assignment', 'in')} </span>
-                <a
-                    href={emptyLink}
-                    className={styles.link}
-                >
-                    {props.projectDetails?.title}
-                </a>
-            </span>
-            <div className={styles.dateContainer}>
-                <FormattedDate
-                    className={styles.date}
-                    value={props.createdAt}
-                    mode="hh:mm aaa, MMM dd, yyyy"
-                />
-                <Button
-                    transparent
-                    iconName="checkCircle"
-                    className={styles.button}
-                    onClick={handleClick}
-                    disabled={markAsDonePending}
-                />
-            </div>
-        </div>
-    );
-}
-
 const keySelector = (info: Assignment) => info.id;
-
 
 function Assignments() {
     const [activePage, setActivePage] = useState<number>(1);
@@ -203,7 +120,7 @@ function Assignments() {
                     className={styles.list}
                     data={assignmentsResponse?.results}
                     keySelector={keySelector}
-                    renderer={AssignmentRenderer}
+                    renderer={AssignmentItem}
                     rendererParams={rendererParams}
                 />
                 {assignmentsResponse && assignmentsResponse.count > 0 && (

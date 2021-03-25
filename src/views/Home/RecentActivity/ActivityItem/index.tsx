@@ -5,18 +5,27 @@ import DisplayPicture from '#components/viewer/DisplayPicture';
 import Link from '#dui/Link';
 import FormattedDate from '#rscv/FormattedDate';
 
-import { RecentActivity } from '#typings/home';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const emptyLink = '#'; // TODO: Add link when made
 
-function ActivityItem(props: RecentActivity) {
+interface RecentActivityProps {
+    activityId: string;
+    projectDisplayName: string;
+    createdAt: string;
+    createdByDisplayName: string;
+    createdByDisplayPicture?: string;
+    type: string;
+}
+
+function ActivityItem(props: RecentActivityProps) {
     const {
-        createdByDisplayName,
-        projectDisplayName,
         createdAt,
+        createdByDisplayName,
+        createdByDisplayPicture,
+        projectDisplayName,
         type,
     } = props;
 
@@ -24,7 +33,10 @@ function ActivityItem(props: RecentActivity) {
         <div className={styles.activityItem}>
             <ElementFragments
                 icons={(
-                    <DisplayPicture className={styles.displayPicture} />
+                    <DisplayPicture
+                        className={styles.displayPicture}
+                        url={createdByDisplayPicture}
+                    />
                 )}
                 childrenClassName={styles.content}
             >

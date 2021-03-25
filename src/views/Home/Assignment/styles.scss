@@ -22,33 +22,6 @@
             flex-grow: 1;
             overflow-y: auto;
 
-            .assignment-item {
-                border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
-                padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
-
-                .link {
-                    text-decoration: underline;
-                    color: var(--dui-color-accent);
-                    font-weight: var(--font-weight-bold);
-                }
-
-                .date-container {
-                    display: flex;
-
-                    .date {
-                        display: block;
-                        flex-grow: 1;
-                        padding: var(--dui-spacing-small);
-                    }
-
-                    .button {
-                        flex-shrink: 0;
-                        padding: var(--dui-spacing-small);
-                        color: var(--dui-color-accent);
-                        font-size: var(--dui-font-size-large);
-                    }
-                }
-            }
         }
 
         .footer {
