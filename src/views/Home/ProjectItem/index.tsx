@@ -5,6 +5,11 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 
+import {
+    ContainerCard,
+    ButtonLikeLink,
+} from '@the-deep/deep-ui';
+
 import FormattedDate from '#rscv/FormattedDate';
 import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
@@ -12,8 +17,6 @@ import Icon from '#rscg/Icon';
 import TextOutput from '#components/general/TextOutput';
 import InformationBox from '#components/viewer/InformationBox';
 import ProgressLine from '#components/viz/ProgressLine';
-import ContainerCard from '#dui/ContainerCard';
-import ButtonLikeLink from '#dui/ButtonLikeLink';
 
 import {
     AreaChart,

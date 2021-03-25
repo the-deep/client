@@ -1,8 +1,9 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-
-import Modal from '#dui/Modal';
-import Button from '#dui/Button';
+import {
+    Button,
+    Modal,
+} from '@the-deep/deep-ui';
 
 import styles from './styles.scss';
 

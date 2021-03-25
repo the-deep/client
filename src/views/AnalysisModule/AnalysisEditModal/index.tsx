@@ -10,10 +10,12 @@ import Faram, {
     FaramActionElement,
     FaramList,
 } from '@togglecorp/faram';
+import {
+    Button,
+    Modal,
+} from '@the-deep/deep-ui';
 
 import useRequest from '#utils/request';
-import Modal from '#dui/Modal';
-import Button from '#dui/Button';
 import TextInput from '#rsci/TextInput';
 import SelectInput from '#rsci/SelectInput';
 import Icon from '#rscg/Icon';

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import '@the-deep/deep-ui/build/index.css';
 
 import { FgRestBuilder } from '#rsu/rest';
 

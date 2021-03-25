@@ -10,17 +10,18 @@ import {
     Legend,
     Cell,
 } from 'recharts';
+import {
+    Button,
+    Card,
+    Container,
+} from '@the-deep/deep-ui';
 
 import InformationBox from '#components/viewer/InformationBox';
-
-import Card from '#dui/Card';
-import Container from '#dui/Container';
 import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 
 import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
-import Button from '#dui/Button';
 import DateFilter from '#rsci/DateFilter';
 import Timeline from '#components/viz/Timeline';
 

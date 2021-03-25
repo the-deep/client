@@ -135,6 +135,14 @@ module.exports = (env) => {
                     ],
                 },
                 {
+                    test: /\.(css|scss)$/,
+                    include: nodeModulesSrc,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        require.resolve('css-loader'),
+                    ],
+                },
+                {
                     test: /\.(png|jpg|gif|svg)$/,
                     exclude: nodeModulesSrc,
                     use: [
