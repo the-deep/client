@@ -2,13 +2,15 @@ import React, { useCallback, useState } from 'react';
 import {
     reverseRoute,
 } from '@togglecorp/fujs';
+import {
+    Container,
+    Tag,
+    QuickActionButton,
+    QuickActionLink,
+} from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
-import QuickActionButton from '#dui/QuickActionButton';
-import Container from '#dui/Container';
-import Tag from '#dui/Tag';
 import FormattedDate from '#rscv/FormattedDate';
-import QuickActionLink from '#dui/QuickActionLink';
 import TextOutput from '#components/general/TextOutput';
 
 import {

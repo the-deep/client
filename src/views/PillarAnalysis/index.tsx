@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import {
+    Heading,
+    Button,
+    TextArea,
+} from '@the-deep/deep-ui';
 
-import Button from '#dui/Button';
 import FullPageHeader from '#dui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
-import TextArea from '#dui/TextArea';
-import Heading from '#dui/Heading';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';

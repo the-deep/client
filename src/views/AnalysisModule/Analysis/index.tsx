@@ -1,11 +1,13 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
+import {
+    ContainerCard,
+    Button,
+    QuickActionButton,
+} from '@the-deep/deep-ui';
 
-import ContainerCard from '#dui/ContainerCard';
-import Button from '#dui/Button';
 import Icon from '#rscg/Icon';
-import QuickActionButton from '#dui/QuickActionButton';
 import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';

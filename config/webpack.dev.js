@@ -108,6 +108,14 @@ module.exports = (env) => {
                     ],
                 },
                 {
+                    test: /\.(css|scss)$/,
+                    include: nodeModulesSrc,
+                    use: [
+                        require.resolve('style-loader'),
+                        require.resolve('css-loader'),
+                    ],
+                },
+                {
                     test: /\.(png|jpg|gif|svg)$/,
                     exclude: nodeModulesSrc,
                     use: [

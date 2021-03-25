@@ -195,7 +195,6 @@ function Navbar(props) {
             'apiDocs',
             'visualization',
             'stringManagement',
-            'workshop',
         ];
         return getValidLinks(dropLinks, currentPath);
     }, [currentPath]);
