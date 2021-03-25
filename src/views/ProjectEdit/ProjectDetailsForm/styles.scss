@@ -36,7 +36,7 @@
 
             .features {
                 display: flex;
-                background-color: white;
+                background-color: var(--dui-color-white);
 
                 .heading {
                     font-size: var(--dui-font-size-heading-extra-small);
@@ -76,7 +76,7 @@
                 .tags {
                     display: flex;
                     flex: 1 0 50%;
-                    background-color: white;
+                    background-color: var(--dui-color-white);
 
                     .heading {
                         font-size: var(--dui-font-size-heading-extra-small);

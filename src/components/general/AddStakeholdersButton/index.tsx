@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import modalize from '#rscg/Modalize';
-import Button from '#rsca/Button';
+import { useModalState } from '#hooks/stateManagement';
+import Icon from '#rscg/Icon';
+import Button from '#dui/Button';
 import _ts from '#ts';
 
 import AddStakeholdersModal from '#components/general/AddStakeholdersModal';
@@ -38,19 +39,6 @@ const fields = stakeholderTypes.map(v => ({
     faramElementName: v.id,
 }));
 
-interface ButtonProps {}
-
-function TransparentButton(props: ButtonProps) {
-    return (
-        <Button
-            transparent
-            {...props}
-        />
-    );
-}
-
-const ModalButton = modalize(TransparentButton);
-
 interface Props {
     className?: string;
     disabled?: boolean;
@@ -61,18 +49,37 @@ function AddStakeholdersButton(props: Props) {
         disabled,
     } = props;
 
+    const [
+        showModal,
+        setModalVisible,
+        setModalHidden,
+    ] = useModalState(false);
+
+    const handleShowStakeholdersModal = useCallback(() => {
+        if (showModal) {
+            setModalHidden();
+        } else {
+            setModalVisible();
+        }
+    }, [setModalHidden, setModalVisible, showModal]);
+
     return (
-        <ModalButton
-            className={className}
-            iconName="edit"
-            disabled={disabled}
-            modal={
+        <>
+            <Button
+                className={className}
+                variant="tertiary"
+                onClick={handleShowStakeholdersModal}
+                disabled={disabled}
+                icons={<Icon name="edit" />}
+            />
+            {showModal && (
                 <AddStakeholdersModal
+                    closeModal={setModalHidden}
                     faramElementName="organizations"
                     fields={fields}
                 />
-            }
-        />
+            )}
+        </>
     );
 }
 

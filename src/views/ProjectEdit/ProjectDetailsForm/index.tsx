@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import Faram, { requiredCondition, dateCondition } from '@togglecorp/faram';
 import { formatDateToString, listToGroupList } from '@togglecorp/fujs';
 
@@ -32,19 +32,18 @@ interface Props {
     projectId: number;
 }
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
-
+const schema = {
+    fields: {
+        title: [requiredCondition],
+        startDate: [dateCondition],
+        endDate: [dateCondition],
+        description: [],
+        organizations: [],
+        hasAssessments: [],
+    },
+};
 function ProjectDetailsForm(props: Props) {
     const { projectId } = props;
-    const schema = {
-        fields: {
-            title: [requiredCondition],
-            startDate: [dateCondition],
-            endDate: [dateCondition],
-            description: [],
-            organizations: [],
-            hasAssessments: [],
-        },
-    };
 
     const [pristine, setPristine] = useState<boolean>(false);
     const [faramValues, setFaramValues] = useState<ProjectDetails>();
@@ -91,17 +90,19 @@ function ProjectDetailsForm(props: Props) {
         projectPatch();
     }, [projectPatch]);
 
-    const organizationListRendererParams = useCallback((key) => {
-        const values = listToGroupList(
+    const groupedOrganizations = useMemo(() => (
+        listToGroupList(
             faramValues?.organizations ?? [],
             o => o.organizationType,
             o => o,
-        );
+        )
+    ), [faramValues]);
 
-        const value = values[key] ?? [];
+    const organizationListRendererParams = useCallback((key, v) => {
+        const organizations = groupedOrganizations[key] ?? [];
 
-        return { data: value };
-    }, [faramValues]);
+        return { data: organizations, title: v.label };
+    }, [groupedOrganizations]);
 
     return (
         <Faram
@@ -232,7 +233,7 @@ function ProjectDetailsForm(props: Props) {
                                 className={styles.input}
                                 value={formatDateToString(new Date(faramValues?.createdAt), 'dd-MM-yyyy')}
                                 label={_ts('projectEdit', 'projectCreatedOn')}
-                                disabled
+                                readOnly
                             />
                         )}
                     </div>

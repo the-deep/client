@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     _cs,
-    listToMap,
 } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
@@ -9,7 +8,6 @@ import Icon from '#rscg/Icon';
 import ContainerCard from '#dui/ContainerCard';
 
 import { ProjectOrganization } from '#typings';
-import { stakeholderTypes } from '#components/general/AddStakeholdersButton';
 import { organizationTitleSelector } from '#entities/organization';
 
 import styles from './styles.scss';
@@ -17,6 +15,7 @@ import styles from './styles.scss';
 interface Props {
     className?: string;
     data: ProjectOrganization[];
+    title: string;
 }
 const organizationDetailsKeySelector = (d: ProjectOrganization) => d.organization;
 const organizationDetailsRendererParams = (_: number, d: ProjectOrganization) => ({
@@ -54,18 +53,17 @@ function OrganizationDetail(props: OrganizationDetailProps) {
 }
 
 function OrganizationList(props: Props) {
-    const { data, className } = props;
+    const { data, title, className } = props;
 
     if (data.length === 0) {
         return null;
     }
 
-    const fieldsMap = listToMap(stakeholderTypes, d => d.id, d => d.label);
     return (
         <ContainerCard
             className={_cs(styles.organizationList, className)}
             headingClassName={styles.heading}
-            heading={fieldsMap[data[0].organizationType]}
+            heading={title}
         >
             <ListView
                 className={styles.content}
