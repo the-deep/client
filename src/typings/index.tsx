@@ -6,3 +6,4 @@ export * from './lead';
 export * from './entry';
 export * from './export';
 export * from './user';
+export * from './notifications';
