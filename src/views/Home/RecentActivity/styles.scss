@@ -17,36 +17,6 @@
         .activity-list {
             flex-grow: 1;
             overflow-y: auto;
-
-            .activity-item {
-                display: flex;
-                align-items: center;
-                border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
-                padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
-
-                .display-picture {
-                    margin-right: var(--spacing-medium);
-                    border-radius: 50%;
-                    background: var(--color-foreground);
-                    padding: var(--spacing-medium);
-                }
-
-                .link {
-                    text-decoration: underline;
-                    color: var(--dui-color-accent);
-                    font-weight: var(--font-weight-bold);
-                }
-
-                .date-container {
-                    display: flex;
-
-                    .date {
-                        display: block;
-                        flex-grow: 1;
-                        padding: var(--dui-spacing-small);
-                    }
-                }
-            }
         }
     }
 }

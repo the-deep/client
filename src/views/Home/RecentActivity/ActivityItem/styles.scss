@@ -1,0 +1,38 @@
+.activity-item {
+    display: flex;
+    border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
+    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-small));
+
+    .display-picture {
+        align-self: flex-start;
+        flex-shrink: 0;
+        margin: var(--dui-spacing-small);
+        background: var(--color-foreground);
+        height: 1.5em;
+    }
+
+    .content {
+        display: block;
+
+        .activity-title {
+            display: inline-block;
+
+            .link {
+                display: inline-flex;
+                flex-shrink: 0;
+                padding: 0;
+                color: var(--dui-color-accent);
+                font-weight: var(--font-weight-bold);
+            }
+
+            .action-type {
+                display: inline;
+            }
+        }
+    }
+
+    .date {
+        display: block;
+        padding: var(--dui-spacing-small);
+    }
+}
