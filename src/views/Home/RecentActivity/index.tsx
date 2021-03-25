@@ -12,13 +12,13 @@ import {
 } from '#typings';
 import {
     RecentActivity,
-} from '#typings/home';
+} from '#typings/user';
 import _ts from '#ts';
 
 import ActivityItem from './ActivityItem';
 import styles from './styles.scss';
 
-const keySelector = (d: RecentActivity) => d.id;
+const keySelector = (d: RecentActivity) => `${d.type}-${d.id}`;
 
 function RecentActivities() {
     const [
@@ -30,15 +30,17 @@ function RecentActivities() {
         url: 'server://projects/recent-activities/',
         method: 'GET',
         autoTrigger: true,
+        shouldPoll: () => 5000,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('recentActivity', 'recentActivitiesFetchFailed'))({ error: errorBody }),
     });
 
     const activityRendererParams = useCallback((_: number, info: RecentActivity) => ({
-        activityId: info.id,
+        activityId: keySelector(info),
         projectDisplayName: info.projectDisplayName,
         createdAt: info.createdAt,
         createdByDisplayName: info.createdByDisplayName,
+        createdByDisplayPicture: info.createdByDisplayPicture,
         type: info.type,
     }), []);
 
