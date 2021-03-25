@@ -2,77 +2,27 @@ import React, { useCallback } from 'react';
 
 import Card from '#components/ui/Card';
 import Header from '#components/ui/Header';
-import DisplayPicture from '#components/viewer/DisplayPicture';
-import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rsu/../v2/View/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+
 import useRequest from '#utils/request';
-import { MultiResponse } from '#typings';
+import { notifyOnFailure } from '#utils/requestNotify';
+import {
+    MultiResponse,
+} from '#typings';
+import {
+    RecentActivity,
+} from '#typings/home';
 import _ts from '#ts';
 
+import ActivityItem from './ActivityItem';
 import styles from './styles.scss';
 
-interface RecentActivity {
-    id: number;
-    createdAt: string;
-    project: number;
-    projectDisplayName: string;
-    createdBy: number;
-    type: string;
-    createdByDisplayName: string;
-}
-
 const keySelector = (d: RecentActivity) => d.id;
-const emptyLink = '#';
 
-function ActivityRenderer(props: RecentActivity) {
-    const {
-        createdByDisplayName,
-        projectDisplayName,
-        createdAt,
-        type,
-    } = props;
-
-    return (
-        <div className={styles.activityItem}>
-            <div className={styles.displayPicture}>
-                <DisplayPicture />
-            </div>
-            <div className={styles.right}>
-                <span className={styles.text}>
-                    <a
-                        className={styles.link}
-                        href={emptyLink}
-                    >
-                        {createdByDisplayName}
-                    </a>
-                    <span className={styles.actionType}>
-                        {type === 'lead'
-                            ? _ts('recentActivity', 'leadAdded')
-                            : _ts('recentActivity', 'entryCommentAdded')
-                        }
-                    </span>
-                    <a
-                        className={styles.link}
-                        href={emptyLink}
-                    >
-                        {projectDisplayName}
-                    </a>
-                </span>
-                <div className={styles.dateContainer}>
-                    <FormattedDate
-                        className={styles.date}
-                        value={createdAt}
-                        mode="hh:mm aaa, MMM dd, yyyy"
-                    />
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function RecentActivity() {
+function RecentActivities() {
     const [
-        ,
+        recentActivitiesPending,
         recentActivitiesResponse,
         ,
         ,
@@ -80,11 +30,12 @@ function RecentActivity() {
         url: 'server://projects/recent-activities/',
         method: 'GET',
         autoTrigger: true,
-        onSuccess: response => console.warn('Recent Activities fetch successfully', response),
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('recentActivity', 'recentActivitiesFetchFailed'))({ error: errorBody }),
     });
 
     const activityRendererParams = useCallback((_: number, info: RecentActivity) => ({
-        id: info.id,
+        activityId: info.id,
         projectDisplayName: info.projectDisplayName,
         createdAt: info.createdAt,
         createdByDisplayName: info.createdByDisplayName,
@@ -96,13 +47,14 @@ function RecentActivity() {
         <Card className={styles.recentActivity}>
             <Header
                 className={styles.header}
-                heading="Recent Activities"
+                heading={_ts('recentActivity', 'recentActivitiesHeading')}
+                actions={recentActivitiesPending && <LoadingAnimation />}
             />
             <div className={styles.contentContainer}>
                 <ListView
                     className={styles.activityList}
                     data={recentActivitiesResponse?.results}
-                    renderer={ActivityRenderer}
+                    renderer={ActivityItem}
                     keySelector={keySelector}
                     rendererParams={activityRendererParams}
                 />
@@ -111,4 +63,4 @@ function RecentActivity() {
     );
 }
 
-export default RecentActivity;
+export default RecentActivities;

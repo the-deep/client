@@ -1305,7 +1305,9 @@
         "-99801867": "Share public link",
         "-8913126": "Enable public link",
         "-98563490": "added a lead on",
-        "-76639539": "added a comment on"
+        "-76639539": "added a comment on",
+        "-14680704": "Recent Activities",
+        "-46268038": "Recent Activities Fetch Failed"
     },
     "links": {
         "browserExtension": {
@@ -3708,7 +3710,12 @@
         },
         "recentActivity": {
             "entryCommentAdded": -76639539,
-            "leadAdded": -98563490
+            "leadAdded": -98563490,
+            "recentActivitiesHeading": -14680704,
+            "recentActivitiesFetchFailed": -46268038
+        },
+        "recentActivities": {
+            "recentActivitiesHeading": -14680704
         }
     }
 }
