@@ -4,11 +4,14 @@ import { reverseRoute } from '@togglecorp/fujs';
 import DisplayPicture from '#components/viewer/DisplayPicture';
 import { pathNames } from '#constants';
 import _ts from '#ts';
+import {
+    NotificationFields,
+    NotificationStatus,
+    NotificationType,
+} from '#typings';
 
 import Notification from '../Notification';
 import LinkItem from '../LinkItem';
-
-type NotificationStatus = 'seen' | 'unseen';
 
 const REVIEW_TYPE_COMMENT = 0;
 const REVIEW_TYPE_APPROVE = 1;
@@ -19,30 +22,8 @@ const REVIEW_TYPE_UNVERIFY = 4;
 type ReviewType = 0 | 1 | 2 | 3 | 4;
 
 interface EntryReviewProps {
-    notificationType: string;
-    notification: {
-        id: number;
-        project: number;
-        receiver: 5;
-        status: NotificationStatus;
-        timestamp: string;
-        data: {
-            id: number;
-            commentType: ReviewType;
-            lead: number;
-            entry: number;
-            text: string;
-            createdByDetails: {
-                id: number;
-                name: string;
-                email: string;
-            };
-            projectDetails: {
-                id: number;
-                title: string;
-            };
-        };
-    };
+    notificationType: NotificationType;
+    notification: NotificationFields;
     className?: string;
     onNotificationSeenStatusChange: (id: number, newStatus: NotificationStatus) => void;
     closeModal: () => void;
@@ -99,33 +80,34 @@ function EntryReview(props: EntryReviewProps) {
         },
     )), [project]);
 
-    const [
-        entryLinkItem,
-        entryLinkItemWithReview,
-        commentLinkItem,
-        projectLinkItem,
-    ] = React.useMemo(() => ([
+    const entryLinkItem = (
         <LinkItem
             link={entriesPageLink}
             title={_ts('notifications.entryReviewComment', 'entryLabel')}
             closeModal={closeModal}
-        />,
+        />
+    );
+    const entryLinkItemWithReview = (
         <LinkItem
             link={entriesPageLinkWithReview}
             title={_ts('notifications.entryReviewComment', 'entryLabel')}
             closeModal={closeModal}
-        />,
+        />
+    );
+    const commentLinkItem = (
         <LinkItem
             link={entriesPageLink}
             title={_ts('notifications.entryReviewComment', 'commentLabel')}
             closeModal={closeModal}
-        />,
+        />
+    );
+    const projectLinkItem = (
         <LinkItem
             link={projectPageLink}
             title={projectName}
             closeModal={closeModal}
-        />,
-    ]), [entriesPageLink, entriesPageLinkWithReview, projectPageLink, projectName, closeModal]);
+        />
+    );
 
     const handleNotificationSeenStatusChange = React.useCallback(() => {
         if (onNotificationSeenStatusChange) {
