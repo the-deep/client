@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { ReactNode, useState, useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Modal from '#dui/Modal';
 import Button from '#dui/Button';
+import ConfirmButton from '#dui/ConfirmButton';
 
 import styles from './styles.scss';
 
 export interface ConfirmModalButtonProps {
-    children?: React.ReactNode;
-    heading?: React.ReactNode;
-    footer?: React.ReactNode;
+    children?: ReactNode;
+    heading?: ReactNode;
+    footer?: ReactNode;
     className?: string;
     bodyClassName?: string;
     headingClassName?: string;
@@ -36,49 +37,59 @@ function ConfirmModalButton(props: ConfirmModalButtonProps) {
         onSuccess,
     } = props;
 
-    return (
-        <Modal
-            className={_cs(
-                className,
-                'confirm',
-                styles.confirm,
-            )}
-            onClose={onModalClose}
-            heading={heading}
-            headingClassName={headingClassName}
-            bodyClassName={bodyClassName}
-            footerClassName={_cs(
-                footerClassName,
-                styles.footer,
-            )}
-            closeButtonHidden={closeButtonHidden}
-            footer={
-                <>
-                    <Button
-                        className={_cs(
-                            'cancel-button',
-                            styles.button,
-                        )}
-                        autoFocus
-                        onClick={onModalClose}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        className={_cs(
-                            'ok-button',
-                            styles.button,
-                        )}
-                        onClick={onSuccess}
-                    >
-                        Ok
-                    </Button>
-                </>
-            }
-        >
-            {children}
-        </Modal>
+    const [showConfirmModal, setShowConfirmModal] = useState(true);
 
+    const handleCancelButton = useCallback(() => {
+        onModalClose();
+        setShowConfirmModal(false);
+    }, [onModalClose]);
+
+    return (
+        <>
+            {showConfirmModal && (
+                <Modal
+                    className={_cs(
+                        className,
+                        'confirm',
+                        styles.confirm,
+                    )}
+                    onClose={onModalClose}
+                    heading={heading}
+                    headingClassName={headingClassName}
+                    bodyClassName={bodyClassName}
+                    footerClassName={_cs(
+                        footerClassName,
+                        styles.footer,
+                    )}
+                    closeButtonHidden={closeButtonHidden}
+                    footer={
+                        <>
+                            <Button
+                                className={_cs(
+                                    'cancel-button',
+                                    styles.button,
+                                )}
+                                autoFocus
+                                onClick={handleCancelButton}
+                            >
+                                Cancel
+                            </Button>
+                            <ConfirmButton
+                                className={_cs(
+                                    'ok-button',
+                                    styles.button,
+                                )}
+                                onConfirm={onSuccess}
+                            >
+                                Ok
+                            </ConfirmButton>
+                        </>
+                    }
+                >
+                    {children}
+                </Modal>
+            )}
+        </>
     );
 }
 
