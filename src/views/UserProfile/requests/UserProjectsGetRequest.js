@@ -8,8 +8,6 @@ import {
 } from '#rest';
 
 export default class UserProjectsGetRequest extends Request {
-    schemaName = 'projectsGetResponse';
-
     handlePreLoad = () => {
         this.parent.setState({ userProjectsPending: true });
     }
