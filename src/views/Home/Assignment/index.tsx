@@ -11,8 +11,10 @@ import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import Card from '#dui/Card';
 
-import { MultiResponse } from '#typings';
-import { Assignment } from '#typings/home';
+import {
+    Assignment,
+    MultiResponse,
+} from '#typings';
 
 import _ts from '#ts';
 
