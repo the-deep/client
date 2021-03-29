@@ -1,6 +1,7 @@
 .assignment {
     display: flex;
     flex-direction: column;
+    padding: var(--dui-spacing-large);
 
     .header{
         padding: var(--dui-spacing-small) 0;
