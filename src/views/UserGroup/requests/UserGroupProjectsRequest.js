@@ -8,8 +8,6 @@ import Request from '#utils/Request';
  * parent: setUserGroupProject
 */
 export default class UserGroupProjectsRequest extends Request {
-    schemaName = 'projectsGetResponse'
-
     handleSuccess = (response) => {
         const { usergroupId } = this.extraParent;
         this.parent.setUsergroupView({
