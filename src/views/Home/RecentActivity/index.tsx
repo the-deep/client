@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import Card from '#components/ui/Card';
 import Header from '#components/ui/Header';
 import ListView from '#rsu/../v2/View/ListView';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -22,7 +21,7 @@ const keySelector = (d: RecentActivity) => `${d.type}-${d.id}`;
 
 function RecentActivities() {
     const [
-        recentActivitiesPending,
+        ,
         recentActivitiesResponse,
         ,
         ,
@@ -46,13 +45,12 @@ function RecentActivities() {
 
 
     return (
-        <Card className={styles.recentActivity}>
+        <div className={styles.recentActivity}>
             <Header
                 className={styles.header}
                 heading={_ts('recentActivity', 'recentActivitiesHeading')}
-                actions={recentActivitiesPending && <LoadingAnimation />}
             />
-            <div className={styles.contentContainer}>
+            <Card className={styles.contentContainer}>
                 <ListView
                     className={styles.activityList}
                     data={recentActivitiesResponse?.results}
@@ -60,8 +58,8 @@ function RecentActivities() {
                     keySelector={keySelector}
                     rendererParams={activityRendererParams}
                 />
-            </div>
-        </Card>
+            </Card>
+        </div>
     );
 }
 

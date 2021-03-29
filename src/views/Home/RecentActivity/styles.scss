@@ -1,6 +1,7 @@
 .recent-activity {
     display: flex;
     flex-direction: column;
+    padding: var(--dui-spacing-large);
 
     .header {
         padding: var(--dui-spacing-small) 0;
@@ -9,8 +10,8 @@
     .content-container {
         display: flex;
         flex-direction: column;
-        border-radius: 10px;
         background-color: var(--dui-color-negative);
+        padding: 0;
         height: 420px;
         overflow-y: auto;
 
