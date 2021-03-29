@@ -1,3 +1,5 @@
+import { ProjectElement } from './project';
+
 export interface AccessibleFeature {
     key: string;
     title: string;
@@ -19,4 +21,35 @@ export interface UserMini {
     id: number;
     email: string;
     displayName: string;
+}
+
+export interface RecentActivity{
+    createdAt: string;
+    createdBy: number;
+    createdByDisplayName: string;
+    createdByDisplayPicture?: string;
+    id: number;
+    project: number;
+    projectDisplayName: string;
+    type: string;
+}
+
+export interface Assignment {
+    id: number;
+    createdAt: string;
+    projectDetails: ProjectElement;
+    createdByDetails: {
+        id: number;
+        displayName: string;
+        email: string;
+    };
+    contentObjectDetails: {
+        id: number;
+        title: string;
+    };
+    isDone: boolean;
+    contentObjectType: {
+        id: number;
+        title: string;
+    };
 }

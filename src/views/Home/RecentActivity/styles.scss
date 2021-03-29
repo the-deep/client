@@ -1,13 +1,10 @@
-.assignment {
+.recent-activity {
     display: flex;
     flex-direction: column;
+    padding: var(--dui-spacing-large);
 
-    .header{
+    .header {
         padding: var(--dui-spacing-small) 0;
-
-        .mark-button {
-            padding: 0;
-        }
     }
 
     .content-container {
@@ -18,16 +15,9 @@
         height: 420px;
         overflow-y: auto;
 
-        .list {
+        .activity-list {
             flex-grow: 1;
             overflow-y: auto;
         }
-    }
-
-    .footer {
-        display: flex;
-        flex-shrink: 0;
-        justify-content: flex-end;
-        padding: var(--dui-spacing-medium);
     }
 }

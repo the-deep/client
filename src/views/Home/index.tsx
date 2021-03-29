@@ -7,7 +7,6 @@ import {
 } from '@togglecorp/fujs';
 import { Redirect } from 'react-router-dom';
 
-import Page from '#rscv/Page';
 import SelectInput from '#rsci/SelectInput';
 import ListView from '#rscv/List/ListView';
 
@@ -41,6 +40,7 @@ import ProjectItem from './ProjectItem';
 import Summary from './Summary';
 import Activity from './Activity';
 import Assignment from './Assignment';
+import RecentActivity from './RecentActivity';
 
 import styles from './styles.scss';
 
@@ -204,81 +204,74 @@ function Home(props: ViewProps) {
     }
 
     return (
-        <Page
-            className={styles.home}
-            mainContentClassName={styles.mainContent}
-            mainContent={(
-                <>
-                    <div className={styles.leftContainer}>
-                        <div className={styles.leftTopContainer}>
-                            <div className={styles.summaryContainer}>
-                                <header className={styles.header}>
-                                    <h2 className={styles.heading}>
-                                        {_ts('home', 'summaryOfMyProjectsHeading')}
-                                    </h2>
-                                </header>
-                                <Summary
-                                    pending={summaryPending}
-                                    summaryResponse={summaryResponse}
-                                    className={styles.content}
-                                />
-                            </div>
-                            <div className={styles.projectTaggingActivity}>
-                                <header className={styles.header}>
-                                    <h2 className={styles.heading}>
-                                        {_ts('home', 'projectTaggingActivityHeading')}
-                                    </h2>
-                                </header>
-                                <Activity
-                                    className={styles.content}
-                                    pending={summaryPending}
-                                    recentActivity={summaryResponse?.recentEntriesActivity}
-                                />
-                            </div>
-                        </div>
-                        <div className={styles.leftBottomContainer}>
-                            <Header
-                                heading={_ts('home', 'recentProjectsHeading')}
-                                headingSize="large"
-                                className={styles.header}
-                                actions={(
-                                    <>
-                                        <SelectInput
-                                            keySelector={projectKeySelector}
-                                            labelSelector={projectLabelSelector}
-                                            optionLabelSelector={optionLabelSelector}
-                                            options={userProjects}
-                                            placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                                            showHintAndError={false}
-                                            showLabel={false}
-                                            className={styles.projectSelectInput}
-                                            value={selectedProject}
-                                            onChange={handleProjectChange}
-                                        />
-                                        <ButtonLikeLink
-                                            variant="primary"
-                                            to={reverseRoute(pathNames.editProject, {})}
-                                        >
-                                            {_ts('home', 'setupNewProjectButtonLabel')}
-                                        </ButtonLikeLink>
-                                    </>
-                                )}
-                            />
-                            <ListView
-                                data={finalRecentProjects}
-                                rendererParams={recentProjectsRendererParams}
-                                renderer={ProjectItem}
-                                keySelector={recentProjectKeySelector}
-                                pending={projectStatsPending || pendingRecentProjects}
-                            />
-                        </div>
+        <div className={styles.home}>
+            <div className={styles.leftContainer}>
+                <div className={styles.leftTopContainer}>
+                    <div className={styles.summaryContainer}>
+                        <Header
+                            className={styles.header}
+                            heading={_ts('home', 'summaryOfMyProjectsHeading')}
+                        />
+                        <Summary
+                            pending={summaryPending}
+                            summaryResponse={summaryResponse}
+                            className={styles.content}
+                        />
                     </div>
-                    <div className={styles.rightContainer}>
-                        <Assignment />
+                    <div className={styles.projectTaggingActivity}>
+                        <Header
+                            className={styles.header}
+                            heading={_ts('home', 'projectTaggingActivityHeading')}
+                        />
+                        <Activity
+                            className={styles.content}
+                            pending={summaryPending}
+                            recentActivity={summaryResponse?.recentEntriesActivity}
+                        />
                     </div>
-                </>
-            )}
-        />
+                </div>
+                <div className={styles.leftBottomContainer}>
+                    <Header
+                        heading={_ts('home', 'recentProjectsHeading')}
+                        headingSize="large"
+                        className={styles.header}
+                        actions={(
+                            <>
+                                <SelectInput
+                                    keySelector={projectKeySelector}
+                                    labelSelector={projectLabelSelector}
+                                    optionLabelSelector={optionLabelSelector}
+                                    options={userProjects}
+                                    placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                                    showHintAndError={false}
+                                    showLabel={false}
+                                    className={styles.projectSelectInput}
+                                    value={selectedProject}
+                                    onChange={handleProjectChange}
+                                />
+                                <ButtonLikeLink
+                                    variant="primary"
+                                    to={reverseRoute(pathNames.editProject, {})}
+                                >
+                                    {_ts('home', 'setupNewProjectButtonLabel')}
+                                </ButtonLikeLink>
+                            </>
+                        )}
+                    />
+                    <ListView
+                        data={finalRecentProjects}
+                        rendererParams={recentProjectsRendererParams}
+                        renderer={ProjectItem}
+                        keySelector={recentProjectKeySelector}
+                        pending={projectStatsPending || pendingRecentProjects}
+                    />
+                </div>
+            </div>
+            <div className={styles.rightContainer}>
+                <Assignment />
+                <RecentActivity />
+            </div>
+        </div>
     );
 }
 
