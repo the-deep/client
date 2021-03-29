@@ -13,22 +13,21 @@
     .content-container {
         display: flex;
         flex-direction: column;
-        border-radius: 10px;
         background-color: var(--dui-color-negative);
+        padding: 0;
         height: 420px;
         overflow-y: auto;
 
         .list {
             flex-grow: 1;
             overflow-y: auto;
-
         }
+    }
 
-        .footer {
-            display: flex;
-            flex-shrink: 0;
-            justify-content: flex-end;
-            padding: var(--dui-spacing-medium);
-        }
+    .footer {
+        display: flex;
+        flex-shrink: 0;
+        justify-content: flex-end;
+        padding: var(--dui-spacing-medium);
     }
 }

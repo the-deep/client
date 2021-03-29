@@ -249,7 +249,7 @@ function ProjectItem(props: RecentProjectItemProps) {
                             <AreaChart data={convertedProjectActivity} >
                                 <defs>
                                     <linearGradient id="projectActivity" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.8} />
+                                        <stop offset="5%" stopColor="var(--dui-color-accent)" stopOpacity={0.1} />
                                         <stop offset="95%" stopColor="var(--dui-color-accent)" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>

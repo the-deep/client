@@ -99,7 +99,7 @@ function Assignments() {
     }), [setSelectedAssignment, markAsDonePending]);
 
     return (
-        <Card className={styles.assignment}>
+        <div className={styles.assignment}>
             {pending && <LoadingAnimation />}
             <Header
                 className={styles.header}
@@ -115,7 +115,7 @@ function Assignments() {
                     </Button>
                 )}
             />
-            <div className={styles.contentContainer}>
+            <Card className={styles.contentContainer}>
                 <ListView
                     className={styles.list}
                     data={assignmentsResponse?.results}
@@ -134,8 +134,8 @@ function Assignments() {
                         />
                     </div>
                 )}
-            </div>
-        </Card>
+            </Card>
+        </div>
     );
 }
 
