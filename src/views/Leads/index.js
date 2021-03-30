@@ -309,7 +309,10 @@ export default class Leads extends React.PureComponent {
         this.state = {
             redirectTo: undefined,
             hasEmmFields: false,
+            showGotoTopButton: false,
         };
+
+        this.tableContainerRef = React.createRef();
 
         this.views = {
             [TABLE_VIEW]: {
@@ -334,6 +337,28 @@ export default class Leads extends React.PureComponent {
 
         this.lastFilters = {};
         this.lastProject = {};
+    }
+
+    componentDidMount() {
+        const c = this.tableContainerRef.current;
+
+        if (c) {
+            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+
+            this.handleRawTableScroll = () => {
+                window.clearTimeout(this.scrollTimeout);
+
+                this.scrollTimeout = window.setTimeout(() => {
+                    if (sw.scrollTop > 0) {
+                        this.setState({ showGotoTopButton: true });
+                    } else {
+                        this.setState({ showGotoTopButton: false });
+                    }
+                }, 200);
+            };
+
+            sw.addEventListener('scroll', this.handleRawTableScroll);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -384,6 +409,13 @@ export default class Leads extends React.PureComponent {
     componentWillUnmount() {
         if (this.leadDeleteRequest) {
             this.leadDeleteRequest.stop();
+        }
+
+        const c = this.tableContainerRef.current;
+
+        if (c) {
+            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+            sw.removeEventListener('scroll', this.handleRawTableScroll);
         }
     }
 
@@ -600,6 +632,16 @@ export default class Leads extends React.PureComponent {
 
         const { sortDirIcon, sortKey } = this.getSortDetails();
 
+        const handleGotoTopButtonClick = () => {
+            const c = this.tableContainerRef.current;
+            if (c) {
+                const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+                if (sw) {
+                    sw.scrollTop = 0;
+                }
+            }
+        };
+
         return (
             <React.Fragment>
                 <div className={styles.leftContainer}>
@@ -653,6 +695,13 @@ export default class Leads extends React.PureComponent {
                                     onPageClick={this.handlePageClick}
                                     onItemsPerPageChange={this.handleLeadsPerPageChange}
                                 />
+                                { this.state.showGotoTopButton && (
+                                    <Button
+                                        className={styles.gotoTop}
+                                        onClick={handleGotoTopButtonClick}
+                                        iconName="chevronUp"
+                                    />
+                                )}
                             </div>
                         ) : (
                             <div className={styles.sortingContainer}>
@@ -712,6 +761,7 @@ export default class Leads extends React.PureComponent {
                 onRemoveLead={this.handleLeadDelete}
 
                 activeProject={activeProject}
+                containerRef={this.tableContainerRef}
             />
         );
     }

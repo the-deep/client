@@ -18,6 +18,7 @@ const styleProperties = {
         colorSelectedGroupHatch: 'rgba(0, 0, 0, 0.4)',
         colorBackgroundReadNotification: '#f5f5f5',
         colorBackgroundDangerHint: '#fffafa',
+        colorAccentOnHover: '#008975cc',
 
         duiColorSurfaceInformational: '#f5f8fb',
     },
