@@ -1,0 +1,6 @@
+.entry-item {
+    --min-height-entry: 180px;
+
+    margin: var(--dui-spacing-medium);
+    min-height: var(--min-height-entry);
+}

@@ -22,5 +22,7 @@ export interface AnalysisPillars {
 }
 
 export interface PillarAnalysisElement extends AnalysisPillars{
+    analysisName: string;
+    title: string;
     filters?: unknown;
 }

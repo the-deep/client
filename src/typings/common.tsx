@@ -74,6 +74,11 @@ export interface DatabaseEntityBase {
     versionId: number;
 }
 
+export interface BooleanKeyValueElement {
+    key: boolean;
+    value: string;
+}
+
 export interface FaramErrors {
     [key: string]: string | undefined | string [] | FaramErrors;
 }

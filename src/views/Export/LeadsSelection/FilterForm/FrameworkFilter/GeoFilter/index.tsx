@@ -14,6 +14,7 @@ interface Props {
     label: string;
     geoOptions: unknown;
     regions: unknown[];
+    className?: string;
     value: {
         includeSubRegions: boolean;
         areas: unknown[];
@@ -84,6 +85,7 @@ function GeoFilter(props: Props) {
         regions,
         value,
         onChange,
+        className,
     } = props;
 
     const handleGeoChange = useCallback((areas) => {
@@ -109,7 +111,7 @@ function GeoFilter(props: Props) {
 
     return (
         <GeoInput
-            className={styles.geoFilter}
+            className={_cs(styles.geoFilter, className)}
             value={value?.areas}
             geoOptionsByRegion={geoOptions}
             onChange={handleGeoChange}
