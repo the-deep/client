@@ -31,7 +31,6 @@ function RecentActivities() {
         url: 'server://projects/recent-activities/',
         method: 'GET',
         autoTrigger: true,
-        shouldPoll: () => 5000,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('recentActivity', 'recentActivitiesFetchFailed'))({ error: errorBody }),
     });
