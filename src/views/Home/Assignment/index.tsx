@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { isDefined } from '@togglecorp/fujs';
+import {
+    Header,
+    Card,
+} from '@the-deep/deep-ui';
 
 import ListView from '#rsu/../v2/View/ListView';
 import Pager from '#rscv/Pager';
 import Button from '#rsca/Button';
-import Header from '#dui/Header';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
-import Card from '#dui/Card';
 
 import {
     Assignment,

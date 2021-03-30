@@ -1,13 +1,15 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
+import {
+    Link,
+    LinkProps,
+} from '@the-deep/deep-ui';
 
 import { routeIsFirstPageSelector } from '#redux';
 
 import {
     AppState,
 } from '#typings';
-
-import Link, { LinkProps } from '../Link';
 
 const mapStateToProps = (state: AppState) => ({
     isFirstPage: routeIsFirstPageSelector(state),

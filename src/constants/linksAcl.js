@@ -26,7 +26,6 @@ export const allLinks = {
     analysisModule: viewsAcl.analysisModule,
 
     leadsViz: viewsAcl.leadsViz,
-    workshop: viewsAcl.workshop,
 
     // TODO: do not disable if there is a 403 error inside
     projectSelect: {
@@ -36,7 +35,6 @@ export const allLinks = {
                 'projects',
                 'home',
                 'dashboard',
-                'workshop',
                 'leadGroups',
                 'leads',
                 'leadsViz',

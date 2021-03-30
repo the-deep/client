@@ -1,9 +1,11 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
+import {
+    Heading,
+    ElementFragments,
+} from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
-import Heading from '#dui/Heading';
-import ElementFragments from '#dui/ElementFragments';
 
 import styles from './styles.scss';
 
@@ -45,10 +47,10 @@ function FullPageHeader(props: FullPageHeaderProps) {
                         </Heading>
                     </>
                 )}
-                iconsClassName={styles.projectDetailsContainer}
+                iconsContainerClassName={styles.projectDetailsContainer}
                 actions={actions}
-                actionsClassName={_cs(styles.actions, actionsClassName)}
-                childrenClassName={_cs(styles.content, contentClassName)}
+                actionsContainerClassName={_cs(styles.actions, actionsClassName)}
+                childrenContainerClassName={_cs(styles.content, contentClassName)}
             >
                 {children}
             </ElementFragments>

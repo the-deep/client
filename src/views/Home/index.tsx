@@ -5,14 +5,16 @@ import {
     isDefined,
     reverseRoute,
 } from '@togglecorp/fujs';
+import {
+    Header,
+    ButtonLikeLink,
+} from '@the-deep/deep-ui';
 import { Redirect } from 'react-router-dom';
 
 import SelectInput from '#rsci/SelectInput';
 import ListView from '#rscv/List/ListView';
 
 import Badge from '#components/viewer/Badge';
-import Header from '#dui/Header';
-import ButtonLikeLink from '#dui/ButtonLikeLink';
 import { pathNames } from '#constants';
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';

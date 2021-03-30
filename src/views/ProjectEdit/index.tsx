@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { isNotDefined } from '@togglecorp/fujs';
+import {
+    Button,
+} from '@the-deep/deep-ui';
 
 import FullPageHeader from '#dui/FullPageHeader';
-import Button from '#dui/Button';
 import BackLink from '#dui/BackLink';
 import Tabs, { Tab, TabList, TabPanel } from '#dui/Tabs';
 

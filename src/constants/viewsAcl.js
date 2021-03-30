@@ -75,7 +75,6 @@ const acl = {
     projectEdit: { hide: notLoggedIn },
     home: { hide: notProjectMember },
     dashboard: { hide: notProjectMember },
-    workshop: { hide: notDevAndAdmin },
     connectors: { hide: notLoggedIn },
 
     leadsViz: { hide: notLeadVizViewable },

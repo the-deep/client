@@ -4,8 +4,10 @@ import {
     FaramGroup,
     FaramActionElement,
 } from '@togglecorp/faram';
+import {
+    QuickActionButton,
+} from '@the-deep/deep-ui';
 
-import QuickActionButton from '#dui/QuickActionButton';
 import TextInput from '#rsci/TextInput';
 import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
