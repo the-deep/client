@@ -1,8 +1,10 @@
 import React from 'react';
+import {
+    ElementFragments,
+    Link,
+} from '@the-deep/deep-ui';
 
-import ElementFragments from '#dui/ElementFragments';
 import DisplayPicture from '#components/viewer/DisplayPicture';
-import Link from '#dui/Link';
 import FormattedDate from '#rscv/FormattedDate';
 
 import _ts from '#ts';
@@ -38,7 +40,7 @@ function ActivityItem(props: RecentActivityProps) {
                         url={createdByDisplayPicture}
                     />
                 )}
-                childrenClassName={styles.content}
+                childrenContainerClassName={styles.content}
             >
                 <div className={styles.activityTitle}>
                     <Link
