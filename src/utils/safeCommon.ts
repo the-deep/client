@@ -1,6 +1,7 @@
-// eslint-disable-next-line import/prefer-default-export
-export function breadcrumb(...args: string[]) {
-    return args.filter(arg => arg).join(' › ');
+import { isDefined } from '@togglecorp/fujs';
+
+export function breadcrumb(...args: (string | undefined)[]) {
+    return args.filter(arg => isDefined(arg)).join(' › ');
 }
 
 type MonthNameMap = {

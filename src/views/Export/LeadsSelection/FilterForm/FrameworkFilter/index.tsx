@@ -1,4 +1,5 @@
 import React from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
@@ -22,6 +23,7 @@ interface Props {
     filter: FilterFields['properties'];
     geoOptions?: unknown;
     regions?: unknown[];
+    className?: string;
 }
 
 function FrameworkFilter(props: Props) {
@@ -31,6 +33,7 @@ function FrameworkFilter(props: Props) {
         filter,
         geoOptions,
         regions,
+        className,
     } = props;
 
     if (!filter || !filter.type) {
@@ -41,6 +44,7 @@ function FrameworkFilter(props: Props) {
         case 'geo': {
             return (
                 <GeoFilter
+                    className={className}
                     faramElementName={filterKey}
                     label={title}
                     geoOptions={geoOptions}
@@ -56,7 +60,7 @@ function FrameworkFilter(props: Props) {
                     options={filter.options}
                     placeholder={_ts('entries', 'multiselectPlaceholder')}
                     showHintAndError={false}
-                    className={styles.frameworkFilter}
+                    className={_cs(styles.frameworkFilter, className)}
                 />
             );
         case 'multiselect-range':
@@ -67,7 +71,7 @@ function FrameworkFilter(props: Props) {
                     options={filter.options}
                     showHintAndError={false}
                     placeholder={_ts('entries', 'multiselectRangePlaceholder')}
-                    className={styles.frameworkFilter}
+                    className={_cs(styles.frameworkFilter, className)}
                 />
             );
         case 'date':
@@ -77,7 +81,7 @@ function FrameworkFilter(props: Props) {
                     label={title}
                     showHintAndError={false}
                     placeholder={_ts('entries', 'datePlaceholder')}
-                    className={styles.frameworkFilter}
+                    className={_cs(styles.frameworkFilter, className)}
                 />
             );
         case 'time':
@@ -87,7 +91,7 @@ function FrameworkFilter(props: Props) {
                     label={title}
                     showHintAndError={false}
                     placeholder={_ts('entries', 'timePlaceholder')}
-                    className={styles.frameworkFilter}
+                    className={_cs(styles.frameworkFilter, className)}
                 />
             );
         case 'text':
@@ -97,7 +101,7 @@ function FrameworkFilter(props: Props) {
                     label={title}
                     showHintAndError={false}
                     placeholder={_ts('entries', 'textSearchPlaceholder')}
-                    className={styles.frameworkFilter}
+                    className={_cs(styles.frameworkFilter, className)}
                 />
             );
         default:

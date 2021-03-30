@@ -1307,7 +1307,9 @@
         "-98563490": "added a lead on",
         "-76639539": "added a comment on",
         "-14680704": "Recent Activities",
-        "-46268038": "Recent Activities Fetch Failed"
+        "-46268038": "Recent Activities Fetch Failed",
+        "-64388086": "Discarded Entries",
+        "-39990212": "All entries"
     },
     "links": {
         "browserExtension": {
@@ -3693,7 +3695,9 @@
             "pillarAssignments": -31952614,
             "selectAnalysisDate": -35701649,
             "allAnalyses": -80223054,
-            "setupNewAnalysisButtonLabel": -90678740
+            "setupNewAnalysisButtonLabel": -90678740,
+            "entriesTabLabel": -39990212,
+            "discardedEntriesTabLabel": -64388086
         },
         "projectEdit": {
             "closeButtonLabel": -39430073,
