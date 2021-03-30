@@ -47,10 +47,10 @@ function FullPageHeader(props: FullPageHeaderProps) {
                         </Heading>
                     </>
                 )}
-                iconsClassName={styles.projectDetailsContainer}
+                iconsContainerClassName={styles.projectDetailsContainer}
                 actions={actions}
-                actionsClassName={_cs(styles.actions, actionsClassName)}
-                childrenClassName={_cs(styles.content, contentClassName)}
+                actionsContainerClassName={_cs(styles.actions, actionsClassName)}
+                childrenContainerClassName={_cs(styles.content, contentClassName)}
             >
                 {children}
             </ElementFragments>

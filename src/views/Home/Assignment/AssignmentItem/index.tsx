@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react';
+import {
+    ElementFragments,
+    Link,
+} from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
 import Button from '#rsca/Button';
-import ElementFragments from '#components/ui/ElementFragments';
-import Link from '#dui/Link';
 
-import { Assignment } from '#typings/home';
+import { Assignment } from '#typings';
 
 import _ts from '#ts';
 
@@ -32,7 +34,7 @@ function AssignmentItem(props: AssignmentRendererProps) {
     return (
         <div className={styles.assignmentItem}>
             <ElementFragments
-                childrenClassName={styles.content}
+                childrenContainerClassName={styles.content}
             >
                 <div className={styles.assignmentTitle}>
                     <Link

@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
+import {
+    Card,
+    Header,
+} from '@the-deep/deep-ui';
 
-import Card from '#components/ui/Card';
-import Header from '#components/ui/Header';
 import ListView from '#rsu/../v2/View/ListView';
 
 import useRequest from '#utils/request';
