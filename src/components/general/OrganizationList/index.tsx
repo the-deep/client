@@ -5,7 +5,7 @@ import {
 
 import ListView from '#rscv/List/ListView';
 import Icon from '#rscg/Icon';
-import ContainerCard from '#dui/ContainerCard';
+import { ContainerCard } from '@the-deep/deep-ui';
 
 import { ProjectOrganization } from '#typings';
 import { organizationTitleSelector } from '#entities/organization';

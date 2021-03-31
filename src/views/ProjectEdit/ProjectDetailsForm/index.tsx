@@ -5,15 +5,17 @@ import { formatDateToString, listToGroupList } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Checkbox from '#rsci/Checkbox';
 import ListView from '#rsu/../v2/View/ListView';
-import Icon from '#rscg/Icon';
 import DateInput from '#rsci/DateInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
-import Button from '#dui/Button';
+import {
+    Button,
+    Container,
+    Tag,
+} from '@the-deep/deep-ui';
 import Footer from '#dui/Footer';
-import Container from '#dui/Container';
-import Tag from '#dui/Tag';
+import { IoArrowForward } from 'react-icons/io5';
 import OrganizationList from '#components/general/OrganizationList';
 import AddStakeholdersButton, { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
 
@@ -185,7 +187,7 @@ function ProjectDetailsForm(props: Props) {
                             ) : (
                                 <Button
                                     actions={(
-                                        <Icon name="arrowForward" />
+                                        <IoArrowForward />
                                     )}
                                     variant="tertiary"
                                 >
