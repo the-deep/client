@@ -15,18 +15,22 @@ import DateFilter from '#rsci/DateFilter';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import { notifyOnFailure } from '#utils/requestNotify';
-import FrameworkFilter from '#views/Export/LeadsSelection/FilterForm/FrameworkFilter';
 import { useModalState } from '#hooks/stateManagement';
 
+import FrameworkFilter from '#components/other/FrameworkFilter';
+
 import {
+    GeoOptions,
     EntryOptions,
     KeyValueElement,
     BooleanKeyValueElement,
     WidgetElement,
+    ProjectDetails,
     FilterFields,
 } from '#typings';
 import _ts from '#ts';
 
+import { FaramValues } from '../';
 import styles from './styles.scss';
 
 const filterKeySelector = (d: FilterFields) => d.key;
@@ -36,46 +40,46 @@ const optionKeySelector = (d: KeyValueElement) => d.key;
 const verificationStatusOptions: BooleanKeyValueElement[] = [
     {
         key: true,
-        value: _ts('editEntry', 'verifiedLabel'),
+        value: _ts('pillarAnalysis', 'verifiedLabel'),
     },
     {
         key: false,
-        value: _ts('editEntry', 'unverifiedLabel'),
+        value: _ts('pillarAnalysis', 'unverifiedLabel'),
     },
 ];
 
 const entryTypeOptions: KeyValueElement[] = [
     {
         key: 'excerpt',
-        value: _ts('entries', 'excerpt'),
+        value: _ts('pillarAnalysis', 'excerpt'),
     },
     {
         key: 'image',
-        value: _ts('entries', 'image'),
+        value: _ts('pillarAnalysis', 'image'),
     },
     {
         key: 'dataSeries',
-        value: _ts('entries', 'dataSeries'),
+        value: _ts('pillarAnalysis', 'dataSeries'),
     },
 ];
 const commentStatusOptions: KeyValueElement[] = [
     {
         key: 'resolved',
-        value: _ts('entries', 'resolvedCommentLabel'),
+        value: _ts('pillarAnalysis', 'resolvedCommentLabel'),
     },
     {
         key: 'unresolved',
-        value: _ts('entries', 'unresolvedCommentLabel'),
+        value: _ts('pillarAnalysis', 'unresolvedCommentLabel'),
     },
 ];
 
 interface OwnProps {
     className?: string;
     filters?: FilterFields[];
-    // FIXME: Write better schema
-    filtersValue?: unknown;
-    geoOptions?: unknown;
-    onFiltersValueChange: (filters: unknown) => void;
+    filtersValue?: FaramValues;
+    geoOptions?: GeoOptions;
+    regions?: ProjectDetails['regions'];
+    onFiltersValueChange: (filters: FaramValues) => void;
     projectId: number;
     widgets?: WidgetElement<unknown>[];
 }
@@ -88,6 +92,7 @@ function EntriesFilterForm(props: OwnProps) {
         widgets,
         filtersValue,
         geoOptions,
+        regions,
         onFiltersValueChange,
     } = props;
 
@@ -113,7 +118,7 @@ function EntriesFilterForm(props: OwnProps) {
         autoTrigger: true,
         method: 'GET',
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'entryOptions'))({ error: errorBody });
+            notifyOnFailure(_ts('pillarAnalysis', 'entryOptions'))({ error: errorBody });
         },
     });
 
@@ -155,12 +160,14 @@ function EntriesFilterForm(props: OwnProps) {
             filterKey: key,
             title: data.title,
             filter: data.properties,
+            regions,
+            geoOptions,
             className: _cs(
                 styles.filter,
                 isMatrixFilter && styles.showFilter,
             ),
         });
-    }, []);
+    }, [regions, geoOptions]);
 
     const handleFaramChange = useCallback((newValues) => {
         setFaramValues(newValues);
@@ -201,14 +208,14 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
-                label={_ts('entries', 'createdByFilterLabel')}
-                placeholder={_ts('entries', 'createdByPlaceholder')}
+                label={_ts('pillarAnalysis', 'createdByFilterLabel')}
+                placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
                 showHintAndError={false}
             />
             <DateFilter
                 className={styles.filter}
                 faramElementName="created_at"
-                label={_ts('entries', 'createdAtFilterLabel')}
+                label={_ts('pillarAnalysis', 'createdAtFilterLabel')}
                 placeholder={_ts('leads', 'placeholderAnytime')}
                 showHintAndError={false}
             />
@@ -218,8 +225,8 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
-                label={_ts('entries', 'commentAssignedToFilterLabel')}
-                placeholder={_ts('entries', 'createdByPlaceholder')}
+                label={_ts('pillarAnalysis', 'commentAssignedToFilterLabel')}
+                placeholder={_ts('pillarAnalysis', 'createdByPlaceholder')}
                 showHintAndError={false}
             />
             <MultiSelectInput
@@ -228,9 +235,9 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryOptions?.createdBy}
-                label={_ts('entries', 'commentCreatedByFilterLabel')}
+                label={_ts('pillarAnalysis', 'commentCreatedByFilterLabel')}
                 showHintAndError={false}
-                placeholder={_ts('entries', 'commentCreatedByPlaceholder')}
+                placeholder={_ts('pillarAnalysis', 'commentCreatedByPlaceholder')}
             />
             <SelectInput
                 className={styles.filter}
@@ -238,8 +245,8 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={commentStatusOptions}
-                label={_ts('entries', 'commentStatusOptionsFilterLabel')}
-                placeholder={_ts('entries', 'commentStatusPlaceholder')}
+                label={_ts('pillarAnalysis', 'commentStatusOptionsFilterLabel')}
+                placeholder={_ts('pillarAnalysis', 'commentStatusPlaceholder')}
                 showHintAndError={false}
             />
             <SelectInput
@@ -248,9 +255,9 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={verificationStatusOptions}
-                label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
+                label={_ts('pillarAnalysis', 'verificationStatusOptionsFilterLabel')}
                 showHintAndError={false}
-                placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                placeholder={_ts('pillarAnalysis', 'verificationStatusPlaceholder')}
             />
             <MultiSelectInput
                 className={styles.filter}
@@ -258,9 +265,9 @@ function EntriesFilterForm(props: OwnProps) {
                 keySelector={optionKeySelector}
                 labelSelector={optionLabelSelector}
                 options={entryTypeOptions}
-                label={_ts('entries', 'entryTypeFilterLabel')}
+                label={_ts('pillarAnalysis', 'entryTypeFilterLabel')}
                 showHintAndError={false}
-                placeholder={_ts('entries', 'entryTypePlaceholder')}
+                placeholder={_ts('pillarAnalysis', 'entryTypePlaceholder')}
             />
             { filteredFrameworkFilters.length > 0 && (
                 <List
@@ -275,7 +282,7 @@ function EntriesFilterForm(props: OwnProps) {
                 disabled={pristine || pending}
                 type="submit"
             >
-                {_ts('leads', 'filterApplyFilter')}
+                {_ts('pillarAnalysis', 'filterApplyFilter')}
             </Button>
             <Button
                 className={styles.button}
@@ -283,14 +290,17 @@ function EntriesFilterForm(props: OwnProps) {
                 onClick={handleClearFilters}
                 variant="tertiary"
             >
-                {_ts('leads', 'filterClearFilter')}
+                {_ts('pillarAnalysis', 'filterClearFilter')}
             </Button>
             <Button
                 className={styles.button}
                 onClick={allFiltersVisible ? hideAllFilters : showAllFilters}
                 variant="tertiary"
             >
-                {allFiltersVisible ? 'Hide filters' : 'Show all filters'}
+                {allFiltersVisible
+                    ? _ts('pillarAnalysis', 'hideFiltersLabel')
+                    : _ts('pillarAnalysis', 'ShowFiltersLabel')
+                }
             </Button>
         </Faram>
     );

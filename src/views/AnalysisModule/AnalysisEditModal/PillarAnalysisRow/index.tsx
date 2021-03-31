@@ -13,6 +13,7 @@ import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import {
+    AnalysisPillarFormItem,
     UserMini,
     MatrixTocElement,
 } from '#typings';
@@ -36,7 +37,7 @@ const labelSelector = (d: MatrixTocElement) => d.altTitle ?? d.title;
 const userKeySelector = (u: UserMini) => u.id;
 const userLabelSelector = (u: UserMini) => u.displayName;
 
-const deleteClick = (rows, index) => {
+const deleteClick = (rows: AnalysisPillarFormItem[], index: number) => {
     const newRows = [...rows];
     newRows.splice(index, 1);
     return newRows;

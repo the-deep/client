@@ -13,7 +13,7 @@ import {
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
-    RecentActivity,
+    ProjectRecentActivity,
 } from '#typings';
 import { _cs, compareDate, getHexFromString } from '@togglecorp/fujs';
 import styles from './styles.scss';
@@ -21,7 +21,7 @@ import styles from './styles.scss';
 interface Props {
     className: string;
     pending: boolean;
-    recentActivity?: RecentActivity;
+    recentActivity?: ProjectRecentActivity;
 }
 
 const minTickFormatter = (value: number | string) => {

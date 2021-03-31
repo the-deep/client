@@ -146,13 +146,13 @@ function Analysis(props: ComponentProps) {
     }, [deletePillarTrigger]);
 
     const analysisPillarRendererParams = useCallback((_, data) => ({
-        projectId: activeProject,
-        pillarId: data.id,
-        title: data.title,
+        analysisId: data.analysis,
         assigneeName: data.assigneeName,
         createdAt,
-        analysis: data.analysis,
         onDelete: handlePillarAnalysisToDelete,
+        pillarId: data.id,
+        projectId: activeProject,
+        title: data.title,
     }), [handlePillarAnalysisToDelete, createdAt, activeProject]);
 
     const handleDeleteAnalysis = useCallback(() => {

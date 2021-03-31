@@ -21,6 +21,7 @@ import _ts from '#ts';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
+    GeoOptions,
     MultiResponse,
     EntryFields,
     FrameworkFields,
@@ -39,6 +40,11 @@ import EntriesFilterForm from './EntriesFilterForm';
 import EntryItem from './EntryItem';
 
 import styles from './styles.scss';
+
+type EntryFieldsMin = Pick<
+    EntryFields,
+    'id' | 'excerpt' | 'droppedExcerpt' | 'image' | 'entryType' | 'tabularFieldData'
+>;
 
 const mapStateToProps = (state: AppState) => ({
     pillarId: pillarAnalysisIdFromRouteSelector(state),
@@ -60,8 +66,12 @@ const frameworkQueryFields = {
 
 type TabNames = 'entries' | 'discarded';
 
+export interface FaramValues {
+    [key: string]: string | string[] | FaramValues;
+}
+
 const maxItemsPerPage = 5;
-const entryKeySelector = (d: EntryFields) => d.id;
+const entryKeySelector = (d: EntryFieldsMin) => d.id;
 
 function PillarAnalysis(props: PageProps) {
     const {
@@ -73,8 +83,8 @@ function PillarAnalysis(props: PageProps) {
 
     const [value, setValue] = useState<string | undefined>();
     const [activeTab, setActiveTab] = useState<TabNames>('entries');
-    const [filtersValue, setFiltersValue] = useState({});
-    const [entries, setEntries] = useState<Partial<EntryFields>[]>([]);
+    const [filtersValue, setFiltersValue] = useState<FaramValues>({});
+    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
 
     const [activePage, setActivePage] = useState(1);
     const [entriesCount, setEntriesCount] = useState(0);
@@ -110,15 +120,12 @@ function PillarAnalysis(props: PageProps) {
     const [
         pendingGeoOptions,
         geoOptions,
-    ] = useRequest<unknown>({
+    ] = useRequest<GeoOptions>({
         url: 'server://geo-options/',
         method: 'GET',
         query: geoOptionsRequestQueryParams,
         schemaName: 'geoOptions',
         autoTrigger: true,
-        onSuccess: (response) => {
-            console.warn('here', response);
-        },
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'geoLabel'))({ error: errorBody });
         },
@@ -160,7 +167,7 @@ function PillarAnalysis(props: PageProps) {
         ],
     }), [activePage]);
 
-    const [pendingEntries] = useRequest<MultiResponse<EntryFields>>({
+    const [pendingEntries] = useRequest<MultiResponse<EntryFieldsMin>>({
         url: 'server://entries/filter/',
         method: 'POST',
         body: entriesRequestBody,
@@ -240,6 +247,8 @@ function PillarAnalysis(props: PageProps) {
                 <EntriesFilterForm
                     className={styles.entriesFilter}
                     filtersValue={filtersValue}
+                    geoOptions={geoOptions}
+                    regions={activeProject?.regions}
                     onFiltersValueChange={setFiltersValue}
                     filters={framework?.filters}
                     widgets={framework?.widgets}

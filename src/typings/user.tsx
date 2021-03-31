@@ -23,7 +23,7 @@ export interface UserMini {
     displayName: string;
 }
 
-export interface RecentActivity{
+export interface RecentActivityItem {
     createdAt: string;
     createdBy: number;
     createdByDisplayName: string;
