@@ -7,9 +7,6 @@ export interface ProjectElement {
     isPrivate: boolean;
 }
 
-// TODO: add properties to GeoOptions
-export interface GeoOptions {
-}
 export interface VisaulizationEnabledOptions {
     entry: boolean;
     assessment: boolean;
@@ -51,6 +48,7 @@ export interface ProjectDetails {
     title: string;
     isVisualizationEnabled: VisaulizationEnabledOptions;
     versionId: number;
+    regions: BasicElement[];
 
     memberStatus: 'admin' | 'member';
     role: number;
@@ -129,7 +127,7 @@ interface ActivitySummaryItem {
     date: string;
 }
 
-export interface RecentActivity {
+export interface ProjectRecentActivity {
     projects: ProjectSummaryItem[];
     activities: ActivitySummaryItem[];
 }
@@ -139,5 +137,5 @@ export interface ProjectsSummary {
     totalLeadsCount: number;
     totalLeadsTaggedCount: number;
     totalLeadsTaggedAndVerifiedCount: number;
-    recentEntriesActivity: RecentActivity;
+    recentEntriesActivity: ProjectRecentActivity;
 }

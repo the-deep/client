@@ -1,19 +1,25 @@
 import React, { useCallback, useMemo } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import { FaramInputElement } from '@togglecorp/faram';
 
 import Icon from '#rscg/Icon';
 import RotatingInput from '#rsci/RotatingInput';
 import GeoInput from '#components/input/GeoInput/';
 
+import {
+    ProjectDetails,
+    GeoOptions,
+    GeoOption,
+} from '#typings';
+
 import _ts from '#ts';
-import _cs from '#cs';
 
 import styles from './styles.scss';
 
 interface Props {
     label: string;
-    geoOptions: unknown;
-    regions: unknown[];
+    geoOptions: GeoOptions;
+    regions: ProjectDetails['regions'];
     className?: string;
     value: {
         includeSubRegions: boolean;
@@ -22,10 +28,15 @@ interface Props {
     onChange: (v: unknown) => void;
 }
 
-const rendererSelector = d => d?.renderer;
-const keySelector = d => d.key;
+interface RotatingInputOptions {
+    renderer: React.ReactNode;
+    key: boolean;
+}
 
-const options = [
+const rendererSelector = (d: RotatingInputOptions) => d.renderer;
+const keySelector = (d: GeoOption) => d.key;
+
+const options: RotatingInputOptions[] = [
     {
         renderer: (
             <div
