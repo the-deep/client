@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import produce from 'immer';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -69,6 +69,8 @@ interface MatrixKeyId extends MatrixTocElement {
     key: string;
 }
 
+type RefType = React.RefObject<HTMLElement>;
+
 interface PropsFromDispatch {
     setTocFilters: typeof setQualityControlViewSelectedMatrixKeyAction;
     setActivePage: typeof setQualityControlViewActivePageAction;
@@ -130,6 +132,33 @@ function QualityControl(props: Props) {
         parentFooterRef,
     } = props;
 
+    const listContainerRef = useRef<HTMLDivElement>(null);
+    const [gotoTopButtonVisible, setGotoTopButtonVisible] = useState(false);
+
+    useEffect(
+        () => {
+            let scrollTimeout: number | undefined;
+            const handleListScroll = () => {
+                window.clearTimeout(scrollTimeout);
+
+                scrollTimeout = window.setTimeout(() => {
+                    const scrollTop = listContainerRef.current?.scrollTop ?? 0;
+                    setGotoTopButtonVisible(scrollTop > 0);
+                }, 200);
+            };
+            const reff = listContainerRef.current;
+            if (reff) {
+                reff.addEventListener('scroll', handleListScroll);
+            }
+            return () => {
+                if (reff) {
+                    reff.removeEventListener('scroll', handleListScroll);
+                }
+            };
+        },
+        [],
+    );
+
     const [isExpanded, setExpansion] = useState(true);
 
     const handleTocCollapse = useCallback(() => {
@@ -147,6 +176,17 @@ function QualityControl(props: Props) {
     const [tocCount, setTocCount] = useState<TocCountMap>({});
     const [searchValue, setSearchValue] = useState<string | undefined>();
     const [defaultCollapseLevel, setDefaultCollapseLevel] = useState(collapseLevel.min);
+
+    const handleGotoTopButtonClick = useCallback(() => {
+        const c = listContainerRef.current;
+        if (c) {
+            c.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth',
+            });
+        }
+    }, [listContainerRef]);
 
     const matrixToc = useMemo(
         () => [
@@ -444,7 +484,10 @@ function QualityControl(props: Props) {
                             />
                         )}
                     </h3>
-                    <div className={styles.entryList}>
+                    <div
+                        ref={listContainerRef}
+                        className={styles.entryList}
+                    >
                         { (entries && entries.length > 0) ? (
                             <List
                                 data={entries}
@@ -470,6 +513,13 @@ function QualityControl(props: Props) {
                     onPageClick={handlePageClick}
                     showItemsPerPageChange={false}
                 />
+                {gotoTopButtonVisible &&
+                    <Button
+                        className={styles.gotoTop}
+                        onClick={handleGotoTopButtonClick}
+                        iconName="chevronUp"
+                    />
+                }
             </FooterContainer>
         </div>
     );

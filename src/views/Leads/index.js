@@ -349,11 +349,7 @@ export default class Leads extends React.PureComponent {
                 window.clearTimeout(this.scrollTimeout);
 
                 this.scrollTimeout = window.setTimeout(() => {
-                    if (sw.scrollTop > 0) {
-                        this.setState({ showGotoTopButton: true });
-                    } else {
-                        this.setState({ showGotoTopButton: false });
-                    }
+                    this.setState({ showGotoTopButton: c.scrollTop > 0 });
                 }, 200);
             };
 
@@ -637,7 +633,11 @@ export default class Leads extends React.PureComponent {
             if (c) {
                 const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
                 if (sw) {
-                    sw.scrollTop = 0;
+                    sw.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: 'smooth',
+                    });
                 }
             }
         };
