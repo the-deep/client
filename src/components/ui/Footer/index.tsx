@@ -1,9 +1,7 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import Actions from '#dui/Actions';
-
-import styles from './styles.scss';
+import { Actions } from '@the-deep/deep-ui';
 
 interface Props {
     className?: string;
@@ -23,12 +21,12 @@ function Footer(props: Props) {
     } = props;
 
     return (
-        <div className={_cs(className, styles.footer)}>
-            <div className={_cs(contentClassName, styles.content)}>
+        <div className={_cs(className)}>
+            <div className={_cs(contentClassName)}>
                 { children }
             </div>
             { actions && (
-                <Actions className={_cs(styles.actions, actionsContainerClassName)}>
+                <Actions className={_cs(actionsContainerClassName)}>
                     { actions }
                 </Actions>
             )}

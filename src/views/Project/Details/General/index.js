@@ -41,7 +41,7 @@ import {
 
 import _ts from '#ts';
 
-import AddStakeholdersButton from '#components/general/AddStakeholdersButton';
+import AddStakeholdersButton from './AddStakeholdersButton';
 import ActivityLog from './ActivityLog';
 import Dashboard from './Dashboard';
 import requestOptions from './requests';
