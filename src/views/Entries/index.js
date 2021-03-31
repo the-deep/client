@@ -387,14 +387,14 @@ export default class Entries extends React.PureComponent {
             entriesVizDataPending: true,
             successFramework: false,
             successGeoOptions: false,
-
+            gotoTopButtonVisible: false,
             view: LIST_VIEW,
         };
 
         this.views = {
             [LIST_VIEW]: {
                 component: this.renderListView,
-                wrapContainer: true,
+                wrapContainer: false,
                 rendererParams: () => ({
                     parentFooterRef: this.footerRef,
                 }),
@@ -428,10 +428,25 @@ export default class Entries extends React.PureComponent {
 
         this.leadEntries = React.createRef();
         this.footerRef = React.createRef();
+        this.listContainerRef = React.createRef();
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
+
+        const c = this.listContainerRef.current;
+
+        if (c) {
+            this.handleListScroll = () => {
+                window.clearTimeout(this.scrollTimeout);
+
+                this.scrollTimeout = window.setTimeout(() => {
+                    this.setState({ gotoTopButtonVisible: c.scrollTop > 0 });
+                }, 200);
+            };
+
+            c.addEventListener('scroll', this.handleListScroll);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -459,6 +474,10 @@ export default class Entries extends React.PureComponent {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+        const c = this.listContainerRef.current;
+        if (c) {
+            c.removeEventListener('scroll', this.handleListScroll);
+        }
     }
 
     getTabs = memoize((framework, isVisualizationEnabled) => {
@@ -558,9 +577,23 @@ export default class Entries extends React.PureComponent {
         const blockedLoading = pendingGeoOptions || pendingFramework;
         const nonBlockedLoading = pendingEntries;
 
+        const handleGotoTopButtonClick = () => {
+            const c = this.listContainerRef.current;
+            if (c) {
+                c.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth',
+                });
+            }
+        };
+
         // FIXME: loading animation is messed up
         return (
-            <React.Fragment>
+            <div
+                ref={this.listContainerRef}
+                className={styles.container}
+            >
                 { (blockedLoading || nonBlockedLoading) &&
                     <LoadingAnimation />
                 }
@@ -588,9 +621,16 @@ export default class Entries extends React.PureComponent {
                             onPageClick={this.handlePageClick}
                             showItemsPerPageChange={false}
                         />
+                        {this.state.gotoTopButtonVisible &&
+                            <Button
+                                className={styles.gotoTop}
+                                onClick={handleGotoTopButtonClick}
+                                iconName="chevronUp"
+                            />
+                        }
                     </FooterContainer>
                 )}
-            </React.Fragment>
+            </div>
         );
     }
 
