@@ -170,6 +170,7 @@ function EntriesExportSelection(props: Props) {
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
+    const [showEntryId, setShowEntryId] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
@@ -318,6 +319,7 @@ function EntriesExportSelection(props: Props) {
             report_structure: newReportStructure,
             text_widget_ids: textWidgetIds,
             show_groups: showGroups,
+            show_entry_id: showGroups,
 
             // entry or assessment
             export_item: 'entry',
