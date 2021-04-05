@@ -171,6 +171,8 @@ function EntriesExportSelection(props: Props) {
     const [textWidgets, setTextWidgets] = useState<TreeSelectableWidget<string | number>[]>([]);
     const [showGroups, setShowGroups] = useState<boolean>(true);
     const [showEntryId, setShowEntryId] = useState<boolean>(true);
+    const [showAryDetails, setShowAryDetails] = useState<boolean>(true);
+    const [showAdditionalMetadata, setShowAdditionalMetadata] = useState<boolean>(true);
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
@@ -319,10 +321,12 @@ function EntriesExportSelection(props: Props) {
             report_structure: newReportStructure,
             text_widget_ids: textWidgetIds,
             show_groups: showGroups,
-            show_entry_id: showGroups,
 
             // entry or assessment
             export_item: 'entry',
+            report_show_lead_entry_id: showEntryId,
+            report_show_assessment_data: showAryDetails,
+            report_show_entry_widget_data: showAdditionalMetadata,
 
             // temporary or permanent
             is_preview: preview,
@@ -356,6 +360,9 @@ function EntriesExportSelection(props: Props) {
         reportStructure,
         selectedLeads,
         showGroups,
+        showEntryId,
+        showAryDetails,
+        showAdditionalMetadata,
         textWidgets,
         getExport,
         filterValues,
@@ -445,10 +452,16 @@ function EntriesExportSelection(props: Props) {
                         reportStructureVariant={reportStructureVariant}
                         decoupledEntries={decoupledEntries}
                         showGroups={showGroups}
+                        showEntryId={showEntryId}
+                        showAryDetails={showAryDetails}
+                        showAdditionalMetadata={showAdditionalMetadata}
                         onExportTypeChange={setActiveExportTypeKey}
                         onReportStructureChange={setReportStructure}
                         entryFilterOptions={entryFilterOptions}
                         onShowGroupsChange={setShowGroups}
+                        onShowEntryIdChange={setShowEntryId}
+                        onShowAryDetailsChange={setShowAryDetails}
+                        onShowAdditionalMetadataChange={setShowAdditionalMetadata}
                         onReportStructureVariantChange={handleReportStructureVariantChange}
                         onDecoupledEntriesChange={setDecoupledEntries}
                         onIncludeSubSectorChange={setIncludeSubSector}
@@ -457,7 +470,7 @@ function EntriesExportSelection(props: Props) {
                     />
                     {(activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf') && (
                         <div>
-                            {showContextualWidgetSelection && (
+                            {showContextualWidgetSelection && showAdditionalMetadata && (
                                 <TreeSelection
                                     label={_ts('export', 'contextualWidgetLabel')}
                                     value={contextualWidgets}
