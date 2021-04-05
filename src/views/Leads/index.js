@@ -340,21 +340,23 @@ export default class Leads extends React.PureComponent {
     }
 
     componentDidMount() {
-        const c = this.tableContainerRef.current;
+        window.setTimeout(() => {
+            const c = this.tableContainerRef.current;
 
-        if (c) {
-            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+            if (c) {
+                const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
 
-            this.handleRawTableScroll = () => {
-                window.clearTimeout(this.scrollTimeout);
+                this.handleRawTableScroll = (e) => {
+                    window.clearTimeout(this.scrollTimeout);
 
-                this.scrollTimeout = window.setTimeout(() => {
-                    this.setState({ showGotoTopButton: c.scrollTop > 0 });
-                }, 200);
-            };
+                    this.scrollTimeout = window.setTimeout(() => {
+                        this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+                    }, 200);
+                };
 
-            sw.addEventListener('scroll', this.handleRawTableScroll);
-        }
+                sw.addEventListener('scroll', this.handleRawTableScroll);
+            }
+        }, 0);
     }
 
     componentWillReceiveProps(nextProps) {
