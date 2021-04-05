@@ -433,22 +433,6 @@ export default class Entries extends React.PureComponent {
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-
-        window.setTimeout(() => {
-            const c = this.listContainerRef.current;
-
-            if (c) {
-                this.handleListScroll = (e) => {
-                    window.clearTimeout(this.scrollTimeout);
-
-                    this.scrollTimeout = window.setTimeout(() => {
-                        this.setState({ gotoTopButtonVisible: e.target.scrollTop > 0 });
-                    }, 200);
-                };
-
-                c.addEventListener('scroll', this.handleListScroll);
-            }
-        }, 0);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -546,6 +530,27 @@ export default class Entries extends React.PureComponent {
 
     handleHashChange = (view) => {
         this.setState({ view });
+
+        if (view === 'list') {
+            window.setTimeout(() => {
+                const c = this.listContainerRef.current;
+
+                if (c) {
+                    this.handleListScroll = (e) => {
+                        window.clearTimeout(this.scrollTimeout);
+
+                        this.scrollTimeout = window.setTimeout(() => {
+                            this.setState({ gotoTopButtonVisible: e.target.scrollTop > 0 });
+                        }, 200);
+                    };
+
+                    c.addEventListener('scroll', this.handleListScroll);
+                }
+            }, 0);
+        } else {
+            window.removeEventListener('scroll', this.handleListScroll, true);
+            this.setState({ gotoTopButtonVisible: false });
+        }
     }
 
     rendererParams = (key, datum) => {

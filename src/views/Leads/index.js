@@ -554,6 +554,34 @@ export default class Leads extends React.PureComponent {
 
     handleTabClick = (view) => {
         this.props.setLeadPageView({ view });
+
+        if (view === 'table') {
+            window.setTimeout(() => {
+                const c = this.tableContainerRef.current;
+
+                if (c) {
+                    const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+
+                    this.handleRawTableScroll = (e) => {
+                        window.clearTimeout(this.scrollTimeout);
+
+                        this.scrollTimeout = window.setTimeout(() => {
+                            this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+                        }, 200);
+                    };
+
+                    sw.addEventListener('scroll', this.handleRawTableScroll);
+                }
+            }, 0);
+        } else {
+            const c = this.tableContainerRef.current;
+
+            if (c) {
+                const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+                sw.removeEventListener('scroll', this.handleRawTableScroll);
+                // this.setState({ showGotoTopButton: false });
+            }
+        }
     }
 
     handleEmmStatusReceive = (hasEmmFields) => {

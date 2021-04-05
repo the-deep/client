@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Masonry } from '@timilsinabishal/react-components';
 import { isListEqual } from '@togglecorp/fujs';
 
+import Button from '#rsca/Button';
+
 import {
     leadsForProjectGridViewSelector,
 } from '#redux';
@@ -59,6 +61,7 @@ export default class LeadGrid extends React.Component {
         this.state = {
             showPreview: false,
             activeLeadIndex: 0,
+            showGotoTopButton: false,
         };
 
         this.itemState = {
@@ -72,6 +75,23 @@ export default class LeadGrid extends React.Component {
     componentDidMount() {
         // Rest grid when loading first time
         this.props.setLeadPageActivePage({ activePage: 1 });
+
+        window.setTimeout(() => {
+            const c = this.masonryRef.current;
+
+            if (c) {
+                this.handleMasonryScroll = (e) => {
+                    window.clearTimeout(this.scrollTimeout);
+
+                    this.scrollTimeout = window.setTimeout(() => {
+                        this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+                        console.warn('scroll pos', e.target.scrollTop);
+                    }, 200);
+                };
+
+                c.addEventListener('scroll', this.handleMasonryScroll);
+            }
+        });
     }
 
     // The lead data for grid may change when the user is in
@@ -79,6 +99,11 @@ export default class LeadGrid extends React.Component {
     // unnecessary recompute in Masonry while it is not displayed
     shouldComponentUpdate() {
         return this.props.view === 'grid';
+    }
+
+    componentWillUnmount() {
+        const c = this.masonryRef.current;
+        c.removeEventListener('scroll', this.handleMasonryScroll);
     }
 
     handleLeadClick = (leadIndex) => {
@@ -127,6 +152,20 @@ export default class LeadGrid extends React.Component {
         const previewLead = leads[this.state.activeLeadIndex];
         const LoadingAnimation = this.renderLoadingAnimation;
 
+        const handleGotoTopButtonClick = () => {
+            const c = this.masonryRef.current;
+            if (c) {
+                c.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth',
+                });
+            }
+            console.warn('in-loop ref', c);
+        };
+        console.warn('ref', this.masonryRef.current);
+        console.warn('state', this.state.showGotoTopButton);
+
         if (leads.length > 0) {
             return (
                 <React.Fragment>
@@ -148,6 +187,13 @@ export default class LeadGrid extends React.Component {
                             state={this.itemState}
                             hasMore
                         />
+                        { this.state.showGotoTopButton &&
+                            <Button
+                                className={styles.gotoTop}
+                                onClick={handleGotoTopButtonClick}
+                                iconName="chevronUp"
+                            />
+                        }
                     </div>
                     {
                         this.state.showPreview &&
