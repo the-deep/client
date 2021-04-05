@@ -434,19 +434,21 @@ export default class Entries extends React.PureComponent {
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
 
-        const c = this.listContainerRef.current;
+        window.setTimeout(() => {
+            const c = this.listContainerRef.current;
 
-        if (c) {
-            this.handleListScroll = () => {
-                window.clearTimeout(this.scrollTimeout);
+            if (c) {
+                this.handleListScroll = (e) => {
+                    window.clearTimeout(this.scrollTimeout);
 
-                this.scrollTimeout = window.setTimeout(() => {
-                    this.setState({ gotoTopButtonVisible: c.scrollTop > 0 });
-                }, 200);
-            };
+                    this.scrollTimeout = window.setTimeout(() => {
+                        this.setState({ gotoTopButtonVisible: e.target.scrollTop > 0 });
+                    }, 200);
+                };
 
-            c.addEventListener('scroll', this.handleListScroll);
-        }
+                c.addEventListener('scroll', this.handleListScroll);
+            }
+        }, 0);
     }
 
     componentWillReceiveProps(nextProps) {
