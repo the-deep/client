@@ -21,6 +21,7 @@ import {
 } from '#typings';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
+import Users from './Users';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -106,7 +107,11 @@ function ProjectEdit(props: ViewProps) {
                     />
                 </TabPanel>
                 <TabPanel name="users">
-                    {_ts('projectEdit', 'usersLabel')}
+                    { projectId && (
+                        <Users
+                            projectId={projectId}
+                        />
+                    )}
                 </TabPanel>
                 <TabPanel name="framework">
                     {_ts('projectEdit', 'frameworkLabel')}
