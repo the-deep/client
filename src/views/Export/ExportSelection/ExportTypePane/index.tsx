@@ -46,7 +46,13 @@ interface Props {
     reportStructureVariant: string;
     decoupledEntries: boolean;
     showGroups: boolean;
+    showEntryId: boolean;
+    showAryDetails: boolean;
+    showAdditionalMetadata: boolean;
     onShowGroupsChange: (show: boolean) => void;
+    onShowEntryIdChange: (show: boolean) => void;
+    onShowAryDetailsChange: (show: boolean) => void;
+    onShowAdditionalMetadataChange: (show: boolean) => void;
     onExportTypeChange: (type: ExportType) => void;
     onReportStructureChange: (reports: ReportStructure[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
@@ -91,9 +97,15 @@ interface RenderWordProps {
     onReportStructureChange: (reports: ReportStructure[]) => void;
     onReportStructureVariantChange: (variant: string) => void;
     onShowGroupsChange: (show: boolean) => void;
+    onShowEntryIdChange: (show: boolean) => void;
+    onShowAryDetailsChange: (show: boolean) => void;
+    onShowAdditionalMetadataChange: (show: boolean) => void;
     reportStructure?: ReportStructure[];
     reportStructureVariant: string;
     showGroups: boolean;
+    showEntryId: boolean;
+    showAryDetails: boolean;
+    showAdditionalMetadata: boolean;
 }
 
 function RenderWordPdfOptions(props: RenderWordProps) {
@@ -102,9 +114,15 @@ function RenderWordPdfOptions(props: RenderWordProps) {
         onReportStructureChange,
         onReportStructureVariantChange,
         onShowGroupsChange,
+        onShowEntryIdChange,
+        onShowAryDetailsChange,
+        onShowAdditionalMetadataChange,
         reportStructure,
         reportStructureVariant,
         showGroups,
+        showEntryId,
+        showAryDetails,
+        showAdditionalMetadata,
         includeSubSector,
         onIncludeSubSectorChange,
         showMatrix2dOptions,
@@ -166,19 +184,37 @@ function RenderWordPdfOptions(props: RenderWordProps) {
                     )}
                 </div>
             </div>
-            {showEntryGroupsSelection && (
-                <div className={styles.contentSettings}>
-                    <h4 className={styles.heading}>
-                        { _ts('export', 'contentSettingsText')}
-                    </h4>
+            <div className={styles.contentSettings}>
+                <h4 className={styles.heading}>
+                    { _ts('export', 'contentSettingsText')}
+                </h4>
+                {showEntryGroupsSelection && (
                     <Checkbox
                         label={_ts('export', 'showEntryGroupsLabel')}
                         value={showGroups}
                         className={styles.showGroupCheckbox}
                         onChange={onShowGroupsChange}
                     />
-                </div>
-            )}
+                )}
+                <Checkbox
+                    label={_ts('export', 'showEntryIdLabel')}
+                    value={showEntryId}
+                    className={styles.showEntryIdCheckbox}
+                    onChange={onShowEntryIdChange}
+                />
+                <Checkbox
+                    label={_ts('export', 'showAryDetailLabel')}
+                    value={showAryDetails}
+                    className={styles.showAryDetailsCheckbox}
+                    onChange={onShowAryDetailsChange}
+                />
+                <Checkbox
+                    label={_ts('export', 'showAdditionalMetadataLabel')}
+                    value={showAdditionalMetadata}
+                    className={styles.showAdditionalMetadataCheckbox}
+                    onChange={onShowAdditionalMetadataChange}
+                />
+            </div>
         </>
     );
 }
@@ -227,7 +263,13 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
         onReportStructureChange,
         onReportStructureVariantChange,
         showGroups,
+        showEntryId,
+        showAryDetails,
+        showAdditionalMetadata,
         onShowGroupsChange,
+        onShowEntryIdChange,
+        onShowAryDetailsChange,
+        onShowAdditionalMetadataChange,
         decoupledEntries,
         onDecoupledEntriesChange,
         entryFilterOptions,
@@ -247,10 +289,16 @@ function RenderOptions(props: Omit<Props, 'onExportTypeChange'>) {
                     onReportStructureChange={onReportStructureChange}
                     onReportStructureVariantChange={onReportStructureVariantChange}
                     onShowGroupsChange={onShowGroupsChange}
+                    onShowEntryIdChange={onShowEntryIdChange}
+                    onShowAryDetailsChange={onShowAryDetailsChange}
+                    onShowAdditionalMetadataChange={onShowAdditionalMetadataChange}
                     showMatrix2dOptions={showMatrix2dOptions}
                     reportStructure={reportStructure}
                     reportStructureVariant={reportStructureVariant}
                     showGroups={showGroups}
+                    showEntryId={showEntryId}
+                    showAryDetails={showAryDetails}
+                    showAdditionalMetadata={showAdditionalMetadata}
                 />
             );
         case 'excel':
@@ -278,7 +326,13 @@ function ExportTypePane(props: Props) {
         onReportStructureChange,
         onReportStructureVariantChange,
         showGroups,
+        showEntryId,
+        showAryDetails,
+        showAdditionalMetadata,
         onShowGroupsChange,
+        onShowEntryIdChange,
+        onShowAryDetailsChange,
+        onShowAdditionalMetadataChange,
         decoupledEntries,
         onDecoupledEntriesChange,
         entryFilterOptions,
@@ -325,7 +379,13 @@ function ExportTypePane(props: Props) {
                 onReportStructureChange={onReportStructureChange}
                 onReportStructureVariantChange={onReportStructureVariantChange}
                 showGroups={showGroups}
+                showEntryId={showEntryId}
+                showAryDetails={showAryDetails}
+                showAdditionalMetadata={showAdditionalMetadata}
                 onShowGroupsChange={onShowGroupsChange}
+                onShowEntryIdChange={onShowEntryIdChange}
+                onShowAryDetailsChange={onShowAryDetailsChange}
+                onShowAdditionalMetadataChange={onShowAdditionalMetadataChange}
                 decoupledEntries={decoupledEntries}
                 onDecoupledEntriesChange={onDecoupledEntriesChange}
                 includeSubSector={includeSubSector}
