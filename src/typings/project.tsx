@@ -139,3 +139,29 @@ export interface ProjectsSummary {
     totalLeadsTaggedAndVerifiedCount: number;
     recentEntriesActivity: ProjectRecentActivity;
 }
+
+export interface UserGroup {
+    id: number;
+    title: string;
+    joinedAt: string;
+    project: number;
+    usergroup: number;
+    role: number;
+    addedBy: number;
+}
+
+type Permissions = 'view' | 'create' | 'modify' | 'delete'
+
+export interface ProjectRole {
+    id: number;
+    leadPermissions: [Permissions];
+    entryPermissions: [Permissions];
+    setupPermissions: [Permissions];
+    exportPermissions: [Permissions];
+    assessmentPermissions: [Permissions];
+    title: string;
+    description: string;
+    level: number;
+    isCreatorRole: boolean;
+    isDefaultRole: boolean;
+}

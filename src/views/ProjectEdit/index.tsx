@@ -20,6 +20,7 @@ import {
     AppState,
 } from '#typings';
 
+import Users from './Users';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -100,7 +101,11 @@ function ProjectEdit(props: ViewProps) {
                     {_ts('projectEdit', 'projectDetailsLabel')}
                 </TabPanel>
                 <TabPanel name="users">
-                    {_ts('projectEdit', 'usersLabel')}
+                    { projectId && (
+                        <Users
+                            projectId={projectId}
+                        />
+                    )}
                 </TabPanel>
                 <TabPanel name="framework">
                     {_ts('projectEdit', 'frameworkLabel')}
