@@ -17,7 +17,6 @@ import _ts from '#ts';
 import {
     Membership,
     MultiResponse,
-    ProjectRole,
 } from '#typings';
 
 import styles from './styles.scss';
@@ -25,7 +24,6 @@ import styles from './styles.scss';
 interface Props{
     className?: string;
     projectId: string;
-    projectRoleList: ProjectRole[];
 }
 
 const maxItemsPerPage = 10;
@@ -33,7 +31,6 @@ const userKeySelector = (d: Membership) => d.id;
 
 function UserList(props: Props) {
     const {
-        projectRoleList,
         projectId,
         className,
     } = props;
@@ -53,11 +50,6 @@ function UserList(props: Props) {
         },
         autoTrigger: true,
     });
-
-    const getUserActiveRoleTitle = useCallback((member: Membership) => {
-        const projectRole = projectRoleList.find(p => p.id === member.role);
-        return projectRole?.title ?? '';
-    }, [projectRoleList]);
 
     const headers: Header<Membership>[] = useMemo(() => ([
         {
@@ -97,13 +89,12 @@ function UserList(props: Props) {
             ),
         },
         {
-            key: 'role',
+            key: 'roleTitle',
             label: _ts('projectEdit', 'assignedRole'),
             order: 6,
             sortable: false,
-            modifier: row => getUserActiveRoleTitle(row),
         },
-    ]), [getUserActiveRoleTitle]);
+    ]), []);
 
     const dataModifier = useCallback(
         (data, columnKey) => {

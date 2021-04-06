@@ -17,7 +17,6 @@ import _ts from '#ts';
 
 import {
     Membership,
-    ProjectRole,
     MultiResponse,
     UserGroup,
 } from '#typings';
@@ -28,7 +27,6 @@ interface Props{
     className?: string;
     users: Membership[];
     projectId: string;
-    projectRoleList: ProjectRole[];
 }
 
 const maxItemsPerPage = 10;
@@ -39,8 +37,6 @@ function UserGroupList(props: Props) {
     const {
         className,
         projectId,
-        projectRoleList,
-        users,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -57,15 +53,6 @@ function UserGroupList(props: Props) {
         autoTrigger: true,
     });
 
-    const getUserGroupActiveRoleTitle = useCallback((group: UserGroup) => {
-        const projectRole = projectRoleList.find(p => p.id === group.role);
-        return projectRole?.title ?? '';
-    }, [projectRoleList]);
-
-    const getAddedByUserName = useCallback((group: UserGroup) => {
-        const user = users.find(u => u.member === group.addedBy);
-        return user?.memberName ?? '';
-    }, [users]);
     const headers: Header<UserGroup>[] = useMemo(() => ([
         {
             key: 'title',
@@ -74,11 +61,10 @@ function UserGroupList(props: Props) {
             sortable: false,
         },
         {
-            key: 'addedBy',
+            key: 'addedByName',
             label: _ts('projectEdit', 'addedByName'),
             order: 2,
             sortable: false,
-            modifier: row => getAddedByUserName(row),
         },
         {
             key: 'joinedAt',
@@ -93,13 +79,12 @@ function UserGroupList(props: Props) {
             ),
         },
         {
-            key: 'role',
+            key: 'roleTitle',
             label: _ts('projectEdit', 'groupRole'),
             order: 4,
             sortable: false,
-            modifier: row => getUserGroupActiveRoleTitle(row),
         },
-    ]), [getAddedByUserName, getUserGroupActiveRoleTitle]);
+    ]), []);
 
     const dataModifier = useCallback(
         (data, columnKey) => {
