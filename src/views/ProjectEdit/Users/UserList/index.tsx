@@ -12,7 +12,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import Icon from '#rscg/Icon';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
-
+import _ts from '#ts';
 
 import {
     Membership,
@@ -62,30 +62,31 @@ function UserList(props: Props) {
     const headers: Header<Membership>[] = useMemo(() => ([
         {
             key: 'memberName',
-            label: 'Name',
+            label: _ts('projectEdit', 'memberName'),
             order: 1,
             sortable: false,
         },
         {
             key: 'memberEmail',
-            label: 'Email',
+            label: _ts('projectEdit', 'memberEmail'),
             order: 2,
             sortable: false,
         },
         {
             key: 'memberOrganization',
-            label: 'Organization',
+            label: _ts('projectEdit', 'memberOrganization'),
             order: 3,
             sortable: false,
         },
         {
             key: 'addedByName',
-            label: 'Added by',
+            label: _ts('projectEdit', 'addedByName'),
             order: 4,
+            sortable: false,
         },
         {
             key: 'joinedAt',
-            label: 'Added on',
+            label: _ts('projectEdit', 'addedOn'),
             order: 5,
             sortable: false,
             modifier: row => (
@@ -97,7 +98,7 @@ function UserList(props: Props) {
         },
         {
             key: 'role',
-            label: 'Assigned role',
+            label: _ts('projectEdit', 'assignedRole'),
             order: 6,
             sortable: false,
             modifier: row => getUserActiveRoleTitle(row),
@@ -123,7 +124,7 @@ function UserList(props: Props) {
     return (
         <Container
             className={_cs(className, styles.users)}
-            heading="Project Users"
+            heading={_ts('projectEdit', 'projectUsers')}
             headingClassName={styles.heading}
             headerActions={(
                 <Button
@@ -134,7 +135,7 @@ function UserList(props: Props) {
                         />
                     )}
                 >
-                    Add a user
+                    {_ts('projectEdit', 'addUser')}
                 </Button>
             )}
         >

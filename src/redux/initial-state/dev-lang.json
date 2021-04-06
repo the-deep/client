@@ -1321,7 +1321,16 @@
         "-708101013": "Request a private project",
         "-69797123": "Additional features",
         "-779713983": "Created on",
-        "-71037102": "Project visibility"
+        "-71037102": "Project visibility",
+        "-12808201": "Added on",
+        "-80813940": "Assigned role",
+        "-79719233": "Project Users",
+        "-70810384": "Add a user",
+        "-70810113": "Group",
+        "-70102939": "Assigned group role",
+        "-70810293": "User Groups",
+        "-79283838": "Manage My User Groups",
+        "-88838184": "Add a user group"
     },
     "links": {
         "browserExtension": {
@@ -3760,7 +3769,21 @@
             "projectStakeholders": -35334807,
             "projectCreatedBy": 538,
             "projectCreatedOn": -779713983,
-            "projectSave": 25
+            "projectSave": 25,
+            "memberName": 103,
+            "memberEmail": 184,
+            "memberOrganization": 154,
+            "addedByName": -68525317,
+            "addedOn": -12808201,
+            "assignedRole": -80813940,
+            "projectUsers": -79719233,
+            "addUser": -70810384,
+            "group": -70810113,
+            "groupRole": -70102939,
+            "userGroup": -70810293,
+            "manageUserGroup": -79283838,
+            "addUserGroup": -88838184
+>>>>>>> 13dc26f78 (Use translations instead of raw strings)
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,
