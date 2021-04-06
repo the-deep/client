@@ -4,7 +4,6 @@ import useRequest from '#utils/request';
 
 import {
     Membership,
-    ProjectRole,
     MultiResponse,
 } from '#typings';
 
@@ -19,14 +18,6 @@ interface Props {
 
 function Users(props: Props) {
     const { projectId } = props;
-    const [
-        ,
-        rolesResponse,
-    ] = useRequest<MultiResponse<ProjectRole>>({
-        url: 'server://project-roles/',
-        method: 'GET',
-        autoTrigger: true,
-    });
 
     const [
         ,
@@ -44,14 +35,12 @@ function Users(props: Props) {
         <div className={styles.users}>
             <UserList
                 className={styles.userList}
-                projectRoleList={rolesResponse?.results ?? []}
                 projectId={projectId}
             />
             <UserGroupList
                 className={styles.userGroupList}
                 users={usersResponse?.results ?? []}
                 projectId={projectId}
-                projectRoleList={rolesResponse?.results ?? []}
             />
         </div>
     );
