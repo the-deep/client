@@ -1312,7 +1312,16 @@
         "-39990212": "All entries",
         "-71989999": "Show Additional Metadata",
         "-17639815": "Show Ary Detail",
-        "-50734970": "Show Entry Id"
+        "-50734970": "Show Entry Id",
+        "-12808201": "Added on",
+        "-80813940": "Assigned role",
+        "-79719233": "Project Users",
+        "-70810384": "Add a user",
+        "-70810113": "Group",
+        "-70102939": "Assigned group role",
+        "-70810293": "User Groups",
+        "-79283838": "Manage My User Groups",
+        "-88838184": "Add a user group"
     },
     "links": {
         "browserExtension": {
@@ -3730,7 +3739,20 @@
             "saveButtonLabel": -48980925,
             "usersLabel": 1119,
             "frameworkLabel": 379,
-            "projectDetailsLabel": -59904873
+            "projectDetailsLabel": -59904873,
+            "memberName": 103,
+            "memberEmail": 184,
+            "memberOrganization": 154,
+            "addedByName": -68525317,
+            "addedOn": -12808201,
+            "assignedRole": -80813940,
+            "projectUsers": -79719233,
+            "addUser": -70810384,
+            "group": -70810113,
+            "groupRole": -70102939,
+            "userGroup": -70810293,
+            "manageUserGroup": -79283838,
+            "addUserGroup": -88838184
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

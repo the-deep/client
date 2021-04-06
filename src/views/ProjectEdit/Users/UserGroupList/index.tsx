@@ -13,6 +13,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import Icon from '#rscg/Icon';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
+import _ts from '#ts';
 
 import {
     Membership,
@@ -68,20 +69,20 @@ function UserGroupList(props: Props) {
     const headers: Header<UserGroup>[] = useMemo(() => ([
         {
             key: 'title',
-            label: 'Group',
+            label: _ts('projectEdit', 'group'),
             order: 1,
             sortable: false,
         },
         {
             key: 'addedBy',
-            label: 'Added by',
+            label: _ts('projectEdit', 'addedByName'),
             order: 2,
             sortable: false,
             modifier: row => getAddedByUserName(row),
         },
         {
             key: 'joinedAt',
-            label: 'Added on',
+            label: _ts('projectEdit', 'addedOn'),
             order: 3,
             sortable: false,
             modifier: row => (
@@ -93,7 +94,7 @@ function UserGroupList(props: Props) {
         },
         {
             key: 'role',
-            label: 'Assigned group role',
+            label: _ts('projectEdit', 'groupRole'),
             order: 4,
             sortable: false,
             modifier: row => getUserGroupActiveRoleTitle(row),
@@ -122,7 +123,7 @@ function UserGroupList(props: Props) {
             heading={(
                 <>
                     <span className={styles.title}>
-                        User Groups
+                        {_ts('projectEdit', 'userGroup')}
                     </span>
                     <Link
                         className={styles.link}
@@ -133,7 +134,7 @@ function UserGroupList(props: Props) {
                             />
                         )}
                     >
-                        Manage My User Groups
+                        {_ts('projectEdit', 'manageUserGroup')}
                     </Link>
                 </>
             )}
@@ -149,7 +150,7 @@ function UserGroupList(props: Props) {
                             />
                         )}
                     >
-                        Add a user group
+                        {_ts('projectEdit', 'addUserGroup')}
                     </Button>
                 </div>
             )}
