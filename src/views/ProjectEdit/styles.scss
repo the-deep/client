@@ -1,6 +1,7 @@
 .project-edit {
     display: flex;
     flex-direction: column;
+    height: 100%;
     overflow-y: auto;
 
     .header {
@@ -33,5 +34,10 @@
                 margin: var(--dui-spacing-small);
             }
         }
+    }
+
+    .tab-panel {
+        display: flex;
+        flex-grow: 1;
     }
 }

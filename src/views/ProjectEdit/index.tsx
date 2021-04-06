@@ -100,7 +100,10 @@ function ProjectEdit(props: ViewProps) {
                 <TabPanel name="general">
                     {_ts('projectEdit', 'projectDetailsLabel')}
                 </TabPanel>
-                <TabPanel name="users">
+                <TabPanel
+                    name="users"
+                    className={styles.tabPanel}
+                >
                     { projectId && (
                         <Users
                             projectId={projectId}
