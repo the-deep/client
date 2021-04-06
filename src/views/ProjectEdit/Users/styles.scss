@@ -1,0 +1,15 @@
+.users {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .user-list {
+        flex-basis: 50%;
+        flex-grow: 1;
+    }
+
+    .user-group-list {
+        flex-basis: 50%;
+        flex-grow: 1;
+    }
+}

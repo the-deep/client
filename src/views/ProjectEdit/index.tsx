@@ -106,7 +106,10 @@ function ProjectEdit(props: ViewProps) {
                         projectId={projectId}
                     />
                 </TabPanel>
-                <TabPanel name="users">
+                <TabPanel
+                    name="users"
+                    className={styles.tabPanel}
+                >
                     { projectId && (
                         <Users
                             projectId={projectId}

@@ -1,34 +1,58 @@
-import React, { useCallback, useMemo } from 'react';
-import RawTable from '#rscv/RawTable';
-import { Header } from '#rscv/Table';
-import TableHeader from '#rscv/TableHeader';
-import FormattedDate from '#rscv/FormattedDate';
-import Icon from '#rscg/Icon';
+import React, { useCallback, useMemo, useState } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     Container,
     Button,
 } from '@the-deep/deep-ui';
 
+import RawTable from '#rscv/RawTable';
+import { Header } from '#rscv/Table';
+import TableHeader from '#rscv/TableHeader';
+import FormattedDate from '#rscv/FormattedDate';
+import Icon from '#rscg/Icon';
+import Pager from '#rscv/Pager';
+import useRequest from '#utils/request';
+
+
 import {
     Membership,
+    MultiResponse,
     ProjectRole,
 } from '#typings';
 
 import styles from './styles.scss';
 
 interface Props{
-    users: Membership[];
-    pending: boolean;
+    className?: string;
+    projectId: string;
     projectRoleList: ProjectRole[];
 }
 
+const maxItemsPerPage = 10;
 const userKeySelector = (d: Membership) => d.id;
+
 function UserList(props: Props) {
     const {
         projectRoleList,
-        pending,
-        users,
+        projectId,
+        className,
     } = props;
+
+    const [activePage, setActivePage] = useState<number>(1);
+
+    const [
+        usersPending,
+        usersResponse,
+    ] = useRequest<MultiResponse<Membership>>({
+        url: 'server://project-memberships/',
+        method: 'GET',
+        query: {
+            project: projectId,
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        },
+        autoTrigger: true,
+    });
 
     const getUserActiveRoleTitle = useCallback((member: Membership) => {
         const projectRole = projectRoleList.find(p => p.id === member.role);
@@ -98,13 +122,11 @@ function UserList(props: Props) {
 
     return (
         <Container
-            className={styles.users}
-            contentClassName={styles.userList}
+            className={_cs(className, styles.users)}
             heading="Project Users"
             headingClassName={styles.heading}
             headerActions={(
                 <Button
-                    className={styles.link}
                     variant="tertiary"
                     icons={(
                         <Icon
@@ -117,14 +139,22 @@ function UserList(props: Props) {
             )}
         >
             <RawTable
-                data={users}
+                data={usersResponse?.results ?? []}
                 dataModifier={dataModifier}
                 headerModifier={headerModifier}
                 headers={headers}
                 keySelector={userKeySelector}
-                className={styles.table}
-                pending={pending}
+                pending={usersPending}
             />
+            {usersResponse && usersResponse.count > maxItemsPerPage && (
+                <Pager
+                    activePage={activePage}
+                    itemsCount={usersResponse.count}
+                    maxItemsPerPage={maxItemsPerPage}
+                    onPageClick={setActivePage}
+                    showItemsPerPageChange={false}
+                />
+            )}
         </Container>
     );
 }

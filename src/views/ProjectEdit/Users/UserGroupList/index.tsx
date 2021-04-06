@@ -1,14 +1,17 @@
-import React, { useCallback, useMemo } from 'react';
-import RawTable from '#rscv/RawTable';
-import { Header } from '#rscv/Table';
-import TableHeader from '#rscv/TableHeader';
-import FormattedDate from '#rscv/FormattedDate';
-import Icon from '#rscg/Icon';
+import React, { useCallback, useMemo, useState } from 'react';
+import { _cs } from '@togglecorp/fujs';
 import {
     Container,
     Button,
     Link,
 } from '@the-deep/deep-ui';
+
+import RawTable from '#rscv/RawTable';
+import { Header } from '#rscv/Table';
+import TableHeader from '#rscv/TableHeader';
+import FormattedDate from '#rscv/FormattedDate';
+import Icon from '#rscg/Icon';
+import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 
 import {
@@ -21,20 +24,25 @@ import {
 import styles from './styles.scss';
 
 interface Props{
+    className?: string;
     users: Membership[];
     projectId: string;
     projectRoleList: ProjectRole[];
 }
 
+const maxItemsPerPage = 10;
 const emptyLink = '#'; // TODO: Add link when made
 const userGroupKeySelector = (d: UserGroup) => d.id;
 
 function UserGroupList(props: Props) {
     const {
+        className,
         projectId,
         projectRoleList,
         users,
     } = props;
+
+    const [activePage, setActivePage] = useState<number>(1);
 
     const [
         userGroupPending,
@@ -110,7 +118,7 @@ function UserGroupList(props: Props) {
 
     return (
         <Container
-            className={styles.userGroups}
+            className={_cs(className, styles.userGroups)}
             heading={(
                 <>
                     <span className={styles.title}>
@@ -152,9 +160,17 @@ function UserGroupList(props: Props) {
                 headerModifier={headerModifier}
                 headers={headers}
                 keySelector={userGroupKeySelector}
-                className={styles.table}
                 pending={userGroupPending && (userGroupResponse?.results ?? []).length < 1}
             />
+            {userGroupResponse && userGroupResponse.count > maxItemsPerPage && (
+                <Pager
+                    activePage={activePage}
+                    itemsCount={userGroupResponse.count}
+                    maxItemsPerPage={maxItemsPerPage}
+                    onPageClick={setActivePage}
+                    showItemsPerPageChange={false}
+                />
+            )}
         </Container>
     );
 }

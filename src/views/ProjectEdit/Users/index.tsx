@@ -11,6 +11,8 @@ import {
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
 
+import styles from './styles.scss';
+
 interface Props {
     projectId: string;
 }
@@ -27,7 +29,7 @@ function Users(props: Props) {
     });
 
     const [
-        usersPending,
+        ,
         usersResponse,
     ] = useRequest<MultiResponse<Membership>>({
         url: 'server://project-memberships/',
@@ -39,13 +41,14 @@ function Users(props: Props) {
     });
 
     return (
-        <div>
+        <div className={styles.users}>
             <UserList
-                users={usersResponse?.results ?? []}
-                pending={usersPending}
+                className={styles.userList}
                 projectRoleList={rolesResponse?.results ?? []}
+                projectId={projectId}
             />
             <UserGroupList
+                className={styles.userGroupList}
                 users={usersResponse?.results ?? []}
                 projectId={projectId}
                 projectRoleList={rolesResponse?.results ?? []}
