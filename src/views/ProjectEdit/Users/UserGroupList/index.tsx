@@ -3,8 +3,11 @@ import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
+import Icon from '#rscg/Icon';
 import {
     Container,
+    Button,
+    Link,
 } from '@the-deep/deep-ui';
 import useRequest from '#utils/request';
 
@@ -23,6 +26,7 @@ interface Props{
     projectRoleList: ProjectRole[];
 }
 
+const emptyLink = '#'; // TODO: Add link when made
 const userGroupKeySelector = (d: UserGroup) => d.id;
 
 function UserGroupList(props: Props) {
@@ -53,7 +57,6 @@ function UserGroupList(props: Props) {
         const user = users.find(u => u.member === group.addedBy);
         return user?.memberName ?? '';
     }, [users]);
-
     const headers: Header<UserGroup>[] = useMemo(() => ([
         {
             key: 'title',
@@ -108,9 +111,40 @@ function UserGroupList(props: Props) {
     return (
         <Container
             className={styles.userGroups}
-            contentClassName={styles.userGroupList}
-            heading="User Groups"
-            headingClassName={styles.header}
+            heading={(
+                <>
+                    <span className={styles.title}>
+                        User Groups
+                    </span>
+                    <Link
+                        className={styles.link}
+                        to={emptyLink}
+                        actions={(
+                            <Icon
+                                name="chevronRight"
+                            />
+                        )}
+                    >
+                        Manage My User Groups
+                    </Link>
+                </>
+            )}
+            headingClassName={styles.heading}
+            headerClassName={styles.header}
+            headerActions={(
+                <div className={styles.actions}>
+                    <Button
+                        variant="tertiary"
+                        icons={(
+                            <Icon
+                                name="add"
+                            />
+                        )}
+                    >
+                        Add a user group
+                    </Button>
+                </div>
+            )}
         >
             <RawTable
                 data={userGroupResponse?.results ?? []}

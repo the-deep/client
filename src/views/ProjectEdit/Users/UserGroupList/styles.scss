@@ -1,0 +1,27 @@
+.user-groups {
+    .header {
+        display: flex;
+
+        .heading {
+            display: flex;
+            align-items: baseline;
+
+            .title {
+                text-transform: uppercase;
+                color: var(--dui-color-brand);
+                font-size: var(--dui-font-size-heading-medium);
+            }
+            .link {
+                padding-left: var(--dui-spacing-super-large);
+                font-size: var(--dui-font-size-medium);
+                font-weight: var(--dui-font-weight-regular);
+            }
+        }
+        .actions {
+            display: flex;
+            flex-grow: 1;
+            justify-content: space-between;
+            justify-self: flex-start;
+        }
+    }
+}

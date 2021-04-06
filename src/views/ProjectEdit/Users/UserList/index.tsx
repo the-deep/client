@@ -3,6 +3,7 @@ import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
+import Icon from '#rscg/Icon';
 import {
     Container,
     Button,
@@ -100,22 +101,19 @@ function UserList(props: Props) {
             className={styles.users}
             contentClassName={styles.userList}
             heading="Project Users"
-            headingClassName={styles.header}
+            headingClassName={styles.heading}
             headerActions={(
-                <div>
-                    <Button
-                        className={styles.link}
-                        variant="tertiary"
-                    >
-                        Manage My User Groups
-                    </Button>
-                    <Button
-                        className={styles.button}
-                        variant="tertiary"
-                    >
-                        Add a user group
-                    </Button>
-                </div>
+                <Button
+                    className={styles.link}
+                    variant="tertiary"
+                    icons={(
+                        <Icon
+                            name="add"
+                        />
+                    )}
+                >
+                    Add a user
+                </Button>
             )}
         >
             <RawTable
