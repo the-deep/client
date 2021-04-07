@@ -69,7 +69,7 @@ const requestOptions = {
     },
 
     usergroupMembershipRequest: {
-        url: '/project-usergroups/',
+        url: ({ props: { projectId } }) => `/projects/${projectId}/project-usergroups/`,
         method: methods.POST,
         body: ({ params: { membership } }) => membership,
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),

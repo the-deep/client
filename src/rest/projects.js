@@ -14,9 +14,9 @@ export const createUrlForProjectOptions = params =>
 export const createUrlForProjectRegions = (projectId, fields) =>
     `${wsEndpoint}/projects/${projectId}/regions/?${p({ fields })}`;
 
-export const urlForProjectUserGroup = `${wsEndpoint}/project-usergroups/`;
-export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/project-usergroups/?${p({ project })}`;
-export const createUrlForProjectUserGroupDelete = userGroupRelationId => `${wsEndpoint}/project-usergroups/${userGroupRelationId}`;
+export const urlForProjectUserGroup = projectId => `${wsEndpoint}/projects/${projectId}/project-usergroups/`;
+export const createUrlForProjectUserGroupGet = (project, projectId) => `${wsEndpoint}/projects/${projectId}/project-usergroups/?${p({ project })}`;
+export const createUrlForProjectUserGroupDelete = (userGroupRelationId, projectId) => `${wsEndpoint}/projects/${projectId}/project-usergroups/${userGroupRelationId}`;
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
 
 export const urlForProjectRoles = `${wsEndpoint}/project-roles/`;

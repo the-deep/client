@@ -46,7 +46,7 @@ function AddUsergroupModal(props: Props) {
         ,
         ,
     ] = useRequest<MultiResponse>({
-        url: 'server://project-usergroups/',
+        url: `server://projects/${projectId}project-usergroups/`,
         method: 'GET',
         autoTrigger: true,
         onSuccess: (response) => {
