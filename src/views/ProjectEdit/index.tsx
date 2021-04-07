@@ -107,7 +107,9 @@ function ProjectEdit(props: ViewProps) {
                     />
                 </TabPanel>
                 <TabPanel name="users">
-                    <UsersPanel />
+                    <UsersPanel
+                        projectId={projectId}
+                    />
                     {_ts('projectEdit', 'usersLabel')}
                 </TabPanel>
                 <TabPanel name="framework">

@@ -14,11 +14,24 @@ import {
 
 import useRequest from '#utils/request';
 import SelectInput from '#rsci/SelectInput';
+import { MultiResponse } from '#typings';
 
 import styles from './styles.scss';
 
 interface Props {
     onModalClose: () => void;
+    projectId: number;
+}
+
+interface Usergroup {
+    id: number;
+    title: string;
+    roleTitle: string;
+    joinedAt: string;
+    project: number;
+    usergroup: number;
+    role: number;
+    addedBy?: string;
 }
 
 const usergroupSchema = {
@@ -30,9 +43,13 @@ const usergroupSchema = {
     },
 };
 
+const keySelector = (d: Usergroup) => d.id;
+const labelSelector = (d: Usergroup) => d.title;
+
 function AddUsergroupModal(props: Props) {
     const {
         onModalClose,
+        projectId,
     } = props;
 
     const [faramValues, setFaramValues] = useState(undefined);
@@ -45,8 +62,8 @@ function AddUsergroupModal(props: Props) {
         userGroupResponse,
         ,
         ,
-    ] = useRequest<MultiResponse>({
-        url: `server://projects/${projectId}project-usergroups/`,
+    ] = useRequest<MultiResponse<Usergroup>>({
+        url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
         autoTrigger: true,
         onSuccess: (response) => {
@@ -56,6 +73,8 @@ function AddUsergroupModal(props: Props) {
             setFaramErrors(errorBody?.faramErrors);
         },
     });
+
+    const options = isDefined(userGroupResponse) ? userGroupResponse.results : [];
 
     const onFaramChange = useCallback((newValue, errors) => {
         setFaramValues(newValue);
@@ -89,7 +108,9 @@ function AddUsergroupModal(props: Props) {
                     faramElementName="project"
                     label="Select Usergroup"
                     placeholder="Select Usergroup"
-                    options={}
+                    options={options}
+                    keySelector={keySelector}
+                    labelSelector={labelSelector}
                 />
             </Faram>
         </Modal>

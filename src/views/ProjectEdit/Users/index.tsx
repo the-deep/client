@@ -16,9 +16,13 @@ interface UsergroupItem {
 }
 
 interface Props {
+    projectId: number;
 }
 
 function UsersPanel(props: Props) {
+    const {
+        projectId,
+    } = props;
     const [
         showAddUsergroupModal,
         setModalShow,
@@ -44,6 +48,7 @@ function UsersPanel(props: Props) {
             {showAddUsergroupModal &&
                 <AddUsergroupModal
                     onModalClose={setModalHidden}
+                    projectId={projectId}
                 />
             }
         </div>
