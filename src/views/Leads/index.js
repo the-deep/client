@@ -629,6 +629,21 @@ export default class Leads extends React.PureComponent {
         );
     }
 
+    handleGotoTopButtonClick = () => {
+        const c = this.tableContainerRef.current;
+        if (c) {
+            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+            if (sw) {
+                sw.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    };
+
+
     renderFooter = () => {
         const {
             activeProject,
@@ -638,7 +653,10 @@ export default class Leads extends React.PureComponent {
             view,
         } = this.props;
 
-        const { hasEmmFields } = this.state;
+        const {
+            hasEmmFields,
+            showGotoTopButton,
+        } = this.state;
 
         const showVisualizationLink = reverseRoute(
             pathNames.leadsViz,
@@ -657,20 +675,6 @@ export default class Leads extends React.PureComponent {
         const leadsCount = Math.min(activePage * leadsPerPage, totalLeadsCount);
 
         const { sortDirIcon, sortKey } = this.getSortDetails();
-
-        const handleGotoTopButtonClick = () => {
-            const c = this.tableContainerRef.current;
-            if (c) {
-                const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
-                if (sw) {
-                    sw.scrollTo({
-                        top: 0,
-                        left: 0,
-                        behavior: 'smooth',
-                    });
-                }
-            }
-        };
 
         return (
             <React.Fragment>
@@ -725,10 +729,10 @@ export default class Leads extends React.PureComponent {
                                     onPageClick={this.handlePageClick}
                                     onItemsPerPageChange={this.handleLeadsPerPageChange}
                                 />
-                                { this.state.showGotoTopButton && (
+                                { showGotoTopButton && (
                                     <Button
                                         className={styles.gotoTop}
-                                        onClick={handleGotoTopButtonClick}
+                                        onClick={this.handleGotoTopButtonClick}
                                         iconName="chevronUp"
                                     />
                                 )}

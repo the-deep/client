@@ -154,6 +154,7 @@ function QualityControl(props: Props) {
                 if (reff) {
                     reff.removeEventListener('scroll', handleListScroll);
                 }
+                window.clearTimeout(scrollTimeout);
             };
         },
         [],
@@ -186,7 +187,7 @@ function QualityControl(props: Props) {
                 behavior: 'smooth',
             });
         }
-    }, [listContainerRef]);
+    }, []);
 
     const matrixToc = useMemo(
         () => [
