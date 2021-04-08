@@ -552,6 +552,16 @@ export default class Entries extends React.PureComponent {
             this.setState({ gotoTopButtonVisible: false });
         }
     }
+    handleGotoTopButtonClick = () => {
+        const c = this.listContainerRef.current;
+        if (c) {
+            c.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth',
+            });
+        }
+    };
 
     rendererParams = (key, datum) => {
         const {
@@ -580,20 +590,11 @@ export default class Entries extends React.PureComponent {
                 entriesRequest: { pending: pendingEntries },
             },
         } = this.props;
+        const { gotoTopButtonVisible } = this.state;
 
         const blockedLoading = pendingGeoOptions || pendingFramework;
         const nonBlockedLoading = pendingEntries;
 
-        const handleGotoTopButtonClick = () => {
-            const c = this.listContainerRef.current;
-            if (c) {
-                c.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth',
-                });
-            }
-        };
 
         // FIXME: loading animation is messed up
         return (
@@ -628,10 +629,10 @@ export default class Entries extends React.PureComponent {
                             onPageClick={this.handlePageClick}
                             showItemsPerPageChange={false}
                         />
-                        {this.state.gotoTopButtonVisible &&
+                        {gotoTopButtonVisible &&
                             <Button
                                 className={styles.gotoTop}
-                                onClick={handleGotoTopButtonClick}
+                                onClick={this.handleGotoTopButtonClick}
                                 iconName="chevronUp"
                             />
                         }
