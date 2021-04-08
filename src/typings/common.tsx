@@ -22,6 +22,7 @@ export interface AppState {
     domainData: any;
     siloDomainData: any;
     route: any;
+    auth: any;
 }
 
 export interface AppProps {
@@ -72,6 +73,11 @@ export interface DatabaseEntityBase {
     modifiedBy: number;
     modifiedByName: string;
     versionId: number;
+}
+
+export interface BooleanKeyValueElement {
+    key: boolean;
+    value: string;
 }
 
 export interface FaramErrors {

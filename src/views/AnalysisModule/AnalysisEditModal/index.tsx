@@ -32,6 +32,7 @@ import {
     MultiResponse,
     FrameworkFields,
     UserMini,
+    AnalysisPillarFormItem,
 } from '#typings';
 
 import _ts from '#ts';
@@ -41,7 +42,7 @@ import styles from './styles.scss';
 
 const FaramButton = FaramActionElement(Button);
 
-const addAttribute = attributes => ([
+const addAttribute = (attributes: AnalysisPillarFormItem[]) => ([
     ...attributes,
     {
         key: randomString(16),

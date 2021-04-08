@@ -45,7 +45,10 @@ interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'anal
     onDelete: (value: number) => void;
 }
 
-type PillarListRendererProps = Omit<AnalysisPillars, 'id' | 'analysis'>
+type PillarListRendererProps = {
+    title: string;
+    assigneeName: string;
+};
 
 const mapStateToProps = (state: AppState) => ({
     activeProject: activeProjectIdFromStateSelector(state),
@@ -143,26 +146,26 @@ function Analysis(props: ComponentProps) {
     }, [deletePillarTrigger]);
 
     const analysisPillarRendererParams = useCallback((_, data) => ({
-        pillarId: data.id,
-        title: data.title,
+        analysisId: data.analysis,
         assigneeName: data.assigneeName,
         createdAt,
-        analysis: data.analysis,
         onDelete: handlePillarAnalysisToDelete,
-    }), [handlePillarAnalysisToDelete, createdAt]);
+        pillarId: data.id,
+        projectId: activeProject,
+        title: data.title,
+    }), [handlePillarAnalysisToDelete, createdAt, activeProject]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);
     }, [analysisId, onDelete]);
 
-    const pillarListRendererParams = useCallback((_: number, data) => {
-        const returnValue: PillarListRendererProps = {
+    const pillarListRendererParams = useCallback(
+        (_: number, data) => ({
             assigneeName: data.assigneeName,
             title: data.title,
-        };
-
-        return returnValue;
-    }, []);
+        }),
+        [],
+    );
 
     return (
         <ContainerCard

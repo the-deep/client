@@ -21,6 +21,16 @@ export interface AnalysisPillars {
     analysis: number;
 }
 
+export interface AnalysisPillarFormItem {
+    key?: number;
+    title?: number;
+    assignee?: number;
+    // TODO: Change structure of this filter
+    filters?: string[];
+}
+
 export interface PillarAnalysisElement extends AnalysisPillars{
+    analysisName: string;
+    title: string;
     filters?: unknown;
 }

@@ -30,7 +30,7 @@ import {
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 
-import FrameworkFilter from './FrameworkFilter';
+import FrameworkFilter from '#components/other/FrameworkFilter';
 
 import { FaramValues } from '../../ExportSelection';
 import styles from './styles.scss';

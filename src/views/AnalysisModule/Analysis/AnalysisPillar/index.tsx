@@ -21,11 +21,14 @@ import { pathNames } from '#constants';
 import _ts from '#ts';
 import styles from './styles.scss';
 
-interface ComponentProps extends Omit<AnalysisPillars, 'id'> {
+interface ComponentProps {
+    analysisId: number;
+    assigneeName?: string;
+    title: string;
+    createdAt: string;
+    onDelete: (value: number) => void;
     pillarId: AnalysisPillars['id'];
     projectId: number;
-    onDelete: (value: number) => void;
-    createdAt: string;
 }
 
 function AnalysisPillar(props: ComponentProps) {
@@ -35,7 +38,7 @@ function AnalysisPillar(props: ComponentProps) {
         assigneeName,
         onDelete,
         projectId,
-        analysis,
+        analysisId,
         createdAt,
     } = props;
 
@@ -48,7 +51,7 @@ function AnalysisPillar(props: ComponentProps) {
 
     const editLink = reverseRoute(pathNames.pillarAnalysis, {
         projectId,
-        analysisId: analysis,
+        analysisId,
         pillarId,
     });
 

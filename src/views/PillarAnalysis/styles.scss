@@ -1,6 +1,8 @@
 .pillar-analysis {
     display: flex;
     flex-direction: column;
+    background-color: var(--dui-color-white);
+    height: 100vh;
     overflow-y: auto;
 
     .header {
@@ -23,23 +25,70 @@
     }
 
     .content {
+        display: flex;
         position: relative;
+        flex-direction: column;
         flex-grow: 1;
-        padding: var(--dui-spacing-medium) calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
         overflow-y: auto;
 
         .inputs-container {
             display: flex;
+            flex-shrink: 0;
+            padding: var(--dui-spacing-medium) calc(var(--dui-spacing-super-large) - var(--dui-spacing-large));
 
             .input-container {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                padding: 0 var(--dui-spacing-large);
+                padding: var(--dui-spacing-large);
 
                 .input-header {
                     padding: var(--dui-spacing-medium) 0;
                 }
+            }
+        }
+
+        .entries-filter {
+            flex-shrink: 0;
+            padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+        }
+
+        .workspace {
+            display: flex;
+            flex-grow: 1;
+            background-color: var(--dui-color-background);
+            overflow: auto;
+
+            --width-left-container: 420px;
+
+            .left-container {
+                display: flex;
+                flex-basis: var(--width-left-container);
+                flex-direction: column;
+                flex-shrink: 0;
+                background-color: var(--dui-color-surface-informational);
+                overflow: auto;
+
+                .header {
+                    flex-shrink: 0;
+                    padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+                }
+
+                .entries {
+                    flex-grow: 1;
+                    padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+                    overflow-y: auto;
+                }
+
+                .pager {
+                    padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+                }
+            }
+
+            .right-container {
+                flex-basis: calc(100% - var(--width-left-container));
+                padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+                overflow: auto;
             }
         }
     }

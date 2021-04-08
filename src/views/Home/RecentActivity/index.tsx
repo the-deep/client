@@ -12,14 +12,14 @@ import {
     MultiResponse,
 } from '#typings';
 import {
-    RecentActivity,
+    RecentActivityItem,
 } from '#typings/user';
 import _ts from '#ts';
 
 import ActivityItem from './ActivityItem';
 import styles from './styles.scss';
 
-const keySelector = (d: RecentActivity) => `${d.type}-${d.id}`;
+const keySelector = (d: RecentActivityItem) => `${d.type}-${d.id}`;
 
 function RecentActivities() {
     const [
@@ -27,7 +27,7 @@ function RecentActivities() {
         recentActivitiesResponse,
         ,
         ,
-    ] = useRequest<MultiResponse<RecentActivity>>({
+    ] = useRequest<MultiResponse<RecentActivityItem>>({
         url: 'server://projects/recent-activities/',
         method: 'GET',
         autoTrigger: true,
@@ -36,7 +36,7 @@ function RecentActivities() {
             notifyOnFailure(_ts('recentActivity', 'recentActivitiesFetchFailed'))({ error: errorBody }),
     });
 
-    const activityRendererParams = useCallback((_: number, info: RecentActivity) => ({
+    const activityRendererParams = useCallback((_: string, info: RecentActivityItem) => ({
         activityId: keySelector(info),
         projectDisplayName: info.projectDisplayName,
         createdAt: info.createdAt,

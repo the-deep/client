@@ -77,7 +77,7 @@ const mapStateToProps = (state: AppState) => ({
 interface ViewProps {
     userProjects: ProjectElement[];
     activeUser: User;
-    activeProject?: number;
+    activeProject: number;
 }
 
 const getRecentProjectStat = (projectStat: ProjectStat) => ({
