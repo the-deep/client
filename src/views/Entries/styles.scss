@@ -101,6 +101,7 @@
         position: absolute;
         right: 25px;
         bottom: 60px;
+        z-index: 1;
         border-radius: 50%;
         box-shadow: 0 var(--spacing-small) var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-medium);
         background: var(--color-accent) !important;

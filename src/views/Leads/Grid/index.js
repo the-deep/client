@@ -78,16 +78,7 @@ export default class LeadGrid extends React.Component {
 
         window.setTimeout(() => {
             const c = this.masonryRef.current;
-
             if (c) {
-                this.handleMasonryScroll = (e) => {
-                    window.clearTimeout(this.scrollTimeout);
-
-                    this.scrollTimeout = window.setTimeout(() => {
-                        this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
-                    }, 200);
-                };
-
                 c.addEventListener('scroll', this.handleMasonryScroll);
             }
         }, 0);
@@ -105,6 +96,14 @@ export default class LeadGrid extends React.Component {
         c.removeEventListener('scroll', this.handleMasonryScroll);
         window.clearTimeout(this.scrollTimeout);
     }
+
+    handleMasonryScroll = (e) => {
+        window.clearTimeout(this.scrollTimeout);
+
+        this.scrollTimeout = window.setTimeout(() => {
+            this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+        }, 200);
+    };
 
     handleLeadClick = (leadIndex) => {
         this.setState({

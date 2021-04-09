@@ -464,6 +464,9 @@ export default class Entries extends React.PureComponent {
         if (c) {
             c.removeEventListener('scroll', this.handleListScroll);
         }
+        if (this.scrollTimeout) {
+            window.clearTimeout(this.scrollTimeout);
+        }
     }
 
     getTabs = memoize((framework, isVisualizationEnabled) => {
@@ -528,30 +531,29 @@ export default class Entries extends React.PureComponent {
         this.props.setEntriesViewActivePage({ activePage: page });
     }
 
+    handleListScroll = (e) => {
+        window.clearTimeout(this.scrollTimeout);
+
+        this.scrollTimeout = window.setTimeout(() => {
+            this.setState({ gotoTopButtonVisible: e.target.scrollTop > 0 });
+        }, 200);
+    };
+
     handleHashChange = (view) => {
         this.setState({ view });
 
         if (view === 'list') {
             window.setTimeout(() => {
                 const c = this.listContainerRef.current;
-
                 if (c) {
-                    this.handleListScroll = (e) => {
-                        window.clearTimeout(this.scrollTimeout);
-
-                        this.scrollTimeout = window.setTimeout(() => {
-                            this.setState({ gotoTopButtonVisible: e.target.scrollTop > 0 });
-                        }, 200);
-                    };
-
                     c.addEventListener('scroll', this.handleListScroll);
                 }
             }, 0);
         } else {
             window.removeEventListener('scroll', this.handleListScroll, true);
-            this.setState({ gotoTopButtonVisible: false });
         }
     }
+
     handleGotoTopButtonClick = () => {
         const c = this.listContainerRef.current;
         if (c) {

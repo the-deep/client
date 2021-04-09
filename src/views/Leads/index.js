@@ -345,15 +345,6 @@ export default class Leads extends React.PureComponent {
 
             if (c) {
                 const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
-
-                this.handleRawTableScroll = (e) => {
-                    window.clearTimeout(this.scrollTimeout);
-
-                    this.scrollTimeout = window.setTimeout(() => {
-                        this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
-                    }, 200);
-                };
-
                 sw.addEventListener('scroll', this.handleRawTableScroll);
             }
         }, 0);
@@ -552,6 +543,14 @@ export default class Leads extends React.PureComponent {
         this.props.setLeadPageActiveSort({ activeSort: key });
     }
 
+    handleRawTableScroll = (e) => {
+        window.clearTimeout(this.scrollTimeout);
+
+        this.scrollTimeout = window.setTimeout(() => {
+            this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+        }, 200);
+    };
+
     handleTabClick = (view) => {
         this.props.setLeadPageView({ view });
 
@@ -561,15 +560,6 @@ export default class Leads extends React.PureComponent {
 
                 if (c) {
                     const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
-
-                    this.handleRawTableScroll = (e) => {
-                        window.clearTimeout(this.scrollTimeout);
-
-                        this.scrollTimeout = window.setTimeout(() => {
-                            this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
-                        }, 200);
-                    };
-
                     sw.addEventListener('scroll', this.handleRawTableScroll);
                 }
             }, 0);
@@ -579,7 +569,6 @@ export default class Leads extends React.PureComponent {
             if (c) {
                 const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
                 sw.removeEventListener('scroll', this.handleRawTableScroll);
-                // this.setState({ showGotoTopButton: false });
             }
         }
     }
@@ -587,6 +576,20 @@ export default class Leads extends React.PureComponent {
     handleEmmStatusReceive = (hasEmmFields) => {
         this.setState({ hasEmmFields });
     }
+
+    handleGotoTopButtonClick = () => {
+        const c = this.tableContainerRef.current;
+        if (c) {
+            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+            if (sw) {
+                sw.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    };
 
     renderHeader = () => {
         const addLeadLink = reverseRoute(
@@ -628,21 +631,6 @@ export default class Leads extends React.PureComponent {
             </React.Fragment>
         );
     }
-
-    handleGotoTopButtonClick = () => {
-        const c = this.tableContainerRef.current;
-        if (c) {
-            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
-            if (sw) {
-                sw.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth',
-                });
-            }
-        }
-    };
-
 
     renderFooter = () => {
         const {
