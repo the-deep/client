@@ -19,18 +19,24 @@ export interface AnalysisPillars {
     createdAt: string;
     assignee: number;
     analysis: number;
+    filters?: PillarFilterItem[];
+}
+
+export interface PillarFilterItem {
+    id: string;
+    key: string;
+    uniqueId: string;
 }
 
 export interface AnalysisPillarFormItem {
     key?: number;
     title?: number;
     assignee?: number;
-    // TODO: Change structure of this filter
-    filters?: string[];
+    filters?: PillarFilterItem[];
 }
 
-export interface PillarAnalysisElement extends AnalysisPillars{
+export interface PillarAnalysisElement extends AnalysisPillars {
     analysisName: string;
     title: string;
-    filters?: unknown;
+    filters?: PillarFilterItem[];
 }

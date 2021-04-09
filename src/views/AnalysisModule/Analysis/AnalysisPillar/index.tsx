@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
     reverseRoute,
 } from '@togglecorp/fujs';
@@ -10,6 +10,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import Icon from '#rscg/Icon';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 import TextOutput from '#components/general/TextOutput';
 
@@ -29,6 +30,7 @@ interface ComponentProps {
     onDelete: (value: number) => void;
     pillarId: AnalysisPillars['id'];
     projectId: number;
+    pendingPillarDelete: boolean;
 }
 
 function AnalysisPillar(props: ComponentProps) {
@@ -40,9 +42,10 @@ function AnalysisPillar(props: ComponentProps) {
         projectId,
         analysisId,
         createdAt,
+        pendingPillarDelete,
     } = props;
 
-    const [completed, setCompleted] = useState(false);
+    const completed = false;
     // setIsCompleted to be used when the status is passed by API
 
     const handleDeletePillar = useCallback(() => {
@@ -54,6 +57,8 @@ function AnalysisPillar(props: ComponentProps) {
         analysisId,
         pillarId,
     });
+
+    const disabled = pendingPillarDelete;
 
     return (
         <Container
@@ -77,17 +82,20 @@ function AnalysisPillar(props: ComponentProps) {
                 <div className={styles.headerRight}>
                     <QuickActionLink
                         to={editLink}
+                        disabled={disabled}
                     >
                         <Icon name="edit" />
                     </QuickActionLink>
                     <QuickActionButton
                         className={styles.button}
+                        disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
                         className={styles.button}
                         onClick={handleDeletePillar}
+                        disabled={disabled}
                     >
                         <Icon name="delete" />
                     </QuickActionButton>
@@ -106,6 +114,7 @@ function AnalysisPillar(props: ComponentProps) {
             )}
         >
             <div className={styles.pillarBody}>
+                {pendingPillarDelete && <LoadingAnimation />}
                 <div className={styles.left}>
                     <div className={styles.item}>
                         <TextOutput

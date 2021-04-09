@@ -177,7 +177,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
 
     const [
-        ,
+        pendingAnalysisDelete,
         ,
         ,
         deleteAnalysisTrigger,
@@ -195,8 +195,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
     const [
         ,
         overviewResponse,
-        ,
-        ,
     ] = useRequest<AnalysisOverview>(
         {
             url: `server://projects/${activeProject}/analysis-overview/`,
@@ -216,8 +214,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
     }))) ?? [];
 
     const handleAnalysisToDeleteClick = useCallback((toDeleteKey) => {
-        deleteAnalysisTrigger();
         setAnalysisIdToDelete(toDeleteKey);
+        deleteAnalysisTrigger();
     }, [deleteAnalysisTrigger]);
 
     const analysisObjectToEdit = useMemo(() => (
@@ -254,7 +252,16 @@ function AnalysisModule(props: AnalysisModuleProps) {
         endDate: data.endDate,
         teamLeadName: data.teamLeadName,
         createdAt: data.createdAt,
-    }), [handleAnalysisEditClick, handleAnalysisToDeleteClick]);
+        modifiedAt: data.modifiedAt,
+        onAnalysisPillarDelete: getAnalysisTrigger,
+        pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
+    }), [
+        handleAnalysisEditClick,
+        handleAnalysisToDeleteClick,
+        getAnalysisTrigger,
+        pendingAnalysisDelete,
+        analysisIdToDelete,
+    ]);
 
     return (
         <div className={styles.analysisModule}>
