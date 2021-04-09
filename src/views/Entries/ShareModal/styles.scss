@@ -4,9 +4,36 @@
     .body {
         position: relative;
 
+        .actions {
+            display: flex;
+            align-items: center;
+
+            .checkbox {
+                flex-grow: 1;
+            }
+
+            .reset {
+                flex-shrink: 0;
+            }
+        }
         .info-text {
             .icon {
                 margin: 0 var(--spacing-small);
+            }
+        }
+
+        .text-input-section {
+            display: flex;
+            align-items: center;
+            margin: var(--spacing-medium) 0;
+
+            .text-input {
+                flex-grow: 1;
+            }
+
+            .copy {
+                flex-shrink: 0;
+                margin: 0 var(--spacing-extra-small);
             }
         }
     }

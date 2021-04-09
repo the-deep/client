@@ -1312,7 +1312,10 @@
         "-39990212": "All entries",
         "-71989999": "Show Additional Metadata",
         "-17639815": "Show Ary Detail",
-        "-50734970": "Show Entry Id"
+        "-50734970": "Show Entry Id",
+        "-77593412": "Reset",
+        "-47914300": "Copied To Clipboard",
+        "-26634816": "Successfully Copied to Clipboard"
     },
     "links": {
         "browserExtension": {
@@ -1821,7 +1824,10 @@
             "entriesPublicLinkHelpText": -99774780,
             "shareModalHeading": -99801867,
             "shareVizLink": -99801867,
-            "getPublicLinkLabel": -8913126
+            "getPublicLinkLabel": -8913126,
+            "resetVizLink": -77593412,
+            "copiedToClipboard": -47914300,
+            "copiedToClipboardSuccessfully": -26634816
         },
         "export": {
             "headerExport": 600,
