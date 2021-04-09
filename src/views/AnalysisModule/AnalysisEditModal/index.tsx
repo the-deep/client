@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import {
     _cs,
     randomString,
+    listToMap,
     isNotDefined,
     isDefined,
 } from '@togglecorp/fujs';
@@ -32,6 +33,7 @@ import {
     MultiResponse,
     FrameworkFields,
     UserMini,
+    PillarFilterItem,
     AnalysisPillarFormItem,
 } from '#typings';
 
@@ -79,6 +81,7 @@ const analysisSchema = {
 const userKeySelector = (u: UserMini) => u.id;
 const userLabelSelector = (u: UserMini) => u.displayName;
 
+const idSelector = (d: PillarFilterItem) => d.uniqueId;
 const childrenSelector = (d: MatrixTocElement) => d.children;
 
 const frameworkQueryFields = {
@@ -110,6 +113,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 // on a list. We might need TODO work on this if we decide to use
                 // UUID globally throughout DEEP
                 key: randomString(16),
+                filters: ap?.filters?.map(f => idSelector(f)),
             })),
         };
         return newValue;
@@ -188,11 +192,29 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         },
     });
 
+    // FIXME: Use new form and write appropriate typings
     const onValidationSuccess = useCallback((finalValues) => {
         setPristine(true);
-        setBodyToSend(finalValues);
+        const { analysisPillar = [] } = finalValues;
+        const matrixMap = listToMap(
+            matrixPillars,
+            idSelector,
+            d => ({
+                id: d.id,
+                key: d.key,
+                uniqueId: d.uniqueId,
+            }),
+        );
+        const newAnalysisPillar = analysisPillar.map(ap => ({
+            ...ap,
+            filters: ap?.filters?.map((f: string) => matrixMap[f]),
+        }));
+        setBodyToSend({
+            ...finalValues,
+            analysisPillar: newAnalysisPillar,
+        });
         triggerAnalysisEdit();
-    }, [triggerAnalysisEdit]);
+    }, [triggerAnalysisEdit, matrixPillars]);
 
     const rowRendererParams = useCallback((key, data, index) => ({
         index,

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
     _cs,
     listToMap,
@@ -98,6 +98,10 @@ function EntriesFilterForm(props: OwnProps) {
 
     const [faramValues, setFaramValues] = useState(filtersValue);
     const [faramErrors, setFaramErrors] = useState({});
+
+    useEffect(() => {
+        setFaramValues(filtersValue);
+    }, [filtersValue]);
     const [
         allFiltersVisible,
         showAllFilters,

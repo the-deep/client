@@ -17,6 +17,7 @@
     }
 
     .pillar-content {
+        position: relative;
         padding: 0 !important;
 
         .content {
@@ -48,6 +49,7 @@
                 }
             }
         }
+
         .pillar-analyses {
             display: flex;
             flex-direction: column;
@@ -63,6 +65,7 @@
                 border-radius: 0;
                 background: none;
                 padding: var(--dui-spacing-extra-large) var(--dui-spacing-large);
+                width: 100%;
                 color: var(--color-link);
             }
 
@@ -86,10 +89,5 @@
         .value {
             font-weight: var(--font-weight-bold);
         }
-    }
-    .body {
-        display: flex;
-        align-items: flex-start;
-        padding: var(--dui-spacing-small);
     }
 }

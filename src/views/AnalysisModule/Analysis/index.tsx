@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 import {
@@ -11,6 +11,7 @@ import Icon from '#rscg/Icon';
 import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import TextOutput from '#components/general/TextOutput';
 
 import useRequest from '#utils/request';
@@ -36,8 +37,11 @@ interface ComponentProps {
     activeProject: number;
     onEdit: (analysisId: number) => void;
     onDelete: (value: number) => void;
+    onAnalysisPillarDelete: () => void;
     teamLeadName: string;
     createdAt: string;
+    modifiedAt: string;
+    pendingAnalysisDelete: boolean;
 }
 
 interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
@@ -80,6 +84,7 @@ function PillarListItem(props: PillarListRendererProps) {
 function Analysis(props: ComponentProps) {
     const {
         title,
+        modifiedAt,
         className,
         startDate,
         endDate,
@@ -87,8 +92,10 @@ function Analysis(props: ComponentProps) {
         analysisId,
         onDelete,
         teamLeadName,
+        onAnalysisPillarDelete,
         createdAt,
         onEdit,
+        pendingAnalysisDelete,
     } = props;
 
     const handleEditClick = useCallback(() => {
@@ -103,6 +110,7 @@ function Analysis(props: ComponentProps) {
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
         limit: MAX_ITEMS_PER_PAGE,
     }), [activePage]);
+
     const [
         pillarPending,
         pillarResponse,
@@ -120,8 +128,14 @@ function Analysis(props: ComponentProps) {
         },
     );
 
+    // NOTE: Whenever the details of the analysis is changed, we refetch all the pillar
+    // analysis of that analysis
+    useEffect(() => {
+        pillarGetTrigger();
+    }, [pillarGetTrigger, modifiedAt]);
+
     const [
-        ,
+        pendingPillarDelete,
         ,
         ,
         deletePillarTrigger,
@@ -130,6 +144,7 @@ function Analysis(props: ComponentProps) {
             url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/${pillarAnalysisToDelete}/`,
             method: 'DELETE',
             onSuccess: () => {
+                onAnalysisPillarDelete();
                 pillarGetTrigger();
             },
             autoTrigger: false,
@@ -153,7 +168,14 @@ function Analysis(props: ComponentProps) {
         pillarId: data.id,
         projectId: activeProject,
         title: data.title,
-    }), [handlePillarAnalysisToDelete, createdAt, activeProject]);
+        pendingPillarDelete: pendingPillarDelete && data.id === pillarAnalysisToDelete,
+    }), [
+        handlePillarAnalysisToDelete,
+        createdAt,
+        activeProject,
+        pendingPillarDelete,
+        pillarAnalysisToDelete,
+    ]);
 
     const handleDeleteAnalysis = useCallback(() => {
         onDelete(analysisId);
@@ -166,6 +188,8 @@ function Analysis(props: ComponentProps) {
         }),
         [],
     );
+
+    const disabled = pendingPillarDelete || pendingAnalysisDelete;
 
     return (
         <ContainerCard
@@ -182,6 +206,7 @@ function Analysis(props: ComponentProps) {
                     <Button
                         className={styles.button}
                         variant="tertiary"
+                        disabled={disabled}
                         icons={(
                             <Icon name="add" />
                         )}
@@ -191,17 +216,20 @@ function Analysis(props: ComponentProps) {
                     <QuickActionButton
                         className={styles.button}
                         onClick={handleEditClick}
+                        disabled={disabled}
                     >
                         <Icon name="edit" />
                     </QuickActionButton>
                     <QuickActionButton
                         className={styles.button}
+                        disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
                         className={styles.button}
                         onClick={handleDeleteAnalysis}
+                        disabled={disabled}
                     >
                         <Icon name="delete" />
                     </QuickActionButton>
@@ -210,10 +238,10 @@ function Analysis(props: ComponentProps) {
             contentClassName={styles.pillarContent}
         >
             <div className={styles.content}>
+                {pendingAnalysisDelete && <LoadingAnimation />}
                 <div className={styles.contentItem}>
                     <TextOutput
                         className={styles.textOutput}
-                        labelClassName={styles.label}
                         valueClassName={styles.value}
                         label={_ts('analysis', 'teamLead')}
                         value={teamLeadName}
