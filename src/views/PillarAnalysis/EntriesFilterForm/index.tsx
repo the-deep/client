@@ -82,6 +82,7 @@ interface OwnProps {
     onFiltersValueChange: (filters: FaramValues) => void;
     projectId: number;
     widgets?: WidgetElement<unknown>[];
+    disabled?: boolean;
 }
 
 function EntriesFilterForm(props: OwnProps) {
@@ -94,6 +95,7 @@ function EntriesFilterForm(props: OwnProps) {
         geoOptions,
         regions,
         onFiltersValueChange,
+        disabled,
     } = props;
 
     const [faramValues, setFaramValues] = useState(filtersValue);
@@ -133,7 +135,7 @@ function EntriesFilterForm(props: OwnProps) {
             entry_type: [],
             project_entry_labels: [],
             lead_group_label: [],
-            ...listToMap(filters, v => v.key, v => []),
+            ...listToMap(filters, v => v.key, () => []),
         },
     }), [filters]);
 
@@ -192,7 +194,7 @@ function EntriesFilterForm(props: OwnProps) {
             schema={schema}
             value={faramValues}
             error={faramErrors}
-            disabled={pending}
+            disabled={pending || disabled}
             onValidationSuccess={handleFaramValidationSuccess}
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
@@ -279,14 +281,14 @@ function EntriesFilterForm(props: OwnProps) {
             )}
             <Button
                 className={styles.button}
-                disabled={pristine || pending}
+                disabled={pristine || pending || disabled}
                 type="submit"
             >
                 {_ts('pillarAnalysis', 'filterApplyFilter')}
             </Button>
             <Button
                 className={styles.button}
-                disabled={isClearDisabled || pending}
+                disabled={isClearDisabled || pending || disabled}
                 onClick={handleClearFilters}
                 variant="tertiary"
             >
@@ -296,6 +298,7 @@ function EntriesFilterForm(props: OwnProps) {
                 className={styles.button}
                 onClick={allFiltersVisible ? hideAllFilters : showAllFilters}
                 variant="tertiary"
+                disabled={disabled}
             >
                 {allFiltersVisible
                     ? _ts('pillarAnalysis', 'hideFiltersLabel')
