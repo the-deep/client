@@ -28,7 +28,6 @@ import styles from './styles.scss';
 interface Props{
     className?: string;
     projectId: string;
-    onModalClose?: () => void;
 }
 
 const maxItemsPerPage = 10;
@@ -39,7 +38,6 @@ function UserGroupList(props: Props) {
     const {
         className,
         projectId,
-        onModalClose,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -177,6 +175,7 @@ function UserGroupList(props: Props) {
                 <AddUserGroupModal
                     onModalClose={setModalHidden}
                     usergroupList={userGroupResponse?.results ?? []}
+                    projectId={projectId}
                 />
             )}
         </Container>

@@ -17,7 +17,7 @@ import {
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
-    UserGroup,
+    Membership,
     MultiResponse,
 } from '#typings';
 import { ProjectRole } from '#typings/project';
@@ -26,39 +26,36 @@ import styles from './styles.scss';
 
 interface Props {
     onModalClose: () => void;
-    usergroupList: UserGroup[];
-    projectId: string;
+    usersList: Membership[];
 }
 
-const usergroupKeySelector = (d: UserGroup) => d.id;
-
-const usergroupLabelSelector = (d: UserGroup) => d.title;
+const membersKeySelector = (d: Membership) => d.id;
+const membersLabelSelector = (d: Membership) => d.memberName;
 
 const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
 type FormType = {
-    member: number;
+    title: number;
     role: number;
 };
 
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
-type FormSchemaFields = ReturnType<FormSchema['fields']>;
+type FormSchemaFields = ReturnType<FormSchema['fields']>
 
 const schema: FormSchema = {
-    fields: ():FormSchemaFields => ({
-        member: [requiredCondition],
+    fields: (): FormSchemaFields => ({
+        title: [requiredCondition],
         role: [requiredCondition],
     }),
 };
 
 const defaultFormValues: PartialForm<FormType> = {};
 
-function AddUserGroupModal(props: Props) {
+function AddUserModal(props: Props) {
     const {
         onModalClose,
-        usergroupList,
-        projectId,
+        usersList,
     } = props;
 
     const {
@@ -79,29 +76,15 @@ function AddUserGroupModal(props: Props) {
         url: 'server://project-roles/',
         method: 'GET',
         autoTrigger: true,
+        onSuccess: () => console.warn(projectRolesResponse),
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'projectRoleFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        ,
-        ,
-        ,
-        triggerAddUserGroup,
-    ] = useRequest({
-        url: `server://projects/${projectId}/project-memberships/`,
-        method: 'POST',
-        body: value,
-        onSuccess: () => console.warn('Successfully posted'),
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectMembershipPostFailedLabel'))({ error: errorBody });
-        },
-    });
-
-    const handleSubmit = useCallback(() => {
-        triggerAddUserGroup();
-    }, [triggerAddUserGroup]);
+    const handleSubmit = useCallback((finalValues: PartialForm<FormType>) => {
+        console.warn('final values', finalValues);
+    }, []);
 
     return (
         <Modal
@@ -118,16 +101,15 @@ function AddUserGroupModal(props: Props) {
                 </p>
                 <div className={styles.inline}>
                     <SelectInput
-                        name="member"
-                        className={styles.usergroupList}
-                        options={usergroupList}
-                        keySelector={usergroupKeySelector}
-                        labelSelector={usergroupLabelSelector}
+                        name="title"
+                        className={styles.list}
+                        options={usersList}
+                        keySelector={membersKeySelector}
+                        labelSelector={membersLabelSelector}
                         optionsPopupClassName={styles.optionsPopup}
                         onChange={onValueChange}
-                        value={value.member}
-                        error={error?.fields?.member}
-                        placeholder="Select usergroup"
+                        value={value.title}
+                        placeholder="Select User"
                     />
                     <SelectInput
                         name="role"
@@ -138,7 +120,6 @@ function AddUserGroupModal(props: Props) {
                         optionsPopupClassName={styles.optionsPopup}
                         onChange={onValueChange}
                         value={value.role}
-                        error={error?.fields?.role}
                         placeholder="Select Role"
                     />
                 </div>
@@ -156,4 +137,4 @@ function AddUserGroupModal(props: Props) {
     );
 }
 
-export default AddUserGroupModal;
+export default AddUserModal;
