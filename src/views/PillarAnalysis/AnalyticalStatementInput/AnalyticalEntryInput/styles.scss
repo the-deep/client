@@ -1,0 +1,8 @@
+.entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: var(--dui-spacing-medium);
+    border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    padding: var(--dui-spacing-medium);
+}

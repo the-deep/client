@@ -30,7 +30,7 @@ export interface AnalysisPillarFormItem {
 }
 
 export interface PillarAnalysisElement extends AnalysisPillars{
-    analysisName: string;
+    analysisTitle: string;
     title: string;
     filters?: unknown;
 }
