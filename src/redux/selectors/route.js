@@ -56,5 +56,6 @@ export const entryIdFromRouteSelector = createRouteSelector('entryId');
 export const leadGroupIdFromRouteSelector = createRouteSelector('leadGroupId');
 export const projectIdFromRouteSelector = createRouteSelector('projectId');
 export const userIdFromRouteSelector = createRouteSelector('userId');
-export const questionnaireIdFromRouteSelector = createRouteSelector('questionnaireId'); export const analysisIdFromRouteSelector = createRouteSelector('analysisId');
+export const questionnaireIdFromRouteSelector = createRouteSelector('questionnaireId');
+export const analysisIdFromRouteSelector = createRouteSelector('analysisId');
 export const pillarAnalysisIdFromRouteSelector = createRouteSelector('pillarId');

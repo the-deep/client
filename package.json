@@ -123,7 +123,7 @@
     },
     "dependencies": {
         "@mapbox/mapbox-gl-draw": "^1.2.0",
-        "@the-deep/deep-ui": "^1.1.1",
+        "@the-deep/deep-ui": "^1.2.0",
         "@timilsinabishal/react-components": "https://github.com/the-deep/react-components",
         "@togglecorp/faram": "^1.2.1",
         "@togglecorp/fujs": "^1.9.2-beta.1",
@@ -194,6 +194,7 @@
         "react-focus-trap": "^2.7.1",
         "react-ga": "^2.6.0",
         "react-helmet": "^5.2.1",
+        "react-icons": "^4.2.0",
         "react-markdown": "^4.3.1",
         "react-redux": "^5.1.1",
         "react-resize-detector": "^2.3.0",

@@ -6,18 +6,18 @@ import {
     listToGroupList,
     randomString,
 } from '@togglecorp/fujs';
+import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
 import {
     Heading,
     Button,
+    QuickActionButton,
     TextArea,
 } from '@the-deep/deep-ui';
 import {
     PartialForm,
     useForm,
     useFormArray,
-    useFormObject,
-    Error,
 } from '@togglecorp/toggle-form';
 
 import ListView from '#rsu/../v2/View/ListView';
@@ -53,134 +53,10 @@ import {
 } from '#redux';
 import EntriesFilterForm from './EntriesFilterForm';
 import EntryItem from './EntryItem';
-import { schema, defaultFormValues, AnalyticalStatementType, AnalyticalEntryType } from './schema';
+import AnalyticalStatementInput from './AnalyticalStatementInput';
+import { schema, defaultFormValues, AnalyticalStatementType } from './schema';
 
 import styles from './styles.scss';
-
-interface AnalyticalEntryInputProps {
-   value: PartialForm<AnalyticalEntryType>,
-   error: Error<AnalyticalEntryType> | undefined;
-   // onChange: (value: PartialForm<AnalyticalEntryType>, index: number) => void;
-   onRemove: (index: number) => void;
-   index: number,
-}
-function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
-    const {
-        value,
-        error,
-        // onChange,
-        onRemove,
-        index,
-    } = props;
-
-    // const onFieldChange = useFormObject(index, value, onChange);
-
-    return (
-        <div>
-            <p>
-                {error?.$internal}
-            </p>
-            <h4>
-                {`Analytical Entry #${index + 1}`}
-            </h4>
-            <Button
-                name={index}
-                onClick={onRemove}
-                title="Remove Analytical Entry"
-            >
-                x
-            </Button>
-            {value.entry}
-        </div>
-    );
-}
-
-
-interface AnalyticalStatementInputProps {
-   value: PartialForm<AnalyticalStatementType>,
-   error: Error<AnalyticalStatementType> | undefined;
-   onChange: (value: PartialForm<AnalyticalStatementType>, index: number) => void;
-   onRemove: (index: number) => void;
-   index: number,
-}
-function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
-    const {
-        value,
-        error,
-        onChange,
-        onRemove,
-        index,
-    } = props;
-
-    const onFieldChange = useFormObject(index, value, onChange);
-
-    const {
-        // onValueChange: onAnalyticalEntryChange,
-        onValueRemove: onAnalyticalEntryRemove,
-    } = useFormArray('analyticalEntries', value.analyticalEntries ?? [], onFieldChange);
-
-    const handleAnalyticalEntryAdd = useCallback(
-        () => {
-            const uuid = randomString();
-            const newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
-                uuid,
-                // FIXME: add order
-                order: 0,
-                entry: Math.ceil(Math.random() * 100),
-            };
-            onFieldChange(
-                [...(value.analyticalEntries ?? []), newAnalyticalEntry],
-                'analyticalEntries' as const,
-            );
-        },
-        [onFieldChange, value.analyticalEntries],
-    );
-
-    return (
-        <div>
-            <div>
-                <p>
-                    {error?.$internal}
-                </p>
-                <h4>
-                    {`Analytical Statement #${index + 1}`}
-                </h4>
-                <Button
-                    name={index}
-                    onClick={onRemove}
-                    title="Remove Analytical Statement"
-                >
-                    x
-                </Button>
-                <TextArea
-                    label="Analytical Statement"
-                    name="statement"
-                    value={value.statement}
-                    onChange={onFieldChange}
-                    error={error?.fields?.statement}
-                />
-                <Button
-                    name={undefined}
-                    onClick={handleAnalyticalEntryAdd}
-                    title="Simulate Entry Drop"
-                >
-                    +
-                </Button>
-                {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
-                    <AnalyticalEntryInput
-                        key={analyticalEntry.uuid}
-                        index={myIndex}
-                        value={analyticalEntry}
-                        // onChange={onAnalyticalEntryChange}
-                        onRemove={onAnalyticalEntryRemove}
-                        // eslint-disable-next-line max-len
-                        error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.uuid]}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-}
 
 type EntryFieldsMin = Pick<
     EntryFields,
@@ -236,6 +112,7 @@ interface PropsFromState {
 
 interface PageProps {
 }
+
 function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
     const {
         pillarId,
@@ -450,12 +327,14 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                     </>
                 )}
             >
-                {breadcrumb(pillarAnalysis?.analysisName, pillarAnalysis?.title ?? '')}
+                {breadcrumb(pillarAnalysis?.analysisTitle, pillarAnalysis?.title ?? '')}
             </FullPageHeader>
             <div className={styles.content}>
-                <p>
-                    {error?.$internal}
-                </p>
+                {error?.$internal && (
+                    <p>
+                        {error?.$internal}
+                    </p>
+                )}
                 <div className={styles.inputsContainer}>
                     <div className={styles.inputContainer}>
                         <Heading
@@ -468,7 +347,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             onChange={onValueChange}
                             value={value.mainStatement}
                             error={error?.fields?.mainStatement}
-                            rows={10}
+                            rows={6}
                             disabled={pendingPillarAnalysis}
                         />
                     </div>
@@ -483,7 +362,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             value={value.informationGap}
                             onChange={onValueChange}
                             error={error?.fields?.informationGap}
-                            rows={10}
+                            rows={6}
                             disabled={pendingPillarAnalysis}
                         />
                     </div>
@@ -545,6 +424,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                     <div className={styles.rightContainer}>
                         {value.analyticalStatements?.map((analyticalStatement, index) => (
                             <AnalyticalStatementInput
+                                className={styles.analyticalStatement}
                                 key={analyticalStatement.uuid}
                                 index={index}
                                 value={analyticalStatement}
@@ -554,15 +434,15 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                                 error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
                             />
                         ))}
-                        <div>
-                            <Button
-                                name={undefined}
-                                onClick={handleAnalyticalStatementAdd}
-                                title="Add Analytical Statement"
-                            >
-                                +
-                            </Button>
-                        </div>
+                        <QuickActionButton
+                            className={styles.addStatementButton}
+                            name={undefined}
+                            onClick={handleAnalyticalStatementAdd}
+                            title="Add Analytical Statement"
+                            variant="primary"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
                     </div>
                 </div>
             </div>
