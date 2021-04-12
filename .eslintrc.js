@@ -72,7 +72,6 @@ module.exports = {
     rules: {
         strict: 0,
         indent: ['error', 4, { SwitchCase: 1 }],
-        'no-unused-vars': [1, { vars: 'all', args: 'after-used', ignoreRestSiblings: false }],
         'no-console': 0,
 
         camelcase: 'warn',
@@ -105,6 +104,15 @@ module.exports = {
         }],
 
         'jsx-a11y/label-has-for': 'warn',
+
+        'no-use-before-define': 'off',
+        '@typescript-eslint/no-use-before-define': ['error'],
+
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': ['error'],
+
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': ['error'],
 
         '@typescript-eslint/no-empty-interface': 0,
         '@typescript-eslint/explicit-function-return-type': 0,
