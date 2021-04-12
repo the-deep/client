@@ -1,0 +1,25 @@
+.information-card {
+    display: flex;
+    align-items: flex-start;
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-white);
+    padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+
+    &.colored-background {
+        &.accent {
+            background-color: var(--dui-color-accent);
+        }
+
+        &.complement-1 {
+            background-color: var(--dui-color-complement1);
+        }
+
+        &.complement-2 {
+            background-color: var(--dui-color-complement2);
+        }
+
+        &.complement-3 {
+            background-color: var(--dui-color-complement3);
+        }
+    }
+}

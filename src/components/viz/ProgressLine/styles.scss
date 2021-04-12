@@ -8,9 +8,9 @@
         flex-shrink: 0;
         justify-content: center;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        font-size: var(--font-size-large);
+        width: 48px;
+        height: 48px;
+        font-size: var(--dui-font-size-large);
         font-weight: var(--font-weight-bold);
 
         &.complement1 {
@@ -39,7 +39,7 @@
 
         .line {
             border-radius: var(--dui-border-radius-progress-bar);
-            background-color: var(--dui-color-background-progress-bar);
+            background-color: var(--dui-color-grey6);
             height: var(--dui-height-progress-bar);
 
             .progress {

@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
+import { IoCheckmarkCircle } from 'react-icons/io5';
 import {
     ElementFragments,
     Link,
+    Button,
 } from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
-import Button from '#rsca/Button';
 
 import { Assignment } from '#typings';
 
@@ -34,44 +35,40 @@ function AssignmentItem(props: AssignmentRendererProps) {
     return (
         <div className={styles.assignmentItem}>
             <ElementFragments
-                childrenContainerClassName={styles.content}
-            >
-                <div className={styles.assignmentTitle}>
-                    <Link
-                        className={styles.link}
-                        to={emptyLink}
+                actions={(
+                    <Button
+                        className={styles.markAsDoneButton}
+                        onClick={handleClick}
+                        disabled={markAsDonePending}
+                        variant="action"
                     >
+                        <IoCheckmarkCircle />
+                    </Button>
+                )}
+                childrenContainerClassName={styles.mainContent}
+            >
+                <div className={styles.description}>
+                    <Link to={emptyLink}>
                         {props.createdByDetails.displayName}
                     </Link>
-                    <div className={styles.text}> {_ts('assignment', 'assignedYou')} </div>
-                    <Link
-                        className={styles.link}
-                        to={emptyLink}
-                    >
+                    &nbsp;
+                    {_ts('assignment', 'assignedYou')}
+                    &nbsp;
+                    <Link to={emptyLink}>
                         {props.contentObjectDetails?.title}
                     </Link>
-                    <div className={styles.text}> {_ts('assignment', 'in')} </div>
-                    <Link
-                        to={emptyLink}
-                        className={styles.link}
-                    >
+                    &nbsp;
+                    {_ts('assignment', 'in')}
+                    &nbsp;
+                    <Link to={emptyLink}>
                         {props.projectDetails?.title}
                     </Link>
                 </div>
-                <div className={styles.dateContainer}>
-                    <FormattedDate
-                        className={styles.date}
-                        value={props.createdAt}
-                        mode="hh:mm aaa, MMM dd, yyyy"
-                    />
-                    <Button
-                        transparent
-                        iconName="checkCircle"
-                        className={styles.button}
-                        onClick={handleClick}
-                        disabled={markAsDonePending}
-                    />
-                </div>
+                <FormattedDate
+                    className={styles.createdDate}
+                    value={props.createdAt}
+                    mode="hh:mm aaa, MMM dd, yyyy"
+                />
             </ElementFragments>
         </div>
     );

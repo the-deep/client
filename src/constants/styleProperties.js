@@ -66,7 +66,7 @@ const styleProperties = {
 
         heightActionBar: '42px',
 
-        fontSizeExtremeLarge: '32px',
+        fontSizeUltraLarge: '38px',
     },
 };
 
