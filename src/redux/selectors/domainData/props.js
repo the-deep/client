@@ -22,3 +22,4 @@ export const projectIdFromRoute = getFromProps('projectId');
 export const userIdFromRoute = getFromProps('userId');
 export const connectorIdFromRoute = getFromProps('connectorId');
 export const questionnaireIdFromRoute = getFromProps('questionnaireId');
+export const pillarAnalysisIdFromRoute = getFromProps('pillarId');

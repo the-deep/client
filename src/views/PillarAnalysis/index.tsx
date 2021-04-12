@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
     isDefined,
@@ -6,6 +6,7 @@ import {
     listToGroupList,
     randomString,
 } from '@togglecorp/fujs';
+import { Dispatch } from 'redux';
 import {
     Heading,
     Button,
@@ -47,6 +48,8 @@ import {
     analysisIdFromRouteSelector,
     pillarAnalysisIdFromRouteSelector,
     activeProjectFromStateSelector,
+    editPillarAnalysisPillarAnalysisSelector,
+    setPillarAnalysisDataAction,
 } from '#redux';
 import EntriesFilterForm from './EntriesFilterForm';
 import EntryItem from './EntryItem';
@@ -199,28 +202,51 @@ const maxItemsPerPage = 5;
 
 const entryKeySelector = (d: EntryFieldsMin) => d.id;
 
-const mapStateToProps = (state: AppState) => ({
+const mapStateToProps = (state: AppState, props: unknown) => ({
     // FIXME: get this from url directly
     pillarId: pillarAnalysisIdFromRouteSelector(state),
     analysisId: analysisIdFromRouteSelector(state),
     projectId: projectIdFromRouteSelector(state),
+
     // FIXME: get this from request
     activeProject: activeProjectFromStateSelector(state),
+
+    pillarAnalysis: editPillarAnalysisPillarAnalysisSelector(state, props),
 });
 
-interface PageProps {
+interface PropsFromDispatch {
+    setPillarAnalysisData: typeof setPillarAnalysisDataAction;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setPillarAnalysisData: params => dispatch(setPillarAnalysisDataAction(params)),
+});
+
+interface PropsFromState {
     pillarId: number;
     projectId: number;
     analysisId: number;
+
     activeProject: ProjectDetails;
+    pillarAnalysis: {
+        id: number;
+        data: typeof defaultFormValues;
+    } | undefined;
 }
-function PillarAnalysis(props: PageProps) {
+
+interface PageProps {
+}
+function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
     const {
         pillarId,
         analysisId,
         projectId,
         activeProject,
+        pillarAnalysis: pillarAnalysisFromProps,
+        setPillarAnalysisData,
     } = props;
+
+    // FIXME: set initial pristine value on form
 
     const {
         pristine,
@@ -229,7 +255,18 @@ function PillarAnalysis(props: PageProps) {
         onValueChange,
         validate,
         onErrorSet,
-    } = useForm(defaultFormValues, schema);
+    } = useForm(pillarAnalysisFromProps?.data ?? defaultFormValues, schema);
+
+    useEffect(
+        () => {
+            setPillarAnalysisData({
+                id: pillarId,
+                data: value,
+                pristine,
+            });
+        },
+        [value, pillarId, setPillarAnalysisData, pristine],
+    );
 
     const handleSubmit = useCallback(
         () => {
@@ -533,4 +570,4 @@ function PillarAnalysis(props: PageProps) {
     );
 }
 
-export default connect(mapStateToProps)(PillarAnalysis);
+export default connect(mapStateToProps, mapDispatchToProps)(PillarAnalysis);

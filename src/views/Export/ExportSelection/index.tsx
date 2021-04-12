@@ -145,7 +145,7 @@ interface OwnProps {
     projectId: number;
 }
 
-type Props = OwnProps &PropsFromState & PropsFromDispatch;
+type Props = OwnProps & PropsFromState & PropsFromDispatch;
 
 function EntriesExportSelection(props: Props) {
     const {
@@ -164,7 +164,7 @@ function EntriesExportSelection(props: Props) {
         widgets,
     } = analysisFramework;
 
-    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
+    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.create_only_unprotected;
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [activeExportTypeKey, setActiveExportTypeKey] = useState<ExportType>('word');
     const [decoupledEntries, setDecoupledEntries] = useState<boolean>(true);
