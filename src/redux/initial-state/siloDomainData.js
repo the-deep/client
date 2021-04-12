@@ -148,6 +148,15 @@ const initialSiloDomainData = {
         */
     },
 
+    editPillarAnalysis: {
+        /*
+        1: {
+            id,
+            data: {},
+        }
+        */
+    },
+
     // i specifies lead
     editEntries: {
         /*
