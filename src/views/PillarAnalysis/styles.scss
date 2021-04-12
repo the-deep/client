@@ -86,6 +86,7 @@
             }
 
             .right-container {
+                display: flex;
                 flex-basis: calc(100% - var(--width-left-container));
                 padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
                 overflow: auto;
