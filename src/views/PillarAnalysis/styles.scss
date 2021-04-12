@@ -88,8 +88,18 @@
             .right-container {
                 display: flex;
                 flex-basis: calc(100% - var(--width-left-container));
-                padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+                padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
                 overflow: auto;
+
+                .analytical-statement {
+                    flex-shrink: 0;
+                }
+
+                .add-statement-button {
+                    align-self: flex-start;
+                    flex-shrink: 0;
+                    margin: var(--dui-spacing-medium);
+                }
             }
         }
     }
