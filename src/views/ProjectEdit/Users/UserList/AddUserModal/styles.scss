@@ -1,0 +1,30 @@
+.modal-body {
+    display: flex;
+
+    .form {
+        display: flex;
+        flex-direction: column;
+
+        .usergroup-list {
+            display: flex;
+            margin: 0 var(--spacing-small);
+        }
+
+        .role-list {
+            display: flex;
+        }
+        .inline {
+            display: flex;
+        }
+    }
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    margin: var(--spacing-medium) 0;
+}
+
+.options-popup {
+    z-index: 1;
+}

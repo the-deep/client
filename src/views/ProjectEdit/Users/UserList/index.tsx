@@ -14,11 +14,13 @@ import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 
+import { useModalState } from '#hooks/stateManagement';
 import {
     Membership,
     MultiResponse,
 } from '#typings';
 
+import AddUserModal from './AddUserModal';
 import styles from './styles.scss';
 
 interface Props{
@@ -40,6 +42,11 @@ function UserList(props: Props) {
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
     }), [activePage]);
+    const [
+        showAddUserModal,
+        setModalShow,
+        setModalHidden,
+    ] = useModalState(false);
 
     const [
         usersPending,
@@ -113,6 +120,10 @@ function UserList(props: Props) {
         />
     ), []);
 
+    const handleAddUserClick = useCallback(() => {
+        setModalShow();
+    }, [setModalShow]);
+
     return (
         <Container
             className={_cs(className, styles.users)}
@@ -128,6 +139,7 @@ function UserList(props: Props) {
                             name="add"
                         />
                     )}
+                    onClick={handleAddUserClick}
                 >
                     {_ts('projectEdit', 'addUser')}
                 </Button>
@@ -151,6 +163,12 @@ function UserList(props: Props) {
                     showItemsPerPageChange={false}
                 />
             )}
+            {showAddUserModal &&
+                <AddUserModal
+                    onModalClose={setModalHidden}
+                    projectId={projectId}
+                />
+            }
         </Container>
     );
 }

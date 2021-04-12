@@ -15,11 +15,14 @@ import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 
+import { useModalState } from '#hooks/stateManagement';
+
 import {
     MultiResponse,
     UserGroup,
 } from '#typings';
 
+import AddUserGroupModal from './AddUserGroupModal';
 import styles from './styles.scss';
 
 interface Props{
@@ -42,6 +45,12 @@ function UserGroupList(props: Props) {
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
     }), [activePage]);
+
+    const [
+        showAddUserGroupModal,
+        setModalShow,
+        setModalHidden,
+    ] = useModalState(false);
 
     const [
         userGroupPending,
@@ -103,6 +112,10 @@ function UserGroupList(props: Props) {
         />
     ), []);
 
+    const handleAddUsergroupClick = useCallback(() => {
+        setModalShow();
+    }, []);
+
     return (
         <Container
             className={_cs(className, styles.userGroups)}
@@ -137,6 +150,7 @@ function UserGroupList(props: Props) {
                                 name="add"
                             />
                         )}
+                        onClick={handleAddUsergroupClick}
                     >
                         {_ts('projectEdit', 'addUserGroup')}
                     </Button>
@@ -159,6 +173,12 @@ function UserGroupList(props: Props) {
                     maxItemsPerPage={maxItemsPerPage}
                     onPageClick={setActivePage}
                     showItemsPerPageChange={false}
+                />
+            )}
+            {showAddUserGroupModal && (
+                <AddUserGroupModal
+                    onModalClose={setModalHidden}
+                    projectId={projectId}
                 />
             )}
         </Container>
