@@ -4,7 +4,7 @@ import {
     Link,
 } from '@the-deep/deep-ui';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#dui/Avatar';
 import FormattedDate from '#rscv/FormattedDate';
 
 import _ts from '#ts';
@@ -34,9 +34,9 @@ function ActivityItem(props: RecentActivityProps) {
         <div className={styles.activityItem}>
             <ElementFragments
                 icons={(
-                    <DisplayPicture
+                    <Avatar
                         className={styles.displayPicture}
-                        url={createdByDisplayPicture}
+                        src={createdByDisplayPicture}
                     />
                 )}
                 childrenContainerClassName={styles.mainContent}
