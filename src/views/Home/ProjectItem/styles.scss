@@ -50,7 +50,7 @@
                 align-items: flex-start;
                 flex-wrap: wrap;
                 margin: var(--dui-spacing-medium);
-                background-color: var(--dui-color-surface-negative);
+                background-color: var(--dui-color-surface-information);
                 width: 108px;
 
                 .bookmark-icon {
@@ -61,7 +61,7 @@
             .progress-lines {
                 flex-grow: 1;
                 margin: var(--dui-spacing-medium);
-                background-color: var(--dui-color-surface-negative);
+                background-color: var(--dui-color-surface-information);
                 padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium)) var(--dui-spacing-large);
 
                 >* {

@@ -1,6 +1,11 @@
 .user-groups {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
     .header {
         display: flex;
+        flex-shrink: 0;
 
         .heading {
             display: flex;
@@ -22,6 +27,17 @@
             flex-grow: 1;
             justify-content: space-between;
             justify-self: flex-start;
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        overflow: auto;
+
+        .table {
+            flex-grow: 1;
+            overflow-y: auto;
         }
     }
 }

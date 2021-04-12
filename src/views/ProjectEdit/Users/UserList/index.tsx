@@ -36,18 +36,18 @@ function UserList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const queryForRequest = useMemo(() => ({
+        offset: (activePage - 1) * maxItemsPerPage,
+        limit: maxItemsPerPage,
+    }), [activePage]);
 
     const [
         usersPending,
         usersResponse,
     ] = useRequest<MultiResponse<Membership>>({
-        url: 'server://project-memberships/',
+        url: `server://projects/${projectId}/project-memberships/`,
         method: 'GET',
-        query: {
-            project: projectId,
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-        },
+        query: queryForRequest,
         autoTrigger: true,
     });
 
@@ -89,10 +89,11 @@ function UserList(props: Props) {
             ),
         },
         {
-            key: 'roleTitle',
+            key: 'roleDetails',
             label: _ts('projectEdit', 'assignedRole'),
             order: 6,
             sortable: false,
+            modifier: row => row.roleDetails.title,
         },
     ]), []);
 
@@ -117,8 +118,10 @@ function UserList(props: Props) {
             className={_cs(className, styles.users)}
             heading={_ts('projectEdit', 'projectUsers')}
             headingClassName={styles.heading}
+            contentClassName={styles.content}
             headerActions={(
                 <Button
+                    name="add-member"
                     variant="tertiary"
                     icons={(
                         <Icon
@@ -131,6 +134,7 @@ function UserList(props: Props) {
             )}
         >
             <RawTable
+                className={styles.table}
                 data={usersResponse?.results ?? []}
                 dataModifier={dataModifier}
                 headerModifier={headerModifier}

@@ -23,7 +23,10 @@ export interface Membership {
     memberStatus: 'admin' | 'member';
     project: number;
     role: number;
-    roleTitle: string;
+    roleDetails: {
+        id: number;
+        title: string;
+    };
     joinedAt: string;
     userGroupOptions: BasicElement[];
 }
@@ -151,7 +154,10 @@ export interface UserGroup {
     role: number;
     addedBy: number;
     addedByName: string;
-    roleTitle: string;
+    roleDetails: {
+        id: number;
+        title: string;
+    };
 }
 
 type Permissions = 'view' | 'create' | 'modify' | 'delete'

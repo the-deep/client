@@ -29,9 +29,8 @@ import styles from './styles.scss';
 
 const requestOptions = {
     changeMembershipRequest: {
-        url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
+        url: ({ props: { projectId }, params: { membership } }) => `/projects/${projectId}/project-memberships/${membership.id}/`,
         method: methods.PUT,
-        body: ({ params: { membership } }) => membership,
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             response: membership,
@@ -48,7 +47,7 @@ const requestOptions = {
     },
 
     removeUserMembershipRequest: {
-        url: ({ params: { membership: { id } } }) => `/project-memberships/${id}/`,
+        url: ({ props: { projectId }, params: { membership: { id } } }) => `/projects/${projectId}/project-memberships/${id}/`,
         method: methods.DELETE,
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({

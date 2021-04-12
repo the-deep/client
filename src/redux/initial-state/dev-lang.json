@@ -3783,7 +3783,6 @@
             "userGroup": -70810293,
             "manageUserGroup": -79283838,
             "addUserGroup": -88838184
->>>>>>> 13dc26f78 (Use translations instead of raw strings)
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

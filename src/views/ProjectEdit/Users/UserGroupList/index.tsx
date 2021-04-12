@@ -16,7 +16,6 @@ import useRequest from '#utils/request';
 import _ts from '#ts';
 
 import {
-    Membership,
     MultiResponse,
     UserGroup,
 } from '#typings';
@@ -25,7 +24,6 @@ import styles from './styles.scss';
 
 interface Props{
     className?: string;
-    users: Membership[];
     projectId: string;
 }
 
@@ -40,16 +38,18 @@ function UserGroupList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const queryForRequest = useMemo(() => ({
+        offset: (activePage - 1) * maxItemsPerPage,
+        limit: maxItemsPerPage,
+    }), [activePage]);
 
     const [
         userGroupPending,
         userGroupResponse,
     ] = useRequest<MultiResponse<UserGroup>>({
-        url: 'server://project-usergroups/',
+        url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
-        query: {
-            project: projectId,
-        },
+        query: queryForRequest,
         autoTrigger: true,
     });
 
@@ -79,10 +79,11 @@ function UserGroupList(props: Props) {
             ),
         },
         {
-            key: 'roleTitle',
+            key: 'roleDetails',
             label: _ts('projectEdit', 'groupRole'),
             order: 4,
             sortable: false,
+            modifier: row => row.roleDetails.title,
         },
     ]), []);
 
@@ -125,10 +126,12 @@ function UserGroupList(props: Props) {
             )}
             headingClassName={styles.heading}
             headerClassName={styles.header}
+            contentClassName={styles.content}
             headerActions={(
                 <div className={styles.actions}>
                     <Button
                         variant="tertiary"
+                        name="add-usergroup"
                         icons={(
                             <Icon
                                 name="add"
@@ -141,6 +144,7 @@ function UserGroupList(props: Props) {
             )}
         >
             <RawTable
+                className={styles.table}
                 data={userGroupResponse?.results ?? []}
                 dataModifier={dataModifier}
                 headerModifier={headerModifier}
