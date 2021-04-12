@@ -49,9 +49,8 @@ const defaultProps = {
 
 const requestOptions = {
     changeUserGroupRoleRequest: {
-        url: ({ params: { usergroupMembership } }) => `/project-usergroups/${usergroupMembership.id}/`,
+        url: ({ props, params: { usergroupMembership } }) => `/projects/${props.projectId}/project-usergroups/${usergroupMembership.id}/`,
         method: methods.PATCH,
-        body: ({ params: { usergroupMembership } }) => usergroupMembership,
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             params: { usergroupMembership },
@@ -68,7 +67,7 @@ const requestOptions = {
         },
     },
     removeUsergroupMembershipRequest: {
-        url: ({ params: { membershipId } }) => `/project-usergroups/${membershipId}/`,
+        url: ({ props, params: { membershipId } }) => `/projects/${props.projectId}/project-usergroups/${membershipId.id}/`,
         method: methods.DELETE,
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({

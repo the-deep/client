@@ -41,10 +41,9 @@ function UserList(props: Props) {
         usersPending,
         usersResponse,
     ] = useRequest<MultiResponse<Membership>>({
-        url: 'server://project-memberships/',
+        url: `server://projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: {
-            project: projectId,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
@@ -89,10 +88,11 @@ function UserList(props: Props) {
             ),
         },
         {
-            key: 'roleTitle',
+            key: 'roleDetails',
             label: _ts('projectEdit', 'assignedRole'),
             order: 6,
             sortable: false,
+            modifier: row => row.roleDetails.title,
         },
     ]), []);
 

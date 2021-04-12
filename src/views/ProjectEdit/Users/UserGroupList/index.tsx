@@ -16,7 +16,6 @@ import useRequest from '#utils/request';
 import _ts from '#ts';
 
 import {
-    Membership,
     MultiResponse,
     UserGroup,
 } from '#typings';
@@ -25,7 +24,6 @@ import styles from './styles.scss';
 
 interface Props{
     className?: string;
-    users: Membership[];
     projectId: string;
 }
 
@@ -45,10 +43,11 @@ function UserGroupList(props: Props) {
         userGroupPending,
         userGroupResponse,
     ] = useRequest<MultiResponse<UserGroup>>({
-        url: 'server://project-usergroups/',
+        url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
         query: {
-            project: projectId,
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
         },
         autoTrigger: true,
     });
@@ -79,10 +78,11 @@ function UserGroupList(props: Props) {
             ),
         },
         {
-            key: 'roleTitle',
+            key: 'roleDetails',
             label: _ts('projectEdit', 'groupRole'),
             order: 4,
             sortable: false,
+            modifier: row => row.roleDetails.title,
         },
     ]), []);
 

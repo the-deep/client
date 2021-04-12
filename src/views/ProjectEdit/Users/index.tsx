@@ -1,12 +1,5 @@
 import React from 'react';
 
-import useRequest from '#utils/request';
-
-import {
-    Membership,
-    MultiResponse,
-} from '#typings';
-
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
 
@@ -19,18 +12,6 @@ interface Props {
 function Users(props: Props) {
     const { projectId } = props;
 
-    const [
-        ,
-        usersResponse,
-    ] = useRequest<MultiResponse<Membership>>({
-        url: 'server://project-memberships/',
-        method: 'GET',
-        query: {
-            project: projectId,
-        },
-        autoTrigger: true,
-    });
-
     return (
         <div className={styles.users}>
             <UserList
@@ -39,7 +20,6 @@ function Users(props: Props) {
             />
             <UserGroupList
                 className={styles.userGroupList}
-                users={usersResponse?.results ?? []}
                 projectId={projectId}
             />
         </div>

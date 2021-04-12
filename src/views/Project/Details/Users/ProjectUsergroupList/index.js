@@ -72,9 +72,8 @@ const requestOptions = {
     usergroupListRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
-        url: '/project-usergroups/',
+        url: ({ props }) => `/projects/${props.projectId}/project-usergroups/`,
         method: methods.GET,
-        query: ({ props: { projectId } }) => ({ project: projectId }),
         onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             response = {},
