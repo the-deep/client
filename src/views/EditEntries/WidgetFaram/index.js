@@ -229,7 +229,12 @@ function WidgetFaram(props) {
 
     // can only create entry
     const handleExcerptCreate = useCallback((excerptData) => {
-        const { type, value, dropped } = excerptData;
+        const {
+            type,
+            value,
+            dropped,
+            imageDetails,
+        } = excerptData;
 
         addEntry({
             leadId,
@@ -244,6 +249,7 @@ function WidgetFaram(props) {
                 ),
             },
             dropped,
+            imageDetails,
         });
     }, [
         addEntry,
