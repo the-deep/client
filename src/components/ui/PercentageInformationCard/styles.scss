@@ -1,0 +1,89 @@
+.percentage-information-card {
+    display: flex;
+    align-items: flex-start;
+    border-radius: var(--dui-border-radius-card);
+    background-color: var(--dui-color-white);
+    padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+
+    .value-container {
+        font-size: var(--font-size-super-large);
+    }
+
+    .chart {
+        .unfilled-arc {
+            background-color: var(--dui-color-grey5);
+        }
+
+        .icon-container {
+            --margin: 0.4em;
+            --width: calc(100% - 2 * var(--margin));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: var(--margin);
+            border-radius: 50%;
+            background-color: var(--dui-color-grey5);
+            width: var(--width);
+            height: var(--width);
+            font-size: 0.7em;
+        }
+    }
+
+    &.colored-background {
+        &.accent {
+            background-color: var(--dui-color-accent);
+        }
+
+        &.complement-1 {
+            background-color: var(--dui-color-complement1);
+        }
+
+        &.complement-2 {
+            background-color: var(--dui-color-complement2);
+        }
+
+        &.complement-3 {
+            background-color: var(--dui-color-complement3);
+        }
+
+        .chart {
+            .filled-arc {
+                fill: var(--dui-color-text-on-dark);
+            }
+        }
+    }
+
+    &:not(&.colored-background) {
+        &.accent {
+            .chart {
+                .filled-arc {
+                    fill: var(--dui-color-accent);
+                }
+            }
+        }
+
+        &.complement-1 {
+            .chart {
+                .filled-arc {
+                    fill: var(--dui-color-complement1);
+                }
+            }
+        }
+
+        &.complement-2 {
+            .chart {
+                .filled-arc {
+                    fill: var(--dui-color-complement2);
+                }
+            }
+        }
+
+        &.complement-3 {
+            .chart {
+                .filled-arc {
+                    fill: var(--dui-color-complement3);
+                }
+            }
+        }
+    }
+}

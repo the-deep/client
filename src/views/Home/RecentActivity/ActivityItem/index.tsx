@@ -24,7 +24,7 @@ interface RecentActivityProps {
 function ActivityItem(props: RecentActivityProps) {
     const {
         createdAt,
-        createdByDisplayName,
+        createdByDisplayName = 'Unknown user',
         createdByDisplayPicture,
         projectDisplayName,
         type,
@@ -39,30 +39,24 @@ function ActivityItem(props: RecentActivityProps) {
                         url={createdByDisplayPicture}
                     />
                 )}
-                childrenContainerClassName={styles.content}
+                childrenContainerClassName={styles.mainContent}
             >
-                <div className={styles.activityTitle}>
-                    <Link
-                        className={styles.link}
-                        to={emptyLink}
-                    >
+                <div className={styles.description}>
+                    <Link to={emptyLink}>
                         {createdByDisplayName}
                     </Link>
-                    <div className={styles.actionType}>
-                        {type === 'lead'
-                            ? _ts('recentActivity', 'leadAdded')
-                            : _ts('recentActivity', 'entryCommentAdded')
-                        }
-                    </div>
-                    <Link
-                        className={styles.link}
-                        to={emptyLink}
-                    >
+                    &nbsp;
+                    {type === 'lead'
+                        ? _ts('recentActivity', 'leadAdded')
+                        : _ts('recentActivity', 'entryCommentAdded')
+                    }
+                    &nbsp;
+                    <Link to={emptyLink}>
                         {projectDisplayName}
                     </Link>
                 </div>
                 <FormattedDate
-                    className={styles.date}
+                    className={styles.createdDate}
                     value={createdAt}
                     mode="hh:mm aaa, MMM dd, yyyy"
                 />

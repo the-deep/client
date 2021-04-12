@@ -1,66 +1,39 @@
 .home {
     display: flex;
-    background-color: #f6f6f6;
+    background-color: var(--dui-color-background);
+    height: 100%;
     overflow: auto;
 
-    .content {
-        border-radius: 5px;
-        min-height: 320px;
-    }
+    .main-content {
+        flex-grow: 1;
 
-    --width-right-content: 400px;
-
-    .left-container {
-        flex-basis: calc(100% - var(--width-right-content));
-        padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-large)) calc(2 * var(--dui-spacing-super-large) - var(--dui-spacing-large));
-
-        .header {
+        .top-section {
             display: flex;
-            align-items: center;
-            padding: var(--dui-spacing-medium) 0;
-        }
-
-        .left-top-container {
-            display: flex;
-            --width-summary-container: 420px;
+            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
 
             .summary-container {
-                flex-basis: var(--width-summary-container);
-                margin: var(--dui-spacing-large);
+                width: 480px;
             }
 
-            .project-tagging-activity {
-                flex-basis: calc(100% - var(--width-summary-container));
-                margin: var(--dui-spacing-large);
-
-                .content {
-                    display: flex;
-                    flex-grow: 1;
-                    border-radius: var(--dui-border-radius-card);
-                    background-color: var(--color-foreground);
-                    padding: var(--dui-spacing-large);
-                }
+            .tagging-activity-container {
+                flex-grow: 1;
+                overflow: auto;
             }
         }
 
-        .left-bottom-container {
-            margin: var(--dui-spacing-large);
-
-            .project-item {
-                margin: var(--dui-spacing-large) 0;
-            }
-
-            .project-select-input {
-                margin: 0 var(--dui-spacing-medium);
-            }
+        .bottom-section {
+            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
         }
     }
 
-    .right-container {
-        flex-basis: var(--width-right-content);
+    .side-content {
+        align-self: flex-start;
+        flex-basis: calc(200px + 10vw);
+        flex-grow: 0;
         flex-shrink: 0;
-        background-color: var(--color-foreground);
-        padding: var(--dui-spacing-medium) var(--dui-spacing-super-large);
+        background-color: var(--dui-color-white);
+        padding: calc(var(--spacing-extra-large) - var(--spacing-medium));
+        overflow: auto;
     }
 }
 

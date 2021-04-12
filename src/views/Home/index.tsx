@@ -6,13 +6,14 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 import {
-    Header,
     ButtonLikeLink,
+    Container,
+    Card,
 } from '@the-deep/deep-ui';
 import { Redirect } from 'react-router-dom';
 
 import SelectInput from '#rsci/SelectInput';
-import ListView from '#rscv/List/ListView';
+import List from '#rscv/List';
 
 import Badge from '#components/viewer/Badge';
 import { pathNames } from '#constants';
@@ -78,6 +79,7 @@ interface ViewProps {
     userProjects: ProjectElement[];
     activeUser: User;
     activeProject: number;
+    className?: string;
 }
 
 const getRecentProjectStat = (projectStat: ProjectStat) => ({
@@ -105,6 +107,7 @@ function Home(props: ViewProps) {
             accessibleFeatures = [],
         },
         activeProject,
+        className,
     } = props;
 
     const [selectedProject, setSelectedProject] = useState<number | undefined>(undefined);
@@ -172,7 +175,6 @@ function Home(props: ViewProps) {
     }, [projectStats, selectedProject]);
 
     const recentProjectsRendererParams = useCallback((_, data) => ({
-        className: styles.projectItem,
         ...data,
     }), []);
 
@@ -194,8 +196,9 @@ function Home(props: ViewProps) {
 
     const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
 
-    if (!accessNewUi) {
+    if (!accessNewUi && activeProject) {
         const routeTo = reverseRoute(pathNames.dashboard, { projectId: activeProject });
+
         return (
             <Redirect
                 to={{
@@ -206,38 +209,31 @@ function Home(props: ViewProps) {
     }
 
     return (
-        <div className={styles.home}>
-            <div className={styles.leftContainer}>
-                <div className={styles.leftTopContainer}>
-                    <div className={styles.summaryContainer}>
-                        <Header
-                            className={styles.header}
-                            heading={_ts('home', 'summaryOfMyProjectsHeading')}
-                        />
-                        <Summary
-                            pending={summaryPending}
-                            summaryResponse={summaryResponse}
-                            className={styles.content}
-                        />
-                    </div>
-                    <div className={styles.projectTaggingActivity}>
-                        <Header
-                            className={styles.header}
-                            heading={_ts('home', 'projectTaggingActivityHeading')}
-                        />
-                        <Activity
-                            className={styles.content}
-                            pending={summaryPending}
-                            recentActivity={summaryResponse?.recentEntriesActivity}
-                        />
-                    </div>
+        <div className={_cs(styles.home, className)}>
+            <div className={styles.mainContent}>
+                <div className={styles.topSection}>
+                    <Summary
+                        heading={_ts('home', 'summaryOfMyProjectsHeading')}
+                        className={styles.summaryContainer}
+                        pending={summaryPending}
+                        summaryResponse={summaryResponse}
+                    />
+                    <Container
+                        className={styles.taggingActivityContainer}
+                        heading={_ts('home', 'projectTaggingActivityHeading')}
+                    >
+                        <Card>
+                            <Activity
+                                pending={summaryPending}
+                                recentActivity={summaryResponse?.recentEntriesActivity}
+                            />
+                        </Card>
+                    </Container>
                 </div>
-                <div className={styles.leftBottomContainer}>
-                    <Header
+                <div className={styles.bottomSection}>
+                    <Container
                         heading={_ts('home', 'recentProjectsHeading')}
-                        headingSize="large"
-                        className={styles.header}
-                        actions={(
+                        headerActions={(
                             <>
                                 <SelectInput
                                     keySelector={projectKeySelector}
@@ -247,7 +243,6 @@ function Home(props: ViewProps) {
                                     placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
                                     showHintAndError={false}
                                     showLabel={false}
-                                    className={styles.projectSelectInput}
                                     value={selectedProject}
                                     onChange={handleProjectChange}
                                 />
@@ -259,17 +254,18 @@ function Home(props: ViewProps) {
                                 </ButtonLikeLink>
                             </>
                         )}
-                    />
-                    <ListView
-                        data={finalRecentProjects}
-                        rendererParams={recentProjectsRendererParams}
-                        renderer={ProjectItem}
-                        keySelector={recentProjectKeySelector}
-                        pending={projectStatsPending || pendingRecentProjects}
-                    />
+                    >
+                        <List
+                            data={finalRecentProjects}
+                            rendererParams={recentProjectsRendererParams}
+                            renderer={ProjectItem}
+                            keySelector={recentProjectKeySelector}
+                            pending={projectStatsPending || pendingRecentProjects}
+                        />
+                    </Container>
                 </div>
             </div>
-            <div className={styles.rightContainer}>
+            <div className={styles.sideContent}>
                 <Assignment />
                 <RecentActivity />
             </div>

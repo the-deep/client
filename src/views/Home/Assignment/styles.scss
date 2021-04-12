@@ -1,34 +1,10 @@
-.assignment {
-    display: flex;
-    flex-direction: column;
-    padding: var(--dui-spacing-large);
+.assignments {
+    background-color: var(--dui-color-white);
 
-    .header{
-        padding: var(--dui-spacing-small) 0;
-
-        .mark-button {
-            padding: 0;
-        }
-    }
-
-    .content-container {
-        display: flex;
-        flex-direction: column;
-        background-color: var(--dui-color-surface-informational);
-        padding: 0;
-        height: 420px;
+    .content {
+        background-color: var(--dui-color-background-information);
+        padding: calc(var(--spacing-large) - var(--spacing-medium));
+        max-height: calc(100px + 25vh);
         overflow-y: auto;
-
-        .list {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-    }
-
-    .footer {
-        display: flex;
-        flex-shrink: 0;
-        justify-content: flex-end;
-        padding: var(--dui-spacing-medium);
     }
 }
