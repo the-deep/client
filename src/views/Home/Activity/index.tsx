@@ -29,6 +29,9 @@ const minTickFormatter = (value: number | string) => {
     const format: Intl.DateTimeFormatOptions = {
         dateStyle: 'medium',
     };
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
 
     return new Intl.DateTimeFormat('en-GB', format).format(date);
 };

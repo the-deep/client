@@ -77,6 +77,9 @@ const tickFormatter = (value: number | string) => {
 
 const minTickFormatter = (value: number | string) => {
     const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
@@ -130,6 +133,7 @@ function ProjectItem(props: RecentProjectItemProps) {
             date: (new Date(pa.date)).getTime(),
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [projectActivity]);
+    console.warn('time here', convertedProjectActivity, projectActivity);
 
     return (
         <ContainerCard
