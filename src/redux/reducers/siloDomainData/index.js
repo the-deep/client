@@ -7,6 +7,7 @@ import assessmentRegistryReducers from './assessmentRegistry';
 import plannedAryReducers from './plannedAry';
 import categoryEditorReducers from './categoryEditor';
 import editEntriesReducers from './editEntries';
+import editPillarAnalysisReducers from './editPillarAnalysis';
 import entriesReducers from './entries';
 import leadsReducers from './leads';
 import galleryFilesReducers from './galleryFiles';
@@ -32,6 +33,7 @@ const reducers = {
     ...categoryEditorReducers,
     ...commonReducers,
     ...editEntriesReducers,
+    ...editPillarAnalysisReducers,
     ...entriesReducers,
     ...leadsReducers,
     ...galleryFilesReducers,
