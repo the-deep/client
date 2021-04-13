@@ -31,12 +31,6 @@ interface ExportTypeItem {
     title: string;
 }
 
-interface ReportStructureOption {
-    key: string;
-    label: string;
-
-}
-
 interface Props {
     reportStructure?: ReportStructure[];
     entryFilterOptions: {

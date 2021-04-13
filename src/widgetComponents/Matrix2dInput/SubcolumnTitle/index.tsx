@@ -34,7 +34,7 @@ interface Props {
     className?: string | undefined;
     orientation?: OrientationKey;
     sectorKey?: string | undefined;
-    onClick?: (x: string | undefined) => {};
+    onClick?: (x: string | undefined) => void;
 }
 
 interface State {

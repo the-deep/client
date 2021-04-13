@@ -169,7 +169,6 @@ export default class Excerpt extends React.PureComponent {
     handleEntryStateChange = (value) => {
         const {
             onEntryStateChange,
-            entryState,
             entryKey,
         } = this.props;
 

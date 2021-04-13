@@ -66,11 +66,11 @@ export interface WidgetFormProps {
     value: Entry;
     framework: FrameworkFields;
     mode: string;
-    onAttributesChange: (newValue: Entry['attributes'], errors: object) => void;
-    onExcerptChange: (newExcerptData: object) => void;
+    onAttributesChange: (newValue: Entry['attributes'], errors: Record<string, unknown>) => void;
+    onExcerptChange: (newExcerptData: Record<string, unknown>) => void;
     schema: Schema;
     computeSchema: ComputeSchema;
-    error: object;
+    error: Record<string, unknown>;
     disabled?: boolean;
 }
 

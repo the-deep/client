@@ -1,4 +1,4 @@
-import { DatabaseEntityBase } from "./common";
+import { DatabaseEntityBase } from './common';
 
 export type ExportType = 'word' | 'pdf' | 'excel' | 'json';
 

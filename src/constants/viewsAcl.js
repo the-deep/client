@@ -2,9 +2,11 @@ const notLoggedIn = ({ isLoggedIn }) => !isLoggedIn;
 const notProjectMember = ({ isLoggedIn, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.view
 );
+/*
 const notProjectAdmin = ({ isLoggedIn, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.modify
 );
+*/
 const notDev = ({ isLoggedIn, isDevMode }) => (
     !isLoggedIn || !isDevMode
 );

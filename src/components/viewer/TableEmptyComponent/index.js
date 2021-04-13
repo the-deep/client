@@ -9,7 +9,7 @@ import noFilter from '#resources/img/no-filter.png';
 import styles from './styles.scss';
 
 const TableEmptyComponent = ({ emptyText, filteredEmptyText }) => ({
-    className,
+    // className,
     isFiltered,
 }) => {
     if (isFiltered) {

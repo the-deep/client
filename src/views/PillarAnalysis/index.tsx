@@ -332,7 +332,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
             <div className={styles.content}>
                 {error?.$internal && (
                     <p>
-                        {error?.$internal}
+                        {error.$internal}
                     </p>
                 )}
                 <div className={styles.inputsContainer}>
@@ -438,6 +438,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             className={styles.addStatementButton}
                             name={undefined}
                             onClick={handleAnalyticalStatementAdd}
+                            // FIXME: use translation
                             title="Add Analytical Statement"
                             variant="primary"
                         >

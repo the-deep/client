@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 import {
     RequestClient,
@@ -51,9 +50,7 @@ const requestOptions = {
         method: methods.POST,
         body: ({ params: { role } }) => ({ role }),
         onSuccess: ({
-            response,
             props: {
-                notification,
                 onNotificationReload,
             },
         }) => {

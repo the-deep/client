@@ -1,6 +1,5 @@
 import update from '#rsu/immutable-update';
 import {
-    compareString,
     listToMap,
     mapToMap,
 } from '@togglecorp/fujs';

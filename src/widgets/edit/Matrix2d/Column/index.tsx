@@ -14,30 +14,24 @@ import SectorTitle from './SectorTitle';
 
 import styles from './styles.scss';
 
-// FIXME: this is not used
-interface Sector {
-    id?: number;
-    subsectors?: [];
-}
-
 interface Props {
     className?: string;
     widgetKey?: string;
     // FIXME: the typings are wrong
-    keySelector: (d: object) => number | string;
-    titleSelector: (d: object) => {};
-    dataModifier: (d: object) => {};
-    onSectorEditButtonClick: (k: string) => {};
-    onAddSectorFaramAction: (k: string) => {};
-    onGeoLinkModalVisiblityChange: (k: string) => {};
-    onLinkWidgetModalVisiblityChange: (k: string) => {};
+    keySelector: (d: Record<string, unknown>) => number | string;
+    titleSelector: (d: Record<string, unknown>) => unknown;
+    dataModifier: (d: Record<string, unknown>) => unknown;
+    onSectorEditButtonClick: (k: string) => void;
+    onAddSectorFaramAction: (k: string) => unknown;
+    onGeoLinkModalVisiblityChange: (k: string) => void;
+    onLinkWidgetModalVisiblityChange: (k: string) => void;
 }
 
 interface State {
 }
 
 export default class Column extends React.PureComponent<Props, State> {
-    private sectorItemRendererParams = (key: string, elem: object, i: number) => ({
+    private sectorItemRendererParams = (key: string, elem: Record<string, unknown>, i: number) => ({
         sectorKey: key,
         className: styles.sectorContent,
         data: elem,
