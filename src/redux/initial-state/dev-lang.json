@@ -1315,7 +1315,8 @@
         "-50734970": "Show Entry Id",
         "-77593412": "Reset",
         "-47914300": "Copied To Clipboard",
-        "-26634816": "Successfully Copied to Clipboard"
+        "-26634816": "Successfully Copied to Clipboard",
+        "-30655961": "Resetting the URL will disable the previous URL and generate a new URL for this project. Are you sure you want to continue?"
     },
     "links": {
         "browserExtension": {
@@ -1827,7 +1828,8 @@
             "getPublicLinkLabel": -8913126,
             "resetVizLink": -77593412,
             "copiedToClipboard": -47914300,
-            "copiedToClipboardSuccessfully": -26634816
+            "copiedToClipboardSuccessfully": -26634816,
+            "resetPublicUrlConfirmationMessage": -30655961
         },
         "export": {
             "headerExport": 600,
