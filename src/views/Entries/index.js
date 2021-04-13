@@ -387,14 +387,14 @@ export default class Entries extends React.PureComponent {
             entriesVizDataPending: true,
             successFramework: false,
             successGeoOptions: false,
-
+            gotoTopButtonVisible: false,
             view: LIST_VIEW,
         };
 
         this.views = {
             [LIST_VIEW]: {
                 component: this.renderListView,
-                wrapContainer: true,
+                wrapContainer: false,
                 rendererParams: () => ({
                     parentFooterRef: this.footerRef,
                 }),
@@ -428,6 +428,7 @@ export default class Entries extends React.PureComponent {
 
         this.leadEntries = React.createRef();
         this.footerRef = React.createRef();
+        this.listContainerRef = React.createRef();
     }
 
     componentDidMount() {
@@ -459,6 +460,13 @@ export default class Entries extends React.PureComponent {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll, true);
+        const c = this.listContainerRef.current;
+        if (c) {
+            c.removeEventListener('scroll', this.handleListScroll);
+        }
+        if (this.scrollTimeout) {
+            window.clearTimeout(this.scrollTimeout);
+        }
     }
 
     getTabs = memoize((framework, isVisualizationEnabled) => {
@@ -523,9 +531,39 @@ export default class Entries extends React.PureComponent {
         this.props.setEntriesViewActivePage({ activePage: page });
     }
 
+    handleListScroll = (e) => {
+        window.clearTimeout(this.scrollTimeout);
+
+        this.scrollTimeout = window.setTimeout(() => {
+            this.setState({ gotoTopButtonVisible: e.target.scrollTop > 0 });
+        }, 200);
+    };
+
     handleHashChange = (view) => {
         this.setState({ view });
+
+        if (view === 'list') {
+            window.setTimeout(() => {
+                const c = this.listContainerRef.current;
+                if (c) {
+                    c.addEventListener('scroll', this.handleListScroll);
+                }
+            }, 0);
+        } else {
+            window.removeEventListener('scroll', this.handleListScroll, true);
+        }
     }
+
+    handleGotoTopButtonClick = () => {
+        const c = this.listContainerRef.current;
+        if (c) {
+            c.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth',
+            });
+        }
+    };
 
     rendererParams = (key, datum) => {
         const {
@@ -554,13 +592,18 @@ export default class Entries extends React.PureComponent {
                 entriesRequest: { pending: pendingEntries },
             },
         } = this.props;
+        const { gotoTopButtonVisible } = this.state;
 
         const blockedLoading = pendingGeoOptions || pendingFramework;
         const nonBlockedLoading = pendingEntries;
 
+
         // FIXME: loading animation is messed up
         return (
-            <React.Fragment>
+            <div
+                ref={this.listContainerRef}
+                className={styles.container}
+            >
                 { (blockedLoading || nonBlockedLoading) &&
                     <LoadingAnimation />
                 }
@@ -588,9 +631,16 @@ export default class Entries extends React.PureComponent {
                             onPageClick={this.handlePageClick}
                             showItemsPerPageChange={false}
                         />
+                        {gotoTopButtonVisible &&
+                            <Button
+                                className={styles.gotoTop}
+                                onClick={this.handleGotoTopButtonClick}
+                                iconName="chevronUp"
+                            />
+                        }
                     </FooterContainer>
                 )}
-            </React.Fragment>
+            </div>
         );
     }
 

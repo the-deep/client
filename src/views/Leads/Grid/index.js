@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Masonry } from '@timilsinabishal/react-components';
 import { isListEqual } from '@togglecorp/fujs';
 
+import Button from '#rsca/Button';
+
 import {
     leadsForProjectGridViewSelector,
 } from '#redux';
@@ -59,6 +61,7 @@ export default class LeadGrid extends React.Component {
         this.state = {
             showPreview: false,
             activeLeadIndex: 0,
+            showGotoTopButton: false,
         };
 
         this.itemState = {
@@ -72,6 +75,13 @@ export default class LeadGrid extends React.Component {
     componentDidMount() {
         // Rest grid when loading first time
         this.props.setLeadPageActivePage({ activePage: 1 });
+
+        window.setTimeout(() => {
+            const c = this.masonryRef.current;
+            if (c) {
+                c.addEventListener('scroll', this.handleMasonryScroll);
+            }
+        }, 0);
     }
 
     // The lead data for grid may change when the user is in
@@ -80,6 +90,20 @@ export default class LeadGrid extends React.Component {
     shouldComponentUpdate() {
         return this.props.view === 'grid';
     }
+
+    componentWillUnmount() {
+        const c = this.masonryRef.current;
+        c.removeEventListener('scroll', this.handleMasonryScroll);
+        window.clearTimeout(this.scrollTimeout);
+    }
+
+    handleMasonryScroll = (e) => {
+        window.clearTimeout(this.scrollTimeout);
+
+        this.scrollTimeout = window.setTimeout(() => {
+            this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+        }, 200);
+    };
 
     handleLeadClick = (leadIndex) => {
         this.setState({
@@ -120,12 +144,28 @@ export default class LeadGrid extends React.Component {
             onLeadClick={this.handleLeadClick}
         />
     );
+    handleGotoTopButtonClick = () => {
+        const c = this.masonryRef.current;
+        if (c) {
+            c.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth',
+            });
+        }
+    };
 
     render() {
         const { loading, onEndReached, leads, emptyComponent: EmptyComponent } = this.props;
 
+        const {
+            showGotoTopButton,
+            showPreview,
+        } = this.state;
+
         const previewLead = leads[this.state.activeLeadIndex];
         const LoadingAnimation = this.renderLoadingAnimation;
+
 
         if (leads.length > 0) {
             return (
@@ -148,9 +188,16 @@ export default class LeadGrid extends React.Component {
                             state={this.itemState}
                             hasMore
                         />
+                        { showGotoTopButton &&
+                            <Button
+                                className={styles.gotoTop}
+                                onClick={this.handleGotoTopButtonClick}
+                                iconName="chevronUp"
+                            />
+                        }
                     </div>
                     {
-                        this.state.showPreview &&
+                        showPreview &&
                             <LeadPreview
                                 value={previewLead}
                                 closeModal={this.hideLeadDetailPreview}

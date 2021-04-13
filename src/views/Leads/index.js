@@ -309,7 +309,10 @@ export default class Leads extends React.PureComponent {
         this.state = {
             redirectTo: undefined,
             hasEmmFields: false,
+            showGotoTopButton: false,
         };
+
+        this.tableContainerRef = React.createRef();
 
         this.views = {
             [TABLE_VIEW]: {
@@ -334,6 +337,17 @@ export default class Leads extends React.PureComponent {
 
         this.lastFilters = {};
         this.lastProject = {};
+    }
+
+    componentDidMount() {
+        window.setTimeout(() => {
+            const c = this.tableContainerRef.current;
+
+            if (c) {
+                const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+                sw.addEventListener('scroll', this.handleRawTableScroll);
+            }
+        }, 0);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -384,6 +398,13 @@ export default class Leads extends React.PureComponent {
     componentWillUnmount() {
         if (this.leadDeleteRequest) {
             this.leadDeleteRequest.stop();
+        }
+
+        const c = this.tableContainerRef.current;
+
+        if (c) {
+            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+            sw.removeEventListener('scroll', this.handleRawTableScroll);
         }
     }
 
@@ -522,13 +543,53 @@ export default class Leads extends React.PureComponent {
         this.props.setLeadPageActiveSort({ activeSort: key });
     }
 
+    handleRawTableScroll = (e) => {
+        window.clearTimeout(this.scrollTimeout);
+
+        this.scrollTimeout = window.setTimeout(() => {
+            this.setState({ showGotoTopButton: e.target.scrollTop > 0 });
+        }, 200);
+    };
+
     handleTabClick = (view) => {
         this.props.setLeadPageView({ view });
+
+        if (view === 'table') {
+            window.setTimeout(() => {
+                const c = this.tableContainerRef.current;
+
+                if (c) {
+                    const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+                    sw.addEventListener('scroll', this.handleRawTableScroll);
+                }
+            }, 0);
+        } else {
+            const c = this.tableContainerRef.current;
+
+            if (c) {
+                const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+                sw.removeEventListener('scroll', this.handleRawTableScroll);
+            }
+        }
     }
 
     handleEmmStatusReceive = (hasEmmFields) => {
         this.setState({ hasEmmFields });
     }
+
+    handleGotoTopButtonClick = () => {
+        const c = this.tableContainerRef.current;
+        if (c) {
+            const sw = c.getElementsByClassName('raw-table-scroll-wrapper')[0];
+            if (sw) {
+                sw.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    };
 
     renderHeader = () => {
         const addLeadLink = reverseRoute(
@@ -580,7 +641,10 @@ export default class Leads extends React.PureComponent {
             view,
         } = this.props;
 
-        const { hasEmmFields } = this.state;
+        const {
+            hasEmmFields,
+            showGotoTopButton,
+        } = this.state;
 
         const showVisualizationLink = reverseRoute(
             pathNames.leadsViz,
@@ -653,6 +717,13 @@ export default class Leads extends React.PureComponent {
                                     onPageClick={this.handlePageClick}
                                     onItemsPerPageChange={this.handleLeadsPerPageChange}
                                 />
+                                { showGotoTopButton && (
+                                    <Button
+                                        className={styles.gotoTop}
+                                        onClick={this.handleGotoTopButtonClick}
+                                        iconName="chevronUp"
+                                    />
+                                )}
                             </div>
                         ) : (
                             <div className={styles.sortingContainer}>
@@ -712,6 +783,7 @@ export default class Leads extends React.PureComponent {
                 onRemoveLead={this.handleLeadDelete}
 
                 activeProject={activeProject}
+                containerRef={this.tableContainerRef}
             />
         );
     }

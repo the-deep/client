@@ -117,6 +117,7 @@ function Table(props) {
         setLeadPageActiveSort,
         onLeadsRemoveSuccess,
         filters,
+        containerRef,
     } = props;
 
     const { pending } = leadPatchRequest;
@@ -529,7 +530,10 @@ function Table(props) {
     );
 
     return (
-        <div className={_cs(className, styles.tableContainer)}>
+        <div
+            ref={containerRef}
+            className={_cs(className, styles.tableContainer)}
+        >
             {pending && <LoadingAnimation />}
             <RawTable
                 data={leads}
