@@ -126,7 +126,7 @@ export default class Listing extends React.PureComponent {
             analysisFramework,
             lead,
             leadId,
-            bookId,
+            // bookId,
             widgets,
             selectedEntryKey,
         } = this.props;

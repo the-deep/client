@@ -66,7 +66,7 @@ test('should set category editor', () => {
                     ],
                 },
             },
-        }
+        },
     };
     expect(reducers[CE__SET_CATEGORY_EDITOR](state, action)).toEqual(after);
 });
@@ -106,7 +106,7 @@ test('should add new category', () => {
                         },
                     ],
                 },
-            }
+            },
         },
     };
     expect(reducers[CE__ADD_NEW_CATEGORY](state, action)).toEqual(after);
@@ -540,7 +540,6 @@ test('should add new subcategory at start', () => {
                             ],
                         },
                     ],
-
 
 
                 },

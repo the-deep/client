@@ -56,8 +56,8 @@ interface ComponentProps {
     className?: string;
     projectId: number;
     framework: FrameworkFields;
-    entriesFilters: {};
-    geoOptions: {};
+    entriesFilters: Record<string, unknown>;
+    geoOptions: Record<string, unknown>;
     maxItemsPerPage: number;
     activePage: number;
     entriesCount: number;
@@ -208,7 +208,7 @@ function QualityControl(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        body: requestFilters as object,
+        body: requestFilters,
         method: 'POST',
         onSuccess: (response) => {
             const count = mapToMap(
@@ -236,7 +236,7 @@ function QualityControl(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        body: requestFilters as object,
+        body: requestFilters,
         method: 'POST',
         onSuccess: (response) => {
             const count = mapToMap(

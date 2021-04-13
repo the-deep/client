@@ -30,9 +30,6 @@ interface Props {
 
     handleExportArchive?: (id: number, value: boolean) => void;
     archivePending?: boolean;
-    handleExportUnArchive?: (id: number) => void;
-
-    unarchiveExportId?: number;
     isArchived?: boolean;
     archiveExportId?: number;
 

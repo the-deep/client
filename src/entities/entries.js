@@ -42,7 +42,7 @@ export const processEntryFilters = (filters, framework, geoOptions, hideMatrixFi
     );
 
     const flatGeoOptions = Object.entries(geoOptions)
-        .map(([key, value]) => value)
+        .map(([, value]) => value)
         .flat();
 
     const treeMap = generateRelation(

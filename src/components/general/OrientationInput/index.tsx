@@ -35,7 +35,7 @@ const OrientationInputItem = ({
 
 
 export default class OrientationInput extends React.PureComponent<Props, State> {
-    inputRendererParams = (key: number, data: object) => ({
+    inputRendererParams = (key: number, data: Record<string, unknown>) => ({
         data,
     })
 

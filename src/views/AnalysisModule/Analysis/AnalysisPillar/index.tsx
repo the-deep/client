@@ -42,8 +42,8 @@ function AnalysisPillar(props: ComponentProps) {
         createdAt,
     } = props;
 
-    const [completed, setCompleted] = useState(false);
-    // setIsCompleted to be used when the status is passed by API
+    // FIXME: setCompleted to be used when the status is passed by API
+    const [completed] = useState(false);
 
     const handleDeletePillar = useCallback(() => {
         onDelete(pillarId);

@@ -16,7 +16,6 @@ import DropdownMenu from '#rsca/DropdownMenu';
 
 import {
     BaseQuestionElement,
-    MiniFrameworkElement,
     LanguageTitle,
     QuestionType,
 } from '#typings';
@@ -87,7 +86,7 @@ interface Props<T extends BaseQuestionElement> {
     onDelete?: (key: T['id']) => void;
     onArchive?: (key: T['id']) => void;
     onUnarchive?: (key: T['id']) => void;
-    framework?: MiniFrameworkElement;
+    // framework?: MiniFrameworkElement;
     expanded?: boolean;
     readOnly?: boolean;
     disabled?: boolean;

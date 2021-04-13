@@ -5,13 +5,11 @@ import { connect } from 'react-redux';
 import {
     _cs,
     isFalsy,
-    reverseRoute,
 } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
 import modalize from '#rscg/Modalize';
-import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -20,10 +18,8 @@ import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 
 import Cloak from '#components/general/Cloak';
-import ButtonLikeLink from '#components/general/ButtonLikeLink';
 import EntryVerify from '#components/general/EntryVerify';
 import EntryCommentModal from '#components/general/EntryCommentModal';
-import { pathNames } from '#constants';
 
 import {
     fetchWidgetViewComponent,
@@ -313,8 +309,6 @@ export default class Entry extends React.PureComponent {
                 },
             },
             entry,
-            onEntryEdit,
-            projectId,
             leadId,
         } = this.props;
 
@@ -332,6 +326,7 @@ export default class Entry extends React.PureComponent {
         const { entryVerificationPending } = this.state;
 
         const filteredWidgets = this.getWidgets(framework?.widgets);
+        /*
         const entriesPageLink = reverseRoute(
             pathNames.editEntries,
             {
@@ -339,6 +334,7 @@ export default class Entry extends React.PureComponent {
                 leadId,
             },
         );
+        */
 
         const defaultAssignees = this.getDefaultAssignees(createdBy);
         const pending = deletePending || entryVerificationPending;

@@ -16,6 +16,7 @@ import Cloak from '#components/general/Cloak';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
+import { Permission } from '#typings/common';
 
 import _ts from '#ts';
 
@@ -23,7 +24,7 @@ import styles from './styles.scss';
 
 interface ComponentProps {
     className?: string;
-    isProjectAdmin?: boolean;
+    // isProjectAdmin?: boolean;
     publicUrl?: string;
     projectId?: number;
     closeModal?: () => void;
@@ -34,7 +35,9 @@ interface PublicUrl {
     publicUrl?: string;
 }
 
-const isNotProjectAdmin = ({ setupPermissions }) => !setupPermissions.modify;
+const isNotProjectAdmin = ({ setupPermissions }: { setupPermissions: Permission }) => (
+    !setupPermissions.modify
+);
 
 function ShareModal(props: ComponentProps) {
     const {

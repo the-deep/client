@@ -5,7 +5,6 @@ import html2canvas from 'html2canvas';
 import {
     _cs,
     reverseRoute,
-    isDefined,
 } from '@togglecorp/fujs';
 
 import ButtonLikeLink from '#components/general/ButtonLikeLink';

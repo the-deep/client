@@ -7,9 +7,6 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import useRequest from '#utils/request';
 import notify from '#notify';
 import _ts from '#ts';
-import {
-    WidgetElement,
-} from '#typings';
 
 import { getCombinedLeadFilters } from '#entities/lead';
 import ExpandableContainer from '#dui/ExpandableContainer';
@@ -43,8 +40,6 @@ interface OwnProps {
             'create_only_unprotected'?: boolean;
         };
     };
-    entriesWidgets?: WidgetElement<unknown>[];
-    entriesGeoOptions?: unknown;
 }
 
 interface ExportTriggerResponse {
@@ -58,7 +53,7 @@ function AssessmentExportSelection(props: OwnProps) {
         projectRole,
     } = props;
 
-    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.['create_only_unprotected'];
+    const filterOnlyUnprotected = !!projectRole?.exportPermissions?.create_only_unprotected;
     const [previewId, setPreviewId] = useState<number | undefined>(undefined);
     const [exportClass, setExportClass] = useState<string>();
     const [isPreview, setIsPreview] = useState<boolean>(false);

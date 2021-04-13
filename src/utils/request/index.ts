@@ -38,7 +38,8 @@ interface RequestOptions<T> {
     // NOTE: re-trigger if autoRetrigger
     url: string | undefined;
     query?: UrlParams;
-    body?: RequestInit['body'] | object;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    body?: RequestInit['body'] | object | undefined;
     method?: Methods;
     other?: RequestInit;
 
@@ -56,6 +57,7 @@ interface RequestOptions<T> {
 function isFetchable(
     url: string | undefined,
     method: Methods,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     body: RequestInit['body'] | object | undefined,
 ): url is string {
     return (

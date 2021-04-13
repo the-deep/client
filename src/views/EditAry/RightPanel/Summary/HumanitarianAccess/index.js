@@ -8,7 +8,7 @@ import TextInput from '#rsci/TextInput';
 
 import {
     priorityIssuesSelector,
-    affectedLocationsSelector,
+    // affectedLocationsSelector,
 } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -19,7 +19,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     priorityIssues: PropTypes.arrayOf(PropTypes.object).isRequired,
-    affectedLocations: PropTypes.arrayOf(PropTypes.object).isRequired,
+    // affectedLocations: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const defaultProps = {
@@ -28,7 +28,7 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     priorityIssues: priorityIssuesSelector(state),
-    affectedLocations: affectedLocationsSelector(state),
+    // affectedLocations: affectedLocationsSelector(state),
 });
 
 @connect(mapStateToProps)
@@ -84,7 +84,7 @@ export default class HumanitarianAccess extends React.PureComponent {
     renderInput = (rowKey, subRowKey, columnKey) => {
         const {
             priorityIssues,
-            affectedLocations,
+            // affectedLocations,
         } = this.props;
 
         if (rowKey === 'priorityIssue') {

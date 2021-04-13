@@ -40,11 +40,6 @@ interface ComponentProps {
     createdAt: string;
 }
 
-interface AnalysisPillarRendererProps extends Omit<AnalysisPillars, 'id' | 'analysis'> {
-    pillarId: AnalysisPillars['id'];
-    onDelete: (value: number) => void;
-}
-
 type PillarListRendererProps = {
     title: string;
     assigneeName: string;
