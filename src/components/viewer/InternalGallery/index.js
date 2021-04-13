@@ -193,7 +193,7 @@ export default class InternalGallery extends React.PureComponent {
         } = this.state;
 
         const {
-            galleryId, // eslint-disable-line no-unused-vars
+            galleryId, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             onlyFileName,
             renderer,
             ...otherProps

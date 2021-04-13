@@ -126,7 +126,7 @@ test('should set project usergroups', () => {
     ];
 
     const action = setProjectUsergroupsAction({
-        usergroups: usergroups,
+        usergroups,
         projectId,
     });
 

@@ -14,7 +14,6 @@ import styles from './styles.scss';
 const emptyLink = '#'; // TODO: Add link when made
 
 interface RecentActivityProps {
-    activityId: string;
     projectDisplayName: string;
     createdAt: string;
     createdByDisplayName: string;

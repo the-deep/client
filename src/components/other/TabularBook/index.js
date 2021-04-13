@@ -69,7 +69,7 @@ const WarningModalButton = modalize(WarningButton);
 const ModalButton = modalize(Button);
 
 const getFieldMeta = (value) => {
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const { data, ...newValue } = value;
     return newValue;
 };
@@ -587,7 +587,7 @@ export default class TabularBook extends React.PureComponent {
             .preLoad(() => {
                 this.setState({ isSheetRetrievePending: true });
             })
-            .success((response) => {
+            .success(() => {
                 this.setState((state) => {
                     const newSheets = produce(state.sheets, (safeSheets) => {
                         sheetIds.forEach((sheetId) => {
@@ -667,12 +667,6 @@ export default class TabularBook extends React.PureComponent {
                 );
             })
             .success((response) => {
-                const {
-                    sheets: {
-                        [sheetId]: dataRowIndex,
-                    },
-                } = this.state;
-
                 this.setState(
                     state => produce(state, (safeState) => {
                         const fieldIndex = safeState.sheets[sheetId].fields.findIndex(
@@ -875,7 +869,7 @@ export default class TabularBook extends React.PureComponent {
         } = this.props;
 
         const {
-            originalSheets,
+            // originalSheets,
             isSheetRetrievePending,
             sheetDeletePending,
             fieldRetrievePending,

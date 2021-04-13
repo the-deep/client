@@ -67,8 +67,7 @@ interface EntryStatProps {
     max: number;
     isSelected: boolean;
     isClickable: boolean;
-    handleClick: (v: {}) => void;
-    className?: string;
+    handleClick: (v: Record<string, unknown>) => void;
     entriesFilters: {
         verified?: boolean;
         'authoring_organization_types'?: number[];
@@ -187,7 +186,7 @@ function EntriesStats(props: Props) {
         [...oldOrganizationType, ...verificationFilter],
     [oldOrganizationType, verificationFilter]);
 
-    const handleClick = useCallback((filter: {}) => {
+    const handleClick = useCallback((filter: Record<string, unknown>) => {
         setEntriesViewFilter({ filters: { ...entriesFilters, ...filter } });
     }, [setEntriesViewFilter, entriesFilters]);
 

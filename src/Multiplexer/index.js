@@ -40,7 +40,7 @@ import {
     currentThemeIdSelector,
 } from '#redux';
 
-import styles from './styles.scss';
+import './styles.scss';
 
 const ROUTE = {
     exclusivelyPublic: 'exclusively-public',

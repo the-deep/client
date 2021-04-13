@@ -56,6 +56,8 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 uuid,
                 // FIXME: add order
                 order: 0,
+                // FIXME: this is temporary.
+                // Remove this after we can drag/drop the entry from sidepane
                 entry: Math.ceil(Math.random() * 100),
             };
             onFieldChange(
@@ -82,6 +84,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         className={styles.button}
                         name={index}
                         onClick={onRemove}
+                        // FIXME: use translation
                         title="Remove Analytical Statement"
                     >
                         <IoClose />
@@ -94,11 +97,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 </header>
                 {error?.$internal && (
                     <p className={styles.error}>
-                        {error?.$internal}
+                        {error.$internal}
                     </p>
                 )}
                 <TextArea
                     className={styles.statement}
+                    // FIXME: use translation
                     placeholder="Enter analytical statement"
                     name="statement"
                     rows={4}
@@ -112,6 +116,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     className={styles.entryAddButton}
                     name={undefined}
                     onClick={handleAnalyticalEntryAdd}
+                    // FIXME: use translation
                     title="Simulate Entry Drop"
                 >
                     <IoAdd />

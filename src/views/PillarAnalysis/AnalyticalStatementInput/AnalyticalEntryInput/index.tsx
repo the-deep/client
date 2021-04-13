@@ -11,11 +11,11 @@ import { AnalyticalEntryType } from '../../schema';
 import styles from './styles.scss';
 
 interface AnalyticalEntryInputProps {
-   value: PartialForm<AnalyticalEntryType>,
+   value: PartialForm<AnalyticalEntryType>;
    error: Error<AnalyticalEntryType> | undefined;
    // onChange: (value: PartialForm<AnalyticalEntryType>, index: number) => void;
    onRemove: (index: number) => void;
-   index: number,
+   index: number;
 }
 
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
@@ -33,7 +33,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         <div className={styles.entry}>
             {error?.$internal && (
                 <p>
-                    {error?.$internal}
+                    {error.$internal}
                 </p>
             )}
             <h4>
@@ -42,6 +42,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             <QuickActionButton
                 name={index}
                 onClick={onRemove}
+                // FIXME: use translation
                 title="Remove Analytical Entry"
             >
                 <IoClose />

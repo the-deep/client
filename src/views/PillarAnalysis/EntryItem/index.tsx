@@ -12,11 +12,11 @@ import styles from './styles.scss';
 
 interface EntryItem {
     className?: string;
-    entryId: number;
-    excerpt?: string;
-    image?: string;
-    tabularFieldData?: TabularDataFields;
     type: EntryType;
+
+    excerpt?: string; // eslint-disable-line react/no-unused-prop-types
+    image?: string; // eslint-disable-line react/no-unused-prop-types
+    tabularFieldData?: TabularDataFields; // eslint-disable-line react/no-unused-prop-types
 }
 
 const entryTypeToValueMap: {

@@ -24,7 +24,7 @@ interface Props {
     className?: string;
     frameworkTitle?: string;
     enumeratorSkill?: string;
-    title?: string;
+    // title?: string;
     enumeratorSkillDisplay?: string;
     dataCollectionTechnique?: string;
     dataCollectionTechniquesDisplay?: string[];
@@ -40,7 +40,7 @@ class QuestionnaireBuilderDiagnostics extends React.PureComponent<Props> {
             className,
             questions,
             showLoadingOverlay,
-            title,
+            // title,
             crisisTypesDetail,
             dataCollectionTechniquesDisplay,
             enumeratorSkillDisplay,

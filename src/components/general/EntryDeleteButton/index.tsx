@@ -4,8 +4,6 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 
-import styles from './styles.scss';
-
 interface EntryDeleteButtonProps {
     className?: string;
     entryId: number;

@@ -1,5 +1,5 @@
 declare module 'enketo-core' {
-    import * as React from 'react';
+    // import * as React from 'react';
 
     // eslint-disable-next-line import/prefer-default-export
     export declare class Form {

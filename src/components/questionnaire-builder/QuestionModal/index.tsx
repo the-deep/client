@@ -409,10 +409,6 @@ const tabs: {[key in TabElement]: string} = {
     metadata: 'Metadata',
 };
 
-interface State {
-    activeTab: TabElement;
-}
-
 function QuestionModal(props: Props) {
     const [activeTab, setActiveTab] = useState<TabElement>('detail');
 

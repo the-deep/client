@@ -23,8 +23,6 @@ import QuestionModal, {
     errorTransformIn,
 } from '#qbc/QuestionModal';
 
-import styles from './styles.scss';
-
 type FrameworkQuestionData = NullableField<FrameworkQuestionElement, 'id' | 'order'>;
 
 interface Error {

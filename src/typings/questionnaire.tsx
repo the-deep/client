@@ -13,11 +13,6 @@ interface DbEntity {
     modifiedByName?: string;
 }
 
-interface KeyValue {
-    key: string;
-    value: string;
-}
-
 export interface IdTitle {
     id: number;
     title: string;

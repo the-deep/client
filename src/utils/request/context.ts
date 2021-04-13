@@ -2,6 +2,7 @@ import { createContext } from 'react';
 
 export interface ContextInterface {
     transformUrl: (url: string) => string;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     transformOptions: (url: string, options: Omit<RequestInit, 'body'> & { body: RequestInit['body'] | object}) => RequestInit;
 }
 

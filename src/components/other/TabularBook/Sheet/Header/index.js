@@ -6,9 +6,6 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import HealthBar from '#rscz/HealthBar';
-import {
-    isDefined,
-} from '@togglecorp/fujs';
 
 import Cloak from '#components/general/Cloak';
 import { DATA_TYPE } from '#entities/tabular';

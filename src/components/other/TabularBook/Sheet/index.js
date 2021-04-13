@@ -170,17 +170,21 @@ export default class Sheet extends React.PureComponent {
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
         const {
             sheet,
+            /*
             viewMode,
             projectRegions,
+            */
         } = this.props;
         const {
             fields,
+            /*
             options: {
                 searchTerm: oldSearchTerm,
                 dataRowIndex: oldDataRowIndex,
             } = {},
             fieldDeletePending,
             fieldEditPending,
+            */
         } = sheet;
 
         const columns = this.getSheetColumns(
@@ -481,10 +485,12 @@ export default class Sheet extends React.PureComponent {
             },
             disabled,
             isFieldRetrievePending,
+            /*
             fieldDeletePending,
             fieldEditPending,
             projectRegions,
             viewMode,
+            */
         } = this.props;
 
         const { searchTerm, sortOrder } = options;
