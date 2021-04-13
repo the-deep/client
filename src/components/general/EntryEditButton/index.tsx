@@ -7,8 +7,6 @@ import EditEntryFormModal from '#components/general/EditEntryFormModal';
 import { Entry } from '#typings/entry';
 import { FrameworkFields } from '#typings/framework';
 
-import styles from './styles.scss';
-
 interface EntryEditButtonProps {
     className?: string;
     entry: Entry;

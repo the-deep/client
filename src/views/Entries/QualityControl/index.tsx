@@ -56,8 +56,8 @@ interface ComponentProps {
     className?: string;
     projectId: number;
     framework: FrameworkFields;
-    entriesFilters: {};
-    geoOptions: {};
+    entriesFilters: Record<string, unknown>;
+    geoOptions: Record<string, unknown>;
     maxItemsPerPage: number;
     activePage: number;
     entriesCount: number;
@@ -68,8 +68,6 @@ interface ComponentProps {
 interface MatrixKeyId extends MatrixTocElement {
     key: string;
 }
-
-type RefType = React.RefObject<HTMLElement>;
 
 interface PropsFromDispatch {
     setTocFilters: typeof setQualityControlViewSelectedMatrixKeyAction;
@@ -249,7 +247,7 @@ function QualityControl(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        body: requestFilters as object,
+        body: requestFilters,
         method: 'POST',
         onSuccess: (response) => {
             const count = mapToMap(
@@ -277,7 +275,7 @@ function QualityControl(props: Props) {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        body: requestFilters as object,
+        body: requestFilters,
         method: 'POST',
         onSuccess: (response) => {
             const count = mapToMap(

@@ -83,7 +83,7 @@ const coordinatorOptions = {
 
     transformProps: (props) => {
         const {
-            myToken, // eslint-disable-line no-unused-vars
+            myToken, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             ...otherProps
         } = props;
         return otherProps;

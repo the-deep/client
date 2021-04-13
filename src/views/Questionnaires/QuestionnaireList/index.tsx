@@ -49,8 +49,6 @@ const ModalButton = modalize(PrimaryButton);
 
 const MAX_QUESTIONNAIRE_PER_PAGE = 10;
 
-type ViewMode = 'active' | 'archived';
-
 interface ComponentProps {
     className?: string;
     title: string;
@@ -73,7 +71,7 @@ interface Params {
     donotReloadList?: boolean;
     questionnaireId?: number;
     setQuestionnaires?: (questionnaires: MiniQuestionnaireElement[], totalCount: number) => void;
-    body?: object;
+    body?: Record<string, unknown>;
     questions?: BaseQuestionElementWithoutId[];
 
     onExportReady?: (title: string, questions: QuestionnaireQuestionElement[]) => void;

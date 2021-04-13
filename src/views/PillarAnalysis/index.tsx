@@ -1,22 +1,31 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
-    listToGroupList,
     isDefined,
     isNotDefined,
+    listToGroupList,
+    randomString,
 } from '@togglecorp/fujs';
+import { IoAdd } from 'react-icons/io5';
+import { Dispatch } from 'redux';
 import {
     Heading,
     Button,
+    QuickActionButton,
     TextArea,
 } from '@the-deep/deep-ui';
+import {
+    PartialForm,
+    useForm,
+    useFormArray,
+} from '@togglecorp/toggle-form';
 
 import ListView from '#rsu/../v2/View/ListView';
 import Pager from '#rscv/Pager';
 import FullPageHeader from '#dui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+// import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
 import Tabs, { Tab, TabList, TabPanel } from '#dui/Tabs';
 
@@ -39,9 +48,13 @@ import {
     analysisIdFromRouteSelector,
     pillarAnalysisIdFromRouteSelector,
     activeProjectFromStateSelector,
+    editPillarAnalysisPillarAnalysisSelector,
+    setPillarAnalysisDataAction,
 } from '#redux';
 import EntriesFilterForm from './EntriesFilterForm';
 import EntryItem from './EntryItem';
+import AnalyticalStatementInput from './AnalyticalStatementInput';
+import { schema, defaultFormValues, AnalyticalStatementType } from './schema';
 
 import styles from './styles.scss';
 
@@ -50,54 +63,134 @@ type EntryFieldsMin = Pick<
     'id' | 'excerpt' | 'droppedExcerpt' | 'image' | 'entryType' | 'tabularFieldData'
 >;
 
-const mapStateToProps = (state: AppState) => ({
-    pillarId: pillarAnalysisIdFromRouteSelector(state),
-    analysisId: analysisIdFromRouteSelector(state),
-    projectId: projectIdFromRouteSelector(state),
-    activeProject: activeProjectFromStateSelector(state),
-});
+type TabNames = 'entries' | 'discarded';
 
-interface PageProps {
-    pillarId: number;
-    projectId: number;
-    analysisId: number;
-    activeProject: ProjectDetails;
+// FIXME: remove this
+export interface FaramValues {
+    [key: string]: string | string[] | FaramValues;
 }
 
 const frameworkQueryFields = {
     fields: ['widgets', 'filters', 'id'],
 };
 
-type TabNames = 'entries' | 'discarded';
-
-export interface FaramValues {
-    [key: string]: string | string[] | FaramValues;
-}
-
 const maxItemsPerPage = 5;
+
 const entryKeySelector = (d: EntryFieldsMin) => d.id;
 
-function PillarAnalysis(props: PageProps) {
+const mapStateToProps = (state: AppState, props: unknown) => ({
+    // FIXME: get this from url directly
+    pillarId: pillarAnalysisIdFromRouteSelector(state),
+    analysisId: analysisIdFromRouteSelector(state),
+    projectId: projectIdFromRouteSelector(state),
+
+    // FIXME: get this from request
+    activeProject: activeProjectFromStateSelector(state),
+
+    pillarAnalysis: editPillarAnalysisPillarAnalysisSelector(state, props),
+});
+
+interface PropsFromDispatch {
+    setPillarAnalysisData: typeof setPillarAnalysisDataAction;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setPillarAnalysisData: params => dispatch(setPillarAnalysisDataAction(params)),
+});
+
+interface PropsFromState {
+    pillarId: number;
+    projectId: number;
+    analysisId: number;
+
+    activeProject: ProjectDetails;
+    pillarAnalysis: {
+        id: number;
+        data: typeof defaultFormValues;
+    } | undefined;
+}
+
+interface PageProps {
+}
+
+function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
     const {
         pillarId,
         analysisId,
         projectId,
         activeProject,
+        pillarAnalysis: pillarAnalysisFromProps,
+        setPillarAnalysisData,
     } = props;
 
-    const [value, setValue] = useState<string | undefined>();
-    const [activeTab, setActiveTab] = useState<TabNames>('entries');
-    const [filtersValue, setFiltersValue] = useState<FaramValues>({});
-    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
+    // FIXME: set initial pristine value on form
 
+    const {
+        pristine,
+        value,
+        error,
+        onValueChange,
+        validate,
+        onErrorSet,
+    } = useForm(pillarAnalysisFromProps?.data ?? defaultFormValues, schema);
+
+    useEffect(
+        () => {
+            setPillarAnalysisData({
+                id: pillarId,
+                data: value,
+                pristine,
+            });
+        },
+        [value, pillarId, setPillarAnalysisData, pristine],
+    );
+
+    const handleSubmit = useCallback(
+        () => {
+            const { errored, error: err, value: val } = validate();
+            onErrorSet(err);
+            if (!errored && isDefined(val)) {
+                console.warn('Save', val);
+            }
+        },
+        [onErrorSet, validate],
+    );
+
+    const {
+        onValueChange: onAnalyticalStatementChange,
+        onValueRemove: onAnalyticalStatementRemove,
+    } = useFormArray('analyticalStatements', value.analyticalStatements ?? [], onValueChange);
+
+    const handleAnalyticalStatementAdd = useCallback(
+        () => {
+            const uuid = randomString();
+            const newAnalyticalStatement: PartialForm<AnalyticalStatementType> = {
+                uuid,
+                // FIXME: add order
+                order: 0,
+            };
+            onValueChange(
+                [...(value.analyticalStatements ?? []), newAnalyticalStatement],
+                'analyticalStatements' as const,
+            );
+        },
+        [onValueChange, value.analyticalStatements],
+    );
+
+    // const [value, setValue] = useState<string | undefined>();
+    const [activeTab, setActiveTab] = useState<TabNames>('entries');
+
+    // FIXME: please use new form
+    const [filtersValue, setFiltersValue] = useState<FaramValues>({});
     const [activePage, setActivePage] = useState(1);
+
+    // FIXME: these are useless
     const [entriesCount, setEntriesCount] = useState(0);
+    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
 
     const [
         pendingPillarAnalysis,
         pillarAnalysis,
-        ,
-        ,
     ] = useRequest<PillarAnalysisElement>({
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
         method: 'GET',
@@ -112,6 +205,8 @@ function PillarAnalysis(props: PageProps) {
                 setFiltersValue(newFilters);
             }
         },
+        // FIXME: add schema
+        // FIXME: add failure
     });
 
     const [
@@ -125,6 +220,7 @@ function PillarAnalysis(props: PageProps) {
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('analysis.editModal', 'frameworkTitle'))({ error: errorBody });
         },
+        // FIXME: add schema
     });
 
     const geoOptionsRequestQueryParams = useMemo(() => ({
@@ -202,7 +298,7 @@ function PillarAnalysis(props: PageProps) {
         type: data.entryType,
     }), []);
 
-    const pending = pendingPillarAnalysis || pendingGeoOptions || pendingFramework;
+    // const pending = pendingPillarAnalysis || pendingGeoOptions || pendingFramework;
 
     return (
         <div className={styles.pillarAnalysis}>
@@ -214,8 +310,11 @@ function PillarAnalysis(props: PageProps) {
                 actions={(
                     <>
                         <Button
+                            name={undefined}
                             className={styles.button}
                             variant="primary"
+                            disabled={pristine || pendingPillarAnalysis}
+                            onClick={handleSubmit}
                         >
                             {_ts('pillarAnalysis', 'saveButtonLabel')}
                         </Button>
@@ -228,10 +327,14 @@ function PillarAnalysis(props: PageProps) {
                     </>
                 )}
             >
-                {breadcrumb(pillarAnalysis?.analysisName, pillarAnalysis?.title ?? '')}
+                {breadcrumb(pillarAnalysis?.analysisTitle, pillarAnalysis?.title ?? '')}
             </FullPageHeader>
             <div className={styles.content}>
-                {pending && <LoadingAnimation />}
+                {error?.$internal && (
+                    <p>
+                        {error.$internal}
+                    </p>
+                )}
                 <div className={styles.inputsContainer}>
                     <div className={styles.inputContainer}>
                         <Heading
@@ -240,9 +343,12 @@ function PillarAnalysis(props: PageProps) {
                             {_ts('pillarAnalysis', 'mainStatementLabel')}
                         </Heading>
                         <TextArea
-                            value={value}
-                            onChange={setValue}
-                            rows={10}
+                            name="mainStatement"
+                            onChange={onValueChange}
+                            value={value.mainStatement}
+                            error={error?.fields?.mainStatement}
+                            rows={6}
+                            disabled={pendingPillarAnalysis}
                         />
                     </div>
                     <div className={styles.inputContainer}>
@@ -252,9 +358,12 @@ function PillarAnalysis(props: PageProps) {
                             {_ts('pillarAnalysis', 'infoGapLabel')}
                         </Heading>
                         <TextArea
-                            value={value}
-                            onChange={setValue}
-                            rows={10}
+                            name="informationGap"
+                            value={value.informationGap}
+                            onChange={onValueChange}
+                            error={error?.fields?.informationGap}
+                            rows={6}
+                            disabled={pendingPillarAnalysis}
                         />
                     </div>
                 </div>
@@ -267,6 +376,7 @@ function PillarAnalysis(props: PageProps) {
                     filters={framework?.filters}
                     widgets={framework?.widgets}
                     projectId={projectId}
+                    disabled={pendingFramework || pendingGeoOptions}
                 />
                 <div className={styles.workspace}>
                     <div className={styles.leftContainer}>
@@ -312,8 +422,28 @@ function PillarAnalysis(props: PageProps) {
                         />
                     </div>
                     <div className={styles.rightContainer}>
-                        {/* NOTE: This is a dummy text */}
-                        Workspace goes here
+                        {value.analyticalStatements?.map((analyticalStatement, index) => (
+                            <AnalyticalStatementInput
+                                className={styles.analyticalStatement}
+                                key={analyticalStatement.uuid}
+                                index={index}
+                                value={analyticalStatement}
+                                onChange={onAnalyticalStatementChange}
+                                onRemove={onAnalyticalStatementRemove}
+                                // eslint-disable-next-line max-len
+                                error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
+                            />
+                        ))}
+                        <QuickActionButton
+                            className={styles.addStatementButton}
+                            name={undefined}
+                            onClick={handleAnalyticalStatementAdd}
+                            // FIXME: use translation
+                            title="Add Analytical Statement"
+                            variant="primary"
+                        >
+                            <IoAdd />
+                        </QuickActionButton>
                     </div>
                 </div>
             </div>
@@ -321,4 +451,4 @@ function PillarAnalysis(props: PageProps) {
     );
 }
 
-export default connect(mapStateToProps)(PillarAnalysis);
+export default connect(mapStateToProps, mapDispatchToProps)(PillarAnalysis);

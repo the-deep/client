@@ -8,9 +8,9 @@ import styles from './styles.scss';
 
 interface ComponentProps {
     className?: string;
-    iconContainerClassName?: string;
-    valueClassName?: string;
-    labelClassName?: string;
+    // iconContainerClassName?: string;
+    // valueClassName?: string;
+    // labelClassName?: string;
     image?: string;
     label: string;
     percent?: number;

@@ -94,7 +94,7 @@ function EditEntryFormModal(props: EditEntryFormModalProps) {
         detachedFaram({
             value: value.attributes,
             schema,
-            onValidationFailure: (errors: object) => { setFaramErrors(errors); },
+            onValidationFailure: (errors: Record<string, unknown>) => { setFaramErrors(errors); },
             onValidationSuccess: (values: Entry['attributes']) => {
                 const request = new FgRestBuilder()
                     .url(createUrlForEntryEdit(value.id))

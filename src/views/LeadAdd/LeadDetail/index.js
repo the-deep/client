@@ -539,12 +539,14 @@ class LeadDetail extends React.PureComponent {
     }
 
     handleExtraInfoFill = (leadOptions) => {
+        /*
         const {
             lead,
         } = this.props;
+        */
         const {
             organizations,
-            priority,
+            // priority,
         } = leadOptions;
 
         if (organizations.length > 0) {

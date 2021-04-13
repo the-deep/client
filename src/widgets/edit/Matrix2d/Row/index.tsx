@@ -14,29 +14,27 @@ import DimensionTitle from './DimensionTitle';
 
 import styles from './styles.scss';
 
-interface Dimension {
-    color?: string;
-    id?: number;
-    subdimensions?: [];
-}
-
 interface Props {
     className?: string;
     widgetKey?: string;
-    keySelector: (d: object) => string | number;
-    titleSelector: (d: object) => {};
-    dataModifier: (d: object) => {};
-    onDimensionEditButtonClick: (k: string) => {};
-    onAddDimensionFaramAction: (k: string) => {};
-    onGeoLinkModalVisiblityChange: (k: string) => {};
-    onLinkWidgetModalVisiblityChange: (k: string) => {};
+    keySelector: (d: Record<string, unknown>) => string | number;
+    titleSelector: (d: Record<string, unknown>) => unknown;
+    dataModifier: (d: Record<string, unknown>) => unknown;
+    onDimensionEditButtonClick: (k: string) => void;
+    onAddDimensionFaramAction: (k: string) => unknown;
+    onGeoLinkModalVisiblityChange: (k: string) => void;
+    onLinkWidgetModalVisiblityChange: (k: string) => void;
 }
 
 interface State {
 }
 
 export default class Row extends React.PureComponent<Props, State> {
-    private dimensionItemRendererParams = (key: string, elem: object, i: number) => ({
+    private dimensionItemRendererParams = (
+        key: string,
+        elem: Record<string, unknown>,
+        i: number,
+    ) => ({
         dimensionKey: key,
         className: styles.dimensionContent,
         // FIXME: should only inject title instead of the whole data

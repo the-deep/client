@@ -40,11 +40,6 @@ interface Params {
     verify: boolean;
 }
 
-interface VerificationOption {
-    key: boolean;
-    value: string;
-}
-
 const shouldHideEntryEdit = ({ entryPermissions }: {
     entryPermissions: {
         modify: boolean;
@@ -68,7 +63,7 @@ const requestOptions: Requests<ComponentProps, Params> = {
         }) => ({
             versionId,
         }),
-        onSuccess: ({ props, params = {}, response }) => {
+        onSuccess: ({ props, response }) => {
             const { handleEntryVerify } = props;
 
             if (handleEntryVerify) {

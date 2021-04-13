@@ -1,7 +1,8 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-import raf from './tempPolyfills'; // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+import raf from './tempPolyfills';
 
 // React 16 Enzyme adapter
 Enzyme.configure({ adapter: new Adapter() });

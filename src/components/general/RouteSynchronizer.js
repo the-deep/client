@@ -294,7 +294,7 @@ class RouteSynchronizer extends React.PureComponent {
     render() {
         const {
             name,
-            match, // eslint-disable-line no-unused-vars
+            match, // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
             path,
             projectRole,
             // tabsByCurrentUrl,

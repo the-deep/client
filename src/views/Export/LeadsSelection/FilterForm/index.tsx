@@ -168,7 +168,7 @@ function FilterForm(props: OwnProps) {
                         entry_type: [],
                         project_entry_labels: [],
                         lead_group_label: [],
-                        ...listToMap(entriesFilters, v => v.key, v => []),
+                        ...listToMap(entriesFilters, v => v.key, () => []),
                     },
                 },
             },

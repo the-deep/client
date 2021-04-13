@@ -11,10 +11,7 @@ import {
     svgPaths,
     imagePaths,
 } from '#constants';
-import {
-    initializeStyles,
-    setStyleProperties,
-} from '#rsu/styles';
+import { initializeStyles } from '#rsu/styles';
 
 import store from '#store';
 
