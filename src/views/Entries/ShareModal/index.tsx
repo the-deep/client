@@ -13,6 +13,7 @@ import Checkbox from '#rsci/Checkbox';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Icon from '#rscg/Icon';
 import Cloak from '#components/general/Cloak';
+import ConfirmButton from '#rsca/ConfirmButton';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -140,13 +141,14 @@ function ShareModal(props: ComponentProps) {
                                 disabled={pending}
                             />
                             { publicUrlAvailable && (
-                                <Button
+                                <ConfirmButton
                                     className={styles.reset}
                                     iconName="undo"
                                     onClick={triggerResetPublicUrl}
+                                    confirmationMessage={_ts('entries', 'resetPublicUrlConfirmationMessage')}
                                 >
                                     {_ts('entries', 'resetVizLink')}
-                                </Button>
+                                </ConfirmButton>
                             )}
                         </div>
                     )}
