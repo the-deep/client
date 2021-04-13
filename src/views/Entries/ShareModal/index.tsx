@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useRef, useMemo, useState } from 'react';
 import {
     _cs,
     isDefined,
@@ -18,6 +18,7 @@ import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import _ts from '#ts';
+import notify from '#notify';
 
 import styles from './styles.scss';
 
@@ -34,6 +35,7 @@ interface PublicUrl {
     publicUrl?: string;
 }
 
+const resetBodyToSend = ({ action: 'new' });
 const isNotProjectAdmin = ({ setupPermissions }) => !setupPermissions.modify;
 
 function ShareModal(props: ComponentProps) {
@@ -46,13 +48,14 @@ function ShareModal(props: ComponentProps) {
     } = props;
 
     const [publicUrlAvailable, setPublicUrlAvailability] = useState(isDefined(publicUrl));
+    const inputValueRef = useRef<HTMLDivElement>(null);
 
     const bodyToSend = useMemo(() => (
-        publicUrlAvailable ? { action: 'unset' } : { action: 'set' }
+        publicUrlAvailable ? { action: 'off' } : { action: 'on' }
     ), [publicUrlAvailable]);
 
     const [
-        pending,
+        pendingUrlVisibilityChange,
         ,
         ,
         triggerAvailabilityChange,
@@ -71,6 +74,39 @@ function ShareModal(props: ComponentProps) {
                 notifyOnFailure(_ts('entries', 'shareVizLink'))({ error: errorBody }),
         },
     );
+
+    const [
+        pendingReset,
+        ,
+        ,
+        triggerResetPublicUrl,
+    ] = useRequest<PublicUrl>(
+        {
+            url: `server://projects/${projectId}/public-viz/`,
+            method: 'POST',
+            body: resetBodyToSend,
+            onSuccess: (response) => {
+                if (onShareLinkChange) {
+                    onShareLinkChange(response?.publicUrl);
+                }
+            },
+            onFailure: (_, errorBody) =>
+                notifyOnFailure(_ts('entries', 'resetVizLink'))({ error: errorBody }),
+        },
+    );
+
+    const pending = pendingUrlVisibilityChange || pendingReset;
+
+    const copyToClipboard = useCallback(() => {
+        navigator.clipboard.writeText(publicUrl ?? '');
+
+        notify.send({
+            title: _ts('entries', 'copiedToClipboard'),
+            type: notify.type.SUCCESS,
+            message: _ts('entries', 'copiedToClipboardSuccessfully'),
+            duration: notify.duration.FAST,
+        });
+    }, [publicUrl]);
 
     return (
         <Modal
@@ -91,19 +127,42 @@ function ShareModal(props: ComponentProps) {
                 <Cloak
                     hide={isNotProjectAdmin}
                     render={(
-                        <Checkbox
-                            value={publicUrlAvailable}
-                            onChange={triggerAvailabilityChange}
-                            label={_ts('entries', 'getPublicLinkLabel')}
-                            disabled={pending}
-                        />
+                        <div className={styles.actions}>
+                            <Checkbox
+                                className={styles.checkbox}
+                                value={publicUrlAvailable}
+                                onChange={triggerAvailabilityChange}
+                                label={_ts('entries', 'getPublicLinkLabel')}
+                                disabled={pending}
+                            />
+                            { publicUrlAvailable && (
+                                <Button
+                                    className={styles.reset}
+                                    iconName="undo"
+                                    onClick={triggerResetPublicUrl}
+                                >
+                                    {_ts('entries', 'resetVizLink')}
+                                </Button>
+                            )}
+                        </div>
                     )}
                 />
-                {isDefined(publicUrl) && (
-                    <TextInput
-                        value={publicUrl}
-                        readOnly
-                    />
+                { publicUrlAvailable && (
+                    <div className={styles.textInputSection}>
+                        <TextInput
+                            className={styles.textInput}
+                            ref={inputValueRef}
+                            value={publicUrl}
+                            showHintAndError={false}
+                            readOnly
+                        />
+                        <Button
+                            className={styles.copy}
+                            iconName="copy"
+                            title="copy"
+                            onClick={copyToClipboard}
+                        />
+                    </div>
                 )}
                 <p className={styles.infoText}>
                     <Icon
