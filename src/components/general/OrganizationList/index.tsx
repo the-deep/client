@@ -4,7 +4,8 @@ import {
 } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
-import Icon from '#rscg/Icon';
+import { IoIosContacts } from 'react-icons/io';
+
 import { ContainerCard } from '@the-deep/deep-ui';
 
 import { ProjectOrganization } from '#typings';
@@ -14,7 +15,7 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    data: ProjectOrganization[];
+    data?: ProjectOrganization[];
     title: string;
 }
 const organizationDetailsKeySelector = (d: ProjectOrganization) => d.organization;
@@ -39,10 +40,7 @@ function OrganizationDetail(props: OrganizationDetailProps) {
                         src={logo}
                     />
                 ) : (
-                    <Icon
-                        className={styles.icon}
-                        name="userGroup"
-                    />
+                    <IoIosContacts />
                 )}
             </div>
             <div className={styles.title}>
@@ -55,7 +53,7 @@ function OrganizationDetail(props: OrganizationDetailProps) {
 function OrganizationList(props: Props) {
     const { data, title, className } = props;
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         return null;
     }
 

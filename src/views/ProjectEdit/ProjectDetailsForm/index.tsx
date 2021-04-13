@@ -13,8 +13,8 @@ import {
     Button,
     Container,
     Tag,
+    Footer,
 } from '@the-deep/deep-ui';
-import Footer from '#dui/Footer';
 import { IoArrowForward } from 'react-icons/io5';
 import OrganizationList from '#components/general/OrganizationList';
 import AddStakeholdersButton, { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
@@ -48,7 +48,7 @@ function ProjectDetailsForm(props: Props) {
     const { projectId } = props;
 
     const [pristine, setPristine] = useState<boolean>(false);
-    const [faramValues, setFaramValues] = useState<ProjectDetails>();
+    const [faramValues, setFaramValues] = useState<Partial<ProjectDetails>>();
     const [finalValues, setFinalValues] = useState<Partial<ProjectDetails>>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
 
@@ -81,13 +81,16 @@ function ProjectDetailsForm(props: Props) {
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
 
-    const handleFaramChange = useCallback((newValues, newErrors) => {
+    const handleFaramChange = useCallback((
+        newValues: Partial<ProjectDetails>,
+        newErrors: FaramErrors,
+    ) => {
         setPristine(false);
         setFaramValues(newValues);
         setFaramErrors(newErrors);
     }, []);
 
-    const handleFaramValidationSuccess = useCallback((_, values) => {
+    const handleFaramValidationSuccess = useCallback((_, values: Partial<ProjectDetails>) => {
         setFinalValues(values);
         projectPatch();
     }, [projectPatch]);
@@ -100,8 +103,8 @@ function ProjectDetailsForm(props: Props) {
         )
     ), [faramValues]);
 
-    const organizationListRendererParams = useCallback((key, v) => {
-        const organizations = groupedOrganizations[key] ?? [];
+    const organizationListRendererParams = useCallback((key: string, v: StakeholderType) => {
+        const organizations = groupedOrganizations[key];
 
         return { data: organizations, title: v.label };
     }, [groupedOrganizations]);
