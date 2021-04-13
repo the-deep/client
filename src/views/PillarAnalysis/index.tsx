@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
-import { isNotDefined } from '@togglecorp/fujs';
+import {
+    listToGroupList,
+    isDefined,
+    isNotDefined,
+} from '@togglecorp/fujs';
 import {
     Heading,
     Button,
@@ -98,6 +102,16 @@ function PillarAnalysis(props: PageProps) {
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
         method: 'GET',
         autoTrigger: true,
+        onSuccess: (response) => {
+            if (isDefined(response)) {
+                const newFilters = listToGroupList(
+                    response.filters,
+                    o => o.key,
+                    o => o.id,
+                );
+                setFiltersValue(newFilters);
+            }
+        },
     });
 
     const [
