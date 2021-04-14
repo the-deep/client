@@ -24,7 +24,7 @@ interface RecentActivityProps {
 function ActivityItem(props: RecentActivityProps) {
     const {
         createdAt,
-        createdByDisplayName = 'Unknown user',
+        createdByDisplayName,
         createdByDisplayPicture,
         projectDisplayName,
         type,

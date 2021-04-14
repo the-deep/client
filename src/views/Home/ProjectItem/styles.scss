@@ -113,10 +113,12 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    margin: 0 calc(-1 * var(--dui-spacing-small));
     padding: var(--dui-spacing-small) 0;
 
     .name {
-        flex-grow: 1;
+        flex-shrink: 0;
+        padding: 0 var(--dui-spacing-small);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -128,6 +130,7 @@
     .date {
         flex-shrink: 0;
         padding: 0;
+        padding: 0 var(--dui-spacing-small);
         color: var(--dui-color-label);
     }
 }

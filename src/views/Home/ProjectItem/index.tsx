@@ -133,7 +133,6 @@ function ProjectItem(props: RecentProjectItemProps) {
             date: (new Date(pa.date)).getTime(),
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [projectActivity]);
-    console.warn('time here', convertedProjectActivity, projectActivity);
 
     return (
         <ContainerCard

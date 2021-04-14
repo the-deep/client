@@ -2,8 +2,7 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Numeral from '#rscv/Numeral';
-import InformationCardFragments,
-{
+import InformationCardFragments, {
     InformationVariant,
 } from '#dui/InformationCardFragments';
 
@@ -11,10 +10,6 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    iconContainerClassName?: string;
-    mainContainerClassName?: string;
-    valueClassName?: string;
-    labelClassName?: string;
     icon?: React.ReactNode;
     label: string;
     value?: number;

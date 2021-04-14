@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import {
     Card,
-    Header,
     Container,
 } from '@the-deep/deep-ui';
 
