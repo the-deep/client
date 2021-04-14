@@ -146,6 +146,9 @@ function Analysis(props: ComponentProps) {
         },
     );
 
+    // FIXME: please use variable name with the context
+    // i.e. What click does this handles?
+    // suggestion: handleAccordionButtonClick
     const handleClick = useCallback(() => {
         setExpanded(!expanded);
     }, [expanded]);
