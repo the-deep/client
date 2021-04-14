@@ -23,6 +23,14 @@
 
         .bottom-section {
             padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+
+            .bottom-section-content {
+                padding: 0 var(--dui-spacing-medium);
+
+                .project-item {
+                    margin: var(--dui-spacing-medium) 0;
+                }
+            }
         }
     }
 

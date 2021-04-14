@@ -4,6 +4,8 @@ import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
+const arcGenerator = arc().cornerRadius(5);
+
 interface Props {
     width: number;
     arcWidth: number;
@@ -29,18 +31,15 @@ function CircularProgressBar(props: Props) {
     const arcOuterRadius = width / 2;
     const arcInnerRadius = (width / 2) - arcWidth;
 
-    const arcGenerator = arc()
-        .cornerRadius(5);
-
-    const progressArc = (v: number) => arcGenerator({
+    const progressArc = React.useCallback((v: number) => arcGenerator({
         endAngle: 2 * Math.PI * v,
         innerRadius: arcInnerRadius,
         outerRadius: arcOuterRadius,
         startAngle: 0,
-    });
+    }), [arcInnerRadius, arcOuterRadius]);
 
-    const unfilledPathData = progressArc(1);
-    const filledPathData = progressArc(value / 100);
+    const unfilledPathData = React.useMemo(() => progressArc(1), [progressArc]);
+    const filledPathData = React.useMemo(() => progressArc(value / 100), [progressArc, value]);
 
     const radius = width / 2;
 

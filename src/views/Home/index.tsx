@@ -175,6 +175,7 @@ function Home(props: ViewProps) {
     }, [projectStats, selectedProject]);
 
     const recentProjectsRendererParams = useCallback((_, data) => ({
+        className: styles.projectItem,
         ...data,
     }), []);
 
@@ -233,6 +234,7 @@ function Home(props: ViewProps) {
                 <div className={styles.bottomSection}>
                     <Container
                         heading={_ts('home', 'recentProjectsHeading')}
+                        contentClassName={styles.bottomSectionContent}
                         headerActions={(
                             <>
                                 <SelectInput
