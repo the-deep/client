@@ -34,7 +34,7 @@ const projectSchema = [];
             numberOfEntries: { type: 'uint' },
             entriesActivity: { type: 'array.timevalue' },
             leadsActivity: { type: 'array.timevalue' },
-            status: { type: 'uint' },
+            status: { type: 'string' },
             statusTitle: { type: 'string' },
         },
     };
