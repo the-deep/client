@@ -32,5 +32,11 @@
             display: inline-flex;
             margin-left: var(--spacing-small);
         }
+
+        :global {
+            .status {
+                text-transform: capitalize;
+            }
+        }
     }
 }

@@ -353,7 +353,7 @@ export default class DiscoverProjects extends React.PureComponent {
                     />
                 );
             case 'status':
-                return project.statusTitle;
+                return project.status;
             default:
                 return project[columnKey];
         }

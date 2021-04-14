@@ -122,13 +122,12 @@ export default class FilterProjectsForm extends React.PureComponent {
         this.state = {
             faramValues: this.props.filters,
             pristine: true,
-            pendingProjectOptionss: false,
         };
 
         this.schema = {
             fields: {
                 search: [],
-                status: [],
+                // status: [],
                 regions: [],
                 involvement: [],
             },
@@ -228,18 +227,20 @@ export default class FilterProjectsForm extends React.PureComponent {
                     showLabel
                     className={styles.projectFilter}
                 />
-                <MultiSegmentInput
-                    faramElementName="status"
-                    keySelector={FilterProjectsForm.optionKeySelector}
-                    labelSelector={FilterProjectsForm.optionLabelSelector}
-                    label={_ts('discoverProjects.filter', 'status')}
-                    options={projectOptions.status}
-                    tooltipSelector={FilterProjectsForm.statusTooltipSelector}
-                    placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className={styles.projectFilter}
-                />
+                {/*
+                    <MultiSegmentInput
+                        faramElementName="status"
+                        keySelector={FilterProjectsForm.optionKeySelector}
+                        labelSelector={FilterProjectsForm.optionLabelSelector}
+                        label={_ts('discoverProjects.filter', 'status')}
+                        options={projectOptions.status}
+                        tooltipSelector={FilterProjectsForm.statusTooltipSelector}
+                        placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
+                        showHintAndError={false}
+                        showLabel
+                        className={styles.projectFilter}
+                    />
+                */}
                 <Button
                     className={styles.button}
                     disabled={isApplyDisabled}

@@ -132,7 +132,6 @@ export default class UserProject extends React.PureComponent {
                 key: 'status',
                 label: _ts('userProfile', 'tableHeaderStatus'),
                 order: 5,
-                modifier: () => 'Active', // NOTE: Show 'Active' for now
             },
             {
                 key: 'members',
