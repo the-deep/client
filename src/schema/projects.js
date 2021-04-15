@@ -35,7 +35,7 @@ const projectSchema = [];
             entriesActivity: { type: 'array.timevalue' },
             leadsActivity: { type: 'array.timevalue' },
             status: { type: 'string' },
-            statusTitle: { type: 'string' },
+            statusDisplay: { type: 'string' },
         },
     };
     projectSchema.push({ name, schema });
@@ -76,7 +76,7 @@ const projectSchema = [];
             role: { type: 'uint' },
             startDate: { type: 'string' }, // date
             status: { type: 'string' },
-            statusTitle: { type: 'string' },
+            statusDisplay: { type: 'string' },
             title: { type: 'string', required: true },
             topSourcers: { type: 'array.sourcers' },
             topTaggers: { type: 'array.sourcers' },

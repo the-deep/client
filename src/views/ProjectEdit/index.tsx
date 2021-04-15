@@ -20,6 +20,7 @@ import {
     AppState,
 } from '#typings';
 
+import ProjectDetailsForm from './ProjectDetailsForm';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -28,7 +29,7 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 interface ViewProps {
-    projectId?: string;
+    projectId: number;
     activeProject: ProjectDetails;
 }
 
@@ -96,8 +97,13 @@ function ProjectEdit(props: ViewProps) {
                         </Tab>
                     </TabList>
                 </FullPageHeader>
-                <TabPanel name="general">
-                    {_ts('projectEdit', 'projectDetailsLabel')}
+                <TabPanel
+                    className={styles.tabPanel}
+                    name="general"
+                >
+                    <ProjectDetailsForm
+                        projectId={projectId}
+                    />
                 </TabPanel>
                 <TabPanel name="users">
                     {_ts('projectEdit', 'usersLabel')}

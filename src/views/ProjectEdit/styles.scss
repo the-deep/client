@@ -1,11 +1,12 @@
 .project-edit {
     display: flex;
     flex-direction: column;
+    background-color: var(--dui-color-white);
+    height: 100%;
     overflow-y: auto;
 
     .header {
         flex-shrink: 0;
-        padding: 0;
 
         .content {
             display: flex;
@@ -33,5 +34,11 @@
                 margin: var(--dui-spacing-small);
             }
         }
+    }
+
+    .tab-panel {
+        display: flex;
+        flex-grow: 1;
+        overflow-y: auto;
     }
 }

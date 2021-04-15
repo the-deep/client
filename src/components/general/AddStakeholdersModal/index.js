@@ -99,7 +99,7 @@ const transformFaramValuesToOrganization = (faramValues = {}, options = []) => {
 @RequestCoordinator
 @RequestClient(requestOptions)
 @FaramInputElement
-export default class StakeholdersModal extends React.PureComponent {
+export default class AddStakeholdersModal extends React.PureComponent {
     static propTypes = propTypes;
     constructor(props) {
         super(props);
