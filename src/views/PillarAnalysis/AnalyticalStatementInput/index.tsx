@@ -3,13 +3,13 @@ import { GrDrag } from 'react-icons/gr';
 import { BiBarChartSquare } from 'react-icons/bi';
 import {
     IoClose,
-    IoAdd,
     IoCheckmarkCircleSharp,
 } from 'react-icons/io5';
 import { _cs, randomString } from '@togglecorp/fujs';
 import {
     QuickActionButton,
     TextArea,
+    DropContainer,
 } from '@the-deep/deep-ui';
 import {
     PartialForm,
@@ -24,7 +24,7 @@ import AnalyticalEntryInput from './AnalyticalEntryInput';
 import styles from './styles.scss';
 
 interface AnalyticalStatementInputProps {
-    className?: string;
+   className?: string;
    value: PartialForm<AnalyticalStatementType>;
    error: Error<AnalyticalStatementType> | undefined;
    onChange: (value: PartialForm<AnalyticalStatementType>, index: number) => void;
@@ -50,18 +50,25 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     } = useFormArray('analyticalEntries', value.analyticalEntries ?? [], onFieldChange);
 
     const handleAnalyticalEntryAdd = useCallback(
-        () => {
+        (val: Record<string, unknown> | undefined) => {
+            if (!val) {
+                return;
+            }
+            const typedVal = val as { entryId: number };
+
+            if (value.analyticalEntries?.find(item => item.id === typedVal.entryId)) {
+                return;
+            }
+
             const uuid = randomString();
             const newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
                 uuid,
+                entry: typedVal.entryId,
                 // FIXME: add order
                 order: 0,
-                // FIXME: this is temporary.
-                // Remove this after we can drag/drop the entry from sidepane
-                entry: Math.ceil(Math.random() * 100),
             };
             onFieldChange(
-                [...(value.analyticalEntries ?? []), newAnalyticalEntry],
+                [newAnalyticalEntry, ...(value.analyticalEntries ?? [])],
                 'analyticalEntries' as const,
             );
         },
@@ -73,10 +80,10 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             <div className={styles.upperContent}>
                 <header className={styles.upperContentHeader}>
                     <div className={styles.leftHeaderContainer}>
-                        <QuickActionButton>
+                        <QuickActionButton name={undefined}>
                             <IoCheckmarkCircleSharp />
                         </QuickActionButton>
-                        <QuickActionButton>
+                        <QuickActionButton name={undefined}>
                             <BiBarChartSquare />
                         </QuickActionButton>
                     </div>
@@ -91,6 +98,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     </QuickActionButton>
                     <QuickActionButton
                         className={styles.button}
+                        name={undefined}
                     >
                         <GrDrag />
                     </QuickActionButton>
@@ -111,16 +119,11 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     error={error?.fields?.statement}
                 />
             </div>
-            <div className={styles.entryContainer}>
-                <QuickActionButton
-                    className={styles.entryAddButton}
-                    name={undefined}
-                    onClick={handleAnalyticalEntryAdd}
-                    // FIXME: use translation
-                    title="Simulate Entry Drop"
-                >
-                    <IoAdd />
-                </QuickActionButton>
+            <DropContainer
+                className={styles.entryContainer}
+                name="entry"
+                onDrop={handleAnalyticalEntryAdd}
+            >
                 {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
                     <AnalyticalEntryInput
                         key={analyticalEntry.uuid}
@@ -132,7 +135,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.uuid]}
                     />
                 ))}
-            </div>
+            </DropContainer>
         </div>
     );
 }

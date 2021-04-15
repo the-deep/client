@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { Card } from '@the-deep/deep-ui';
+import { DraggableContent } from '@the-deep/deep-ui';
 
 import {
     EntryType,
@@ -17,6 +17,8 @@ interface EntryItem {
     excerpt?: string; // eslint-disable-line react/no-unused-prop-types
     image?: string; // eslint-disable-line react/no-unused-prop-types
     tabularFieldData?: TabularDataFields; // eslint-disable-line react/no-unused-prop-types
+
+    entryId: number;
 }
 
 const entryTypeToValueMap: {
@@ -39,15 +41,22 @@ function EntryItem(props: EntryItem) {
     const {
         className,
         type,
+        entryId,
     } = props;
 
+    const value = useMemo(() => ({ entryId }), [entryId]);
+
     return (
-        <Card className={_cs(className, styles.entryItem)}>
+        <DraggableContent
+            className={_cs(className, styles.entryItem)}
+            name="entry"
+            value={value}
+        >
             <ExcerptOutput
                 type={entryTypeToExcerptTypeMap[type]}
                 value={props[entryTypeToValueMap[type]]}
             />
-        </Card>
+        </DraggableContent>
     );
 }
 
