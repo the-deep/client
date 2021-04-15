@@ -571,7 +571,7 @@ class LeadDetail extends React.PureComponent {
             newOrgs.push(webInfo.source);
         }
         if (webInfo.author) {
-            newOrgs.push([webInfo.author.id]);
+            newOrgs.push(webInfo.author);
         }
         if (newOrgs.length > 0) {
             this.setState(state => ({
