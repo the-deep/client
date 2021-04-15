@@ -13,6 +13,7 @@ import {
     Button,
     QuickActionButton,
     TextArea,
+    CollapsibleContainer,
 } from '@the-deep/deep-ui';
 import {
     PartialForm,
@@ -379,22 +380,37 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                     disabled={pendingFramework || pendingGeoOptions}
                 />
                 <div className={styles.workspace}>
-                    <div className={styles.leftContainer}>
-                        <Tabs
-                            value={activeTab}
-                            onChange={setActiveTab}
+                    <Tabs
+                        value={activeTab}
+                        onChange={setActiveTab}
+                    >
+                        <CollapsibleContainer
+                            className={styles.entryListSection}
+                            expandButtonClassName={styles.expandEntryListButton}
+                            headerIcons={(
+                                <TabList className={styles.header}>
+                                    <Tab name="entries">
+                                        {_ts('pillarAnalysis', 'entriesTabLabel')}
+                                    </Tab>
+                                    <Tab
+                                        name="discarded"
+                                        disabled
+                                    >
+                                        {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
+                                    </Tab>
+                                </TabList>
+                            )}
+                            footerContent={(
+                                <Pager
+                                    className={styles.pager}
+                                    activePage={activePage}
+                                    itemsCount={entriesCount}
+                                    maxItemsPerPage={maxItemsPerPage}
+                                    onPageClick={setActivePage}
+                                    showItemsPerPageChange={false}
+                                />
+                            )}
                         >
-                            <TabList className={styles.header}>
-                                <Tab name="entries">
-                                    {_ts('pillarAnalysis', 'entriesTabLabel')}
-                                </Tab>
-                                <Tab
-                                    name="discarded"
-                                    disabled
-                                >
-                                    {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
-                                </Tab>
-                            </TabList>
                             <TabPanel
                                 className={styles.entries}
                                 name="entries"
@@ -411,16 +427,8 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                                 {/* NOTE: This is a dummy text */}
                                 Discarded entries go here
                             </TabPanel>
-                        </Tabs>
-                        <Pager
-                            className={styles.pager}
-                            activePage={activePage}
-                            itemsCount={entriesCount}
-                            maxItemsPerPage={maxItemsPerPage}
-                            onPageClick={setActivePage}
-                            showItemsPerPageChange={false}
-                        />
-                    </div>
+                        </CollapsibleContainer>
+                    </Tabs>
                     <div className={styles.rightContainer}>
                         {value.analyticalStatements?.map((analyticalStatement, index) => (
                             <AnalyticalStatementInput
