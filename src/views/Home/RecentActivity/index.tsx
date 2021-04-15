@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import {
     Card,
-    Header,
+    Container,
 } from '@the-deep/deep-ui';
 
-import ListView from '#rsu/../v2/View/ListView';
+import List from '#rsu/../v2/View/List';
 
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -46,21 +46,20 @@ function RecentActivities() {
 
 
     return (
-        <div className={styles.recentActivity}>
-            <Header
-                className={styles.header}
-                heading={_ts('recentActivity', 'recentActivitiesHeading')}
-            />
-            <Card className={styles.contentContainer}>
-                <ListView
-                    className={styles.activityList}
+        <Container
+            sub
+            className={styles.recentActivity}
+            heading={_ts('recentActivity', 'recentActivitiesHeading')}
+        >
+            <Card className={styles.content}>
+                <List
                     data={recentActivitiesResponse?.results}
                     renderer={ActivityItem}
                     keySelector={keySelector}
                     rendererParams={activityRendererParams}
                 />
             </Card>
-        </div>
+        </Container>
     );
 }
 

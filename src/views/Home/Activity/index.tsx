@@ -19,14 +19,21 @@ import { _cs, compareDate, getHexFromString } from '@togglecorp/fujs';
 import styles from './styles.scss';
 
 interface Props {
-    className: string;
+    className?: string;
     pending: boolean;
     recentActivity?: ProjectRecentActivity;
 }
 
 const minTickFormatter = (value: number | string) => {
     const date = new Date(value);
-    return date.toDateString();
+    const format: Intl.DateTimeFormatOptions = {
+        dateStyle: 'medium',
+    };
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    return new Intl.DateTimeFormat('en-GB', format).format(date);
 };
 
 const dateFormatter = (value: number | string) => {
@@ -68,6 +75,7 @@ function Activity(props: Props) {
                         tick={{ strokeWidth: 1 }}
                         tickFormatter={minTickFormatter}
                         interval="preserveStartEnd"
+                        padding={{ left: 10, right: 10 }}
                     />
                     <YAxis
                         dataKey="value"
@@ -89,6 +97,7 @@ function Activity(props: Props) {
                             stroke={s.color}
                             strokeWidth={2}
                             connectNulls
+                            dot
                         />
                     ))}
                 </LineChart>

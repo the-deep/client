@@ -16,7 +16,7 @@ import {
     Container,
 } from '@the-deep/deep-ui';
 
-import InformationBox from '#components/viewer/InformationBox';
+import InformationCard from '#dui/InformationCard';
 import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 
 import Icon from '#rscg/Icon';
@@ -286,7 +286,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
             >
                 <div className={styles.infoBoxes}>
                     <div className={styles.topInfoBox}>
-                        <InformationBox
+                        <InformationCard
                             className={styles.infoBox}
                             icon={(
                                 <Icon
@@ -298,7 +298,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             value={100}
                             variant="accent"
                         />
-                        <InformationBox
+                        <InformationCard
                             className={styles.infoBox}
                             icon={(
                                 <Icon

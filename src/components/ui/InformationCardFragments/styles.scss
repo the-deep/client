@@ -1,0 +1,106 @@
+.icon-container {
+    padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+    font-size: var(--font-size-ultra-large);
+
+    &.accent {
+        color: var(--dui-color-accent);
+
+        &.colored-background {
+            color: var(--dui-color-text-on-accent);
+        }
+    }
+
+    &.complement-1 {
+        color: var(--dui-color-complement1);
+
+        &.colored-background {
+            color: var(--dui-color-text-on-dark);
+        }
+    }
+
+    &.complement-2 {
+        color: var(--dui-color-complement2);
+
+        &.colored-background {
+            color: var(--dui-color-text-on-dark);
+        }
+    }
+
+    &.complement-3 {
+        color: var(--dui-color-complement3);
+
+        &.colored-background {
+            color: var(--dui-color-text-on-dark);
+        }
+    }
+
+    >* {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+    }
+}
+
+.value-and-label-container {
+    padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+
+    .value {
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+        font-size: var(--font-size-ultra-large);
+        font-weight: var(--font-weight-bold);
+    }
+
+    .label {
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+        font-size: var(--font-size-large);
+    }
+
+    &.accent {
+        &:not(&.colored-background) {
+            .value {
+                color: var(--dui-color-accent);
+            }
+        }
+
+        &.colored-background {
+            color: var(--dui-color-text-on-accent);
+        }
+    }
+
+    &.complement-1 {
+        &:not(&.colored-background) {
+            .value {
+                color: var(--dui-color-complement1);
+            }
+        }
+
+        &.colored-background {
+            color: var(--dui-color-text-on-dark);
+        }
+    }
+
+    &.complement-2 {
+        &:not(&.colored-background) {
+            .value {
+                color: var(--dui-color-complement2);
+            }
+        }
+
+        &.colored-background {
+            color: var(--dui-color-text-on-dark);
+        }
+    }
+
+    &.complement-3 {
+        &:not(&.colored-background) {
+            .value {
+                color: var(--dui-color-complement3);
+            }
+        }
+
+        &.colored-background {
+            color: var(--dui-color-text-on-dark);
+        }
+    }
+}

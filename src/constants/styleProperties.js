@@ -66,6 +66,9 @@ const styleProperties = {
 
         heightActionBar: '42px',
 
+        fontSizeUltraLarge: '38px',
+
+        // We do not use variable name extreme
         fontSizeExtremeLarge: '32px',
     },
 };

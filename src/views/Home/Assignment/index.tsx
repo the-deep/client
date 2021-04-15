@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { isDefined } from '@togglecorp/fujs';
 import {
-    Header,
+    Container,
+    Button,
     Card,
 } from '@the-deep/deep-ui';
 
-import ListView from '#rsu/../v2/View/ListView';
+import List from '#rsu/../v2/View/List';
 import Pager from '#rscv/Pager';
-import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
@@ -103,43 +103,43 @@ function Assignments() {
     }), [setSelectedAssignment, markAsDonePending]);
 
     return (
-        <div className={styles.assignment}>
-            {pending && <LoadingAnimation />}
-            <Header
-                className={styles.header}
-                heading={_ts('assignment', 'myAssignments')}
-                actions={assignmentsResponse && assignmentsResponse.count > 0 && (
+        <Container
+            sub
+            heading={_ts('assignment', 'myAssignments')}
+            headerActions={(
+                assignmentsResponse && assignmentsResponse.count > 0 && (
                     <Button
-                        transparent
-                        className={styles.markButton}
                         onClick={triggerBulkAsDone}
                         disabled={bulkPending}
+                        variant="action"
                     >
                         {_ts('assignment', 'markAllAsDone')}
                     </Button>
-                )}
-            />
-            <Card className={styles.contentContainer}>
-                <ListView
-                    className={styles.list}
+                )
+            )}
+            className={styles.assignments}
+            footerContent={(
+                assignmentsResponse && assignmentsResponse.count > 0 && (
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={assignmentsResponse.count}
+                        maxItemsPerPage={maxItemsPerPage}
+                        onPageClick={setActivePage}
+                        showItemsPerPageChange={false}
+                    />
+                )
+            )}
+        >
+            {pending && <LoadingAnimation />}
+            <Card className={styles.content}>
+                <List
                     data={assignmentsResponse?.results}
                     keySelector={keySelector}
                     renderer={AssignmentItem}
                     rendererParams={rendererParams}
                 />
-                {assignmentsResponse && assignmentsResponse.count > 0 && (
-                    <div className={styles.footer}>
-                        <Pager
-                            activePage={activePage}
-                            itemsCount={assignmentsResponse.count}
-                            maxItemsPerPage={maxItemsPerPage}
-                            onPageClick={setActivePage}
-                            showItemsPerPageChange={false}
-                        />
-                    </div>
-                )}
             </Card>
-        </div>
+        </Container>
     );
 }
 
