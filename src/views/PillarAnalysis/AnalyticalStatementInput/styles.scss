@@ -8,6 +8,7 @@
     width: var(--width-analytical-statement);
 
     .upper-content {
+        flex-shrink: 0;
         border: var(--dui-width-separator-thin) solid var(--dui-color-surface-negative);
         background-color: var(--dui-color-surface-informational);
         padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
@@ -41,13 +42,9 @@
     .entry-container {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
+        background-color: var(--dui-color-white);
         padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
         overflow: auto;
-
-        .entry-add-button {
-            align-self: flex-end;
-            flex-shrink: 0;
-            margin: var(--dui-spacing-medium);
-        }
     }
 }
