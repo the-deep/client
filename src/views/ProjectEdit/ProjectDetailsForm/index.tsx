@@ -1,21 +1,29 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import Faram, { requiredCondition, dateCondition } from '@togglecorp/faram';
-import { formatDateToString, listToGroupList } from '@togglecorp/fujs';
-
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import Checkbox from '#rsci/Checkbox';
-import ListView from '#rsu/../v2/View/ListView';
-import DateInput from '#rsci/DateInput';
-import NonFieldErrors from '#rsci/NonFieldErrors';
-import TextInput from '#rsci/TextInput';
-import TextArea from '#rsci/TextArea';
+import Faram, {
+    requiredCondition,
+    FaramInputElement,
+    dateCondition,
+} from '@togglecorp/faram';
 import {
     Button,
     Container,
+    ContainerCard,
+    Link,
     Tag,
     Footer,
+    TextInput as TextInputFromDui,
+    DateInput as DateInputFromDui,
+    TextArea as TextAreaFromDui,
+    Checkbox as CheckboxFromDui,
 } from '@the-deep/deep-ui';
-import { IoArrowForward } from 'react-icons/io5';
+import {
+    listToGroupList,
+    isNotDefined,
+} from '@togglecorp/fujs';
+
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rsu/../v2/View/ListView';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import OrganizationList from '#components/general/OrganizationList';
 import AddStakeholdersButton, { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
 
@@ -29,6 +37,11 @@ import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
+
+const TextInput = FaramInputElement(TextInputFromDui);
+const Checkbox = FaramInputElement(CheckboxFromDui);
+const TextArea = FaramInputElement(TextAreaFromDui);
+const DateInput = FaramInputElement(DateInputFromDui);
 
 interface Props {
     projectId: number;
@@ -54,6 +67,7 @@ function ProjectDetailsForm(props: Props) {
 
     const [
         projectGetPending,
+        projectDetails,
     ] = useRequest<ProjectDetails>({
         url: `server://projects/${projectId}/`,
         method: 'GET',
@@ -61,6 +75,7 @@ function ProjectDetailsForm(props: Props) {
         onSuccess: (response) => {
             setFaramValues(response);
         },
+        autoTriggerDisabled: isNotDefined(projectId),
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
@@ -71,8 +86,8 @@ function ProjectDetailsForm(props: Props) {
         ,
         projectPatch,
     ] = useRequest<ProjectDetails>({
-        url: `server://projects/${projectId}/`,
-        method: 'PATCH',
+        url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
+        method: projectId ? 'PATCH' : 'POST',
         body: finalValues,
         onSuccess: (response) => {
             setFaramValues(response);
@@ -121,7 +136,10 @@ function ProjectDetailsForm(props: Props) {
             onChange={handleFaramChange}
         >
             {(projectGetPending || projectPatchPending) && <LoadingAnimation />}
-            <NonFieldErrors faramElement />
+            <NonFieldErrors
+                faramElement
+                persistent={false}
+            />
             <div className={styles.content}>
                 <div className={styles.main}>
                     <TextInput
@@ -150,7 +168,7 @@ function ProjectDetailsForm(props: Props) {
                         faramElementName="description"
                         label={_ts('projectEdit', 'projectDescription')}
                         placeholder={_ts('projectEdit', 'projectDescription')}
-                        rows="2"
+                        rows="4"
                     />
                     <div className={styles.projectTags}>
                         <Container
@@ -188,14 +206,11 @@ function ProjectDetailsForm(props: Props) {
                                     {_ts('projectEdit', 'publicProject')}
                                 </Tag>
                             ) : (
-                                <Button
-                                    actions={(
-                                        <IoArrowForward />
-                                    )}
-                                    variant="tertiary"
+                                <Link
+                                    to="mailto:pm@thedeep.io"
                                 >
                                     {_ts('projectEdit', 'requestPrivateProject')}
-                                </Button>
+                                </Link>
                             )}
                         </Container>
                     </div>
@@ -210,8 +225,9 @@ function ProjectDetailsForm(props: Props) {
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />
                     </Container>
-                    <Container
+                    <ContainerCard
                         className={styles.stakeholders}
+                        headerClassName={styles.header}
                         headingClassName={styles.heading}
                         heading={_ts('projectEdit', 'projectStakeholders')}
                         headerActions={<AddStakeholdersButton />}
@@ -225,18 +241,20 @@ function ProjectDetailsForm(props: Props) {
                             keySelector={stakeholderTypeKeySelector}
                             emptyComponent={null}
                         />
-                    </Container>
+                    </ContainerCard>
                     <div className={styles.createdByDetails}>
-                        <TextInput
-                            className={styles.input}
-                            faramElementName="createdByName"
-                            label={_ts('projectEdit', 'projectCreatedBy')}
-                            disabled
-                        />
-                        {faramValues?.createdAt && (
+                        {projectDetails?.createdByName && (
+                            <TextInput
+                                className={styles.input}
+                                label={_ts('projectEdit', 'projectCreatedBy')}
+                                value={projectDetails.createdByName}
+                                readOnly
+                            />
+                        )}
+                        {projectDetails?.createdAt && (
                             <DateInput
                                 className={styles.input}
-                                value={formatDateToString(new Date(faramValues?.createdAt), 'dd-MM-yyyy')}
+                                value={projectDetails.createdAt.split('T')[0]}
                                 label={_ts('projectEdit', 'projectCreatedOn')}
                                 readOnly
                             />
@@ -244,7 +262,7 @@ function ProjectDetailsForm(props: Props) {
                     </div>
                 </div>
                 <div className={styles.map}>
-                    map
+                    Map
                 </div>
             </div>
             <Footer
