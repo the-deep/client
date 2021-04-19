@@ -1,4 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { Redirect } from 'react-router-dom';
+import { pathNames } from '#constants';
 import Faram, {
     requiredCondition,
     FaramInputElement,
@@ -19,15 +23,21 @@ import {
 import {
     listToGroupList,
     isNotDefined,
+    reverseRoute,
 } from '@togglecorp/fujs';
 
+import {
+    userIdFromRouteSelector,
+    setActiveProjectAction,
+    setProjectAction,
+} from '#redux';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rsu/../v2/View/ListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import OrganizationList from '#components/general/OrganizationList';
 import AddStakeholdersButton, { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
-
 import {
+    AppState,
     FaramErrors,
     ProjectDetails,
 } from '#typings';
@@ -46,7 +56,17 @@ const DateInput = FaramInputElement(DateInputFromDui);
 interface Props {
     projectId: number;
 }
+
+interface PropsFromDispatch {
+    setUserProject: typeof setProjectAction;
+    setActiveProject: typeof setActiveProjectAction;
+}
+
+interface PropsFromState {
+    userId: number;
+}
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
+
 const schema = {
     fields: {
         title: [requiredCondition],
@@ -57,13 +77,29 @@ const schema = {
         hasAssessments: [],
     },
 };
-function ProjectDetailsForm(props: Props) {
-    const { projectId } = props;
 
-    const [pristine, setPristine] = useState<boolean>(false);
+const mapStateToProps = (state: AppState) => ({
+    userId: userIdFromRouteSelector(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setUserProject: params => dispatch(setProjectAction(params)),
+    setActiveProject: params => dispatch(setActiveProjectAction(params)),
+});
+
+function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
+    const {
+        userId,
+        projectId,
+        setUserProject,
+        setActiveProject,
+    } = props;
+
+    const [pristine, setPristine] = useState<boolean>(true);
     const [faramValues, setFaramValues] = useState<Partial<ProjectDetails>>();
     const [finalValues, setFinalValues] = useState<Partial<ProjectDetails>>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
+    const [redirectId, setRedirectId] = useState<number | undefined>();
 
     const [
         projectGetPending,
@@ -90,7 +126,14 @@ function ProjectDetailsForm(props: Props) {
         method: projectId ? 'PATCH' : 'POST',
         body: finalValues,
         onSuccess: (response) => {
-            setFaramValues(response);
+            if (!projectId) {
+                const { id } = response;
+                setActiveProject({ activeProject: id });
+                setUserProject({ project: response, userId });
+                setRedirectId(id);
+            } else {
+                setFaramValues(response);
+            }
         },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
@@ -106,7 +149,7 @@ function ProjectDetailsForm(props: Props) {
     }, []);
 
     const handleFaramValidationSuccess = useCallback((_, values: Partial<ProjectDetails>) => {
-        setFinalValues(values);
+        setFinalValues({ ...values, organizations: values.organizations ?? [] });
         projectPatch();
     }, [projectPatch]);
 
@@ -123,6 +166,17 @@ function ProjectDetailsForm(props: Props) {
 
         return { data: organizations, title: v.label };
     }, [groupedOrganizations]);
+
+    if (redirectId) {
+        const newRoute = reverseRoute(pathNames.editProject, {
+            redirectId,
+        });
+        return (
+            <Redirect
+                to={newRoute}
+            />
+        );
+    }
 
     return (
         <Faram
@@ -272,6 +326,7 @@ function ProjectDetailsForm(props: Props) {
                         disabled={pristine || projectGetPending || projectPatchPending}
                         type="submit"
                         variant="primary"
+                        name="projectSave"
                     >
                         {_ts('projectEdit', 'projectSave')}
                     </Button>
@@ -281,4 +336,4 @@ function ProjectDetailsForm(props: Props) {
     );
 }
 
-export default ProjectDetailsForm;
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectDetailsForm);

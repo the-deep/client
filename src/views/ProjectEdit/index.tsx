@@ -103,6 +103,7 @@ function ProjectEdit(props: ViewProps) {
                     name="general"
                 >
                     <ProjectDetailsForm
+                        key={projectId}
                         projectId={projectId}
                     />
                 </TabPanel>
