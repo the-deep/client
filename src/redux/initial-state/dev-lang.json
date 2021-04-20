@@ -1322,7 +1322,11 @@
         "-70810293": "User Groups",
         "-79283838": "Manage My User Groups",
         "-88838184": "Add a user group",
-        "-451230": "Failed to fetch Project Roles"
+        "-451230": "Failed to fetch Project Roles",
+        "-12814500": "Failed to post Project Membership",
+        "-14727630": "Failed to post Project Usergroups",
+        "-55358986": "Failed to fetch usergroups",
+        "-93154523": "Failed to fetch users list"
     },
     "links": {
         "browserExtension": {
@@ -3755,7 +3759,11 @@
             "manageUserGroup": -79283838,
             "addUserGroup": -88838184,
             "submitLabel": 826,
-            "projectRoleFetchFailed": -451230
+            "projectRoleFetchFailed": -451230,
+            "projectMembershipPostFailed": -12814500,
+            "projectUsergroupPostFailedLabel": -14727630,
+            "usergroupFetchFailed": -55358986,
+            "usersFetchFailed": -93154523
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

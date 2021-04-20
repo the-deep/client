@@ -26,7 +26,6 @@ import styles from './styles.scss';
 
 interface Props {
     onModalClose: () => void;
-    usergroupList: UserGroup[];
     projectId: string;
 }
 
@@ -38,7 +37,7 @@ const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
 type FormType = {
-    member: number;
+    usergroup: number;
     role: number;
 };
 
@@ -47,7 +46,7 @@ type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
     fields: ():FormSchemaFields => ({
-        member: [requiredCondition],
+        usergroup: [requiredCondition],
         role: [requiredCondition],
     }),
 };
@@ -57,7 +56,6 @@ const defaultFormValues: PartialForm<FormType> = {};
 function AddUserGroupModal(props: Props) {
     const {
         onModalClose,
-        usergroupList,
         projectId,
     } = props;
 
@@ -86,16 +84,27 @@ function AddUserGroupModal(props: Props) {
 
     const [
         ,
+        usergroupResponse,
+    ] = useRequest({
+        url: 'server://user-groups',
+        method: 'GET',
+        autoTrigger: true,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
+        },
+    });
+
+    const [
+        ,
         ,
         ,
         triggerAddUserGroup,
     ] = useRequest({
-        url: `server://projects/${projectId}/project-memberships/`,
+        url: `server://projects/${projectId}/project-usergroups/`,
         method: 'POST',
         body: value,
-        onSuccess: () => console.warn('Successfully posted'),
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectMembershipPostFailedLabel'))({ error: errorBody });
+            notifyOnFailure(_ts('projectEdit', 'projectUsergroupPostFailedLabel'))({ error: errorBody });
         },
     });
 
@@ -118,15 +127,15 @@ function AddUserGroupModal(props: Props) {
                 </p>
                 <div className={styles.inline}>
                     <SelectInput
-                        name="member"
+                        name="usergroup"
                         className={styles.usergroupList}
-                        options={usergroupList}
+                        options={usergroupResponse?.results}
                         keySelector={usergroupKeySelector}
                         labelSelector={usergroupLabelSelector}
                         optionsPopupClassName={styles.optionsPopup}
                         onChange={onValueChange}
-                        value={value.member}
-                        error={error?.fields?.member}
+                        value={value.usergroup}
+                        error={error?.fields?.usergroup}
                         placeholder="Select usergroup"
                     />
                     <SelectInput

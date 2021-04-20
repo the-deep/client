@@ -161,7 +161,7 @@ function UserList(props: Props) {
             {showAddUserModal &&
                 <AddUserModal
                     onModalClose={setModalHidden}
-                    usersList={usersResponse?.results ?? []}
+                    projectId={projectId}
                 />
             }
         </Container>

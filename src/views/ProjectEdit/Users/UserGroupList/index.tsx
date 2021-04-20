@@ -174,7 +174,6 @@ function UserGroupList(props: Props) {
             {showAddUserGroupModal && (
                 <AddUserGroupModal
                     onModalClose={setModalHidden}
-                    usergroupList={userGroupResponse?.results ?? []}
                     projectId={projectId}
                 />
             )}
