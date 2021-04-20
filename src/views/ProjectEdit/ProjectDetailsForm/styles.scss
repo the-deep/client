@@ -3,6 +3,7 @@
     position: relative;
     flex-direction: column;
     flex-grow: 1;
+    background-color: var(--dui-color-white);
     padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
     overflow-y: auto;
 
@@ -32,6 +33,7 @@
                     display: flex;
                     flex-direction: column;
                     flex-grow: 1;
+                    flex-shrink: 0;
                     padding: var(--dui-spacing-medium);
                 }
             }
@@ -108,6 +110,7 @@
 
                 .input {
                     flex-grow: 1;
+                    flex-shrink: 0;
                 }
             }
         }

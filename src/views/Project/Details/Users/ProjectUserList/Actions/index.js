@@ -29,9 +29,9 @@ import styles from './styles.scss';
 
 const requestOptions = {
     changeMembershipRequest: {
-        url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
-        method: methods.PUT,
-        body: ({ params: { membership } }) => membership,
+        url: ({ props: { projectId }, params: { membership } }) => `/projects/${projectId}/project-memberships/${membership.id}/`,
+        method: methods.PATCH,
+        body: ({ params }) => params && params.membership,
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             response: membership,
@@ -48,8 +48,9 @@ const requestOptions = {
     },
 
     removeUserMembershipRequest: {
-        url: ({ params: { membership: { id } } }) => `/project-memberships/${id}/`,
+        url: ({ props: { projectId }, params: { membership: { id } } }) => `/projects/${projectId}/project-memberships/${id}/`,
         method: methods.DELETE,
+        body: ({ params }) => params && params.membership,
         onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             params: { membership },
@@ -86,6 +87,7 @@ const propTypes = {
     removeProjectMembership: PropTypes.func.isRequired,
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     row: PropTypes.shape({
+        id: PropTypes.number,
         role: PropTypes.number,
         member: PropTypes.number,
         memberName: PropTypes.string,
@@ -159,7 +161,7 @@ export default class Actions extends React.PureComponent {
 
         changeMembershipRequest.do({
             membership: {
-                ...row,
+                id: row.id,
                 role: newRole,
             },
         });
@@ -175,7 +177,7 @@ export default class Actions extends React.PureComponent {
 
         changeMembershipRequest.do({
             membership: {
-                ...row,
+                id: row.id,
                 linkedGroup: newGroup || null, // We need to pass null to unset
             },
         });

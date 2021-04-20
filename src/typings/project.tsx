@@ -23,6 +23,10 @@ export interface Membership {
     memberStatus: 'admin' | 'member';
     project: number;
     role: number;
+    roleDetails: {
+        id: number;
+        title: string;
+    };
     joinedAt: string;
     userGroupOptions: BasicElement[];
 }
@@ -139,4 +143,35 @@ export interface ProjectsSummary {
     totalLeadsTaggedCount: number;
     totalLeadsTaggedAndVerifiedCount: number;
     recentEntriesActivity: ProjectRecentActivity;
+}
+
+export interface UserGroup {
+    id: number;
+    title: string;
+    joinedAt: string;
+    project: number;
+    usergroup: number;
+    role: number;
+    addedBy: number;
+    addedByName: string;
+    roleDetails: {
+        id: number;
+        title: string;
+    };
+}
+
+type Permissions = 'view' | 'create' | 'modify' | 'delete'
+
+export interface ProjectRole {
+    id: number;
+    leadPermissions: [Permissions];
+    entryPermissions: [Permissions];
+    setupPermissions: [Permissions];
+    exportPermissions: [Permissions];
+    assessmentPermissions: [Permissions];
+    title: string;
+    description: string;
+    level: number;
+    isCreatorRole: boolean;
+    isDefaultRole: boolean;
 }
