@@ -2,13 +2,15 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import { AiFillQuestionCircle } from 'react-icons/ai';
+import {
+    ElementFragments,
+} from '@the-deep/deep-ui';
 
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import EntryCommentFormForModal from '#components/general/EntryCommentFormForModal';
 
-import ElementFragments from '#components/ui/ElementFragments';
 import { useModalState } from '#hooks/stateManagement';
 import { notifyError } from '#utils/requestNotify';
 import notify from '#notify';

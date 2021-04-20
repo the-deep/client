@@ -128,8 +128,9 @@ module.exports = {
         'react/default-props-match-prop-types': ['warn', {
             allowRequiredDefaults: true,
         }],
-        'react/require-default-props': 'warn',
-
+        'react/require-default-props': ['warn', {
+            ignoreFunctionalComponents: true,
+        }],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
     },

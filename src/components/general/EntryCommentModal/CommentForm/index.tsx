@@ -1,10 +1,9 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Faram, { requiredCondition, ObjectSchema } from '@togglecorp/faram';
 import TextArea from '#rsci/TextArea';
 import MultiSelectInput from '#rsci/MultiSelectInput';
-import RadioInput from '#rsci/RadioInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import useProjectMemberListQuery, {
@@ -20,7 +19,7 @@ import { FaramErrors } from '#typings';
 
 import styles from './styles.scss';
 
-interface Review {
+interface Comment {
     text?: string;
     commentType?: number; // eslint-disable-line camelcase
     mentionedUsers?: number[]; // eslint-disable-line camelcase
@@ -28,30 +27,16 @@ interface Review {
 
 interface Props {
     className?: string;
-    isVerified: boolean;
-    isApproved: boolean;
     onSuccess: () => void;
-    entryId: number;
+    entryId?: number;
     projectId: number;
     pristine: boolean;
     setPristine: (value: boolean) => void;
 }
 
-interface ReviewType {
-    id: number;
-    label: string;
-}
-
-const reviewTypeKeySelector = (d: ReviewType) => d.id;
-const reviewTypeLabelSelector = (d: ReviewType) => d.label;
-
-const commentRequiredTypes = [0, 2, 4];
-
-function Review(props: Props) {
+function CommentForm(props: Props) {
     const {
         className,
-        isVerified,
-        isApproved,
         entryId,
         projectId,
         pristine,
@@ -59,26 +44,24 @@ function Review(props: Props) {
         onSuccess,
     } = props;
 
-    const [faramValues, setFaramValues] = useState<Review | undefined>({
+    const [faramValues, setFaramValues] = useState<Comment | undefined>({
         commentType: 0,
     });
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
 
-    const commentRequired = commentRequiredTypes.some(v => v === faramValues?.['commentType']) ? [requiredCondition] : [];
-
     const schema: ObjectSchema = {
         fields: {
-            text: commentRequired,
+            text: [requiredCondition],
             commentType: [requiredCondition],
-            mentionedUsers: commentRequired,
+            mentionedUsers: [requiredCondition],
         },
     };
 
     const [
-        reviewPending,
+        commentPending,
         ,
         ,
-        postReview,
+        postComment,
     ] = useRequest<unknown>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
@@ -89,7 +72,7 @@ function Review(props: Props) {
             setFaramValues(undefined);
         },
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
+            notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
         },
     });
 
@@ -98,19 +81,11 @@ function Review(props: Props) {
         projectMembersResponse,
     ] = useProjectMemberListQuery(projectId);
 
-    const reviewTypes: ReviewType[] = useMemo(() => ([
-        { id: 0, label: _ts('entryReview', 'comment') },
-        isApproved ? { id: 2, label: _ts('entryReview', 'unapprove') }
-            : { id: 1, label: _ts('entryReview', 'approve') },
-        isVerified ? { id: 4, label: _ts('entryReview', 'unverify') }
-            : { id: 3, label: _ts('entryReview', 'verify') },
-    ]), [isApproved, isVerified]);
-
     const handleFaramChange = useCallback((newFaramValues, newFaramErrors) => {
         setPristine(false);
         setFaramValues(newFaramValues);
         setFaramErrors(newFaramErrors);
-        if (newFaramValues?.['commentType']) {
+        if (newFaramValues?.commentType) {
             setFaramErrors(undefined);
         }
     }, [setPristine]);
@@ -123,8 +98,8 @@ function Review(props: Props) {
             }));
         }
         setPristine(true);
-        postReview();
-    }, [setPristine, postReview]);
+        postComment();
+    }, [setPristine, postComment]);
 
     const handleFaramValidationFailure = useCallback((newFaramErrors) => {
         setFaramErrors(newFaramErrors);
@@ -132,14 +107,14 @@ function Review(props: Props) {
 
     return (
         <Faram
-            className={_cs(className, styles.review)}
+            className={_cs(className, styles.comment)}
             onChange={handleFaramChange}
             onValidationFailure={handleFaramValidationFailure}
             onValidationSuccess={handleFaramValidationSuccess}
             schema={schema}
             value={faramValues}
             error={faramErrors}
-            disabled={reviewPending || projectMembersPending}
+            disabled={commentPending || projectMembersPending}
         >
             <NonFieldErrors
                 faramElement
@@ -150,13 +125,6 @@ function Review(props: Props) {
                 label={_ts('entryReview', 'comment')}
                 rows={3}
                 autoFocus
-            />
-            <RadioInput
-                className={styles.types}
-                faramElementName="commentType"
-                options={reviewTypes}
-                keySelector={reviewTypeKeySelector}
-                labelSelector={reviewTypeLabelSelector}
             />
             <MultiSelectInput
                 faramElementName="mentionedUsers"
@@ -169,12 +137,12 @@ function Review(props: Props) {
                 className={styles.submitButton}
                 type="submit"
                 disabled={pristine}
-                pending={reviewPending}
+                pending={commentPending}
             >
-                {_ts('entryReview', 'review')}
+                {_ts('entryReview', 'comment')}
             </PrimaryButton>
         </Faram>
     );
 }
 
-export default Review;
+export default CommentForm;

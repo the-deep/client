@@ -10,9 +10,7 @@ import Pager from '#rscv/Pager';
 import DangerButton from '#rsca/Button/DangerButton';
 import Confirm from '#rscv/Modal/Confirm';
 import FloatingContainer from '#rscv/FloatingContainer';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import List from '#rsu/../v2/View/List';
-import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
+import ListView from '#rsu/../v2/View/ListView';
 
 import useRequest from '#utils/request';
 import { MultiResponse, EntryComment, EntryReviewSummary, AppState } from '#typings';
@@ -25,8 +23,8 @@ import {
     projectIdFromRouteSelector,
 } from '#redux';
 
-import Comment from './Comment';
-import Review from './Review';
+import CommentList from './CommentList';
+import CommentForm from './CommentForm';
 import styles from './styles.scss';
 
 
@@ -60,7 +58,7 @@ const mapStateToProps = (state: AppState) => ({
     projectId: projectIdFromRouteSelector(state),
 });
 
-function EntryReviewModal(props: Props) {
+function EntryCommentModal(props: Props) {
     const {
         className,
         parentBCR,
@@ -85,7 +83,7 @@ function EntryReviewModal(props: Props) {
         },
         autoTrigger: true,
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
+            notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
         },
     });
 
@@ -157,9 +155,6 @@ function EntryReviewModal(props: Props) {
 
     const { handlePointerDown } = useDragMove({ onDragMove: handleMouseMove });
 
-    const isApproved = commentsResponse?.summary.approvedBy
-        .some(v => v.id === activeUser.userId) ?? false;
-
     return (
         <>
             <FloatingContainer
@@ -177,7 +172,7 @@ function EntryReviewModal(props: Props) {
                     onPointerDown={handlePointerDown}
                 >
                     <h3>
-                        {_ts('entryReview', 'commentAndReviewHeading')}
+                        {_ts('entryReview', 'commentHeading')}
                     </h3>
                     <DangerButton
                         iconName="close"
@@ -186,25 +181,25 @@ function EntryReviewModal(props: Props) {
                     />
                 </div>
                 <div className={styles.content}>
-                    {commentsPending && (<LoadingAnimation />)}
-                    <Review
+                    <CommentForm
                         className={styles.review}
                         entryId={entryId}
                         pristine={pristine}
                         setPristine={setPristine}
                         onSuccess={getComments}
                         projectId={projectId}
-                        isApproved={isApproved}
-                        isVerified={commentsResponse?.summary.verified ?? false}
                     />
-                    <List
+                    <ListView
+                        className={styles.comments}
                         data={commentsResponse?.results}
                         keySelector={commentKeySelector}
                         rendererParams={commentRendererParams}
-                        renderer={Comment}
+                        renderer={CommentList}
+                        pending={commentsPending}
                     />
                     {commentsResponse && commentsResponse.count > maxItemsPerPage && (
                         <Pager
+                            className={styles.pager}
                             activePage={activePage}
                             itemsCount={commentsResponse.count}
                             maxItemsPerPage={maxItemsPerPage}
@@ -212,17 +207,6 @@ function EntryReviewModal(props: Props) {
                             showItemsPerPageChange={false}
                         />
                     )}
-                </div>
-                <div className={styles.footer}>
-                    { commentsResponse && commentsResponse.summary.approvedBy.length > 0 && (
-                        <>
-                            {_ts('entryReview', 'approvedBy')}
-                            <CommaSeparateItems
-                                className={styles.approvedBy}
-                                items={commentsResponse.summary.approvedBy}
-                            />
-                        </>
-                    ) }
                 </div>
             </FloatingContainer>
             <Confirm
@@ -238,4 +222,4 @@ function EntryReviewModal(props: Props) {
     );
 }
 
-export default connect(mapStateToProps)(EntryReviewModal);
+export default connect(mapStateToProps)(EntryCommentModal);
