@@ -2,80 +2,52 @@
     display: flex;
     flex-direction: column;
     z-index: 1;
-    background-color: var(--color-foreground-alt);
     width: var(--entry-comment-modal-width);
     max-height: var(--entry-comment-modal-max-height);
-    overflow-y: auto;
 
     .header {
         display: flex;
-        flex-direction: column;
-        flex-shrink: 0;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground);
         cursor: move;
-        overflow-y: auto;
+        padding: var(--spacing-small) var(--spacing-medium);
         user-select: none;
-
-        .top-header {
-            display: flex;
-            align-items: center;
-            padding: var(--spacing-small);
-
-            .heading {
-                flex-grow: 1;
-            }
-        }
-
-        .tabs {
-            flex-grow: 1;
-
-            .tab {
-                text-transform: capitalize;
-                font-size: var(--font-size-small);
-                font-weight: var(--font-weight-bold);
-            }
-
-            .buttons {
-                display: flex;
-                align-items: center;
-                flex-shrink: 0;
-                padding: var(--spacing-extra-small);
-            }
-        }
     }
 
     .content {
         display: flex;
+        position: relative;
         flex-direction: column;
-        flex-grow: 1;
-        overflow-y: auto;
+        background-color: var(--color-foreground-alt);
+        padding: calc(var(--spacing-medium) - var(--spacing-small));
+        height: 550px;
+        max-height: 80vh;
 
-        .threads {
+        .review {
+            display: flex;
+            flex-shrink: 0;
+            margin: var(--spacing-small);
+        }
+
+        .comments {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            background-color: var(--color-foreground-alt);
-            padding: var(--spacing-medium);
+            overflow-y: auto;
 
-            .thread {
-                background-color: var(--color-foreground);
-
-                &:not(:last-child) {
-                    margin-bottom: var(--spacing-medium);
-                }
+            .comment {
+                margin: var(--spacing-small);
             }
         }
 
-        .new-comment {
-            flex-shrink: 0;
-            margin: var(--spacing-medium);
-            border: var(--width-separator-thin) solid var(--color-separator);
-            background-color: var(--color-foreground);
+        .pager {
             padding-top: var(--spacing-small);
         }
     }
 }
 
 .confirm {
-    z-index: 10;
+    z-index: 2;
 }

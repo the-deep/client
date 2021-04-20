@@ -14,7 +14,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
-import EntryReviewButton from '#components/general/EntryReviewButton';
+import EntryCommentButton from '#components/general/EntryCommentButton';
 import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import {
@@ -27,7 +27,6 @@ import {
 
     editEntriesSetSelectedEntryKeyAction,
     editEntriesSetEntryVerificationStatusAction,
-    editEntriesSetEntryCommentsCountAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
@@ -50,7 +49,6 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
-    setEntryCommentsCount: PropTypes.func.isRequired,
     setEntryVerificationStatus: PropTypes.func.isRequired,
 
     index: PropTypes.number.isRequired,
@@ -89,7 +87,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
-    setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     setEntryVerificationStatus: params => dispatch(
         editEntriesSetEntryVerificationStatusAction(params),
     ),
@@ -101,7 +98,6 @@ const entryLabelKeySelector = d => d.labelId;
 function WidgetFaramContainer(props) {
     const {
         widgets,
-        setEntryCommentsCount,
         className: classNameFromProps,
         pending,
         widgetType,
@@ -237,7 +233,7 @@ function WidgetFaramContainer(props) {
                             }
                         />
                     )}
-                    <EntryReviewButton entryId={entryAccessor.serverId(entry)} />
+                    <EntryCommentButton entryId={entryAccessor.serverId(entry)} />
                     <Cloak
                         hide={shouldHideEntryEdit}
                         render={
