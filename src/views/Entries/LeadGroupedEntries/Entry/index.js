@@ -15,7 +15,7 @@ import ToggleEntryVerification from '#components/general/ToggleEntryVerification
 import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
 
 import Cloak from '#components/general/Cloak';
-import EntryReviewButton from '#components/general/EntryReviewButton';
+import EntryCommentButton from '#components/general/EntryCommentButton';
 
 import {
     fetchWidgetViewComponent,
@@ -342,7 +342,6 @@ export default class Entry extends React.PureComponent {
         const { entryVerificationPending } = this.state;
 
         const filteredWidgets = this.getWidgets(framework?.widgets);
-        const defaultAssignees = this.getDefaultAssignees(createdBy);
 
         const pending = deletePending || entryVerificationPending;
         const entryLastChangedBy = verificationLastChangedByDetails?.displayName;
@@ -397,8 +396,7 @@ export default class Entry extends React.PureComponent {
                             leadId={entry.lead}
                             projectId={entry.project}
                         />
-                        <EntryReviewButton
-                            className={styles.review}
+                        <EntryCommentButton
                             entryId={entryId}
                         />
                         <EntryEditButton

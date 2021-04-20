@@ -10,7 +10,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import { EntryComment } from '#typings';
 import _ts from '#ts';
 
-import CommentForm from './CommentForm';
+import EditCommentForm from './EditCommentForm';
 import styles from './styles.scss';
 
 interface Props {
@@ -114,7 +114,7 @@ function Comment(props: Props) {
                     )}
                 </div>
                 {editMode ? (
-                    <CommentForm
+                    <EditCommentForm
                         comment={comment}
                         onEditSuccess={handleSuccess}
                         onEditCancel={handleCancel}
