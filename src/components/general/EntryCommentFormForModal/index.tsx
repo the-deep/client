@@ -38,7 +38,9 @@ export interface EntryCommentFormForModalProps<T> {
     className?: string;
 }
 
-function EntryCommentFormForModal<T extends {}>(props: EntryCommentFormForModalProps<T>) {
+function EntryCommentFormForModal<T extends Record<string, unknown>>(
+    props: EntryCommentFormForModalProps<T>,
+) {
     const {
         initialValue,
         disabled,

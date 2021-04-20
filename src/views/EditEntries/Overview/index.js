@@ -9,7 +9,7 @@ import {
 import memoize from 'memoize-one';
 
 import modalize from '#rscg/Modalize';
-import EntryReviewButton from '#components/general/EntryReviewButton';
+import EntryCommentButton from '#components/general/EntryCommentButton';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import SelectInput from '#rsci/SelectInput';
@@ -364,7 +364,7 @@ export default class Overview extends React.PureComponent {
                                         }
                                     />
                                 )}
-                                <EntryReviewButton entryId={entryAccessor.serverId(entry)} />
+                                <EntryCommentButton entryId={entryAccessor.serverId(entry)} />
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
                                     render={
