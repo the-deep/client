@@ -16,7 +16,7 @@ import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import ListItem, { DefaultIcon } from '#rscv/ListItem';
-import EntryReviewButton from '#components/general/EntryReviewButton';
+import EntryCommentButton from '#components/general/EntryCommentButton';
 
 import useRequest from '#utils/request';
 import { getScaleWidgetsData } from '#utils/framework';
@@ -396,7 +396,7 @@ function EntryCard(props: EntryCardProps) {
                                     onPendingStatusChange={setVerifyChangePending}
                                     disabled={isDeleted}
                                 />
-                                <EntryReviewButton entryId={entry.id} />
+                                <EntryCommentButton entryId={entry.id} />
                                 <EntryOpenLink
                                     entryId={entry.id}
                                     leadId={entry.lead}
