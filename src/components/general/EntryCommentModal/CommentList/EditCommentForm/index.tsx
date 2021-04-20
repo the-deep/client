@@ -29,7 +29,7 @@ interface Comment {
     commentType?: number;
     mentionedUsers?: number[];
 }
-function CommentForm(props: Props) {
+function EditCommentForm(props: Props) {
     const {
         className,
         comment,
@@ -65,7 +65,7 @@ function CommentForm(props: Props) {
             setFaramValues(undefined);
         },
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('entryReview', 'reviewHeading'))({ error: errorBody });
+            notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
         },
     });
 
@@ -130,4 +130,4 @@ function CommentForm(props: Props) {
     );
 }
 
-export default CommentForm;
+export default EditCommentForm;

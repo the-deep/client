@@ -19,12 +19,9 @@ const REVIEW_TYPE_UNAPPROVE = 2;
 const REVIEW_TYPE_VERIFY = 3;
 const REVIEW_TYPE_UNVERIFY = 4;
 
-type ReviewType = 0 | 1 | 2 | 3 | 4;
-
 interface EntryReviewProps {
     notificationType: NotificationType;
     notification: NotificationFields;
-    className?: string;
     onNotificationSeenStatusChange: (id: number, newStatus: NotificationStatus) => void;
     closeModal: () => void;
 }
