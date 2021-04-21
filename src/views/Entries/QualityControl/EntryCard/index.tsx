@@ -9,7 +9,7 @@ import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
 import ToggleEntryControl from '#components/general/ToggleEntryControl';
-import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
@@ -195,7 +195,7 @@ function EntryCard(props: EntryCardProps) {
         };
     }, []);
 
-    const handleEntryVerificationChange = useCallback((verified) => {
+    const handleEntryControlChange = useCallback((verified) => {
         if (onEntryChange) {
             const entryToPatch = {
                 ...entry,
@@ -206,19 +206,19 @@ function EntryCard(props: EntryCardProps) {
         }
     }, [entry, onEntryChange]);
 
-    const handleEntryApprovalChange = useCallback((approved, approvalCount) => {
+    const handleEntryVerificationChange = useCallback((verified, verificationCount) => {
         if (onEntryChange) {
             const entryToPatch = {
                 ...entry,
-                isApprovedByCurrentUser: approved,
-                approvedByCount: approvalCount,
+                isVerifiedByCurrentUser: verified,
+                verifiedByCount: verificationCount,
             };
 
             onEntryChange(entryToPatch);
         }
     }, [entry, onEntryChange]);
 
-    const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
+    const entryLastChangedBy = entry?.controlStatusLastChangedByDetails?.displayName;
 
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
@@ -226,7 +226,7 @@ function EntryCard(props: EntryCardProps) {
             <div
                 className={_cs(
                     styles.entryCard,
-                    entry.verified && styles.verified,
+                    entry.controlled && styles.controlled,
                     isDeleted && styles.deleted,
                     isConfidential && styles.confidential,
                 )}
@@ -366,12 +366,12 @@ function EntryCard(props: EntryCardProps) {
                             >
                                 {moreActionsVisible ? (_ts('entries', 'less')) : (_ts('entries', 'more'))}
                             </Button>
-                            <ToggleEntryApproval
+                            <ToggleEntryVerification
                                 entryId={entry.id}
                                 projectId={entry.project}
-                                value={entry.isApprovedByCurrentUser}
-                                approvalCount={entry.approvedByCount}
-                                onChange={handleEntryApprovalChange}
+                                value={entry.isVerifiedByCurrentUser}
+                                verifyCount={entry.verifiedByCount}
+                                onChange={handleEntryVerificationChange}
                             />
                         </div>
                         <div className={styles.bottom}>
@@ -389,8 +389,8 @@ function EntryCard(props: EntryCardProps) {
                                     ) : undefined}
                                     projectId={entry.project}
                                     entryId={entry.id}
-                                    value={entry.verified}
-                                    onChange={handleEntryVerificationChange}
+                                    value={entry.controlled}
+                                    onChange={handleEntryControlChange}
                                     onPendingStatusChange={setVerifyChangePending}
                                     disabled={isDeleted}
                                 />

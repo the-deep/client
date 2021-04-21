@@ -1,4 +1,4 @@
-.toggle-entry-approval {
+.toggle-entry-verification {
     display: flex;
     align-items: center;
 
@@ -12,7 +12,7 @@
         font-size: var(--dui-font-size-medium);
     }
 
-    &.approved {
+    &.verified {
         .icon {
             color: var(--color-primary);
         }

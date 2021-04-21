@@ -49,7 +49,7 @@ export const entryAccessor = {
     createdBy: entry => getDataSafe(entry).createdBy,
 
     unresolvedCommentCount: entry => getServerDataSafe(entry).unresolvedCommentCount || 0,
-    verified: entry => getServerDataSafe(entry).verified || false,
+    controlled: entry => getServerDataSafe(entry).controlled || false,
     versionId: entry => getServerDataSafe(entry).versionId,
 };
 

@@ -26,7 +26,7 @@ function useProjectMemberListQuery(projectId: DatabaseEntityBase['id']): [
         method: 'GET',
         query: memberFieldQuery,
         autoTrigger: true,
-        onFailure: notifyError(_ts('entryReview', 'reviewHeading')),
+        onFailure: notifyError(_ts('entryReview', 'projectMemberList')),
     });
 
     return [
