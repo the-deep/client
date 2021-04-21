@@ -82,7 +82,7 @@ const METADATA_FIELDS__FAMILY = 21;
 const METADATA_FIELDS__COORDINATION = 6;
 
 const COORDINATION__JOINT = '1';
-const COORDINATION__HARMONIZED = '2';
+// const COORDINATION__HARMONIZED = '2';
 
 const FAMILY__HNO = '7';
 
@@ -98,8 +98,8 @@ export const shouldShowHNO = (basicInformation) => {
 export const shouldShowCNA = (basicInformation) => {
     const coordinationValue = basicInformation[METADATA_FIELDS__COORDINATION];
     return (
-        (coordinationValue === COORDINATION__HARMONIZED
-            || coordinationValue === COORDINATION__JOINT)
+        coordinationValue === COORDINATION__JOINT
+        // || coordinationValue === COORDINATION__HARMONIZED
         && !shouldShowHNO(basicInformation)
     );
 };
