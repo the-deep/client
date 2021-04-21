@@ -42,7 +42,7 @@ import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
-import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
+import ToggleEntryControl from '#components/general/ToggleEntryControl';
 
 import {
     calculateFirstTimeAttributes,
@@ -342,9 +342,9 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.rightActionButtons}>
-                                <ToggleEntryVerification
+                                <ToggleEntryControl
                                     tooltip={entryLastChangedBy ? (
-                                        _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                                        _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                                     ) : undefined}
                                     entryId={entryAccessor.serverId(entry)}
                                     projectId={entry.project}

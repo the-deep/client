@@ -8,7 +8,7 @@ import DateOutput from '#components/viewer/DateOutput';
 import EntryDeleteButton from '#components/general/EntryDeleteButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
-import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
+import ToggleEntryControl from '#components/general/ToggleEntryControl';
 import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
@@ -382,9 +382,9 @@ function EntryCard(props: EntryCardProps) {
                                 disabled={isDeleted}
                             />
                             <div className={styles.otherActions}>
-                                <ToggleEntryVerification
+                                <ToggleEntryControl
                                     tooltip={entryLastChangedBy ? (
-                                        _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                                        _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                                     ) : undefined}
                                     projectId={entry.project}
                                     entryId={entry.id}
