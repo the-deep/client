@@ -5,6 +5,7 @@ import {
     isNotDefined,
     listToGroupList,
     randomString,
+    listToMap,
 } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
@@ -58,6 +59,9 @@ import AnalyticalStatementInput from './AnalyticalStatementInput';
 import { schema, defaultFormValues, AnalyticalStatementType } from './schema';
 
 import styles from './styles.scss';
+
+// This is an aribitrary number
+const STATEMENTS_LIMIT = 30;
 
 type EntryFieldsMin = Pick<
     EntryFields,
@@ -164,6 +168,11 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
 
     const handleAnalyticalStatementAdd = useCallback(
         () => {
+            // NOTE: Don't let users add more that certain statements
+            if ((value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT) {
+                return;
+            }
+
             const uuid = randomString();
             const newAnalyticalStatement: PartialForm<AnalyticalStatementType> = {
                 uuid,
@@ -291,13 +300,30 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
         autoTriggerDisabled: pendingPillarAnalysis || pendingFramework,
     });
 
+    const usedUpEntriesMap = useMemo(
+        () => {
+            const usedUpEntries = value.analyticalStatements?.map(
+                statement => statement.analyticalEntries?.map(
+                    entry => entry.entry,
+                ),
+            ).flat().filter(isDefined);
+            return listToMap(
+                usedUpEntries,
+                item => item,
+                () => true,
+            );
+        },
+        [value.analyticalStatements],
+    );
+
     const entryCardRendererParams = useCallback((key, data) => ({
         entryId: key,
         excerpt: data.excerpt,
         image: data.image,
         tabularFieldData: data.tabularFieldData,
         type: data.entryType,
-    }), []);
+        disabled: usedUpEntriesMap[key],
+    }), [usedUpEntriesMap]);
 
     // const pending = pendingPillarAnalysis || pendingGeoOptions || pendingFramework;
 
@@ -449,6 +475,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             // FIXME: use translation
                             title="Add Analytical Statement"
                             variant="primary"
+                            disabled={(value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT}
                         >
                             <IoAdd />
                         </QuickActionButton>

@@ -19,6 +19,7 @@ interface EntryItem {
     tabularFieldData?: TabularDataFields; // eslint-disable-line react/no-unused-prop-types
 
     entryId: number;
+    disabled?: boolean;
 }
 
 const entryTypeToValueMap: {
@@ -42,13 +43,14 @@ function EntryItem(props: EntryItem) {
         className,
         type,
         entryId,
+        disabled,
     } = props;
 
     const value = useMemo(() => ({ entryId }), [entryId]);
 
     return (
         <DraggableContent
-            className={_cs(className, styles.entryItem)}
+            className={_cs(className, styles.entryItem, disabled && styles.disabled)}
             name="entry"
             value={value}
         >

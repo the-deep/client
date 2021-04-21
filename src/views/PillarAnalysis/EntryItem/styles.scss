@@ -4,4 +4,10 @@
     margin: var(--dui-spacing-medium);
     background-color: var(--dui-color-white);
     min-height: var(--min-height-entry);
+
+    &.disabled {
+        opacity: var(--dui-opacity-disabled-element);
+        /* FIXME: this is a hack */
+        pointer-events: none;
+    }
 }

@@ -23,6 +23,9 @@ import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
 
+// This is an aribitrary number
+const ENTRIES_LIMIT = 50;
+
 interface AnalyticalStatementInputProps {
    className?: string;
    value: PartialForm<AnalyticalStatementType>;
@@ -56,7 +59,12 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             }
             const typedVal = val as { entryId: number };
 
-            if (value.analyticalEntries?.find(item => item.id === typedVal.entryId)) {
+            // NOTE: Don't add what is already added
+            if (value.analyticalEntries?.find(item => item.entry === typedVal.entryId)) {
+                return;
+            }
+            // NOTE: Don't let users add more that certain entries
+            if ((value.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT) {
                 return;
             }
 
@@ -123,6 +131,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 className={styles.entryContainer}
                 name="entry"
                 onDrop={handleAnalyticalEntryAdd}
+                // TODO: disable this when entries count is greater than certain count
             >
                 {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
                     <AnalyticalEntryInput
