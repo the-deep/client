@@ -33,7 +33,7 @@ import {
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetEntryCommentsCountAction,
-    editEntriesSetEntryVerificationStatusAction,
+    editEntriesSetEntryControlStatusAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
@@ -66,7 +66,7 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
-    setEntryVerificationStatus: PropTypes.func.isRequired,
+    setEntryControlStatus: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -106,8 +106,8 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
-    setEntryVerificationStatus: params => dispatch(
-        editEntriesSetEntryVerificationStatusAction(params),
+    setEntryControlStatus: params => dispatch(
+        editEntriesSetEntryControlStatusAction(params),
     ),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
@@ -132,7 +132,7 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         this.state = {
-            entryVerifyPending: false,
+            entryControlPending: false,
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -250,24 +250,24 @@ export default class Overview extends React.PureComponent {
         setEntryCommentsCount({ entry, leadId });
     }
 
-    handleVerificationChange = (verified) => {
+    handleControlChange = (controlled) => {
         const {
             entry: entryFromProps,
             leadId,
-            setEntryVerificationStatus,
+            setEntryControlStatus,
         } = this.props;
 
         const entry = {
             id: entryAccessor.serverId(entryFromProps),
-            verified,
+            controlled,
             versionId: entryFromProps.versionId,
         };
 
-        setEntryVerificationStatus({ entry, leadId });
+        setEntryControlStatus({ entry, leadId });
     }
 
-    handleEntryVerifyPendingChange = (entryVerifyPending) => {
-        this.setState({ entryVerifyPending });
+    handleEntryControlPendingChange = (entryControlPending) => {
+        this.setState({ entryControlPending });
     }
 
     render() {
@@ -292,19 +292,19 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         const {
-            entryVerifyPending,
+            entryControlPending,
         } = this.state;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
 
         const fieldId = entryAccessor.tabularField(entry);
-        const verified = entryAccessor.verified(entry);
+        const controlled = entryAccessor.controlled(entry);
 
-        const disableVerifiedButton = !entry?.localData?.isPristine
+        const disableControlledButton = !entry?.localData?.isPristine
             || isFalsy(entryAccessor.serverId(entry));
 
-        const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
+        const entryLastChangedBy = entry?.controlLastChangedByDetails?.displayName;
         return (
             <ResizableH
                 className={_cs(className, styles.overview)}
@@ -320,7 +320,7 @@ export default class Overview extends React.PureComponent {
                 }
                 rightChild={
                     <React.Fragment>
-                        {entryVerifyPending && <LoadingAnimation />}
+                        {entryControlPending && <LoadingAnimation />}
                         <header className={styles.header}>
                             <div className={styles.leftActionButtons}>
                                 <Cloak
@@ -354,10 +354,10 @@ export default class Overview extends React.PureComponent {
                                     ) : undefined}
                                     entryId={entryAccessor.serverId(entry)}
                                     projectId={entry.project}
-                                    value={verified}
-                                    onChange={this.handleVerificationChange}
-                                    onPendingStatusChange={this.handleEntryVerifyPendingChange}
-                                    disabled={disableVerifiedButton}
+                                    value={controlled}
+                                    onChange={this.handleControlChange}
+                                    onPendingStatusChange={this.handleEntryControlPendingChange}
+                                    disabled={disableControlledButton}
                                 />
                                 {labels.length > 0 && (
                                     <ModalButton
