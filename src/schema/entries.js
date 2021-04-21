@@ -47,9 +47,9 @@ const entrySchema = [];
             informationDate: { type: 'string' },
             droppedExcerpt: { type: 'string' },
             highlightHidden: { type: 'boolean' },
-            verified: { type: 'boolean' },
-            verificationLastChangedBy: { type: 'uint' },
-            verificationLastChangedByDetails: { type: 'user-s' },
+            controlled: { type: 'boolean' },
+            controlStatusLastChangedBy: { type: 'uint' },
+            controlStatusLastChangedByDetails: { type: 'user-s' },
             /*
             exportData: {
                 arrayType: {

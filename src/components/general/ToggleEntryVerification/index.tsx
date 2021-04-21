@@ -21,7 +21,7 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-interface ToggleEntryApprovalProps {
+interface ToggleEntryVerificationProps {
     className?: string;
     entryId: DatabaseEntityBase['id'];
     projectId: DatabaseEntityBase['id'];
@@ -30,15 +30,15 @@ interface ToggleEntryApprovalProps {
     value: boolean;
     tooltip?: string;
     disabled?: boolean;
-    approvalCount: number;
+    verifyCount: number;
 }
 
-const APPROVE = 1;
-const UNAPPROVE = 2;
+const VERIFY = 1;
+const UNVERIFY = 2;
 
-const approveFormData = { commentType: APPROVE };
+const verifyFormData = { commentType: VERIFY };
 
-function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
+function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     const {
         className,
         entryId,
@@ -48,7 +48,7 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
         onPendingStatusChange,
         tooltip,
         disabled,
-        approvalCount,
+        verifyCount,
     } = props;
 
     const [
@@ -57,14 +57,14 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
         setCommentModalHidden,
     ] = useModalState(false);
 
-    const [unapproveFormData, setUnapproveFormData] = React.useState({
-        commentType: UNAPPROVE,
+    const [unverifyFormData, setUnverifyFormData] = React.useState({
+        commentType: UNVERIFY,
     });
 
     const url = `server://v2/entries/${entryId}/review-comments/`;
     const formData = React.useMemo(() => (
-        value ? unapproveFormData : approveFormData
-    ), [value, unapproveFormData]);
+        value ? unverifyFormData : verifyFormData
+    ), [value, unverifyFormData]);
 
     const [
         reviewRequestPending,
@@ -76,8 +76,8 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
         method: 'POST',
         body: formData,
         onSuccess: () => {
-            // FIXME: use approvalCount from the response
-            onChange(!value, value ? (approvalCount - 1) : (approvalCount + 1));
+            // FIXME: use verifyCount from the response
+            onChange(!value, value ? (verifyCount - 1) : (verifyCount + 1));
             setCommentModalHidden();
 
             notify.send({
@@ -104,46 +104,46 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
-    const handleUnapproveFormValidationSuccess = React.useCallback((newData) => {
-        setUnapproveFormData(prevData => ({
+    const handleUnverifyFormValidationSuccess = React.useCallback((newData) => {
+        setUnverifyFormData(prevData => ({
             ...prevData,
             ...newData,
         }));
         triggerReviewRequest();
-    }, [setUnapproveFormData, triggerReviewRequest]);
+    }, [setUnverifyFormData, triggerReviewRequest]);
 
-    const approvalStatus = React.useMemo(() => {
+    const verificationStatus = React.useMemo(() => {
         let text = '';
 
-        if (value && approvalCount <= 1) {
-            text = _ts('entryReview', 'approvedOnlyByUserLabel');
-            // 'Approved only by you';
-        } else if (value && approvalCount > 1) {
-            text = _ts('entryReview', 'approvedByUserAndOthersLabel', {
-                userCount: approvalCount - 1,
+        if (value && verifyCount <= 1) {
+            text = _ts('entryReview', 'verifiedOnlyByUserLabel');
+            // 'Verified only by you';
+        } else if (value && verifyCount > 1) {
+            text = _ts('entryReview', 'verifiedByUserAndOthersLabel', {
+                userCount: verifyCount - 1,
             });
-            // `Approved by you and ${approvalCount} other users`;
-        } else if (!value && approvalCount === 0) {
-            text = _ts('entryReview', 'notApprovedLabel');
-            // 'Not approved';
+            // `Verified by you and ${verifyCount} other users`;
+        } else if (!value && verifyCount === 0) {
+            text = _ts('entryReview', 'notVerifiedLabel');
+            // 'Not verified';
         } else {
-            text = _ts('entryReview', 'notApprovedByUserButApprovedByOthersLabel', {
-                userCount: approvalCount,
+            text = _ts('entryReview', 'notVerifiedByUserButVerifiedByOthersLabel', {
+                userCount: verifyCount,
             });
-            // `Not approved by you (Approved by ${approvalCount} other users)`;
+            // `Not verified by you (Verified by ${verifyCount} other users)`;
         }
 
         return text;
-    }, [value, approvalCount]);
+    }, [value, verifyCount]);
 
     return (
         <div
-            title={tooltip ?? approvalStatus}
+            title={tooltip ?? verificationStatus}
             className={
                 _cs(
                     className,
-                    styles.toggleEntryApproval,
-                    value && styles.approved,
+                    styles.toggleEntryVerification,
+                    value && styles.verified,
                 )
             }
         >
@@ -162,17 +162,17 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
                                 <AiFillQuestionCircle className={styles.icon} />
                             )}
                         >
-                            { value ? _ts('entryReview', 'unapproveLabel') : _ts('entryReview', 'approveLabel') }
+                            { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
                         </ElementFragments>
                     </Button>
                 }
             >
-                {_ts('entryReview', 'peerApprovalLabel', { n: approvalCount })}
+                {_ts('entryReview', 'peerVerificationLabel', { n: verifyCount })}
             </ElementFragments>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
-                        title={_ts('entryReview', 'unapproveEntryLabel')}
+                        title={_ts('entryReview', 'unverifyEntryLabel')}
                         rightComponent={
                             <Button
                                 onClick={setCommentModalHidden}
@@ -184,7 +184,7 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
                     <EntryCommentFormForModal
                         disabled={reviewRequestPending}
                         projectId={projectId}
-                        onValidationSuccess={handleUnapproveFormValidationSuccess}
+                        onValidationSuccess={handleUnverifyFormValidationSuccess}
                     />
                 </Modal>
             )}
@@ -192,4 +192,4 @@ function ToggleEntryApproval(props: ToggleEntryApprovalProps) {
     );
 }
 
-export default ToggleEntryApproval;
+export default ToggleEntryVerification;

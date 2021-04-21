@@ -37,8 +37,8 @@ export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 
 export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
 export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
-export const EEB__SET_ENTRIES_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRIES_VERIFICATION_STATUS';
-export const EEB__SET_ENTRY_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRY_VERIFICATION_STATUS';
+export const EEB__SET_ENTRIES_CONTROL_STATUS = 'siloDomainData/EEB__SET_ENTRIES_CONTROL_STATUS';
+export const EEB__SET_ENTRY_CONTROL_STATUS = 'siloDomainData/EEB__SET_ENTRY_CONTROL_STATUS';
 
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
 
@@ -154,19 +154,19 @@ export const editEntriesSetEntriesCommentsCountAction = ({ entries, leadId }) =>
     leadId,
 });
 
-export const editEntriesSetEntriesVerificationStatusAction = ({
+export const editEntriesSetEntriesControlStatusAction = ({
     updateVersionId,
     entries,
     leadId,
 }) => ({
-    type: EEB__SET_ENTRIES_VERIFICATION_STATUS,
+    type: EEB__SET_ENTRIES_CONTROL_STATUS,
     entries,
     leadId,
     updateVersionId,
 });
 
-export const editEntriesSetEntryVerificationStatusAction = ({ entry, leadId }) => ({
-    type: EEB__SET_ENTRY_VERIFICATION_STATUS,
+export const editEntriesSetEntryControlStatusAction = ({ entry, leadId }) => ({
+    type: EEB__SET_ENTRY_CONTROL_STATUS,
     entry,
     leadId,
 });
@@ -438,7 +438,7 @@ const setEntryCommentsCount = (state, action) => {
     return newState;
 };
 
-const setEntriesVerificationStatus = (state, action) => {
+const setEntriesControlStatus = (state, action) => {
     const {
         leadId,
         entries: entriesFromServer,
@@ -466,7 +466,7 @@ const setEntriesVerificationStatus = (state, action) => {
             if (index > -1) {
                 const safeEntry = safeState.editEntries[leadId].entries[index];
                 // eslint-disable-next-line no-param-reassign
-                safeEntry.serverData.verified = es.verified;
+                safeEntry.serverData.controlled = es.controlled;
 
                 if (updateVersionId) {
                     // eslint-disable-next-line no-param-reassign
@@ -479,7 +479,7 @@ const setEntriesVerificationStatus = (state, action) => {
     return newState;
 };
 
-const setEntryVerificationStatus = (state, action) => {
+const setEntryControlStatus = (state, action) => {
     const {
         leadId,
         entry,
@@ -491,7 +491,7 @@ const setEntryVerificationStatus = (state, action) => {
         updateVersionId: true,
     };
 
-    return setEntriesVerificationStatus(state, newAction);
+    return setEntriesControlStatus(state, newAction);
 };
 
 const setEntries = (state, action) => {
@@ -1460,9 +1460,9 @@ const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
     [EEB__SET_ENTRIES_COMMENTS_COUNT]: setEntriesCommentsCount,
-    [EEB__SET_ENTRIES_VERIFICATION_STATUS]: setEntriesVerificationStatus,
+    [EEB__SET_ENTRIES_CONTROL_STATUS]: setEntriesControlStatus,
     [EEB__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
-    [EEB__SET_ENTRY_VERIFICATION_STATUS]: setEntryVerificationStatus,
+    [EEB__SET_ENTRY_CONTROL_STATUS]: setEntryControlStatus,
     [EEB__UPDATE_ENTRIES_BULK]: updateEntriesBulk,
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,

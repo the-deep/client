@@ -79,11 +79,11 @@ export interface EntryFields extends DatabaseEntityBase {
     tabularFieldData: TabularDataFields;
     lead: Pick<Lead, EntryLeadType>;
     projectLabel: ProjectLabelFields[];
-    verified: boolean;
-    verificationLastChangedByDetails: UserFields;
-    approvedBy: UserFields['id'][];
-    approvedByCount: number;
-    isApprovedByCurrentUser: boolean;
+    controlled: boolean;
+    controlStatusLastChangedByDetails: UserFields;
+    verifiedBy: UserFields['id'][];
+    verifiedByCount: number;
+    isVerifiedByCurrentUser: boolean;
 }
 
 export interface LeadWithGroupedEntriesFields {
@@ -163,7 +163,7 @@ export interface EntryComment {
 }
 
 export interface EntryReviewSummary {
-    approvedBy: UserDetail[];
-    verified: boolean;
-    verificationLastChangedBy: UserDetail & { displayPicture: string };
+    verifiedBy: UserDetail[];
+    controlled: boolean;
+    controlStatusLastChangedByDetails: UserDetail & { displayPicture: string };
 }
