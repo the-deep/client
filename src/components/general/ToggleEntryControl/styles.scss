@@ -1,4 +1,4 @@
-.toggle-entry-verification {
+.toggle-entry-control {
     display: flex;
     align-items: center;
     padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
@@ -7,7 +7,7 @@
         font-size: var(--dui-font-size-medium);
     }
 
-    &.verified {
+    &.controlled {
         .icon {
             color: var(--color-success);
         }

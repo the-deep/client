@@ -22,7 +22,7 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-interface ToggleEntryVerificationProps {
+interface ToggleEntryControlProps {
     className?: string;
     entryId: DatabaseEntityBase['id'];
     projectId: DatabaseEntityBase['id'];
@@ -33,12 +33,12 @@ interface ToggleEntryVerificationProps {
     disabled?: boolean;
 }
 
-const VERIFY = 3;
-const UNVERIFY = 4;
+const CONTROL = 3;
+const UNCONTROL = 4;
 
-const verifyFormData = { commentType: VERIFY };
+const controlFormData = { commentType: CONTROL };
 
-function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
+function ToggleEntryControl(props: ToggleEntryControlProps) {
     const {
         className,
         entryId,
@@ -56,14 +56,14 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
         setCommentModalHidden,
     ] = useModalState(false);
 
-    const [unverifyFormData, setUnverifyFormData] = React.useState({
-        commentType: UNVERIFY,
+    const [uncontrolFormData, setUncontrolFormData] = React.useState({
+        commentType: UNCONTROL,
     });
 
     const url = `server://v2/entries/${entryId}/review-comments/`;
     const formData = React.useMemo(() => (
-        value ? unverifyFormData : verifyFormData
-    ), [value, unverifyFormData]);
+        value ? uncontrolFormData : controlFormData
+    ), [value, uncontrolFormData]);
 
     const [
         reviewRequestPending,
@@ -79,13 +79,13 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
             setCommentModalHidden();
 
             notify.send({
-                title: _ts('editEntry', 'entryVerificationStatusChange'),
+                title: _ts('editEntry', 'entryControlStatusChange'),
                 type: notify.type.SUCCESS,
-                message: _ts('editEntry', 'entryVerificationStatusChangeSuccess'),
+                message: _ts('editEntry', 'entryControlStatusChangeSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: notifyError(_ts('editEntry', 'entryVerifyFailure')),
+        onFailure: notifyError(_ts('editEntry', 'entryControlFailure')),
     });
 
     React.useEffect(() => {
@@ -102,13 +102,13 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
-    const handleUnverifyFormValidationSuccess = React.useCallback((newData) => {
-        setUnverifyFormData(prevData => ({
+    const handleUncontrolFormValidationSuccess = React.useCallback((newData) => {
+        setUncontrolFormData(prevData => ({
             ...prevData,
             ...newData,
         }));
         triggerReviewRequest();
-    }, [setUnverifyFormData, triggerReviewRequest]);
+    }, [setUncontrolFormData, triggerReviewRequest]);
 
     return (
         <>
@@ -117,8 +117,8 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                 className={
                     _cs(
                         className,
-                        styles.toggleEntryVerification,
-                        value && styles.verified,
+                        styles.toggleEntryControl,
+                        value && styles.controlled,
                     )
                 }
                 onClick={handleClick}
@@ -132,13 +132,13 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                         <AiFillQuestionCircle className={styles.icon} />
                     )}
                 >
-                    { value ? _ts('entryReview', 'verifiedLabel') : _ts('entryReview', 'unverifiedLabel') }
+                    { value ? _ts('entryReview', 'controlledLabel') : _ts('entryReview', 'uncontrolledLabel') }
                 </ElementFragments>
             </Button>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
-                        title={_ts('entryReview', 'unverifyEntryLabel')}
+                        title={_ts('entryReview', 'uncontrolledEntryLabel')}
                         rightComponent={
                             <Button
                                 onClick={setCommentModalHidden}
@@ -150,7 +150,7 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                     <EntryCommentFormForModal
                         disabled={reviewRequestPending}
                         projectId={projectId}
-                        onValidationSuccess={handleUnverifyFormValidationSuccess}
+                        onValidationSuccess={handleUncontrolFormValidationSuccess}
                     />
                 </Modal>
             )}
@@ -158,4 +158,4 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     );
 }
 
-export default ToggleEntryVerification;
+export default ToggleEntryControl;
