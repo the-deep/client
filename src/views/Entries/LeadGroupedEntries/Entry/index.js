@@ -11,7 +11,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
-import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
+import ToggleEntryControl from '#components/general/ToggleEntryControl';
 import ToggleEntryApproval from '#components/general/ToggleEntryApproval';
 
 import Cloak from '#components/general/Cloak';
@@ -367,9 +367,9 @@ export default class Entry extends React.PureComponent {
                                 approvalCount={approvedByCount}
                                 onChange={this.handleEntryApprovalChange}
                             />
-                            <ToggleEntryVerification
+                            <ToggleEntryControl
                                 tooltip={entryLastChangedBy ? (
-                                    _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                                    _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                                 ) : undefined}
                                 entryId={entryId}
                                 projectId={projectId}
