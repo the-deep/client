@@ -15,7 +15,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
 import EntryCommentButton from '#components/general/EntryCommentButton';
-import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
+import ToggleEntryControl from '#components/general/ToggleEntryControl';
 
 import {
     entryAccessor,
@@ -208,9 +208,9 @@ function WidgetFaramContainer(props) {
                         keySelector={entryLabelKeySelector}
                         emptyComponent={null}
                     />
-                    <ToggleEntryVerification
+                    <ToggleEntryControl
                         tooltip={entryLastChangedBy ? (
-                            _ts('entries', 'verificationLastChangedBy', { userName: entryLastChangedBy })
+                            _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                         ) : undefined}
                         entryId={entryAccessor.serverId(entry)}
                         projectId={entry.project}

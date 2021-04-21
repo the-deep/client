@@ -3,30 +3,26 @@ import { notifyError } from '#utils/requestNotify';
 import {
     MultiResponse,
     DatabaseEntityBase,
+    Membership,
 } from '#typings';
 import _ts from '#ts';
 
 const memberFieldQuery = {
-    fields: ['id', 'displayName'],
+    fields: ['member', 'member_name'],
 };
 
-export interface Member {
-    id: number;
-    displayName: string;
-}
+export const memberKeySelector = (d: Membership) => d.member;
+export const memberNameSelector = (d:Membership) => d.memberName;
 
-export const memberKeySelector = (d: Member) => d.id;
-export const memberNameSelector = (d: Member) => d.displayName;
-
-function useProjectmemberListQuery(projectId: DatabaseEntityBase['id']): [
+function useProjectMemberListQuery(projectId: DatabaseEntityBase['id']): [
     boolean,
-    MultiResponse<Member> | undefined
+    MultiResponse<Membership> | undefined
 ] {
     const [
         pending,
         response,
-    ] = useRequest<MultiResponse<Member>>({
-        url: `server://v2/projects/${projectId}/members/`,
+    ] = useRequest<MultiResponse<Membership>>({
+        url: `server://v2/projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: memberFieldQuery,
         autoTrigger: true,
@@ -39,4 +35,4 @@ function useProjectmemberListQuery(projectId: DatabaseEntityBase['id']): [
     ];
 }
 
-export default useProjectmemberListQuery;
+export default useProjectMemberListQuery;
