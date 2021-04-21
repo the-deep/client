@@ -168,7 +168,7 @@ function WidgetFaramContainer(props) {
         groups: data.groups,
     }), []);
 
-    const entryLastChangedBy = entry?.verificationLastChangedByDetails?.displayName;
+    const entryLastChangedBy = entry?.controlStatusLastChangedByDetails?.displayName;
 
     return (
         <div
