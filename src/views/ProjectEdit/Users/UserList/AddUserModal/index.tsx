@@ -1,6 +1,10 @@
 import React, { useCallback } from 'react';
 
 import {
+    isDefined,
+} from '@togglecorp/fujs';
+
+import {
     ObjectSchema,
     PartialForm,
     requiredCondition,
@@ -18,6 +22,7 @@ import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
     MultiResponse,
+    Membership,
 } from '#typings';
 import { ProjectRole } from '#typings/project';
 import _ts from '#ts';
@@ -26,6 +31,8 @@ import styles from './styles.scss';
 interface Props {
     onModalClose: () => void;
     projectId: number;
+    reloadTable: () => void;
+    userValue: Membership;
 }
 
 interface User {
@@ -63,12 +70,14 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultFormValues: PartialForm<FormType> = {};
+const defaultFormValue: PartialForm<FormType> = {};
 
 function AddUserModal(props: Props) {
     const {
         onModalClose,
         projectId,
+        reloadTable,
+        userValue,
     } = props;
 
     const {
@@ -78,7 +87,7 @@ function AddUserModal(props: Props) {
         onValueChange,
         validate,
         onErrorSet,
-    } = useForm(defaultFormValues, schema);
+    } = useForm(userValue ?? defaultFormValue, schema);
 
     const [
         ,
@@ -97,7 +106,7 @@ function AddUserModal(props: Props) {
     const [
         ,
         usersListResponse,
-    ] = useRequest({
+    ] = useRequest<MultiResponse<User>>({
         url: 'server://users/',
         method: 'GET',
         autoTrigger: true,
@@ -112,9 +121,17 @@ function AddUserModal(props: Props) {
         ,
         triggerAddProjectMember,
     ] = useRequest({
-        url: `server://projects/${projectId}/project-memberships/`,
-        method: 'POST',
+        url: isDefined(userValue)
+            ? `server://projects/${projectId}/project-memberships/${userValue.id}/`
+            : `server://projects/${projectId}/project-memberships/`,
+        method: isDefined(userValue)
+            ? 'PATCH'
+            : 'POST',
         body: value,
+        onSuccess: () => {
+            reloadTable();
+            onModalClose();
+        },
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'projectMembershipPostFailed'))({ error: errorBody });
         },
@@ -165,6 +182,7 @@ function AddUserModal(props: Props) {
                 </div>
                 <footer className={styles.footer}>
                     <Button
+                        name="submit"
                         variant="primary"
                         type="submit"
                         disabled={pristine}

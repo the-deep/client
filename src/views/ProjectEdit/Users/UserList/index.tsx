@@ -1,15 +1,22 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
+
+import {
+    IoPencil,
+    IoTrash,
+    IoAdd,
+} from 'react-icons/io5';
+
 import {
     Container,
     Button,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
-import Icon from '#rscg/Icon';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
@@ -38,6 +45,8 @@ function UserList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [membershipIdToDelete, setMembershipIdToDelete] = useState<number | undefined>(undefined);
+    const [membershipIdToEdit, setMembershipIdToEdit] = useState<number | undefined>(undefined);
     const queryForRequest = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
@@ -51,12 +60,38 @@ function UserList(props: Props) {
     const [
         usersPending,
         usersResponse,
+        ,
+        triggerGetUsers,
     ] = useRequest<MultiResponse<Membership>>({
         url: `server://projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: queryForRequest,
         autoTrigger: true,
     });
+
+    const [
+        ,
+        ,
+        ,
+        triggerMembershipDelete,
+    ] = useRequest({
+        url: `server://projects/${projectId}/project-memberships/${membershipIdToDelete}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            triggerGetUsers();
+        },
+        autoTrigger: false,
+    });
+
+    const handleDeleteMembershipClick = useCallback((deleteUserId) => {
+        setMembershipIdToDelete(deleteUserId);
+        triggerMembershipDelete();
+    }, [triggerMembershipDelete]);
+
+    const handleEditMembershipClick = useCallback((membershipId) => {
+        setMembershipIdToEdit(membershipId);
+        setModalShow();
+    }, [setModalShow]);
 
     const headers: Header<Membership>[] = useMemo(() => ([
         {
@@ -102,7 +137,33 @@ function UserList(props: Props) {
             sortable: false,
             modifier: row => row.roleDetails.title,
         },
-    ]), []);
+        {
+            key: 'actions',
+            label: _ts('projectEdit', 'actionsLabel'),
+            order: 7,
+            sortable: false,
+            modifier: row => (
+                <div className={styles.rowActions}>
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        title={_ts('projectEdit', 'editUserLabel')}
+                        onClick={() => handleEditMembershipClick(row.id)}
+                    >
+                        <IoPencil />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        title={_ts('projectEdit', 'deleteUserLabel')}
+                        onClick={() => handleDeleteMembershipClick(row.id)}
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                </div>
+            ),
+        },
+    ]), [handleDeleteMembershipClick, handleEditMembershipClick]);
 
     const dataModifier = useCallback(
         (data, columnKey) => {
@@ -120,6 +181,10 @@ function UserList(props: Props) {
         />
     ), []);
 
+    const membershipToEdit = useMemo(() => (
+        usersResponse?.results?.find(d => d.id === membershipIdToEdit)
+    ), [usersResponse?.results, membershipIdToEdit]);
+
     const handleAddUserClick = useCallback(() => {
         setModalShow();
     }, [setModalShow]);
@@ -135,9 +200,7 @@ function UserList(props: Props) {
                     name="add-member"
                     variant="tertiary"
                     icons={(
-                        <Icon
-                            name="add"
-                        />
+                        <IoAdd />
                     )}
                     onClick={handleAddUserClick}
                 >
@@ -167,6 +230,8 @@ function UserList(props: Props) {
                 <AddUserModal
                     onModalClose={setModalHidden}
                     projectId={projectId}
+                    reloadTable={triggerGetUsers}
+                    userValue={membershipToEdit}
                 />
             }
         </Container>

@@ -1,6 +1,11 @@
 import React, { useCallback } from 'react';
 
 import {
+    isDefined,
+    // isNotDefined,
+} from '@togglecorp/fujs';
+
+import {
     ObjectSchema,
     PartialForm,
     requiredCondition,
@@ -27,6 +32,8 @@ import styles from './styles.scss';
 interface Props {
     onModalClose: () => void;
     projectId: string;
+    reloadTable: () => void;
+    usergroupValue?: UserGroup;
 }
 
 const usergroupKeySelector = (d: UserGroup) => d.id;
@@ -51,12 +58,14 @@ const schema: FormSchema = {
     }),
 };
 
-const defaultFormValues: PartialForm<FormType> = {};
+const defaultFormValue: PartialForm<FormType> = {};
 
 function AddUserGroupModal(props: Props) {
     const {
         onModalClose,
         projectId,
+        reloadTable,
+        usergroupValue,
     } = props;
 
     const {
@@ -66,7 +75,8 @@ function AddUserGroupModal(props: Props) {
         onValueChange,
         validate,
         onErrorSet,
-    } = useForm(defaultFormValues, schema);
+    } = useForm(usergroupValue ?? defaultFormValue, schema);
+
 
     const [
         ,
@@ -100,9 +110,17 @@ function AddUserGroupModal(props: Props) {
         ,
         triggerAddUserGroup,
     ] = useRequest({
-        url: `server://projects/${projectId}/project-usergroups/`,
-        method: 'POST',
+        url: isDefined(usergroupValue)
+            ? `server://projects/${projectId}/project-usergroups/${usergroupValue.id}/`
+            : `server://projects/${projectId}/project-usergroups/`,
+        method: isDefined(usergroupValue)
+            ? 'PATCH'
+            : 'POST',
         body: value,
+        onSuccess: () => {
+            reloadTable();
+            onModalClose();
+        },
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'projectUsergroupPostFailedLabel'))({ error: errorBody });
         },
@@ -153,6 +171,7 @@ function AddUserGroupModal(props: Props) {
                 </div>
                 <footer className={styles.footer}>
                     <Button
+                        name="submit"
                         variant="primary"
                         type="submit"
                         disabled={pristine}

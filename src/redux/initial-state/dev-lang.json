@@ -1337,7 +1337,10 @@
         "-12814500": "Failed to post Project Membership",
         "-14727630": "Failed to post Project Usergroups",
         "-55358986": "Failed to fetch usergroups",
-        "-93154523": "Failed to fetch users list"
+        "-93154523": "Failed to fetch users list",
+        "-56604597": "Delete usergroup from project",
+        "-76480274": "Delete user from project",
+        "-75535574": "Edit User"
     },
     "links": {
         "browserExtension": {
@@ -3794,7 +3797,13 @@
             "projectMembershipPostFailed": -12814500,
             "projectUsergroupPostFailedLabel": -14727630,
             "usergroupFetchFailed": -55358986,
-            "usersFetchFailed": -93154523
+            "usersFetchFailed": -93154523,
+            "actionsLabel": 16,
+            "deleteLabel": -94736495,
+            "deleteUsergroupLabel": -56604597,
+            "editUsergroupLabel": 168,
+            "deleteUserLabel": -76480274,
+            "editUserLabel": -75535574
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

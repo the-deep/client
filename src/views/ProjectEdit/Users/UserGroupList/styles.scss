@@ -38,6 +38,20 @@
         .table {
             flex-grow: 1;
             overflow-y: auto;
+
+            :global {
+                .actions {
+                    width: 200px;
+                }
+            }
+
+            .row-actions {
+                display: flex;
+
+                .button {
+                    margin: 0 calc(var(--spacing-small) / 2);
+                }
+            }
         }
     }
 }

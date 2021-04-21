@@ -1,16 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
+
+import {
+    IoPencil,
+    IoTrash,
+    IoChevronForward,
+    IoAdd,
+} from 'react-icons/io5';
+
 import {
     Container,
     Button,
     Link,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
-import Icon from '#rscg/Icon';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
@@ -41,6 +49,8 @@ function UserGroupList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [usergroupIdToDelete, setUsergroupIdToDelete] = useState<number | undefined>(undefined);
+    const [usergroupIdToEdit, setUsergroupIdToEdit] = useState<number | undefined>(undefined);
     const queryForRequest = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
@@ -55,12 +65,38 @@ function UserGroupList(props: Props) {
     const [
         userGroupPending,
         userGroupResponse,
+        ,
+        triggerUsergroupResponse,
     ] = useRequest<MultiResponse<UserGroup>>({
         url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
         query: queryForRequest,
         autoTrigger: true,
     });
+
+    const [
+        ,
+        ,
+        ,
+        triggerDeleteUsergroup,
+    ] = useRequest({
+        url: `server://projects/${projectId}/project-usergroups/${usergroupIdToDelete}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            triggerUsergroupResponse();
+        },
+        autoTrigger: false,
+    });
+
+    const handleDeleteUsergroupClick = useCallback((deleteUsergroupId) => {
+        setUsergroupIdToDelete(deleteUsergroupId);
+        triggerDeleteUsergroup();
+    }, [triggerDeleteUsergroup]);
+
+    const handleEditUsergroupClick = useCallback((usergroupId) => {
+        setUsergroupIdToEdit(usergroupId);
+        setModalShow();
+    }, [setModalShow]);
 
     const headers: Header<UserGroup>[] = useMemo(() => ([
         {
@@ -94,7 +130,33 @@ function UserGroupList(props: Props) {
             sortable: false,
             modifier: row => row.roleDetails.title,
         },
-    ]), []);
+        {
+            key: 'actions',
+            label: _ts('projectEdit', 'actionsLabel'),
+            order: 5,
+            sortable: false,
+            modifier: row => (
+                <div className={styles.rowActions}>
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        title={_ts('projectEdit', 'editUsergroupLabel')}
+                        onClick={() => handleEditUsergroupClick(row.id)}
+                    >
+                        <IoPencil />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        title={_ts('projectEdit', 'deleteUsergroupLabel')}
+                        onClick={() => handleDeleteUsergroupClick(row.id)}
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                </div>
+            ),
+        },
+    ]), [handleDeleteUsergroupClick, handleEditUsergroupClick]);
 
     const dataModifier = useCallback(
         (data, columnKey) => {
@@ -112,9 +174,14 @@ function UserGroupList(props: Props) {
         />
     ), []);
 
+    const usergroupToEdit = useMemo(() => (
+        userGroupResponse?.results?.find(d => d.id === usergroupIdToEdit)
+    ), [userGroupResponse?.results, usergroupIdToEdit]);
+
     const handleAddUsergroupClick = useCallback(() => {
+        setUsergroupIdToEdit(undefined);
         setModalShow();
-    }, []);
+    }, [setModalShow]);
 
     return (
         <Container
@@ -128,9 +195,7 @@ function UserGroupList(props: Props) {
                         className={styles.link}
                         to={emptyLink}
                         actions={(
-                            <Icon
-                                name="chevronRight"
-                            />
+                            <IoChevronForward />
                         )}
                     >
                         {_ts('projectEdit', 'manageUserGroup')}
@@ -146,9 +211,7 @@ function UserGroupList(props: Props) {
                         variant="tertiary"
                         name="add-usergroup"
                         icons={(
-                            <Icon
-                                name="add"
-                            />
+                            <IoAdd />
                         )}
                         onClick={handleAddUsergroupClick}
                     >
@@ -179,6 +242,8 @@ function UserGroupList(props: Props) {
                 <AddUserGroupModal
                     onModalClose={setModalHidden}
                     projectId={projectId}
+                    reloadTable={triggerUsergroupResponse}
+                    usergroupValue={usergroupToEdit}
                 />
             )}
         </Container>
