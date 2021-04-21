@@ -14,10 +14,10 @@ import Notification from '../Notification';
 import LinkItem from '../LinkItem';
 
 const REVIEW_TYPE_COMMENT = 0;
-const REVIEW_TYPE_APPROVE = 1;
-const REVIEW_TYPE_UNAPPROVE = 2;
-const REVIEW_TYPE_VERIFY = 3;
-const REVIEW_TYPE_UNVERIFY = 4;
+const REVIEW_TYPE_VERIFY = 1;
+const REVIEW_TYPE_UNVERIFY = 2;
+const REVIEW_TYPE_CONTROL = 3;
+const REVIEW_TYPE_UNCONTROL = 4;
 
 interface EntryReviewProps {
     notificationType: NotificationType;
@@ -131,20 +131,6 @@ function EntryReview(props: EntryReviewProps) {
                     comment: commentLinkItem,
                 });
                 break;
-            case REVIEW_TYPE_APPROVE:
-                message = _ts('notifications.entryReviewComment', 'approve', {
-                    assigner,
-                    entry: commentText ? entryLinkItemWithReview : entryLinkItem,
-                    projectName: projectLinkItem,
-                });
-                break;
-            case REVIEW_TYPE_UNAPPROVE:
-                message = _ts('notifications.entryReviewComment', 'unapprove', {
-                    assigner,
-                    entry: entryLinkItemWithReview,
-                    projectName: projectLinkItem,
-                });
-                break;
             case REVIEW_TYPE_VERIFY:
                 message = _ts('notifications.entryReviewComment', 'verify', {
                     assigner,
@@ -154,6 +140,20 @@ function EntryReview(props: EntryReviewProps) {
                 break;
             case REVIEW_TYPE_UNVERIFY:
                 message = _ts('notifications.entryReviewComment', 'unverify', {
+                    assigner,
+                    entry: entryLinkItemWithReview,
+                    projectName: projectLinkItem,
+                });
+                break;
+            case REVIEW_TYPE_CONTROL:
+                message = _ts('notifications.entryReviewComment', 'control', {
+                    assigner,
+                    entry: commentText ? entryLinkItemWithReview : entryLinkItem,
+                    projectName: projectLinkItem,
+                });
+                break;
+            case REVIEW_TYPE_UNCONTROL:
+                message = _ts('notifications.entryReviewComment', 'uncontrol', {
                     assigner,
                     entry: entryLinkItemWithReview,
                     projectName: projectLinkItem,
