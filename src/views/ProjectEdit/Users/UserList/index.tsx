@@ -186,9 +186,7 @@ function UserList(props: Props) {
         usersResponse?.results?.find(d => d.id === membershipIdToEdit)
     ), [usersResponse?.results, membershipIdToEdit]);
 
-    const handleAddUserClick = useCallback(() => {
-        setModalShow();
-    }, [setModalShow]);
+    const handleAddUserClick = setModalShow;
 
     return (
         <Container
@@ -240,7 +238,7 @@ function UserList(props: Props) {
                 <AddUserModal
                     onModalClose={setModalHidden}
                     projectId={projectId}
-                    reloadTable={triggerGetUsers}
+                    onTableReload={triggerGetUsers}
                     userValue={membershipToEdit}
                 />
             }

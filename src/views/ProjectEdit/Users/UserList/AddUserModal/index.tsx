@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
     isDefined,
@@ -31,7 +31,7 @@ import styles from './styles.scss';
 interface Props {
     onModalClose: () => void;
     projectId: number;
-    reloadTable: () => void;
+    onTableReload: () => void;
     userValue: Membership;
 }
 
@@ -76,7 +76,7 @@ function AddUserModal(props: Props) {
     const {
         onModalClose,
         projectId,
-        reloadTable,
+        onTableReload,
         userValue,
     } = props;
 
@@ -129,7 +129,7 @@ function AddUserModal(props: Props) {
             : 'POST',
         body: value,
         onSuccess: () => {
-            reloadTable();
+            onTableReload();
             onModalClose();
         },
         onFailure: (_, errorBody) => {
@@ -137,9 +137,7 @@ function AddUserModal(props: Props) {
         },
     });
 
-    const handleSubmit = useCallback(() => {
-        triggerAddProjectMember();
-    }, [triggerAddProjectMember]);
+    const handleSubmit = triggerAddProjectMember;
 
     return (
         <Modal

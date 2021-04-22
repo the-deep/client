@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
     isDefined,
@@ -32,7 +32,7 @@ import styles from './styles.scss';
 interface Props {
     onModalClose: () => void;
     projectId: string;
-    reloadTable: () => void;
+    onTableReload: () => void;
     usergroupValue?: UserGroup;
 }
 
@@ -64,7 +64,7 @@ function AddUserGroupModal(props: Props) {
     const {
         onModalClose,
         projectId,
-        reloadTable,
+        onTableReload,
         usergroupValue,
     } = props;
 
@@ -118,7 +118,7 @@ function AddUserGroupModal(props: Props) {
             : 'POST',
         body: value,
         onSuccess: () => {
-            reloadTable();
+            onTableReload();
             onModalClose();
         },
         onFailure: (_, errorBody) => {
@@ -126,9 +126,7 @@ function AddUserGroupModal(props: Props) {
         },
     });
 
-    const handleSubmit = useCallback(() => {
-        triggerAddUserGroup();
-    }, [triggerAddUserGroup]);
+    const handleSubmit = triggerAddUserGroup;
 
     return (
         <Modal

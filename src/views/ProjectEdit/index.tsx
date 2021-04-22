@@ -42,7 +42,7 @@ function ProjectEdit(props: ViewProps) {
         activeProject,
     } = props;
 
-    const [activeTab, setActiveTab] = useState<TabNames>('users');
+    const [activeTab, setActiveTab] = useState<TabNames>('general');
 
     return (
         <div className={styles.projectEdit}>

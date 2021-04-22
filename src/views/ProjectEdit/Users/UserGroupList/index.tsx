@@ -252,7 +252,7 @@ function UserGroupList(props: Props) {
                 <AddUserGroupModal
                     onModalClose={setModalHidden}
                     projectId={projectId}
-                    reloadTable={triggerUsergroupResponse}
+                    onTableReload={triggerUsergroupResponse}
                     usergroupValue={usergroupToEdit}
                 />
             )}
