@@ -18,6 +18,7 @@ import {
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
+import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
@@ -220,15 +221,24 @@ function UserGroupList(props: Props) {
                 </div>
             )}
         >
-            <RawTable
-                className={styles.table}
-                data={userGroupResponse?.results ?? []}
-                dataModifier={dataModifier}
-                headerModifier={headerModifier}
-                headers={headers}
-                keySelector={userGroupKeySelector}
-                pending={userGroupPending && (userGroupResponse?.results ?? []).length < 1}
-            />
+            {(userGroupResponse && userGroupResponse?.count > 0)
+                ? (
+                    <RawTable
+                        className={styles.table}
+                        data={userGroupResponse?.results ?? []}
+                        dataModifier={dataModifier}
+                        headerModifier={headerModifier}
+                        headers={headers}
+                        keySelector={userGroupKeySelector}
+                        pending={userGroupPending && (userGroupResponse?.results ?? []).length < 1}
+                    />
+                )
+                : (
+                    <Message className={styles.emptyTable}>
+                        {_ts('projectEdit', 'emptyUsergroupTableMessage')}
+                    </Message>
+                )
+            }
             {userGroupResponse && userGroupResponse.count > maxItemsPerPage && (
                 <Pager
                     activePage={activePage}

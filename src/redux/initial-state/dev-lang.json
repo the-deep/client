@@ -1340,7 +1340,9 @@
         "-93154523": "Failed to fetch users list",
         "-56604597": "Delete usergroup from project",
         "-76480274": "Delete user from project",
-        "-75535574": "Edit User"
+        "-75535574": "Edit User",
+        "-70353397": "No usergroups added",
+        "-98959986": "No users added"
     },
     "links": {
         "browserExtension": {
@@ -3803,7 +3805,9 @@
             "deleteUsergroupLabel": -56604597,
             "editUsergroupLabel": 168,
             "deleteUserLabel": -76480274,
-            "editUserLabel": -75535574
+            "editUserLabel": -75535574,
+            "emptyUserTableMessage": -98959986,
+            "emptyUsergroupTableMessage": -70353397
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

@@ -16,6 +16,7 @@ import {
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
+import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
@@ -208,15 +209,24 @@ function UserList(props: Props) {
                 </Button>
             )}
         >
-            <RawTable
-                className={styles.table}
-                data={usersResponse?.results ?? []}
-                dataModifier={dataModifier}
-                headerModifier={headerModifier}
-                headers={headers}
-                keySelector={userKeySelector}
-                pending={usersPending}
-            />
+            {(usersResponse && usersResponse?.count > 0)
+                ? (
+                    <RawTable
+                        className={styles.table}
+                        data={usersResponse?.results ?? []}
+                        dataModifier={dataModifier}
+                        headerModifier={headerModifier}
+                        headers={headers}
+                        keySelector={userKeySelector}
+                        pending={usersPending}
+                    />
+                )
+                : (
+                    <Message className={styles.emptyTable}>
+                        {_ts('projectEdit', 'emptyUserTableMessage')}
+                    </Message>
+                )
+            }
             {usersResponse && usersResponse.count > maxItemsPerPage && (
                 <Pager
                     activePage={activePage}
