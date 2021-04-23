@@ -1,14 +1,26 @@
 .toggle-entry-verification {
     display: flex;
     align-items: center;
+    padding-right: var(--spacing-small);
+
+    .icons {
+        padding: 0;
+    }
+    .children {
+        padding: 0;
+    }
+
+    .actions {
+        padding: 0;
+    }
 
     .toggle-button {
         display: flex;
         align-items: center;
-        padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
     }
 
     .icon {
+        color: var(--dui-color-negative);
         font-size: var(--dui-font-size-medium);
     }
 

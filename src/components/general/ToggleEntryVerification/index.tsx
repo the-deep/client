@@ -1,7 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoCheckmarkCircle } from 'react-icons/io5';
-import { AiFillQuestionCircle } from 'react-icons/ai';
+import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
     ElementFragments,
 } from '@the-deep/deep-ui';
@@ -12,7 +11,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import EntryCommentFormForModal from '#components/general/EntryCommentFormForModal';
 
 import { useModalState } from '#hooks/stateManagement';
-import { notifyError } from '#utils/requestNotify';
+import { notifyOnFailure } from '#utils/requestNotify';
 import notify from '#notify';
 import useRequest from '#utils/request';
 
@@ -87,7 +86,8 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: notifyError(_ts('editEntry', 'entryVerifyFailure')),
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('editEntry', 'entryVerificationStatusChange'))({ error: errorBody }),
     });
 
     React.useEffect(() => {
@@ -148,26 +148,25 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
             }
         >
             <ElementFragments
-                actions={
+                iconsContainerClassName={styles.icons}
+                childrenContainerClassName={styles.children}
+                actionsContainerClassName={styles.actions}
+                icons={
                     <Button
                         className={styles.toggleButton}
                         onClick={handleClick}
                         pending={reviewRequestPending}
                         disabled={disabled}
                     >
-                        <ElementFragments
-                            icons={value ? (
-                                <IoCheckmarkCircle className={styles.icon} />
-                            ) : (
-                                <AiFillQuestionCircle className={styles.icon} />
-                            )}
-                        >
-                            { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
-                        </ElementFragments>
+                        { value ? _ts('entryReview', 'unverifyLabel') : _ts('entryReview', 'verifyLabel') }
                     </Button>
                 }
+                actions={verifyCount}
             >
-                {_ts('entryReview', 'peerVerificationLabel', { n: verifyCount })}
+                {value ?
+                    <IoCheckmark className={styles.icon} /> :
+                    <IoClose className={styles.icon} />
+                }
             </ElementFragments>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
