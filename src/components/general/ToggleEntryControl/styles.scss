@@ -1,9 +1,20 @@
 .toggle-entry-control {
     display: flex;
     align-items: center;
-    padding: var(--spacing-small) calc(var(--spacing-medium) - var(--spacing-small));
+
+    .icons {
+        padding: 0;
+    }
+    .children {
+        padding: 0;
+    }
+
+    .actions {
+        padding: 0;
+    }
 
     .icon {
+        color: var(--dui-color-negative);
         font-size: var(--dui-font-size-medium);
     }
 

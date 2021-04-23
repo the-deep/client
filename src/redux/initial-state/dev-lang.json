@@ -1109,8 +1109,8 @@
         "-28899891": "Entry control status",
         "-53772993": "The control status of the entry was changed successfully.",
         "-70818933": "The verification status of the entry was changed successfully.",
-        "-83960265": "Controlled",
-        "-45171916": "Uncontrolled",
+        "-83960265": "Control",
+        "-45171916": "Uncontrol",
         "-35075096": "The control status of this entry was last changed by {userName}.",
         "-12312311": "Are you sure you want to delete this entry?",
         "-12312312": "Warning!",
@@ -1754,11 +1754,8 @@
             "entryGroupSaveSuccess": -24270008,
             "entryGroupSaveFailure": -86483548,
             "entryGroupUpdate": -93218852,
-            "entryControlFailure": -87987213,
             "entryVerificationStatusChange": -291012930,
-            "entryControlStatusChange": -28899891,
             "entryVerificationStatusChangeSuccess": -70818933,
-            "entryControlStatusChangeSuccess": -53772993,
             "controlledLabel": -83960265,
             "uncontrolledLabel": -45171916,
             "unPinExcerpt": -26426769,
@@ -3847,7 +3844,10 @@
             "verifiedOnlyByUserLabel": -70288448,
             "notVerifiedByUserButVerifiedByOthersLabel": -44367329,
             "notVerifiedLabel": -4503674,
-            "peerVerificationLabel": -46401322
+            "peerVerificationLabel": -46401322,
+            "entryControlStatusChange": -28899891,
+            "entryControlStatusChangeSuccess": -53772993,
+            "entryControlFailure": -87987213
         },
         "notifications.entryCommentItem": {
             "comment": -52742063
