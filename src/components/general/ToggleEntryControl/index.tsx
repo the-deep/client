@@ -1,7 +1,6 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import { IoCheckmarkCircle } from 'react-icons/io5';
-import { AiFillQuestionCircle } from 'react-icons/ai';
+import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
     ElementFragments,
 } from '@the-deep/deep-ui';
@@ -79,13 +78,13 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
             setCommentModalHidden();
 
             notify.send({
-                title: _ts('editEntry', 'entryControlStatusChange'),
+                title: _ts('entryReview', 'entryControlStatusChange'),
                 type: notify.type.SUCCESS,
-                message: _ts('editEntry', 'entryControlStatusChangeSuccess'),
+                message: _ts('entryReview', 'entryControlStatusChangeSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: notifyError(_ts('editEntry', 'entryControlFailure')),
+        onFailure: notifyError(_ts('entryReview', 'entryControlFailure')),
     });
 
     React.useEffect(() => {
@@ -111,30 +110,36 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
     }, [setUncontrolFormData, triggerReviewRequest]);
 
     return (
-        <>
-            <Button
-                title={tooltip}
-                className={
-                    _cs(
-                        className,
-                        styles.toggleEntryControl,
-                        value && styles.controlled,
-                    )
+        <div
+            className={styles.toggleEntryControl}
+        >
+            <ElementFragments
+                iconsContainerClassName={styles.icons}
+                childrenContainerClassName={styles.children}
+                actionsContainerClassName={styles.actions}
+                icons={
+                    <Button
+                        title={tooltip}
+                        className={
+                            _cs(
+                                className,
+                                styles.toggleEntryControl,
+                                value && styles.controlled,
+                            )
+                        }
+                        onClick={handleClick}
+                        pending={reviewRequestPending}
+                        disabled={disabled}
+                    >
+                        { value ? _ts('entryReview', 'uncontrolledLabel') : _ts('entryReview', 'controlledLabel') }
+                    </Button>
                 }
-                onClick={handleClick}
-                pending={reviewRequestPending}
-                disabled={disabled}
             >
-                <ElementFragments
-                    icons={value ? (
-                        <IoCheckmarkCircle className={styles.icon} />
-                    ) : (
-                        <AiFillQuestionCircle className={styles.icon} />
-                    )}
-                >
-                    { value ? _ts('entryReview', 'controlledLabel') : _ts('entryReview', 'uncontrolledLabel') }
-                </ElementFragments>
-            </Button>
+                {value ?
+                    <IoCheckmark className={styles.icon} /> :
+                    <IoClose className={styles.icon} />
+                }
+            </ElementFragments>
             { commentModalShown && (
                 <Modal className={styles.commentModal}>
                     <ModalHeader
@@ -154,7 +159,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
                     />
                 </Modal>
             )}
-        </>
+        </div>
     );
 }
 
