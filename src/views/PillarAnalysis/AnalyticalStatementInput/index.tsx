@@ -5,11 +5,14 @@ import {
     IoClose,
     IoCheckmarkCircleSharp,
 } from 'react-icons/io5';
-import { _cs, randomString } from '@togglecorp/fujs';
 import {
+    _cs,
+    randomString,
+} from '@togglecorp/fujs';
+import {
+    DropContainer,
     QuickActionButton,
     TextArea,
-    DropContainer,
 } from '@the-deep/deep-ui';
 import {
     PartialForm,
@@ -23,16 +26,15 @@ import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
 
-// This is an aribitrary number
 const ENTRIES_LIMIT = 50;
 
 interface AnalyticalStatementInputProps {
-   className?: string;
-   value: PartialForm<AnalyticalStatementType>;
-   error: Error<AnalyticalStatementType> | undefined;
-   onChange: (value: PartialForm<AnalyticalStatementType>, index: number) => void;
-   onRemove: (index: number) => void;
-   index: number;
+    className?: string;
+    value: PartialForm<AnalyticalStatementType>;
+    error: Error<AnalyticalStatementType> | undefined;
+    onChange: (value: PartialForm<AnalyticalStatementType>, index: number) => void;
+    onRemove: (index: number) => void;
+    index: number;
 }
 
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
@@ -72,16 +74,16 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             const newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
                 uuid,
                 entry: typedVal.entryId,
-                // FIXME: add order
-                order: 0,
+                order: value.analyticalEntries?.length ?? 0,
             };
             onFieldChange(
-                [newAnalyticalEntry, ...(value.analyticalEntries ?? [])],
+                [...(value.analyticalEntries ?? []), newAnalyticalEntry],
                 'analyticalEntries' as const,
             );
         },
         [onFieldChange, value.analyticalEntries],
     );
+
 
     return (
         <div className={_cs(styles.analyticalStatement, className)}>
@@ -127,24 +129,30 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     error={error?.fields?.statement}
                 />
             </div>
-            <DropContainer
-                className={styles.entryContainer}
-                name="entry"
-                onDrop={handleAnalyticalEntryAdd}
-                // TODO: disable this when entries count is greater than certain count
-            >
-                {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
-                    <AnalyticalEntryInput
-                        key={analyticalEntry.uuid}
-                        index={myIndex}
-                        value={analyticalEntry}
-                        // onChange={onAnalyticalEntryChange}
-                        onRemove={onAnalyticalEntryRemove}
-                        // eslint-disable-next-line max-len
-                        error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.uuid]}
-                    />
-                ))}
-            </DropContainer>
+            <div className={styles.bottomContainer}>
+                <div className={styles.entryContainer}>
+                    {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
+                        <AnalyticalEntryInput
+                            key={analyticalEntry.uuid}
+                            index={myIndex}
+                            value={analyticalEntry}
+                            // onChange={onAnalyticalEntryChange}
+                            onRemove={onAnalyticalEntryRemove}
+                            // eslint-disable-next-line max-len
+                            error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.uuid]}
+                            analyticalEntries={value?.analyticalEntries}
+                            onFieldChange={onFieldChange}
+                        />
+                    ))}
+                </div>
+                <DropContainer
+                    className={styles.dropContainer}
+                    name="entry"
+                    draggedOverClassName={styles.draggedOver}
+                    onDrop={handleAnalyticalEntryAdd}
+                    // TODO: disable this when entries count is greater than certain count
+                />
+            </div>
         </div>
     );
 }
