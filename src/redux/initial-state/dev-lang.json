@@ -1361,12 +1361,14 @@
         "-46401322": "{n} peer verification(s)",
         "-52742063": "comment",
         "-97072562": "{assigner} assigned you to a new {comment}.",
-        "-56701570": "{assigner} verified an {entry} in project {projectName}.",
+        "-56701570": "{assigner} verified aREvyn {entry} in project {projectName}.",
         "-10980487": "{assigner} controlled an {entry} in project {projectName}.",
         "-96661189": "{assigner} uncontrolled an {entry} in project {projectName}.",
         "-33405531": "A review {comment} that you were previously assigned is updated.",
         "-77891125": "{assigner} unverified an {entry} in project {projectName}.",
-        "-62878959": "entry"
+        "-62878959": "entry",
+        "-79871971": "Uncontrolled",
+        "-78791838": "Controlled"
     },
     "links": {
         "browserExtension": {
@@ -3862,7 +3864,9 @@
             "peerVerificationLabel": -46401322,
             "entryControlStatusChange": -28899891,
             "entryControlStatusChangeSuccess": -53772993,
-            "entryControlFailure": -87987213
+            "entryControlFailure": -87987213,
+            "uncontrolled": -79871971,
+            "controlled:": -78791838
         },
         "notifications.entryCommentItem": {
             "comment": -52742063
