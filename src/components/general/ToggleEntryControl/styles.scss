@@ -18,6 +18,10 @@
         font-size: var(--dui-font-size-medium);
     }
 
+    .disabled {
+        color: var(--dui-color-text-disabled);
+    }
+
     &.controlled {
         .icon {
             color: var(--color-success);
