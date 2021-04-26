@@ -27,6 +27,13 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const tagOptions = [
+    { id: 1, label: _ts('project.users', 'qualityController') },
+];
+
+const projectTagKeySelector = tag => tag.id;
+const projectTagLabelSelector = tag => tag.label;
+
 const requestOptions = {
     changeMembershipRequest: {
         url: ({ props: { projectId }, params: { membership } }) => `/projects/${projectId}/project-memberships/${membership.id}/`,
@@ -195,6 +202,8 @@ export default class Actions extends React.PureComponent {
         removeUserMembershipRequest.do({ membership });
     }
 
+    handleTagSelection = () => {}; // TODO: implement this when api is ready
+
     render() {
         const {
             row,
@@ -217,6 +226,7 @@ export default class Actions extends React.PureComponent {
             memberEmail,
             linkedGroup,
             userGroupOptions,
+            tag = 1, // TODO: fix this when api is ready
         } = row;
 
         const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
@@ -262,6 +272,20 @@ export default class Actions extends React.PureComponent {
                     showHintAndError={false}
                     disabled={userGroupOptions.length === 0 || activeUserId === memberId || pending}
                     readOnly={readOnly}
+                />
+                <SelectInput
+                    className={styles.inputElement}
+                    label={_ts('project.users', 'tags')}
+                    placeholder=""
+                    hideClearButton
+                    value={tag}
+                    options={tagOptions}
+                    onChange={this.handleTagSelection}
+                    keySelector={projectTagKeySelector}
+                    labelSelector={projectTagLabelSelector}
+                    showHintAndError={false}
+                    readOnly={readOnly}
+                    disabled={isSuperior || !!linkedGroup || activeUserId === memberId || pending}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding

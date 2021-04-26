@@ -24,6 +24,13 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const tagOptions = [
+    { id: 1, label: _ts('project.users', 'qualityController') },
+];
+
+const projectTagKeySelector = tag => tag.id;
+const projectTagLabelSelector = tag => tag.label;
+
 const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.number,
@@ -151,6 +158,8 @@ export default class Actions extends React.PureComponent {
         });
     }
 
+    handleTagSelection = () => {}; // TODO: implement this when api is ready
+
     render() {
         const {
             readOnly,
@@ -164,6 +173,7 @@ export default class Actions extends React.PureComponent {
 
         const {
             role,
+            tag = 1, // TODO: fix this when api is ready
         } = row;
 
         const removeUG = _ts(
@@ -194,6 +204,19 @@ export default class Actions extends React.PureComponent {
                     onChange={this.handleRoleSelectInputChange}
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
+                    showHintAndError={false}
+                    readOnly={readOnly}
+                    disabled={isSuperior || pending}
+                />
+                <SelectInput
+                    label={_ts('project.users', 'tags')}
+                    placeholder=""
+                    hideClearButton
+                    value={tag}
+                    options={tagOptions}
+                    onChange={this.handleTagSelection}
+                    keySelector={projectTagKeySelector}
+                    labelSelector={projectTagLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
                     disabled={isSuperior || pending}
