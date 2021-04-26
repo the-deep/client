@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
     ElementFragments,
 } from '@the-deep/deep-ui';
+
+import {
+    activeProjectRoleSelector,
+} from '#redux';
+import {
+    DatabaseEntityBase,
+    ProjectRole,
+    AppState,
+} from '#typings';
 
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
@@ -16,7 +26,6 @@ import notify from '#notify';
 import useRequest from '#utils/request';
 import { notifyError } from '#utils/requestNotify';
 
-import { DatabaseEntityBase } from '#typings';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -32,12 +41,19 @@ interface ToggleEntryControlProps {
     disabled?: boolean;
 }
 
+interface PropsFromState {
+    projectRole: ProjectRole;
+}
+
 const CONTROL = 3;
 const UNCONTROL = 4;
 
 const controlFormData = { commentType: CONTROL };
+const mapStateToProps = (state: AppState) => ({
+    projectRole: activeProjectRoleSelector(state),
+});
 
-function ToggleEntryControl(props: ToggleEntryControlProps) {
+function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     const {
         className,
         entryId,
@@ -47,7 +63,10 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
         onPendingStatusChange,
         tooltip,
         disabled,
+        projectRole,
     } = props;
+
+    console.warn('projectrole', projectRole);
 
     const [
         commentModalShown,
@@ -109,6 +128,17 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
         triggerReviewRequest();
     }, [setUncontrolFormData, triggerReviewRequest]);
 
+    const controlStatusLabel = useMemo(() => {
+        if (projectRole.qualityController) {
+            return value
+                ? _ts('entryReview', 'controlled')
+                : _ts('entryReview', 'uncontrolled');
+        }
+        return value
+            ? _ts('entryReview', 'uncontrolledLabel')
+            : _ts('entryReview', 'controlledLabel');
+    }, [projectRole, value]);
+
     return (
         <div
             className={styles.toggleEntryControl}
@@ -129,15 +159,25 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
                         }
                         onClick={handleClick}
                         pending={reviewRequestPending}
-                        disabled={disabled}
+                        disabled={disabled || !projectRole.qualityController}
                     >
-                        { value ? _ts('entryReview', 'uncontrolledLabel') : _ts('entryReview', 'controlledLabel') }
+                        { controlStatusLabel }
                     </Button>
                 }
             >
                 {value ?
-                    <IoCheckmark className={styles.icon} /> :
-                    <IoClose className={styles.icon} />
+                    <IoCheckmark
+                        className={_cs(
+                            styles.icon,
+                            !projectRole.qualityController && styles.disabled,
+                        )}
+                    /> :
+                    <IoClose
+                        className={_cs(
+                            styles.icon,
+                            !projectRole.qualityController && styles.disabled,
+                        )}
+                    />
                 }
             </ElementFragments>
             { commentModalShown && (
@@ -163,4 +203,4 @@ function ToggleEntryControl(props: ToggleEntryControlProps) {
     );
 }
 
-export default ToggleEntryControl;
+export default connect(mapStateToProps)(ToggleEntryControl);

@@ -174,4 +174,5 @@ export interface ProjectRole {
     level: number;
     isCreatorRole: boolean;
     isDefaultRole: boolean;
+    qualityController: boolean; //TODO: fix this later
 }
