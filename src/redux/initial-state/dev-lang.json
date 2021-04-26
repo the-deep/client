@@ -1396,7 +1396,9 @@
         "-77891125": "{assigner} unverified an {entry} in project {projectName}.",
         "-62878959": "entry",
         "-79871971": "Uncontrolled",
-        "-78791838": "Controlled"
+        "-78791838": "Controlled",
+        "-998103293": "Tags",
+        "-797987183": "Quality Cotroller"
     },
     "links": {
         "browserExtension": {
@@ -2493,7 +2495,9 @@
             "noResultsFound": -10595927,
             "meTitle": -24177081,
             "organizationTitle": 154,
-            "addedByTitle": -68525317
+            "addedByTitle": -68525317,
+            "tags": -998103293,
+            "qualityController": -797987183
         },
         "project": {
             "projectGetFailure": 2500,
