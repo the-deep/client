@@ -18,6 +18,7 @@
         margin: var(--dui-spacing-medium);
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
         padding: var(--dui-spacing-medium);
+        height: 160px;
     }
 
     .overlay {
@@ -34,6 +35,16 @@
             margin: var(--dui-spacing-medium);
             border: var(--dui-width-separator-thin) dashed var(--dui-color-separator);
             height: 160px;
+        }
+    }
+
+    &.hide {
+        .overlay {
+            display: none;
+        }
+
+        .entry {
+            opacity: 0.4;
         }
     }
 }

@@ -7,6 +7,8 @@ import {
 } from 'react-icons/io5';
 import {
     _cs,
+    isDefined,
+    isNotDefined,
     randomString,
 } from '@togglecorp/fujs';
 import {
@@ -37,6 +39,11 @@ interface AnalyticalStatementInputProps {
     index: number;
 }
 
+export interface DroppedValue {
+    entryId: number;
+    statementUuid?: string;
+}
+
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {
         className,
@@ -54,36 +61,70 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onValueRemove: onAnalyticalEntryRemove,
     } = useFormArray('analyticalEntries', value.analyticalEntries ?? [], onFieldChange);
 
+    const handleAnalyticalEntryDrop = useCallback(
+        (dropValue: DroppedValue, dropOverEntryUuid?: string) => {
+            if (isDefined(dropValue.statementUuid) && (dropValue.statementUuid !== value.uuid)) {
+                // NOTE: Remove entry from old statement if it was moved from
+                // one statement to another statement
+                console.warn('i am being removed', dropValue);
+            }
+            const newAnalyticalEntries = [...(value.analyticalEntries ?? [])];
+
+            const uuid = randomString();
+            let newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
+                uuid,
+                entry: dropValue.entryId,
+                order: value.order ?? 0,
+            };
+
+            // NOTE: Treat moved item as a new item by removing the old one and
+            // adding the new one again
+            const movedItem = value.analyticalEntries
+                ?.find(item => item.entry === dropValue.entryId);
+            if (value.analyticalEntries && isDefined(movedItem)) {
+                newAnalyticalEntry = {
+                    ...movedItem,
+                    order: value.order ?? 0,
+                };
+                const movedItemOldIndex = value.analyticalEntries
+                    .findIndex(item => item.entry === dropValue.entryId);
+                newAnalyticalEntries.splice(movedItemOldIndex, 1);
+            }
+
+            // NOTE: Don't let users add more that certain entries
+            if (
+                isNotDefined(movedItem)
+                && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
+            ) {
+                return;
+            }
+
+            if (dropOverEntryUuid) {
+                const currentIndex = newAnalyticalEntries
+                    .findIndex(v => v.uuid === dropOverEntryUuid);
+                newAnalyticalEntries.splice(currentIndex, 0, newAnalyticalEntry);
+            } else {
+                newAnalyticalEntries.push(newAnalyticalEntry);
+            }
+            const orderedEntries = newAnalyticalEntries.map((v, i) => ({ ...v, order: i }));
+            onFieldChange(
+                orderedEntries,
+                'analyticalEntries' as const,
+            );
+        },
+        [onFieldChange, value.analyticalEntries, value.order],
+    );
+
     const handleAnalyticalEntryAdd = useCallback(
         (val: Record<string, unknown> | undefined) => {
             if (!val) {
                 return;
             }
-            const typedVal = val as { entryId: number };
-
-            // NOTE: Don't add what is already added
-            if (value.analyticalEntries?.find(item => item.entry === typedVal.entryId)) {
-                return;
-            }
-            // NOTE: Don't let users add more that certain entries
-            if ((value.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT) {
-                return;
-            }
-
-            const uuid = randomString();
-            const newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
-                uuid,
-                entry: typedVal.entryId,
-                order: value.analyticalEntries?.length ?? 0,
-            };
-            onFieldChange(
-                [...(value.analyticalEntries ?? []), newAnalyticalEntry],
-                'analyticalEntries' as const,
-            );
+            const typedVal = val as { entryId: number, statementUuid: string };
+            handleAnalyticalEntryDrop(typedVal);
         },
-        [onFieldChange, value.analyticalEntries],
+        [handleAnalyticalEntryDrop],
     );
-
 
     return (
         <div className={_cs(styles.analyticalStatement, className)}>
@@ -135,13 +176,13 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         <AnalyticalEntryInput
                             key={analyticalEntry.uuid}
                             index={myIndex}
+                            statementUuid={value.uuid}
                             value={analyticalEntry}
                             // onChange={onAnalyticalEntryChange}
                             onRemove={onAnalyticalEntryRemove}
                             // eslint-disable-next-line max-len
                             error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.uuid]}
-                            analyticalEntries={value?.analyticalEntries}
-                            onFieldChange={onFieldChange}
+                            onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
                         />
                     ))}
                 </div>

@@ -1740,14 +1740,15 @@
     resolve-from "^5.0.0"
     ts-dedent "^2.0.0"
 
-"@the-deep/deep-ui@^1.3.2":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.3.2.tgz#ddccd4c28fc1c3dc114fafe36980cda862633221"
-  integrity sha512-jHB0//+ibXUrCVqfIPkXk05b9reEwIIDWnuYM0bg+05J5ch6lPPli3+rcj6MgnQmoGfZxgDDvrUmmbvrVAe35g==
+"@the-deep/deep-ui@^1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.3.3.tgz#984e3bee57cee91c96904ab28cebb5a87402433f"
+  integrity sha512-wFxhOi1Lto3MmGTkKYZK+BOrozF0dK+68hc0Px95CFEIkhyLzDNrEAND4LJwi8Dc/hyc2kNRGrktd29xTaM2fQ==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
     "@togglecorp/fujs" "^1.9.2-beta.0"
+    d3-shape "^2.1.0"
     react-icons "^4.2.0"
 
 "@timilsinabishal/react-components@https://github.com/the-deep/react-components":
@@ -4899,6 +4900,13 @@ d3-shape@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-2.0.0.tgz#2331b62fa784a2a1daac47a7233cfd69301381fd"
   integrity sha512-djpGlA779ua+rImicYyyjnOjeubyhql1Jyn1HK0bTyawuH76UQRWXd+pftr67H6Fa8hSwetkgb/0id3agKWykw==
+  dependencies:
+    d3-path "1 - 2"
+
+d3-shape@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-2.1.0.tgz#3b6a82ccafbc45de55b57fcf956c584ded3b666f"
+  integrity sha512-PnjUqfM2PpskbSLTJvAzp2Wv4CZsnAgTfcVRTwW03QR3MkXF8Uo7B1y/lWkAsmbKwuecto++4NlsYcvYpXpTHA==
   dependencies:
     d3-path "1 - 2"
 

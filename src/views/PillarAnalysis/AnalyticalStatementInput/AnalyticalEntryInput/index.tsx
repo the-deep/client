@@ -1,29 +1,31 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { IoClose } from 'react-icons/io5';
 import {
     DropContainer,
+    DraggableContent,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
     PartialForm,
     Error,
 } from '@togglecorp/toggle-form';
-import { randomString } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
+
+import { useModalState } from '#hooks/stateManagement';
 
 import { AnalyticalEntryType } from '../../schema';
+import { DroppedValue } from '../';
 
 import styles from './styles.scss';
 
-const ENTRIES_LIMIT = 50;
-
 interface AnalyticalEntryInputProps {
-    analyticalEntries?: PartialForm<AnalyticalEntryType>[];
+    statementUuid: string;
     value: PartialForm<AnalyticalEntryType>;
     error: Error<AnalyticalEntryType> | undefined;
     // onChange: (value: PartialForm<AnalyticalEntryType>, index: number) => void;
     onRemove: (index: number) => void;
-    onFieldChange: (list: PartialForm<AnalyticalEntryType>[], fieldName: 'analyticalEntries') => void;
     index: number;
+    onAnalyticalEntryDrop: (droppedValue: DroppedValue, dropOverEntryUuid: string) => void;
 }
 
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
@@ -33,57 +35,55 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         // onChange,
         onRemove,
         index,
-        analyticalEntries,
-        onFieldChange,
+        statementUuid,
+        onAnalyticalEntryDrop,
     } = props;
+
+    const [
+        entryDraggedStatus,
+        setDragStart,
+        setDragEnd,
+    ] = useModalState(false);
 
     const handleAnalyticalEntryAdd = useCallback(
         (val: Record<string, unknown> | undefined) => {
             if (!val) {
                 return;
             }
-            const typedVal = val as { entryId: number };
-
-            // NOTE: Don't add what is already added
-            if (analyticalEntries?.find(item => item.entry === typedVal.entryId)) {
-                return;
-            }
-            // NOTE: Don't let users add more that certain entries
-            if ((analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT) {
-                return;
-            }
-
-            const uuid = randomString();
-            const newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
-                uuid,
-                entry: typedVal.entryId,
-                order: value.order ?? 0,
-            };
-            const currentIndex = analyticalEntries?.findIndex(v => v.uuid === value.uuid);
-            const newAnalyticalEntries = [...(analyticalEntries ?? [])];
-            newAnalyticalEntries.splice(currentIndex, 0, newAnalyticalEntry);
-            const orderedEntries = newAnalyticalEntries.map((v, i) => ({ ...v, order: i }));
-            onFieldChange(
-                orderedEntries,
-                'analyticalEntries' as const,
-            );
+            const typedVal = val as { entryId: number, statementUuid: string };
+            onAnalyticalEntryDrop(typedVal, value.uuid);
         },
-        [onFieldChange, analyticalEntries, value],
+        [value, onAnalyticalEntryDrop],
     );
+
+    const dragValue = useMemo(() => ({
+        entryId: value.entry,
+        statementUuid,
+    }), [value.entry, statementUuid]);
 
     // const onFieldChange = useFormObject(index, value, onChange);
 
     return (
         <DropContainer
-            className={styles.dropContainer}
+            className={_cs(
+                styles.dropContainer,
+                entryDraggedStatus && styles.hide,
+            )}
             name="entry"
-            onDrop={handleAnalyticalEntryAdd}
+            onDrop={!entryDraggedStatus ? handleAnalyticalEntryAdd : undefined}
             dropOverlayContainerClassName={styles.overlay}
             draggedOverClassName={styles.draggedOver}
             contentClassName={styles.content}
             // TODO: disable this when entries count is greater than certain count
         >
-            <div className={styles.entry}>
+            <DraggableContent
+                className={styles.entry}
+                name="entry"
+                dropEffect="move"
+                value={dragValue}
+                onDragStart={setDragStart}
+                onDragStop={setDragEnd}
+            >
                 {error?.$internal && (
                     <p>
                         {error.$internal}
@@ -100,7 +100,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 >
                     <IoClose />
                 </QuickActionButton>
-            </div>
+            </DraggableContent>
         </DropContainer>
     );
 }
