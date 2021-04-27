@@ -92,8 +92,6 @@ function AddUserModal(props: Props) {
     const [
         ,
         projectRolesResponse,
-        ,
-        ,
     ] = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
@@ -141,7 +139,7 @@ function AddUserModal(props: Props) {
 
     return (
         <Modal
-            heading="Add Usergroup"
+            heading={_ts('projectEdit', 'addUserHeading')}
             onClose={onModalClose}
             bodyClassName={styles.modalBody}
         >
@@ -162,7 +160,7 @@ function AddUserModal(props: Props) {
                         optionsPopupClassName={styles.optionsPopup}
                         onChange={onValueChange}
                         value={value.member}
-                        placeholder="Select User"
+                        placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
                         error={error?.fields?.member}
                     />
 
@@ -175,7 +173,7 @@ function AddUserModal(props: Props) {
                         optionsPopupClassName={styles.optionsPopup}
                         onChange={onValueChange}
                         value={value.role}
-                        placeholder="Select Role"
+                        placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
                     />
                 </div>
                 <footer className={styles.footer}>

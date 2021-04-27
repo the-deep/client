@@ -1342,7 +1342,11 @@
         "-76480274": "Delete user from project",
         "-75535574": "Edit User",
         "-70353397": "No usergroups added",
-        "-98959986": "No users added"
+        "-98959986": "No users added",
+        "-30147930": "Failed to Delete user membership",
+        "-53750920": "Select Role",
+        "-18211847": "Select User",
+        "-14111698": "Select User group"
     },
     "links": {
         "browserExtension": {
@@ -3807,7 +3811,15 @@
             "deleteUserLabel": -76480274,
             "editUserLabel": -75535574,
             "emptyUserTableMessage": -98959986,
-            "emptyUsergroupTableMessage": -70353397
+            "emptyUsergroupTableMessage": -70353397,
+            "addUserHeading": -96311582,
+            "addUsergroupHeading": -88838184,
+            "membershipDeleteFailed": -30147930,
+            "selectRolePlaceholder": -53750920,
+            "selectUserPlaceholder": -18211847,
+            "selectUsergroupPlaceholder": -14111698,
+            "userFetchFailed": -93154523,
+            "usergroupDeleteFailed": -55358986
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

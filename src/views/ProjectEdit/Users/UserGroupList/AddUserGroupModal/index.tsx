@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
     isDefined,
-    // isNotDefined,
 } from '@togglecorp/fujs';
 
 import {
@@ -130,7 +129,7 @@ function AddUserGroupModal(props: Props) {
 
     return (
         <Modal
-            heading="Add Usergroup"
+            heading={_ts('projectEdit', 'addUsergroupHeading')}
             onClose={onModalClose}
             bodyClassName={styles.modalBody}
         >
@@ -152,7 +151,7 @@ function AddUserGroupModal(props: Props) {
                         onChange={onValueChange}
                         value={value.usergroup}
                         error={error?.fields?.usergroup}
-                        placeholder="Select usergroup"
+                        placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
                     />
                     <SelectInput
                         name="role"

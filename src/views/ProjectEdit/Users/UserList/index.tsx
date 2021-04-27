@@ -12,7 +12,7 @@ import {
     Button,
     QuickActionButton,
 } from '@the-deep/deep-ui';
-
+import { notifyOnFailure } from '#utils/requestNotify';
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
@@ -68,6 +68,9 @@ function UserList(props: Props) {
         method: 'GET',
         query: queryForRequest,
         autoTrigger: true,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'userFetchFailed'))({ error: errorBody });
+        },
     });
 
     const [
@@ -82,6 +85,9 @@ function UserList(props: Props) {
             triggerGetUsers();
         },
         autoTrigger: false,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'membershipDeleteFailed'))({ error: errorBody });
+        },
     });
 
     const handleDeleteMembershipClick = useCallback((deleteUserId) => {

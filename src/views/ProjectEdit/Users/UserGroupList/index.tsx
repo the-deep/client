@@ -15,6 +15,7 @@ import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
 
+import { notifyOnFailure } from '#utils/requestNotify';
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
@@ -73,6 +74,9 @@ function UserGroupList(props: Props) {
         method: 'GET',
         query: queryForRequest,
         autoTrigger: true,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
+        },
     });
 
     const [
@@ -87,6 +91,9 @@ function UserGroupList(props: Props) {
             triggerUsergroupResponse();
         },
         autoTrigger: false,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'usergroupDeleteFailed'))({ error: errorBody });
+        },
     });
 
     const handleDeleteUsergroupClick = useCallback((deleteUsergroupId) => {
