@@ -336,7 +336,7 @@ export default class Entry extends React.PureComponent {
             controlled,
             isVerifiedByCurrentUser,
             verifiedByCount,
-            controlStatusLastChangedByDetails,
+            controlLastChangedByDetails,
         } = entry;
 
         const { entryControlPending } = this.state;
@@ -344,7 +344,7 @@ export default class Entry extends React.PureComponent {
         const filteredWidgets = this.getWidgets(framework?.widgets);
 
         const pending = deletePending || entryControlPending;
-        const entryLastChangedBy = controlStatusLastChangedByDetails?.displayName;
+        const entryLastChangedBy = controlLastChangedByDetails?.displayName;
 
         return (
             <div className={_cs(classNameFromProps, styles.entryContainer)}>
