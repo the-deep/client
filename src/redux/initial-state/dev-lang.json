@@ -1346,7 +1346,9 @@
         "-30147930": "Failed to Delete user membership",
         "-53750920": "Select Role",
         "-18211847": "Select User",
-        "-14111698": "Select User group"
+        "-14111698": "Select Usergroup",
+        "-67231440": "Edit user membership",
+        "-31585106": "Edit usergroup membership"
     },
     "links": {
         "browserExtension": {
@@ -3819,7 +3821,12 @@
             "selectUserPlaceholder": -18211847,
             "selectUsergroupPlaceholder": -14111698,
             "userFetchFailed": -93154523,
-            "usergroupDeleteFailed": -55358986
+            "usergroupDeleteFailed": -55358986,
+            "roleLabel": 12509,
+            "userLabel": 1200,
+            "usergroupLabel": 201,
+            "editUserHeading": -67231440,
+            "editUsergroupHeading": -31585106
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

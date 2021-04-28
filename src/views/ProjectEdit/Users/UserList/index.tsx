@@ -16,6 +16,7 @@ import { notifyOnFailure } from '#utils/requestNotify';
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
@@ -57,6 +58,11 @@ function UserList(props: Props) {
         setModalShow,
         setModalHidden,
     ] = useModalState(false);
+
+    const handleModalClose = useCallback(() => {
+        setMembershipIdToEdit(undefined);
+        setModalHidden();
+    }, [setModalHidden]);
 
     const [
         usersPending,
@@ -213,6 +219,7 @@ function UserList(props: Props) {
                 </Button>
             )}
         >
+            {usersPending && (<LoadingAnimation />)}
             {(usersResponse && usersResponse?.count > 0)
                 ? (
                     <RawTable
@@ -226,9 +233,11 @@ function UserList(props: Props) {
                     />
                 )
                 : (
-                    <Message className={styles.emptyTable}>
-                        {_ts('projectEdit', 'emptyUserTableMessage')}
-                    </Message>
+                    <div className={styles.emptyTable}>
+                        <Message>
+                            {_ts('projectEdit', 'emptyUserTableMessage')}
+                        </Message>
+                    </div>
                 )
             }
             {usersResponse && usersResponse.count > maxItemsPerPage && (
@@ -242,7 +251,7 @@ function UserList(props: Props) {
             )}
             {showAddUserModal &&
                 <AddUserModal
-                    onModalClose={setModalHidden}
+                    onModalClose={handleModalClose}
                     projectId={projectId}
                     onTableReload={triggerGetUsers}
                     userValue={membershipToEdit}

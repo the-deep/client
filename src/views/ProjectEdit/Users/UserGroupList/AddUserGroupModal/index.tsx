@@ -1,23 +1,21 @@
-import React from 'react';
-
+import React, { useState, useMemo, useCallback } from 'react';
 import {
     isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
-
 import {
     ObjectSchema,
     PartialForm,
     requiredCondition,
     useForm,
-    createSubmitHandler,
 } from '@togglecorp/toggle-form';
-
 import {
     Modal,
     SelectInput,
     Button,
 } from '@the-deep/deep-ui';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import useRequest from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
@@ -26,24 +24,36 @@ import {
 } from '#typings';
 import { ProjectRole } from '#typings/project';
 import _ts from '#ts';
+
 import styles from './styles.scss';
+
+interface UserGroupMini {
+    id: number;
+    title: string;
+}
+
+interface UserGroupMembership {
+    id: number;
+    title: string;
+    usergroup: number;
+}
 
 interface Props {
     onModalClose: () => void;
-    projectId: string;
+    projectId: number;
     onTableReload: () => void;
-    usergroupValue?: UserGroup;
+    usergroupValue?: UserGroupMembership;
 }
 
-const usergroupKeySelector = (d: UserGroup) => d.id;
-
-const usergroupLabelSelector = (d: UserGroup) => d.title;
+const usergroupKeySelector = (d: UserGroupMini) => d.id;
+const usergroupLabelSelector = (d: UserGroupMini) => d.title;
 
 const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
 type FormType = {
-    usergroup: number;
+    id?: number;
+    usergroup?: number;
     role: number;
 };
 
@@ -51,11 +61,23 @@ type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 const schema: FormSchema = {
-    fields: ():FormSchemaFields => ({
-        usergroup: [requiredCondition],
-        role: [requiredCondition],
-    }),
+    fields: (value): FormSchemaFields => {
+        if (isDefined(value.id)) {
+            return ({
+                role: [requiredCondition],
+            });
+        }
+        return ({
+            usergroup: [requiredCondition],
+            role: [requiredCondition],
+        });
+    },
 };
+
+interface ValueToSend {
+    role: number;
+    usergroup?: number;
+}
 
 const defaultFormValue: PartialForm<FormType> = {};
 
@@ -67,6 +89,8 @@ function AddUserGroupModal(props: Props) {
         usergroupValue,
     } = props;
 
+    const formValue: PartialForm<FormType> = usergroupValue ?? defaultFormValue;
+
     const {
         pristine,
         value,
@@ -74,14 +98,17 @@ function AddUserGroupModal(props: Props) {
         onValueChange,
         validate,
         onErrorSet,
-    } = useForm(usergroupValue ?? defaultFormValue, schema);
+    } = useForm(formValue, schema);
 
+    const [valueToSend, setValueToSend] = useState<ValueToSend>();
+
+    const queryForUsergroups = useMemo(() => ({
+        members_exclude_project: projectId,
+    }), [projectId]);
 
     const [
-        ,
+        pendingRoles,
         projectRolesResponse,
-        ,
-        ,
     ] = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
@@ -92,11 +119,12 @@ function AddUserGroupModal(props: Props) {
     });
 
     const [
-        ,
+        pendingUsergroupList,
         usergroupResponse,
-    ] = useRequest({
-        url: 'server://user-groups',
+    ] = useRequest<MultiResponse<UserGroup>>({
+        url: 'server://user-groups/',
         method: 'GET',
+        query: queryForUsergroups,
         autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
@@ -104,7 +132,7 @@ function AddUserGroupModal(props: Props) {
     });
 
     const [
-        ,
+        pendingAddAction,
         ,
         ,
         triggerAddUserGroup,
@@ -115,7 +143,7 @@ function AddUserGroupModal(props: Props) {
         method: isDefined(usergroupValue)
             ? 'PATCH'
             : 'POST',
-        body: value,
+        body: valueToSend,
         onSuccess: () => {
             onTableReload();
             onModalClose();
@@ -125,58 +153,89 @@ function AddUserGroupModal(props: Props) {
         },
     });
 
-    const handleSubmit = triggerAddUserGroup;
+    const handleSubmit = useCallback(
+        () => {
+            const { errored, error: err, value: val } = validate();
+            onErrorSet(err);
+            if (!errored && isDefined(val)) {
+                setValueToSend(val as ValueToSend);
+                triggerAddUserGroup();
+            }
+        },
+        [onErrorSet, validate, triggerAddUserGroup],
+    );
+
+    const usergroupList = useMemo(() => {
+        if (isNotDefined(usergroupValue)) {
+            return usergroupResponse?.results ?? [];
+        }
+        return [
+            ...(usergroupResponse?.results ?? []),
+            {
+                id: usergroupValue.usergroup,
+                title: usergroupValue.title,
+            },
+        ];
+    }, [usergroupResponse, usergroupValue]);
+
+    const pendingRequests = pendingRoles || pendingUsergroupList;
 
     return (
         <Modal
-            heading={_ts('projectEdit', 'addUsergroupHeading')}
+            className={styles.modal}
+            heading={
+                isDefined(usergroupValue)
+                    ? _ts('projectEdit', 'editUsergroupHeading')
+                    : _ts('projectEdit', 'addUsergroupHeading')
+            }
             onClose={onModalClose}
             bodyClassName={styles.modalBody}
+            footerClassName={styles.footer}
+            footer={(
+                <Button
+                    name="submit"
+                    variant="primary"
+                    type="submit"
+                    disabled={pristine || pendingRequests || pendingAddAction}
+                    onClick={handleSubmit}
+                >
+                    {_ts('projectEdit', 'submitLabel')}
+                </Button>
+            )}
         >
-            <form
-                className={styles.form}
-                onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
-            >
+            {pendingAddAction && (<LoadingAnimation />)}
+            {error?.$internal && (
                 <p>
                     {error?.$internal}
                 </p>
-                <div className={styles.inline}>
-                    <SelectInput
-                        name="usergroup"
-                        className={styles.usergroupList}
-                        options={usergroupResponse?.results}
-                        keySelector={usergroupKeySelector}
-                        labelSelector={usergroupLabelSelector}
-                        optionsPopupClassName={styles.optionsPopup}
-                        onChange={onValueChange}
-                        value={value.usergroup}
-                        error={error?.fields?.usergroup}
-                        placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
-                    />
-                    <SelectInput
-                        name="role"
-                        className={styles.roleList}
-                        options={projectRolesResponse?.results}
-                        keySelector={roleKeySelector}
-                        labelSelector={roleLabelSelector}
-                        optionsPopupClassName={styles.optionsPopup}
-                        onChange={onValueChange}
-                        value={value.role}
-                        error={error?.fields?.role}
-                        placeholder="Select Role"
-                    />
-                </div>
-                <footer className={styles.footer}>
-                    <Button
-                        name="submit"
-                        variant="primary"
-                        type="submit"
-                        disabled={pristine}
-                    >
-                        {_ts('projectEdit', 'submitLabel')}
-                    </Button>
-                </footer>
-            </form>
+            )}
+            <SelectInput
+                name="usergroup"
+                className={styles.input}
+                options={usergroupList}
+                readOnly={isDefined(usergroupValue)}
+                keySelector={usergroupKeySelector}
+                labelSelector={usergroupLabelSelector}
+                optionsPopupClassName={styles.optionsPopup}
+                onChange={onValueChange}
+                value={value.usergroup}
+                error={error?.fields?.usergroup}
+                label={_ts('projectEdit', 'usergroupLabel')}
+                placeholder={_ts('projectEdit', 'selectUsergroupPlaceholder')}
+            />
+            <SelectInput
+                name="role"
+                className={styles.input}
+                options={projectRolesResponse?.results}
+                keySelector={roleKeySelector}
+                labelSelector={roleLabelSelector}
+                optionsPopupClassName={styles.optionsPopup}
+                onChange={onValueChange}
+                value={value.role}
+                error={error?.fields?.role}
+                label={_ts('projectEdit', 'roleLabel')}
+                placeholder={_ts('projectEdit', 'selectRolePlaceholder')}
+            />
         </Modal>
     );
 }

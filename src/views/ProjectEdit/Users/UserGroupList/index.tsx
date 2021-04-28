@@ -20,6 +20,7 @@ import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
 import Message from '#rscv/Message';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
@@ -63,6 +64,11 @@ function UserGroupList(props: Props) {
         setModalShow,
         setModalHidden,
     ] = useModalState(false);
+
+    const handleModalClose = useCallback(() => {
+        setUsergroupIdToEdit(undefined);
+        setModalHidden();
+    }, [setModalHidden]);
 
     const [
         userGroupPending,
@@ -228,6 +234,7 @@ function UserGroupList(props: Props) {
                 </div>
             )}
         >
+            {userGroupPending && (<LoadingAnimation />)}
             {(userGroupResponse && userGroupResponse?.count > 0)
                 ? (
                     <RawTable
@@ -257,7 +264,7 @@ function UserGroupList(props: Props) {
             )}
             {showAddUserGroupModal && (
                 <AddUserGroupModal
-                    onModalClose={setModalHidden}
+                    onModalClose={handleModalClose}
                     projectId={projectId}
                     onTableReload={triggerUsergroupResponse}
                     usergroupValue={usergroupToEdit}

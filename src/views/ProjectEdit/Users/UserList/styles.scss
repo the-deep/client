@@ -1,14 +1,20 @@
 .users {
+    position: relative;
+
     .content {
         display: flex;
         flex-grow: 1;
-        overflow: auto;
+        overflow-x: auto;
 
         .table {
             flex-grow: 1;
             overflow-y: auto;
 
             :global {
+                .header {
+                    z-index: 1;
+                }
+
                 .actions {
                     width: 200px;
                 }
@@ -28,6 +34,10 @@
         text-transform: uppercase;
         color: var(--dui-color-brand);
         font-size: var(--dui-font-size-heading-medium);
+    }
+
+    .empty-table {
+        min-height: 30vh;
     }
 }
 

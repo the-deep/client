@@ -1,28 +1,19 @@
-.modal-body {
-    display: flex;
-
-    .form {
+.modal {
+    .modal-body {
         display: flex;
+        position: relative;
         flex-direction: column;
+        padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
 
-        .usergroup-list {
-            display: flex;
-            margin: 0 var(--spacing-small);
-        }
-
-        .role-list {
-            display: flex;
-        }
-        .inline {
-            display: flex;
+        .input {
+            margin: var(--dui-spacing-small);
         }
     }
-}
 
-.footer {
-    display: flex;
-    justify-content: flex-end;
-    margin: var(--spacing-medium) 0;
+    .footer {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 .options-popup {

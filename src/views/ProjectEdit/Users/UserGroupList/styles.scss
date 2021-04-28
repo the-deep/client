@@ -1,7 +1,7 @@
 .user-groups {
     display: flex;
+    position: relative;
     flex-direction: column;
-    overflow-y: auto;
 
     .header {
         display: flex;
@@ -40,6 +40,10 @@
             overflow-y: auto;
 
             :global {
+                .header {
+                    z-index: 1;
+                }
+
                 .actions {
                     width: 200px;
                 }
@@ -53,5 +57,9 @@
                 }
             }
         }
+    }
+
+    .empty-table {
+        min-height: 30vh;
     }
 }
