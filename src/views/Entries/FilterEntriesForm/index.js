@@ -64,14 +64,14 @@ const commentStatusOptions = [
     },
 ];
 
-const verificationStatusOptions = [
+const controlStatusOptions = [
     {
         key: true,
-        value: _ts('editEntry', 'verifiedLabel'),
+        value: _ts('editEntry', 'controlledLabel'),
     },
     {
         key: false,
-        value: _ts('editEntry', 'unverifiedLabel'),
+        value: _ts('editEntry', 'uncontrolledLabel'),
     },
 ];
 
@@ -103,9 +103,8 @@ const staticFiltersLabelMap = {
     comment_assignee: _ts('entries', 'commentAssignedToFilterLabel'),
     comment_created_by: _ts('entries', 'commentCreatedByFilterLabel'),
     comment_status: _ts('entries', 'commentStatusOptionsFilterLabel'),
-    verified: _ts('entries', 'verificationStatusOptionsFilterLabel'),
+    controlled: _ts('entries', 'controlStatusOptionsFilterLabel'),
     entry_type: _ts('entries', 'entryTypeFilterLabel'),
-
     project_entry_labels: _ts('entries', 'entryLabelsFilterLabel'),
     lead_group_label: _ts('entries', 'entryGroupsFilterLabel'),
     authoring_organization_types: _ts('entries', 'authoringOrganizationsFilterLabel'),
@@ -237,9 +236,9 @@ function FilterEntriesForm(props) {
     } = entryFilterOptions;
 
     const showEntryLabelFilters = projectEntryLabel && projectEntryLabel.length > 0;
-    const selectedVerification = useMemo(() => (
-        verificationStatusOptions.find(
-            v => v.key === filters.verified,
+    const selectedControlField = useMemo(() => (
+        controlStatusOptions.find(
+            v => v.key === filters.controlled,
         )
     ), [filters]);
 
@@ -417,20 +416,20 @@ function FilterEntriesForm(props) {
                                 className={styles.entriesFilter}
                                 keySelector={optionKeySelector}
                                 labelSelector={optionLabelSelector}
-                                options={verificationStatusOptions}
-                                label={staticFiltersLabelMap.verified}
+                                options={controlStatusOptions}
+                                label={staticFiltersLabelMap.controlled}
                                 onChange={(value) => {
                                     handleFilterChange(
-                                        'verified',
+                                        'controlled',
                                         value,
                                     );
                                 }}
                                 showHintAndError={false}
                                 value={(
-                                    selectedVerification ? selectedVerification.key : undefined
+                                    selectedControlField ? selectedControlField.key : undefined
                                 )}
                                 disabled={pending}
-                                placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                                placeholder={_ts('entries', 'controlStatusPlaceholder')}
                             />
                             <MultiSelectInput
                                 className={styles.entriesFilter}
