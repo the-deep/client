@@ -13,7 +13,6 @@ import ToggleEntryVerification from '#components/general/ToggleEntryVerification
 import Cloak from '#components/general/Cloak';
 import Button from '#rsca/Button';
 import modalize from '#rscg/Modalize';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import ListItem, { DefaultIcon } from '#rscv/ListItem';
 import EntryCommentButton from '#components/general/EntryCommentButton';
@@ -131,14 +130,12 @@ function EntryCard(props: EntryCardProps) {
     } = props;
 
     const [moreActionsVisible, setMoreActionsVisible, setMoreActionsHidden] = useModalState(false);
-    const [isEditLeadModalShown, showEditLeadModal] = React.useState<boolean>(false);
+    const [isEditLeadModalShown, showEditLeadModal] = useState<boolean>(false);
 
     const {
         url: leadUrlFromProps,
         attachment,
     } = lead;
-
-    const [verifiyChangePending, setVerifyChangePending] = useState(false);
 
     const leadUrl = (attachment && attachment.file) ?? leadUrlFromProps;
 
@@ -181,8 +178,6 @@ function EntryCard(props: EntryCardProps) {
 
     const isConfidential = lead.confidentiality === 'confidential';
 
-    const loading = verifiyChangePending;
-
     const scaleWidgets = useMemo(() => getScaleWidgetsData(framework, entry), [framework, entry]);
 
     const scaleWidgetRendererParams = useCallback((_: string, d: ScaleWidget) => {
@@ -193,34 +188,35 @@ function EntryCard(props: EntryCardProps) {
         };
     }, []);
 
-    const handleEntryControlChange = useCallback((verified) => {
+    const handleEntryControlChange = useCallback((controlled) => {
         if (onEntryChange) {
             const entryToPatch = {
                 ...entry,
-                verified,
+                controlled,
             };
 
             onEntryChange(entryToPatch);
         }
     }, [entry, onEntryChange]);
 
-    const handleEntryVerificationChange = useCallback((verified, verificationCount) => {
-        if (onEntryChange) {
-            const entryToPatch = {
-                ...entry,
-                isVerifiedByCurrentUser: verified,
-                verifiedByCount: verificationCount,
-            };
+    const handleEntryVerificationChange = useCallback(
+        (verified: boolean, verificationCount: number) => {
+            if (onEntryChange) {
+                const entryToPatch = {
+                    ...entry,
+                    isVerifiedByCurrentUser: verified,
+                    verifiedByCount: verificationCount,
+                };
 
-            onEntryChange(entryToPatch);
-        }
-    }, [entry, onEntryChange]);
+                onEntryChange(entryToPatch);
+            }
+        }, [entry, onEntryChange],
+    );
 
-    const entryLastChangedBy = entry?.controlStatusLastChangedByDetails?.displayName;
+    const entryLastChangedBy = entry?.controlledChangedByDetails?.displayName;
 
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
-            {loading && <LoadingAnimation />}
             <div
                 className={_cs(
                     styles.entryCard,
@@ -390,7 +386,6 @@ function EntryCard(props: EntryCardProps) {
                                     entryId={entry.id}
                                     value={entry.controlled}
                                     onChange={handleEntryControlChange}
-                                    onPendingStatusChange={setVerifyChangePending}
                                     disabled={isDeleted}
                                 />
                                 <EntryCommentButton entryId={entry.id} />

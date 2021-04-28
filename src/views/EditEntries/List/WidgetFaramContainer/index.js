@@ -26,7 +26,7 @@ import {
     editEntriesFilteredEntryGroupsSelector,
 
     editEntriesSetSelectedEntryKeyAction,
-    editEntriesSetEntryVerificationStatusAction,
+    editEntriesSetEntryControlStatusAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
@@ -49,7 +49,7 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
-    setEntryVerificationStatus: PropTypes.func.isRequired,
+    setEntryControlStatus: PropTypes.func.isRequired,
 
     index: PropTypes.number.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -87,8 +87,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
-    setEntryVerificationStatus: params => dispatch(
-        editEntriesSetEntryVerificationStatusAction(params),
+    setEntryControlStatus: params => dispatch(
+        editEntriesSetEntryControlStatusAction(params),
     ),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
@@ -115,11 +115,11 @@ function WidgetFaramContainer(props) {
         labels,
         selectedEntryKey,
         setSelectedEntryKey,
-        setEntryVerificationStatus,
+        setEntryControlStatus,
         markAsDeletedEntry,
     } = props;
 
-    const [verifyPending, setVerifyPending] = useState(false);
+    const [controlPending, setControlPending] = useState(false);
 
     const shouldHideEntryDelete = useCallback(({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(entry)
@@ -151,18 +151,18 @@ function WidgetFaramContainer(props) {
         });
     }, [markAsDeletedEntry, entry, leadId]);
 
-    const handleVerificationChange = useCallback((verified) => {
+    const handleControlStatusChange = useCallback((controlled) => {
         const entryForPatch = {
             id: entryAccessor.serverId(entry),
-            verified,
+            controlled,
             versionId: entry.versionId,
         };
 
-        setEntryVerificationStatus({ entry: entryForPatch, leadId });
-    }, [entry, setEntryVerificationStatus, leadId]);
+        setEntryControlStatus({ entry: entryForPatch, leadId });
+    }, [entry, setEntryControlStatus, leadId]);
 
     const entryKey = entryAccessor.key(entry);
-    const verified = entryAccessor.verified(entry);
+    const controlled = entryAccessor.controlled(entry);
 
     const entryLabelsForEntry = useMemo(() => (
         getEntryGroupsForEntry(
@@ -172,7 +172,7 @@ function WidgetFaramContainer(props) {
         )
     ), [entryKey, entryGroups, labels]);
 
-    const disableVerifiedButton = !entry?.localData?.isPristine
+    const disableControlledButton = !entry?.localData?.isPristine
         || isFalsy(entryAccessor.serverId(entry));
 
     const entryLabelsRendererParams = useCallback((key, data) => ({
@@ -183,7 +183,7 @@ function WidgetFaramContainer(props) {
         groups: data.groups,
     }), []);
 
-    const entryLastChangedBy = entry?.controlStatusLastChangedByDetails?.displayName;
+    const entryLastChangedBy = entry?.controlledChangedByDetails?.displayName;
 
     return (
         <div
@@ -193,7 +193,7 @@ function WidgetFaramContainer(props) {
                 entryKey === selectedEntryKey && styles.selected,
             )}
         >
-            {verifyPending && <LoadingAnimation />}
+            {controlPending && <LoadingAnimation />}
             <header className={_cs('widget-container-header', styles.header)}>
                 <h3 className={styles.heading}>
                     {/* FIXME: use strings */}
@@ -214,10 +214,10 @@ function WidgetFaramContainer(props) {
                         ) : undefined}
                         entryId={entryAccessor.serverId(entry)}
                         projectId={entry.project}
-                        value={verified}
-                        onChange={handleVerificationChange}
-                        disabled={disableVerifiedButton}
-                        onPendingStatusChange={setVerifyPending}
+                        value={controlled}
+                        onChange={handleControlStatusChange}
+                        disabled={disableControlledButton}
+                        onPendingStatusChange={setControlPending}
                     />
                     {labels.length > 0 && (
                         <ModalButton

@@ -183,8 +183,8 @@ export interface MatrixTocElement {
     key?: string;
     title: string;
     altTitle?: string;
-    verified?: number;
-    unverified?: number;
+    controlled?: number;
+    uncontrolled?: number;
     children?: MatrixTocElement[] | [];
     uniqueId: string;
 }

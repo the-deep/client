@@ -416,15 +416,15 @@ function Table(props) {
                 defaultSortOrder: 'dsc',
                 modifier: (row) => {
                     const percentage = row.entriesCount
-                        ? ((row.verifiedEntriesCount ?? 0) / row.entriesCount) * 100
+                        ? ((row.controlledEntriesCount ?? 0) / row.entriesCount) * 100
                         : 0;
                     return (
                         <div
                             title={_ts(
                                 'leads',
-                                'verifiedEntries',
+                                'controlledEntries',
                                 {
-                                    verifiedCount: row.verifiedEntriesCount,
+                                    controlledCount: row.controlledEntriesCount,
                                     entriesCount: row.entriesCount,
                                 },
                             )}

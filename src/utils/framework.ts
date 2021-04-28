@@ -380,8 +380,8 @@ export const getMatrix1dToc = (
                     key,
                     title: value,
                     altTitle: breadcrumb(title, rowTitle, value),
-                    verified: count?.verifiedCount,
-                    unverified: count?.unverifiedCount,
+                    controlled: count?.controlledCount,
+                    uncontrolled: count?.uncontrolledCount,
                     uniqueId: `${key}-${cellKey}`,
                 });
             });
@@ -393,8 +393,8 @@ export const getMatrix1dToc = (
                 key,
                 title: rowTitle,
                 altTitle: breadcrumb(title, rowTitle),
-                verified: count?.verifiedCount,
-                unverified: count?.unverifiedCount,
+                controlled: count?.controlledCount,
+                uncontrolled: count?.uncontrolledCount,
                 children: transformedCells,
                 uniqueId: `${key}-${rowKey}`,
             });
@@ -455,8 +455,8 @@ export const getMatrix2dToc = (
                         key: dimensionKey,
                         title: subDimensionTitle,
                         altTitle: breadcrumb(title, dimensionTitle, subDimensionTitle),
-                        verified: count?.verifiedCount,
-                        unverified: count?.unverifiedCount,
+                        controlled: count?.controlledCount,
+                        uncontrolled: count?.uncontrolledCount,
                         uniqueId: `${dimensionKey}-${subDimensionId}`,
                     };
                 },
@@ -469,8 +469,8 @@ export const getMatrix2dToc = (
                 key: dimensionKey,
                 title: dimensionTitle,
                 altTitle: breadcrumb(title, dimensionTitle),
-                verified: count?.verifiedCount,
-                unverified: count?.unverifiedCount,
+                controlled: count?.controlledCount,
+                uncontrolled: count?.uncontrolledCount,
                 children: transformedSubDimensions,
                 uniqueId: `${dimensionKey}-${dimensionId}`,
             });
@@ -491,8 +491,8 @@ export const getMatrix2dToc = (
                         key: sectorKey,
                         title: subSectorTitle,
                         altTitle: breadcrumb(title, sectorTitle, subSectorTitle),
-                        verified: count?.verifiedCount,
-                        unverified: count?.unverifiedCount,
+                        controlled: count?.controlledCount,
+                        uncontrolled: count?.uncontrolledCount,
                         uniqueId: `${sectorKey}-${subSectorId}`,
                     };
                 },
@@ -505,8 +505,8 @@ export const getMatrix2dToc = (
                 key: sectorKey,
                 title: sectorTitle,
                 altTitle: breadcrumb(title, sectorTitle),
-                verified: count?.verifiedCount,
-                unverified: count?.unverifiedCount,
+                controlled: count?.controlledCount,
+                uncontrolled: count?.uncontrolledCount,
                 children: transformedSubSectors,
                 uniqueId: `${sectorKey}-${sectorId}`,
             });

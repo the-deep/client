@@ -69,7 +69,7 @@ import {
     editEntriesSaveEntryAction,
     editEntriesSetEntriesAction,
     editEntriesSetEntriesCommentsCountAction,
-    editEntriesSetEntriesVerificationStatusAction,
+    editEntriesSetEntriesControlStatusAction,
     editEntriesUpdateEntriesBulkAction,
     editEntriesSetEntryErrorsAction,
     editEntriesSetEntryGroupErrorsAction,
@@ -126,7 +126,7 @@ const propTypes = {
     setLead: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setRegions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setEntriesCommentsCount: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
-    setEntryVerificationStatus: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
+    setEntryControlStatus: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     setLabels: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types, max-len
     resetEntryGroupUiState: PropTypes.func.isRequired,
 
@@ -182,8 +182,8 @@ const mapDispatchToProps = dispatch => ({
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     setEntryGroups: params => dispatch(editEntriesSetEntryGroupsAction(params)),
     setEntriesCommentsCount: params => dispatch(editEntriesSetEntriesCommentsCountAction(params)),
-    setEntryVerificationStatus: params => dispatch(
-        editEntriesSetEntriesVerificationStatusAction(params),
+    setEntryControlStatus: params => dispatch(
+        editEntriesSetEntriesControlStatusAction(params),
     ),
     updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
@@ -213,7 +213,7 @@ const requestOptions = {
                 entries: entriesFromProps,
                 entryGroups: entryGroupsFromProps,
                 setEntriesCommentsCount,
-                setEntryVerificationStatus,
+                setEntryControlStatus,
                 setAnalysisFramework,
                 setEntries,
                 setEntryGroups,
@@ -267,7 +267,7 @@ const requestOptions = {
             });
 
             setEntriesCommentsCount({ leadId, entries });
-            setEntryVerificationStatus({ leadId, entries });
+            setEntryControlStatus({ leadId, entries });
 
             setLabels({ leadId, labels: entryLabels });
 

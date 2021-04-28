@@ -66,8 +66,7 @@ const entrySchema = [];
             droppedExcerpt: { type: 'string' },
             highlightHidden: { type: 'boolean' },
             controlled: { type: 'boolean' },
-            controlStatusLastChangedBy: { type: 'uint' },
-            controlStatusLastChangedByDetails: { type: 'user-s' },
+            controlledChangedByDetails: { type: 'user-s' },
             /*
             exportData: {
                 arrayType: {
