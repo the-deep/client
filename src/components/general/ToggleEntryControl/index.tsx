@@ -129,7 +129,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     }, [setUncontrolFormData, triggerReviewRequest]);
 
     const controlStatusLabel = useMemo(() => {
-        if (projectRole.qualityController) {
+        if (true) {
             return value
                 ? _ts('entryReview', 'controlled')
                 : _ts('entryReview', 'uncontrolled');
@@ -137,7 +137,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
         return value
             ? _ts('entryReview', 'uncontrolledLabel')
             : _ts('entryReview', 'controlledLabel');
-    }, [projectRole, value]);
+    }, [value]);
 
     return (
         <div
@@ -159,7 +159,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                         }
                         onClick={handleClick}
                         pending={reviewRequestPending}
-                        disabled={disabled || !projectRole.qualityController}
+                        disabled={disabled}
                     >
                         { controlStatusLabel }
                     </Button>
