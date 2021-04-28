@@ -107,7 +107,7 @@ export interface ProjectStat {
     numberOfEntries: number;
     numberOfLeads: number;
     numberOfLeadsTagged: number;
-    numberOfLeadsTaggedAndVerified: number;
+    numberOfLeadsTaggedAndControlled: number;
     numberOfUsers: number;
     role: number;
     startDate?: string;

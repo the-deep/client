@@ -43,14 +43,14 @@ interface BooleanKeyValueElement {
     key: boolean;
     value: string;
 }
-const verificationStatusOptions: BooleanKeyValueElement[] = [
+const controlStatusOption: BooleanKeyValueElement[] = [
     {
         key: true,
-        value: _ts('editEntry', 'verifiedLabel'),
+        value: _ts('editEntry', 'controlledLabel'),
     },
     {
         key: false,
-        value: _ts('editEntry', 'unverifiedLabel'),
+        value: _ts('editEntry', 'uncontrolledLabel'),
     },
 ];
 
@@ -166,7 +166,7 @@ function FilterForm(props: OwnProps) {
                         comment_assignee: [],
                         comment_created_by: [],
                         comment_status: [],
-                        verified: [],
+                        controlled: [],
                         entry_type: [],
                         project_entry_labels: [],
                         lead_group_label: [],
@@ -473,13 +473,13 @@ function FilterForm(props: OwnProps) {
                                 className={styles.leadsFilter}
                             />
                             <SelectInput
-                                faramElementName="verified"
+                                faramElementName="controlled"
                                 keySelector={optionKeySelector}
                                 labelSelector={optionLabelSelector}
-                                options={verificationStatusOptions}
-                                label={_ts('entries', 'verificationStatusOptionsFilterLabel')}
+                                options={controlStatusOption}
+                                label={_ts('entries', 'controlStatusOptionFilterLabel')}
                                 showHintAndError={false}
-                                placeholder={_ts('entries', 'verificationStatusPlaceholder')}
+                                placeholder={_ts('entries', 'controlStatusPlaceholder')}
                                 className={styles.leadsFilter}
                             />
                             <MultiSelectInput

@@ -87,7 +87,7 @@ export interface EntryFields extends DatabaseEntityBase {
     lead: Pick<Lead, EntryLeadType>;
     projectLabel: ProjectLabelFields[];
     controlled: boolean;
-    controlStatusLastChangedByDetails: UserFields;
+    controlledChangedByDetails: UserFields;
     verifiedBy: UserFields['id'][];
     verifiedByCount: number;
     isVerifiedByCurrentUser: boolean;
@@ -114,16 +114,16 @@ export type Entry = Omit<EntryFields, 'lead'> & {
 export interface TocItemCount {
     labelKey: string;
     widgetKey: string;
-    unverifiedCount: number;
-    verifiedCount: number;
+    uncontrolledCount: number;
+    controlledCount: number;
 }
 
 export interface EntrySummary {
     countPerTocItem?: TocItemCount[];
     totalLeads: number;
     totalSources: number;
-    totalUnverifiedEntries: number;
-    totalVerifiedEntries: number;
+    totalUncontrolledEntries: number;
+    totalControlledEntries: number;
     orgTypeCount: {
         count: number;
         org: {
@@ -172,5 +172,5 @@ export interface EntryComment {
 export interface EntryReviewSummary {
     verifiedBy: UserDetail[];
     controlled: boolean;
-    controlStatusLastChangedByDetails: UserDetail & { displayPicture: string };
+    controlledChangedByDetails: UserFields;
 }
