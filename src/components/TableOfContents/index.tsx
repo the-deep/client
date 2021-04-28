@@ -22,8 +22,8 @@ interface Props<T, K extends string | number>{
     idSelector: (datum: T) => K;
     keySelector: (datum: T) => K | undefined;
     labelSelector: (datum: T) => K;
-    verifiedCountSelector: (datum: T) => number | undefined;
-    unverifiedCountSelector: (datum: T) => number | undefined;
+    controlledCountSelector: (datum: T) => number | undefined;
+    uncontrolledCountSelector: (datum: T) => number | undefined;
     childrenSelector: (datum: T) => T[] | undefined;
     onChange: (value: T[]) => void;
     options: T[];
@@ -59,8 +59,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
         childrenSelector,
         defaultCollapseLevel,
         className,
-        verifiedCountSelector,
-        unverifiedCountSelector,
+        controlledCountSelector,
+        uncontrolledCountSelector,
         multiple = false,
         searchValue,
     } = props;
@@ -69,8 +69,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     const id = idSelector(option);
     const title = labelSelector(option);
     const children = childrenSelector(option);
-    const verifiedCount = verifiedCountSelector(option);
-    const unverifiedCount = unverifiedCountSelector(option);
+    const controlledCount = controlledCountSelector(option);
+    const uncontrolledCount = uncontrolledCountSelector(option);
 
     const tocElementRef = useRef<HTMLDivElement>(null);
 
@@ -117,8 +117,8 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
     ), [value, idSelector, id]);
 
     const totalEntries = useMemo(() => (
-        (verifiedCount ?? 0) + (unverifiedCount ?? 0)
-    ), [verifiedCount, unverifiedCount]);
+        (controlledCount ?? 0) + (uncontrolledCount ?? 0)
+    ), [controlledCount, uncontrolledCount]);
 
     const isIdSearched = id === searchValue;
 
@@ -156,12 +156,12 @@ function ToCItem<T, K extends string | number>(props: ToCItemProps<T, K>) {
                     {totalEntries > 0 && (
                         <Badge
                             className={styles.count}
-                            title={`${verifiedCount ?? 0} of ${totalEntries}`}
+                            title={`${controlledCount ?? 0} of ${totalEntries}`}
                             tooltip={_ts(
                                 'entries.qualityControl',
-                                'verifiedCountTooltip',
+                                'controlledCountTooltip',
                                 {
-                                    verified: verifiedCount ?? 0,
+                                    controlled: controlledCount ?? 0,
                                     total: totalEntries,
                                 },
                             )}
