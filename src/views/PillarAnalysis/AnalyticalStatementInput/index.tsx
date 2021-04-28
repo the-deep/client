@@ -36,6 +36,7 @@ interface AnalyticalStatementInputProps {
     error: Error<AnalyticalStatementType> | undefined;
     onChange: (value: PartialForm<AnalyticalStatementType>, index: number) => void;
     onRemove: (index: number) => void;
+    onEntryMove: (entryId: number, statementUuid: string) => void;
     index: number;
 }
 
@@ -44,6 +45,11 @@ export interface DroppedValue {
     statementUuid?: string;
 }
 
+const defaultVal: AnalyticalStatementType = {
+    uuid: '123',
+    analyticalEntries: [],
+};
+
 function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     const {
         className,
@@ -51,68 +57,77 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         error,
         onChange,
         onRemove,
+        onEntryMove,
         index,
     } = props;
 
-    const onFieldChange = useFormObject(index, value, onChange);
+    const onFieldChange = useFormObject(index, onChange, defaultVal);
 
     const {
         // onValueChange: onAnalyticalEntryChange,
         onValueRemove: onAnalyticalEntryRemove,
-    } = useFormArray('analyticalEntries', value.analyticalEntries ?? [], onFieldChange);
+    } = useFormArray('analyticalEntries', onFieldChange);
+
+    type AnalyticalEntry = typeof value.analyticalEntries;
 
     const handleAnalyticalEntryDrop = useCallback(
         (dropValue: DroppedValue, dropOverEntryUuid?: string) => {
+            onFieldChange(
+                (oldEntries: AnalyticalEntry) => {
+                    // NOTE: Treat moved item as a new item by removing the old one and
+                    // adding the new one again
+                    const movedItem = value.analyticalEntries
+                        ?.find(item => item.entry === dropValue.entryId);
+
+                    // NOTE: Don't let users add more that certain entries
+                    if (
+                        isNotDefined(movedItem)
+                        && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
+                    ) {
+                        return oldEntries;
+                    }
+
+                    const newAnalyticalEntries = [...(oldEntries ?? [])];
+
+                    const uuid = randomString();
+                    let newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
+                        uuid,
+                        entry: dropValue.entryId,
+                        order: value.order ?? 0,
+                    };
+
+                    if (value.analyticalEntries && isDefined(movedItem)) {
+                        newAnalyticalEntry = {
+                            ...movedItem,
+                            order: value.order ?? 0,
+                        };
+                        const movedItemOldIndex = value.analyticalEntries
+                            .findIndex(item => item.entry === dropValue.entryId);
+                        newAnalyticalEntries.splice(movedItemOldIndex, 1);
+                    }
+
+                    if (dropOverEntryUuid) {
+                        const currentIndex = newAnalyticalEntries
+                            .findIndex(v => v.uuid === dropOverEntryUuid);
+                        newAnalyticalEntries.splice(currentIndex, 0, newAnalyticalEntry);
+                    } else {
+                        newAnalyticalEntries.push(newAnalyticalEntry);
+                    }
+
+                    // NOTE: After the newly added entry's order is set and
+                    // placed in the desired index, we can change the order of
+                    // whole list in bulk
+                    return newAnalyticalEntries.map((v, i) => ({ ...v, order: i }));
+                },
+                'analyticalEntries' as const,
+            );
             if (isDefined(dropValue.statementUuid) && (dropValue.statementUuid !== value.uuid)) {
                 // NOTE: Remove entry from old statement if it was moved from
                 // one statement to another statement
-                console.warn('i am being removed', dropValue);
+                onEntryMove(dropValue.entryId, dropValue.statementUuid);
             }
-            const newAnalyticalEntries = [...(value.analyticalEntries ?? [])];
-
-            const uuid = randomString();
-            let newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
-                uuid,
-                entry: dropValue.entryId,
-                order: value.order ?? 0,
-            };
-
-            // NOTE: Treat moved item as a new item by removing the old one and
-            // adding the new one again
-            const movedItem = value.analyticalEntries
-                ?.find(item => item.entry === dropValue.entryId);
-            if (value.analyticalEntries && isDefined(movedItem)) {
-                newAnalyticalEntry = {
-                    ...movedItem,
-                    order: value.order ?? 0,
-                };
-                const movedItemOldIndex = value.analyticalEntries
-                    .findIndex(item => item.entry === dropValue.entryId);
-                newAnalyticalEntries.splice(movedItemOldIndex, 1);
-            }
-
-            // NOTE: Don't let users add more that certain entries
-            if (
-                isNotDefined(movedItem)
-                && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
-            ) {
-                return;
-            }
-
-            if (dropOverEntryUuid) {
-                const currentIndex = newAnalyticalEntries
-                    .findIndex(v => v.uuid === dropOverEntryUuid);
-                newAnalyticalEntries.splice(currentIndex, 0, newAnalyticalEntry);
-            } else {
-                newAnalyticalEntries.push(newAnalyticalEntry);
-            }
-            const orderedEntries = newAnalyticalEntries.map((v, i) => ({ ...v, order: i }));
-            onFieldChange(
-                orderedEntries,
-                'analyticalEntries' as const,
-            );
         },
-        [onFieldChange, value.analyticalEntries, value.order],
+        [onFieldChange, value.analyticalEntries, value.order, onEntryMove, value.uuid],
     );
 
     const handleAnalyticalEntryAdd = useCallback(

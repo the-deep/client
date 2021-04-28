@@ -12,6 +12,7 @@ import {
 import { _cs } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
+import _ts from '#ts';
 
 import { AnalyticalEntryType } from '../../schema';
 import { DroppedValue } from '../';
@@ -70,6 +71,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 entryDraggedStatus && styles.hide,
             )}
             name="entry"
+            // NOTE: Disabled drop on the same entry which is being dragged
             onDrop={!entryDraggedStatus ? handleAnalyticalEntryAdd : undefined}
             dropOverlayContainerClassName={styles.overlay}
             draggedOverClassName={styles.draggedOver}
@@ -95,8 +97,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 <QuickActionButton
                     name={index}
                     onClick={onRemove}
-                    // FIXME: use translation
-                    title="Remove Analytical Entry"
+                    title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
                 >
                     <IoClose />
                 </QuickActionButton>
