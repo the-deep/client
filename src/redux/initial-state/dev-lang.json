@@ -1360,8 +1360,10 @@
         "-62878959": "entry",
         "-79871971": "Uncontrolled",
         "-78791838": "Controlled",
-        "-998103293": "Tags",
-        "-797987183": "Quality Cotroller"
+        "-998103293": "Badges",
+        "-797987183": "Quality Cotroller",
+        "-180812081": "Control",
+        "-18084021": "Uncontrol"
     },
     "links": {
         "browserExtension": {
@@ -2458,7 +2460,7 @@
             "meTitle": -24177081,
             "organizationTitle": 154,
             "addedByTitle": -68525317,
-            "tags": -998103293,
+            "badges": -998103293,
             "qualityController": -797987183
         },
         "project": {
@@ -3837,7 +3839,9 @@
             "entryControlStatusChangeSuccess": -53772993,
             "entryControlFailure": -87987213,
             "uncontrolled": -79871971,
-            "controlled:": -78791838
+            "controlled": -78791838,
+            "control": -180812081,
+            "uncontrol": -18084021
         },
         "notifications.entryCommentItem": {
             "comment": -52742063

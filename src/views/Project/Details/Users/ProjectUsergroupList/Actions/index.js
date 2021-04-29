@@ -6,6 +6,7 @@ import { compareNumber } from '@togglecorp/fujs';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     notifyOnFailure,
@@ -24,18 +25,19 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const tagOptions = [
-    { id: 1, label: _ts('project.users', 'qualityController') },
+const badgeOptions = [
+    { id: 0, label: _ts('project.users', 'qualityController') },
 ];
 
-const projectTagKeySelector = tag => tag.id;
-const projectTagLabelSelector = tag => tag.label;
+const projectBadgeKeySelector = badge => badge.id;
+const projectBadgeLabelSelector = badge => badge.label;
 
 const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.number,
         title: PropTypes.string,
         id: PropTypes.number,
+        badges: PropTypes.arrayOf(PropTypes.number),
     }).isRequired,
 
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -158,7 +160,7 @@ export default class Actions extends React.PureComponent {
         });
     }
 
-    handleTagSelection = () => {}; // TODO: implement this when api is ready
+    handleBadgeSelection = () => {}; // TODO: implement this when api is ready
 
     render() {
         const {
@@ -173,7 +175,7 @@ export default class Actions extends React.PureComponent {
 
         const {
             role,
-            tag = 1, // TODO: fix this when api is ready
+            badges,
         } = row;
 
         const removeUG = _ts(
@@ -208,15 +210,15 @@ export default class Actions extends React.PureComponent {
                     readOnly={readOnly}
                     disabled={isSuperior || pending}
                 />
-                <SelectInput
-                    label={_ts('project.users', 'tags')}
+                <MultiSelectInput
+                    label={_ts('project.users', 'badges')}
                     placeholder=""
                     hideClearButton
-                    value={tag}
-                    options={tagOptions}
+                    value={badges}
+                    options={badgeOptions}
                     onChange={this.handleTagSelection}
-                    keySelector={projectTagKeySelector}
-                    labelSelector={projectTagLabelSelector}
+                    keySelector={projectBadgeKeySelector}
+                    labelSelector={projectBadgeLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
                     disabled={isSuperior || pending}
