@@ -90,19 +90,23 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 value={dragValue}
                 onDragStart={setDragStart}
                 onDragStop={setDragEnd}
+                childrenContainerClassName={styles.content}
+                actions={(
+                    <QuickActionButton
+                        className={styles.removeButton}
+                        name={index}
+                        onClick={onRemove}
+                        title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
+                    >
+                        <IoClose />
+                    </QuickActionButton>
+                )}
             >
                 {error?.$internal && (
                     <p>
                         {error.$internal}
                     </p>
                 )}
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
-                >
-                    <IoClose />
-                </QuickActionButton>
                 {entry && (
                     <EntryItem
                         excerpt={entry.excerpt}
