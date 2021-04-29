@@ -1330,7 +1330,9 @@
         "-70102939": "Assigned group role",
         "-70810293": "User Groups",
         "-79283838": "Manage My User Groups",
-        "-88838184": "Add a user group"
+        "-88838184": "Add a user group",
+        "-48337185": "Add analytical statement",
+        "-89045904": "Remove analytical statement"
     },
     "links": {
         "browserExtension": {
@@ -3714,11 +3716,6 @@
             "closeButtonLabel": -39430073,
             "mainStatementLabel": -62584276,
             "infoGapLabel": -25536744,
-            "editAnalysisModalHeading": -30091387,
-            "pillarAssignments": -31952614,
-            "selectAnalysisDate": -35701649,
-            "allAnalyses": -80223054,
-            "setupNewAnalysisButtonLabel": -90678740,
             "entriesTabLabel": -39990212,
             "discardedEntriesTabLabel": -64388086,
             "ShowFiltersLabel": -44015188,
@@ -3744,7 +3741,11 @@
             "unverifiedLabel": -45171916,
             "verificationStatusOptionsFilterLabel": -90989808,
             "verificationStatusPlaceholder": 14,
-            "verifiedLabel": -83960265
+            "verifiedLabel": -83960265,
+            "geoLabel": -50186668,
+            "frameworkTitle": 379,
+            "addAnalyticalStatementButtonTitle": -48337185,
+            "removeAnalyticalEntryButtonTitle": -89045904
         },
         "projectEdit": {
             "closeButtonLabel": -39430073,

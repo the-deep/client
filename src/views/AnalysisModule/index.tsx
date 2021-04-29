@@ -268,6 +268,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
             <SubNavbar>
                 <div className={styles.subNavbar}>
                     <Button
+                        name={undefined}
                         variant="primary"
                         onClick={handleNewAnalysisCreateClick}
                         icons={(
@@ -308,7 +309,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                             )}
                             label={_ts('analysis', 'totalEntriesLabel')}
                             value={100}
-                            variant="complement"
+                            variant="complement1"
                         />
                     </div>
                     <div className={styles.bottomInfoBox}>

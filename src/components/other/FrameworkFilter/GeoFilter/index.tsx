@@ -18,8 +18,8 @@ import styles from './styles.scss';
 
 interface Props {
     label: string;
-    geoOptions: GeoOptions;
-    regions: ProjectDetails['regions'];
+    geoOptions: GeoOptions | undefined;
+    regions: ProjectDetails['regions'] | undefined;
     className?: string;
     value: {
         includeSubRegions: boolean;

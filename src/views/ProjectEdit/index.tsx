@@ -58,6 +58,7 @@ function ProjectEdit(props: ViewProps) {
                     actions={(
                         <>
                             <Button
+                                name={undefined}
                                 className={styles.button}
                                 variant="primary"
                             >

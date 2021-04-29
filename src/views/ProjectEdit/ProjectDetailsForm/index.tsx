@@ -218,11 +218,12 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         />
                     </div>
                     <TextArea
+                        name="this-is-not-used"
                         className={styles.input}
                         faramElementName="description"
                         label={_ts('projectEdit', 'projectDescription')}
                         placeholder={_ts('projectEdit', 'projectDescription')}
-                        rows="4"
+                        rows={4}
                     />
                     <div className={styles.projectTags}>
                         <Container
@@ -275,6 +276,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         heading={_ts('projectEdit', 'projectAdditionalFeatures')}
                     >
                         <Checkbox
+                            name="this-is-not-used"
                             faramElementName="hasAssessments"
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />

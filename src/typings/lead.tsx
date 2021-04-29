@@ -53,6 +53,13 @@ export interface Lead extends DatabaseEntityBase {
     pageCount: number;
     wordCount?: number;
     confidentialityDisplay?: string;
+
+    attachment?: {
+        id: number;
+        title: string;
+        file: string;
+        mimeType: string;
+    };
 }
 
 export interface EmmEntity {

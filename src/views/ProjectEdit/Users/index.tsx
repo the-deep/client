@@ -6,7 +6,7 @@ import UserGroupList from './UserGroupList';
 import styles from './styles.scss';
 
 interface Props {
-    projectId: string;
+    projectId: number;
 }
 
 function Users(props: Props) {

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import produce from 'immer';
 import {
     isDefined,
     isNotDefined,
@@ -92,6 +93,7 @@ const mapStateToProps = (state: AppState, props: unknown) => ({
     // FIXME: get this from request
     activeProject: activeProjectFromStateSelector(state),
 
+    // FIXME: the inferred typing is wrong in this case
     pillarAnalysis: editPillarAnalysisPillarAnalysisSelector(state, props),
 });
 
@@ -164,7 +166,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
     const {
         onValueChange: onAnalyticalStatementChange,
         onValueRemove: onAnalyticalStatementRemove,
-    } = useFormArray('analyticalStatements', value.analyticalStatements ?? [], onValueChange);
+    } = useFormArray('analyticalStatements', onValueChange);
 
     const handleAnalyticalStatementAdd = useCallback(
         () => {
@@ -185,6 +187,31 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
             );
         },
         [onValueChange, value.analyticalStatements],
+    );
+
+    type AnalyticalStatements = typeof value.analyticalStatements;
+
+    const handleEntryMove = useCallback(
+        (entryId: number, statementUuid: string) => {
+            onValueChange(
+                (oldStatements: AnalyticalStatements) => (
+                    produce(oldStatements ?? [], (safeStatements) => {
+                        const selectedIndex = safeStatements
+                            .findIndex(s => s.uuid === statementUuid);
+                        if (selectedIndex !== -1) {
+                            const safeEntries = safeStatements[selectedIndex].analyticalEntries;
+                            const entryIndex = safeEntries?.findIndex(s => s.entry === entryId);
+
+                            if (isDefined(entryIndex) && entryIndex !== -1) {
+                                safeEntries?.splice(entryIndex, 1);
+                            }
+                        }
+                    })
+                ),
+                'analyticalStatements' as const,
+            );
+        },
+        [onValueChange],
     );
 
     // const [value, setValue] = useState<string | undefined>();
@@ -228,7 +255,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
         query: frameworkQueryFields,
         autoTrigger: true,
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('analysis.editModal', 'frameworkTitle'))({ error: errorBody });
+            notifyOnFailure(_ts('pillarAnalysis', 'frameworkTitle'))({ error: errorBody });
         },
         // FIXME: add schema
     });
@@ -247,7 +274,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
         schemaName: 'geoOptions',
         autoTrigger: true,
         onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'geoLabel'))({ error: errorBody });
+            notifyOnFailure(_ts('pillarAnalysis', 'geoLabel'))({ error: errorBody });
         },
     });
 
@@ -428,7 +455,6 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             )}
                             footerContent={(
                                 <Pager
-                                    className={styles.pager}
                                     activePage={activePage}
                                     itemsCount={entriesCount}
                                     maxItemsPerPage={maxItemsPerPage}
@@ -437,10 +463,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                                 />
                             )}
                         >
-                            <TabPanel
-                                className={styles.entries}
-                                name="entries"
-                            >
+                            <TabPanel name="entries">
                                 <ListView
                                     data={entries}
                                     keySelector={entryKeySelector}
@@ -464,6 +487,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                                 value={analyticalStatement}
                                 onChange={onAnalyticalStatementChange}
                                 onRemove={onAnalyticalStatementRemove}
+                                onEntryMove={handleEntryMove}
                                 // eslint-disable-next-line max-len
                                 error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
                             />
@@ -472,8 +496,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             className={styles.addStatementButton}
                             name={undefined}
                             onClick={handleAnalyticalStatementAdd}
-                            // FIXME: use translation
-                            title="Add Analytical Statement"
+                            title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
                             variant="primary"
                             disabled={(value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT}
                         >

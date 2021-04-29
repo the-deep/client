@@ -91,7 +91,6 @@ function Activity(props: Props) {
                     {data.map(s => (
                         <Line
                             dataKey="value"
-                            data={s.data}
                             name={s.title}
                             key={s.title}
                             stroke={s.color}

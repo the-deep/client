@@ -103,11 +103,18 @@ declare module '@togglecorp/faram' {
     export const dateCondition: (value: any) => ValidOp;
     export const timeCondition: (value: any) => ValidOp;
 
-    /*
     function FaramInputElement<T>(component: React.ComponentType<T>):
-        (React.ComponentType<Omit<T, 'value' | 'onChange'>
-            & { faramElementName: string; faramInfo?: any }>)
-        | React.ComponentType<T>;
+        React.ComponentType<
+            (Omit<T, 'value' | 'onChange'> & { faramElementName: string; faramInfo?: any })
+            | (T & { faramElementName?: undefined })
+        >;
+
+    function FaramActionElement<T>(component: React.ComponentType<T>):
+        React.ComponentType<
+            (Omit<T, 'disabled' | 'changeDelay' | 'onClick'> & { faramElementName: string; faramAction: any })
+            | (T & { faramElementName?: undefined })
+        >;
+    /*
     // NOTE: you need to explicitly pass faramElementName with this typing
 
     // NOTE: you need to explicitly pass faramElementName with this typing
@@ -122,10 +129,6 @@ declare module '@togglecorp/faram' {
     function FaramErrorIndicatorElement<T>(component: React.ComponentType<T>):
         React.ComponentType<Omit<T, 'hasError' | 'errors'> & { faramElementName: string }>
 
-    // NOTE: you need to explicitly pass faramElementName with this typing
-    function FaramActionElement<T>(component: React.ComponentType<T>):
-        React.ComponentType<Omit<T, 'disabled' | 'changeDelay' | 'onClick'>
-            & { faramElementName: string; faramAction: any }>
 
     // NOTE: you need to explicitly pass faramElementName with this typing
     function FaramListElement<T>(component: React.ComponentType<T>):

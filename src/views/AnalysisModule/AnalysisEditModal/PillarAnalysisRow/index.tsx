@@ -9,7 +9,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import TextInput from '#rsci/TextInput';
-import Icon from '#rscg/Icon';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import {
@@ -82,9 +81,9 @@ function PillarAnalysisRow(props: PillarAnalysisRowProps) {
                 />
             </FaramGroup>
             <FaramButton
+                name={undefined}
                 faramAction={deleteClick}
                 faramElementName={String(index)}
-                icons={(<Icon name="delete" />)}
                 title={_ts('widgets.editor.matrix1d', 'removeCellButtonTitle')}
             />
         </div>

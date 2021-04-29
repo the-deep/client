@@ -16,6 +16,7 @@ import {
     MultiResponse,
     WidgetElement,
     GeoOptions,
+    ProjectDetails,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 import { Header } from '#rscv/Table';
@@ -31,7 +32,7 @@ interface ComponentProps {
     className?: string;
     entriesFilters?: FilterFields[];
     entriesWidgets?: WidgetElement<unknown>[];
-    projectRegions?: unknown[];
+    projectRegions?: ProjectDetails['regions'];
     entriesGeoOptions?: GeoOptions;
     hasAssessment?: boolean;
     onSelectLeadChange: (values: number[]) => void;

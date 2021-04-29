@@ -895,7 +895,7 @@ class QuestionnaireBuilder extends React.PureComponent<Props, State> {
                                 questions={questions}
                                 requiredDuration={requiredDuration}
                                 showLoadingOverlay={showLoadingOverlay}
-                                title={title}
+                                // title={title}
                             />
                             <div className={styles.questionStatus}>
                                 <header className={styles.header}>

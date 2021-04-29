@@ -14,13 +14,13 @@ import styles from './styles.scss';
 interface Props {
     className?: string;
     value?: number;
-    disabled: boolean;
-    readOnly: boolean;
+    disabled?: boolean;
+    readOnly?: boolean;
     onChange: (value: number | undefined) => void;
 
     title?: string;
-    showHintAndError: boolean;
-    showLabel: boolean;
+    showHintAndError?: boolean;
+    showLabel?: boolean;
     error?: string;
     hint?: string;
     label?: string;

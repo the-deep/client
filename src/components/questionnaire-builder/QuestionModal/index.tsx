@@ -624,7 +624,7 @@ function QuestionModal(props: Props) {
                                     <FrameworkAttributeInput
                                         className={styles.frameworkAttributeInput}
                                         faramElementName="frameworkAttribute"
-                                        disabled={pending || !framework}
+                                        // disabled={pending || !framework}
                                         sectorList={sectorList}
                                         subsectorList={subsectorList}
                                         dimensionList={dimensionList}
