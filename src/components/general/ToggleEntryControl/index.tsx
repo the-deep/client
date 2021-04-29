@@ -7,12 +7,14 @@ import {
 } from '@the-deep/deep-ui';
 
 import {
-    activeProjectRoleSelector,
+    activeUserSelector,
 } from '#redux';
 import {
     DatabaseEntityBase,
-    ProjectRole,
+    User,
     AppState,
+    MultiResponse,
+    Membership,
 } from '#typings';
 
 import Button from '#rsca/Button';
@@ -42,7 +44,7 @@ interface ToggleEntryControlProps {
 }
 
 interface PropsFromState {
-    projectRole: ProjectRole;
+    activeUser: User;
 }
 
 const CONTROL = 3;
@@ -50,7 +52,7 @@ const UNCONTROL = 4;
 
 const controlFormData = { commentType: CONTROL };
 const mapStateToProps = (state: AppState) => ({
-    projectRole: activeProjectRoleSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
@@ -63,10 +65,24 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
         onPendingStatusChange,
         tooltip,
         disabled,
-        projectRole,
+        activeUser,
     } = props;
 
-    console.warn('projectrole', projectRole);
+    const [
+        projectMembersPending,
+        projectMembersResponse,
+    ] = useRequest<MultiResponse<Membership>>({
+        url: `server://v2/projects/${projectId}/project-memberships/`,
+        method: 'GET',
+        autoTrigger: true,
+        onFailure: notifyError(_ts('entryReview', 'projectMemberList')),
+    });
+
+    const isQualityController = useMemo(() =>
+        projectMembersResponse?.results.find(
+            v => v.member === activeUser.userId,
+        )?.badges.some(v => v === 0),
+    [activeUser.userId, projectMembersResponse]);
 
     const [
         commentModalShown,
@@ -129,15 +145,15 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     }, [setUncontrolFormData, triggerReviewRequest]);
 
     const controlStatusLabel = useMemo(() => {
-        if (true) {
+        if (isQualityController) {
             return value
-                ? _ts('entryReview', 'controlled')
-                : _ts('entryReview', 'uncontrolled');
+                ? _ts('entryReview', 'control')
+                : _ts('entryReview', 'uncontrol');
         }
         return value
             ? _ts('entryReview', 'uncontrolledLabel')
             : _ts('entryReview', 'controlledLabel');
-    }, [value]);
+    }, [value, isQualityController]);
 
     return (
         <div
@@ -159,7 +175,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                         }
                         onClick={handleClick}
                         pending={reviewRequestPending}
-                        disabled={disabled}
+                        disabled={disabled || projectMembersPending || !isQualityController}
                     >
                         { controlStatusLabel }
                     </Button>
@@ -169,13 +185,13 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                     <IoCheckmark
                         className={_cs(
                             styles.icon,
-                            !projectRole.qualityController && styles.disabled,
+                            !isQualityController && styles.disabled,
                         )}
                     /> :
                     <IoClose
                         className={_cs(
                             styles.icon,
-                            !projectRole.qualityController && styles.disabled,
+                            !isQualityController && styles.disabled,
                         )}
                     />
                 }
