@@ -23,6 +23,7 @@ export interface Membership {
     memberStatus: 'admin' | 'member';
     project: number;
     role: number;
+    badges: number[];
     roleDetails: {
         id: number;
         title: string;
