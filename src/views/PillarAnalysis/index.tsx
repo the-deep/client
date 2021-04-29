@@ -41,7 +41,7 @@ import {
     GeoOptions,
     MultiResponse,
     FrameworkFields,
-    PillarAnalysisElement,
+    AnalysisPillars,
     ProjectDetails,
     AppState,
 } from '#typings';
@@ -134,9 +134,12 @@ function PillarAnalysis(props: Props) {
         value,
         error,
         onValueChange,
+        onValueSet,
         validate,
         onErrorSet,
     } = useForm(pillarAnalysisFromProps?.data ?? defaultFormValues, schema);
+
+    const [submitValues, setSubmitValues] = useState<typeof value | undefined>();
 
     useEffect(
         () => {
@@ -149,44 +152,34 @@ function PillarAnalysis(props: Props) {
         [value, pillarId, setPillarAnalysisData, pristine],
     );
 
-    const handleSubmit = useCallback(
-        () => {
-            const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
-            if (!errored && isDefined(val)) {
-                console.warn('Save', val);
-            }
-        },
-        [onErrorSet, validate],
-    );
-
     const {
         onValueChange: onAnalyticalStatementChange,
         onValueRemove: onAnalyticalStatementRemove,
-    } = useFormArray('analyticalStatements', onValueChange);
+    } = useFormArray('analyticalStatement', onValueChange);
 
     const handleAnalyticalStatementAdd = useCallback(
         () => {
             // NOTE: Don't let users add more that certain statements
-            if ((value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT) {
+            if ((value.analyticalStatement?.length ?? 0) >= STATEMENTS_LIMIT) {
                 return;
             }
+
+            const oldStatements = value.analyticalStatement ?? [];
 
             const uuid = randomString();
             const newAnalyticalStatement: PartialForm<AnalyticalStatementType> = {
                 uuid,
-                // FIXME: add order
-                order: 0,
+                order: oldStatements.length,
             };
             onValueChange(
-                [...(value.analyticalStatements ?? []), newAnalyticalStatement],
-                'analyticalStatements' as const,
+                [...oldStatements, newAnalyticalStatement],
+                'analyticalStatement' as const,
             );
         },
-        [onValueChange, value.analyticalStatements],
+        [onValueChange, value.analyticalStatement],
     );
 
-    type AnalyticalStatements = typeof value.analyticalStatements;
+    type AnalyticalStatements = typeof value.analyticalStatement;
 
     const handleEntryMove = useCallback(
         (entryId: number, statementUuid: string) => {
@@ -205,7 +198,7 @@ function PillarAnalysis(props: Props) {
                         }
                     })
                 ),
-                'analyticalStatements' as const,
+                'analyticalStatement' as const,
             );
         },
         [onValueChange],
@@ -243,22 +236,48 @@ function PillarAnalysis(props: Props) {
     const [
         pendingPillarAnalysis,
         pillarAnalysis,
-    ] = useRequest<PillarAnalysisElement>({
+    ] = useRequest<AnalysisPillars>({
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
         method: 'GET',
         autoTrigger: true,
         onSuccess: (response) => {
-            if (isDefined(response)) {
-                const newFilters = listToGroupList(
-                    response.filters,
-                    o => o.key,
-                    o => o.id,
-                );
-                setFiltersValue(newFilters);
-            }
+            const newFilters = listToGroupList(
+                response.filters,
+                o => o.key,
+                o => o.id,
+            );
+            setFiltersValue(newFilters);
+
+            // FIXME: check set pristine value
+            // FIXME: only set after checking version id
+            // FIXME: server doesn't preserve uuid information currently
+            onValueSet(() => ({
+                mainStatement: response.mainStatement,
+                informationGap: response.informationGap,
+                analyticalStatement: response.analyticalStatement,
+            }));
         },
         // FIXME: add schema
         // FIXME: add failure
+    });
+
+    const [
+        pendingPillarAnalysisSave,
+        ,
+        ,
+        updateAnalysisPillars,
+    ] = useRequest<AnalysisPillars>({
+        url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
+        body: submitValues,
+        method: 'PATCH',
+        autoTrigger: false,
+        onSuccess: (response) => {
+            onValueSet(() => ({
+                mainStatement: response.mainStatement,
+                informationGap: response.informationGap,
+                analyticalStatement: response.analyticalStatement,
+            }));
+        },
     });
 
     const [
@@ -292,6 +311,18 @@ function PillarAnalysis(props: Props) {
             notifyOnFailure(_ts('pillarAnalysis', 'geoLabel'))({ error: errorBody });
         },
     });
+
+    const handleSubmit = useCallback(
+        () => {
+            const { errored, error: err, value: val } = validate();
+            onErrorSet(err);
+            if (!errored && isDefined(val)) {
+                setSubmitValues(val);
+                updateAnalysisPillars();
+            }
+        },
+        [onErrorSet, validate, updateAnalysisPillars],
+    );
 
     const entriesRequestBody = useMemo(() => {
         if (isNotDefined(framework) || isNotDefined(geoOptions)) {
@@ -344,7 +375,7 @@ function PillarAnalysis(props: Props) {
 
     const [initialEntries] = useState<number[]>(
         () => {
-            const es = pillarAnalysisFromProps?.data?.analyticalStatements
+            const es = pillarAnalysisFromProps?.data?.analyticalStatement
                 ?.map(statement => (
                     statement.analyticalEntries?.map(entry => entry.entry)
                 )).flat().filter(isDefined).flat();
@@ -396,7 +427,7 @@ function PillarAnalysis(props: Props) {
 
     const usedUpEntriesMap = useMemo(
         () => {
-            const usedUpEntries = value.analyticalStatements?.map(
+            const usedUpEntries = value.analyticalStatement?.map(
                 statement => statement.analyticalEntries?.map(
                     entry => entry.entry,
                 ),
@@ -407,7 +438,7 @@ function PillarAnalysis(props: Props) {
                 () => true,
             );
         },
-        [value.analyticalStatements],
+        [value.analyticalStatement],
     );
 
     const entryCardRendererParams = useCallback((key, data) => ({
@@ -434,7 +465,9 @@ function PillarAnalysis(props: Props) {
                             name={undefined}
                             className={styles.button}
                             variant="primary"
-                            disabled={pristine || pendingPillarAnalysis}
+                            disabled={
+                                pristine || pendingPillarAnalysis || pendingPillarAnalysisSave
+                            }
                             onClick={handleSubmit}
                         >
                             {_ts('pillarAnalysis', 'saveButtonLabel')}
@@ -552,7 +585,7 @@ function PillarAnalysis(props: Props) {
                         }}
                     >
                         <div className={styles.rightContainer}>
-                            {value.analyticalStatements?.map((analyticalStatement, index) => (
+                            {value.analyticalStatement?.map((analyticalStatement, index) => (
                                 <AnalyticalStatementInput
                                     className={styles.analyticalStatement}
                                     key={analyticalStatement.uuid}
@@ -563,7 +596,7 @@ function PillarAnalysis(props: Props) {
                                     onEntryMove={handleEntryMove}
                                     onEntryDrop={handleEntryDrop}
                                     // eslint-disable-next-line max-len
-                                    error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
+                                    error={error?.fields?.analyticalStatement?.members?.[analyticalStatement.uuid]}
                                 />
                             ))}
                             <QuickActionButton
@@ -573,7 +606,7 @@ function PillarAnalysis(props: Props) {
                                 title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
                                 variant="primary"
                                 disabled={
-                                    (value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT
+                                    (value.analyticalStatement?.length ?? 0) >= STATEMENTS_LIMIT
                                 }
                             >
                                 <IoAdd />

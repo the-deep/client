@@ -27,7 +27,6 @@ import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
-    PillarAnalysisElement,
     AnalysisElement,
     MatrixTocElement,
     MultiResponse,
@@ -64,7 +63,7 @@ type AnalysisElementForm = Omit<AnalysisElement, 'analysisPillar'> & {
     analysisPillar: (Omit<AnalysisPillars, 'filters'> & { filters: string[] })[];
 };
 
-const analysisPillarKeySelector = (d: PillarAnalysisElement & { key: string }) => d.key;
+const analysisPillarKeySelector = (d: AnalysisPillars & { key: string }) => d.key;
 
 const analysisSchema = {
     fields: {

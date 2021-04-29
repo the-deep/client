@@ -6,27 +6,13 @@ import {
     requiredCondition,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
+import { AnalysisPillars } from '#typings';
 
-export interface FormType {
-    mainStatement?: string;
-    informationGap?: string;
-    analyticalStatements?: {
-        id?: number;
-        uuid: string;
-        order?: number;
-        statement?: string;
-        analyticalEntries: {
-            id?: number;
-            uuid: string;
-            entry: number;
-            order?: number;
-        }[];
-    }[];
-}
+export type FormType = Pick<AnalysisPillars, 'mainStatement' | 'informationGap' | 'analyticalStatement'>;
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-export type AnalyticalStatementType = NonNullable<NonNullable<FormType['analyticalStatements']>>[number];
+export type AnalyticalStatementType = NonNullable<NonNullable<FormType['analyticalStatement']>>[number];
 export type AnalyticalEntryType = NonNullable<NonNullable<AnalyticalStatementType['analyticalEntries']>>[number];
 
 type AnalyticalEntrySchema = ObjectSchema<PartialForm<AnalyticalEntryType>>;
@@ -71,7 +57,7 @@ export const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         mainStatement: [],
         informationGap: [],
-        analyticalStatements: analyticalStatementsSchema,
+        analyticalStatement: analyticalStatementsSchema,
     }),
 };
 
