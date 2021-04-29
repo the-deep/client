@@ -386,12 +386,11 @@ export default class Entry extends React.PureComponent {
                                     confirmationTitle={_ts('entries', 'deleteConfirmTitle')}
                                     confirmationMessage={_ts('entries', 'deleteConfirmMessage')}
                                     disabled={pending}
-                                    className={styles.deleteButton}
                                 />
                             }
                         />
                         <EntryOpenLink
-                            className={styles.button}
+                            className={styles.link}
                             entryId={entry.id}
                             leadId={entry.lead}
                             projectId={entry.project}
