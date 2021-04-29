@@ -38,6 +38,7 @@ interface AnalyticalStatementInputProps {
     onChange: (value: StateArg<PartialForm<AnalyticalStatementType>>, index: number) => void;
     onRemove: (index: number) => void;
     onEntryMove: (entryId: number, statementUuid: string) => void;
+    onEntryDrop: (entryId: number) => void;
     index: number;
 }
 
@@ -59,6 +60,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
         onChange,
         onRemove,
         onEntryMove,
+        onEntryDrop,
         index,
     } = props;
 
@@ -127,8 +129,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 // one statement to another statement
                 onEntryMove(dropValue.entryId, dropValue.statementUuid);
             }
+            onEntryDrop(dropValue.entryId);
         },
-        [onFieldChange, value.analyticalEntries, value.order, onEntryMove, value.uuid],
+        [onEntryDrop, onFieldChange, value.analyticalEntries, value.order, onEntryMove, value.uuid],
     );
 
     const handleAnalyticalEntryAdd = useCallback(

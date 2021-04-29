@@ -7,6 +7,7 @@ import {
     listToGroupList,
     randomString,
     listToMap,
+    Obj,
 } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
@@ -39,7 +40,6 @@ import { notifyOnFailure } from '#utils/requestNotify';
 import {
     GeoOptions,
     MultiResponse,
-    EntryFields,
     FrameworkFields,
     PillarAnalysisElement,
     ProjectDetails,
@@ -55,19 +55,15 @@ import {
     setPillarAnalysisDataAction,
 } from '#redux';
 import EntriesFilterForm from './EntriesFilterForm';
-import EntryItem from './EntryItem';
+import SourceEntryItem from './SourceEntryItem';
 import AnalyticalStatementInput from './AnalyticalStatementInput';
 import { schema, defaultFormValues, AnalyticalStatementType } from './schema';
+import EntryContext, { EntryFieldsMin } from './context';
 
 import styles from './styles.scss';
 
 // This is an aribitrary number
 const STATEMENTS_LIMIT = 30;
-
-type EntryFieldsMin = Pick<
-    EntryFields,
-    'id' | 'excerpt' | 'droppedExcerpt' | 'image' | 'entryType' | 'tabularFieldData'
->;
 
 type TabNames = 'entries' | 'discarded';
 
@@ -119,8 +115,9 @@ interface PropsFromState {
 
 interface PageProps {
 }
+type Props = PageProps & PropsFromState & PropsFromDispatch;
 
-function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
+function PillarAnalysis(props: Props) {
     const {
         pillarId,
         analysisId,
@@ -214,6 +211,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
         [onValueChange],
     );
 
+
     // const [value, setValue] = useState<string | undefined>();
     const [activeTab, setActiveTab] = useState<TabNames>('entries');
 
@@ -224,6 +222,23 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
     // FIXME: these are useless
     const [entriesCount, setEntriesCount] = useState(0);
     const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
+
+    const [entriesMapping, setEntriesMapping] = useState<Obj<EntryFieldsMin>>({});
+
+    const handleEntryDrop = useCallback(
+        (entryId: number) => {
+            const entry = entries?.find(item => item.id === entryId);
+            if (!entry) {
+                console.error('Me no understand how this entry came from', entryId);
+                return;
+            }
+            setEntriesMapping(oldEntriesMapping => ({
+                ...oldEntriesMapping,
+                [entryId]: entry,
+            }));
+        },
+        [entries],
+    );
 
     const [
         pendingPillarAnalysis,
@@ -325,6 +340,58 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
             setEntries(response.results);
         },
         autoTriggerDisabled: pendingPillarAnalysis || pendingFramework,
+    });
+
+    const [initialEntries] = useState<number[]>(
+        () => {
+            const es = pillarAnalysisFromProps?.data?.analyticalStatements
+                ?.map(statement => (
+                    statement.analyticalEntries?.map(entry => entry.entry)
+                )).flat().filter(isDefined).flat();
+            return es ?? [];
+        },
+    );
+
+    const analysisEntriesRequestBody = useMemo(
+        () => ({
+            filters: [
+                ['entries_id', initialEntries],
+            ],
+        }),
+        [initialEntries],
+    );
+
+    const analysisEntriesRequestQuery = useMemo(() => ({
+        // NOTE: 30 columns x 50 rows
+        limit: 30 * 50,
+        fields: [
+            'id',
+            'excerpt',
+            'dropped_excerpt',
+            'image',
+            'entry_type',
+            'tabular_field_data',
+        ],
+    }), []);
+
+
+    useRequest<MultiResponse<EntryFieldsMin>>({
+        url: 'server://entries/filter/',
+        method: 'POST',
+        body: analysisEntriesRequestBody,
+        query: analysisEntriesRequestQuery,
+        autoTrigger: true,
+        onSuccess: (response) => {
+            setEntriesCount(response.count);
+            setEntriesMapping(oldEntriesMappings => ({
+                ...oldEntriesMappings,
+                ...listToMap(
+                    response.results,
+                    item => item.id,
+                    item => item,
+                ),
+            }));
+        },
     });
 
     const usedUpEntriesMap = useMemo(
@@ -467,7 +534,7 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                                 <ListView
                                     data={entries}
                                     keySelector={entryKeySelector}
-                                    renderer={EntryItem}
+                                    renderer={SourceEntryItem}
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
                                 />
@@ -478,35 +545,47 @@ function PillarAnalysis(props: PageProps & PropsFromState & PropsFromDispatch) {
                             </TabPanel>
                         </CollapsibleContainer>
                     </Tabs>
-                    <div className={styles.rightContainer}>
-                        {value.analyticalStatements?.map((analyticalStatement, index) => (
-                            <AnalyticalStatementInput
-                                className={styles.analyticalStatement}
-                                key={analyticalStatement.uuid}
-                                index={index}
-                                value={analyticalStatement}
-                                onChange={onAnalyticalStatementChange}
-                                onRemove={onAnalyticalStatementRemove}
-                                onEntryMove={handleEntryMove}
-                                // eslint-disable-next-line max-len
-                                error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
-                            />
-                        ))}
-                        <QuickActionButton
-                            className={styles.addStatementButton}
-                            name={undefined}
-                            onClick={handleAnalyticalStatementAdd}
-                            title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
-                            variant="primary"
-                            disabled={(value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT}
-                        >
-                            <IoAdd />
-                        </QuickActionButton>
-                    </div>
+                    <EntryContext.Provider
+                        value={{
+                            entries: entriesMapping,
+                            setEntries: setEntriesMapping,
+                        }}
+                    >
+                        <div className={styles.rightContainer}>
+                            {value.analyticalStatements?.map((analyticalStatement, index) => (
+                                <AnalyticalStatementInput
+                                    className={styles.analyticalStatement}
+                                    key={analyticalStatement.uuid}
+                                    index={index}
+                                    value={analyticalStatement}
+                                    onChange={onAnalyticalStatementChange}
+                                    onRemove={onAnalyticalStatementRemove}
+                                    onEntryMove={handleEntryMove}
+                                    onEntryDrop={handleEntryDrop}
+                                    // eslint-disable-next-line max-len
+                                    error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
+                                />
+                            ))}
+                            <QuickActionButton
+                                className={styles.addStatementButton}
+                                name={undefined}
+                                onClick={handleAnalyticalStatementAdd}
+                                title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
+                                variant="primary"
+                                disabled={
+                                    (value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT
+                                }
+                            >
+                                <IoAdd />
+                            </QuickActionButton>
+                        </div>
+                    </EntryContext.Provider>
                 </div>
             </div>
         </div>
     );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PillarAnalysis);
+export default connect(mapStateToProps, mapDispatchToProps)(
+    PillarAnalysis,
+);
