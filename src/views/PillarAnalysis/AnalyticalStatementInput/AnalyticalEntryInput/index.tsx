@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
 import { IoClose } from 'react-icons/io5';
 import {
     DropContainer,
@@ -14,6 +14,8 @@ import { _cs } from '@togglecorp/fujs';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
+import EntryItem from '../../EntryItem';
+import EntryContext from '../../context';
 import { AnalyticalEntryType } from '../../schema';
 import { DroppedValue } from '../';
 
@@ -62,6 +64,9 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         statementUuid,
     }), [value.entry, statementUuid]);
 
+    const { entries } = useContext(EntryContext);
+    const entry = value.entry ? entries[value.entry] : undefined;
+
     // const onFieldChange = useFormObject(index, value, onChange);
 
     return (
@@ -85,22 +90,31 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 value={dragValue}
                 onDragStart={setDragStart}
                 onDragStop={setDragEnd}
+                childrenContainerClassName={styles.content}
+                actions={(
+                    <QuickActionButton
+                        className={styles.removeButton}
+                        name={index}
+                        onClick={onRemove}
+                        title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
+                    >
+                        <IoClose />
+                    </QuickActionButton>
+                )}
             >
                 {error?.$internal && (
                     <p>
                         {error.$internal}
                     </p>
                 )}
-                <h4>
-                    {value.entry}
-                </h4>
-                <QuickActionButton
-                    name={index}
-                    onClick={onRemove}
-                    title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}
-                >
-                    <IoClose />
-                </QuickActionButton>
+                {entry && (
+                    <EntryItem
+                        excerpt={entry.excerpt}
+                        image={entry.image}
+                        tabularFieldData={entry.tabularFieldData}
+                        type={entry.entryType}
+                    />
+                )}
             </DraggableContent>
         </DropContainer>
     );

@@ -1,7 +1,7 @@
 .drop-container {
     display: flex;
     flex-direction: column;
-    background-color: var(--dui-color-white);
+    background-color: var(--dui-color-foreground);
     overflow: unset;
 
     .content {
@@ -13,12 +13,26 @@
 
     .entry {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        margin: var(--dui-spacing-medium);
         border: var(--dui-width-separator-thin) solid var(--dui-color-separator);
-        padding: var(--dui-spacing-medium);
+        padding: var(--dui-spacing-small);
+
+        // TODO: we should not limit the height of the entry
         height: 160px;
+        overflow: auto;
+
+        .remove-button {
+            margin: 0;
+
+            // TODO: fix in deep-ui and remove this
+            padding: var(--dui-spacing-extra-small);
+        }
+
+        .content {
+            align-self: stretch;
+            overflow: auto;
+        }
     }
 
     .overlay {
