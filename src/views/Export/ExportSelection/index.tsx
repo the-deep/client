@@ -39,6 +39,7 @@ import {
     GeoOptions,
     WidgetElement,
     ConditionalWidget,
+    ProjectDetails,
 } from '#typings';
 
 import { getCombinedLeadFilters } from '#entities/lead';
@@ -132,7 +133,7 @@ interface PropsFromState {
     };
     geoOptions: GeoOptions;
     projectDetails: {
-        regions: unknown[];
+        regions: ProjectDetails['regions'];
     };
 }
 

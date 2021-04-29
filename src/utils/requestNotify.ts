@@ -1,7 +1,7 @@
 import notify from '#notify';
 
-// eslint-disable-next-line max-len
-export const notifyOnFailure = (title: string) => (response: { error: Record<string, unknown> }) => {
+// eslint-disable-next-line max-len, @typescript-eslint/ban-types
+export const notifyOnFailure = (title: string) => (response: { error: object }) => {
     const { error } = response;
 
     const typedError = error as { messageForNotification: string } | undefined;

@@ -202,6 +202,7 @@ function Analysis(props: ComponentProps) {
             headerActions={(
                 <div className={styles.headerRight}>
                     <Button
+                        name={undefined}
                         className={styles.button}
                         variant="tertiary"
                         disabled={disabled}
@@ -212,6 +213,7 @@ function Analysis(props: ComponentProps) {
                         {_ts('analysis', 'addPillarAnalysis')}
                     </Button>
                     <QuickActionButton
+                        name={undefined}
                         className={styles.button}
                         onClick={handleEditClick}
                         disabled={disabled}
@@ -219,12 +221,14 @@ function Analysis(props: ComponentProps) {
                         <Icon name="edit" />
                     </QuickActionButton>
                     <QuickActionButton
+                        name={undefined}
                         className={styles.button}
                         disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
+                        name={undefined}
                         className={styles.button}
                         onClick={handleDeleteAnalysis}
                         disabled={disabled}
@@ -263,6 +267,7 @@ function Analysis(props: ComponentProps) {
                 className={styles.pillarAnalyses}
             >
                 <Button
+                    name={undefined}
                     className={styles.accordionButton}
                     icons={(
                         <Icon name={expanded

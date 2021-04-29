@@ -284,6 +284,7 @@ function EntriesFilterForm(props: OwnProps) {
                 />
             )}
             <Button
+                name={undefined}
                 className={styles.button}
                 disabled={pristine || pending || disabled}
                 type="submit"
@@ -291,6 +292,7 @@ function EntriesFilterForm(props: OwnProps) {
                 {_ts('pillarAnalysis', 'filterApplyFilter')}
             </Button>
             <Button
+                name={undefined}
                 className={styles.button}
                 disabled={isClearDisabled || pending || disabled}
                 onClick={handleClearFilters}
@@ -299,6 +301,7 @@ function EntriesFilterForm(props: OwnProps) {
                 {_ts('pillarAnalysis', 'filterClearFilter')}
             </Button>
             <Button
+                name={undefined}
                 className={styles.button}
                 onClick={allFiltersVisible ? hideAllFilters : showAllFilters}
                 variant="tertiary"

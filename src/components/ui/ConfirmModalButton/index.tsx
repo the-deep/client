@@ -56,6 +56,7 @@ function ConfirmModalButton(props: ConfirmModalButtonProps) {
             footer={
                 <>
                     <Button
+                        name={undefined}
                         className={_cs(
                             'cancel-button',
                             styles.button,
@@ -66,6 +67,7 @@ function ConfirmModalButton(props: ConfirmModalButtonProps) {
                         Cancel
                     </Button>
                     <Button
+                        name={undefined}
                         className={_cs(
                             'ok-button',
                             styles.button,

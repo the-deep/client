@@ -23,7 +23,7 @@ import styles from './styles.scss';
 
 interface Props{
     className?: string;
-    projectId: string;
+    projectId: number;
 }
 
 const maxItemsPerPage = 10;

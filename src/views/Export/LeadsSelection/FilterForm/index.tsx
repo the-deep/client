@@ -25,8 +25,10 @@ import {
     EmmEntity,
     // BasicElement,
     WidgetElement,
-    FilterFields,
     FaramErrors,
+    FilterFields,
+    ProjectDetails,
+    GeoOptions,
 } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 
@@ -95,8 +97,8 @@ interface OwnProps {
     entriesFilters?: FilterFields[];
     entriesWidgets?: WidgetElement<unknown>[];
     onChange: (filter: FaramValues) => void;
-    regions?: unknown[];
-    geoOptions?: unknown;
+    geoOptions?: GeoOptions;
+    regions?: ProjectDetails['regions'];
     hasAssessment?: boolean;
     setFiltersPending?: (pending: boolean) => void;
 }

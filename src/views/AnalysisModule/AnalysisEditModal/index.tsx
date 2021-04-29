@@ -35,6 +35,7 @@ import {
     UserMini,
     PillarFilterItem,
     AnalysisPillarFormItem,
+    AnalysisPillars,
 } from '#typings';
 
 import _ts from '#ts';
@@ -58,6 +59,10 @@ interface AnalysisEditModalProps {
     value?: AnalysisElement;
     projectId: number;
 }
+
+type AnalysisElementForm = Omit<AnalysisElement, 'analysisPillar'> & {
+    analysisPillar: (Omit<AnalysisPillars, 'filters'> & { filters: string[] })[];
+};
 
 const analysisPillarKeySelector = (d: PillarAnalysisElement & { key: string }) => d.key;
 
@@ -118,9 +123,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         };
         return newValue;
     });
-    const [faramErrors, setFaramErrors] = useState();
+    const [faramErrors, setFaramErrors] = useState<unknown | undefined>();
     const [pristine, setPristine] = useState(true);
-    const [bodyToSend, setBodyToSend] = useState(undefined);
+    const [bodyToSend, setBodyToSend] = useState<AnalysisElement | undefined>(undefined);
 
     const [
         pendingFramework,
@@ -193,9 +198,9 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     });
 
     // FIXME: Use new form and write appropriate typings
-    const onValidationSuccess = useCallback((finalValues) => {
+    const onValidationSuccess = useCallback((finalValues: AnalysisElementForm) => {
         setPristine(true);
-        const { analysisPillar = [] } = finalValues;
+        const { analysisPillar } = finalValues;
         const matrixMap = listToMap(
             matrixPillars,
             idSelector,
@@ -205,7 +210,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 uniqueId: d.uniqueId,
             }),
         );
-        const newAnalysisPillar = analysisPillar.map(ap => ({
+        const newAnalysisPillar = analysisPillar?.map(ap => ({
             ...ap,
             filters: ap?.filters?.map((f: string) => matrixMap[f]),
         }));
@@ -276,6 +281,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                         rendererParams={rowRendererParams}
                     />
                     <FaramButton
+                        name={undefined}
                         faramElementName="add-button"
                         faramAction={addAttribute}
                         variant="tertiary"
@@ -288,6 +294,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                 </FaramList>
                 <footer className={styles.footer}>
                     <Button
+                        name={undefined}
                         variant="primary"
                         type="submit"
                         disabled={pristine || pendingAnalysisEdit}

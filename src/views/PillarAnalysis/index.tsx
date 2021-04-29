@@ -93,6 +93,7 @@ const mapStateToProps = (state: AppState, props: unknown) => ({
     // FIXME: get this from request
     activeProject: activeProjectFromStateSelector(state),
 
+    // FIXME: the inferred typing is wrong in this case
     pillarAnalysis: editPillarAnalysisPillarAnalysisSelector(state, props),
 });
 

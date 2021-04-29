@@ -37,6 +37,7 @@ function AssignmentItem(props: AssignmentRendererProps) {
             <ElementFragments
                 actions={(
                     <Button
+                        name={undefined}
                         className={styles.markAsDoneButton}
                         onClick={handleClick}
                         disabled={markAsDonePending}

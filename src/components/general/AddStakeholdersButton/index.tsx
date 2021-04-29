@@ -67,6 +67,7 @@ function AddStakeholdersButton(props: Props) {
         <>
             <Button
                 className={className}
+                name={undefined}
                 variant="tertiary"
                 onClick={handleShowStakeholdersModal}
                 disabled={disabled}

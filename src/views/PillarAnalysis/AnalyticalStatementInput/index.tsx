@@ -20,6 +20,7 @@ import {
     PartialForm,
     useFormArray,
     useFormObject,
+    StateArg,
     Error,
 } from '@togglecorp/toggle-form';
 
@@ -34,7 +35,7 @@ interface AnalyticalStatementInputProps {
     className?: string;
     value: PartialForm<AnalyticalStatementType>;
     error: Error<AnalyticalStatementType> | undefined;
-    onChange: (value: PartialForm<AnalyticalStatementType>, index: number) => void;
+    onChange: (value: StateArg<PartialForm<AnalyticalStatementType>>, index: number) => void;
     onRemove: (index: number) => void;
     onEntryMove: (entryId: number, statementUuid: string) => void;
     index: number;

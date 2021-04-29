@@ -39,9 +39,9 @@ interface RequestOptions<T> {
     url: string | undefined;
     query?: UrlParams;
     // eslint-disable-next-line @typescript-eslint/ban-types
-    body?: RequestInit['body'] | object | undefined;
+    body?: RequestInit['body'] | object;
     method?: Methods;
-    other?: RequestInit;
+    other?: Omit<RequestInit, 'body'>;
 
     // NOTE: don't ever retrigger
     mockResponse?: T;
@@ -434,7 +434,8 @@ function useRequest<T>(
                 {
                     ...other,
                     method,
-                    body,
+                    // FIXME: here object is explicitly cast as BodyInit
+                    body: body as (BodyInit | null | undefined),
                 },
                 delay,
 

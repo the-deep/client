@@ -11,6 +11,8 @@ import _ts from '#ts';
 
 import {
     FilterFields,
+    ProjectDetails,
+    GeoOptions,
 } from '#typings';
 
 import GeoFilter from './GeoFilter';
@@ -21,8 +23,8 @@ interface Props {
     title: string;
     filterKey: string;
     filter: FilterFields['properties'];
-    geoOptions?: unknown;
-    regions?: unknown[];
+    geoOptions?: GeoOptions;
+    regions?: ProjectDetails['regions'];
     className?: string;
 }
 

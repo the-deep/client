@@ -87,12 +87,14 @@ function AnalysisPillar(props: ComponentProps) {
                         <Icon name="edit" />
                     </QuickActionLink>
                     <QuickActionButton
+                        name={undefined}
                         className={styles.button}
                         disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
+                        name={undefined}
                         className={styles.button}
                         onClick={handleDeletePillar}
                         disabled={disabled}

@@ -109,6 +109,7 @@ function Assignments() {
             headerActions={(
                 assignmentsResponse && assignmentsResponse.count > 0 && (
                     <Button
+                        name={undefined}
                         onClick={triggerBulkAsDone}
                         disabled={bulkPending}
                         variant="action"
