@@ -19,8 +19,8 @@ function Image(props) {
     } = props;
 
     const handleImageClick = useCallback(() => {
-        onImageClick(imageId);
-    }, [onImageClick, imageId]);
+        onImageClick(source);
+    }, [onImageClick, source]);
 
     const handleDragStart = useCallback((e) => {
         onDragStart(imageId, source, e);
@@ -68,8 +68,8 @@ function ImagesGrid(props) {
     const [activeImageSource, setActiveImageSource] = useState(undefined);
     const [imageViewModalShow, setImageViewModalShow] = useState(false);
 
-    const handleImageClick = useCallback((imageId) => {
-        setActiveImageSource(imageId);
+    const handleImageClick = useCallback((source) => {
+        setActiveImageSource(source);
         setImageViewModalShow(true);
     }, []);
 

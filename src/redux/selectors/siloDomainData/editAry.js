@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { isTruthy, listToMap } from '@togglecorp/fujs';
+import { isTruthy } from '@togglecorp/fujs';
 
 import {
     createSchema,
