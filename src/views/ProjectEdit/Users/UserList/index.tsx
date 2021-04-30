@@ -1,24 +1,35 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
+
+import {
+    IoPencil,
+    IoTrash,
+    IoAdd,
+} from 'react-icons/io5';
 import {
     Container,
     Button,
+    Pager,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 
+import { notifyOnFailure } from '#utils/requestNotify';
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
 import TableHeader from '#rscv/TableHeader';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
-import Icon from '#rscg/Icon';
-import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 
+import { useModalState } from '#hooks/stateManagement';
 import {
     Membership,
     MultiResponse,
 } from '#typings';
 
+import AddUserModal from './AddUserModal';
 import styles from './styles.scss';
 
 interface Props{
@@ -36,20 +47,64 @@ function UserList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
+    const [membershipIdToDelete, setMembershipIdToDelete] = useState<number | undefined>(undefined);
+    const [membershipIdToEdit, setMembershipIdToEdit] = useState<number | undefined>(undefined);
     const queryForRequest = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
     }), [activePage]);
+    const [
+        showAddUserModal,
+        setModalShow,
+        setModalHidden,
+    ] = useModalState(false);
+
+    const handleModalClose = useCallback(() => {
+        setMembershipIdToEdit(undefined);
+        setModalHidden();
+    }, [setModalHidden]);
 
     const [
         usersPending,
         usersResponse,
+        ,
+        triggerGetUsers,
     ] = useRequest<MultiResponse<Membership>>({
         url: `server://projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: queryForRequest,
         autoTrigger: true,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'userFetchFailed'))({ error: errorBody });
+        },
     });
+
+    const [
+        ,
+        ,
+        ,
+        triggerMembershipDelete,
+    ] = useRequest({
+        url: `server://projects/${projectId}/project-memberships/${membershipIdToDelete}/`,
+        method: 'DELETE',
+        onSuccess: () => {
+            triggerGetUsers();
+        },
+        autoTrigger: false,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'membershipDeleteFailed'))({ error: errorBody });
+        },
+    });
+
+    const handleDeleteMembershipClick = useCallback((deleteUserId) => {
+        setMembershipIdToDelete(deleteUserId);
+        triggerMembershipDelete();
+    }, [triggerMembershipDelete]);
+
+    const handleEditMembershipClick = useCallback((membershipId) => {
+        setMembershipIdToEdit(membershipId);
+        setModalShow();
+    }, [setModalShow]);
 
     const headers: Header<Membership>[] = useMemo(() => ([
         {
@@ -95,7 +150,33 @@ function UserList(props: Props) {
             sortable: false,
             modifier: row => row.roleDetails.title,
         },
-    ]), []);
+        {
+            key: 'actions',
+            label: _ts('projectEdit', 'actionsLabel'),
+            order: 7,
+            sortable: false,
+            modifier: row => (
+                <div className={styles.rowActions}>
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        title={_ts('projectEdit', 'editUserLabel')}
+                        onClick={() => handleEditMembershipClick(row.id)}
+                    >
+                        <IoPencil />
+                    </QuickActionButton>
+                    <QuickActionButton
+                        className={styles.button}
+                        name={undefined}
+                        title={_ts('projectEdit', 'deleteUserLabel')}
+                        onClick={() => handleDeleteMembershipClick(row.id)}
+                    >
+                        <IoTrash />
+                    </QuickActionButton>
+                </div>
+            ),
+        },
+    ]), [handleDeleteMembershipClick, handleEditMembershipClick]);
 
     const dataModifier = useCallback(
         (data, columnKey) => {
@@ -113,6 +194,12 @@ function UserList(props: Props) {
         />
     ), []);
 
+    const membershipToEdit = useMemo(() => (
+        usersResponse?.results?.find(d => d.id === membershipIdToEdit)
+    ), [usersResponse?.results, membershipIdToEdit]);
+
+    const handleAddUserClick = setModalShow;
+
     return (
         <Container
             className={_cs(className, styles.users)}
@@ -124,33 +211,51 @@ function UserList(props: Props) {
                     name="add-member"
                     variant="tertiary"
                     icons={(
-                        <Icon
-                            name="add"
-                        />
+                        <IoAdd />
                     )}
+                    onClick={handleAddUserClick}
                 >
                     {_ts('projectEdit', 'addUser')}
                 </Button>
             )}
         >
-            <RawTable
-                className={styles.table}
-                data={usersResponse?.results ?? []}
-                dataModifier={dataModifier}
-                headerModifier={headerModifier}
-                headers={headers}
-                keySelector={userKeySelector}
-                pending={usersPending}
+            {usersPending && (<LoadingAnimation />)}
+            {(usersResponse && usersResponse?.count > 0)
+                ? (
+                    <RawTable
+                        className={styles.table}
+                        data={usersResponse?.results ?? []}
+                        dataModifier={dataModifier}
+                        headerModifier={headerModifier}
+                        headers={headers}
+                        keySelector={userKeySelector}
+                        pending={usersPending}
+                    />
+                )
+                : (
+                    <div className={styles.emptyTable}>
+                        <Message>
+                            {_ts('projectEdit', 'emptyUserTableMessage')}
+                        </Message>
+                    </div>
+                )
+            }
+            <Pager
+                activePage={activePage}
+                className={styles.pager}
+                itemsCount={usersResponse?.count ?? 0}
+                maxItemsPerPage={maxItemsPerPage}
+                onActivePageChange={setActivePage}
+                itemsPerPageControlHidden
             />
-            {usersResponse && usersResponse.count > maxItemsPerPage && (
-                <Pager
-                    activePage={activePage}
-                    itemsCount={usersResponse.count}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onPageClick={setActivePage}
-                    showItemsPerPageChange={false}
+            {showAddUserModal &&
+                <AddUserModal
+                    onModalClose={handleModalClose}
+                    projectId={projectId}
+                    onTableReload={triggerGetUsers}
+                    userValue={membershipToEdit}
                 />
-            )}
+            }
         </Container>
     );
 }

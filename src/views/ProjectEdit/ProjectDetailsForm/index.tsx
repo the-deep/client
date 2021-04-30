@@ -287,6 +287,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         headingClassName={styles.heading}
                         heading={_ts('projectEdit', 'projectStakeholders')}
                         headerActions={<AddStakeholdersButton />}
+                        contentClassName={styles.content}
                     >
                         <ListView
                             className={styles.items}

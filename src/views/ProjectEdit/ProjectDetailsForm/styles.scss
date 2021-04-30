@@ -54,8 +54,6 @@
             .stakeholders {
                 margin: var(--dui-spacing-medium);
                 background-color: var(--dui-color-surface-informational);
-                height: clamp(200px, 25vh, 400px);
-                overflow-y: auto;
 
                 .header {
                     border: 0;
@@ -63,6 +61,10 @@
                     .heading {
                         font-size: var(--dui-font-size-heading-extra-small);
                     }
+                }
+
+                .content {
+                    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
                 }
 
                 .items {
