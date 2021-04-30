@@ -29,10 +29,11 @@ import Pager from '#rscv/Pager';
 import FullPageHeader from '#dui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
-// import LoadingAnimation from '#rscv/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
 import Tabs, { Tab, TabList, TabPanel } from '#dui/Tabs';
 
+import notify from '#notify';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -101,6 +102,8 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
     setPillarAnalysisData: params => dispatch(setPillarAnalysisDataAction(params)),
 });
 
+type FormType = typeof defaultFormValues;
+
 interface PropsFromState {
     pillarId: number;
     projectId: number;
@@ -109,7 +112,7 @@ interface PropsFromState {
     activeProject: ProjectDetails;
     pillarAnalysis: {
         id: number;
-        data: typeof defaultFormValues;
+        data: FormType;
     } | undefined;
 }
 
@@ -127,8 +130,6 @@ function PillarAnalysis(props: Props) {
         setPillarAnalysisData,
     } = props;
 
-    // FIXME: set initial pristine value on form
-
     const {
         pristine,
         value,
@@ -139,8 +140,53 @@ function PillarAnalysis(props: Props) {
         onErrorSet,
     } = useForm(pillarAnalysisFromProps?.data ?? defaultFormValues, schema);
 
+    const {
+        onValueChange: onAnalyticalStatementChange,
+        onValueRemove: onAnalyticalStatementRemove,
+    } = useFormArray('analyticalStatements', onValueChange);
+
     const [submitValues, setSubmitValues] = useState<typeof value | undefined>();
 
+    const [activeTab, setActiveTab] = useState<TabNames>('entries');
+
+    // FIXME: please use new form
+    const [filtersValue, setFiltersValue] = useState<FaramValues>({});
+    const [activePage, setActivePage] = useState(1);
+    // FIXME: these are useless
+    const [entriesCount, setEntriesCount] = useState(0);
+    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
+
+    // NOTE: retain entries mapping to show entry information in entry cards
+    const [entriesMapping, setEntriesMapping] = useState<Obj<EntryFieldsMin>>({});
+
+    // NOTE: create a list of entries to fetch data for these on initial load
+    const [initialEntries] = useState<number[]>(
+        () => {
+            const es = pillarAnalysisFromProps?.data?.analyticalStatements
+                ?.map(statement => (
+                    statement.analyticalEntries?.map(entry => entry.entry)
+                )).flat().filter(isDefined).flat();
+            return es ?? [];
+        },
+    );
+
+    const usedUpEntriesMap = useMemo(
+        () => {
+            const usedUpEntries = value.analyticalStatements?.map(
+                statement => statement.analyticalEntries?.map(
+                    entry => entry.entry,
+                ),
+            ).flat().filter(isDefined);
+            return listToMap(
+                usedUpEntries,
+                item => item,
+                () => true,
+            );
+        },
+        [value.analyticalStatements],
+    );
+
+    // NOTE: write analysis data on redux
     useEffect(
         () => {
             setPillarAnalysisData({
@@ -150,87 +196,6 @@ function PillarAnalysis(props: Props) {
             });
         },
         [value, pillarId, setPillarAnalysisData, pristine],
-    );
-
-    const {
-        onValueChange: onAnalyticalStatementChange,
-        onValueRemove: onAnalyticalStatementRemove,
-    } = useFormArray('analyticalStatement', onValueChange);
-
-    const handleAnalyticalStatementAdd = useCallback(
-        () => {
-            // NOTE: Don't let users add more that certain statements
-            if ((value.analyticalStatement?.length ?? 0) >= STATEMENTS_LIMIT) {
-                return;
-            }
-
-            const oldStatements = value.analyticalStatement ?? [];
-
-            const uuid = randomString();
-            const newAnalyticalStatement: PartialForm<AnalyticalStatementType> = {
-                uuid,
-                order: oldStatements.length,
-            };
-            onValueChange(
-                [...oldStatements, newAnalyticalStatement],
-                'analyticalStatement' as const,
-            );
-        },
-        [onValueChange, value.analyticalStatement],
-    );
-
-    type AnalyticalStatements = typeof value.analyticalStatement;
-
-    const handleEntryMove = useCallback(
-        (entryId: number, statementUuid: string) => {
-            onValueChange(
-                (oldStatements: AnalyticalStatements) => (
-                    produce(oldStatements ?? [], (safeStatements) => {
-                        const selectedIndex = safeStatements
-                            .findIndex(s => s.uuid === statementUuid);
-                        if (selectedIndex !== -1) {
-                            const safeEntries = safeStatements[selectedIndex].analyticalEntries;
-                            const entryIndex = safeEntries?.findIndex(s => s.entry === entryId);
-
-                            if (isDefined(entryIndex) && entryIndex !== -1) {
-                                safeEntries?.splice(entryIndex, 1);
-                            }
-                        }
-                    })
-                ),
-                'analyticalStatement' as const,
-            );
-        },
-        [onValueChange],
-    );
-
-
-    // const [value, setValue] = useState<string | undefined>();
-    const [activeTab, setActiveTab] = useState<TabNames>('entries');
-
-    // FIXME: please use new form
-    const [filtersValue, setFiltersValue] = useState<FaramValues>({});
-    const [activePage, setActivePage] = useState(1);
-
-    // FIXME: these are useless
-    const [entriesCount, setEntriesCount] = useState(0);
-    const [entries, setEntries] = useState<EntryFieldsMin[]>([]);
-
-    const [entriesMapping, setEntriesMapping] = useState<Obj<EntryFieldsMin>>({});
-
-    const handleEntryDrop = useCallback(
-        (entryId: number) => {
-            const entry = entries?.find(item => item.id === entryId);
-            if (!entry) {
-                console.error('Me no understand how this entry came from', entryId);
-                return;
-            }
-            setEntriesMapping(oldEntriesMapping => ({
-                ...oldEntriesMapping,
-                [entryId]: entry,
-            }));
-        },
-        [entries],
     );
 
     const [
@@ -250,15 +215,16 @@ function PillarAnalysis(props: Props) {
 
             // FIXME: check set pristine value
             // FIXME: only set after checking version id
-            // FIXME: server doesn't preserve uuid information currently
-            onValueSet(() => ({
+            onValueSet((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
-                analyticalStatement: response.analyticalStatement,
+                analyticalStatements: response.analyticalStatements,
             }));
         },
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('pillarAnalysis', 'pillarAnalysisTitle'))({ error: errorBody });
+        },
         // FIXME: add schema
-        // FIXME: add failure
     });
 
     const [
@@ -272,12 +238,22 @@ function PillarAnalysis(props: Props) {
         method: 'PATCH',
         autoTrigger: false,
         onSuccess: (response) => {
-            onValueSet(() => ({
+            onValueSet((): FormType => ({
                 mainStatement: response.mainStatement,
                 informationGap: response.informationGap,
-                analyticalStatement: response.analyticalStatement,
+                analyticalStatements: response.analyticalStatements,
             }));
+            notify.send({
+                title: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
+                type: notify.type.SUCCESS,
+                message: _ts('pillarAnalysis', 'pillarAnalaysisUpdateSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
         },
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('pillarAnalysis', 'pillarAnalysisTitle'))({ error: errorBody });
+        },
+        // FIXME: add schema
     });
 
     const [
@@ -310,19 +286,8 @@ function PillarAnalysis(props: Props) {
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('pillarAnalysis', 'geoLabel'))({ error: errorBody });
         },
+        // FIXME: add schema
     });
-
-    const handleSubmit = useCallback(
-        () => {
-            const { errored, error: err, value: val } = validate();
-            onErrorSet(err);
-            if (!errored && isDefined(val)) {
-                setSubmitValues(val);
-                updateAnalysisPillars();
-            }
-        },
-        [onErrorSet, validate, updateAnalysisPillars],
-    );
 
     const entriesRequestBody = useMemo(() => {
         if (isNotDefined(framework) || isNotDefined(geoOptions)) {
@@ -346,7 +311,6 @@ function PillarAnalysis(props: Props) {
             ],
         });
     }, [geoOptions, filtersValue, framework, projectId]);
-
     const entriesRequestQuery = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
@@ -359,7 +323,6 @@ function PillarAnalysis(props: Props) {
             'tabular_field_data',
         ],
     }), [activePage]);
-
     const [pendingEntries] = useRequest<MultiResponse<EntryFieldsMin>>({
         url: 'server://entries/filter/',
         method: 'POST',
@@ -371,17 +334,11 @@ function PillarAnalysis(props: Props) {
             setEntries(response.results);
         },
         autoTriggerDisabled: pendingPillarAnalysis || pendingFramework,
-    });
-
-    const [initialEntries] = useState<number[]>(
-        () => {
-            const es = pillarAnalysisFromProps?.data?.analyticalStatement
-                ?.map(statement => (
-                    statement.analyticalEntries?.map(entry => entry.entry)
-                )).flat().filter(isDefined).flat();
-            return es ?? [];
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('pillarAnalysis', 'entriesTitle'))({ error: errorBody });
         },
-    );
+        // FIXME: add schema
+    });
 
     const analysisEntriesRequestBody = useMemo(
         () => ({
@@ -391,7 +348,6 @@ function PillarAnalysis(props: Props) {
         }),
         [initialEntries],
     );
-
     const analysisEntriesRequestQuery = useMemo(() => ({
         // NOTE: 30 columns x 50 rows
         limit: 30 * 50,
@@ -404,9 +360,7 @@ function PillarAnalysis(props: Props) {
             'tabular_field_data',
         ],
     }), []);
-
-
-    useRequest<MultiResponse<EntryFieldsMin>>({
+    const [pendingEntriesInitialData] = useRequest<MultiResponse<EntryFieldsMin>>({
         url: 'server://entries/filter/',
         method: 'POST',
         body: analysisEntriesRequestBody,
@@ -423,22 +377,84 @@ function PillarAnalysis(props: Props) {
                 ),
             }));
         },
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('pillarAnalysis', 'analysisPillarEntriesTitle'))({ error: errorBody });
+        },
+        // FIXME: add schema
     });
 
-    const usedUpEntriesMap = useMemo(
+    const handleEntryDrop = useCallback(
+        (entryId: number) => {
+            const entry = entries?.find(item => item.id === entryId);
+            if (!entry) {
+                console.error('Me no understand how this entry came from', entryId);
+                return;
+            }
+            setEntriesMapping(oldEntriesMapping => ({
+                ...oldEntriesMapping,
+                [entryId]: entry,
+            }));
+        },
+        [entries],
+    );
+
+    const handleAnalyticalStatementAdd = useCallback(
         () => {
-            const usedUpEntries = value.analyticalStatement?.map(
-                statement => statement.analyticalEntries?.map(
-                    entry => entry.entry,
-                ),
-            ).flat().filter(isDefined);
-            return listToMap(
-                usedUpEntries,
-                item => item,
-                () => true,
+            // NOTE: Don't let users add more that certain statements
+            if ((value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT) {
+                return;
+            }
+
+            const oldStatements = value.analyticalStatements ?? [];
+
+            const uuid = randomString();
+            const newAnalyticalStatement: PartialForm<AnalyticalStatementType> = {
+                uuid,
+                order: oldStatements.length,
+            };
+            onValueChange(
+                [...oldStatements, newAnalyticalStatement],
+                'analyticalStatements' as const,
             );
         },
-        [value.analyticalStatement],
+        [onValueChange, value.analyticalStatements],
+    );
+
+    type AnalyticalStatements = typeof value.analyticalStatements;
+
+    const handleEntryMove = useCallback(
+        (entryId: number, statementUuid: string) => {
+            onValueChange(
+                (oldStatements: AnalyticalStatements) => (
+                    produce(oldStatements ?? [], (safeStatements) => {
+                        const selectedIndex = safeStatements
+                            .findIndex(s => s.uuid === statementUuid);
+                        if (selectedIndex !== -1) {
+                            const safeEntries = safeStatements[selectedIndex].analyticalEntries;
+                            const entryIndex = safeEntries?.findIndex(s => s.entry === entryId);
+
+                            if (isDefined(entryIndex) && entryIndex !== -1) {
+                                safeEntries?.splice(entryIndex, 1);
+                            }
+                        }
+                    })
+                ),
+                'analyticalStatements' as const,
+            );
+        },
+        [onValueChange],
+    );
+
+    const handleSubmit = useCallback(
+        () => {
+            const { errored, error: err, value: val } = validate();
+            onErrorSet(err);
+            if (!errored && isDefined(val)) {
+                setSubmitValues(val);
+                updateAnalysisPillars();
+            }
+        },
+        [onErrorSet, validate, updateAnalysisPillars],
     );
 
     const entryCardRendererParams = useCallback((key, data) => ({
@@ -450,7 +466,7 @@ function PillarAnalysis(props: Props) {
         disabled: usedUpEntriesMap[key],
     }), [usedUpEntriesMap]);
 
-    // const pending = pendingPillarAnalysis || pendingGeoOptions || pendingFramework;
+    const pending = pendingPillarAnalysis || pendingEntriesInitialData || pendingPillarAnalysisSave;
 
     return (
         <div className={styles.pillarAnalysis}>
@@ -466,7 +482,7 @@ function PillarAnalysis(props: Props) {
                             className={styles.button}
                             variant="primary"
                             disabled={
-                                pristine || pendingPillarAnalysis || pendingPillarAnalysisSave
+                                pristine || pending
                             }
                             onClick={handleSubmit}
                         >
@@ -484,6 +500,7 @@ function PillarAnalysis(props: Props) {
                 {breadcrumb(pillarAnalysis?.analysisTitle, pillarAnalysis?.title ?? '')}
             </FullPageHeader>
             <div className={styles.content}>
+                {pending && <LoadingAnimation />}
                 {error?.$internal && (
                     <p>
                         {error.$internal}
@@ -502,7 +519,7 @@ function PillarAnalysis(props: Props) {
                             value={value.mainStatement}
                             error={error?.fields?.mainStatement}
                             rows={6}
-                            disabled={pendingPillarAnalysis}
+                            disabled={pending}
                         />
                     </div>
                     <div className={styles.inputContainer}>
@@ -517,7 +534,7 @@ function PillarAnalysis(props: Props) {
                             onChange={onValueChange}
                             error={error?.fields?.informationGap}
                             rows={6}
-                            disabled={pendingPillarAnalysis}
+                            disabled={pending}
                         />
                     </div>
                 </div>
@@ -585,7 +602,7 @@ function PillarAnalysis(props: Props) {
                         }}
                     >
                         <div className={styles.rightContainer}>
-                            {value.analyticalStatement?.map((analyticalStatement, index) => (
+                            {value.analyticalStatements?.map((analyticalStatement, index) => (
                                 <AnalyticalStatementInput
                                     className={styles.analyticalStatement}
                                     key={analyticalStatement.uuid}
@@ -596,7 +613,7 @@ function PillarAnalysis(props: Props) {
                                     onEntryMove={handleEntryMove}
                                     onEntryDrop={handleEntryDrop}
                                     // eslint-disable-next-line max-len
-                                    error={error?.fields?.analyticalStatement?.members?.[analyticalStatement.uuid]}
+                                    error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
                                 />
                             ))}
                             <QuickActionButton
@@ -606,7 +623,7 @@ function PillarAnalysis(props: Props) {
                                 title={_ts('pillarAnalysis', 'addAnalyticalStatementButtonTitle')}
                                 variant="primary"
                                 disabled={
-                                    (value.analyticalStatement?.length ?? 0) >= STATEMENTS_LIMIT
+                                    (value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT
                                 }
                             >
                                 <IoAdd />

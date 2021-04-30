@@ -150,10 +150,18 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             <div className={styles.upperContent}>
                 <header className={styles.upperContentHeader}>
                     <div className={styles.leftHeaderContainer}>
-                        <QuickActionButton name={undefined}>
+                        <QuickActionButton
+                            className={styles.button}
+                            name={undefined}
+                            disabled
+                        >
                             <IoCheckmarkCircleSharp />
                         </QuickActionButton>
-                        <QuickActionButton name={undefined}>
+                        <QuickActionButton
+                            className={styles.button}
+                            name={undefined}
+                            disabled
+                        >
                             <BiBarChartSquare />
                         </QuickActionButton>
                     </div>
@@ -169,6 +177,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     <QuickActionButton
                         className={styles.button}
                         name={undefined}
+                        // FIXME: use translation
+                        title="Reorder Analytical Statement"
+                        disabled
                     >
                         <GrDrag />
                     </QuickActionButton>

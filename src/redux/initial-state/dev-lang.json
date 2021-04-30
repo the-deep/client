@@ -1348,7 +1348,9 @@
         "-18211847": "Select User",
         "-14111698": "Select Usergroup",
         "-67231440": "Edit user membership",
-        "-31585106": "Edit usergroup membership"
+        "-31585106": "Edit usergroup membership",
+        "-30397704": "Pillar Analysis Entries",
+        "-33611896": "Pillar Analysis successfully updated."
     },
     "links": {
         "browserExtension": {
@@ -3761,7 +3763,11 @@
             "geoLabel": -50186668,
             "frameworkTitle": 379,
             "addAnalyticalStatementButtonTitle": -48337185,
-            "removeAnalyticalEntryButtonTitle": -89045904
+            "removeAnalyticalEntryButtonTitle": -89045904,
+            "entriesTitle": 15,
+            "pillarAnalysisTitle": -52946834,
+            "analysisPillarEntriesTitle": -30397704,
+            "pillarAnalaysisUpdateSuccess": -33611896
         },
         "projectEdit": {
             "closeButtonLabel": -39430073,
@@ -3779,7 +3785,6 @@
             "inactiveProject": -80991835,
             "projectVisibility": -71037102,
             "publicProject": -59389,
-            "privateProject": -92759559,
             "requestPrivateProject": -708101013,
             "projectAdditionalFeatures": -69797123,
             "projectAssessmentRegistry": -85659768,
@@ -3807,7 +3812,6 @@
             "usergroupFetchFailed": -55358986,
             "usersFetchFailed": -93154523,
             "actionsLabel": 16,
-            "deleteLabel": -94736495,
             "deleteUsergroupLabel": -56604597,
             "editUsergroupLabel": 168,
             "deleteUserLabel": -76480274,
@@ -3838,8 +3842,6 @@
             "recentActivitiesHeading": -14680704,
             "recentActivitiesFetchFailed": -46268038
         },
-        "recentActivities": {
-            "recentActivitiesHeading": -14680704
-        }
+        "recentActivities": {}
     }
 }

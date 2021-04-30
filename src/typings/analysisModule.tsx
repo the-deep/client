@@ -10,7 +10,7 @@ export interface AnalysisPillars {
     analysisTitle: string;
     mainStatement?: string;
     informationGap?: string;
-    analyticalStatement?: {
+    analyticalStatements?: {
         id?: number;
         uuid: string;
         order?: number;

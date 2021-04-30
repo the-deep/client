@@ -26,6 +26,8 @@
 
             .button {
                 flex-shrink: 0;
+                margin: var(--dui-spacing-extra-small);
+                padding: var(--dui-spacing-extra-small);
             }
         }
 

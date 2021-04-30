@@ -8,11 +8,11 @@ import {
 } from '@togglecorp/toggle-form';
 import { AnalysisPillars } from '#typings';
 
-export type FormType = Pick<AnalysisPillars, 'mainStatement' | 'informationGap' | 'analyticalStatement'>;
+export type FormType = Pick<AnalysisPillars, 'mainStatement' | 'informationGap' | 'analyticalStatements'>;
 type FormSchema = ObjectSchema<PartialForm<FormType>>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
-export type AnalyticalStatementType = NonNullable<NonNullable<FormType['analyticalStatement']>>[number];
+export type AnalyticalStatementType = NonNullable<NonNullable<FormType['analyticalStatements']>>[number];
 export type AnalyticalEntryType = NonNullable<NonNullable<AnalyticalStatementType['analyticalEntries']>>[number];
 
 type AnalyticalEntrySchema = ObjectSchema<PartialForm<AnalyticalEntryType>>;
@@ -57,7 +57,7 @@ export const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         mainStatement: [],
         informationGap: [],
-        analyticalStatement: analyticalStatementsSchema,
+        analyticalStatements: analyticalStatementsSchema,
     }),
 };
 
