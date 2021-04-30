@@ -3,11 +3,11 @@ import { isDefined } from '@togglecorp/fujs';
 import {
     Container,
     Button,
+    Pager,
     Card,
 } from '@the-deep/deep-ui';
 
 import List from '#rsu/../v2/View/List';
-import Pager from '#rscv/Pager';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import useRequest from '#utils/request';
@@ -119,20 +119,21 @@ function Assignments() {
                 )
             )}
             className={styles.assignments}
-            footerContent={(
-                assignmentsResponse && assignmentsResponse.count > 0 && (
-                    <Pager
-                        activePage={activePage}
-                        itemsCount={assignmentsResponse.count}
-                        maxItemsPerPage={maxItemsPerPage}
-                        onPageClick={setActivePage}
-                        showItemsPerPageChange={false}
-                    />
-                )
+            footerActions={((assignmentsResponse?.count ?? 0) > maxItemsPerPage) && (
+                <Pager
+                    activePage={activePage}
+                    itemsCount={assignmentsResponse?.count ?? 0}
+                    maxItemsPerPage={maxItemsPerPage}
+                    onActivePageChange={setActivePage}
+                    itemsPerPageControlHidden
+                    hidePageNumberLabel
+                    hideInfo
+                    hidePrevAndNext
+                />
             )}
         >
-            {pending && <LoadingAnimation />}
             <Card className={styles.content}>
+                {pending && <LoadingAnimation />}
                 <List
                     data={assignmentsResponse?.results}
                     keySelector={keySelector}

@@ -3,7 +3,7 @@ import { IoCheckmarkCircle } from 'react-icons/io5';
 import {
     ElementFragments,
     Link,
-    Button,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
@@ -36,15 +36,14 @@ function AssignmentItem(props: AssignmentRendererProps) {
         <div className={styles.assignmentItem}>
             <ElementFragments
                 actions={(
-                    <Button
+                    <QuickActionButton
                         name={undefined}
                         className={styles.markAsDoneButton}
                         onClick={handleClick}
                         disabled={markAsDonePending}
-                        variant="action"
                     >
                         <IoCheckmarkCircle />
-                    </Button>
+                    </QuickActionButton>
                 )}
                 childrenContainerClassName={styles.mainContent}
             >

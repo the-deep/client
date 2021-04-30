@@ -2,6 +2,7 @@
     background-color: var(--dui-color-white);
 
     .content {
+        position: relative;
         background-color: var(--dui-color-background-information);
         padding: calc(var(--spacing-large) - var(--spacing-medium));
         max-height: calc(100px + 25vh);
