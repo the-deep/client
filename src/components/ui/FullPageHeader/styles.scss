@@ -3,7 +3,7 @@
     align-items: center;
     border-bottom: var(--width-separator-thin) solid var(--color-separator);
     background-color: var(--dui-color-foreground);
-    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small)) calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
+    padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
 
     .project-details-container {
         display: flex;
@@ -16,7 +16,7 @@
             padding: var(--dui-spacing-small) var(--dui-spacing-medium);
 
             .icon {
-                height: var(--dui-height-navbar-icon);
+                height: 2rem;
                 color: var(--dui-color-brand);
             }
         }

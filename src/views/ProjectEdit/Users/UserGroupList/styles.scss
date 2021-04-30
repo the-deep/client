@@ -1,6 +1,5 @@
-.user-groups {
+.usergroups {
     display: flex;
-    position: relative;
     flex-direction: column;
 
     .header {
@@ -32,8 +31,10 @@
 
     .content {
         display: flex;
+        position: relative;
+        flex-direction: column;
         flex-grow: 1;
-        overflow: auto;
+        overflow-x: auto;
 
         .table {
             flex-grow: 1;
@@ -56,6 +57,11 @@
                     margin: 0 calc(var(--spacing-small) / 2);
                 }
             }
+        }
+
+        .pager {
+            align-self: flex-end;
+            flex-shrink: 0;
         }
     }
 

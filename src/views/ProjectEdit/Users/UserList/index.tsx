@@ -6,12 +6,13 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
-
 import {
     Container,
     Button,
+    Pager,
     QuickActionButton,
 } from '@the-deep/deep-ui';
+
 import { notifyOnFailure } from '#utils/requestNotify';
 import RawTable from '#rscv/RawTable';
 import { Header } from '#rscv/Table';
@@ -19,7 +20,6 @@ import TableHeader from '#rscv/TableHeader';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
-import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 
@@ -240,15 +240,14 @@ function UserList(props: Props) {
                     </div>
                 )
             }
-            {usersResponse && usersResponse.count > maxItemsPerPage && (
-                <Pager
-                    activePage={activePage}
-                    itemsCount={usersResponse.count}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onPageClick={setActivePage}
-                    showItemsPerPageChange={false}
-                />
-            )}
+            <Pager
+                activePage={activePage}
+                className={styles.pager}
+                itemsCount={usersResponse?.count ?? 0}
+                maxItemsPerPage={maxItemsPerPage}
+                onActivePageChange={setActivePage}
+                itemsPerPageControlHidden
+            />
             {showAddUserModal &&
                 <AddUserModal
                     onModalClose={handleModalClose}

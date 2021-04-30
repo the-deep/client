@@ -12,6 +12,7 @@ import {
     Container,
     Button,
     Link,
+    Pager,
     QuickActionButton,
 } from '@the-deep/deep-ui';
 
@@ -22,7 +23,6 @@ import TableHeader from '#rscv/TableHeader';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
-import Pager from '#rscv/Pager';
 import useRequest from '#utils/request';
 import _ts from '#ts';
 
@@ -43,7 +43,7 @@ interface Props{
 
 const maxItemsPerPage = 10;
 const emptyLink = '#'; // TODO: Add link when made
-const userGroupKeySelector = (d: UserGroup) => d.id;
+const usergroupKeySelector = (d: UserGroup) => d.id;
 
 function UserGroupList(props: Props) {
     const {
@@ -71,8 +71,8 @@ function UserGroupList(props: Props) {
     }, [setModalHidden]);
 
     const [
-        userGroupPending,
-        userGroupResponse,
+        usergroupPending,
+        usergroupResponse,
         ,
         triggerUsergroupResponse,
     ] = useRequest<MultiResponse<UserGroup>>({
@@ -189,8 +189,8 @@ function UserGroupList(props: Props) {
     ), []);
 
     const usergroupToEdit = useMemo(() => (
-        userGroupResponse?.results?.find(d => d.id === usergroupIdToEdit)
-    ), [userGroupResponse?.results, usergroupIdToEdit]);
+        usergroupResponse?.results?.find(d => d.id === usergroupIdToEdit)
+    ), [usergroupResponse?.results, usergroupIdToEdit]);
 
     const handleAddUsergroupClick = useCallback(() => {
         setUsergroupIdToEdit(undefined);
@@ -199,7 +199,7 @@ function UserGroupList(props: Props) {
 
     return (
         <Container
-            className={_cs(className, styles.userGroups)}
+            className={_cs(className, styles.usergroups)}
             heading={(
                 <>
                     <span className={styles.title}>
@@ -234,34 +234,33 @@ function UserGroupList(props: Props) {
                 </div>
             )}
         >
-            {userGroupPending && (<LoadingAnimation />)}
-            {(userGroupResponse && userGroupResponse?.count > 0)
+            {usergroupPending && (<LoadingAnimation />)}
+            {(usergroupResponse && usergroupResponse?.count > 0)
                 ? (
                     <RawTable
                         className={styles.table}
-                        data={userGroupResponse?.results ?? []}
+                        data={usergroupResponse?.results ?? []}
                         dataModifier={dataModifier}
                         headerModifier={headerModifier}
                         headers={headers}
-                        keySelector={userGroupKeySelector}
-                        pending={userGroupPending && (userGroupResponse?.results ?? []).length < 1}
+                        keySelector={usergroupKeySelector}
                     />
-                )
-                : (
-                    <Message className={styles.emptyTable}>
-                        {_ts('projectEdit', 'emptyUsergroupTableMessage')}
-                    </Message>
+                ) : (
+                    <div className={styles.emptyTable}>
+                        <Message>
+                            {_ts('projectEdit', 'emptyUsergroupTableMessage')}
+                        </Message>
+                    </div>
                 )
             }
-            {userGroupResponse && userGroupResponse.count > maxItemsPerPage && (
-                <Pager
-                    activePage={activePage}
-                    itemsCount={userGroupResponse.count}
-                    maxItemsPerPage={maxItemsPerPage}
-                    onPageClick={setActivePage}
-                    showItemsPerPageChange={false}
-                />
-            )}
+            <Pager
+                activePage={activePage}
+                className={styles.pager}
+                itemsCount={usergroupResponse?.count ?? 0}
+                maxItemsPerPage={maxItemsPerPage}
+                onActivePageChange={setActivePage}
+                itemsPerPageControlHidden
+            />
             {showAddUserGroupModal && (
                 <AddUserGroupModal
                     onModalClose={handleModalClose}

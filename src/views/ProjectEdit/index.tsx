@@ -61,6 +61,8 @@ function ProjectEdit(props: ViewProps) {
                                 name={undefined}
                                 className={styles.button}
                                 variant="primary"
+                                // NOTE: To be fixed later
+                                disabled
                             >
                                 {_ts('projectEdit', 'saveButtonLabel')}
                             </Button>
