@@ -6,7 +6,6 @@ import {
     QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
-    PartialForm,
     Error,
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
@@ -16,19 +15,19 @@ import _ts from '#ts';
 
 import EntryItem from '../../EntryItem';
 import EntryContext from '../../context';
-import { AnalyticalEntryType } from '../../schema';
+import { AnalyticalEntryType, PartialAnalyticalEntryType } from '../../schema';
 import { DroppedValue } from '../';
 
 import styles from './styles.scss';
 
 interface AnalyticalEntryInputProps {
-    statementUuid: string;
-    value: PartialForm<AnalyticalEntryType>;
+    statementClientId: string;
+    value: PartialAnalyticalEntryType;
     error: Error<AnalyticalEntryType> | undefined;
-    // onChange: (value: PartialForm<AnalyticalEntryType>, index: number) => void;
+    // onChange: (value: PartialAnalyticalEntryType, index: number) => void;
     onRemove: (index: number) => void;
     index: number;
-    onAnalyticalEntryDrop: (droppedValue: DroppedValue, dropOverEntryUuid: string) => void;
+    onAnalyticalEntryDrop: (droppedValue: DroppedValue, dropOverEntryClientId: string) => void;
 }
 
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
@@ -38,7 +37,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         // onChange,
         onRemove,
         index,
-        statementUuid,
+        statementClientId,
         onAnalyticalEntryDrop,
     } = props;
 
@@ -53,16 +52,16 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             if (!val) {
                 return;
             }
-            const typedVal = val as { entryId: number, statementUuid: string };
-            onAnalyticalEntryDrop(typedVal, value.uuid);
+            const typedVal = val as { entryId: number, statementClientId: string };
+            onAnalyticalEntryDrop(typedVal, value.clientId);
         },
         [value, onAnalyticalEntryDrop],
     );
 
     const dragValue = useMemo(() => ({
         entryId: value.entry,
-        statementUuid,
-    }), [value.entry, statementUuid]);
+        statementClientId,
+    }), [value.entry, statementClientId]);
 
     const { entries } = useContext(EntryContext);
     const entry = value.entry ? entries[value.entry] : undefined;

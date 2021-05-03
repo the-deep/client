@@ -84,6 +84,7 @@ module.exports = (env) => {
                 cacheGroups: {
                     vendors: {
                         test: /[\\/]node_modules[\\/]/,
+                        /*
                         name(module) {
                             // get the name. E.g. node_modules/packageName/not/this/part.js
                             // or node_modules/packageName
@@ -92,6 +93,8 @@ module.exports = (env) => {
                             // npm package names are URL-safe, but some servers don't like @ symbols
                             return `npm.${packageName.replace('@', '')}`;
                         },
+                        enforce: true,
+                        */
                         chunks: 'all',
                     },
                 },
