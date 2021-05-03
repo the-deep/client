@@ -8,12 +8,12 @@ import {
 
 import {
     activeUserSelector,
+    projectMembershipListSelector,
 } from '#redux';
 import {
     DatabaseEntityBase,
     User,
     AppState,
-    MultiResponse,
     Membership,
 } from '#typings';
 
@@ -45,14 +45,17 @@ interface ToggleEntryControlProps {
 
 interface PropsFromState {
     activeUser: User;
+    projectMembers: Membership[];
 }
 
 const CONTROL = 3;
 const UNCONTROL = 4;
+const QUALITY_CONTROLLER = 0;
 
 const controlFormData = { commentType: CONTROL };
 const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
+    projectMembers: projectMembershipListSelector(state),
 });
 
 function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
@@ -66,23 +69,13 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
         tooltip,
         disabled,
         activeUser,
+        projectMembers,
     } = props;
 
-    const [
-        projectMembersPending,
-        projectMembersResponse,
-    ] = useRequest<MultiResponse<Membership>>({
-        url: `server://v2/projects/${projectId}/project-memberships/`,
-        method: 'GET',
-        autoTrigger: true,
-        onFailure: notifyError(_ts('entryReview', 'projectMemberList')),
-    });
-
     const isQualityController = useMemo(() =>
-        projectMembersResponse?.results.find(
-            v => v.member === activeUser.userId,
-        )?.badges.some(v => v === 0),
-    [activeUser.userId, projectMembersResponse]);
+        projectMembers.find(v => v.member === activeUser.userId)
+            ?.badges.some(v => v === QUALITY_CONTROLLER),
+    [activeUser.userId, projectMembers]);
 
     const [
         commentModalShown,
@@ -175,7 +168,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                         }
                         onClick={handleClick}
                         pending={reviewRequestPending}
-                        disabled={disabled || projectMembersPending || !isQualityController}
+                        disabled={disabled || !isQualityController}
                     >
                         { controlStatusLabel }
                     </Button>
