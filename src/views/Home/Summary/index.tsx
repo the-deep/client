@@ -11,12 +11,11 @@ import {
 import {
     Container,
     ContainerProps,
+    InformationCard,
+    PercentageInformationCard,
 } from '@the-deep/deep-ui';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-
-import InformationCard from '#dui/InformationCard';
-import PercentageInformationCard from '#dui/PercentageInformationCard';
 
 import _ts from '#ts';
 
@@ -31,7 +30,6 @@ interface Props extends ContainerProps {
     pending: boolean;
     summaryResponse?: ProjectsSummary;
 }
-
 
 function Summary(props: Props) {
     const {

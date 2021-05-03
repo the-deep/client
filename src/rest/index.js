@@ -9,7 +9,6 @@ export * from './analysisFramework';
 export * from './assessmentRegistry';
 export * from './categoryEditor';
 export * from './connectors';
-export * from './docs';
 export * from './entries';
 export * from './export';
 export * from './external';

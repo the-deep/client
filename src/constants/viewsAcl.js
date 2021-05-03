@@ -6,10 +6,10 @@ const notProjectMember = ({ isLoggedIn, setupPermissions }) => (
 const notProjectAdmin = ({ isLoggedIn, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.modify
 );
-*/
 const notDev = ({ isLoggedIn, isDevMode }) => (
     !isLoggedIn || !isDevMode
 );
+*/
 const notAdmin = ({ isLoggedIn, isAdmin }) => (
     !isLoggedIn || !isAdmin
 );
@@ -102,12 +102,9 @@ const acl = {
 
     analysisFramework: { hide: notLoggedIn },
     categoryEditor: { hide: notLoggedIn },
-    weeklySnapshot: { hide: notLoggedIn },
-    apiDocs: { hide: notDevAndAdmin },
     stringManagement: { hide: notDevAndAdmin },
     landingPage: { hide: notLoggedIn },
     adminPanel: { hide: notAdmin },
-    visualization: { hide: notDev },
 
     // FIXME: have it's own permission model
     projectQuestionnaires: { hide: notQuestionnaireViewable },

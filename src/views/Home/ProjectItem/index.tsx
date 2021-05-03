@@ -10,6 +10,7 @@ import {
     ContainerCard,
     Card,
     ButtonLikeLink,
+    InformationCard,
 } from '@the-deep/deep-ui';
 
 import FormattedDate from '#rscv/FormattedDate';
@@ -17,7 +18,6 @@ import DateRangeOutput from '#dui/DateRangeOutput';
 import List from '#rscv/List';
 import Icon from '#rscg/Icon';
 import TextOutput from '#components/general/TextOutput';
-import InformationCard from '#dui/InformationCard';
 import ProgressLine from '#components/viz/ProgressLine';
 
 import {

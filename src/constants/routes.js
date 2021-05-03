@@ -289,22 +289,6 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'categoryEditor');
 
-    weeklySnapshot: {
-        order: 120,
-        type: ROUTE.private,
-        path: '/weekly-snapshot/',
-        loader: () => import('../views/WeeklySnapshot'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'weeklySnapshot');
-
-    apiDocs: {
-        order: 130,
-        type: ROUTE.private,
-        path: '/api-docs/',
-        loader: () => import('../views/ApiDocs'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'apiDocs');
-
     landingPage: {
         order: 140,
         type: ROUTE.private,
@@ -320,14 +304,6 @@ export const routes = {
         loader: () => import('../views/StringManagement'),
         links: allLinks,
     }, // _ts('pageTitle', 'stringManagement');
-
-    visualization: {
-        order: 170,
-        type: ROUTE.private,
-        path: '/visualization/',
-        loader: () => import('../views/Visualization'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'visualization');
 
     questionnaireBuilder: {
         order: 180,

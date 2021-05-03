@@ -14,9 +14,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
-import forceDirectedData from '#views/Visualization/dummydata/forceDirectedData';
 import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
-import OldForceDirectedGraph from '#rscz/ForceDirectedGraph';
 import wrapViz from '#rscz/VizWrapper';
 
 import {
@@ -461,14 +459,6 @@ export default class ClusterViz extends PureComponent {
                                     })}
                                 </Message>
                             </div>
-                            <OldForceDirectedGraph
-                                className={styles.forcedDirectedGraph}
-                                headerText={_ts('visualization', 'forcedDirectedGraph')}
-                                data={forceDirectedData}
-                                idSelector={ClusterViz.idSelector}
-                                groupSelector={ClusterViz.groupSelector}
-                                valueSelector={ClusterViz.valueSelector}
-                            />
                         </Fragment>
                     )
                 }

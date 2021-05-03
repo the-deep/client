@@ -17,9 +17,7 @@ export const allLinks = {
     countries: viewsAcl.countries,
     clusterViz: { hide: notClusteringViewable },
     connectors: viewsAcl.connectors,
-    apiDocs: viewsAcl.apiDocs,
     stringManagement: viewsAcl.stringManagement,
-    visualization: viewsAcl.visualization,
     adminPanel: viewsAcl.adminPanel,
 
     projectQuestionnaires: viewsAcl.projectQuestionnaires,
