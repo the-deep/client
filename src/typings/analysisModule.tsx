@@ -12,12 +12,12 @@ export interface AnalysisPillars {
     informationGap?: string;
     analyticalStatements?: {
         id?: number;
-        uuid: string;
+        clientId: string;
         order?: number;
         statement?: string;
         analyticalEntries: {
             id?: number;
-            uuid: string;
+            clientId: string;
             entry: number;
             order?: number;
         }[];

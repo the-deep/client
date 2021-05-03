@@ -17,14 +17,17 @@ import {
     TextArea,
 } from '@the-deep/deep-ui';
 import {
-    PartialForm,
     useFormArray,
     useFormObject,
     StateArg,
     Error,
 } from '@togglecorp/toggle-form';
 
-import { AnalyticalStatementType, AnalyticalEntryType } from '../schema';
+import {
+    AnalyticalStatementType,
+    PartialAnalyticalEntryType,
+    PartialAnalyticalStatementType,
+} from '../schema';
 import AnalyticalEntryInput from './AnalyticalEntryInput';
 
 import styles from './styles.scss';
@@ -33,22 +36,22 @@ const ENTRIES_LIMIT = 50;
 
 interface AnalyticalStatementInputProps {
     className?: string;
-    value: PartialForm<AnalyticalStatementType>;
+    value: PartialAnalyticalStatementType;
     error: Error<AnalyticalStatementType> | undefined;
-    onChange: (value: StateArg<PartialForm<AnalyticalStatementType>>, index: number) => void;
+    onChange: (value: StateArg<PartialAnalyticalStatementType>, index: number) => void;
     onRemove: (index: number) => void;
-    onEntryMove: (entryId: number, statementUuid: string) => void;
+    onEntryMove: (entryId: number, statementClientId: string) => void;
     onEntryDrop: (entryId: number) => void;
     index: number;
 }
 
 export interface DroppedValue {
     entryId: number;
-    statementUuid?: string;
+    statementClientId?: string;
 }
 
 const defaultVal: AnalyticalStatementType = {
-    uuid: '123',
+    clientId: '123',
     analyticalEntries: [],
 };
 
@@ -74,7 +77,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
     type AnalyticalEntry = typeof value.analyticalEntries;
 
     const handleAnalyticalEntryDrop = useCallback(
-        (dropValue: DroppedValue, dropOverEntryUuid?: string) => {
+        (dropValue: DroppedValue, dropOverEntryClientId?: string) => {
             onFieldChange(
                 (oldEntries: AnalyticalEntry) => {
                     // NOTE: Treat moved item as a new item by removing the old one and
@@ -92,9 +95,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
 
                     const newAnalyticalEntries = [...(oldEntries ?? [])];
 
-                    const uuid = randomString();
-                    let newAnalyticalEntry: PartialForm<AnalyticalEntryType> = {
-                        uuid,
+                    const clientId = randomString();
+                    let newAnalyticalEntry: PartialAnalyticalEntryType = {
+                        clientId,
                         entry: dropValue.entryId,
                         order: value.order ?? 0,
                     };
@@ -109,9 +112,9 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                         newAnalyticalEntries.splice(movedItemOldIndex, 1);
                     }
 
-                    if (dropOverEntryUuid) {
+                    if (dropOverEntryClientId) {
                         const currentIndex = newAnalyticalEntries
-                            .findIndex(v => v.uuid === dropOverEntryUuid);
+                            .findIndex(v => v.clientId === dropOverEntryClientId);
                         newAnalyticalEntries.splice(currentIndex, 0, newAnalyticalEntry);
                     } else {
                         newAnalyticalEntries.push(newAnalyticalEntry);
@@ -124,14 +127,20 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 },
                 'analyticalEntries' as const,
             );
-            if (isDefined(dropValue.statementUuid) && (dropValue.statementUuid !== value.uuid)) {
+            if (
+                isDefined(dropValue.statementClientId)
+                && (dropValue.statementClientId !== value.clientId)
+            ) {
                 // NOTE: Remove entry from old statement if it was moved from
                 // one statement to another statement
-                onEntryMove(dropValue.entryId, dropValue.statementUuid);
+                onEntryMove(dropValue.entryId, dropValue.statementClientId);
             }
             onEntryDrop(dropValue.entryId);
         },
-        [onEntryDrop, onFieldChange, value.analyticalEntries, value.order, onEntryMove, value.uuid],
+        [
+            onEntryDrop, onFieldChange, onEntryMove,
+            value.analyticalEntries, value.order, value.clientId,
+        ],
     );
 
     const handleAnalyticalEntryAdd = useCallback(
@@ -139,7 +148,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             if (!val) {
                 return;
             }
-            const typedVal = val as { entryId: number, statementUuid: string };
+            const typedVal = val as { entryId: number, statementClientId: string };
             handleAnalyticalEntryDrop(typedVal);
         },
         [handleAnalyticalEntryDrop],
@@ -204,14 +213,14 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 <div className={styles.entryContainer}>
                     {value.analyticalEntries?.map((analyticalEntry, myIndex) => (
                         <AnalyticalEntryInput
-                            key={analyticalEntry.uuid}
+                            key={analyticalEntry.clientId}
                             index={myIndex}
-                            statementUuid={value.uuid}
+                            statementClientId={value.clientId}
                             value={analyticalEntry}
                             // onChange={onAnalyticalEntryChange}
                             onRemove={onAnalyticalEntryRemove}
                             // eslint-disable-next-line max-len
-                            error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.uuid]}
+                            error={error?.fields?.analyticalEntries?.members?.[analyticalEntry.clientId]}
                             onAnalyticalEntryDrop={handleAnalyticalEntryDrop}
                         />
                     ))}

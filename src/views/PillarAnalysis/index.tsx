@@ -19,7 +19,6 @@ import {
     CollapsibleContainer,
 } from '@the-deep/deep-ui';
 import {
-    PartialForm,
     useForm,
     useFormArray,
 } from '@togglecorp/toggle-form';
@@ -58,7 +57,11 @@ import {
 import EntriesFilterForm from './EntriesFilterForm';
 import SourceEntryItem from './SourceEntryItem';
 import AnalyticalStatementInput from './AnalyticalStatementInput';
-import { schema, defaultFormValues, AnalyticalStatementType } from './schema';
+import {
+    schema,
+    defaultFormValues,
+    PartialAnalyticalStatementType,
+} from './schema';
 import EntryContext, { EntryFieldsMin } from './context';
 
 import styles from './styles.scss';
@@ -407,9 +410,9 @@ function PillarAnalysis(props: Props) {
 
             const oldStatements = value.analyticalStatements ?? [];
 
-            const uuid = randomString();
-            const newAnalyticalStatement: PartialForm<AnalyticalStatementType> = {
-                uuid,
+            const clientId = randomString();
+            const newAnalyticalStatement: PartialAnalyticalStatementType = {
+                clientId,
                 order: oldStatements.length,
             };
             onValueChange(
@@ -423,12 +426,12 @@ function PillarAnalysis(props: Props) {
     type AnalyticalStatements = typeof value.analyticalStatements;
 
     const handleEntryMove = useCallback(
-        (entryId: number, statementUuid: string) => {
+        (entryId: number, statementClientId: string) => {
             onValueChange(
                 (oldStatements: AnalyticalStatements) => (
                     produce(oldStatements ?? [], (safeStatements) => {
                         const selectedIndex = safeStatements
-                            .findIndex(s => s.uuid === statementUuid);
+                            .findIndex(s => s.clientId === statementClientId);
                         if (selectedIndex !== -1) {
                             const safeEntries = safeStatements[selectedIndex].analyticalEntries;
                             const entryIndex = safeEntries?.findIndex(s => s.entry === entryId);
@@ -605,7 +608,7 @@ function PillarAnalysis(props: Props) {
                             {value.analyticalStatements?.map((analyticalStatement, index) => (
                                 <AnalyticalStatementInput
                                     className={styles.analyticalStatement}
-                                    key={analyticalStatement.uuid}
+                                    key={analyticalStatement.clientId}
                                     index={index}
                                     value={analyticalStatement}
                                     onChange={onAnalyticalStatementChange}
@@ -613,7 +616,7 @@ function PillarAnalysis(props: Props) {
                                     onEntryMove={handleEntryMove}
                                     onEntryDrop={handleEntryDrop}
                                     // eslint-disable-next-line max-len
-                                    error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.uuid]}
+                                    error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.clientId]}
                                 />
                             ))}
                             <QuickActionButton
