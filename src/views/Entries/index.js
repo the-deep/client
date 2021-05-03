@@ -9,7 +9,9 @@ import {
     reverseRoute,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
-
+import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
 import { Link } from 'react-router-dom';
 import { pathNames } from '#constants/';
 import {
@@ -54,6 +56,7 @@ import {
     totalEntriesCountForProjectSelector,
     setEntriesViewActivePageAction,
     geoOptionsForProjectSelector,
+    setProjectMembershipsAction,
 } from '#redux';
 
 import QualityControl from './QualityControl';
@@ -187,6 +190,7 @@ const mapDispatchToProps = dispatch => ({
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     // setProject: params => dispatch(setProjectAction(params)),
     unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
+    setProjectMemberships: params => dispatch(setProjectMembershipsAction(params)),
 });
 
 const propTypes = {
@@ -354,6 +358,25 @@ const requestOptions = {
             schemaName: 'entriesGetResponse',
         },
         */
+    },
+    projectMembershipRequest: {
+        onMount: true,
+        onPropsChanged: ['projectId', 'usergroups'],
+        url: ({ props }) => `/projects/${props.projectId}/project-memberships/`,
+        method: methods.GET,
+        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
+        onSuccess: ({
+            response = {},
+            props: {
+                projectId,
+                setProjectMemberships,
+            },
+        }) => {
+            setProjectMemberships({
+                projectId,
+                memberships: response.results,
+            });
+        },
     },
 };
 
