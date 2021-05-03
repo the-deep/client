@@ -1,4 +1,4 @@
-import { isDefined, isNotDefined } from '@togglecorp/fujs';
+import { isDefined, isNotDefined, isTruthyString } from '@togglecorp/fujs';
 import { serverlessEndpoint, wsEndpoint, getVersionedUrl } from '#config/rest';
 
 import { UrlParams } from './types';
@@ -67,6 +67,20 @@ export function processDeepOptions(url: string, options: RequestInit, access: st
         ...otherOptions,
     };
 }
+
+export type Methods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export function isFetchable(
+    url: string | undefined,
+    method: Methods,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    body: RequestInit['body'] | object | undefined,
+): url is string {
+    return (
+        isTruthyString(url)
+        && (!['PUT', 'PATCH', 'POST'].includes(method) || isDefined(body))
+    );
+}
+
 
 /*
 export function alterResponseErrorToFaramError(errors: Err) {
