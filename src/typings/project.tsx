@@ -158,6 +158,7 @@ export interface UserGroup {
     role: number;
     addedBy: number;
     addedByName: string;
+    badges: number[];
     roleDetails: {
         id: number;
         title: string;
