@@ -3,6 +3,10 @@ import { encodeDate } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 import colorBrewer from 'colorbrewer';
 import {
+    IoDocumentOutline,
+    IoCheckmarkCircle,
+} from 'react-icons/io5';
+import {
     PieChart,
     Pie,
     ResponsiveContainer,
@@ -14,10 +18,9 @@ import {
     Button,
     Card,
     Container,
+    InformationCard,
+    PercentageInformationCard,
 } from '@the-deep/deep-ui';
-
-import InformationCard from '#dui/InformationCard';
-import InfoBoxWithDonut from '#dui/InfoBoxWithDonut';
 
 import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
@@ -46,7 +49,6 @@ import {
     MultiResponse,
 } from '#typings';
 
-import svgPaths from '#constants/svgPaths';
 import _ts from '#ts';
 import { activeProjectIdFromStateSelector } from '#redux';
 
@@ -313,19 +315,19 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         />
                     </div>
                     <div className={styles.bottomInfoBox}>
-                        <InfoBoxWithDonut
+                        <PercentageInformationCard
                             className={styles.infoBox}
-                            percent={78}
+                            value={72}
+                            variant="complement2"
                             label={_ts('analysis', 'entriesAnalyzedLabel')}
-                            variant="complement"
-                            image={`${svgPaths.checkmarkCircleFillIcon}#checkmark`}
+                            icon={<IoCheckmarkCircle />}
                         />
-                        <InfoBoxWithDonut
+                        <PercentageInformationCard
                             className={styles.infoBox}
-                            percent={54}
-                            variant="accent"
+                            value={54}
                             label={_ts('analysis', 'sourcesAnalyzedLabel')}
-                            image={`${svgPaths.documentIcon}#document`}
+                            variant="complement1"
+                            icon={<IoDocumentOutline />}
                         />
                     </div>
                 </div>

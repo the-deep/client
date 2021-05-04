@@ -17,6 +17,10 @@ import {
     QuickActionButton,
     TextArea,
     CollapsibleContainer,
+    Tabs,
+    Tab,
+    TabList,
+    TabPanel,
 } from '@the-deep/deep-ui';
 import {
     useForm,
@@ -30,7 +34,6 @@ import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
-import Tabs, { Tab, TabList, TabPanel } from '#dui/Tabs';
 
 import notify from '#notify';
 import useRequest from '#utils/request';
@@ -556,6 +559,7 @@ function PillarAnalysis(props: Props) {
                     <Tabs
                         value={activeTab}
                         onChange={setActiveTab}
+                        variant="secondary"
                     >
                         <CollapsibleContainer
                             className={styles.entryListSection}

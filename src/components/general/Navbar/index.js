@@ -192,8 +192,6 @@ function Navbar(props) {
             'countries',
             'connectors',
 
-            'apiDocs',
-            'visualization',
             'stringManagement',
         ];
         return getValidLinks(dropLinks, currentPath);

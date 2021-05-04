@@ -134,13 +134,11 @@ export default class NavDrop extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static dropdownItemIcons = {
-        apiDocs: 'code',
         userProfile: 'person',
         stringManagement: 'world',
         projects: 'map',
         countries: 'globe',
         connectors: 'link',
-        visualization: 'pizza',
     };
 
     static getDropItemKey = item => item.key

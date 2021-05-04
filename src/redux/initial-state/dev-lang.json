@@ -322,7 +322,6 @@
         "768": "e.g. 123 456",
         "774": "Organigram structure",
         "775": "Options",
-        "777": "Information date",
         "780": "List",
         "781": "Overview",
         "786": "Sub-rows",
@@ -532,29 +531,10 @@
         "3010": "Cluster-{clusterIndex}",
         "3011": "Keywords",
         "3012": "{leadsCount} leads",
-        "3999": "Visualizations",
-        "4000": "Visualization",
         "4001": "Sunburst",
         "4002": "Correlation matrix",
-        "4003": "Dendrogram",
-        "4004": "Radial dendrogram",
-        "4005": "Treemap",
-        "4006": "Zoomable treemap",
         "4007": "Chord diagram",
-        "4008": "Horizontal bar",
         "4009": "Forced directed graph",
-        "4010": "Force directed graph voronoi",
-        "4011": "Collapsible tree",
-        "4012": "Orgchart",
-        "4013": "Piechart",
-        "4014": "Donutchart",
-        "4016": "Stacked barchart",
-        "4017": "Streamgraph",
-        "4018": "Sankey",
-        "4019": "Sparklines",
-        "4020": "Parallel coordinates",
-        "4021": "Cluster Force Layout",
-        "4022": "GoogleOrgChart",
         "5550": "{count} items selected",
         "5551": "Selected",
         "5552": "All",
@@ -567,8 +547,6 @@
         "5562": "Assessments",
         "5563": "Edit assessment",
         "5566": "User profile",
-        "5569": "Weekly snapshot",
-        "5570": "Api docs",
         "5571": "404",
         "5572": "String management",
         "6000": "Do you want to remove this widget?",
@@ -576,9 +554,6 @@
         "7002": "Methodology",
         "7003": "Summary",
         "7004": "Score",
-        "7036": "Response schema",
-        "7037": "Request schema",
-        "7038": "Loading api",
         "7039": "Sub-columns",
         "7500": "Couldn't upload image",
         "7501": "Couldn't upload file",
@@ -765,7 +740,6 @@
         "-54185786": "Users/Usergroups",
         "-17852758": "Search Users/Usergroups",
         "-1045504": "Go back",
-        "-72172702": "Workshop",
         "-7863682": "Entries activity - Last 3 months",
         "-88399268": "Leads activity - Last 3 months",
         "-13293319": "Project status",
@@ -922,7 +896,6 @@
         "-92759559": "Private",
         "-59389": "Public",
         "-94818927": "Note: Project visibility cannot be changed once the project is created",
-        "-40643314": "Grouped bar chart",
         "-38465658": "Failed to create tabular.",
         "-64655622": "This is a private project and is only visible to project members.",
         "-57055647": "Project Visibility",
@@ -1295,8 +1268,6 @@
         "-52946834": "Pillar analysis",
         "-35701649": "Select Analysis Date",
         "-80223054": "All Analyses",
-        "-24200085": "All Analyses",
-        "-98549020": "Select Analysis Date",
         "-22196585": "Create a project",
         "-48980925": "Save and get started",
         "-59904873": "Project details",
@@ -1428,14 +1399,6 @@
             "widgetsPreviewTitle": -61550815,
             "viewDetailsButtonLabel": -40186961
         },
-        "widgets.editor.date": {
-            "informationDateCheckboxLabel": 777,
-            "widgetTitlePlaceholder": 13,
-            "titleLabel": 13,
-            "saveButtonLabel": 25,
-            "cancelButtonLabel": 61,
-            "cancelConfirmMessage": -14675920
-        },
         "widgets.editor.default": {
             "widgetTitlePlaceholder": 13,
             "titleLabel": 13,
@@ -1468,11 +1431,6 @@
         },
         "widgets.tagging.matrix2d": {
             "subsectorsLabel": 7039
-        },
-        "api": {
-            "loadingLabel": 7038,
-            "responseSchemaLabel": 7036,
-            "requestSchemaLabel": 7037
         },
         "categoryEditor": {
             "titleInputTitle": 12550,
@@ -2355,13 +2313,10 @@
             "connectors": 1100,
             "analysisFramework": 379,
             "categoryEditor": 380,
-            "weeklySnapshot": 5569,
-            "apiDocs": 5570,
             "fourHundredFour": 5571,
             "browserExtension": 2000,
             "stringManagement": 5572,
             "clusterViz": 3000,
-            "visualization": 3999,
             "fourHundredThree": -44264923,
             "projectDenied": -44264923,
             "plannedArys": -41526057,
@@ -2847,32 +2802,6 @@
             "createClusterFailure": -96949624,
             "addLeadsLinkLabel": 12
         },
-        "visualization": {
-            "visualizationTitle": 4000,
-            "sunburst": 4001,
-            "correlationMatrix": 4002,
-            "dendrogram": 4003,
-            "radialDendrogram": 4004,
-            "treemap": 4005,
-            "zoomableTreemap": 4006,
-            "chordDiagram": 4007,
-            "horizontalBar": 4008,
-            "forcedDirectedGraph": 4009,
-            "forceDirectedGraphVoronoi": 4010,
-            "collapsibleTree": 4011,
-            "orgChart": 4012,
-            "pieChart": 4013,
-            "donutChart": 4014,
-            "organigram": 753,
-            "stackedBarChart": 4016,
-            "streamGraph": 4017,
-            "sankey": 4018,
-            "sparklines": 4019,
-            "parallelCoordinates": 4020,
-            "googleOrgChart": 4022,
-            "clusterForceLayout": 4021,
-            "groupedBarChart": -40643314
-        },
         "stringManagement": {
             "devLangSaveTitle": 12001,
             "devLangSaveSuccessText": 12002
@@ -3134,7 +3063,6 @@
             "noRegionsInProject": 343,
             "tabularCreationFailedMessage": -38465658
         },
-        "tabular.editModal.editField": {},
         "project.general.dashboard": {
             "createdAtTitle": 163,
             "createdByTitle": 538,
@@ -3230,7 +3158,6 @@
             "messageForAnd": -45914563,
             "messageForOr": -2861291
         },
-        "nagbar": {},
         "components.geo.geoModal": {
             "adminLevelLabel": 123,
             "applyButtonLabel": 427,
@@ -3265,16 +3192,11 @@
             "totalLabel": -60840374,
             "validLabel": -16598080
         },
-        "components.dashboard": {},
         "geoViz": {
             "noRegionSelectedMessage": -14762237,
             "invalidRegion": -78572254,
             "legendTitle": -37259810
         },
-        "tabular.editModal": {},
-        "tabular.sheets.date": {},
-        "tabular.sheets.number": {},
-        "tabular.sheets.string": {},
         "components.multiDocumentUploader": {
             "externalLinkLabel": -54799911,
             "uploadFilesLabel": -19937712,
@@ -3284,7 +3206,6 @@
             "dropFilesHereLabel": -93329065,
             "uploadingFilesLabel": -16421564
         },
-        "widgets.editor": {},
         "leadgroups": {
             "emptyMessage": -50910995,
             "emptyWithFilterMessage": -27964979
@@ -3412,7 +3333,6 @@
         "editFramework": {
             "dummyExcerptPlaceholder": -66973833
         },
-        "entryComment": {},
         "entryComments": {
             "assignedTo": -127936,
             "deleteLabel": -94736495,
@@ -3603,7 +3523,6 @@
             "unsupportedBrowserMessage": -6144826,
             "hereLabel": -40128868
         },
-        "canvasDrawModal": {},
         "components.canvasDrawModal": {
             "cancelButtonLabel": 61,
             "clearButtonLabel": -32081272,
@@ -3662,7 +3581,6 @@
             "searchInputPlacehoder": -46164024,
             "showTableOfContents": -19695002
         },
-        "qualityControl": {},
         "home.recentProjects": {
             "analysisFrameworkLabel": -540964,
             "editProjectButtonLabel": 171,
@@ -3841,7 +3759,6 @@
             "leadAdded": -98563490,
             "recentActivitiesHeading": -14680704,
             "recentActivitiesFetchFailed": -46268038
-        },
-        "recentActivities": {}
+        }
     }
 }
