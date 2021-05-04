@@ -6,7 +6,6 @@ import { compareNumber } from '@togglecorp/fujs';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
-import MultiSelectInput from '#rsci/MultiSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     notifyOnFailure,
@@ -25,19 +24,11 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const badgeOptions = [
-    { id: 0, label: _ts('project.users', 'qualityController') },
-];
-
-const projectBadgeKeySelector = badge => badge.id;
-const projectBadgeLabelSelector = badge => badge.label;
-
 const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.number,
         title: PropTypes.string,
         id: PropTypes.number,
-        badges: PropTypes.arrayOf(PropTypes.number),
     }).isRequired,
 
     activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -160,8 +151,6 @@ export default class Actions extends React.PureComponent {
         });
     }
 
-    handleBadgeSelection = () => {}; // TODO: implement this when api is ready
-
     render() {
         const {
             readOnly,
@@ -175,7 +164,6 @@ export default class Actions extends React.PureComponent {
 
         const {
             role,
-            badges,
         } = row;
 
         const removeUG = _ts(
@@ -206,19 +194,6 @@ export default class Actions extends React.PureComponent {
                     onChange={this.handleRoleSelectInputChange}
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
-                    showHintAndError={false}
-                    readOnly={readOnly}
-                    disabled={isSuperior || pending}
-                />
-                <MultiSelectInput
-                    label={_ts('project.users', 'badges')}
-                    placeholder=""
-                    hideClearButton
-                    value={badges}
-                    options={badgeOptions}
-                    onChange={this.handleTagSelection}
-                    keySelector={projectBadgeKeySelector}
-                    labelSelector={projectBadgeLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
                     disabled={isSuperior || pending}
