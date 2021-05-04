@@ -73,10 +73,10 @@ export const leadAddSetLeadTabularBookAction = ({ leadKey, tabularBook }) => ({
     tabularBook,
 });
 
-export const leadAddSetLeadAttachmentAction = ({ leadKey, attachmentId }) => ({
+export const leadAddSetLeadAttachmentAction = ({ leadKey, attachment }) => ({
     type: LA__SET_LEAD_ATTACHMENT,
     leadKey,
-    attachmentId,
+    attachment,
 });
 
 export const leadAddChangeLeadAction = ({ leadKey, faramValues, faramErrors }) => ({
@@ -361,7 +361,7 @@ const setLeadTabularBook = (state, action) => {
 const setLeadAttachment = (state, action) => {
     const {
         leadKey,
-        attachmentId,
+        attachment,
     } = action;
     const {
         leadAddPage: {
@@ -385,9 +385,7 @@ const setLeadAttachment = (state, action) => {
         }
 
         // eslint-disable-next-line no-param-reassign
-        safeState.leadAddPage.leads[index].faramValues.attachment = {
-            id: attachmentId,
-        };
+        safeState.leadAddPage.leads[index].faramValues.attachment = attachment;
     });
 
     return newState;
