@@ -203,7 +203,21 @@ export default class Actions extends React.PureComponent {
         removeUserMembershipRequest.do({ membership });
     }
 
-    handleBadgeSelection = () => {}; // TODO: implement this when api is ready
+    handleBadgeSelection = (value) => {
+        const {
+            row,
+            requests: {
+                changeMembershipRequest,
+            },
+        } = this.props;
+
+        changeMembershipRequest.do({
+            membership: {
+                id: row.id,
+                badges: value,
+            },
+        });
+    };
 
     render() {
         const {
