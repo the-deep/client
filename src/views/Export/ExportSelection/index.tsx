@@ -177,7 +177,6 @@ function EntriesExportSelection(props: Props) {
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
-    // const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, onFilterChange] = useState<FaramValues>({});
@@ -343,7 +342,6 @@ function EntriesExportSelection(props: Props) {
             ...Object.entries(processedFilters),
         ];
 
-        // setFiltersToExport(newFilters);
         setIsPreview(preview);
 
         getExport(newFilters);

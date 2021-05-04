@@ -142,7 +142,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         modifyAnalysis,
     ] = useArrayEdit(setAnalyses, analysisKeySelector);
     const [analysisCount, setAnalysisCount] = useState(0);
-    // const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
     const [analysisToEdit, setAnalysisToEdit] = useState();
     const [filter, setFilter] = useState<Filter | undefined>(undefined);
 
@@ -208,10 +207,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         label: d.title,
     }))) ?? [];
 
-    const handleAnalysisToDeleteClick = useCallback((toDeleteKey: number) => {
-        // setAnalysisIdToDelete(toDeleteKey);
-        deleteAnalysisTrigger(toDeleteKey);
-    }, [deleteAnalysisTrigger]);
+    const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
 
     const analysisObjectToEdit = useMemo(() => (
         analyses?.find(a => a.id === analysisToEdit)

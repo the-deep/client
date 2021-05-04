@@ -1,8 +1,5 @@
-import React, { useCallback, useRef, useMemo } from 'react';
-import {
-    _cs,
-    isDefined,
-} from '@togglecorp/fujs';
+import React, { useCallback, useRef } from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';

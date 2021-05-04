@@ -47,9 +47,6 @@ function ExportedFiles(props: Props) {
     const [userExports, setUserExports] = useState<Export[]>([]);
     const [exportCount, setExportCount] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<number>();
-    // const [deleteExportId, setDeleteExportId] = useState<number>();
-    // const [cancelExportId, setCancelExportId] = useState<number>();
-    // const [archiveExportId, setArchiveExportId] = useState<number>();
     const [archiveStatus, setArchiveStatus] = useState<boolean>();
 
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
@@ -93,15 +90,12 @@ function ExportedFiles(props: Props) {
     } = useLazyRequest<unknown, number>({
         url: ctx => `server://exports/${ctx}/`,
         method: 'DELETE',
-        onSuccess: () => {
+        onSuccess: (_, ctx) => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
-            // FIXME: can't do this
-            /*
-            if (deleteExportId === selectedExport) {
+            if (ctx === selectedExport) {
                 setSelectedExport(undefined);
             }
-            */
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,
@@ -127,15 +121,12 @@ function ExportedFiles(props: Props) {
         url: ctx => `server://exports/${ctx}/cancel/`,
         method: 'POST',
         body: {},
-        onSuccess: () => {
+        onSuccess: (_, ctx) => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
-            /*
-            // FIXME: can't do this
-            if (cancelExportId === selectedExport) {
+            if (ctx === selectedExport) {
                 setSelectedExport(undefined);
             }
-            */
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,
@@ -162,15 +153,12 @@ function ExportedFiles(props: Props) {
         url: ctx => `server://exports/${ctx}/`,
         method: 'PATCH',
         body: { is_archived: archiveStatus },
-        onSuccess: () => {
+        onSuccess: (_, ctx) => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
-            // FIXME: can't do this
-            /*
-            if (archiveExportId === selectedExport) {
+            if (ctx === selectedExport) {
                 setSelectedExport(undefined);
             }
-            */
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,

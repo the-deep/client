@@ -20,7 +20,7 @@ import fetchResource, { RequestOptions as NonTriggerFetchOptions } from './fetch
 // eslint-disable-next-line @typescript-eslint/ban-types
 type RequestBody = RequestInit['body'] | object;
 
-interface RequestOptions<T> extends NonTriggerFetchOptions<T> {
+interface RequestOptions<T> extends NonTriggerFetchOptions<T, null> {
     // NOTE: disabling will cancel on-going requests
     skip?: boolean;
 
@@ -162,7 +162,7 @@ function useRequest<T>(
                 const { onSuccess } = requestOptionsRef.current;
                 if (onSuccess) {
                     callSideEffectSafe(() => {
-                        onSuccess(mockResponse);
+                        onSuccess(mockResponse, null);
                     }, clientIdRef.current);
                 }
                 return () => {};
@@ -209,6 +209,7 @@ function useRequest<T>(
                 transformUrlRef,
                 transformOptionsRef,
                 requestOptionsRef,
+                null,
 
                 setPendingSafe,
                 setResponseSafe,

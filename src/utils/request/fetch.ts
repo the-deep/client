@@ -9,24 +9,25 @@ import { ContextInterface } from './context';
 
 import schema from '../../schema';
 
-export interface RequestOptions<T> {
+export interface RequestOptions<T, Q> {
     schemaName?: string;
-    shouldRetry?: (val: T, run: number) => number;
-    shouldPoll?: (val: T | undefined) => number;
-    onSuccess?: (val: T) => void;
-    onFailure?: (val: Err, error: Record<string, unknown>) => void;
+    shouldRetry?: (val: T, run: number, context: Q) => number;
+    shouldPoll?: (val: T | undefined, context: Q) => number;
+    onSuccess?: (val: T, context: Q) => void;
+    onFailure?: (val: Err, error: Record<string, unknown>, context: Q) => void;
     // delay?: number;
     // preserveResponse?: boolean;
 }
 
-async function fetchResource<T>(
+async function fetchResource<T, Q>(
     url: string,
     options: RequestInit,
     delay: number,
 
     transformUrlRef: React.MutableRefObject<ContextInterface['transformUrl']>,
     transformOptionsRef: React.MutableRefObject<ContextInterface['transformOptions']>,
-    requestOptionsRef: React.MutableRefObject<RequestOptions<T>>,
+    requestOptionsRef: React.MutableRefObject<RequestOptions<T, Q>>,
+    context: Q,
 
     setPendingSafe: (value: boolean, clientId: number) => void,
     setResponseSafe: (value: T | undefined, clientId: number) => void,
@@ -51,6 +52,7 @@ async function fetchResource<T>(
             transformUrlRef,
             transformOptionsRef,
             requestOptionsRef,
+            context,
 
             setPendingSafe,
             setResponseSafe,
@@ -65,7 +67,7 @@ async function fetchResource<T>(
 
     async function handleError(message: Error) {
         const { shouldPoll } = requestOptionsRef.current;
-        const pollTime = shouldPoll ? shouldPoll(undefined) : -1;
+        const pollTime = shouldPoll ? shouldPoll(undefined, context) : -1;
 
         if (pollTime > 0) {
             await handlePoll(pollTime);
@@ -93,7 +95,7 @@ async function fetchResource<T>(
                         errorCode: message.errorCode,
                     };
 
-                    onFailure(message.value, requestError);
+                    onFailure(message.value, requestError, context);
                 }, clientId);
             }
         }
@@ -155,7 +157,8 @@ async function fetchResource<T>(
         }
     }
 
-    const retryTime = shouldRetry ? shouldRetry(resBody as T, run) : -1;
+    const retryTime = shouldRetry ? shouldRetry(resBody as T, run, context) : -1;
+
     if (retryTime >= 0) {
         await sleep(retryTime, { signal });
         await fetchResource(
@@ -166,6 +169,7 @@ async function fetchResource<T>(
             transformUrlRef,
             transformOptionsRef,
             requestOptionsRef,
+            context,
 
             setPendingSafe,
             setResponseSafe,
@@ -179,7 +183,7 @@ async function fetchResource<T>(
         return;
     }
 
-    const pollTime = shouldPoll ? shouldPoll(resBody as T) : -1;
+    const pollTime = shouldPoll ? shouldPoll(resBody as T, context) : -1;
     ReactDOM.unstable_batchedUpdates(() => {
         if (pollTime < 0) {
             setPendingSafe(false, clientId);
@@ -191,7 +195,7 @@ async function fetchResource<T>(
     const { onSuccess } = requestOptionsRef.current;
     if (onSuccess) {
         callSideEffectSafe(() => {
-            onSuccess(resBody as T);
+            onSuccess(resBody as T, context);
         }, clientId);
     }
 

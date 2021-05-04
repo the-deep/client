@@ -27,6 +27,7 @@ const staticContent = path.resolve(appBase, 'static/');
 const smp = new SpeedMeasurePlugin({
     outputFormat: 'humanVerbose',
     loaderTopFiles: 20,
+    disable: !process.env.MEASURE,
     // granularLoaderData: true,
 });
 

@@ -120,7 +120,6 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
     } = useLazyRequest<ProjectDetails, unknown>({
         url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
         method: projectId ? 'PATCH' : 'POST',
-        // body: finalValues,
         body: ctx => ctx,
         onSuccess: (response) => {
             if (!projectId) {

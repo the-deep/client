@@ -22,7 +22,7 @@ export type PartialAnalyticalStatementType = PartialForm<
 export type AnalyticalEntryType = NonNullable<NonNullable<AnalyticalStatementType['analyticalEntries']>>[number];
 export type PartialAnalyticalEntryType = PartialForm<AnalyticalEntryType, { clientId: string }>;
 
-type AnalyticalEntrySchema = ObjectSchema<AnalyticalEntryType>;
+type AnalyticalEntrySchema = ObjectSchema<PartialAnalyticalEntryType>;
 type AnalyticalEntrySchemaFields = ReturnType<AnalyticalEntrySchema['fields']>;
 const analyticalEntrySchema: AnalyticalEntrySchema = {
     fields: (): AnalyticalEntrySchemaFields => ({
@@ -33,7 +33,7 @@ const analyticalEntrySchema: AnalyticalEntrySchema = {
     }),
 };
 
-type AnalyticalEntriesSchema = ArraySchema<AnalyticalEntryType>;
+type AnalyticalEntriesSchema = ArraySchema<PartialAnalyticalEntryType>;
 type AnalyticalEntriesSchemaMember = ReturnType<AnalyticalEntriesSchema['member']>;
 const analyticalEntriesSchema: AnalyticalEntriesSchema = {
     keySelector: col => col.clientId,
