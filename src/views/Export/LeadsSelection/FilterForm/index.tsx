@@ -16,7 +16,7 @@ import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import _ts from '#ts';
 import {
     LeadOptions,
@@ -202,15 +202,14 @@ function FilterForm(props: OwnProps) {
         geoOptions,
     ]);
 
-    const [
-        leadOptionsPending,
-        leadOptions,
-    ] = useRequest<LeadOptions>({
+    const {
+        pending: leadOptionsPending,
+        response: leadOptions,
+    } = useRequest<LeadOptions>({
         url: 'server://lead-options/',
         query: {
             projects: [projectId],
         },
-        autoTrigger: true,
         method: 'GET',
         schemaName: 'projectLeadFilterOptions',
         onFailure: (_, errorBody) => {
@@ -219,15 +218,13 @@ function FilterForm(props: OwnProps) {
     });
 
     /*
-    const [
-        ,
-        entryOptions,
-    ] = useRequest<EntryOptions>({
+    const {
+        response: entryOptions,
+    } = useRequest<EntryOptions>({
         url: 'server://entry-options/',
         query: {
             projects: [projectId],
         },
-        autoTrigger: true,
         method: 'GET',
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'entryOptions'))({ error: errorBody });

@@ -16,7 +16,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 
 import { hidUrl } from '#config/hid';
 import { reCaptchaSiteKey } from '#config/reCaptcha';
@@ -78,15 +78,17 @@ function Login(props) {
     const [faramErrors, setFaramErrors] = useState({});
     const [pending, setPending] = useState(false);
     const [loginUrl, setLoginUrl] = useState(false);
-    const [loginBody, setLoginBody] = useState({});
     const [showReCaptcha, setShowReCaptcha] = useState(false);
     const [finalSchema, setFinalSchema] = useState(schema);
     const recaptchaRef = useRef(null);
 
-    const [loginPending, , , loginTrigger] = useRequest({
+    const {
+        pending: loginPending,
+        trigger: loginTrigger,
+    } = useLazyRequest({
         url: loginUrl,
         method: 'POST',
-        body: loginBody,
+        body: ctx => ctx,
         onSuccess: (response) => {
             const { refresh, access } = response;
             login({ refresh, access });
@@ -141,8 +143,7 @@ function Login(props) {
                 tokenType: query.token_type,
             };
             setLoginUrl('server://token/hid/');
-            setLoginBody(params);
-            loginTrigger();
+            loginTrigger(params);
         }
     }, [loginTrigger, location]);
 
@@ -173,8 +174,7 @@ function Login(props) {
             recaptchaResponse,
         };
         setLoginUrl('server://token/');
-        setLoginBody(params);
-        loginTrigger();
+        loginTrigger(params);
     }, [loginTrigger]);
 
     return (

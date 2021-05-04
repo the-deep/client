@@ -1,13 +1,13 @@
 import {
     useState,
     useEffect,
+    useMemo,
     useRef,
     useCallback,
     useContext,
     useLayoutEffect,
 } from 'react';
 import ReactDOM from 'react-dom';
-import { isDefined } from '@togglecorp/fujs';
 
 import AbortController from 'abort-controller';
 
@@ -27,7 +27,7 @@ function isCallable<Q, T>(value: Callable<Q, T>): value is ((value: Q) => T) {
 
 function resolveCallable<Q, T>(value: Callable<Q, T>, context: Q | undefined) {
     if (isCallable(value)) {
-        return isDefined(context) ? value(context) : undefined;
+        return context !== undefined ? value(context) : undefined;
     }
     return value;
 }
@@ -43,12 +43,12 @@ interface LazyRequestOptions<T, Q> extends NonTriggerFetchOptions<T> {
     other?: Callable<Q, Omit<RequestInit, 'body'> | undefined>;
 
     // NOTE: don't ever re-trigger
-    mockResponse?: T;
     delay?: number;
+    mockResponse?: T;
     preserveResponse?: boolean;
 }
 
-function useLazyRequest<T, Q>(
+function useLazyRequest<T, Q = null>(
     requestOptions: LazyRequestOptions<T, Q>,
 ) {
     const {
@@ -68,15 +68,46 @@ function useLazyRequest<T, Q>(
     const transformUrlRef = useRef(transformUrl);
 
     const [requestOptionsFromState, setRequestOptionsFromState] = useState(requestOptions);
+    const [context, setContext] = useState<Q | undefined>();
+
+    const {
+        url: rawUrl,
+        query: rawQuery,
+        method: rawMethod,
+        body: rawBody,
+        other: rawOther,
+    } = requestOptionsFromState;
+
+    const query = useMemo(
+        () => resolveCallable(rawQuery, context),
+        [rawQuery, context],
+    );
+    const url = useMemo(
+        () => resolveCallable(rawUrl, context),
+        [rawUrl, context],
+    );
+    const body = useMemo(
+        () => resolveCallable(rawBody, context),
+        [rawBody, context],
+    );
+    const method = useMemo(
+        () => resolveCallable(rawMethod, context) ?? 'GET',
+        [rawMethod, context],
+    );
+    const other = useMemo(
+        () => resolveCallable(rawOther, context),
+        [rawOther, context],
+    );
+
+    const urlQuery = query ? prepareUrlParams(query) : undefined;
+    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
 
     const [response, setResponse] = useState<T | undefined>();
     const [error, setError] = useState<Error | undefined>();
 
-    const [pending, setPending] = useState(false);
-
     const [runId, setRunId] = useState(-1);
 
-    const [context, setContext] = useState<Q | undefined>();
+    const [pending, setPending] = useState(false);
 
     const setPendingSafe = useCallback(
         (value: boolean, clientId: number) => {
@@ -134,23 +165,6 @@ function useLazyRequest<T, Q>(
         },
         [requestOptions],
     );
-
-    const {
-        url: rawUrl,
-        query: rawQuery,
-        method: rawMethod,
-        body: rawBody,
-        other: rawOther,
-    } = requestOptionsFromState;
-
-    const query = resolveCallable(rawQuery, context);
-    const url = resolveCallable(rawUrl, context);
-    const body = resolveCallable(rawBody, context);
-    const method = resolveCallable(rawMethod, context) ?? 'GET';
-    const other = resolveCallable(rawOther, context);
-
-    const urlQuery = query ? prepareUrlParams(query) : undefined;
-    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
 
     useEffect(
         () => {
@@ -253,6 +267,7 @@ function useLazyRequest<T, Q>(
         pending,
         error: error?.value,
         trigger,
+        context,
     };
 }
 export default useLazyRequest;

@@ -6,7 +6,7 @@ import {
 
 import List from '#rsu/../v2/View/List';
 
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
     MultiResponse,
@@ -22,15 +22,11 @@ import styles from './styles.scss';
 const keySelector = (d: RecentActivityItem) => `${d.type}-${d.id}`;
 
 function RecentActivities() {
-    const [
-        ,
-        recentActivitiesResponse,
-        ,
-        ,
-    ] = useRequest<MultiResponse<RecentActivityItem>>({
+    const {
+        response: recentActivitiesResponse,
+    } = useRequest<MultiResponse<RecentActivityItem>>({
         url: 'server://projects/recent-activities/',
         method: 'GET',
-        autoTrigger: true,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('recentActivity', 'recentActivitiesFetchFailed'))({ error: errorBody }),
     });

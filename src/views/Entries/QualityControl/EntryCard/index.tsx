@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -17,7 +17,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import ListItem, { DefaultIcon } from '#rscv/ListItem';
 
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { getScaleWidgetsData } from '#utils/framework';
 
 import LeadPreview from '#views/Leads/LeadPreview';
@@ -151,21 +151,17 @@ function EntryCard(props: EntryCardProps) {
 
     const leadSource = lead.sourceDetail ? lead.sourceDetail.title : lead.sourceRaw;
 
-    const [
+    const {
         pending,
-        leadFromRequest,
-        ,
-        getLead,
-    ] = useRequest<Lead>({
+        response: leadFromRequest,
+        trigger: getLead,
+    } = useLazyRequest<Lead>({
         url: `server://v2/leads/${lead.id}/`,
         method: 'GET',
-    });
-
-    useEffect(() => {
-        if (leadFromRequest) {
+        onSuccess: () => {
             showEditLeadModal(true);
-        }
-    }, [leadFromRequest]);
+        },
+    });
 
     const handleDeletePendingChange = useCallback((/* isPending: boolean */) => {
         // TODO; disable all actions if pending
@@ -176,7 +172,7 @@ function EntryCard(props: EntryCardProps) {
     }, [onDelete, entry]);
 
     const handleEditLeadButtonClick = () => {
-        getLead();
+        getLead(null);
     };
 
     const handleEditLeadModalClose = () => {

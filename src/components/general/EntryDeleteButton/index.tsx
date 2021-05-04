@@ -1,7 +1,7 @@
 import React from 'react';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
 interface EntryDeleteButtonProps {
@@ -24,7 +24,10 @@ function EntryDeleteButton(props: EntryDeleteButtonProps) {
         disabled,
     } = props;
 
-    const [pending, , , deleteEntry] = useRequest({
+    const {
+        pending,
+        trigger: deleteEntry,
+    } = useLazyRequest<unknown>({
         url: `server://entries/${entryId}/`,
         method: 'DELETE',
         onSuccess: onDeleteSuccess,
@@ -38,7 +41,7 @@ function EntryDeleteButton(props: EntryDeleteButtonProps) {
     }, [pending, onPendingChange]);
 
     const handleEntryDelete = React.useCallback(() => {
-        deleteEntry();
+        deleteEntry(null);
     }, [deleteEntry]);
 
     return (

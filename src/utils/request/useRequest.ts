@@ -31,8 +31,8 @@ interface RequestOptions<T> extends NonTriggerFetchOptions<T> {
     other?: Omit<RequestInit, 'body'>;
 
     // NOTE: don't ever re-trigger
-    mockResponse?: T;
     delay?: number;
+    mockResponse?: T;
     preserveResponse?: boolean;
 }
 
@@ -57,15 +57,27 @@ function useRequest<T>(
 
     const { skip = false } = requestOptions;
 
+    const {
+        url,
+        query,
+        method = 'GET',
+        body,
+        other,
+    } = requestOptions;
+
+    const urlQuery = query ? prepareUrlParams(query) : undefined;
+    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
+
+
     const [response, setResponse] = useState<T | undefined>();
     const [error, setError] = useState<Error | undefined>();
 
-    const [pending, setPending] = useState(() => (
-        runId >= 0 && isFetchable(extendedUrl, method, body)
-    ));
-
     const [runId, setRunId] = useState(() => (
         skip ? -1 : new Date().getTime()
+    ));
+
+    const [pending, setPending] = useState(() => (
+        runId >= 0 && isFetchable(extendedUrl, method, body)
     ));
 
     const setPendingSafe = useCallback(
@@ -124,17 +136,6 @@ function useRequest<T>(
         },
         [requestOptions],
     );
-
-    const {
-        url,
-        query,
-        method = 'GET',
-        body,
-        other,
-    } = requestOptions;
-
-    const urlQuery = query ? prepareUrlParams(query) : undefined;
-    const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
 
     // To re-trigger request when skip changes
     useEffect(
@@ -229,10 +230,18 @@ function useRequest<T>(
         ],
     );
 
+    const retrigger = useCallback(
+        () => {
+            setRunId(skip ? -1 : new Date().getTime());
+        },
+        [skip],
+    );
+
     return {
         response,
         pending,
         error: error?.value,
+        retrigger,
     };
 }
 export default useRequest;

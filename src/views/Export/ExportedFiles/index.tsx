@@ -13,7 +13,7 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 import ExportPreview from '#components/other/ExportPreview';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 
 import ExportsTable from './ExportsTable';
 import styles from './styles.scss';
@@ -47,19 +47,17 @@ function ExportedFiles(props: Props) {
     const [userExports, setUserExports] = useState<Export[]>([]);
     const [exportCount, setExportCount] = useState<number>(0);
     const [selectedExport, setSelectedExport] = useState<number>();
-    const [deleteExportId, setDeleteExportId] = useState<number>();
-    const [cancelExportId, setCancelExportId] = useState<number>();
-    const [archiveExportId, setArchiveExportId] = useState<number>();
+    // const [deleteExportId, setDeleteExportId] = useState<number>();
+    // const [cancelExportId, setCancelExportId] = useState<number>();
+    // const [archiveExportId, setArchiveExportId] = useState<number>();
     const [archiveStatus, setArchiveStatus] = useState<boolean>();
 
     const isArchived = useMemo(() => activeTab === 'archived', [activeTab]);
 
-    const [
+    const {
         pending,
-        ,
-        ,
-        getExport,
-    ] = useRequest<MultiResponse<Export>>({
+        retrigger: getExport,
+    } = useRequest<MultiResponse<Export>>({
         url: 'server://exports/',
         query: {
             project: projectId,
@@ -70,7 +68,6 @@ function ExportedFiles(props: Props) {
             limit: maxItemsPerPage,
         },
         method: 'GET',
-        autoTrigger: true,
         schemaName: 'userExportsGetResponse',
         onSuccess: (response) => {
             setUserExports(response.results);
@@ -89,20 +86,22 @@ function ExportedFiles(props: Props) {
         },
     });
 
-    const [
-        deletePending,
-        ,
-        ,
-        deleteExport,
-    ] = useRequest({
-        url: `server://exports/${deleteExportId}/`,
+    const {
+        pending: deletePending,
+        trigger: deleteExport,
+        context: deleteExportId,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://exports/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
+            // FIXME: can't do this
+            /*
             if (deleteExportId === selectedExport) {
                 setSelectedExport(undefined);
             }
+            */
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,
@@ -110,7 +109,6 @@ function ExportedFiles(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        autoTrigger: false,
         onFailure: () => {
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
@@ -121,21 +119,23 @@ function ExportedFiles(props: Props) {
         },
     });
 
-    const [
-        cancelPending,
-        ,
-        ,
-        cancelExport,
-    ] = useRequest({
-        url: `server://exports/${cancelExportId}/cancel/`,
+    const {
+        pending: cancelPending,
+        trigger: cancelExport,
+        context: cancelExportId,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://exports/${ctx}/cancel/`,
         method: 'POST',
         body: {},
         onSuccess: () => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
+            /*
+            // FIXME: can't do this
             if (cancelExportId === selectedExport) {
                 setSelectedExport(undefined);
             }
+            */
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,
@@ -143,7 +143,6 @@ function ExportedFiles(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        autoTrigger: false,
         onFailure: () => {
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
@@ -155,22 +154,23 @@ function ExportedFiles(props: Props) {
     });
 
 
-    const [
-        archivePending,
-        ,
-        ,
-        changeArchiveStatus,
-    ] = useRequest({
-        url: `server://exports/${archiveExportId}/`,
+    const {
+        pending: archivePending,
+        trigger: changeArchiveStatus,
+        context: archiveExportId,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://exports/${ctx}/`,
         method: 'PATCH',
         body: { is_archived: archiveStatus },
-        autoTrigger: false,
         onSuccess: () => {
             getExport();
             setExportCount(oldCount => oldCount - 1);
+            // FIXME: can't do this
+            /*
             if (archiveExportId === selectedExport) {
                 setSelectedExport(undefined);
             }
+            */
             notify.send({
                 title: _ts('export', 'userExportsTitle'),
                 type: notify.type.SUCCESS,
@@ -190,20 +190,12 @@ function ExportedFiles(props: Props) {
         },
     });
 
-    const handleExportDelete = useCallback((id) => {
-        setDeleteExportId(id);
-        deleteExport();
-    }, [deleteExport]);
+    const handleExportDelete = deleteExport;
+    const handleExportCancel = cancelExport;
 
-    const handleExportCancel = useCallback((id) => {
-        setCancelExportId(id);
-        cancelExport();
-    }, [cancelExport]);
-
-    const handleExportArchive = useCallback((id, value) => {
+    const handleExportArchive = useCallback((id: number, value: boolean) => {
         setArchiveStatus(value);
-        setArchiveExportId(id);
-        changeArchiveStatus();
+        changeArchiveStatus(id);
     }, [changeArchiveStatus]);
 
     const handleTabChange = useCallback((tab: TabElement) => {

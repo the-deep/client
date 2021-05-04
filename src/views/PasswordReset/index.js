@@ -15,7 +15,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _ts from '#ts';
 import { pathNames } from '#constants';
 import { reCaptchaSiteKey } from '#config/reCaptcha';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 
 import styles from './styles.scss';
 
@@ -35,14 +35,16 @@ function PasswordReset() {
     const [faramValues, setFaramValues] = useState({});
     const [faramErrors, setFaramErrors] = useState({});
     const [success, setSuccess] = useState(false);
-    const [userData, setUserData] = useState(undefined);
 
     const recaptchaRef = useRef(null);
 
-    const [resetPending, , , triggerReset] = useRequest({
+    const {
+        pending: resetPending,
+        trigger: triggerReset,
+    } = useLazyRequest({
         url: 'server://password/reset/',
         method: 'POST',
-        body: userData,
+        body: ctx => ctx,
         onSuccess: () => {
             setSuccess(true);
             if (recaptchaRef.current && recaptchaRef.current.reset) {
@@ -77,11 +79,10 @@ function PasswordReset() {
     }, []);
 
     const handleFaramValidationSuccess = useCallback((_, finalValues) => {
-        setUserData({
+        triggerReset({
             email: finalValues.email,
             recaptchaResponse: finalValues.recaptchaResponse,
         });
-        triggerReset();
     }, [triggerReset]);
 
     return (

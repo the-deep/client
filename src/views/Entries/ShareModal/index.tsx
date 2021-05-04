@@ -1,5 +1,8 @@
 import React, { useCallback, useRef, useMemo } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
@@ -12,7 +15,7 @@ import Icon from '#rscg/Icon';
 import Cloak from '#components/general/Cloak';
 import ConfirmButton from '#rsca/ConfirmButton';
 
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import { Permission } from '#typings/common';
 
@@ -35,8 +38,6 @@ interface PublicUrl {
     publicUrl?: string;
 }
 
-const resetBodyToSend = ({ action: 'new' });
-
 const isNotProjectAdmin = ({ setupPermissions }: { setupPermissions: Permission }) => (
     !setupPermissions.modify
 );
@@ -53,20 +54,15 @@ function ShareModal(props: ComponentProps) {
 
     const inputValueRef = useRef<HTMLDivElement>(null);
 
-    const bodyToSend = useMemo(() => (
-        isEntriesVizPublic ? { action: 'off' } : { action: 'on' }
-    ), [isEntriesVizPublic]);
-
-    const [
-        pendingUrlVisibilityChange,
-        ,
-        ,
-        triggerAvailabilityChange,
-    ] = useRequest<PublicUrl>(
+    const {
+        pending: pendingUrlVisibilityChange,
+        trigger: triggerAvailabilityChange,
+    } = useLazyRequest<PublicUrl, boolean>(
         {
             url: `server://projects/${projectId}/public-viz/`,
             method: 'POST',
-            body: bodyToSend,
+            // FIXME: please check if this is correct
+            body: ctx => (ctx ? { action: 'off' } : { action: 'on' }),
             onSuccess: (response) => {
                 if (onShareLinkChange) {
                     onShareLinkChange(response?.publicUrl, !isEntriesVizPublic);
@@ -77,16 +73,14 @@ function ShareModal(props: ComponentProps) {
         },
     );
 
-    const [
-        pendingReset,
-        ,
-        ,
-        triggerResetPublicUrl,
-    ] = useRequest<PublicUrl>(
+    const {
+        pending: pendingReset,
+        trigger: triggerResetPublicUrl,
+    } = useLazyRequest<PublicUrl, unknown>(
         {
             url: `server://projects/${projectId}/public-viz/`,
             method: 'POST',
-            body: resetBodyToSend,
+            body: { action: 'new' },
             onSuccess: (response) => {
                 if (onShareLinkChange) {
                     onShareLinkChange(response?.publicUrl, isEntriesVizPublic);

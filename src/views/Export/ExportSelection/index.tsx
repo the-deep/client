@@ -22,7 +22,7 @@ import {
     getContextualWidgetsFromFramework,
     getTextWidgetsFromFramework,
 } from '#utils/framework';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 
 import { notifyOnFailure } from '#utils/requestNotify';
 import ExpandableContainer from '#dui/ExpandableContainer';
@@ -177,7 +177,7 @@ function EntriesExportSelection(props: Props) {
     const [reportStructure, setReportStructure] = useState<ReportStructure[]>([]);
     const [includeSubSector, setIncludeSubSector] = useState<boolean>(false);
     const [isPreview, setIsPreview] = useState<boolean>(false);
-    const [filtersToExport, setFiltersToExport] = useState<unknown>();
+    // const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, onFilterChange] = useState<FaramValues>({});
@@ -191,13 +191,12 @@ function EntriesExportSelection(props: Props) {
         setContextualWidgets,
     ] = useState<TreeSelectableWidget<string | number>[]>([]);
 
-    const [
-        analysisFrameworkPending,
-    ] = useRequest<unknown>({
+    const {
+        pending: analysisFrameworkPending,
+    } = useRequest<unknown>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         schemaName: 'analysisFramework',
-        autoTrigger: true,
         onSuccess: (response) => {
             setAnalysisFramework({ analysisFramework: response });
         },
@@ -210,14 +209,13 @@ function EntriesExportSelection(props: Props) {
         project: projectId,
     }), [projectId]);
 
-    const [
-        geoOptionsPending,
-    ] = useRequest<unknown>({
+    const {
+        pending: geoOptionsPending,
+    } = useRequest<unknown>({
         url: 'server://geo-options/',
         method: 'GET',
         query: geoOptionsRequestQueryParams,
         schemaName: 'geoOptions',
-        autoTrigger: true,
         onSuccess: (response) => {
             setGeoOptions({ projectId, locations: response });
         },
@@ -253,15 +251,13 @@ function EntriesExportSelection(props: Props) {
         setReportStructureVariant(value);
     }, []);
 
-    const [
-        exportPending,
-        ,
-        ,
-        getExport,
-    ] = useRequest<ExportTriggerResponse>({
+    const {
+        pending: exportPending,
+        trigger: getExport,
+    } = useLazyRequest<ExportTriggerResponse, unknown>({
         url: 'server://export-trigger/',
         method: 'POST',
-        body: { filters: filtersToExport },
+        body: ctx => ({ filters: ctx }),
         onSuccess: (response) => {
             if (isPreview) {
                 setPreviewId(response.exportTriggered);
@@ -347,10 +343,10 @@ function EntriesExportSelection(props: Props) {
             ...Object.entries(processedFilters),
         ];
 
-        setFiltersToExport(newFilters);
+        // setFiltersToExport(newFilters);
         setIsPreview(preview);
 
-        getExport();
+        getExport(newFilters);
     }, [
         selectAll,
         activeExportTypeKey,

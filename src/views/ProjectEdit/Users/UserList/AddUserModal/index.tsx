@@ -16,7 +16,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
     MultiResponse,
@@ -94,50 +94,44 @@ function AddUserModal(props: Props) {
         onErrorSet,
     } = useForm(formValueFromProps, schema);
 
-    const [valueToSend, setValueToSend] = useState<ValueToSend>();
-
     const queryForUsers = useMemo(() => ({
         members_exclude_project: projectId,
     }), [projectId]);
 
-    const [
-        pendingRoles,
-        projectRolesResponse,
-    ] = useRequest<MultiResponse<ProjectRole>>({
+    const {
+        pending: pendingRoles,
+        response: projectRolesResponse,
+    } = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'projectRoleFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        pendingUserList,
-        usersListResponse,
-    ] = useRequest<MultiResponse<User>>({
+    const {
+        pending: pendingUserList,
+        response: usersListResponse,
+    } = useRequest<MultiResponse<User>>({
         url: 'server://users/',
         method: 'GET',
         query: queryForUsers,
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'usersFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        pendingAddAction,
-        ,
-        ,
-        triggerAddProjectMember,
-    ] = useRequest({
+    const {
+        pending: pendingAddAction,
+        trigger: triggerAddProjectMember,
+    } = useLazyRequest<unknown, ValueToSend>({
         url: isDefined(userValue)
             ? `server://projects/${projectId}/project-memberships/${userValue.id}/`
             : `server://projects/${projectId}/project-memberships/`,
         method: isDefined(userValue)
             ? 'PATCH'
             : 'POST',
-        body: valueToSend,
+        body: ctx => ctx,
         onSuccess: () => {
             onTableReload();
             onModalClose();
@@ -152,8 +146,7 @@ function AddUserModal(props: Props) {
             const { errored, error: err, value: val } = validate();
             onErrorSet(err);
             if (!errored && isDefined(val)) {
-                setValueToSend(val as ValueToSend);
-                triggerAddProjectMember();
+                triggerAddProjectMember(val as ValueToSend);
             }
         },
         [onErrorSet, validate, triggerAddProjectMember],

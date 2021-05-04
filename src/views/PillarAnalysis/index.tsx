@@ -36,7 +36,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
 
 import notify from '#notify';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 import { notifyOnFailure } from '#utils/requestNotify';
 
@@ -151,8 +151,6 @@ function PillarAnalysis(props: Props) {
         onValueRemove: onAnalyticalStatementRemove,
     } = useFormArray('analyticalStatements', onValueChange);
 
-    const [submitValues, setSubmitValues] = useState<typeof value | undefined>();
-
     const [activeTab, setActiveTab] = useState<TabNames>('entries');
 
     // FIXME: please use new form
@@ -204,13 +202,12 @@ function PillarAnalysis(props: Props) {
         [value, pillarId, setPillarAnalysisData, pristine],
     );
 
-    const [
-        pendingPillarAnalysis,
-        pillarAnalysis,
-    ] = useRequest<AnalysisPillars>({
+    const {
+        pending: pendingPillarAnalysis,
+        response: pillarAnalysis,
+    } = useRequest<AnalysisPillars>({
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
         method: 'GET',
-        autoTrigger: true,
         onSuccess: (response) => {
             const newFilters = listToGroupList(
                 response.filters,
@@ -233,16 +230,13 @@ function PillarAnalysis(props: Props) {
         // FIXME: add schema
     });
 
-    const [
-        pendingPillarAnalysisSave,
-        ,
-        ,
-        updateAnalysisPillars,
-    ] = useRequest<AnalysisPillars>({
+    const {
+        pending: pendingPillarAnalysisSave,
+        trigger: updateAnalysisPillars,
+    } = useLazyRequest<AnalysisPillars, unknown>({
         url: `server://projects/${projectId}/analysis/${analysisId}/pillars/${pillarId}/`,
-        body: submitValues,
+        body: ctx => ctx,
         method: 'PATCH',
-        autoTrigger: false,
         onSuccess: (response) => {
             onValueSet((): FormType => ({
                 mainStatement: response.mainStatement,
@@ -262,14 +256,13 @@ function PillarAnalysis(props: Props) {
         // FIXME: add schema
     });
 
-    const [
-        pendingFramework,
-        framework,
-    ] = useRequest<Partial<FrameworkFields>>({
+    const {
+        pending: pendingFramework,
+        response: framework,
+    } = useRequest<Partial<FrameworkFields>>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         query: frameworkQueryFields,
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('pillarAnalysis', 'frameworkTitle'))({ error: errorBody });
         },
@@ -280,15 +273,14 @@ function PillarAnalysis(props: Props) {
         project: projectId,
     }), [projectId]);
 
-    const [
-        pendingGeoOptions,
-        geoOptions,
-    ] = useRequest<GeoOptions>({
+    const {
+        pending: pendingGeoOptions,
+        response: geoOptions,
+    } = useRequest<GeoOptions>({
         url: 'server://geo-options/',
         method: 'GET',
         query: geoOptionsRequestQueryParams,
         schemaName: 'geoOptions',
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('pillarAnalysis', 'geoLabel'))({ error: errorBody });
         },
@@ -317,6 +309,7 @@ function PillarAnalysis(props: Props) {
             ],
         });
     }, [geoOptions, filtersValue, framework, projectId]);
+
     const entriesRequestQuery = useMemo(() => ({
         offset: (activePage - 1) * maxItemsPerPage,
         limit: maxItemsPerPage,
@@ -329,17 +322,19 @@ function PillarAnalysis(props: Props) {
             'tabular_field_data',
         ],
     }), [activePage]);
-    const [pendingEntries] = useRequest<MultiResponse<EntryFieldsMin>>({
+
+    const {
+        pending: pendingEntries,
+    } = useRequest<MultiResponse<EntryFieldsMin>>({
         url: 'server://entries/filter/',
         method: 'POST',
+        skip: pendingPillarAnalysis || pendingFramework,
         body: entriesRequestBody,
         query: entriesRequestQuery,
-        autoTrigger: true,
         onSuccess: (response) => {
             setEntriesCount(response.count);
             setEntries(response.results);
         },
-        autoTriggerDisabled: pendingPillarAnalysis || pendingFramework,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('pillarAnalysis', 'entriesTitle'))({ error: errorBody });
         },
@@ -366,12 +361,13 @@ function PillarAnalysis(props: Props) {
             'tabular_field_data',
         ],
     }), []);
-    const [pendingEntriesInitialData] = useRequest<MultiResponse<EntryFieldsMin>>({
+    const {
+        pending: pendingEntriesInitialData,
+    } = useRequest<MultiResponse<EntryFieldsMin>>({
         url: 'server://entries/filter/',
         method: 'POST',
         body: analysisEntriesRequestBody,
         query: analysisEntriesRequestQuery,
-        autoTrigger: true,
         onSuccess: (response) => {
             setEntriesCount(response.count);
             setEntriesMapping(oldEntriesMappings => ({
@@ -456,8 +452,7 @@ function PillarAnalysis(props: Props) {
             const { errored, error: err, value: val } = validate();
             onErrorSet(err);
             if (!errored && isDefined(val)) {
-                setSubmitValues(val);
-                updateAnalysisPillars();
+                updateAnalysisPillars(val);
             }
         },
         [onErrorSet, validate, updateAnalysisPillars],

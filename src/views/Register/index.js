@@ -13,7 +13,7 @@ import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
 
 import { reCaptchaSiteKey } from '#config/reCaptcha';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
@@ -36,14 +36,17 @@ function Register() {
     const [faramValues, setFaramValues] = useState({});
     const [faramErrors, setFaramErrors] = useState({});
     const [success, setSuccess] = useState(false);
-    const [userData, setUserData] = useState(undefined);
 
     const recaptchaRef = useRef(null);
 
-    const [registerPending, , , triggerRegister] = useRequest({
+    const {
+        pending: registerPending,
+        trigger: triggerRegister,
+        context,
+    } = useLazyRequest({
         url: 'server://users/',
         method: 'POST',
-        body: userData,
+        body: ctx => ctx,
         onSuccess: () => {
             setSuccess(true);
             if (recaptchaRef.current && recaptchaRef.current.reset) {
@@ -81,12 +84,11 @@ function Register() {
     }, []);
 
     const handleFaramValidationSuccess = useCallback((finalValues) => {
-        setUserData({
+        triggerRegister({
             ...finalValues,
             // NOTE: username of the user is their email address
             username: finalValues.email,
         });
-        triggerRegister();
     }, [triggerRegister]);
 
     return (
@@ -94,7 +96,7 @@ function Register() {
             <div className={styles.registerBox}>
                 { success ? (
                     <div className={styles.registerSuccess}>
-                        {_ts('register', 'checkYourEmailText', { email: userData?.email })}
+                        {_ts('register', 'checkYourEmailText', { email: context?.email })}
                     </div>
                 ) : (
                     <Faram

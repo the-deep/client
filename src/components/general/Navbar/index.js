@@ -16,7 +16,7 @@ import {
 
 import Icon from '#rscg/Icon';
 import Confirm from '#rscv/Modal/Confirm';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import SelectInput from '#rsci/SelectInput';
 
 import Badge from '#components/viewer/Badge';
@@ -201,12 +201,10 @@ function Navbar(props) {
         setShowLogoutConfirm(true);
     }, []);
 
-    const [,,, triggerChangeActiveProject] = useRequest({
+    const { trigger: triggerChangeActiveProject } = useLazyRequest({
         url: `server://users/${userId}/`,
+        body: ctx => ctx,
         method: 'PATCH',
-        body: ({
-            lastActiveProject: activeProject,
-        }),
     });
 
     const handleProjectChange = useCallback((key) => {
@@ -216,7 +214,7 @@ function Navbar(props) {
             ) !== -1;
             if (isValidProject) {
                 setActiveProject({ activeProject: key });
-                triggerChangeActiveProject();
+                triggerChangeActiveProject({ lastActiveProject: key });
             }
         }
     }, [setActiveProject, triggerChangeActiveProject, userProjects]);

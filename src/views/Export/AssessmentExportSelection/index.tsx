@@ -4,7 +4,7 @@ import { _cs } from '@togglecorp/fujs';
 import ExportPreview from '#components/other/ExportPreview';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import notify from '#notify';
 import _ts from '#ts';
 
@@ -58,24 +58,23 @@ function AssessmentExportSelection(props: OwnProps) {
     const [exportClass, setExportClass] = useState<string>();
     const [isPreview, setIsPreview] = useState<boolean>(false);
     const [exportItem, setExportItem] = useState<string>();
-    const [filtersToExport, setFiltersToExport] = useState<unknown>();
     const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(true);
     const [filterValues, onFilterChange] = useState<FaramValues>({});
 
+    // Clear previewId on project change
+    // FIXME: But, do we not need to clear every state here?
     useEffect(() => {
         setPreviewId(undefined);
     }, [projectId]);
 
-    const [
-        exportPending,
-        ,
-        ,
-        getExport,
-    ] = useRequest<ExportTriggerResponse>({
+    const {
+        pending: exportPending,
+        trigger: getExport,
+    } = useLazyRequest<ExportTriggerResponse, unknown>({
         url: 'server://export-trigger/',
         method: 'POST',
-        body: { filters: filtersToExport },
+        body: ctx => ({ filters: ctx }),
         onSuccess: (response) => {
             if (isPreview) {
                 setPreviewId(response.exportTriggered);
@@ -127,7 +126,6 @@ function AssessmentExportSelection(props: OwnProps) {
             ...Object.entries(processedFilters),
         ];
 
-        setFiltersToExport(newFilters);
         setIsPreview(preview);
         setExportItem(item);
 
@@ -138,7 +136,7 @@ function AssessmentExportSelection(props: OwnProps) {
             || undefined
         );
         setExportClass(newExportClass);
-        getExport();
+        getExport(newFilters);
     }, [
         selectAll,
         selectedLeads,

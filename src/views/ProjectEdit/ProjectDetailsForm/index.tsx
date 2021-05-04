@@ -43,7 +43,7 @@ import {
 } from '#typings';
 
 import _ts from '#ts';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
@@ -97,34 +97,31 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
 
     const [pristine, setPristine] = useState<boolean>(true);
     const [faramValues, setFaramValues] = useState<Partial<ProjectDetails>>();
-    const [finalValues, setFinalValues] = useState<Partial<ProjectDetails>>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [redirectId, setRedirectId] = useState<number | undefined>();
 
-    const [
-        projectGetPending,
-        projectDetails,
-    ] = useRequest<ProjectDetails>({
+    const {
+        pending: projectGetPending,
+        response: projectDetails,
+    } = useRequest<ProjectDetails>({
+        skip: isNotDefined(projectId),
         url: `server://projects/${projectId}/`,
         method: 'GET',
-        autoTrigger: true,
         onSuccess: (response) => {
             setFaramValues(response);
         },
-        autoTriggerDisabled: isNotDefined(projectId),
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
 
-    const [
-        projectPatchPending,
-        ,
-        ,
-        projectPatch,
-    ] = useRequest<ProjectDetails>({
+    const {
+        pending: projectPatchPending,
+        trigger: projectPatch,
+    } = useLazyRequest<ProjectDetails, unknown>({
         url: projectId ? `server://projects/${projectId}/` : 'server://projects/',
         method: projectId ? 'PATCH' : 'POST',
-        body: finalValues,
+        // body: finalValues,
+        body: ctx => ctx,
         onSuccess: (response) => {
             if (!projectId) {
                 const { id } = response;
@@ -149,8 +146,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
     }, []);
 
     const handleFaramValidationSuccess = useCallback((_, values: Partial<ProjectDetails>) => {
-        setFinalValues({ ...values, organizations: values.organizations ?? [] });
-        projectPatch();
+        projectPatch({ ...values, organizations: values.organizations ?? [] });
     }, [projectPatch]);
 
     const groupedOrganizations = useMemo(() => (

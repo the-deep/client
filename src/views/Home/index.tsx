@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import {
     _cs,
-    isDefined,
+    isNotDefined,
     reverseRoute,
 } from '@togglecorp/fujs';
 import {
@@ -17,7 +17,7 @@ import List from '#rscv/List';
 
 import Badge from '#components/viewer/Badge';
 import { pathNames } from '#constants';
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import featuresMapping from '#constants/features';
 
@@ -131,37 +131,31 @@ function Home(props: ViewProps) {
         </div>
     ), [selectedProject]);
 
-    const [
-        ,
-        recentProjectsResponse,
-    ] = useRequest<ProjectStat[]>({
+    const {
+        response: recentProjectsResponse,
+    } = useRequest<ProjectStat[]>({
         url: 'server://projects-stat/recent/',
         method: 'GET',
-        autoTrigger: true,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('home', 'recentProjectsTitle'))({ error: errorBody }),
     });
 
-    const [
-        summaryPending,
-        summaryResponse,
-    ] = useRequest<ProjectsSummary>({
+    const {
+        pending: summaryPending,
+        response: summaryResponse,
+    } = useRequest<ProjectsSummary>({
         url: 'server://projects-stat/summary/',
         method: 'GET',
-        autoTrigger: true,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('home', 'summaryOfMyProjectsHeading'))({ error: errorBody }),
     });
 
-    const [
-        ,
-        projectStats,
-        ,
-        triggerProjectStats,
-    ] = useRequest<ProjectStat>({
+    const {
+        response: projectStats,
+    } = useRequest<ProjectStat>({
+        skip: isNotDefined(selectedProject),
         url: `server://projects-stat/${selectedProject}/`,
         method: 'GET',
-        autoTrigger: isDefined(selectedProject),
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('home', 'projectDetails'))({ error: errorBody });
         },
@@ -188,12 +182,7 @@ function Home(props: ViewProps) {
         );
     }, [projectDashboardData, selectedProject, recentProjectsResponse]);
 
-    const handleProjectChange = useCallback((newSelectedProject) => {
-        setSelectedProject(newSelectedProject);
-        if (isDefined(newSelectedProject)) {
-            triggerProjectStats();
-        }
-    }, [triggerProjectStats]);
+    const handleProjectChange = setSelectedProject;
 
     const accessNewUi = accessibleFeatures.find(f => f.key === featuresMapping.newUi);
 
