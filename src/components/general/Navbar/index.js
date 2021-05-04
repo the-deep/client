@@ -151,7 +151,7 @@ function Navbar(props) {
         [setParentNode, location],
     );
 
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const handleLogoutModalClose = useCallback((confirm) => {
         if (confirm) {

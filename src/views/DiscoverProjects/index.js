@@ -50,6 +50,11 @@ import Actions from './Actions';
 
 import styles from './styles.scss';
 
+const paginationOptions = [
+    { label: '25', key: 25 },
+    { label: '50', key: 50 },
+];
+
 const TableEmptyComponentWithText = TableEmptyComponent({
     emptyText: _ts('discoverProjects.table', 'emptyMessage'),
     filteredEmptyText: _ts('discoverProjects.table', 'emptyWithFilterMessage'),
@@ -106,12 +111,19 @@ const mapDispatchToProps = dispatch => ({
     setActivePage: params => dispatch(setDiscoverProjectsActivePageAction(params)),
 });
 
-const projectsPerPage = 25;
-
 const requestOptions = {
     projectListRequest: {
         url: '/projects-stat/',
-        query: ({ props: { filters, activePage, activeSort } }) => {
+        query: ({
+            params: {
+                projectsPerPage = 25,
+            },
+            props: {
+                filters,
+                activePage,
+                activeSort,
+            },
+        }) => {
             const sanitizedFilters = getFiltersForRequest(filters);
             const projectListRequestOffset = (activePage - 1) * projectsPerPage;
             const projectListRequestLimit = projectsPerPage;
@@ -244,6 +256,14 @@ export default class DiscoverProjects extends React.PureComponent {
         ${_ts('discoverProjects.table', 'numberOfLeads')}: ${d}
     `;
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            projectsPerPage: 25,
+        };
+    }
+
     headerModifier = (headerData) => {
         const { activeSort } = this.props;
 
@@ -359,6 +379,16 @@ export default class DiscoverProjects extends React.PureComponent {
         }
     }
 
+    handleItemsPerPageChange = (projectsPerPage) => {
+        const {
+            requests: {
+                projectListRequest,
+            },
+        } = this.props;
+        this.setState({ projectsPerPage });
+        projectListRequest.do({ projectsPerPage });
+    }
+
     handlePageClick = (page) => {
         this.props.setActivePage(page);
     }
@@ -412,6 +442,8 @@ export default class DiscoverProjects extends React.PureComponent {
             },
         } = this.props;
 
+        const { projectsPerPage } = this.state;
+
         const pending = (
             pendingProjectList ||
             pendingProjectJoin ||
@@ -458,7 +490,9 @@ export default class DiscoverProjects extends React.PureComponent {
                         className={styles.pager}
                         itemsCount={totalProjectsCount}
                         maxItemsPerPage={projectsPerPage}
+                        onItemsPerPageChange={this.handleItemsPerPageChange}
                         onPageClick={this.handlePageClick}
+                        options={paginationOptions}
                     />
                 }
             />
