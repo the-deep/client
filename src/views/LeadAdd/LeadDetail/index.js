@@ -109,6 +109,9 @@ const propTypes = {
     onApplyAllClick: PropTypes.func,
     onApplyAllBelowClick: PropTypes.func,
 
+    // eslint-disable-next-line react/no-unused-prop-types
+    onLeadAttachmentChange: PropTypes.func,
+
     // onLeadSave: PropTypes.func.isRequired,
     // onLeadRemove: PropTypes.func.isRequired,
     // onLeadExport: PropTypes.func.isRequired,
@@ -125,6 +128,7 @@ const defaultProps = {
     hideProjects: false,
     onApplyAllClick: undefined,
     onApplyAllBelowClick: undefined,
+    onLeadAttachmentChange: undefined,
     disableLeadUrlChange: false,
     leadState: undefined,
     projects: [],
@@ -231,8 +235,22 @@ const requestOptions = {
         url: ({ params: { fileId } }) => `/files/${fileId}/`,
         query: ({ params: { url } }) => ({ url }),
         method: methods.GET,
-        onSuccess: ({ props: { requests }, response }) => {
-            if (requests.webInfoRequest) {
+        onSuccess: ({
+            props: {
+                requests,
+                onLeadAttachmentChange,
+            },
+            response,
+            params: {
+                shouldCallWebInfo,
+                leadKey,
+            },
+        }) => {
+            if (onLeadAttachmentChange && leadKey) {
+                onLeadAttachmentChange(leadKey, response);
+            }
+
+            if (shouldCallWebInfo && requests.webInfoRequest) {
                 requests.webInfoRequest.do({
                     url: response.file,
                     isFile: true,
@@ -402,6 +420,23 @@ class LeadDetail extends React.PureComponent {
         webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
     }
 
+    componentDidMount() {
+        const {
+            requests: { fileUrlGetRequest },
+            lead,
+        } = this.props;
+
+        const values = leadFaramValuesSelector(lead);
+        const { attachment } = values;
+
+        if (isDefined(attachment)) {
+            fileUrlGetRequest.do({
+                leadKey: leadKeySelector(lead),
+                fileId: attachment.id,
+            });
+        }
+    }
+
     getPriorityOptions = memoize((priority = []) => (
         [...priority].sort((a, b) => compareNumber(a.key, b.key))
     ));
@@ -452,7 +487,11 @@ class LeadDetail extends React.PureComponent {
         const values = leadFaramValuesSelector(lead);
         const { attachment } = values;
 
-        fileUrlGetRequest.do({ fileId: attachment.id });
+        fileUrlGetRequest.do({
+            leadKey: leadKeySelector(lead),
+            fileId: attachment.id,
+            shouldCallWebInfo: true,
+        });
     }
 
     handleApplyAllClick = (attrName) => {
