@@ -966,6 +966,7 @@ class LeadAdd extends React.PureComponent {
                                     onApplyAllClick={this.handleLeadApplyAllClick}
                                     leadState={activeLeadState}
                                     onLeadAttachmentChange={this.handleLeadAttachmentChange}
+                                    attachmentUrlRefreshEnabled
 
                                     bulkActionDisabled={submitAllPending}
                                 />

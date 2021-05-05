@@ -6,22 +6,9 @@
     flex-direction: column;
 
     .gallery-image {
-        margin-bottom: var(--spacing-small);
-        width: 100%;
+        margin: var(--spacing-medium) auto;
+        width: 150px;
         height: 150px;
-
-        :global {
-            .gallery-image {
-                overflow: unset;
-            }
-
-            .image {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                object-position: center center;
-            }
-        }
     }
 
     .gallery-image-select {
