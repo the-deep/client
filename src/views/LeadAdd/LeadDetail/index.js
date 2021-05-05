@@ -108,6 +108,8 @@ const propTypes = {
     onChange: PropTypes.func.isRequired,
     onApplyAllClick: PropTypes.func,
     onApplyAllBelowClick: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    attachmentUrlRefreshEnabled: PropTypes.bool,
 
     // eslint-disable-next-line react/no-unused-prop-types
     onLeadAttachmentChange: PropTypes.func,
@@ -127,6 +129,7 @@ const defaultProps = {
     bulkActionDisabled: false,
     hideProjects: false,
     onApplyAllClick: undefined,
+    attachmentUrlRefreshEnabled: false,
     onApplyAllBelowClick: undefined,
     onLeadAttachmentChange: undefined,
     disableLeadUrlChange: false,
@@ -235,10 +238,27 @@ const requestOptions = {
         url: ({ params: { fileId } }) => `/files/${fileId}/`,
         query: ({ params: { url } }) => ({ url }),
         method: methods.GET,
+        onMount: ({ props }) => {
+            const {
+                requests: { fileUrlGetRequest },
+                lead,
+                attachmentUrlRefreshEnabled,
+            } = props;
+
+            const { attachment } = leadFaramValuesSelector(lead);
+
+            if (attachmentUrlRefreshEnabled && isDefined(attachment)) {
+                fileUrlGetRequest.do({
+                    leadKey: leadKeySelector(lead),
+                    fileId: attachment.id,
+                });
+            }
+        },
         onSuccess: ({
             props: {
                 requests,
                 onLeadAttachmentChange,
+                attachmentUrlRefreshEnabled,
             },
             response,
             params: {
@@ -246,7 +266,7 @@ const requestOptions = {
                 leadKey,
             },
         }) => {
-            if (onLeadAttachmentChange && leadKey) {
+            if (attachmentUrlRefreshEnabled && onLeadAttachmentChange && leadKey) {
                 onLeadAttachmentChange(leadKey, response);
             }
 
@@ -418,23 +438,6 @@ class LeadDetail extends React.PureComponent {
         leadOptionsRequest.setDefaultParams({ handleExtraInfoFill: this.handleExtraInfoFill });
         webInfoRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
         webInfoDataRequest.setDefaultParams({ handleWebInfoFill: this.handleWebInfoFill });
-    }
-
-    componentDidMount() {
-        const {
-            requests: { fileUrlGetRequest },
-            lead,
-        } = this.props;
-
-        const values = leadFaramValuesSelector(lead);
-        const { attachment } = values;
-
-        if (isDefined(attachment)) {
-            fileUrlGetRequest.do({
-                leadKey: leadKeySelector(lead),
-                fileId: attachment.id,
-            });
-        }
     }
 
     getPriorityOptions = memoize((priority = []) => (
