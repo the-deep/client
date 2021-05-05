@@ -3,7 +3,7 @@
 
     .content {
         background-color: var(--dui-color-background-information);
-        padding: calc(var(--spacing-large) - var(--spacing-medium));
+        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium));
         max-height: calc(100px + 25vh);
         overflow-y: auto;
     }

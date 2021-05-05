@@ -132,7 +132,7 @@ function Home(props: ViewProps) {
     ), [selectedProject]);
 
     const [
-        pendingRecentProjects,
+        ,
         recentProjectsResponse,
     ] = useRequest<ProjectStat[]>({
         url: 'server://projects-stat/recent/',
@@ -154,7 +154,7 @@ function Home(props: ViewProps) {
     });
 
     const [
-        projectStatsPending,
+        ,
         projectStats,
         ,
         triggerProjectStats,
@@ -262,7 +262,6 @@ function Home(props: ViewProps) {
                             rendererParams={recentProjectsRendererParams}
                             renderer={ProjectItem}
                             keySelector={recentProjectKeySelector}
-                            pending={projectStatsPending || pendingRecentProjects}
                         />
                     </Container>
                 </div>

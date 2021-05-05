@@ -1,6 +1,6 @@
 .activity-item {
     display: flex;
-    padding: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) 0;
+    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-extra-small)) 0;
 
     &:not(:last-child) {
         border-bottom: var(--width-separator-thin) solid var(--dui-border-color-card);
@@ -11,8 +11,8 @@
         flex-shrink: 0;
         margin: var(--dui-spacing-small) var(--dui-spacing-extra-small);
         background: var(--color-foreground);
-        width: 2em;
-        height: 2em;
+        width: 3em;
+        height: 3em;
     }
 
     .main-content {
