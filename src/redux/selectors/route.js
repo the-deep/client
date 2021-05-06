@@ -59,3 +59,4 @@ export const userIdFromRouteSelector = createRouteSelector('userId');
 export const questionnaireIdFromRouteSelector = createRouteSelector('questionnaireId');
 export const analysisIdFromRouteSelector = createRouteSelector('analysisId');
 export const pillarAnalysisIdFromRouteSelector = createRouteSelector('pillarId');
+export const analyticalFrameworkIdFromRouteSelector = createRouteSelector('analyticalFrameworkId');
