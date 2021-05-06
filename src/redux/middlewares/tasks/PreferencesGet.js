@@ -38,7 +38,7 @@ export default class PreferencesGet extends AbstractTask {
                     schema.validate(response, 'userPreferences');
                     const {
                         email,
-                        displayPicture,
+                        displayPictureUrl,
                         isSuperuser,
                         displayName,
                         username,
@@ -60,7 +60,7 @@ export default class PreferencesGet extends AbstractTask {
 
                     store.dispatch(setUserPreferencesAction({
                         email,
-                        displayPicture,
+                        displayPictureUrl,
                         isSuperuser,
                         accessibleFeatures,
                         displayName,

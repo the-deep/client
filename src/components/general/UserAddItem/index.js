@@ -62,7 +62,7 @@ export default class UserAddItem extends React.PureComponent {
                 <div className={styles.top}>
                     <Avatar
                         className={styles.picture}
-                        url={displayPictureUrl}
+                        src={displayPictureUrl}
                         name={`${firstName} ${lastName}`}
                     />
                     <div className={styles.name}>
