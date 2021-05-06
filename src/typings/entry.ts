@@ -80,6 +80,7 @@ export interface EntryFields extends DatabaseEntityBase {
     clientId: string;
     highlightHidden: boolean;
     image?: string;
+    imageRaw?: string;
     imageDetails?: ImageDetails;
     tabularField: number;
     tabularFieldData: TabularDataFields;

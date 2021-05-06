@@ -133,6 +133,8 @@ function WidgetForm(props: WidgetFormProps) {
             excerpt,
             droppedExcerpt,
             image,
+            imageDetails,
+            imageRaw,
             tabularField,
         } = value;
 
@@ -151,6 +153,8 @@ function WidgetForm(props: WidgetFormProps) {
                 excerpt,
                 droppedExcerpt,
                 image,
+                imageDetails,
+                imageRaw,
                 tabularField,
                 // TODO: implement tabular field
                 // tabularFieldData: tabularData,
