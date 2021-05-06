@@ -1,7 +1,7 @@
 import React from 'react';
 import { reverseRoute } from '@togglecorp/fujs';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#dui/Avatar';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 import {
@@ -178,7 +178,9 @@ function EntryReview(props: EntryReviewProps) {
             notificationId={id}
             message={message}
             icon={(
-                <DisplayPicture />
+                <Avatar
+                    name={assigner}
+                />
             )}
             timestamp={notification.timestamp}
             description={notification.data.text}
