@@ -149,13 +149,15 @@ export default class EntriesListing extends React.PureComponent {
             excerpt,
             tabularFieldData,
             order,
+            imageDetails,
+            imageRaw,
         } = entry;
 
         if (entryType === 'image') {
             return (
                 <img
                     className={styles.image}
-                    src={entry.image}
+                    src={imageDetails?.file ?? imageRaw}
                     alt={_ts('editAssessment.entriesListing', 'altLabel')}
                 />
             );

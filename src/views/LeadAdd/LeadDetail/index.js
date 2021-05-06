@@ -108,6 +108,11 @@ const propTypes = {
     onChange: PropTypes.func.isRequired,
     onApplyAllClick: PropTypes.func,
     onApplyAllBelowClick: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    attachmentUrlRefreshEnabled: PropTypes.bool,
+
+    // eslint-disable-next-line react/no-unused-prop-types
+    onLeadAttachmentChange: PropTypes.func,
 
     // onLeadSave: PropTypes.func.isRequired,
     // onLeadRemove: PropTypes.func.isRequired,
@@ -124,7 +129,9 @@ const defaultProps = {
     bulkActionDisabled: false,
     hideProjects: false,
     onApplyAllClick: undefined,
+    attachmentUrlRefreshEnabled: false,
     onApplyAllBelowClick: undefined,
+    onLeadAttachmentChange: undefined,
     disableLeadUrlChange: false,
     leadState: undefined,
     projects: [],
@@ -231,8 +238,39 @@ const requestOptions = {
         url: ({ params: { fileId } }) => `/files/${fileId}/`,
         query: ({ params: { url } }) => ({ url }),
         method: methods.GET,
-        onSuccess: ({ props: { requests }, response }) => {
-            if (requests.webInfoRequest) {
+        onMount: ({ props }) => {
+            const {
+                requests: { fileUrlGetRequest },
+                lead,
+                attachmentUrlRefreshEnabled,
+            } = props;
+
+            const { attachment } = leadFaramValuesSelector(lead);
+
+            if (attachmentUrlRefreshEnabled && isDefined(attachment)) {
+                fileUrlGetRequest.do({
+                    leadKey: leadKeySelector(lead),
+                    fileId: attachment.id,
+                });
+            }
+        },
+        onSuccess: ({
+            props: {
+                requests,
+                onLeadAttachmentChange,
+                attachmentUrlRefreshEnabled,
+            },
+            response,
+            params: {
+                shouldCallWebInfo,
+                leadKey,
+            },
+        }) => {
+            if (attachmentUrlRefreshEnabled && onLeadAttachmentChange && leadKey) {
+                onLeadAttachmentChange(leadKey, response);
+            }
+
+            if (shouldCallWebInfo && requests.webInfoRequest) {
                 requests.webInfoRequest.do({
                     url: response.file,
                     isFile: true,
@@ -452,7 +490,11 @@ class LeadDetail extends React.PureComponent {
         const values = leadFaramValuesSelector(lead);
         const { attachment } = values;
 
-        fileUrlGetRequest.do({ fileId: attachment.id });
+        fileUrlGetRequest.do({
+            leadKey: leadKeySelector(lead),
+            fileId: attachment.id,
+            shouldCallWebInfo: true,
+        });
     }
 
     handleApplyAllClick = (attrName) => {
@@ -1141,7 +1183,7 @@ class LeadDetail extends React.PureComponent {
                                 { values.attachment &&
                                     <InternalGallery
                                         onlyFileName
-                                        galleryId={values.attachment.id}
+                                        attachment={values.attachment}
                                     />
                                 }
                             </div>

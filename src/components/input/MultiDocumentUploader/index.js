@@ -33,13 +33,15 @@ const propTypes = {
 
     className: PropTypes.string,
     label: PropTypes.string,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
+    onUpload: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     value: PropTypes.array,
+    files: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     showLabel: PropTypes.bool,
     showHintAndError: PropTypes.bool,
-    showPageRange: PropTypes.bool,
+    // showPageRange: PropTypes.bool,
     showUrlInput: PropTypes.bool,
     showFileInput: PropTypes.bool,
 
@@ -56,12 +58,11 @@ const defaultProps = {
 
     className: '',
     label: '',
-    onChange: undefined,
     value: [],
 
     showLabel: true,
     showHintAndError: true,
-    showPageRange: false,
+    // showPageRange: false,
     showUrlInput: false,
     showFileInput: true,
 
@@ -133,6 +134,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
             {
                 key: randomString(16),
                 type: 'url',
+
                 name: urlValue,
                 url: urlValue,
             },
@@ -154,20 +156,31 @@ export default class MultiDocumentUploader extends React.PureComponent {
                         metadata: {
                             pages,
                         } = {},
+
                         id,
+                        title,
                         file: fileUrl,
+                        mimeType,
                     } = response;
-                    const { name } = file;
+
+                    this.props.onUpload({
+                        id,
+                        mimeType,
+                        title,
+                        file: fileUrl,
+                    });
                     this.props.onChange([
                         ...this.props.value,
                         {
                             key,
                             type: 'file',
+
                             id,
-                            name,
-                            url: fileUrl,
                             startPage: 1,
                             endPage: pages,
+
+                            name: title, // not very useful here
+                            url: fileUrl, // not very useful here
                         },
                     ]);
                     this.uploadCoordinator.notifyComplete(key);
@@ -220,17 +233,20 @@ export default class MultiDocumentUploader extends React.PureComponent {
     }
 
     rendererParamsForSelection = (key, item) => ({
-        galleryId: item.id,
         disabled: this.props.disabled,
         readOnly: this.props.readOnly,
-        showPageRange: this.props.showPageRange,
-
         selectionKey: key,
+
+        type: item.type,
 
         url: item.url,
         name: item.name,
+
+        attachment: this.props.files[item.id],
         startPage: item.startPage,
         endPage: item.endPage,
+
+        // showPageRange: this.props.showPageRange,
 
         onRemoveClick: this.handleRemoveClick,
         onStartPageChange: this.handleStartPageChange,

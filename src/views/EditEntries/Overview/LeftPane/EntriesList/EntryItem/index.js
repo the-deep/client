@@ -25,7 +25,8 @@ const EntryItem = (props) => {
         entryServerId,
         entryKey,
         entryType,
-        image,
+        imageRaw,
+        imageDetails,
         excerpt,
         order,
         tabularField,
@@ -91,7 +92,8 @@ const EntryItem = (props) => {
             >
                 <EntryPreview
                     entryType={entryType}
-                    image={image}
+                    imageRaw={imageRaw}
+                    imageDetails={imageDetails}
                     excerpt={excerpt}
                     order={order}
                     tabularFieldId={tabularFieldId}
@@ -142,7 +144,8 @@ EntryItem.propTypes = {
     entryServerId: PropTypes.number,
     entryKey: PropTypes.string.isRequired,
     entryType: PropTypes.string.isRequired,
-    image: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     excerpt: PropTypes.string,
     order: PropTypes.number.isRequired,
     tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -158,7 +161,8 @@ EntryItem.defaultProps = {
     pending: false,
     isMarkedAsDeleted: false,
     entryServerId: undefined,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,

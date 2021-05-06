@@ -58,6 +58,11 @@ export const editAryServerIdSelector = createSelector(
     ary => ary.serverId,
 );
 
+export const editAryFilesSelecotr = createSelector(
+    editAryFromRouteSelector,
+    ary => ary.files || emptyObject,
+);
+
 export const editAryVersionIdSelector = createSelector(
     editAryFromRouteSelector,
     ary => ary.versionId,

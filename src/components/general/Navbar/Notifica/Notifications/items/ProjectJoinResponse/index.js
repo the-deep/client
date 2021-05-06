@@ -5,7 +5,8 @@ import {
     reverseRoute,
 } from '@togglecorp/fujs';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#components/ui/Avatar';
+
 import { pathNames } from '#constants';
 import _ts from '#ts';
 
@@ -40,7 +41,6 @@ function ProjectJoinResponseItem(props) {
             status: seenStatus,
             data: {
                 respondedBy: {
-                    displayPicture: responderDisplayPictureId,
                     displayName: responderName,
                     id: responderId,
                 } = emptyObject,
@@ -116,12 +116,7 @@ function ProjectJoinResponseItem(props) {
             notificationId={notificationId}
             seenStatus={seenStatus === NOTIFICATION_STATUS_SEEN}
             onNotificationSeenStatusChange={onNotificationSeenStatusChange}
-            icon={
-                <DisplayPicture
-                    className={styles.displayPicture}
-                    galleryId={responderDisplayPictureId}
-                />
-            }
+            icon={<Avatar name={requestorName} />}
             message={(
                 <div>
                     {messageText}

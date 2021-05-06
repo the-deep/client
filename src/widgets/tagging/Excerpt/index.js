@@ -18,7 +18,8 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     droppedExcerpt: PropTypes.string,
-    image: PropTypes.string,
+    imageRaw: PropTypes.string,
+    imageDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularField: PropTypes.number,
     tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onExcerptChange: PropTypes.func,
@@ -36,7 +37,8 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     droppedExcerpt: undefined,
-    image: undefined,
+    imageRaw: undefined,
+    imageDetails: undefined,
     tabularField: undefined,
     tabularFieldData: undefined,
     disabled: false,
@@ -125,11 +127,12 @@ export default class Excerpt extends React.PureComponent {
         const {
             type,
             data,
+            imageDetails,
         } = formattedData;
 
         const {
             entryType,
-            image,
+            imageRaw,
             excerpt,
             tabularField,
             onExcerptChange,
@@ -138,7 +141,7 @@ export default class Excerpt extends React.PureComponent {
 
         const hasEntry = !!entryType;
         const hasExcerpt =
-            (entryType === IMAGE && !!image) ||
+            (entryType === IMAGE && (!!imageDetails?.file || !!imageRaw)) ||
             (entryType === TEXT && !!excerpt) ||
             (entryType === DATA_SERIES && !!tabularField);
 
@@ -147,12 +150,14 @@ export default class Excerpt extends React.PureComponent {
                 type,
                 value: data,
                 dropped: true,
+                imageDetails,
             });
         } else {
             onExcerptChange({
                 type,
                 value: data,
                 dropped: true,
+                imageDetails,
             });
         }
 
@@ -185,12 +190,15 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderExcerptImage = () => {
-        const { image } = this.props;
+        const {
+            imageDetails,
+            imageRaw,
+        } = this.props;
 
         return (
             <Image
                 className={_cs(styles.image, 'image')}
-                src={image}
+                src={imageDetails?.file || imageRaw}
                 alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
                 zoomable
                 expandable

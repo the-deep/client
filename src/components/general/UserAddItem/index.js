@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#components/ui/Avatar';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import _cs from '#cs';
 
@@ -10,7 +10,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     pending: PropTypes.bool,
-    displayPicture: PropTypes.number,
+    displayPictureUrl: PropTypes.string,
     actionButtonTitle: PropTypes.string,
     username: PropTypes.string,
     firstName: PropTypes.string,
@@ -22,7 +22,7 @@ const propTypes = {
 const defaultProps = {
     className: undefined,
     actionButtonTitle: '',
-    displayPicture: undefined,
+    displayPictureUrl: undefined,
     username: '',
     firstName: '',
     lastName: '',
@@ -51,7 +51,7 @@ export default class UserAddItem extends React.PureComponent {
             className,
             pending,
             actionButtonTitle,
-            displayPicture,
+            displayPictureUrl,
             username,
             firstName,
             lastName,
@@ -60,9 +60,10 @@ export default class UserAddItem extends React.PureComponent {
         return (
             <div className={_cs(className, styles.user)}>
                 <div className={styles.top}>
-                    <DisplayPicture
+                    <Avatar
                         className={styles.picture}
-                        galleryId={displayPicture}
+                        src={displayPictureUrl}
+                        name={`${firstName} ${lastName}`}
                     />
                     <div className={styles.name}>
                         <div className={styles.text}>

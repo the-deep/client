@@ -1,16 +1,10 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- * @co-author thenav56 <navinayer56@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
-import InternalGallery from '#components/viewer/InternalGallery';
+import Avatar from '#components/ui/Avatar';
 import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';
@@ -96,6 +90,7 @@ export default class UserEdit extends React.PureComponent {
             pending: false,
             pristine: false,
             showGalleryImage: true,
+            displayPictureUrl: props.userInformation.displayPictureUrl,
         };
 
         this.userPatchRequest = new UserPatchRequest({
@@ -167,11 +162,12 @@ export default class UserEdit extends React.PureComponent {
         this.startRequestForUserImageUpload(file);
     }
 
-    handleImageUploadSuccess = (displayPicture) => {
+    handleImageUploadSuccess = (response) => {
         this.setState({
-            faramValues: { ...this.state.faramValues, displayPicture },
+            faramValues: { ...this.state.faramValues, displayPicture: response.id },
             pristine: true,
             pending: false,
+            displayPictureUrl: response.file,
         });
     }
 
@@ -182,6 +178,7 @@ export default class UserEdit extends React.PureComponent {
             pristine,
             showGalleryImage,
             pending,
+            displayPictureUrl,
         } = this.state;
 
         const { availableLanguages } = this.props;
@@ -201,10 +198,10 @@ export default class UserEdit extends React.PureComponent {
                 <NonFieldErrors faramElement />
                 <HiddenInput faramElementName="displayPicture" />
                 {
-                    showGalleryImage && faramValues.displayPicture && (
-                        <InternalGallery
+                    showGalleryImage && (
+                        <Avatar
                             className={styles.galleryImage}
-                            galleryId={faramValues.displayPicture}
+                            src={displayPictureUrl}
                         />
                     )
                 }

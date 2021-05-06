@@ -51,6 +51,7 @@ export const entryAccessor = {
     unresolvedCommentCount: entry => getServerDataSafe(entry).unresolvedCommentCount || 0,
     verified: entry => getServerDataSafe(entry).verified || false,
     versionId: entry => getServerDataSafe(entry).versionId,
+    imageDetails: entry => getServerDataSafe(entry).imageDetails,
 };
 
 export const entryGroupAccessor = {
@@ -166,9 +167,15 @@ export const createEntry = ({
     hasError = false,
     color,
 }) => {
+    const {
+        imageDetails,
+    } = data;
+
     const keysToPick = [
         'excerpt',
         'image',
+        'imageRaw',
+        'leadImage',
         'tabularField',
         'entryType',
         'lead',
@@ -216,6 +223,7 @@ export const createEntry = ({
         serverData: {
             versionId: { $set: versionId },
             verified: { $set: verified },
+            imageDetails: { $set: imageDetails },
         },
         data: {
             $set: { id: serverId, ...pickedData },

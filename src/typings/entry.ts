@@ -59,6 +59,11 @@ export interface TabularDataFields {
     };
 }
 
+interface ImageDetails {
+    id: number;
+    file: string;
+}
+
 export interface EntryFields extends DatabaseEntityBase {
     attributes: {
         [key: string]: AttributeFields;
@@ -75,6 +80,7 @@ export interface EntryFields extends DatabaseEntityBase {
     clientId: string;
     highlightHidden: boolean;
     image?: string;
+    imageDetails?: ImageDetails;
     tabularField: number;
     tabularFieldData: TabularDataFields;
     lead: Pick<Lead, EntryLeadType>;

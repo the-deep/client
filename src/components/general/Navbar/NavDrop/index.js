@@ -27,7 +27,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#components/ui/Avatar';
 import Cloak from '#components/general/Cloak';
 import styles from './styles.scss';
 
@@ -187,17 +187,18 @@ export default class NavDrop extends React.PureComponent {
         );
 
         const displayPicture = (
-            userInformation.displayPicture ||
-            activeUser.displayPicture
+            userInformation.displayPictureUrl ||
+            activeUser.displayPictureUrl
         );
 
         return (
             <DropdownMenu
                 className={_cs(styles.dropdownMenu, className)}
                 leftComponent={
-                    <DisplayPicture
+                    <Avatar
                         className={styles.displayPicture}
-                        galleryId={displayPicture}
+                        src={displayPicture}
+                        name={userName}
                     />
                 }
                 title={userName}

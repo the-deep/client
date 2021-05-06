@@ -246,7 +246,7 @@ export default class SearchList extends React.PureComponent {
         username,
         firstName,
         lastName,
-        displayPicture,
+        displayPictureUrl,
         type,
         id: memberId,
     }) => ({
@@ -254,7 +254,7 @@ export default class SearchList extends React.PureComponent {
         username,
         firstName,
         lastName,
-        displayPicture,
+        displayPictureUrl,
         type,
         memberId,
         projectId: this.props.projectId,

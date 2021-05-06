@@ -229,7 +229,12 @@ function WidgetFaram(props) {
 
     // can only create entry
     const handleExcerptCreate = useCallback((excerptData) => {
-        const { type, value, dropped } = excerptData;
+        const {
+            type,
+            value,
+            dropped,
+            imageDetails,
+        } = excerptData;
 
         addEntry({
             leadId,
@@ -244,6 +249,7 @@ function WidgetFaram(props) {
                 ),
             },
             dropped,
+            imageDetails,
         });
     }, [
         addEntry,
@@ -460,11 +466,12 @@ function WidgetFaram(props) {
             entryType,
             excerpt,
             droppedExcerpt,
-            image,
             tabularField: tabularFieldFromEntry,
+            imageRaw,
         } = entryAccessor.data(entry) || {};
 
         const highlightHidden = entryAccessor.isHighlightHidden(entry);
+        const imageDetails = entryAccessor.imageDetails(entry);
 
         let widgetProps = {
             widgetName: widgetId,
@@ -480,8 +487,9 @@ function WidgetFaram(props) {
                 entryType,
                 excerpt,
                 droppedExcerpt,
-                image,
                 tabularField: tabularFieldFromEntry,
+                imageRaw,
+                imageDetails,
                 tabularFieldData: tabularData,
                 entryState,
                 onEntryStateChange,
@@ -497,6 +505,7 @@ function WidgetFaram(props) {
                 onExcerptChange: handleExcerptChange,
                 onExcerptCreate: handleExcerptCreate,
                 onExcerptReset: handleExcerptReset,
+                imageDetails,
             };
         }
 

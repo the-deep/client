@@ -12,7 +12,8 @@ const EntryPreview = (props) => {
 
         entryType,
 
-        image,
+        imageRaw,
+        imageDetails,
 
         excerpt,
         order,
@@ -26,7 +27,7 @@ const EntryPreview = (props) => {
             return (
                 <img
                     className={_cs(className, styles.image)}
-                    src={image}
+                    src={imageDetails?.file ?? imageRaw}
                     alt={_ts('editEntry.overview.leftpane.entryList', 'altLabel')}
                 />
             );
@@ -53,7 +54,6 @@ const EntryPreview = (props) => {
 };
 EntryPreview.propTypes = {
     entryType: PropTypes.string,
-    image: PropTypes.string,
     excerpt: PropTypes.string,
     order: PropTypes.number,
     tabularFieldId: PropTypes.number,
@@ -61,7 +61,6 @@ EntryPreview.propTypes = {
     className: PropTypes.string,
 };
 EntryPreview.defaultProps = {
-    image: undefined,
     excerpt: undefined,
     tabularFieldId: undefined,
     tabularField: undefined,

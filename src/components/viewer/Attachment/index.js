@@ -16,6 +16,10 @@ import styles from './styles.scss';
 const TAB_TABULAR = 'tabular';
 const TAB_ORIGINAL = 'original';
 
+function getFileType(title = '') {
+    return title.toLowerCase().match(/(?:\.([^.]+))?$/)[1];
+}
+
 // FIXME: use is LeadPaneType spreadsheet
 const tabularCompatibleFileTypes = [
     'xls',
@@ -61,7 +65,6 @@ export default class Attachment extends React.PureComponent {
 
         this.state = {
             activeTab: TAB_ORIGINAL,
-            response: {},
         };
 
         this.views = {
@@ -91,7 +94,7 @@ export default class Attachment extends React.PureComponent {
 
                     return (
                         <InternalGallery
-                            galleryId={attachment && attachment.id}
+                            attachment={attachment}
                             notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
                             showUrl
                         />
@@ -110,10 +113,13 @@ export default class Attachment extends React.PureComponent {
     });
 
     handleTabularButtonClick = () => {
-        const { onTabularButtonClick } = this.props;
-        const { response } = this.state;
+        const { onTabularButtonClick, attachment } = this.props;
         if (onTabularButtonClick) {
-            onTabularButtonClick(response);
+            const fileType = getFileType(attachment.title);
+            onTabularButtonClick({
+                ...attachment,
+                fileType,
+            });
         }
     }
 
@@ -121,26 +127,10 @@ export default class Attachment extends React.PureComponent {
         this.setState({ activeTab });
     };
 
-    handleAttachmentMimeTypeGet = (response) => {
-        const {
-            title = '',
-        } = response;
-        // FIXME: move this to common utils
-        const fileType = title.toLowerCase().match(/(?:\.([^.]+))?$/)[1];
-        const newResponse = {
-            ...response,
-            fileType,
-        };
-
-        this.setState({
-            response: newResponse,
-        });
-    }
-
     isExtractable = () => {
-        const { viewOnly } = this.props;
-        const { response } = this.state;
-        return !viewOnly && this.isTabularCompatible(response.fileType);
+        const { viewOnly, attachment } = this.props;
+        const fileType = getFileType(attachment.title);
+        return !viewOnly && this.isTabularCompatible(fileType);
     }
 
     shouldHideTabularButton = () => {
@@ -193,10 +183,9 @@ export default class Attachment extends React.PureComponent {
                 renderOnHide={
                     <InternalGallery
                         className={className}
-                        galleryId={attachment && attachment.id}
+                        attachment={attachment}
                         notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
                         showUrl
-                        onMimeTypeGet={this.handleAttachmentMimeTypeGet}
                     />
                 }
             />

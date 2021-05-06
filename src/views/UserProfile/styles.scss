@@ -33,9 +33,7 @@
                 .display-picture {
                     flex-shrink: 0;
                     margin-right: var(--spacing-large);
-                    border: var(--width-separator-medium) solid var(--color-accent);
-                    width: var(--width-display-picture);
-                    height: var(--width-display-picture);
+                    --size: var(--width-display-picture);
                 }
 
                 .detail {

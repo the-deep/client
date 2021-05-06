@@ -10,8 +10,8 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Avatar from '#components/ui/Avatar';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
 import {
     userInformationSelector,
     setUserProfileAction,
@@ -186,10 +186,10 @@ export default class UserProfile extends React.PureComponent {
                             <React.Fragment>
                                 <div className={styles.left}>
                                     <div className={styles.info}>
-                                        {/* FIXME: add a default image in img */}
-                                        <DisplayPicture
+                                        <Avatar
                                             className={styles.displayPicture}
-                                            galleryId={userInformation.displayPicture}
+                                            src={userInformation.displayPictureUrl}
+                                            name={`${userInformation.firstName} ${userInformation.lastName}`}
                                         />
                                         <div className={styles.detail}>
                                             <div className={styles.nameContainer}>

@@ -60,7 +60,7 @@ export default class LeadPreview extends React.PureComponent {
             return (
                 <InternalGallery
                     className={_cs(styles.preview, className)}
-                    galleryId={attachment.id}
+                    attachment={attachment}
                     onScreenshotCapture={this.props.handleScreenshot}
                     showScreenshot={showScreenshot}
                     showUrl

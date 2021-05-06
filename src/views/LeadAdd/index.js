@@ -426,11 +426,21 @@ class LeadAdd extends React.PureComponent {
                             this.handleFileUploadProgressChange(key, Math.min(99, progress));
                         })
                         .success((response) => {
-                            const { id: attachment } = response;
+                            const {
+                                id,
+                                file: attachmentFile,
+                                mimeType,
+                                title,
+                            } = response;
 
                             setLeadAttachment({
                                 leadKey: key,
-                                attachmentId: attachment,
+                                attachment: {
+                                    id,
+                                    file: attachmentFile,
+                                    mimeType,
+                                    title,
+                                },
                             });
                             this.handleFileUploadProgressChange(key, 100);
                             this.uploadCoordinator.notifyComplete(key);
@@ -719,6 +729,22 @@ class LeadAdd extends React.PureComponent {
         });
     }
 
+    handleLeadAttachmentChange = (leadKey, newAttachment) => {
+        const {
+            setLeadAttachment,
+        } = this.props;
+
+        setLeadAttachment({
+            leadKey,
+            attachment: {
+                id: newAttachment.id,
+                file: newAttachment.file,
+                mimeType: newAttachment.mimeType,
+                title: newAttachment.title,
+            },
+        });
+    }
+
     handleLeadsToRemoveSet = (leadKeys) => {
         this.setState({
             leadsToRemove: leadKeys,
@@ -939,6 +965,8 @@ class LeadAdd extends React.PureComponent {
                                     onApplyAllBelowClick={this.handleLeadApplyAllBelowClick}
                                     onApplyAllClick={this.handleLeadApplyAllClick}
                                     leadState={activeLeadState}
+                                    onLeadAttachmentChange={this.handleLeadAttachmentChange}
+                                    attachmentUrlRefreshEnabled
 
                                     bulkActionDisabled={submitAllPending}
                                 />

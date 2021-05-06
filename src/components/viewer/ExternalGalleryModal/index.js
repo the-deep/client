@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 
-import InternalGallery from '#components/viewer/InternalGallery';
+import ExternalGallery from '#components/viewer/ExternalGallery';
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -13,7 +13,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     name: PropTypes.string.isRequired,
-    attachment: PropTypes.number.isRequired,
+    url: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
 };
 
@@ -28,14 +28,14 @@ export default class Selection extends React.PureComponent {
     render() {
         const {
             className,
-            attachment,
+            url,
             name,
             closeModal,
             ...otherProps
         } = this.props;
 
         return (
-            <Modal className={_cs(className, styles.internalGalleryModal)}>
+            <Modal className={_cs(className, styles.externalGalleryModal)}>
                 <ModalHeader
                     title={name}
                     rightComponent={(
@@ -47,8 +47,8 @@ export default class Selection extends React.PureComponent {
                     )}
                 />
                 <ModalBody className={styles.body} >
-                    <InternalGallery
-                        attachment={attachment}
+                    <ExternalGallery
+                        url={url}
                         {...otherProps}
                     />
                 </ModalBody>
