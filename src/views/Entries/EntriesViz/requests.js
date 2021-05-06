@@ -22,7 +22,7 @@ const requestOptions = {
         }),
         onSuccess: ({ response, props }) => {
             if (props.onShareLinkChange) {
-                props.onShareLinkChange(response.publicUrl);
+                props.onShareLinkChange(response.publicUrl, response.publicShare);
             }
             if (response.status === 'failure') {
                 notify.send({

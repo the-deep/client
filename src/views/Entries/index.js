@@ -384,6 +384,7 @@ export default class Entries extends React.PureComponent {
 
         this.state = {
             entriesVizShareUrl: undefined,
+            isEntriesVizPublic: false,
             entriesVizDataPending: true,
             successFramework: false,
             successGeoOptions: false,
@@ -512,8 +513,11 @@ export default class Entries extends React.PureComponent {
         }, this.startEntriesRequest);
     }
 
-    handleShareLinkChange = (entriesVizShareUrl) => {
-        this.setState({ entriesVizShareUrl });
+    handleShareLinkChange = (entriesVizShareUrl, isEntriesVizPublic) => {
+        this.setState({
+            entriesVizShareUrl,
+            isEntriesVizPublic,
+        });
     }
 
     handleEntriesVizPendingChange = (entriesVizDataPending) => {
@@ -662,6 +666,7 @@ export default class Entries extends React.PureComponent {
             view,
             entriesVizDataPending,
             entriesVizShareUrl,
+            isEntriesVizPublic,
         } = this.state;
 
         const {
@@ -679,7 +684,10 @@ export default class Entries extends React.PureComponent {
                     <React.Fragment>
                         {(
                             view === VIZ_VIEW
-                            && (hasModifyPermissions || isDefined(entriesVizShareUrl))
+                            && (
+                                hasModifyPermissions
+                                || (isEntriesVizPublic && isDefined(entriesVizShareUrl))
+                            )
                             && !entriesVizDataPending
                         ) && (
                             <ModalButton
@@ -687,6 +695,7 @@ export default class Entries extends React.PureComponent {
                                 iconName="share"
                                 modal={(
                                     <ShareModal
+                                        isEntriesVizPublic={isEntriesVizPublic}
                                         isProjectAdmin={hasModifyPermissions}
                                         publicUrl={entriesVizShareUrl}
                                         projectId={projectId}
