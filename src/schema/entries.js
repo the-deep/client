@@ -23,6 +23,22 @@ const entrySchema = [];
 }
 
 {
+    const name = 'imageDetails';
+    const schema = {
+        doc: {
+            name: 'Image details',
+            description: 'Image details',
+        },
+        fields: {
+            file: { type: 'string' },
+            id: { type: 'number' },
+            title: { type: 'string' },
+        },
+    };
+    entrySchema.push({ name, schema });
+}
+
+{
     const name = 'entry';
     const schema = {
         doc: {
@@ -34,6 +50,8 @@ const entrySchema = [];
             analysisFramework: { type: 'uint', required: true },
 
             image: { type: 'number' },
+            imageRaw: { type: 'string' },
+            imageDetails: { type: 'imageDetails' },
             excerpt: { type: 'string' },
             tabularField: { type: 'number' },
 

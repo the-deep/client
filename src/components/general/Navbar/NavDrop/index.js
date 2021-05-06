@@ -103,8 +103,8 @@ DropItem.defaultProps = {
 const mapStateToProps = state => ({
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
-    activeUser: activeUserSelector(state), // from auth
-    userInformation: currentUserInformationSelector(state), // from users
+    activeUser: activeUserSelector(state),
+    userInformation: currentUserInformationSelector(state),
 });
 
 const propTypes = {
