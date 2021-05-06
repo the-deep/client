@@ -198,7 +198,7 @@ function WidgetFaramContainer(props) {
                             _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                         ) : undefined}
                         entryId={entryAccessor.serverId(entry)}
-                        projectId={entry.project}
+                        projectId={lead.project}
                         value={controlled}
                         onChange={handleControlStatusChange}
                         disabled={disableControlledButton}

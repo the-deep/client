@@ -341,7 +341,7 @@ export default class Overview extends React.PureComponent {
                                         _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                                     ) : undefined}
                                     entryId={entryAccessor.serverId(entry)}
-                                    projectId={entry.project}
+                                    projectId={lead.project}
                                     value={controlled}
                                     onChange={this.handleControlChange}
                                     onPendingStatusChange={this.handleEntryControlPendingChange}
