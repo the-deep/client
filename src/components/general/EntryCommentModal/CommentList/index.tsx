@@ -3,7 +3,7 @@ import { _cs } from '@togglecorp/fujs';
 import ReactMarkdown from 'react-markdown';
 
 import FormattedDate from '#rscv/FormattedDate';
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import Avatar from '#dui/Avatar';
 import CommaSeparateItems from '#components/viewer/CommaSeparateItems';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
@@ -69,9 +69,10 @@ function Comment(props: Props) {
         <div
             className={_cs(styles.comment, className)}
         >
-            <DisplayPicture
+            <Avatar
                 className={styles.displayPicture}
-                url={createdByDetails.displayPicture}
+                src={createdByDetails?.displayPictureUrl}
+                name={createdByDetails?.name}
             />
             <div
                 className={styles.content}

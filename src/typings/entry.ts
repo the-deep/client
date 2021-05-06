@@ -159,7 +159,7 @@ export interface EntryComment {
         text: string;
     }[];
     lead: number;
-    createdByDetails: UserDetail & { displayPicture: string };
+    createdByDetails: UserDetail & { displayPictureUrl: string };
     mentionedUsersDetails: UserDetail[];
     commentTypeDisplay: string;
     commentType: number;
