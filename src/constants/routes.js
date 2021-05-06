@@ -281,6 +281,15 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'analysisFramework');
 
+    analyticalFramework: {
+        order: 101,
+        type: ROUTE.private,
+        path: '/framework/:analyticalFrameworkId?/',
+        loader: () => import('../views/AnalyticalFramework'),
+        links: allLinks,
+        hideNavbar: true,
+    }, // _ts('pageTitle', 'analyticalFramework');
+
     categoryEditor: {
         order: 110,
         type: ROUTE.private,
