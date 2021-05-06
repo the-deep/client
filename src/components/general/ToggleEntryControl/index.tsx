@@ -140,12 +140,12 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     const controlStatusLabel = useMemo(() => {
         if (isQualityController) {
             return value
-                ? _ts('entryReview', 'control')
-                : _ts('entryReview', 'uncontrol');
+                ? _ts('entryReview', 'uncontrol')
+                : _ts('entryReview', 'control');
         }
         return value
-            ? _ts('entryReview', 'uncontrolledLabel')
-            : _ts('entryReview', 'controlledLabel');
+            ? _ts('entryReview', 'controlledLabel')
+            : _ts('entryReview', 'uncontrolledLabel');
     }, [value, isQualityController]);
 
     return (

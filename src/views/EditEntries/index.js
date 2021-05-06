@@ -89,11 +89,14 @@ import {
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
+    setProjectMembershipsAction,
 } from '#redux';
 import notify from '#notify';
 import _ts from '#ts';
 import { VIEW } from '#widgets';
-
+import {
+    notifyOnFailure,
+} from '#utils/requestNotify';
 import { calculateEntryColor } from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
@@ -193,6 +196,7 @@ const mapDispatchToProps = dispatch => ({
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
     resetEntryGroupUiState: params => dispatch(editEntriesResetEntryGroupUiStateAction(params)),
     setLabels: params => dispatch(editEntriesSetLabelsAction(params)),
+    setProjectMemberships: params => dispatch(setProjectMembershipsAction(params)),
 });
 
 const requestOptions = {
@@ -325,6 +329,24 @@ const requestOptions = {
                     });
                 }
             }
+        },
+    },
+    projectMembershipRequest: {
+        onPropsChanged: ['projectId'],
+        url: ({ props }) => `/projects/${props.projectId}/project-memberships/`,
+        onMount: true,
+        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
+        onSuccess: ({
+            response = {},
+            props: {
+                projectId,
+                setProjectMemberships,
+            },
+        }) => {
+            setProjectMemberships({
+                projectId,
+                memberships: response.results,
+            });
         },
     },
 };
