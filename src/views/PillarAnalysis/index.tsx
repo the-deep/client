@@ -13,6 +13,7 @@ import { IoAdd } from 'react-icons/io5';
 import { Dispatch } from 'redux';
 import {
     Heading,
+    DropContainer,
     Button,
     QuickActionButton,
     TextArea,
@@ -145,6 +146,8 @@ function PillarAnalysis(props: Props) {
         validate,
         onErrorSet,
     } = useForm(pillarAnalysisFromProps?.data ?? defaultFormValues, schema);
+
+    const [statementDraggedStatus, setStatementDraggedStatus] = useState(false);
 
     const {
         onValueChange: onAnalyticalStatementChange,
@@ -400,6 +403,46 @@ function PillarAnalysis(props: Props) {
         [entries],
     );
 
+    const handleAnalyticalStatementDrop = useCallback((droppedId: string, dropOverId?: string) => {
+        onValueChange((oldStatements: FormType['analyticalStatements']) => {
+            if (isNotDefined(oldStatements)) {
+                return oldStatements;
+            }
+            const movedItemIndex = oldStatements.findIndex(item => item.clientId === droppedId);
+            if (
+                isNotDefined(movedItemIndex)
+                || movedItemIndex === -1
+            ) {
+                return oldStatements;
+            }
+            const newStatements = [...oldStatements];
+            newStatements.splice(movedItemIndex, 1);
+
+            const dropOverIndex = newStatements.findIndex(item => item.clientId === dropOverId);
+            if (dropOverIndex === -1) {
+                newStatements.push(oldStatements[movedItemIndex]);
+            } else {
+                newStatements.splice(dropOverIndex, 0, oldStatements[movedItemIndex]);
+            }
+
+            // NOTE: After the newly added statements's order is set and
+            // placed in the desired index, we can change the order of
+            // whole list in bulk
+            return newStatements.map((v, i) => ({ ...v, order: i }));
+        }, 'analyticalStatements');
+    }, [onValueChange]);
+
+    const handleAnalyticalStatementEndDrop = useCallback(
+        (val: Record<string, unknown> | undefined) => {
+            if (!val) {
+                return;
+            }
+            const typedVal = val as { statementClientId: string };
+            handleAnalyticalStatementDrop(typedVal.statementClientId);
+        },
+        [handleAnalyticalStatementDrop],
+    );
+
     const handleAnalyticalStatementAdd = useCallback(
         () => {
             // NOTE: Don't let users add more that certain statements
@@ -616,8 +659,23 @@ function PillarAnalysis(props: Props) {
                                     onEntryDrop={handleEntryDrop}
                                     // eslint-disable-next-line max-len
                                     error={error?.fields?.analyticalStatements?.members?.[analyticalStatement.clientId]}
+                                    onStatementDraggedStatusChange={setStatementDraggedStatus}
+                                    statementDraggedStatus={statementDraggedStatus}
+                                    onAnalyticalStatementDrop={handleAnalyticalStatementDrop}
                                 />
                             ))}
+                            {statementDraggedStatus && (
+                                <DropContainer
+                                    className={styles.dropContainer}
+                                    name="statement"
+                                    // NOTE: Disabled drop on the same entry which is being dragged
+                                    onDrop={handleAnalyticalStatementEndDrop}
+                                    dropOverlayContainerClassName={styles.overlay}
+                                    draggedOverClassName={styles.draggedOver}
+                                    contentClassName={styles.content}
+                                    disabled={!statementDraggedStatus}
+                                />
+                            )}
                             <QuickActionButton
                                 className={styles.addStatementButton}
                                 name={undefined}
