@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { _cs } from '@togglecorp/fujs';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
@@ -9,12 +10,15 @@ import {
 import {
     activeUserSelector,
     projectMembershipListSelector,
+    patchEntryControlAction,
+    editEntriesSetEntryControlStatusAction,
 } from '#redux';
 import {
     DatabaseEntityBase,
     User,
     AppState,
     Membership,
+    Entry,
 } from '#typings';
 
 import Button from '#rsca/Button';
@@ -36,16 +40,21 @@ interface ToggleEntryControlProps {
     className?: string;
     entryId: DatabaseEntityBase['id'];
     projectId: DatabaseEntityBase['id'];
-    onChange: (newValue: boolean) => void;
     onPendingStatusChange?: (newValue: boolean) => void;
     value: boolean;
     tooltip?: string;
     disabled?: boolean;
+    onChange?: (value: boolean) => void;
 }
 
 interface PropsFromState {
     activeUser: User;
     projectMembers: Membership[];
+}
+
+interface PropsFromDispatch {
+    setEntryControl: typeof patchEntryControlAction,
+    setEditEntryControl: typeof editEntriesSetEntryControlStatusAction,
 }
 
 const CONTROL = 3;
@@ -57,19 +66,27 @@ const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
     projectMembers: projectMembershipListSelector(state),
 });
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setEntryControl: params => dispatch(patchEntryControlAction(params)),
+    setEditEntryControl: params => dispatch(
+        editEntriesSetEntryControlStatusAction(params),
+    ),
+});
 
-function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
+function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & PropsFromDispatch) {
     const {
         className,
         entryId,
         projectId,
         value,
-        onChange,
         onPendingStatusChange,
         tooltip,
         disabled,
         activeUser,
         projectMembers,
+        setEntryControl,
+        setEditEntryControl,
+        onChange,
     } = props;
 
     const isQualityController = useMemo(() =>
@@ -93,16 +110,35 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     ), [value, uncontrolFormData]);
 
     const [
-        reviewRequestPending,
-        ,,
-        triggerReviewRequest,
-    ] = useRequest({
-        url,
+        entryPending,
+        ,
+        ,
+        getEntry,
+    ] = useRequest<Entry>({
+        url: `server://v2/entries/${entryId}/`,
         autoTrigger: false,
-        method: 'POST',
-        body: formData,
-        onSuccess: () => {
-            onChange(!value);
+        method: 'GET',
+        onSuccess: (response) => {
+            const { id, lead, controlled, versionId } = response;
+
+            if (onChange) {
+                onChange(controlled);
+            }
+
+            setEntryControl({
+                entryId: id,
+                leadId: lead,
+                status: controlled,
+                versionId,
+            });
+
+            const entryForPatch = {
+                id,
+                controlled,
+                versionId,
+            };
+
+            setEditEntryControl({ entry: entryForPatch, leadId: lead });
             setCommentModalHidden();
 
             notify.send({
@@ -111,6 +147,22 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                 message: _ts('entryReview', 'entryControlStatusChangeSuccess'),
                 duration: notify.duration.MEDIUM,
             });
+        },
+        onFailure: notifyError(_ts('entryReview', 'entryControlFailure')),
+    });
+
+    const [
+        reviewRequestPending,
+        ,
+        ,
+        triggerReviewRequest,
+    ] = useRequest({
+        url,
+        autoTrigger: false,
+        method: 'POST',
+        body: formData,
+        onSuccess: () => {
+            getEntry();
         },
         onFailure: notifyError(_ts('entryReview', 'entryControlFailure')),
     });
@@ -167,7 +219,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
                             )
                         }
                         onClick={handleClick}
-                        pending={reviewRequestPending}
+                        pending={reviewRequestPending || entryPending}
                         disabled={disabled || !isQualityController}
                     >
                         { controlStatusLabel }
@@ -212,4 +264,4 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     );
 }
 
-export default connect(mapStateToProps)(ToggleEntryControl);
+export default connect(mapStateToProps, mapDispatchToProps)(ToggleEntryControl);

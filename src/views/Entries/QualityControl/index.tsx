@@ -291,6 +291,7 @@ function QualityControl(props: Props) {
     useEffect(
         getEntries,
         [
+            getEntries,
             projectId,
             activePage,
             requestFilters,

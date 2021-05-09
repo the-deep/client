@@ -192,17 +192,6 @@ function EntryCard(props: EntryCardProps) {
         };
     }, []);
 
-    const handleEntryControlChange = useCallback((controlled) => {
-        if (onEntryChange) {
-            const entryToPatch = {
-                ...entry,
-                controlled,
-            };
-
-            onEntryChange(entryToPatch);
-        }
-    }, [entry, onEntryChange]);
-
     const handleEntryVerificationChange = useCallback(
         (verified: boolean, verificationCount: number) => {
             if (onEntryChange) {
@@ -216,6 +205,16 @@ function EntryCard(props: EntryCardProps) {
             }
         }, [entry, onEntryChange],
     );
+
+    const handleEntryControlChange = useCallback((controlled: boolean) => {
+        if (onEntryChange) {
+            const entryToPatch = {
+                ...entry,
+                controlled,
+            };
+            onEntryChange(entryToPatch);
+        }
+    }, [entry, onEntryChange]);
 
     const entryLastChangedBy = entry?.controlledChangedByDetails?.displayName;
 
@@ -388,8 +387,8 @@ function EntryCard(props: EntryCardProps) {
                                     projectId={entry.project}
                                     entryId={entry.id}
                                     value={entry.controlled}
-                                    onChange={handleEntryControlChange}
                                     disabled={isDeleted}
+                                    onChange={handleEntryControlChange}
                                 />
                                 <EntryCommentButton entryId={entry.id} />
                                 <EntryOpenLink

@@ -33,7 +33,6 @@ import {
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetEntryCommentsCountAction,
-    editEntriesSetEntryControlStatusAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
@@ -66,7 +65,6 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
-    setEntryControlStatus: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -100,9 +98,6 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
-    setEntryControlStatus: params => dispatch(
-        editEntriesSetEntryControlStatusAction(params),
-    ),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
@@ -244,22 +239,6 @@ export default class Overview extends React.PureComponent {
         setEntryCommentsCount({ entry, leadId });
     }
 
-    handleControlChange = (controlled) => {
-        const {
-            entry: entryFromProps,
-            leadId,
-            setEntryControlStatus,
-        } = this.props;
-
-        const entry = {
-            id: entryAccessor.serverId(entryFromProps),
-            controlled,
-            versionId: entryFromProps.versionId,
-        };
-
-        setEntryControlStatus({ entry, leadId });
-    }
-
     handleEntryControlPendingChange = (entryControlPending) => {
         this.setState({ entryControlPending });
     }
@@ -349,7 +328,6 @@ export default class Overview extends React.PureComponent {
                                     entryId={entryAccessor.serverId(entry)}
                                     projectId={lead.project}
                                     value={controlled}
-                                    onChange={this.handleControlChange}
                                     onPendingStatusChange={this.handleEntryControlPendingChange}
                                     disabled={disableControlledButton}
                                 />
