@@ -235,7 +235,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
                     ? _ts('analysis.editModal', 'editAnalysisModalHeading')
                     : _ts('analysis.editModal', 'addAnalysisModalHeading')
             }
-            onClose={onModalClose}
+            onCloseButtonClick={onModalClose}
         >
             <Faram
                 schema={analysisSchema}

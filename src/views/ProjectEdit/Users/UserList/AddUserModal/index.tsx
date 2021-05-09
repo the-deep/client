@@ -182,7 +182,7 @@ function AddUserModal(props: Props) {
                     ? _ts('projectEdit', 'editUserHeading')
                     : _ts('projectEdit', 'addUserHeading')
             }
-            onClose={onModalClose}
+            onCloseButtonClick={onModalClose}
             bodyClassName={styles.modalBody}
             footerClassName={styles.footer}
             footer={(

@@ -188,7 +188,7 @@ function AddUserGroupModal(props: Props) {
                     ? _ts('projectEdit', 'editUsergroupHeading')
                     : _ts('projectEdit', 'addUsergroupHeading')
             }
-            onClose={onModalClose}
+            onCloseButtonClick={onModalClose}
             bodyClassName={styles.modalBody}
             footerClassName={styles.footer}
             footer={(
