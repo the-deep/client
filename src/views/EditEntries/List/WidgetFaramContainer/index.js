@@ -26,7 +26,6 @@ import {
     editEntriesFilteredEntryGroupsSelector,
 
     editEntriesSetSelectedEntryKeyAction,
-    editEntriesSetEntryControlStatusAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
@@ -49,8 +48,6 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
-    setEntryControlStatus: PropTypes.func.isRequired,
-
     index: PropTypes.number.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -72,9 +69,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
-    setEntryControlStatus: params => dispatch(
-        editEntriesSetEntryControlStatusAction(params),
-    ),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
@@ -100,7 +94,6 @@ function WidgetFaramContainer(props) {
         labels,
         selectedEntryKey,
         setSelectedEntryKey,
-        setEntryControlStatus,
         markAsDeletedEntry,
     } = props;
 
@@ -135,16 +128,6 @@ function WidgetFaramContainer(props) {
             value: true,
         });
     }, [markAsDeletedEntry, entry, leadId]);
-
-    const handleControlStatusChange = useCallback((controlled) => {
-        const entryForPatch = {
-            id: entryAccessor.serverId(entry),
-            controlled,
-            versionId: entry.versionId,
-        };
-
-        setEntryControlStatus({ entry: entryForPatch, leadId });
-    }, [entry, setEntryControlStatus, leadId]);
 
     const entryKey = entryAccessor.key(entry);
     const controlled = entryAccessor.controlled(entry);
@@ -200,7 +183,6 @@ function WidgetFaramContainer(props) {
                         entryId={entryAccessor.serverId(entry)}
                         projectId={lead.project}
                         value={controlled}
-                        onChange={handleControlStatusChange}
                         disabled={disableControlledButton}
                         onPendingStatusChange={setControlPending}
                     />
