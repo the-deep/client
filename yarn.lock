@@ -1740,16 +1740,19 @@
     resolve-from "^5.0.0"
     ts-dedent "^2.0.0"
 
-"@the-deep/deep-ui@^1.3.4-beta.1":
-  version "1.3.4-beta.1"
-  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.3.4-beta.1.tgz#0960efda6edaf9914356ca5ce1e20eb5433d8b7f"
-  integrity sha512-GcGwQ/m1ScHiXJPnRk/lLA1pALV2vKz/r3ROuAd+R7sw0bT94jPw4zLaRvoLH/rHlSt5lzl4cfyii1QWLiH6Fw==
+"@the-deep/deep-ui@^1.3.5-beta.1":
+  version "1.3.5-beta.1"
+  resolved "https://registry.yarnpkg.com/@the-deep/deep-ui/-/deep-ui-1.3.5-beta.1.tgz#77eac1c25918d8bcf8568e1543f31ce6f575fe39"
+  integrity sha512-Qs+rAmqumS+3LNYOVL1O3FChVLQgD7drLa5BRotpivAqp1fyuqJG1jf1iNtC0XU5NhS6jSev1R4GijprvlzJpw==
   dependencies:
     "@babel/runtime-corejs3" "^7.11.2"
     "@storybook/client-api" "^6.0.21"
     "@togglecorp/fujs" "^1.9.2-beta.0"
+    "@types/requestidlecallback" "^0.3.1"
     d3-shape "^2.1.0"
     react-icons "^4.2.0"
+    react-zoom-pan-pinch "^1.6.1"
+    resize-observer-polyfill "^1.5.1"
 
 "@timilsinabishal/react-components@https://github.com/the-deep/react-components":
   version "1.0.0"
@@ -2083,6 +2086,11 @@
   dependencies:
     "@types/d3-shape" "^1"
     "@types/react" "*"
+
+"@types/requestidlecallback@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@types/requestidlecallback/-/requestidlecallback-0.3.1.tgz#34bb89753b1cdc72d0547522527b1cb0f02b5ec4"
+  integrity sha512-BnnRkgWYijCIndUn+LgoqKHX/hNpJC5G03B9y7mZya/C2gUQTSn75fEj3ZP1/Rl2E6EYeXh2/7/8UNEZ4X7HuQ==
 
 "@types/scheduler@*":
   version "0.16.1"
@@ -11752,6 +11760,11 @@ react-wordcloud@^1.0.8:
     resize-observer-polyfill "^1.5.1"
     seedrandom "^3.0.1"
     tippy.js "^4.3.4"
+
+react-zoom-pan-pinch@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/react-zoom-pan-pinch/-/react-zoom-pan-pinch-1.6.1.tgz#da16267c258ab37e8ebcdc7c252794a9633e91ec"
+  integrity sha512-J2eM0gZ04XiUWvmKZrOhSAB2zjyoK7kw2POIeN1X0yTTlmp6HPGV0zYfjnlkhgt8nQwpvXAbsF/oAnkuiwk1kA==
 
 react@^16.8.6:
   version "16.8.6"
