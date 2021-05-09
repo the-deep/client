@@ -1,13 +1,36 @@
 .analysis-edit-modal {
-    display: flex;
+    width: 96vw;
+    max-width: 600px;
+    max-height: 800px;
 
     .input {
-        padding: var(--dui-spacing-medium);
+        margin: var(--dui-spacing-medium) 0;
     }
 
-    .footer {
+    .modal-body {
         display: flex;
-        align-items: center;
-        justify-content: flex-end;
+        flex-direction: column;
+        overflow: auto;
+
+        .error {
+            color: var(--dui-color-danger);
+        }
+
+        .analysis-pillar-list-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: auto;
+
+            .analysis-pillar-list {
+                flex-grow: 1;
+                overflow: auto;
+            }
+
+            .actions {
+                flex-shrink: 0;
+                padding: var(--dui-spacing-medium) 0;
+            }
+        }
     }
 }

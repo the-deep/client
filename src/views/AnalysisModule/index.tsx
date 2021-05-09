@@ -1,10 +1,16 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { encodeDate } from '@togglecorp/fujs';
+import {
+    encodeDate,
+    _cs,
+} from '@togglecorp/fujs';
 import { connect } from 'react-redux';
-import colorBrewer from 'colorbrewer';
 import {
     IoDocumentOutline,
     IoCheckmarkCircle,
+    IoBookmarkOutline,
+    IoDocumentTextOutline,
+    IoPieChart,
+    IoStatsChart,
 } from 'react-icons/io5';
 import {
     PieChart,
@@ -29,19 +35,15 @@ import DateFilter from '#rsci/DateFilter';
 import Timeline from '#components/viz/Timeline';
 
 import { useRequest, useLazyRequest } from '#utils/request';
+import RechartsLegend from '#components/ui/RechartsLegend';
 import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
-import {
-    getDateWithTimezone,
-} from '#utils/common';
-import {
-    shortMonthNamesMap,
-} from '#utils/safeCommon';
+import { getDateWithTimezone } from '#utils/common';
+import { shortMonthNamesMap } from '#utils/safeCommon';
 import {
     useModalState,
     useArrayEdit,
 } from '#hooks/stateManagement';
-
 
 import {
     AppState,
@@ -70,11 +72,14 @@ const mapStateToProps = (state: AppState) => ({
 
 const analysisKeySelector = (d: AnalysisElement) => d.id;
 const maxItemsPerPage = 5;
-const colorScheme = colorBrewer.Dark2[8];
-
-interface AnalysisModuleProps {
-    activeProject: number;
-}
+const colorScheme = [
+    '#2878bf',
+    '#71efff',
+    '#42b7df',
+    '#0053af',
+    '#3f9fcf',
+    '#5fd1ef',
+];
 
 type Filter = {
     startDate?: string;
@@ -92,14 +97,13 @@ interface AuthoringOrganizations {
     organizationTypeTitle: string;
 }
 
-interface AnalysisOverview {
-    analysisList: AnalysisList[];
-    entriesTotal: number;
-    analyzedEntriesCount: number;
-    sourcesTotal: number;
-    analyzedSourceCount: number;
-    authoringOrganizations: AuthoringOrganizations[];
-}
+/*
+const dummyAuthoringOrganizations: AuthoringOrganizations[] = [
+    { count: 10, organizationTypeId: 1, organizationTypeTitle: 'NGOs' },
+    { count: 6, organizationTypeId: 1, organizationTypeTitle: 'Government' },
+    { count: 16, organizationTypeId: 1, organizationTypeTitle: 'UN Agency' },
+];
+ */
 
 interface TimelineData {
     key: number;
@@ -123,8 +127,23 @@ const timelineTickSelector = (d: number) => {
     return `${year}-${shortMonthNamesMap[month]}`;
 };
 
+interface AnalysisOverview {
+    analysisList: AnalysisList[];
+    entriesTotal: number;
+    analyzedEntriesCount: number;
+    sourcesTotal: number;
+    analyzedSourceCount: number;
+    authoringOrganizations: AuthoringOrganizations[];
+}
+
+interface AnalysisModuleProps {
+    className?: string;
+    activeProject: number;
+}
+
 function AnalysisModule(props: AnalysisModuleProps) {
     const {
+        className,
         activeProject,
     } = props;
 
@@ -199,7 +218,9 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const piechartData: AuthoringOrganizations[] = overviewResponse?.authoringOrganizations ?? [];
+    const piechartData: AuthoringOrganizations[]
+        = overviewResponse?.authoringOrganizations ?? [];
+    // const piechartData: AuthoringOrganizations[] = dummyAuthoringOrganizations;
 
     const timelineData: TimelineData[] = (analysesResponse?.results?.map(d => ({
         key: d.id,
@@ -255,7 +276,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
     ]);
 
     return (
-        <div className={styles.analysisModule}>
+        <div className={_cs(styles.analysisModule, className)}>
             <SubNavbar>
                 <div className={styles.subNavbar}>
                     <Button
@@ -276,83 +297,94 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 heading={_ts('analysis', 'analysesOverview')}
                 headingClassName={styles.header}
             >
-                <div className={styles.infoBoxes}>
-                    <div className={styles.topInfoBox}>
-                        <InformationCard
-                            className={styles.infoBox}
-                            icon={(
-                                <Icon
-                                    className={styles.icon}
-                                    name="noteIcon"
-                                />
-                            )}
-                            label={_ts('analysis', 'totalSourcesLabel')}
-                            value={100}
-                            variant="accent"
-                        />
-                        <InformationCard
-                            className={styles.infoBox}
-                            icon={(
-                                <Icon
-                                    className={styles.icon}
-                                    name="bookmarkIcon"
-                                />
-                            )}
-                            label={_ts('analysis', 'totalEntriesLabel')}
-                            value={100}
-                            variant="complement1"
-                        />
-                    </div>
-                    <div className={styles.bottomInfoBox}>
-                        <PercentageInformationCard
-                            className={styles.infoBox}
-                            value={72}
-                            variant="complement2"
-                            label={_ts('analysis', 'entriesAnalyzedLabel')}
-                            icon={<IoCheckmarkCircle />}
-                        />
-                        <PercentageInformationCard
-                            className={styles.infoBox}
-                            value={54}
-                            label={_ts('analysis', 'sourcesAnalyzedLabel')}
-                            variant="complement1"
-                            icon={<IoDocumentOutline />}
-                        />
-                    </div>
+                <div className={styles.infoCardContainer}>
+                    <InformationCard
+                        coloredBackground
+                        icon={<IoDocumentTextOutline />}
+                        label={_ts('analysis', 'totalSourcesLabel')}
+                        value={100}
+                        variant="accent"
+                    />
+                    <InformationCard
+                        coloredBackground
+                        icon={<IoBookmarkOutline />}
+                        label={_ts('analysis', 'totalEntriesLabel')}
+                        value={100}
+                        variant="complement1"
+                    />
+                    <PercentageInformationCard
+                        value={72}
+                        variant="complement2"
+                        label={_ts('analysis', 'entriesAnalyzedLabel')}
+                        icon={<IoCheckmarkCircle />}
+                    />
+                    <PercentageInformationCard
+                        value={54}
+                        label={_ts('analysis', 'sourcesAnalyzedLabel')}
+                        variant="complement1"
+                        icon={<IoDocumentOutline />}
+                    />
                 </div>
                 <Card className={styles.pieChartContainer}>
-                    <ResponsiveContainer>
-                        <PieChart>
-                            <Pie
-                                data={piechartData}
-                                dataKey={valueSelector}
-                                nameKey={labelSelector}
-                                outerRadius={50}
-                                paddingAngle={2}
-                            >
-                                {piechartData.map((
-                                    entry: AuthoringOrganizations,
-                                    index: number,
-                                ) => (
-                                    <Cell
-                                        key={entry.organizationTypeId}
-                                        fill={colorScheme[index % colorScheme.length]}
-                                    />
-                                ))}
-                            </Pie>
-                            <Legend verticalAlign="bottom" />
-                            <Tooltip labelFormatter={tickFormatter} />
-                        </PieChart>
-                    </ResponsiveContainer>
+                    { piechartData?.length > 0 ? (
+                        <ResponsiveContainer>
+                            <PieChart>
+                                <Pie
+                                    data={piechartData}
+                                    dataKey={valueSelector}
+                                    nameKey={labelSelector}
+                                >
+                                    {piechartData.map((
+                                        entry: AuthoringOrganizations,
+                                        index: number,
+                                    ) => (
+                                        <Cell
+                                            key={entry.organizationTypeId}
+                                            fill={colorScheme[
+                                                index % colorScheme.length
+                                            ]}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Legend
+                                    verticalAlign="bottom"
+                                    content={<RechartsLegend className={styles.legend} />}
+                                />
+                                <Tooltip labelFormatter={tickFormatter} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    ) : (
+                        <div className={styles.emptyChart}>
+                            <IoPieChart
+                                className={styles.icon}
+                            />
+                            <div className={styles.text}>
+                                {/* FIXME: use strings with appropriate wording */}
+                                Chart not available
+                            </div>
+                        </div>
+                    )}
                 </Card>
                 <Card className={styles.analysesTimelineContainer}>
-                    <Timeline
-                        data={timelineData}
-                        labelSelector={timelineLabelSelector}
-                        valueSelector={timelineValueSelector}
-                        keySelector={timelineKeySelector}
-                        tickLabelSelector={timelineTickSelector}
-                    />
+                    {timelineData?.length > 0 ? (
+                        <Timeline
+                            data={timelineData}
+                            labelSelector={timelineLabelSelector}
+                            valueSelector={timelineValueSelector}
+                            keySelector={timelineKeySelector}
+                            tickLabelSelector={timelineTickSelector}
+                        />
+                    ) : (
+                        <div className={styles.emptyChart}>
+                            <IoStatsChart
+                                className={styles.icon}
+                            />
+                            <div className={styles.text}>
+                                {/* FIXME: use strings with appropriate wording */}
+                                Chart not available
+                            </div>
+                        </div>
+                    )}
                 </Card>
             </Container>
             <Container

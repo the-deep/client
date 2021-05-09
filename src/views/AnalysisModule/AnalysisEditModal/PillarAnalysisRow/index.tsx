@@ -1,18 +1,21 @@
 import React from 'react';
 import { _cs } from '@togglecorp/fujs';
-import {
-    FaramGroup,
-    FaramActionElement,
-} from '@togglecorp/faram';
+import { IoClose } from 'react-icons/io5';
 import {
     QuickActionButton,
+    TextInput,
+    SelectInput,
+    MultiSelectInput,
 } from '@the-deep/deep-ui';
 
-import TextInput from '#rsci/TextInput';
-import SelectInput from '#rsci/SelectInput';
-import MultiSelectInput from '#rsci/MultiSelectInput';
 import {
-    AnalysisPillarFormItem,
+    useFormObject,
+    PartialForm,
+    Error,
+    StateArg,
+} from '@togglecorp/toggle-form';
+
+import {
     UserMini,
     MatrixTocElement,
 } from '#typings';
@@ -21,13 +24,10 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const FaramButton = FaramActionElement(QuickActionButton);
-
-interface PillarAnalysisRowProps {
-    className?: string;
-    index: number;
-    usersList: UserMini[];
-    matrixPillars?: MatrixTocElement[];
+export interface PillarAnalysisFields {
+    title: string;
+    assignee: UserMini['id'];
+    filters: MatrixTocElement['uniqueId'][];
 }
 
 const idSelector = (d: MatrixTocElement) => d.uniqueId;
@@ -36,56 +36,77 @@ const labelSelector = (d: MatrixTocElement) => d.altTitle ?? d.title;
 const userKeySelector = (u: UserMini) => u.id;
 const userLabelSelector = (u: UserMini) => u.displayName;
 
-const deleteClick = (rows: AnalysisPillarFormItem[], index: number) => {
-    const newRows = [...rows];
-    newRows.splice(index, 1);
-    return newRows;
+type Value = PartialForm<PillarAnalysisFields>
+const defaultValue: Value = {
 };
 
-function PillarAnalysisRow(props: PillarAnalysisRowProps) {
+export interface Props {
+    className?: string;
+    error: Error<PillarAnalysisFields> | undefined;
+    index: number;
+    matrixPillars?: MatrixTocElement[];
+    onChange: (value: StateArg<Value>, index: number) => void;
+    onRemove: (index: number) => void;
+    usersList: UserMini[];
+    value: Value;
+}
+
+function PillarAnalysisRow(props: Props) {
     const {
-        index,
         className,
-        usersList,
+        error,
+        index,
         matrixPillars,
+        onChange,
+        onRemove,
+        usersList,
+        value,
     } = props;
+
+    const onFieldChange = useFormObject(index, onChange, defaultValue);
 
     return (
         <div className={_cs(className, styles.pillarAnalysisRow)}>
-            <FaramGroup
-                faramElementName={String(index)}
-            >
-                <TextInput
-                    faramElementName="title"
-                    className={styles.input}
-                    label={_ts('analysis.editModal', 'pillarAnalysisTitleLabel')}
-                    placeholder={_ts('analysis.editModal', 'pillarAnalysisTitlePlaceholder')}
-                />
-                <SelectInput
-                    className={styles.input}
-                    faramElementName="assignee"
-                    label={_ts('analysis.editModal', 'pillarAnalysisAssigneeLabel')}
-                    placeholder={_ts('analysis.editModal', 'pillarAnalysisAssigneePlaceholder')}
-                    options={usersList}
-                    keySelector={userKeySelector}
-                    labelSelector={userLabelSelector}
-                />
-                <MultiSelectInput
-                    className={styles.input}
-                    faramElementName="filters"
-                    options={matrixPillars}
-                    label={_ts('analysis.editModal', 'pillarAnalysisPillarTitle')}
-                    placeholder={_ts('analysis.editModal', 'matrixPillarsPlaceholder')}
-                    keySelector={idSelector}
-                    labelSelector={labelSelector}
-                />
-            </FaramGroup>
-            <FaramButton
-                name={undefined}
-                faramAction={deleteClick}
-                faramElementName={String(index)}
-                title={_ts('widgets.editor.matrix1d', 'removeCellButtonTitle')}
+            <TextInput
+                className={styles.input}
+                error={error?.fields?.title}
+                label={_ts('analysis.editModal', 'pillarAnalysisTitleLabel')}
+                name="title"
+                onChange={onFieldChange}
+                placeholder={_ts('analysis.editModal', 'pillarAnalysisTitlePlaceholder')}
+                value={value.title}
             />
+            <SelectInput
+                className={styles.input}
+                error={error?.fields?.assignee}
+                keySelector={userKeySelector}
+                label={_ts('analysis.editModal', 'pillarAnalysisAssigneeLabel')}
+                labelSelector={userLabelSelector}
+                name="assignee"
+                onChange={onFieldChange}
+                options={usersList}
+                placeholder={_ts('analysis.editModal', 'pillarAnalysisAssigneePlaceholder')}
+                value={value.assignee}
+            />
+            <MultiSelectInput
+                className={styles.input}
+                error={error?.fields?.filters?.$internal}
+                keySelector={idSelector}
+                label={_ts('analysis.editModal', 'pillarAnalysisPillarTitle')}
+                labelSelector={labelSelector}
+                name="filters"
+                onChange={onFieldChange}
+                options={matrixPillars}
+                placeholder={_ts('analysis.editModal', 'matrixPillarsPlaceholder')}
+                value={value.filters}
+            />
+            <QuickActionButton
+                className={styles.removeButton}
+                name={index}
+                onClick={onRemove}
+            >
+                <IoClose />
+            </QuickActionButton>
         </div>
     );
 }

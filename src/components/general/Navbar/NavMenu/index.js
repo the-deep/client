@@ -64,7 +64,7 @@ class NavMenu extends React.PureComponent {
 
     static keySelector = d => d.key
 
-    static computeSize = (navLinks, menu) => {
+    static computeSize = (navLinks, menu, projectId, countryId) => {
         if (!menu) {
             return [];
         }
@@ -76,6 +76,7 @@ class NavMenu extends React.PureComponent {
         const overflow = menu.getElementsByTagName('div')[0];
 
         const linkWidths = [];
+        const linkHrefs = {};
         let totalWidth = 0;
 
         for (let i = 0; i < links.length; i += 1) {
@@ -83,7 +84,13 @@ class NavMenu extends React.PureComponent {
             const { width } = links[i].getBoundingClientRect();
             linkWidths.push(width);
             totalWidth += width;
+            linkHrefs[links[i].getAttribute('href')] = true;
         }
+
+        const visibleNavLinks = navLinks.filter((nl) => {
+            const url = reverseRoute(pathNames[nl.key], { countryId, projectId });
+            return linkHrefs[url];
+        });
 
         if (menu.scrollWidth > Math.ceil(cr.width)) {
             totalWidth += overflow.getBoundingClientRect().width;
@@ -92,7 +99,7 @@ class NavMenu extends React.PureComponent {
 
             let lastVisibleLinkIndex = links.length - 1;
             while (totalWidth > cr.width) {
-                overflowMenuLinks.unshift(navLinks[lastVisibleLinkIndex]);
+                overflowMenuLinks.unshift(visibleNavLinks[lastVisibleLinkIndex]);
 
                 totalWidth -= linkWidths[0];
                 linkWidths.shift();
@@ -128,13 +135,23 @@ class NavMenu extends React.PureComponent {
     }
 
     componentWillMount() {
-        const overflowMenuLinks = NavMenu.computeSize(this.state.navLinks, this.menu);
+        const overflowMenuLinks = NavMenu.computeSize(
+            this.state.navLinks,
+            this.menu,
+            this.props.projectId,
+            this.props.countryId,
+        );
         this.setState({ overflowMenuLinks });
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.boundingClientRect !== nextProps.boundingClientRect) {
-            const overflowMenuLinks = NavMenu.computeSize(nextProps.links, this.menu);
+            const overflowMenuLinks = NavMenu.computeSize(
+                nextProps.links,
+                this.menu,
+                nextProps.projectId,
+                nextProps.countryId,
+            );
 
             this.setState({
                 navLinks: nextProps.links,

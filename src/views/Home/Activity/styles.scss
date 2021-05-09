@@ -1,10 +1,30 @@
 .activity {
-    display: flex;
     position: relative;
+    min-height: 300px;
 
     .container {
         display: flex;
         flex-grow: 1;
-        min-height: 260px;
+    }
+
+    .empty-chart {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: center;
+        // color: var(--dui-color-text-watermark);
+        color: var(--dui-color-text-disabled);
+
+        .icon {
+            flex-shrink: 0;
+            padding: var(--dui-spacing-small);
+            font-size: 10em;
+        }
+
+        .text {
+            padding: var(--dui-spacing-small);
+            font-size: var(--dui-font-size-large);
+        }
     }
 }

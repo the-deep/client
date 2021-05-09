@@ -1,55 +1,97 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React from 'react';
 import {
     _cs,
     randomString,
-    listToMap,
-    isNotDefined,
     isDefined,
+    listToMap,
 } from '@togglecorp/fujs';
-import Faram, {
+import {
+    useForm,
+    useFormArray,
+    PartialForm as RawPartialForm,
+    ObjectSchema,
+    ArraySchema,
     requiredCondition,
-    FaramActionElement,
-    FaramList,
-} from '@togglecorp/faram';
+} from '@togglecorp/toggle-form';
 import {
     Button,
     Modal,
+    TextInput,
+    SelectInput,
+    List,
 } from '@the-deep/deep-ui';
+import { IoAdd } from 'react-icons/io5';
 
 import { useRequest, useLazyRequest } from '#utils/request';
-import TextInput from '#rsci/TextInput';
-import SelectInput from '#rsci/SelectInput';
-import Icon from '#rscg/Icon';
-import List from '#rscv/List';
 
-import NonFieldErrors from '#rsci/NonFieldErrors';
 import { flatten } from '#utils/common';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
 import { notifyOnFailure } from '#utils/requestNotify';
+import NonFieldError from '#components/ui/NonFieldError';
 import {
     AnalysisElement,
     MatrixTocElement,
     MultiResponse,
     FrameworkFields,
     UserMini,
-    PillarFilterItem,
-    AnalysisPillarFormItem,
-    AnalysisPillars,
 } from '#typings';
 
 import _ts from '#ts';
 
-import PillarAnalysisRow from './PillarAnalysisRow';
+import PillarAnalysisRow, { PillarAnalysisFields, Props as PillarAnalysisProps } from './PillarAnalysisRow';
 import styles from './styles.scss';
 
-const FaramButton = FaramActionElement(Button);
+type PartialForm<T> = RawPartialForm<T, { key: string }>;
+type AnalysisPillar = Partial<PillarAnalysisFields> & { key: string };
 
-const addAttribute = (attributes: AnalysisPillarFormItem[]) => ([
-    ...attributes,
-    {
-        key: randomString(16),
-    },
-]);
+type FormType = {
+    title?: string;
+    teamLead?: UserMini['id'];
+    analysisPillar?: AnalysisPillar[];
+}
+
+const analysisPillarKeySelector = (d: AnalysisPillar) => d.key;
+
+type FormSchema = ObjectSchema<PartialForm<FormType>>;
+type FormSchemaFields = ReturnType<FormSchema['fields']>;
+
+type AnalysisPillarType = NonNullable<NonNullable<FormType['analysisPillar']>>[number];
+
+type AnalysisPillarSchema = ObjectSchema<PartialForm<AnalysisPillarType>>;
+type AnalysisPillarSchemaFields = ReturnType<AnalysisPillarSchema['fields']>;
+const analysisPillarSchema: AnalysisPillarSchema = {
+    fields: (): AnalysisPillarSchemaFields => ({
+        key: [],
+        title: [requiredCondition],
+        assignee: [requiredCondition],
+        filters: [requiredCondition],
+    }),
+};
+
+type AnalysisPillarListSchema = ArraySchema<PartialForm<AnalysisPillarType>>;
+type AnalysisPillarListMember = ReturnType<AnalysisPillarListSchema['member']>;
+const analysisPillarListSchema: AnalysisPillarListSchema = {
+    keySelector: d => d.key,
+    member: (): AnalysisPillarListMember => analysisPillarSchema,
+};
+
+const analysisFormSchema: FormSchema = {
+    fields: (): FormSchemaFields => ({
+        title: [requiredCondition],
+        teamLead: [requiredCondition],
+        analysisPillar: analysisPillarListSchema,
+    }),
+};
+
+const defaultAnalysisFormValues: PartialForm<FormType> = {};
+
+
+const userKeySelector = (u: UserMini) => u.id;
+const userLabelSelector = (u: UserMini) => u.displayName;
+const childrenSelector = (d: MatrixTocElement) => d.children;
+
+const frameworkQueryFields = { fields: ['widgets', 'id'] };
+const usersQueryFields = { fields: ['display_name', 'id'] };
 
 interface AnalysisEditModalProps {
     className?: string;
@@ -59,71 +101,36 @@ interface AnalysisEditModalProps {
     projectId: number;
 }
 
-type AnalysisElementForm = Omit<AnalysisElement, 'analysisPillar'> & {
-    analysisPillar: (Omit<AnalysisPillars, 'filters'> & { filters: string[] })[];
-};
-
-const analysisPillarKeySelector = (d: AnalysisPillars & { key: string }) => d.key;
-
-const analysisSchema = {
-    fields: {
-        title: [requiredCondition],
-        teamLead: [requiredCondition],
-        analysisPillar: {
-            keySelector: analysisPillarKeySelector,
-            member: {
-                fields: {
-                    title: [requiredCondition],
-                    assignee: [requiredCondition],
-                    filters: [requiredCondition],
-                },
-            },
-        },
-    },
-};
-
-const userKeySelector = (u: UserMini) => u.id;
-const userLabelSelector = (u: UserMini) => u.displayName;
-
-const idSelector = (d: PillarFilterItem) => d.uniqueId;
-const childrenSelector = (d: MatrixTocElement) => d.children;
-
-const frameworkQueryFields = {
-    fields: ['widgets', 'id'],
-};
-
-const usersQueryFields = {
-    fields: ['display_name', 'id'],
-};
-
 function AnalysisEditModal(props: AnalysisEditModalProps) {
     const {
         className,
         onSuccess,
         onModalClose,
-        value,
+        value: initialValue,
         projectId,
     } = props;
 
-    const [faramValues, setFaramValues] = useState(() => {
-        if (isNotDefined(value)) {
-            return undefined;
-        }
-        const newValue = {
-            ...value,
-            analysisPillar: value?.analysisPillar?.map(ap => ({
-                ...ap,
-                // NOTE: This is done for maintaining unique key while operating items
-                // on a list. We might need TODO work on this if we decide to use
-                // UUID globally throughout DEEP
-                key: randomString(16),
-                filters: ap?.filters?.map(f => idSelector(f)),
+    const [initialFormValue] = React.useState<PartialForm<FormType>>(
+        isDefined(initialValue) ? ({
+            teamLead: initialValue.teamLead,
+            title: initialValue.title,
+            analysisPillar: initialValue.analysisPillar.map(ap => ({
+                key: String(ap.id),
+                assignee: ap.assignee,
+                filters: ap.filters ? ap.filters.map(f => f.uniqueId) : undefined,
+                title: ap.title,
             })),
-        };
-        return newValue;
-    });
-    const [faramErrors, setFaramErrors] = useState<unknown | undefined>();
-    const [pristine, setPristine] = useState(true);
+        }) : defaultAnalysisFormValues,
+    );
+
+    const {
+        pristine,
+        value,
+        error,
+        onValueChange,
+        validate,
+        onErrorSet,
+    } = useForm(initialFormValue, analysisFormSchema);
 
     const {
         pending: pendingFramework,
@@ -137,16 +144,13 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         },
     });
 
-    const matrixPillars = useMemo(
-        () => flatten(
-            [
-                ...getMatrix1dToc(framework?.widgets),
-                ...getMatrix2dToc(framework?.widgets),
-            ],
-            childrenSelector,
-        ).filter((v: MatrixTocElement) => v.key),
-        [framework],
-    );
+    const matrixPillars: MatrixTocElement[] = React.useMemo(() => (
+        flatten([
+            ...getMatrix1dToc(framework?.widgets),
+            ...getMatrix2dToc(framework?.widgets),
+        ], childrenSelector).filter((v: MatrixTocElement) => v.key)
+    ), [framework]);
+
 
     const {
         pending: pendingUsersList,
@@ -159,18 +163,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             notifyOnFailure(_ts('analysis.editModal', 'usersTitle'))({ error: errorBody }),
     });
 
-    const onFaramChange = useCallback((newValue, errors) => {
-        setFaramValues(newValue);
-        setFaramErrors(errors);
-        setPristine(false);
-    }, []);
-
-    const onValidationFailure = useCallback((errors) => {
-        setFaramErrors(errors);
-        setPristine(true);
-    }, []);
-
-    const id = value?.id;
+    const id = initialValue?.id;
     const {
         pending: pendingAnalysisEdit,
         trigger: triggerAnalysisEdit,
@@ -182,125 +175,154 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         body: ctx => ctx,
         onSuccess: (response) => {
             if (response) {
-                onSuccess(response, isDefined(value));
+                onSuccess(response, isDefined(initialValue));
             }
             onModalClose();
         },
         onFailure: (_, errorBody) => {
-            setFaramErrors(errorBody?.faramErrors);
+            // TODO: set form errors properly
+            // onErrorSet();
             notifyOnFailure(_ts('analysis.editModal', 'anaylsisEditModal'))({ error: errorBody });
         },
     });
 
-    // FIXME: Use new form and write appropriate typings
-    const onValidationSuccess = useCallback((finalValues: AnalysisElementForm) => {
-        setPristine(true);
-        const { analysisPillar } = finalValues;
-        const matrixMap = listToMap(
-            matrixPillars,
-            idSelector,
-            d => ({
-                id: d.id,
-                key: d.key,
-                uniqueId: d.uniqueId,
-            }),
-        );
-        const newAnalysisPillar = analysisPillar?.map(ap => ({
-            ...ap,
-            filters: ap?.filters?.map((f: string) => matrixMap[f]),
-        }));
-        triggerAnalysisEdit({
-            ...finalValues,
-            analysisPillar: newAnalysisPillar,
-        });
-    }, [triggerAnalysisEdit, matrixPillars]);
+    const {
+        onValueChange: onRowChange,
+        onValueRemove: onRowRemove,
+    } = useFormArray('analysisPillar', onValueChange);
 
-    const rowRendererParams = useCallback((key, data, index) => ({
-        index,
-        usersList: usersListResponse?.results ?? [],
-        matrixPillars,
-        data,
-    }), [usersListResponse, matrixPillars]);
+    const rowRendererParams: (
+        key: string,
+        data: Partial<PillarAnalysisFields>,
+        index: number,
+    ) => PillarAnalysisProps = React.useCallback(
+        (key, data, index) => ({
+            error: error?.fields?.analysisPillar?.members?.[key],
+            index,
+            matrixPillars,
+            onChange: onRowChange as PillarAnalysisProps['onChange'],
+            onRemove: onRowRemove,
+            usersList: usersListResponse?.results ?? [],
+            value: data,
+        }),
+        [usersListResponse, matrixPillars, error, onRowChange, onRowRemove],
+    );
+
+    type AnalysisPillarList = typeof value.analysisPillar;
+    const handleAddRowButtonClick = React.useCallback(() => {
+        const newRow: PartialForm<AnalysisPillarType> = { key: randomString(16) };
+        onValueChange((oldValue: PartialForm<AnalysisPillarList>) => (
+            [...(oldValue ?? []), newRow]
+        ), 'analysisPillar' as const);
+    }, [onValueChange]);
+
+    const pending = pendingFramework || pendingUsersList;
+
+    const handleSubmitButtonClick = React.useCallback(() => {
+        const {
+            errored,
+            error: validationError,
+            value: finalValue,
+        } = validate();
+
+        onErrorSet(validationError);
+
+        if (!errored) {
+            const matrixMap = listToMap(
+                matrixPillars,
+                d => d.id,
+                d => ({
+                    id: d.id,
+                    key: d.key,
+                    uniqueId: d.uniqueId,
+                }),
+            );
+            triggerAnalysisEdit({
+                ...finalValue,
+                analysisPillar: finalValue?.analysisPillar?.map(ap => ({
+                    ...ap,
+                    filters: ap.filters?.map(f => matrixMap[f]),
+                })),
+            });
+        } else {
+            console.error(validationError);
+        }
+    }, [validate, onErrorSet, matrixPillars, triggerAnalysisEdit]);
+
+    const apError = error?.fields?.analysisPillar;
 
     return (
         <Modal
             className={_cs(styles.analysisEditModal, className)}
             heading={
-                isDefined(value)
+                isDefined(initialValue)
                     ? _ts('analysis.editModal', 'editAnalysisModalHeading')
                     : _ts('analysis.editModal', 'addAnalysisModalHeading')
             }
             onCloseButtonClick={onModalClose}
-        >
-            <Faram
-                schema={analysisSchema}
-                onChange={onFaramChange}
-                onValidationSuccess={onValidationSuccess}
-                onValidationFailure={onValidationFailure}
-                value={faramValues}
-                error={faramErrors}
-                disabled={pendingUsersList || pendingFramework || pendingAnalysisEdit}
-            >
-                <NonFieldErrors
-                    faramElement
-                    persistent={false}
-                />
-                <TextInput
-                    className={styles.input}
-                    faramElementName="title"
-                    label={_ts('analysis.editModal', 'analysisTitleLabel')}
-                    placeholder={_ts('analysis.editModal', 'analysisTitlePlaceholder')}
-                />
-                <SelectInput
-                    className={styles.input}
-                    faramElementName="teamLead"
-                    label={_ts('analysis.editModal', 'teamLeadLabel')}
-                    placeholder={_ts('analysis.editModal', 'teamLeadPlaceholder')}
-                    options={usersListResponse?.results}
-                    keySelector={userKeySelector}
-                    labelSelector={userLabelSelector}
-                />
-                <FaramList
-                    faramElementName="analysisPillar"
-                    keySelector={analysisPillarKeySelector}
-                >
-                    <NonFieldErrors
-                        persistent={false}
-                        faramElement
-                    />
-                    <List
-                        faramElement
-                        renderer={PillarAnalysisRow}
-                        keySelector={analysisPillarKeySelector}
-                        rendererParams={rowRendererParams}
-                    />
-                    <FaramButton
-                        name={undefined}
-                        faramElementName="add-button"
-                        faramAction={addAttribute}
-                        variant="tertiary"
-                        icons={(
-                            <Icon name="add" />
-                        )}
-                    >
-                        {_ts('analysis.editModal', 'addAnAnalystButtonLabel')}
-                    </FaramButton>
-                </FaramList>
-                <footer className={styles.footer}>
+            bodyClassName={styles.modalBody}
+            footerActions={(
+                <>
                     <Button
                         name={undefined}
                         variant="primary"
-                        type="submit"
                         disabled={pristine || pendingAnalysisEdit}
+                        onClick={handleSubmitButtonClick}
                     >
                         {
-                            isDefined(value)
+                            isDefined(initialValue)
                                 ? _ts('analysis.editModal', 'editButtonLabel')
                                 : _ts('analysis.editModal', 'createButtonLabel')
                         }
                     </Button>
-                </footer>
-            </Faram>
+                </>
+            )}
+        >
+            <NonFieldError error={error} />
+            <TextInput
+                className={styles.input}
+                label={_ts('analysis.editModal', 'analysisTitleLabel')}
+                name="title"
+                placeholder={_ts('analysis.editModal', 'analysisTitlePlaceholder')}
+                value={value.title}
+                error={error?.fields?.title}
+                disabled={pending}
+                onChange={onValueChange}
+            />
+            <SelectInput
+                className={styles.input}
+                keySelector={userKeySelector}
+                label={_ts('analysis.editModal', 'teamLeadLabel')}
+                labelSelector={userLabelSelector}
+                name="teamLead"
+                options={usersListResponse?.results}
+                placeholder={_ts('analysis.editModal', 'teamLeadPlaceholder')}
+                value={value.teamLead}
+                error={error?.fields?.teamLead}
+                onChange={onValueChange}
+                disabled={pending}
+            />
+            <div className={styles.analysisPillarListContainer}>
+                <NonFieldError error={apError} />
+                <div className={styles.analysisPillarList}>
+                    <List
+                        data={value.analysisPillar}
+                        renderer={PillarAnalysisRow}
+                        keySelector={analysisPillarKeySelector}
+                        rendererParams={rowRendererParams}
+                    />
+                </div>
+                <div className={styles.actions}>
+                    <Button
+                        name={undefined}
+                        onClick={handleAddRowButtonClick}
+                        icons={<IoAdd />}
+                        variant="tertiary"
+                    >
+                        {_ts('analysis.editModal', 'addAnAnalystButtonLabel')}
+                    </Button>
+                </div>
+            </div>
         </Modal>
     );
 }

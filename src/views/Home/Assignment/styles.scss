@@ -8,4 +8,26 @@
         max-height: calc(100px + 25vh);
         overflow-y: auto;
     }
+
+    .empty-message {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: center;
+        // color: var(--dui-color-text-watermark);
+        color: var(--dui-color-text-disabled);
+
+        .icon {
+            flex-shrink: 0;
+            padding: var(--dui-spacing-small);
+            font-size: 10em;
+        }
+
+        .text {
+            padding: var(--dui-spacing-small);
+            text-align: center;
+            font-size: var(--dui-font-size-large);
+        }
+    }
 }

@@ -3,14 +3,13 @@ import {
     Card,
     Container,
 } from '@the-deep/deep-ui';
+import { GiShrug } from 'react-icons/gi';
 
 import List from '#rsu/../v2/View/List';
 
 import { useRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
-import {
-    MultiResponse,
-} from '#typings';
+import { MultiResponse } from '#typings';
 import {
     RecentActivityItem,
 } from '#typings/user';
@@ -48,12 +47,22 @@ function RecentActivities() {
             heading={_ts('recentActivity', 'recentActivitiesHeading')}
         >
             <Card className={styles.content}>
-                <List
-                    data={recentActivitiesResponse?.results}
-                    renderer={ActivityItem}
-                    keySelector={keySelector}
-                    rendererParams={activityRendererParams}
-                />
+                {(recentActivitiesResponse?.results ?? []).length > 0 ? (
+                    <List
+                        data={recentActivitiesResponse?.results}
+                        renderer={ActivityItem}
+                        keySelector={keySelector}
+                        rendererParams={activityRendererParams}
+                    />
+                ) : (
+                    <div className={styles.emptyMessage}>
+                        <GiShrug className={styles.icon} />
+                        <div className={styles.text}>
+                            {/* FIXME: use strings with appropriate wording */}
+                            You do not have any recent activities
+                        </div>
+                    </div>
+                )}
             </Card>
         </Container>
     );

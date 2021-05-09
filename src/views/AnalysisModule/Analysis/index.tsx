@@ -195,7 +195,7 @@ function Analysis(props: ComponentProps) {
                 />
             )}
             headerActions={(
-                <div className={styles.headerRight}>
+                <>
                     <Button
                         name={undefined}
                         className={styles.button}
@@ -230,7 +230,7 @@ function Analysis(props: ComponentProps) {
                     >
                         <Icon name="delete" />
                     </QuickActionButton>
-                </div>
+                </>
             )}
             contentClassName={styles.pillarContent}
         >

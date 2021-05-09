@@ -1,9 +1,16 @@
 .pillar-analysis-row {
     display: flex;
-    align-items: center;
-    padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+    align-items: flex-start;
+    margin: 0 calc(-2 * var(--dui-spacing-small));
+    padding: var(--dui-spacing-medium) 0;
+    width: calc(100% + 2 * var(--dui-spacing-small));
 
     .input {
-        padding: var(--dui-spacing-small);
+        margin: 0 var(--dui-spacing-small);
+    }
+
+    .remove-button {
+        margin: 0 var(--dui-spacing-small);
+        margin-top: calc(var(--dui-font-size-small) + 2 * var(--dui-spacing-small));
     }
 }

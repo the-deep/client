@@ -62,16 +62,6 @@ function AxisTick(props: AxisTickProps) {
     );
 }
 
-export interface TimelineProps<T> {
-    className?: string;
-    data: T[];
-    keySelector: (item: T) => string | number;
-    valueSelector: (item: T) => number;
-    labelSelector: (item: T) => React.ReactNode;
-    tickLabelSelector: (item: number) => React.ReactNode;
-    domain?: MinMax;
-}
-
 const scale = (domain: MinMax, range: MinMax, value: number) => {
     const [minDomain, maxDomain] = domain;
     const [minRange, maxRange] = range;
@@ -83,6 +73,17 @@ const scale = (domain: MinMax, range: MinMax, value: number) => {
 const axisTickKeySelector = (d: number) => d;
 const range: MinMax = [0, 100];
 
+export interface TimelineProps<T> {
+    className?: string;
+    data: T[];
+    keySelector: (item: T) => string | number;
+    valueSelector: (item: T) => number;
+    labelSelector: (item: T) => React.ReactNode;
+    tickLabelSelector: (item: number) => React.ReactNode;
+    domain?: MinMax;
+    minDomainExtent?: number;
+}
+
 function Timeline<T>(props: TimelineProps<T>) {
     const {
         className,
@@ -92,21 +93,28 @@ function Timeline<T>(props: TimelineProps<T>) {
         tickLabelSelector,
         data,
         domain: domainFromProps,
+        minDomainExtent = 7776000000, // 3 months
     } = props;
-
 
     const domain: MinMax = React.useMemo(() => {
         if (domainFromProps) {
             return domainFromProps;
         }
+
         if (data.length > 0) {
-            return [
-                Math.min(...data.map(valueSelector)),
-                Math.max(...data.map(valueSelector)),
-            ];
+            const min = Math.min(...data.map(valueSelector));
+            const max = Math.max(...data.map(valueSelector));
+
+            if (max - min >= minDomainExtent) {
+                return [min, max];
+            }
+
+            const extension = Math.floor(minDomainExtent / 2);
+            return [min - extension, max + extension];
         }
+
         return [0, 0];
-    }, [domainFromProps, data, valueSelector]);
+    }, [domainFromProps, data, valueSelector, minDomainExtent]);
 
     const axisTicks = React.useMemo(() => {
         const [minDomain, maxDomain] = domain;
@@ -138,7 +146,6 @@ function Timeline<T>(props: TimelineProps<T>) {
     if (data.length === 0) {
         return null;
     }
-
 
     return (
         <div className={_cs(className, styles.timeline)}>

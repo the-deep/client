@@ -4,10 +4,11 @@ import {
     Button,
     Pager,
     Card,
+    PendingMessage,
 } from '@the-deep/deep-ui';
+import { MdPlaylistAddCheck } from 'react-icons/md';
 
 import List from '#rsu/../v2/View/List';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -131,13 +132,23 @@ function Assignments() {
             )}
         >
             <Card className={styles.content}>
-                {pending && <LoadingAnimation />}
-                <List
-                    data={assignmentsResponse?.results}
-                    keySelector={keySelector}
-                    renderer={AssignmentItem}
-                    rendererParams={rendererParams}
-                />
+                {pending && <PendingMessage />}
+                {(assignmentsResponse?.results ?? []).length > 0 ? (
+                    <List
+                        data={assignmentsResponse?.results}
+                        keySelector={keySelector}
+                        renderer={AssignmentItem}
+                        rendererParams={rendererParams}
+                    />
+                ) : (
+                    <div className={styles.emptyMessage}>
+                        <MdPlaylistAddCheck className={styles.icon} />
+                        <div className={styles.text}>
+                            {/* FIXME: use strings with appropriate wording */}
+                            You do not have any assignments
+                        </div>
+                    </div>
+                )}
             </Card>
         </Container>
     );

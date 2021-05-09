@@ -15,26 +15,20 @@ import {
     PercentageInformationCard,
 } from '@the-deep/deep-ui';
 
-import LoadingAnimation from '#rscv/LoadingAnimation';
-
 import _ts from '#ts';
 
-import {
-    ProjectsSummary,
-} from '#typings';
+import { ProjectsSummary } from '#typings';
 
 import styles from './styles.scss';
 
 interface Props extends ContainerProps {
     className?: string;
-    pending: boolean;
     summaryResponse?: ProjectsSummary;
 }
 
 function Summary(props: Props) {
     const {
         className,
-        pending,
         summaryResponse,
         contentClassName,
         ...otherProps
@@ -55,7 +49,6 @@ function Summary(props: Props) {
             contentClassName={_cs(contentClassName, styles.content)}
             {...otherProps}
         >
-            {pending && <LoadingAnimation />}
             <InformationCard
                 icon={<IoDocumentTextOutline />}
                 label={_ts('home', 'projects')}

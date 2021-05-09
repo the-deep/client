@@ -8,11 +8,12 @@ import {
 import {
     ButtonLikeLink,
     Container,
-    Card,
+    SelectInput,
+    PendingMessage,
 } from '@the-deep/deep-ui';
+import { GiShrug } from 'react-icons/gi';
 import { Redirect } from 'react-router-dom';
 
-import SelectInput from '#rsci/SelectInput';
 import List from '#rscv/List';
 
 import Badge from '#components/viewer/Badge';
@@ -132,6 +133,7 @@ function Home(props: ViewProps) {
     ), [selectedProject]);
 
     const {
+        pending: recentProjectsPending,
         response: recentProjectsResponse,
     } = useRequest<ProjectStat[]>({
         url: 'server://projects-stat/recent/',
@@ -151,6 +153,7 @@ function Home(props: ViewProps) {
     });
 
     const {
+        pending: projectStatsPending,
         response: projectStats,
     } = useRequest<ProjectStat>({
         skip: isNotDefined(selectedProject),
@@ -190,34 +193,31 @@ function Home(props: ViewProps) {
         const routeTo = reverseRoute(pathNames.dashboard, { projectId: activeProject });
 
         return (
-            <Redirect
-                to={{
-                    pathname: routeTo,
-                }}
-            />
+            <Redirect to={{ pathname: routeTo }} />
         );
     }
 
+    const pageDataPending = summaryPending || recentProjectsPending || projectStatsPending;
+
     return (
         <div className={_cs(styles.home, className)}>
+            { pageDataPending && <PendingMessage /> }
             <div className={styles.mainContent}>
                 <div className={styles.topSection}>
                     <Summary
                         heading={_ts('home', 'summaryOfMyProjectsHeading')}
                         className={styles.summaryContainer}
-                        pending={summaryPending}
                         summaryResponse={summaryResponse}
                     />
                     <Container
                         className={styles.taggingActivityContainer}
                         heading={_ts('home', 'projectTaggingActivityHeading')}
+                        contentClassName={styles.content}
                     >
-                        <Card>
-                            <Activity
-                                pending={summaryPending}
-                                recentActivity={summaryResponse?.recentEntriesActivity}
-                            />
-                        </Card>
+                        <Activity
+                            className={styles.taggingActivity}
+                            data={summaryResponse?.recentEntriesActivity}
+                        />
                     </Container>
                 </div>
                 <div className={styles.bottomSection}>
@@ -227,13 +227,12 @@ function Home(props: ViewProps) {
                         headerActions={(
                             <>
                                 <SelectInput
+                                    name=""
                                     keySelector={projectKeySelector}
                                     labelSelector={projectLabelSelector}
                                     optionLabelSelector={optionLabelSelector}
                                     options={userProjects}
                                     placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                                    showHintAndError={false}
-                                    showLabel={false}
                                     value={selectedProject}
                                     onChange={handleProjectChange}
                                 />
@@ -246,12 +245,24 @@ function Home(props: ViewProps) {
                             </>
                         )}
                     >
-                        <List
-                            data={finalRecentProjects}
-                            rendererParams={recentProjectsRendererParams}
-                            renderer={ProjectItem}
-                            keySelector={recentProjectKeySelector}
-                        />
+                        {finalRecentProjects.length > 0 ? (
+                            <List
+                                data={finalRecentProjects}
+                                rendererParams={recentProjectsRendererParams}
+                                renderer={ProjectItem}
+                                keySelector={recentProjectKeySelector}
+                            />
+                        ) : (
+                            <div className={styles.emptyRecentProject}>
+                                <GiShrug className={styles.icon} />
+                                <div className={styles.text}>
+                                    {/* FIXME: use strings with appropriate wording */}
+                                    Looks like you do not have any recent project,
+                                    <br />
+                                    please select a project to view it&apos;s details
+                                </div>
+                            </div>
+                        )}
                     </Container>
                 </div>
             </div>
