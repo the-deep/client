@@ -27,7 +27,6 @@ import {
     entriesSetEntryCommentsCountAction,
     deleteEntryAction,
     editEntryAction,
-    patchEntryControlAction,
     patchEntryVerificationAction,
 } from '#redux';
 
@@ -58,7 +57,6 @@ const propTypes = {
     leadId: PropTypes.number,
     setEntryCommentsCount: PropTypes.func.isRequired,
     onEntryEdit: PropTypes.func.isRequired,
-    setEntryControl: PropTypes.func.isRequired,
     setEntryVerification: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
@@ -102,7 +100,6 @@ const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(entriesSetEntryCommentsCountAction(params)),
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
     onEntryEdit: params => dispatch(editEntryAction(params)),
-    setEntryControl: params => dispatch(patchEntryControlAction(params)),
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
 });
 
@@ -159,24 +156,6 @@ export default class Entry extends React.PureComponent {
         };
 
         setEntryCommentsCount({ entry, projectId, leadId });
-    }
-
-    handleEntryControlChange = (controlled) => {
-        const {
-            setEntryControl,
-            entry: {
-                id: entryId,
-                versionId,
-            },
-            leadId,
-        } = this.props;
-
-        setEntryControl({
-            entryId,
-            leadId,
-            status: controlled,
-            versionId,
-        });
     }
 
     handleEntryVerificationChange = (verified, count) => {
@@ -374,7 +353,6 @@ export default class Entry extends React.PureComponent {
                                 entryId={entryId}
                                 projectId={projectId}
                                 value={controlled}
-                                onChange={this.handleEntryControlChange}
                             />
                         </div>
                         <Cloak
