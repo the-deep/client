@@ -3874,7 +3874,8 @@
             "entryCommentAdded": -76639539,
             "leadAdded": -98563490,
             "recentActivitiesHeading": -14680704,
-            "recentActivitiesFetchFailed": -46268038
+            "recentActivitiesFetchFailed": -46268038,
+            "recentActivitiesHeading": -14680704
         },
         "analyticalFramework": {
             "addNewAnalyticalFramework": -80810293,
@@ -3919,9 +3920,6 @@
             "userLabel": 1200,
             "usersFetchFailed": -93154523,
             "review": -82831919
-        },
-        "recentActivities": {
-            "recentActivitiesHeading": -14680704
         },
         "entryReview": {
             "projectMemberList": -79798712,

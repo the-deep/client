@@ -36,6 +36,7 @@ import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
+    editEntriesSetEntryControlStatusAction,
 } from '#redux';
 import { VIEW } from '#widgets';
 
@@ -65,6 +66,7 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
+    setEditEntryControl: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -100,6 +102,7 @@ const mapDispatchToProps = dispatch => ({
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
+    setEditEntryControl: params => dispatch(editEntriesSetEntryControlStatusAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -243,6 +246,20 @@ export default class Overview extends React.PureComponent {
         this.setState({ entryControlPending });
     }
 
+    handleEntryControlChange = (controlStatus) => {
+        const {
+            entry,
+            leadId,
+            setEditEntryControl,
+        } = this.props;
+        const entryForPatch = {
+            id: entryAccessor.serverId(entry),
+            controlled: controlStatus,
+        };
+
+        setEditEntryControl({ entry: entryForPatch, leadId });
+    }
+
     render() {
         const {
             className,
@@ -329,6 +346,7 @@ export default class Overview extends React.PureComponent {
                                     projectId={lead.project}
                                     value={controlled}
                                     onPendingStatusChange={this.handleEntryControlPendingChange}
+                                    onChange={this.handleEntryControlChange}
                                     disabled={disableControlledButton}
                                 />
                                 {labels.length > 0 && (

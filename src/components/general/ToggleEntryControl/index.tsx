@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { _cs } from '@togglecorp/fujs';
 import { IoCheckmark, IoClose } from 'react-icons/io5';
 import {
@@ -10,15 +9,12 @@ import {
 import {
     activeUserSelector,
     projectMembershipListSelector,
-    patchEntryControlAction,
-    editEntriesSetEntryControlStatusAction,
 } from '#redux';
 import {
     DatabaseEntityBase,
     User,
     AppState,
     Membership,
-    Entry,
 } from '#typings';
 
 import Button from '#rsca/Button';
@@ -44,17 +40,12 @@ interface ToggleEntryControlProps {
     value: boolean;
     tooltip?: string;
     disabled?: boolean;
-    onChange?: (value: boolean) => void;
+    onChange: (value: boolean) => void;
 }
 
 interface PropsFromState {
     activeUser: User;
     projectMembers: Membership[];
-}
-
-interface PropsFromDispatch {
-    setEntryControl: typeof patchEntryControlAction,
-    setEditEntryControl: typeof editEntriesSetEntryControlStatusAction,
 }
 
 const CONTROL = 3;
@@ -66,14 +57,8 @@ const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
     projectMembers: projectMembershipListSelector(state),
 });
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
-    setEntryControl: params => dispatch(patchEntryControlAction(params)),
-    setEditEntryControl: params => dispatch(
-        editEntriesSetEntryControlStatusAction(params),
-    ),
-});
 
-function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & PropsFromDispatch) {
+function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
     const {
         className,
         entryId,
@@ -84,8 +69,6 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & Pr
         disabled,
         activeUser,
         projectMembers,
-        setEntryControl,
-        setEditEntryControl,
         onChange,
     } = props;
 
@@ -110,48 +93,6 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & Pr
     ), [value, uncontrolFormData]);
 
     const [
-        entryPending,
-        ,
-        ,
-        getEntry,
-    ] = useRequest<Entry>({
-        url: `server://v2/entries/${entryId}/`,
-        autoTrigger: false,
-        method: 'GET',
-        onSuccess: (response) => {
-            const { id, lead, controlled, versionId } = response;
-
-            if (onChange) {
-                onChange(controlled);
-            }
-
-            setEntryControl({
-                entryId: id,
-                leadId: lead,
-                status: controlled,
-                versionId,
-            });
-
-            const entryForPatch = {
-                id,
-                controlled,
-                versionId,
-            };
-
-            setEditEntryControl({ entry: entryForPatch, leadId: lead });
-            setCommentModalHidden();
-
-            notify.send({
-                title: _ts('entryReview', 'entryControlStatusChange'),
-                type: notify.type.SUCCESS,
-                message: _ts('entryReview', 'entryControlStatusChangeSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
-        onFailure: notifyError(_ts('entryReview', 'entryControlFailure')),
-    });
-
-    const [
         reviewRequestPending,
         ,
         ,
@@ -162,7 +103,15 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & Pr
         method: 'POST',
         body: formData,
         onSuccess: () => {
-            getEntry();
+            onChange(!value);
+            setCommentModalHidden();
+
+            notify.send({
+                title: _ts('entryReview', 'entryControlStatusChange'),
+                type: notify.type.SUCCESS,
+                message: _ts('entryReview', 'entryControlStatusChangeSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
         },
         onFailure: notifyError(_ts('entryReview', 'entryControlFailure')),
     });
@@ -219,7 +168,7 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & Pr
                             )
                         }
                         onClick={handleClick}
-                        pending={reviewRequestPending || entryPending}
+                        pending={reviewRequestPending}
                         disabled={disabled || !isQualityController}
                     >
                         { controlStatusLabel }
@@ -264,4 +213,4 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState & Pr
     );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ToggleEntryControl);
+export default connect(mapStateToProps)(ToggleEntryControl);

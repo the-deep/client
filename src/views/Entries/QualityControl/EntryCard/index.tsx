@@ -212,7 +212,7 @@ function EntryCard(props: EntryCardProps) {
         }
     }, [entry, onEntryChange]);
 
-    const entryLastChangedBy = entry?.controlledChangedByDetails?.displayName;
+    const entryLastChangedBy = entry.controlledChangedByDetails?.displayName;
 
     return (
         <div className={_cs(className, styles.entryCardContainer)}>
@@ -384,8 +384,8 @@ function EntryCard(props: EntryCardProps) {
                                     projectId={entry.project}
                                     entryId={entry.id}
                                     value={entry.controlled}
-                                    disabled={isDeleted}
                                     onChange={handleEntryControlChange}
+                                    disabled={isDeleted}
                                 />
                                 <EntryCommentButton entryId={entry.id} />
                                 <EntryOpenLink
