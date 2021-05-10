@@ -501,7 +501,7 @@ const setEntryControlStatus = (state, action) => {
     const newAction = {
         leadId,
         entries: [entry],
-        updateVersionId: true,
+        updateVersionId: false,
     };
 
     return setEntriesControlStatus(state, newAction);
@@ -977,7 +977,6 @@ const applyToAllEntries = mode => (state, action) => {
     let iterableEntries;
     if (mode === 'all-below') {
         const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === entryKey);
-        console.warn(entryIndex);
         // set all entries before current entry to undefined
         iterableEntries = entries.map((entry, i) => (i < entryIndex ? undefined : entry));
     } else if (mode === 'all') {

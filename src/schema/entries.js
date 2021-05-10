@@ -49,7 +49,7 @@ const entrySchema = [];
         fields: {
             analysisFramework: { type: 'uint', required: true },
 
-            image: { type: 'string' },
+            image: { type: 'number' },
             imageRaw: { type: 'string' },
             imageDetails: { type: 'imageDetails' },
             excerpt: { type: 'string' },

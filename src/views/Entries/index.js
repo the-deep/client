@@ -575,6 +575,7 @@ export default class Entries extends React.PureComponent {
         } else {
             window.removeEventListener('scroll', this.handleListScroll, true);
         }
+        this.startEntriesRequest();
     }
 
     handleGotoTopButtonClick = () => {

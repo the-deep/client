@@ -9,7 +9,7 @@ export const E__UPDATE_FILTER = 'siloDomainData/E__UPDATE_FILTER';
 export const E__UNSET_FILTER = 'siloDomainData/E__UNSET_FILTER';
 export const E__SET_ACTIVE_PAGE = 'siloDomainData/E__SET_ACTIVE_PAGE';
 export const E__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/E__SET_ENTRY_COMMENTS_COUNT';
-export const E__PATCH_ENTRY_CONTROl = 'siloDomainData/E__PATCH_ENTRY_CONTROl';
+export const E__PATCH_ENTRY_CONTROL = 'siloDomainData/E__PATCH_ENTRY_CONTROL';
 export const E__PATCH_ENTRY_VERIFICATION = 'siloDomainData/E__PATCH_ENTRY_VERIFICATION';
 export const E__DELETE_ENTRY = 'siloDomainData/E__DELETE_ENTRY';
 export const E__EDIT_ENTRY = 'siloDomainData/E__EDIT_ENTRY';
@@ -54,7 +54,7 @@ export const setEntriesAction = ({ projectId, entries, totalEntriesCount }) => (
 });
 
 export const patchEntryControlAction = ({ versionId, entryId, leadId, status }) => ({
-    type: E__PATCH_ENTRY_CONTROl,
+    type: E__PATCH_ENTRY_CONTROL,
     entryId,
     leadId,
     status,
@@ -518,7 +518,7 @@ const reducers = {
     [E__SET_ENTRIES]: setEntries,
     [E__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
     [E__SET_ACTIVE_PAGE]: entriesViewSetActivePage,
-    [E__PATCH_ENTRY_CONTROl]: patchEntryControl,
+    [E__PATCH_ENTRY_CONTROL]: patchEntryControl,
     [E__PATCH_ENTRY_VERIFICATION]: patchEntryVerification,
     [E__DELETE_ENTRY]: deleteEntry,
     [E__EDIT_ENTRY]: editEntry,

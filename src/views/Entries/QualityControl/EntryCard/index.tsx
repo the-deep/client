@@ -387,8 +387,8 @@ function EntryCard(props: EntryCardProps) {
                                     projectId={entry.project}
                                     entryId={entry.id}
                                     value={entry.controlled}
-                                    disabled={isDeleted}
                                     onChange={handleEntryControlChange}
+                                    disabled={isDeleted}
                                 />
                                 <EntryCommentButton entryId={entry.id} />
                                 <EntryOpenLink
