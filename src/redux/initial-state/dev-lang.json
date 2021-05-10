@@ -1330,7 +1330,7 @@
         "-91832843": "Primary Tagging",
         "-19828383": "Secondary Tagging",
         "-82831919": "Review",
-        "-91820939": "Analytical Framework"
+        "-91820939": "Analytical Framework",
         "-72934872": "Review",
         "-79798712": "Entry Review",
         "-797971971": "Approved by",
@@ -3811,7 +3811,8 @@
             "entryCommentAdded": -76639539,
             "leadAdded": -98563490,
             "recentActivitiesHeading": -14680704,
-            "recentActivitiesFetchFailed": -46268038
+            "recentActivitiesFetchFailed": -46268038,
+            "recentActivitiesHeading": -14680704
         },
         "analyticalFramework": {
             "addNewAnalyticalFramework": -80810293,
@@ -3821,9 +3822,6 @@
             "primaryTagging": -91832843,
             "secondaryTagging": -19828383,
             "review": -82831919
-        },
-        "recentActivities": {
-            "recentActivitiesHeading": -14680704
         },
         "entryReview": {
             "projectMemberList": -79798712,

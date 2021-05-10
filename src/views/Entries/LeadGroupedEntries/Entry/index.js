@@ -28,6 +28,7 @@ import {
     deleteEntryAction,
     editEntryAction,
     patchEntryVerificationAction,
+    patchEntryControlAction,
 } from '#redux';
 
 import {
@@ -58,6 +59,7 @@ const propTypes = {
     setEntryCommentsCount: PropTypes.func.isRequired,
     onEntryEdit: PropTypes.func.isRequired,
     setEntryVerification: PropTypes.func.isRequired,
+    setEntryControl: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
 };
@@ -101,6 +103,7 @@ const mapDispatchToProps = dispatch => ({
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
     onEntryEdit: params => dispatch(editEntryAction(params)),
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
+    setEntryControl: params => dispatch(patchEntryControlAction(params)),
 });
 
 const widgetLayoutSelector = (widget) => {
@@ -179,6 +182,24 @@ export default class Entry extends React.PureComponent {
 
     handleEntryControlPendingChange = (entryControlPending) => {
         this.setState({ entryControlPending });
+    }
+
+    handleEntryControlChange = (controlStatus) => {
+        const {
+            entry: {
+                id: entryId,
+                versionId,
+            },
+            leadId,
+            setEntryControl,
+        } = this.props;
+
+        setEntryControl({
+            entryId,
+            leadId,
+            status: controlStatus,
+            versionId,
+        });
     }
 
     handleEntryDelete = () => {
@@ -353,6 +374,7 @@ export default class Entry extends React.PureComponent {
                                 entryId={entryId}
                                 projectId={projectId}
                                 value={controlled}
+                                onChange={this.handleEntryControlChange}
                             />
                         </div>
                         <Cloak

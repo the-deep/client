@@ -49,7 +49,7 @@ function Comment(props: Props) {
     const [latest] = textHistory;
 
     const isEditable = useMemo(() =>
-        activeUser.userId === createdByDetails.id && latest && !editMode,
+        activeUser.userId === createdByDetails?.id && latest && !editMode,
     [activeUser, createdByDetails, latest, editMode]);
 
     const handleEditClick = useCallback(() => {
@@ -79,7 +79,7 @@ function Comment(props: Props) {
             >
                 <div className={styles.heading}>
                     <span className={styles.detail}>
-                        <span className={styles.name}>{createdByDetails.name}</span>
+                        <span className={styles.name}>{createdByDetails?.name}</span>
                         &nbsp;
                         {_ts('entryReview', 'commentType', { commentType: commentTypeToTextMap[commentType] })}
                         &nbsp;
