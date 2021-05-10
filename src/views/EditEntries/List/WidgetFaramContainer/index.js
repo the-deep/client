@@ -27,6 +27,7 @@ import {
 
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
+    editEntriesSetEntryControlStatusAction,
 } from '#redux';
 
 import EntryLabelBadge from '#components/general/EntryLabel';
@@ -62,6 +63,7 @@ const propTypes = {
 
     entryState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    setEditEntryControl: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -85,6 +87,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
+    setEditEntryControl: params => dispatch(editEntriesSetEntryControlStatusAction(params)),
 });
 
 const entryLabelKeySelector = d => d.labelId;
@@ -110,6 +113,7 @@ function WidgetFaramContainer(props) {
         selectedEntryKey,
         setSelectedEntryKey,
         markAsDeletedEntry,
+        setEditEntryControl,
     } = props;
 
     const [controlPending, setControlPending] = useState(false);
@@ -143,6 +147,15 @@ function WidgetFaramContainer(props) {
             value: true,
         });
     }, [markAsDeletedEntry, entry, leadId]);
+
+    const handleEntryControlChange = useCallback((controlStatus) => {
+        const entryForPatch = {
+            id: entryAccessor.serverId(entry),
+            controlled: controlStatus,
+        };
+
+        setEditEntryControl({ entry: entryForPatch, leadId });
+    }, [entry, leadId, setEditEntryControl]);
 
     const entryKey = entryAccessor.key(entry);
     const controlled = entryAccessor.controlled(entry);
@@ -198,8 +211,9 @@ function WidgetFaramContainer(props) {
                         entryId={entryAccessor.serverId(entry)}
                         projectId={lead.project}
                         value={controlled}
-                        disabled={disableControlledButton}
                         onPendingStatusChange={setControlPending}
+                        onChange={handleEntryControlChange}
+                        disabled={disableControlledButton}
                     />
                     {labels.length > 0 && (
                         <ModalButton
