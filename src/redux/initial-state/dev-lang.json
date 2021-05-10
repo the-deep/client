@@ -1328,7 +1328,13 @@
         "-91832843": "Primary Tagging",
         "-19828383": "Secondary Tagging",
         "-82831919": "Review",
-        "-91820939": "Analytical Framework"
+        "-91820939": "Analytical Framework",
+        "-62095001": "Framework Creator",
+        "-99242308": "Information on Analytical Frameworks",
+        "-77381500": "Recently used in projects:",
+        "-93387145": "Reference Framework Image",
+        "-55206863": "Select Framework",
+        "-18769692": "Selected Framework"
     },
     "links": {
         "browserExtension": {
@@ -2336,7 +2342,6 @@
             "pillarAnalysis": -52946834,
             "editProject": 31,
             "analyticalFramework": -91820939
-
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -3757,7 +3762,23 @@
             "userLabel": 1200,
             "usergroupLabel": 201,
             "editUserHeading": -67231440,
-            "editUsergroupHeading": -31585106
+            "editUsergroupHeading": -31585106,
+            "addNewFrameworkButtonLabel": -80810293,
+            "analyticalFrameworkTitle": -91820939,
+            "cloneFrameworkButtonTitle": 12502,
+            "createdAtLabel": -779713983,
+            "editFrameworkLinkTitle": -59086768,
+            "frameworkCreatorTitle": -62095001,
+            "frameworkDetails": -540964,
+            "infoOnFrameworkLabel": -99242308,
+            "recentlyUsedInProjectsTitle": -77381500,
+            "referenceFrameworkImageLabel": -93387145,
+            "selectFrameworkButtonLabel": -55206863,
+            "frameworkReferenceImageAlt": -93387145,
+            "frameworkReferenceImageModalHeading": -93387145,
+            "selectedFrameworkTagLabel": -18769692,
+            "confirmUseFramework": 365,
+            "confirmUseFrameworkText": 366
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

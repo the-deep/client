@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { Redirect } from 'react-router-dom';
@@ -15,6 +15,7 @@ import {
     Link,
     Tag,
     Footer,
+    PendingMessage,
     TextInput as TextInputFromDui,
     DateInput as DateInputFromDui,
     TextArea as TextAreaFromDui,
@@ -22,16 +23,14 @@ import {
 } from '@the-deep/deep-ui';
 import {
     listToGroupList,
-    isNotDefined,
     reverseRoute,
 } from '@togglecorp/fujs';
 
 import {
-    userIdFromRouteSelector,
     setActiveProjectAction,
+    activeUserSelector,
     setProjectAction,
 } from '#redux';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rsu/../v2/View/ListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import OrganizationList from '#components/general/OrganizationList';
@@ -43,7 +42,7 @@ import {
 } from '#typings';
 
 import _ts from '#ts';
-import { useRequest, useLazyRequest } from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
@@ -55,6 +54,8 @@ const DateInput = FaramInputElement(DateInputFromDui);
 
 interface Props {
     projectId: number;
+    projectDetails?: ProjectDetails;
+    pending?: boolean;
 }
 
 interface PropsFromDispatch {
@@ -63,7 +64,7 @@ interface PropsFromDispatch {
 }
 
 interface PropsFromState {
-    userId: number;
+    activeUser: { userId: number };
 }
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
@@ -79,7 +80,7 @@ const schema = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-    userId: userIdFromRouteSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
@@ -89,10 +90,14 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 
 function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
     const {
-        userId,
+        activeUser: {
+            userId,
+        },
         projectId,
         setUserProject,
         setActiveProject,
+        projectDetails,
+        pending,
     } = props;
 
     const [pristine, setPristine] = useState<boolean>(true);
@@ -100,19 +105,9 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [redirectId, setRedirectId] = useState<number | undefined>();
 
-    const {
-        pending: projectGetPending,
-        response: projectDetails,
-    } = useRequest<ProjectDetails>({
-        skip: isNotDefined(projectId),
-        url: `server://projects/${projectId}/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            setFaramValues(response);
-        },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
-    });
+    useEffect(() => {
+        setFaramValues(projectDetails);
+    }, [projectDetails]);
 
     const {
         pending: projectPatchPending,
@@ -179,12 +174,12 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
             schema={schema}
             value={faramValues}
             error={faramErrors}
-            disabled={projectGetPending}
+            disabled={pending}
             onValidationSuccess={handleFaramValidationSuccess}
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
         >
-            {(projectGetPending || projectPatchPending) && <LoadingAnimation />}
+            {projectPatchPending && <PendingMessage />}
             <NonFieldErrors
                 faramElement
                 persistent={false}
@@ -321,7 +316,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                 className={styles.footer}
                 actions={(
                     <Button
-                        disabled={pristine || projectGetPending || projectPatchPending}
+                        disabled={pristine || projectPatchPending}
                         type="submit"
                         variant="primary"
                         name="projectSave"

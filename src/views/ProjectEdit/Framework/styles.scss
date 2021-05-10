@@ -1,0 +1,18 @@
+.framework {
+    display: flex;
+    position: relative;
+    flex-grow: 1;
+    overflow-y: auto;
+    --width-left-container: 320px;
+
+    .left-container {
+        background-color: var(--dui-color-white);
+        padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+        width: var(--width-left-container);
+    }
+
+    .right-container {
+        padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+        width: calc(100% - var(--width-left-container));
+    }
+}

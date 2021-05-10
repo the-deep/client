@@ -7,10 +7,12 @@ import {
     Tab,
     TabList,
     TabPanel,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 
 import FullPageHeader from '#dui/FullPageHeader';
 import BackLink from '#dui/BackLink';
+import { useRequest } from '#utils/request';
 
 import {
     activeProjectFromStateSelector,
@@ -22,8 +24,10 @@ import {
     ProjectDetails,
     AppState,
 } from '#typings';
+import { notifyOnFailure } from '#utils/requestNotify';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
+import Framework from './Framework';
 import Users from './Users';
 import styles from './styles.scss';
 
@@ -46,12 +50,25 @@ function ProjectEdit(props: ViewProps) {
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabNames>('general');
+    const {
+        pending: projectGetPending,
+        response: projectDetails,
+        retrigger: triggerProjectsGet,
+    } = useRequest<ProjectDetails>({
+        skip: isNotDefined(projectId),
+        url: `server://projects/${projectId}/`,
+        method: 'GET',
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+    });
 
     return (
         <div className={styles.projectEdit}>
             <Tabs
+                useHash
                 value={activeTab}
                 onChange={setActiveTab}
+                initialHash="framework"
             >
                 <FullPageHeader
                     className={styles.header}
@@ -104,28 +121,43 @@ function ProjectEdit(props: ViewProps) {
                         </Tab>
                     </TabList>
                 </FullPageHeader>
-                <TabPanel
-                    className={styles.tabPanel}
-                    name="general"
-                >
-                    <ProjectDetailsForm
-                        key={projectId}
-                        projectId={projectId}
-                    />
-                </TabPanel>
-                <TabPanel
-                    name="users"
-                    className={styles.tabPanel}
-                >
-                    { projectId && (
-                        <Users
+                <div className={styles.tabPanelContainer}>
+                    {projectGetPending && <PendingMessage />}
+                    <TabPanel
+                        className={styles.tabPanel}
+                        name="general"
+                    >
+                        <ProjectDetailsForm
+                            key={projectId}
                             projectId={projectId}
+                            projectDetails={projectDetails}
+                            pending={projectGetPending}
+                            onProjectChange={triggerProjectsGet}
                         />
-                    )}
-                </TabPanel>
-                <TabPanel name="framework">
-                    {_ts('projectEdit', 'frameworkLabel')}
-                </TabPanel>
+                    </TabPanel>
+                    <TabPanel
+                        name="users"
+                        className={styles.tabPanel}
+                    >
+                        { projectId && (
+                            <Users
+                                projectId={projectId}
+                            />
+                        )}
+                    </TabPanel>
+                    <TabPanel
+                        name="framework"
+                        className={styles.tabPanel}
+                    >
+                        { projectId && (
+                            <Framework
+                                projectId={projectId}
+                                projectDetails={projectDetails}
+                                onProjectChange={triggerProjectsGet}
+                            />
+                        )}
+                    </TabPanel>
+                </div>
             </Tabs>
         </div>
     );
