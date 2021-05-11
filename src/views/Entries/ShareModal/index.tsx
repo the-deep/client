@@ -1,8 +1,5 @@
-import React, { useCallback, useRef, useMemo, useState } from 'react';
-import {
-    _cs,
-    isDefined,
-} from '@togglecorp/fujs';
+import React, { useCallback, useRef, useMemo } from 'react';
+import { _cs } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
@@ -30,7 +27,8 @@ interface ComponentProps {
     publicUrl?: string;
     projectId?: number;
     closeModal?: () => void;
-    onShareLinkChange?: (publicUrl?: string) => void;
+    onShareLinkChange?: (publicUrl: string | undefined, publicShare: boolean) => void;
+    isEntriesVizPublic: boolean;
 }
 
 interface PublicUrl {
@@ -48,16 +46,16 @@ function ShareModal(props: ComponentProps) {
         className,
         onShareLinkChange,
         publicUrl,
+        isEntriesVizPublic,
         closeModal,
         projectId,
     } = props;
 
-    const [publicUrlAvailable, setPublicUrlAvailability] = useState(isDefined(publicUrl));
     const inputValueRef = useRef<HTMLDivElement>(null);
 
     const bodyToSend = useMemo(() => (
-        publicUrlAvailable ? { action: 'off' } : { action: 'on' }
-    ), [publicUrlAvailable]);
+        isEntriesVizPublic ? { action: 'off' } : { action: 'on' }
+    ), [isEntriesVizPublic]);
 
     const [
         pendingUrlVisibilityChange,
@@ -70,9 +68,8 @@ function ShareModal(props: ComponentProps) {
             method: 'POST',
             body: bodyToSend,
             onSuccess: (response) => {
-                setPublicUrlAvailability(!publicUrlAvailable);
                 if (onShareLinkChange) {
-                    onShareLinkChange(response?.publicUrl);
+                    onShareLinkChange(response?.publicUrl, !isEntriesVizPublic);
                 }
             },
             onFailure: (_, errorBody) =>
@@ -92,7 +89,7 @@ function ShareModal(props: ComponentProps) {
             body: resetBodyToSend,
             onSuccess: (response) => {
                 if (onShareLinkChange) {
-                    onShareLinkChange(response?.publicUrl);
+                    onShareLinkChange(response?.publicUrl, isEntriesVizPublic);
                 }
             },
             onFailure: (_, errorBody) =>
@@ -135,12 +132,12 @@ function ShareModal(props: ComponentProps) {
                         <div className={styles.actions}>
                             <Checkbox
                                 className={styles.checkbox}
-                                value={publicUrlAvailable}
+                                value={isEntriesVizPublic}
                                 onChange={triggerAvailabilityChange}
                                 label={_ts('entries', 'getPublicLinkLabel')}
                                 disabled={pending}
                             />
-                            { publicUrlAvailable && (
+                            { isEntriesVizPublic && (
                                 <ConfirmButton
                                     className={styles.reset}
                                     iconName="undo"
@@ -153,7 +150,7 @@ function ShareModal(props: ComponentProps) {
                         </div>
                     )}
                 />
-                { publicUrlAvailable && (
+                { isEntriesVizPublic && (
                     <div className={styles.textInputSection}>
                         <TextInput
                             className={styles.textInput}
