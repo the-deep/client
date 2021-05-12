@@ -14,7 +14,7 @@ import Pager from '#rscv/Pager';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import TextOutput from '#components/general/TextOutput';
 
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 
 import {
     AppState,
@@ -100,23 +100,21 @@ function Analysis(props: ComponentProps) {
     const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
     const [activePage, setActivePage] = useState<number>(1);
     const [expanded, setExpanded] = useState<boolean>(false);
-    const [pillarAnalysisToDelete, setPillarAnalysisToDelete] = useState<number | undefined>();
+
     const queryOptions = useMemo(() => ({
         offset: (activePage - 1) * MAX_ITEMS_PER_PAGE,
         limit: MAX_ITEMS_PER_PAGE,
     }), [activePage]);
 
-    const [
-        pillarPending,
-        pillarResponse,
-        ,
-        pillarGetTrigger,
-    ] = useRequest<MultiResponse<AnalysisPillars>>(
+    const {
+        pending: pillarPending,
+        response: pillarResponse,
+        retrigger: pillarGetTrigger,
+    } = useRequest<MultiResponse<AnalysisPillars>>(
         {
             url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/`,
             method: 'GET',
             query: queryOptions,
-            autoTrigger: true,
             onSuccess: (response) => {
                 setAnalysisPillar(response.results);
             },
@@ -129,20 +127,18 @@ function Analysis(props: ComponentProps) {
         pillarGetTrigger();
     }, [pillarGetTrigger, modifiedAt]);
 
-    const [
-        pendingPillarDelete,
-        ,
-        ,
-        deletePillarTrigger,
-    ] = useRequest(
+    const {
+        pending: pendingPillarDelete,
+        trigger: deletePillarTrigger,
+        context: deletePillarId,
+    } = useLazyRequest<unknown, number>(
         {
-            url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/${pillarAnalysisToDelete}/`,
+            url: ctx => `server://projects/${activeProject}/analysis/${analysisId}/pillars/${ctx}/`,
             method: 'DELETE',
             onSuccess: () => {
                 onAnalysisPillarDelete();
                 pillarGetTrigger();
             },
-            autoTrigger: false,
         },
     );
 
@@ -154,8 +150,7 @@ function Analysis(props: ComponentProps) {
     }, [expanded]);
 
     const handlePillarAnalysisToDelete = useCallback((toDeleteKey: number) => {
-        setPillarAnalysisToDelete(toDeleteKey);
-        deletePillarTrigger();
+        deletePillarTrigger(toDeleteKey);
     }, [deletePillarTrigger]);
 
     const analysisPillarRendererParams = useCallback((_, data) => ({
@@ -166,13 +161,13 @@ function Analysis(props: ComponentProps) {
         pillarId: data.id,
         projectId: activeProject,
         title: data.title,
-        pendingPillarDelete: pendingPillarDelete && data.id === pillarAnalysisToDelete,
+        pendingPillarDelete: pendingPillarDelete && data.id === deletePillarId,
     }), [
         handlePillarAnalysisToDelete,
         createdAt,
         activeProject,
         pendingPillarDelete,
-        pillarAnalysisToDelete,
+        deletePillarId,
     ]);
 
     const handleDeleteAnalysis = useCallback(() => {

@@ -8,6 +8,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 
 const ShellRunPlugin = require('./shellrun-plugin');
 const getEnvVariables = require('./env.js');
@@ -23,10 +24,17 @@ const appFavicon = path.resolve(appBase, 'public/favicon.ico');
 const appLogo = path.resolve(appBase, 'public/favicon.png');
 const staticContent = path.resolve(appBase, 'static/');
 
+const smp = new SpeedMeasurePlugin({
+    outputFormat: 'humanVerbose',
+    loaderTopFiles: 20,
+    disable: !process.env.MEASURE,
+    // granularLoaderData: true,
+});
+
 module.exports = (env) => {
     const ENV_VARS = getEnvVariables(env);
 
-    return {
+    return smp.wrap({
         entry: appIndexJs,
         output: {
             path: appDist,
@@ -228,5 +236,5 @@ module.exports = (env) => {
             }),
             new CleanWebpackPlugin(),
         ],
-    };
+    });
 };

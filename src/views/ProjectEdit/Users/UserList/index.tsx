@@ -20,7 +20,7 @@ import TableHeader from '#rscv/TableHeader';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
 import { useModalState } from '#hooks/stateManagement';
@@ -47,12 +47,8 @@ function UserList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [membershipIdToDelete, setMembershipIdToDelete] = useState<number | undefined>(undefined);
     const [membershipIdToEdit, setMembershipIdToEdit] = useState<number | undefined>(undefined);
-    const queryForRequest = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-    }), [activePage]);
+
     const [
         showAddUserModal,
         setModalShow,
@@ -64,42 +60,37 @@ function UserList(props: Props) {
         setModalHidden();
     }, [setModalHidden]);
 
-    const [
-        usersPending,
-        usersResponse,
-        ,
-        triggerGetUsers,
-    ] = useRequest<MultiResponse<Membership>>({
+    const queryForRequest = useMemo(() => ({
+        offset: (activePage - 1) * maxItemsPerPage,
+        limit: maxItemsPerPage,
+    }), [activePage]);
+    const {
+        pending: usersPending,
+        response: usersResponse,
+        retrigger: triggerGetUsers,
+    } = useRequest<MultiResponse<Membership>>({
         url: `server://projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: queryForRequest,
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'userFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        ,
-        ,
-        ,
-        triggerMembershipDelete,
-    ] = useRequest({
-        url: `server://projects/${projectId}/project-memberships/${membershipIdToDelete}/`,
+    const {
+        trigger: triggerMembershipDelete,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://projects/${projectId}/project-memberships/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
             triggerGetUsers();
         },
-        autoTrigger: false,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'membershipDeleteFailed'))({ error: errorBody });
         },
     });
 
-    const handleDeleteMembershipClick = useCallback((deleteUserId) => {
-        setMembershipIdToDelete(deleteUserId);
-        triggerMembershipDelete();
-    }, [triggerMembershipDelete]);
+    const handleDeleteMembershipClick = triggerMembershipDelete;
 
     const handleEditMembershipClick = useCallback((membershipId) => {
         setMembershipIdToEdit(membershipId);

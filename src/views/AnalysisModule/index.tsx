@@ -28,7 +28,7 @@ import Pager from '#rscv/Pager';
 import DateFilter from '#rsci/DateFilter';
 import Timeline from '#components/viz/Timeline';
 
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import { SubNavbar } from '#components/general/Navbar';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
@@ -142,7 +142,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         modifyAnalysis,
     ] = useArrayEdit(setAnalyses, analysisKeySelector);
     const [analysisCount, setAnalysisCount] = useState(0);
-    const [analysisIdToDelete, setAnalysisIdToDelete] = useState<number | undefined>();
     const [analysisToEdit, setAnalysisToEdit] = useState();
     const [filter, setFilter] = useState<Filter | undefined>(undefined);
 
@@ -159,12 +158,11 @@ function AnalysisModule(props: AnalysisModuleProps) {
         });
     }, [activePage, filter]);
 
-    const [
-        pendingAnalyses,
-        analysesResponse,
-        ,
-        getAnalysisTrigger,
-    ] = useRequest<MultiResponse<AnalysisElement>>({
+    const {
+        pending: pendingAnalyses,
+        response: analysesResponse,
+        retrigger: getAnalysisTrigger,
+    } = useRequest<MultiResponse<AnalysisElement>>({
         url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
         query: analysisQueryOptions,
@@ -172,36 +170,30 @@ function AnalysisModule(props: AnalysisModuleProps) {
             setAnalyses(response.results);
             setAnalysisCount(response.count);
         },
-        autoTrigger: true,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
     });
 
-
-    const [
-        pendingAnalysisDelete,
-        ,
-        ,
-        deleteAnalysisTrigger,
-    ] = useRequest(
+    const {
+        pending: pendingAnalysisDelete,
+        trigger: deleteAnalysisTrigger,
+        context: analysisIdToDelete,
+    } = useLazyRequest<unknown, number>(
         {
-            url: `server://projects/${activeProject}/analysis/${analysisIdToDelete}/`,
+            url: ctx => `server://projects/${activeProject}/analysis/${ctx}/`,
             method: 'DELETE',
             onSuccess: () => {
                 getAnalysisTrigger();
             },
-            autoTrigger: false,
         },
     );
 
-    const [
-        ,
-        overviewResponse,
-    ] = useRequest<AnalysisOverview>(
+    const {
+        response: overviewResponse,
+    } = useRequest<AnalysisOverview>(
         {
             url: `server://projects/${activeProject}/analysis-overview/`,
             method: 'GET',
-            autoTrigger: true,
             onFailure: (_, errorBody) =>
                 notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
         },
@@ -215,10 +207,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         label: d.title,
     }))) ?? [];
 
-    const handleAnalysisToDeleteClick = useCallback((toDeleteKey) => {
-        setAnalysisIdToDelete(toDeleteKey);
-        deleteAnalysisTrigger();
-    }, [deleteAnalysisTrigger]);
+    const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
 
     const analysisObjectToEdit = useMemo(() => (
         analyses?.find(a => a.id === analysisToEdit)

@@ -7,7 +7,7 @@ import RawTable from '#rscv/RawTable';
 import Pager from '#rscv/Pager';
 import TableHeader from '#rscv/TableHeader';
 import { getCombinedLeadFilters } from '#entities/lead';
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 
 import _ts from '#ts';
 import {
@@ -109,13 +109,8 @@ function LeadsSelection(props: ComponentProps) {
         hasAssessment,
     ]);
 
-    const [
-        leadsPending,
-        leadsResponse,
-    ] = useRequest<MultiResponse<Lead>>({
-        url: 'server://v2/leads/filter/',
-        method: 'POST',
-        query: {
+    const leadsRequestQuery = useMemo(
+        () => ({
             fields: [
                 'id',
                 'title',
@@ -129,9 +124,18 @@ function LeadsSelection(props: ComponentProps) {
             project: projectId,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
-        },
-        autoTrigger: true,
-        autoTriggerDisabled: pending || filterOptionsPending,
+        }),
+        [activePage, projectId],
+    );
+
+    const {
+        pending: leadsPending,
+        response: leadsResponse,
+    } = useRequest<MultiResponse<Lead>>({
+        url: 'server://v2/leads/filter/',
+        method: 'POST',
+        query: leadsRequestQuery,
+        skip: pending || filterOptionsPending,
         body: leadsRequestBody,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('export', 'leadsLabel'))({ error: errorBody });

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { isDefined } from '@togglecorp/fujs';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
     Container,
     Button,
@@ -10,7 +9,7 @@ import {
 import List from '#rsu/../v2/View/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import {
@@ -32,38 +31,38 @@ const keySelector = (info: Assignment) => info.id;
 
 function Assignments() {
     const [activePage, setActivePage] = useState<number>(1);
-    const [selectedAssignment, setSelectedAssignment] = useState<number | undefined>();
-    const [
+
+    const assignmentsQuery = useMemo(
+        () => ({
+            is_done: 3, // 1: Unknown | 2: True | 3: False
+            offset: (activePage - 1) * maxItemsPerPage,
+            limit: maxItemsPerPage,
+        }),
+        [activePage],
+    );
+
+    const {
         pending,
-        assignmentsResponse,
-        ,
-        getAssignments,
-    ] = useRequest<MultiResponse<Assignment>>(
+        response: assignmentsResponse,
+        retrigger: getAssignments,
+    } = useRequest<MultiResponse<Assignment>>(
         {
             url: 'server://assignments/',
             method: 'GET',
-            query: {
-                is_done: 3, // 1: Unknown | 2: True | 3: False
-                offset: (activePage - 1) * maxItemsPerPage,
-                limit: maxItemsPerPage,
-            },
-            autoTrigger: true,
+            query: assignmentsQuery,
             onFailure: (_, errorBody) =>
                 notifyOnFailure(_ts('assignment', 'assignmentListFetchFailed'))({ error: errorBody }),
         },
     );
 
-    const [
-        markAsDonePending,
-        ,
-        ,
-        triggerMarkAsDone,
-    ] = useRequest<MultiResponse<Assignment>>(
+    const {
+        pending: markAsDonePending,
+        trigger: triggerMarkAsDone,
+    } = useLazyRequest<MultiResponse<Assignment>, number>(
         {
-            url: `server://assignments/${selectedAssignment}/`,
+            url: ctx => `server://assignments/${ctx}/`,
             method: 'PUT',
             body: { is_done: true },
-            autoTrigger: false,
             onSuccess: () => {
                 getAssignments();
             },
@@ -72,18 +71,10 @@ function Assignments() {
         },
     );
 
-    useEffect(() => {
-        if (isDefined(selectedAssignment)) {
-            triggerMarkAsDone();
-        }
-    }, [selectedAssignment, triggerMarkAsDone]);
-
-    const [
-        bulkPending,
-        ,
-        ,
-        triggerBulkAsDone,
-    ] = useRequest<BulkResponse>(
+    const {
+        pending: bulkPending,
+        trigger: triggerBulkAsDone,
+    } = useLazyRequest<BulkResponse>(
         {
             url: 'server://assignments/bulk-mark-as-done/',
             method: 'POST',
@@ -96,11 +87,18 @@ function Assignments() {
         },
     );
 
+    const handleBulkActionClick = useCallback(
+        () => {
+            triggerBulkAsDone(null);
+        },
+        [triggerBulkAsDone],
+    );
+
     const rendererParams = useCallback((_: number, info: Assignment) => ({
         ...info,
-        handleClick: setSelectedAssignment,
+        handleClick: triggerMarkAsDone,
         markAsDonePending,
-    }), [setSelectedAssignment, markAsDonePending]);
+    }), [triggerMarkAsDone, markAsDonePending]);
 
     return (
         <Container
@@ -110,7 +108,7 @@ function Assignments() {
                 assignmentsResponse && assignmentsResponse.count > 0 && (
                     <Button
                         name={undefined}
-                        onClick={triggerBulkAsDone}
+                        onClick={handleBulkActionClick}
                         disabled={bulkPending}
                         variant="action"
                     >

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     _cs,
     isDefined,
@@ -11,7 +11,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import GalleryViewer from '#components/viewer/GalleryViewer';
 
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -38,20 +38,13 @@ function ExportPreview(props: OwnProps) {
     const [error, setError] = useState<string | undefined>(undefined);
     const [exportObj, setExportObj] = useState<ExportObj | undefined>(undefined);
 
-    const [
-        pending,
-        ,
-        ,
-        triggerExport,
-    ] = useRequest<ExportObj>({
-        url: `server://exports/${exportId}/`,
+    const { pending } = useRequest<ExportObj>({
+        skip: !exportId,
+        url: exportId ? `server://exports/${exportId}/` : undefined,
         method: 'GET',
         shouldPoll: (response) => {
             const isPending = response?.pending;
-            if (isPending) {
-                return 2000;
-            }
-            return -1;
+            return isPending ? 2000 : -1;
         },
         onSuccess: (response) => {
             setExportObj(response);
@@ -68,12 +61,6 @@ function ExportPreview(props: OwnProps) {
             onPreviewClick();
         }
     }, [onPreviewClick]);
-
-    useEffect(() => {
-        if (isDefined(exportId)) {
-            triggerExport();
-        }
-    }, [triggerExport, exportId]);
 
     return (
         <div className={_cs(className, styles.exportPreview)}>

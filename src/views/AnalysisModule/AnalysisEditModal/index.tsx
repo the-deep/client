@@ -16,7 +16,7 @@ import {
     Modal,
 } from '@the-deep/deep-ui';
 
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import TextInput from '#rsci/TextInput';
 import SelectInput from '#rsci/SelectInput';
 import Icon from '#rscg/Icon';
@@ -124,16 +124,14 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
     });
     const [faramErrors, setFaramErrors] = useState<unknown | undefined>();
     const [pristine, setPristine] = useState(true);
-    const [bodyToSend, setBodyToSend] = useState<AnalysisElement | undefined>(undefined);
 
-    const [
-        pendingFramework,
-        framework,
-    ] = useRequest<Partial<FrameworkFields>>({
+    const {
+        pending: pendingFramework,
+        response: framework,
+    } = useRequest<Partial<FrameworkFields>>({
         url: `server://projects/${projectId}/analysis-framework/`,
         method: 'GET',
         query: frameworkQueryFields,
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('analysis.editModal', 'frameworkTitle'))({ error: errorBody });
         },
@@ -150,14 +148,13 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         [framework],
     );
 
-    const [
-        pendingUsersList,
-        usersListResponse,
-    ] = useRequest<MultiResponse<UserMini>>({
+    const {
+        pending: pendingUsersList,
+        response: usersListResponse,
+    } = useRequest<MultiResponse<UserMini>>({
         url: `server://projects/${projectId}/members/`,
         query: usersQueryFields,
         method: 'GET',
-        autoTrigger: true,
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('analysis.editModal', 'usersTitle'))({ error: errorBody }),
     });
@@ -173,17 +170,16 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         setPristine(true);
     }, []);
 
-    const [
-        pendingAnalysisEdit,
-        ,
-        ,
-        triggerAnalysisEdit,
-    ] = useRequest<AnalysisElement>({
-        url: isDefined(value)
-            ? `server://projects/${projectId}/analysis/${value.id}/`
+    const id = value?.id;
+    const {
+        pending: pendingAnalysisEdit,
+        trigger: triggerAnalysisEdit,
+    } = useLazyRequest<AnalysisElement, unknown>({
+        url: isDefined(id)
+            ? `server://projects/${projectId}/analysis/${id}/`
             : `server://projects/${projectId}/analysis/`,
-        method: isDefined(value) ? 'PATCH' : 'POST',
-        body: bodyToSend,
+        method: isDefined(id) ? 'PATCH' : 'POST',
+        body: ctx => ctx,
         onSuccess: (response) => {
             if (response) {
                 onSuccess(response, isDefined(value));
@@ -213,11 +209,10 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
             ...ap,
             filters: ap?.filters?.map((f: string) => matrixMap[f]),
         }));
-        setBodyToSend({
+        triggerAnalysisEdit({
             ...finalValues,
             analysisPillar: newAnalysisPillar,
         });
-        triggerAnalysisEdit();
     }, [triggerAnalysisEdit, matrixPillars]);
 
     const rowRendererParams = useCallback((key, data, index) => ({

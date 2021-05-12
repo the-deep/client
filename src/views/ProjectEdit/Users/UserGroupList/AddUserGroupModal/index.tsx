@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
     isDefined,
     isNotDefined,
@@ -16,7 +16,7 @@ import {
 } from '@the-deep/deep-ui';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
     UserGroup,
@@ -100,50 +100,44 @@ function AddUserGroupModal(props: Props) {
         onErrorSet,
     } = useForm(formValue, schema);
 
-    const [valueToSend, setValueToSend] = useState<ValueToSend>();
-
     const queryForUsergroups = useMemo(() => ({
         members_exclude_project: projectId,
     }), [projectId]);
 
-    const [
-        pendingRoles,
-        projectRolesResponse,
-    ] = useRequest<MultiResponse<ProjectRole>>({
+    const {
+        pending: pendingRoles,
+        response: projectRolesResponse,
+    } = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'projectRoleFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        pendingUsergroupList,
-        usergroupResponse,
-    ] = useRequest<MultiResponse<UserGroup>>({
+    const {
+        pending: pendingUsergroupList,
+        response: usergroupResponse,
+    } = useRequest<MultiResponse<UserGroup>>({
         url: 'server://user-groups/',
         method: 'GET',
         query: queryForUsergroups,
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        pendingAddAction,
-        ,
-        ,
-        triggerAddUserGroup,
-    ] = useRequest({
+    const {
+        pending: pendingAddAction,
+        trigger: triggerAddUserGroup,
+    } = useLazyRequest<unknown, ValueToSend>({
         url: isDefined(usergroupValue)
             ? `server://projects/${projectId}/project-usergroups/${usergroupValue.id}/`
             : `server://projects/${projectId}/project-usergroups/`,
         method: isDefined(usergroupValue)
             ? 'PATCH'
             : 'POST',
-        body: valueToSend,
+        body: ctx => ctx,
         onSuccess: () => {
             onTableReload();
             onModalClose();
@@ -158,8 +152,7 @@ function AddUserGroupModal(props: Props) {
             const { errored, error: err, value: val } = validate();
             onErrorSet(err);
             if (!errored && isDefined(val)) {
-                setValueToSend(val as ValueToSend);
-                triggerAddUserGroup();
+                triggerAddUserGroup(val as ValueToSend);
             }
         },
         [onErrorSet, validate, triggerAddUserGroup],

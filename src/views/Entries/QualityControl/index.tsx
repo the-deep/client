@@ -28,7 +28,7 @@ import { MatrixTocElement, MultiResponse, AppState } from '#typings';
 import { processEntryFilters } from '#entities/entries';
 import { getMatrix1dToc, getMatrix2dToc } from '#utils/framework';
 import { flatten } from '#utils/common';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 
 import {
     qualityControlViewActivePageSelector,
@@ -234,19 +234,21 @@ function QualityControl(props: Props) {
         projectId,
     ]);
 
-    const [
-        pending,
-        ,
-        ,
-        getEntries,
-    ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
-        url: 'server://entries/filter/',
-        query: {
+    const entriesWithSummaryQuery = useMemo(
+        () => ({
             calculate_count_per_toc_item: 1,
             calculate_summary: 1,
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
-        },
+        }),
+        [activePage, maxItemsPerPage],
+    );
+
+    const {
+        pending,
+    } = useRequest<EntriesWithSummaryResponse<EntryFields>>({
+        url: 'server://entries/filter/',
+        query: entriesWithSummaryQuery,
         body: requestFilters,
         method: 'POST',
         onSuccess: (response) => {
@@ -262,19 +264,11 @@ function QualityControl(props: Props) {
         },
     });
 
-    const [
-        ,
-        ,
-        ,
-        getEntriesWithStats,
-    ] = useRequest<EntriesWithSummaryResponse<EntryFields>>({
+    const {
+        trigger: getEntriesWithStats,
+    } = useLazyRequest<EntriesWithSummaryResponse<EntryFields>>({
         url: 'server://entries/filter/',
-        query: {
-            calculate_count_per_toc_item: 1,
-            calculate_summary: 1,
-            offset: (activePage - 1) * maxItemsPerPage,
-            limit: maxItemsPerPage,
-        },
+        query: entriesWithSummaryQuery,
         body: requestFilters,
         method: 'POST',
         onSuccess: (response) => {
@@ -287,15 +281,6 @@ function QualityControl(props: Props) {
             setStats(response.summary);
         },
     });
-
-    useEffect(
-        getEntries,
-        [
-            projectId,
-            activePage,
-            requestFilters,
-        ],
-    );
 
     const handleEntryEdit = useCallback((updatedEntry) => {
         setEntries(oldEntries => (
@@ -310,11 +295,11 @@ function QualityControl(props: Props) {
                 }
             })
         ));
-        getEntriesWithStats();
+        getEntriesWithStats(null);
     }, [getEntriesWithStats, setEntries]);
 
     const handleLeadEdit = useCallback((updatedLead) => {
-        getEntriesWithStats();
+        getEntriesWithStats(null);
         setEntries(oldEntries => (
             produce(oldEntries, (safeEntries) => {
                 safeEntries.forEach((entry) => {
@@ -328,7 +313,7 @@ function QualityControl(props: Props) {
     }, [getEntriesWithStats, setEntries]);
 
     const handleEntryDelete = useCallback((entryId) => {
-        getEntriesWithStats();
+        getEntriesWithStats(null);
         setDeletedEntries(oldDeletedEntries => ({ ...oldDeletedEntries, [entryId]: true }));
     }, [setDeletedEntries, getEntriesWithStats]);
 

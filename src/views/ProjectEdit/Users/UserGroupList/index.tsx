@@ -23,7 +23,7 @@ import TableHeader from '#rscv/TableHeader';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
-import useRequest from '#utils/request';
+import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
 import { useModalState } from '#hooks/stateManagement';
@@ -52,12 +52,7 @@ function UserGroupList(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [usergroupIdToDelete, setUsergroupIdToDelete] = useState<number | undefined>(undefined);
     const [usergroupIdToEdit, setUsergroupIdToEdit] = useState<number | undefined>(undefined);
-    const queryForRequest = useMemo(() => ({
-        offset: (activePage - 1) * maxItemsPerPage,
-        limit: maxItemsPerPage,
-    }), [activePage]);
 
     const [
         showAddUserGroupModal,
@@ -70,42 +65,38 @@ function UserGroupList(props: Props) {
         setModalHidden();
     }, [setModalHidden]);
 
-    const [
-        usergroupPending,
-        usergroupResponse,
-        ,
-        triggerUsergroupResponse,
-    ] = useRequest<MultiResponse<UserGroup>>({
+    const queryForRequest = useMemo(() => ({
+        offset: (activePage - 1) * maxItemsPerPage,
+        limit: maxItemsPerPage,
+    }), [activePage]);
+
+    const {
+        pending: usergroupPending,
+        response: usergroupResponse,
+        retrigger: triggerUsergroupResponse,
+    } = useRequest<MultiResponse<UserGroup>>({
         url: `server://projects/${projectId}/project-usergroups/`,
         method: 'GET',
         query: queryForRequest,
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
         },
     });
 
-    const [
-        ,
-        ,
-        ,
-        triggerDeleteUsergroup,
-    ] = useRequest({
-        url: `server://projects/${projectId}/project-usergroups/${usergroupIdToDelete}/`,
+    const {
+        trigger: triggerDeleteUsergroup,
+    } = useLazyRequest<unknown, number>({
+        url: ctx => `server://projects/${projectId}/project-usergroups/${ctx}/`,
         method: 'DELETE',
         onSuccess: () => {
             triggerUsergroupResponse();
         },
-        autoTrigger: false,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'usergroupDeleteFailed'))({ error: errorBody });
         },
     });
 
-    const handleDeleteUsergroupClick = useCallback((deleteUsergroupId) => {
-        setUsergroupIdToDelete(deleteUsergroupId);
-        triggerDeleteUsergroup();
-    }, [triggerDeleteUsergroup]);
+    const handleDeleteUsergroupClick = triggerDeleteUsergroup;
 
     const handleEditUsergroupClick = useCallback((usergroupId) => {
         setUsergroupIdToEdit(usergroupId);

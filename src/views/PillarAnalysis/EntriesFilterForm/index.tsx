@@ -10,7 +10,7 @@ import {
 import Faram from '@togglecorp/faram';
 
 import List from '#rsu/../v2/View/List';
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import DateFilter from '#rsci/DateFilter';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
@@ -115,13 +115,12 @@ function EntriesFilterForm(props: OwnProps) {
         projects: [projectId],
     }), [projectId]);
 
-    const [
-        entryOptionsPending,
-        entryOptions,
-    ] = useRequest<EntryOptions>({
+    const {
+        pending: entryOptionsPending,
+        response: entryOptions,
+    } = useRequest<EntryOptions>({
         url: 'server://entry-options/',
         query: entryOptionsQueryParams,
-        autoTrigger: true,
         method: 'GET',
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('pillarAnalysis', 'entryOptions'))({ error: errorBody });

@@ -16,7 +16,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import Cloak from '#components/general/Cloak';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import {
     setProjectAction,
     setUserProjectAction,
@@ -83,19 +83,16 @@ function ProjectAddForm(props) {
     } = props;
 
     const [faramValues, setFaramValues] = useState({ isPrivate: false, organizations: [] });
-    const [submitValues, setSubmitValues] = useState({});
     const [faramErrors, setFaramErrors] = useState({});
     const [pristine, setPristine] = useState(true);
 
-    const [
+    const {
         pending,
-        ,
-        ,
-        createNewProject,
-    ] = useRequest({
+        trigger: createNewProject,
+    } = useLazyRequest({
         url: 'server://projects/',
-        body: submitValues,
         method: 'POST',
+        body: ctx => ctx,
         onSuccess: (response) => {
             // FIXME: Remove too many redux writes in future
             setUserProject({ project: response });
@@ -132,11 +129,10 @@ function ProjectAddForm(props) {
     }, [setFaramErrors]);
 
     const handleFaramSuccess = useCallback((values) => {
-        setSubmitValues({
+        createNewProject({
             ...values,
             userGroups,
         });
-        createNewProject();
     }, [createNewProject, userGroups]);
 
     return (

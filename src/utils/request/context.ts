@@ -2,8 +2,11 @@ import { createContext } from 'react';
 
 export interface ContextInterface {
     transformUrl: (url: string) => string;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    transformOptions: (url: string, options: Omit<RequestInit, 'body'> & { body?: RequestInit['body'] | object | undefined }) => RequestInit;
+    transformOptions: (
+        url: string,
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        options: Omit<RequestInit, 'body'> & { body?: RequestInit['body'] | object | undefined },
+    ) => RequestInit;
 }
 
 const defaultContext: ContextInterface = {
