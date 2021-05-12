@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 
 import { ProjectDetails } from '#typings';
@@ -21,19 +21,24 @@ function ProjectFramework(props: Props) {
         onProjectChange,
     } = props;
 
+    const [
+        selectedFramework,
+        setSelectedFramework,
+    ] = useState<number| undefined>(projectDetails?.analysisFramework ?? 5);
+
     return (
         <div className={_cs(styles.framework, className)}>
             <div className={styles.leftContainer}>
                 Framework {projectId}
             </div>
-            {projectDetails?.analysisFramework && (
+            {selectedFramework && (
                 <FrameworkDetail
-                    projectFrameworkId={projectDetails.analysisFramework}
+                    projectFrameworkId={projectDetails?.analysisFramework}
                     projectId={projectId}
-                    frameworkId={5}
-                    // frameworkId={projectDetails.analysisFramework}
+                    frameworkId={selectedFramework}
                     className={styles.rightContainer}
                     onProjectChange={onProjectChange}
+                    onFrameworkChange={setSelectedFramework}
                 />
             )}
         </div>

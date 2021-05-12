@@ -1334,7 +1334,10 @@
         "-77381500": "Recently used in projects:",
         "-93387145": "Reference Framework Image",
         "-55206863": "Select Framework",
-        "-18769692": "Selected Framework"
+        "-18769692": "Selected Framework",
+        "-70958236": "Add Analytical Framework",
+        "-8323151": "Clone Analytical Framework",
+        "-68469687": "Successfully added new analytical framework."
     },
     "links": {
         "browserExtension": {
@@ -3778,7 +3781,16 @@
             "frameworkReferenceImageModalHeading": -93387145,
             "selectedFrameworkTagLabel": -18769692,
             "confirmUseFramework": 365,
-            "confirmUseFrameworkText": 366
+            "confirmUseFrameworkText": 366,
+            "descriptionLabel": 200,
+            "addFrameworkHeading": -70958236,
+            "cloneFrameworkHeading": -8323151,
+            "descriptionPlaceholder": 14,
+            "titleLabel": 13,
+            "titlePlaceholder": 14,
+            "analyticalFramework": -91820939,
+            "cloneFrameworkSuccessMessage": -8045218,
+            "createFrameworkSuccessMessage": -68469687
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,

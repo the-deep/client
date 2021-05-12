@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     _cs,
     reverseRoute,
@@ -37,6 +37,7 @@ import {
     ProjectDetails,
 } from '#typings';
 
+import AddFrameworkModal from '../AddFrameworkModal';
 import styles from './styles.scss';
 
 interface ProjectItem {
@@ -58,10 +59,11 @@ const itemKeySelector = (d: ProjectItem) => d.id;
 
 interface Props {
     className?: string;
-    projectFrameworkId: number;
+    projectFrameworkId?: number;
     frameworkId: number;
     projectId: number;
     onProjectChange: () => void;
+    onFrameworkChange: (newFrameworkSelected: number) => void;
 }
 
 function FrameworkDetail(props: Props) {
@@ -71,6 +73,7 @@ function FrameworkDetail(props: Props) {
         frameworkId,
         projectId,
         onProjectChange,
+        onFrameworkChange,
     } = props;
 
     const {
@@ -112,9 +115,33 @@ function FrameworkDetail(props: Props) {
         hideReferenceImage,
     ] = useModalState(false);
 
+    const [frameworkToClone, setFrameworkToClone] = useState<Framework | undefined>();
+
+    const [
+        frameworkAddModalShown,
+        showFrameworkAddModal,
+        hideFrameworkAddModal,
+    ] = useModalState(false);
+
     const handleUseFrameworkClick = useCallback(() => {
         projectPatch(null);
     }, [projectPatch]);
+
+    const handleFrameworkAddClick = useCallback(() => {
+        setFrameworkToClone(undefined);
+        showFrameworkAddModal();
+    }, [showFrameworkAddModal]);
+
+    const handleNewFrameworkAddSuccess = useCallback((newFrameworkId: number) => {
+        setFrameworkToClone(undefined);
+        onFrameworkChange(newFrameworkId);
+        hideFrameworkAddModal();
+    }, [onFrameworkChange, hideFrameworkAddModal]);
+
+    const handleFrameworkCloneClick = useCallback(() => {
+        setFrameworkToClone(frameworkDetails);
+        showFrameworkAddModal();
+    }, [frameworkDetails, showFrameworkAddModal]);
 
     const disableAllButtons = projectPatchPending;
 
@@ -131,6 +158,7 @@ function FrameworkDetail(props: Props) {
                             title={_ts('projectEdit', 'addNewFrameworkButtonLabel')}
                             icons={(<IoAdd />)}
                             disabled={disableAllButtons}
+                            onClick={handleFrameworkAddClick}
                         >
                             {_ts('projectEdit', 'addNewFrameworkButtonLabel')}
                         </Button>
@@ -208,6 +236,7 @@ function FrameworkDetail(props: Props) {
                             title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
                             variant="inverted"
                             disabled={disableAllButtons}
+                            onClick={handleFrameworkCloneClick}
                             name="clone"
                         >
                             <IoCopyOutline />
@@ -271,6 +300,13 @@ function FrameworkDetail(props: Props) {
                         src=""
                     />
                 </Modal>
+            )}
+            {frameworkAddModalShown && (
+                <AddFrameworkModal
+                    frameworkToClone={frameworkToClone}
+                    onActionSuccess={handleNewFrameworkAddSuccess}
+                    onModalClose={hideFrameworkAddModal}
+                />
             )}
         </div>
     );
