@@ -13,7 +13,7 @@ import EntryCommentFormForModal from '#components/general/EntryCommentFormForMod
 import { useModalState } from '#hooks/stateManagement';
 import { notifyOnFailure } from '#utils/requestNotify';
 import notify from '#notify';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 
 import { DatabaseEntityBase } from '#typings';
 import _ts from '#ts';
@@ -35,8 +35,6 @@ interface ToggleEntryVerificationProps {
 const VERIFY = 1;
 const UNVERIFY = 2;
 
-const verifyFormData = { commentType: VERIFY };
-
 function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
     const {
         className,
@@ -56,24 +54,13 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
         setCommentModalHidden,
     ] = useModalState(false);
 
-    const [unverifyFormData, setUnverifyFormData] = React.useState({
-        commentType: UNVERIFY,
-    });
-
-    const url = `server://v2/entries/${entryId}/review-comments/`;
-    const formData = React.useMemo(() => (
-        value ? unverifyFormData : verifyFormData
-    ), [value, unverifyFormData]);
-
-    const [
-        reviewRequestPending,
-        ,,
-        triggerReviewRequest,
-    ] = useRequest({
-        url,
-        autoTrigger: false,
+    const {
+        pending: reviewRequestPending,
+        trigger: triggerReviewRequest,
+    } = useLazyRequest({
+        url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
-        body: formData,
+        body: ctx => ctx,
         onSuccess: () => {
             // FIXME: use verifyCount from the response
             onChange(!value, value ? (verifyCount - 1) : (verifyCount + 1));
@@ -100,17 +87,13 @@ function ToggleEntryVerification(props: ToggleEntryVerificationProps) {
         if (value) {
             setCommentModalVisible();
         } else {
-            triggerReviewRequest();
+            triggerReviewRequest({ commentType: VERIFY });
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
     const handleUnverifyFormValidationSuccess = React.useCallback((newData) => {
-        setUnverifyFormData(prevData => ({
-            ...prevData,
-            ...newData,
-        }));
-        triggerReviewRequest();
-    }, [setUnverifyFormData, triggerReviewRequest]);
+        triggerReviewRequest({ commentType: UNVERIFY, ...newData });
+    }, [triggerReviewRequest]);
 
     const verificationStatus = React.useMemo(() => {
         let text = '';

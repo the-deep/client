@@ -7,7 +7,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
@@ -51,18 +51,17 @@ function EditCommentForm(props: Props) {
         },
     };
 
-    const [
-        commentEditPending,
-        ,
-        ,
-        editComment,
-    ] = useRequest<EntryComment>({
+    const {
+        pending: commentEditPending,
+        trigger: editComment,
+    } = useLazyRequest<EntryComment>({
         url: `server://v2/entries/${comment.entry}/review-comments/${comment.id}/`,
         method: 'PUT',
-        body: faramValues,
+        body: ctx => ctx,
         onSuccess: (response) => {
-            onEditSuccess(response);
+            setPristine(true);
             setFaramValues(undefined);
+            onEditSuccess(response);
         },
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
@@ -75,10 +74,9 @@ function EditCommentForm(props: Props) {
         setFaramErrors(newFaramErrors);
     }, [setPristine]);
 
-    const handleFaramValidationSuccess = useCallback(() => {
-        setPristine(true);
-        editComment();
-    }, [setPristine, editComment]);
+    const handleFaramValidationSuccess = useCallback((newFaramValues) => {
+        editComment(newFaramValues);
+    }, [editComment]);
 
     const handleFaramValidationFailure = useCallback((newFaramErrors) => {
         setFaramErrors(newFaramErrors);
