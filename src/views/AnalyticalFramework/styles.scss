@@ -1,19 +1,33 @@
 .analytical-framework {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     height: 100%;
     overflow-y: auto;
 
     .header {
         flex-shrink: 0;
-    }
 
-    .tab-list {
-        display: flex;
-        .tab {
-            flex-grow: 1;
-            font-size: var(--font-size-large);
+        .content {
+            display: flex;
+            align-items: stretch;
+            align-self: stretch;
+            padding: 0 var(--spacing-medium);
+
+            .tab-list {
+                .tab {
+                    font-size: var(--font-size-large);
+
+                    &:not(.active-tab) {
+                        border-bottom-color: transparent;
+                    }
+                }
+            }
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            padding: 0 calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
         }
     }
 

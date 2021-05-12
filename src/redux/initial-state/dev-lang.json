@@ -1342,7 +1342,18 @@
         "-89101159": "My frameworks",
         "-20004833": "There are no analytical frameworks.",
         "-13184074": "Are you sure you want to remove this user from this project?",
-        "-1778933": "Are you sure you want to remove this user group from this project?"
+        "-1778933": "Are you sure you want to remove this user group from this project?",
+        "-99938191": "1. Framework Details",
+        "-91832843": "2. Primary Tagging",
+        "-19828383": "3. Secondary Tagging",
+        "-82831919": "4. Review",
+        "-91820939": "Analytical Framework",
+        "-19284382": "Framework Title",
+        "-83818181": "Associated Organization",
+        "-981828381": "Description",
+        "-918283811": "Framework visibility",
+        "-918281818": "Public",
+        "-818101082": "Private"
     },
     "links": {
         "browserExtension": {
@@ -3822,7 +3833,17 @@
             "frameworkDetails": -99938191,
             "primaryTagging": -91832843,
             "secondaryTagging": -19828383,
-            "review": -82831919
+            "review": -82831919,
+            "title": -91820939,
+            "frameworkTitle": -19284382,
+            "createdBy": 538,
+            "createdOn": -779713983,
+            "associatedOrganization": -83818181,
+            "description": 200,
+            "frameworkVisibility": -918283811,
+            "publicFramework": -918281818,
+            "privateFramework": -818101082,
+            "saveFramework": 25
         }
     }
 }
