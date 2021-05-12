@@ -12,7 +12,7 @@ import Confirm from '#rscv/Modal/Confirm';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rsu/../v2/View/ListView';
 
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import { MultiResponse, EntryComment, EntryReviewSummary, AppState } from '#typings';
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
@@ -69,19 +69,17 @@ function EntryCommentModal(props: Props) {
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
-    const [
-        commentsPending,
-        commentsResponse,
-        ,
-        getComments,
-    ] = useRequest<MultiResponseWithSummary<EntryComment>>({
+    const {
+        pending: commentsPending,
+        response: commentsResponse,
+        retrigger: getComments,
+    } = useRequest<MultiResponseWithSummary<EntryComment>>({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'GET',
         query: {
             offset: (activePage - 1) * maxItemsPerPage,
             limit: maxItemsPerPage,
         },
-        autoTrigger: true,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
         },
