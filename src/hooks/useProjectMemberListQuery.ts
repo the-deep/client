@@ -1,4 +1,4 @@
-import useRequest from '#utils/request';
+import { useRequest } from '#utils/request';
 import { notifyError } from '#utils/requestNotify';
 import {
     MultiResponse,
@@ -18,14 +18,13 @@ function useProjectMemberListQuery(projectId: DatabaseEntityBase['id']): [
     boolean,
     MultiResponse<Membership> | undefined
 ] {
-    const [
+    const {
         pending,
         response,
-    ] = useRequest<MultiResponse<Membership>>({
+    } = useRequest<MultiResponse<Membership>>({
         url: `server://v2/projects/${projectId}/project-memberships/`,
         method: 'GET',
         query: memberFieldQuery,
-        autoTrigger: true,
         onFailure: notifyError(_ts('entryReview', 'projectMemberList')),
     });
 

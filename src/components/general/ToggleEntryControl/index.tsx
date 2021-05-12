@@ -25,7 +25,7 @@ import EntryCommentFormForModal from '#components/general/EntryCommentFormForMod
 
 import { useModalState } from '#hooks/stateManagement';
 import notify from '#notify';
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { notifyError } from '#utils/requestNotify';
 
 import _ts from '#ts';
@@ -52,7 +52,6 @@ const CONTROL = 3;
 const UNCONTROL = 4;
 const QUALITY_CONTROLLER = 0;
 
-const controlFormData = { commentType: CONTROL };
 const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
     projectMembers: projectMembershipListSelector(state),
@@ -83,25 +82,13 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
         setCommentModalHidden,
     ] = useModalState(false);
 
-    const [uncontrolFormData, setUncontrolFormData] = React.useState({
-        commentType: UNCONTROL,
-    });
-
-    const url = `server://v2/entries/${entryId}/review-comments/`;
-    const formData = React.useMemo(() => (
-        value ? uncontrolFormData : controlFormData
-    ), [value, uncontrolFormData]);
-
-    const [
-        reviewRequestPending,
-        ,
-        ,
-        triggerReviewRequest,
-    ] = useRequest({
-        url,
-        autoTrigger: false,
+    const {
+        pending: reviewRequestPending,
+        trigger: triggerReviewRequest,
+    } = useLazyRequest({
+        url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
-        body: formData,
+        body: ctx => ctx,
         onSuccess: () => {
             onChange(!value);
             setCommentModalHidden();
@@ -126,17 +113,16 @@ function ToggleEntryControl(props: ToggleEntryControlProps & PropsFromState) {
         if (value) {
             setCommentModalVisible();
         } else {
-            triggerReviewRequest();
+            triggerReviewRequest({ commentType: CONTROL });
         }
     }, [value, triggerReviewRequest, setCommentModalVisible]);
 
     const handleUncontrolFormValidationSuccess = React.useCallback((newData) => {
-        setUncontrolFormData(prevData => ({
-            ...prevData,
+        triggerReviewRequest({
+            commentType: UNCONTROL,
             ...newData,
-        }));
-        triggerReviewRequest();
-    }, [setUncontrolFormData, triggerReviewRequest]);
+        });
+    }, [triggerReviewRequest]);
 
     const controlStatusLabel = useMemo(() => {
         if (isQualityController) {

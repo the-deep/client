@@ -11,7 +11,7 @@ import useProjectMemberListQuery, {
     memberNameSelector,
 } from '#hooks/useProjectMemberListQuery';
 
-import useRequest from '#utils/request';
+import { useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
@@ -57,19 +57,18 @@ function CommentForm(props: Props) {
         },
     };
 
-    const [
-        commentPending,
-        ,
-        ,
-        postComment,
-    ] = useRequest<unknown>({
+    const {
+        pending: commentPending,
+        trigger: postComment,
+    } = useLazyRequest({
         url: `server://v2/entries/${entryId}/review-comments/`,
         method: 'POST',
-        body: faramValues,
+        body: ctx => ctx,
         onSuccess: () => {
-            onSuccess();
+            setPristine(true);
             setFaramErrors(undefined);
             setFaramValues(undefined);
+            onSuccess();
         },
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('entryReview', 'commentHeading'))({ error: errorBody });
@@ -92,14 +91,14 @@ function CommentForm(props: Props) {
 
     const handleFaramValidationSuccess = useCallback((_, newFaramValues) => {
         if (newFaramValues?.text === '') {
-            setFaramValues(oldFaramValues => ({
-                ...oldFaramValues,
+            postComment({
+                ...newFaramValues,
                 text: undefined,
-            }));
+            });
+        } else {
+            postComment(newFaramValues);
         }
-        setPristine(true);
-        postComment();
-    }, [setPristine, postComment]);
+    }, [postComment]);
 
     const handleFaramValidationFailure = useCallback((newFaramErrors) => {
         setFaramErrors(newFaramErrors);
