@@ -107,6 +107,7 @@ function AddFrameworkModal(props: Props) {
             });
         },
         onFailure: (_, errorBody) => {
+            // NOTE: Handle form error later on
             notifyOnFailure(_ts('projectEdit', 'projectMembershipPostFailed'))({ error: errorBody });
         },
     });

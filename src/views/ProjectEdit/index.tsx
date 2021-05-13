@@ -50,14 +50,17 @@ function ProjectEdit(props: ViewProps) {
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabNames>('general');
+    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
+
     const {
         pending: projectGetPending,
-        response: projectDetails,
-        retrigger: triggerProjectsGet,
     } = useRequest<ProjectDetails>({
         skip: isNotDefined(projectId),
         url: `server://projects/${projectId}/`,
         method: 'GET',
+        onSuccess: (response) => {
+            setProjectDetails(response);
+        },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
@@ -132,7 +135,7 @@ function ProjectEdit(props: ViewProps) {
                             projectId={projectId}
                             projectDetails={projectDetails}
                             pending={projectGetPending}
-                            onProjectChange={triggerProjectsGet}
+                            onProjectChange={setProjectDetails}
                         />
                     </TabPanel>
                     <TabPanel
@@ -153,7 +156,7 @@ function ProjectEdit(props: ViewProps) {
                             <Framework
                                 projectId={projectId}
                                 projectDetails={projectDetails}
-                                onProjectChange={triggerProjectsGet}
+                                onProjectChange={setProjectDetails}
                             />
                         )}
                     </TabPanel>

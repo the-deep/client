@@ -23,10 +23,10 @@ import {
     ContainerCard,
     Card,
     Link,
+    DateOutput,
 } from '@the-deep/deep-ui';
 
 import TextOutput from '#components/general/TextOutput';
-import DateOutput from '#rscv/FormattedDate';
 import Icon from '#rscg/Icon';
 import { pathNames } from '#constants';
 import { useLazyRequest, useRequest } from '#utils/request';
@@ -62,7 +62,7 @@ interface Props {
     projectFrameworkId?: number;
     frameworkId: number;
     projectId: number;
-    onProjectChange: () => void;
+    onProjectChange: (project: ProjectDetails) => void;
     onFrameworkChange: (newFrameworkSelected: number) => void;
 }
 
@@ -92,12 +92,12 @@ function FrameworkDetail(props: Props) {
         trigger: projectPatch,
     } = useLazyRequest<ProjectDetails>({
         url: `server://projects/${projectId}/`,
-        method: projectId ? 'PATCH' : 'POST',
+        method: 'PATCH',
         body: ({
             analysisFramework: frameworkId,
         }),
-        onSuccess: () => {
-            onProjectChange();
+        onSuccess: (response) => {
+            onProjectChange(response);
         },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
@@ -167,15 +167,19 @@ function FrameworkDetail(props: Props) {
             </div>
             <ContainerCard
                 className={styles.frameworkItem}
-                heading={frameworkDetails?.title}
+                heading={frameworkDetails?.title ?? '-'}
                 sub
+                headerDescriptionClassName={styles.createdAtContainer}
                 headerDescription={(
                     <>
                         {_ts('projectEdit', 'createdAtLabel')}
-                        <DateOutput
-                            className={styles.createdDate}
-                            value={frameworkDetails?.createdAt}
-                        />
+                        {frameworkDetails?.createdAt && (
+                            <DateOutput
+                                className={styles.createdDate}
+                                value={frameworkDetails.createdAt}
+                                format="dd MMM, yyyy"
+                            />
+                        )}
                     </>
                 )}
                 headerActions={(
@@ -275,7 +279,7 @@ function FrameworkDetail(props: Props) {
                         type="small-block"
                         value={(
                             <List
-                                data={frameworkDetails?.visibleProjects ?? []}
+                                data={frameworkDetails?.visibleProjects}
                                 keySelector={itemKeySelector}
                                 rendererParams={itemRendererParams}
                                 renderer={Link}

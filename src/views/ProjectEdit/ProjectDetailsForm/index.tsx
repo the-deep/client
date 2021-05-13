@@ -56,6 +56,7 @@ interface Props {
     projectId: number;
     projectDetails?: ProjectDetails;
     pending?: boolean;
+    onProjectChange: (project: ProjectDetails) => void;
 }
 
 interface PropsFromDispatch {
@@ -98,6 +99,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
         setActiveProject,
         projectDetails,
         pending,
+        onProjectChange,
     } = props;
 
     const [pristine, setPristine] = useState<boolean>(true);
@@ -107,6 +109,8 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
 
     useEffect(() => {
         setFaramValues(projectDetails);
+        setPristine(true);
+        setFaramErrors(undefined);
     }, [projectDetails]);
 
     const {
@@ -117,6 +121,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
         method: projectId ? 'PATCH' : 'POST',
         body: ctx => ctx,
         onSuccess: (response) => {
+            onProjectChange(response);
             if (!projectId) {
                 const { id } = response;
                 setActiveProject({ activeProject: id });

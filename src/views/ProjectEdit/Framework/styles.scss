@@ -2,13 +2,88 @@
     display: flex;
     position: relative;
     flex-grow: 1;
+    height: 100%;
     overflow-y: auto;
     --width-left-container: 320px;
 
     .left-container {
+        flex-shrink: 0;
         background-color: var(--dui-color-white);
-        padding: var(--dui-spacing-large) var(--dui-spacing-super-large);
+        padding: calc(var(--dui-spacing-large) - var(--dui-spacing-medium))
+            calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
         width: var(--width-left-container);
+        height: 100%;
+        overflow-y: auto;
+
+        .filters {
+            .filter {
+                padding: var(--dui-spacing-medium);
+            }
+        }
+
+        .bottom-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+            margin-right: calc(-1 * (var(--dui-spacing-super-large) - var(--dui-spacing-medium)));
+            overflow-x: unset;
+            overflow-y: auto;
+
+            .list-container {
+                background-color: var(--dui-color-background-information);
+                padding: var(--dui-spacing-medium);
+                overflow-y: auto;
+
+                .item {
+                    display: block;
+                    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+                    border-left: var(--dui-width-separator-medium) solid transparent;
+                    background-color: var(--dui-color-background-information);
+                    padding: calc(var(--dui-spacing-small) - var(--dui-spacing-extra-small))
+                        calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+                    width: 100%;
+                    text-align: left;
+
+                    .title {
+                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+                        font-weight: var(--dui-font-weight-bold);
+                    }
+
+                    .created-at-container {
+                        display: flex;
+                        align-items: center;
+                        padding: var(--dui-spacing-extra-small) var(--dui-spacing-small);
+                        color: var(--dui-color-text-label);
+
+                        .created-date {
+                            padding: 0 var(--dui-spacing-extra-small);
+                        }
+                    }
+
+                    &.selected {
+                        border-left-color: var(--dui-color-accent);
+                        background-color: var(--dui-color-surface-information);
+
+                        .title {
+                            color: var(--dui-color-accent);
+                        }
+                    }
+                }
+
+                .show-more-button {
+                    padding: var(--dui-spacing-small) var(--dui-spacing-medium);
+                    color: var(--dui-color-accent);
+                }
+            }
+
+            .empty-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: clamp(320px, 70vh, 720px);
+            }
+        }
     }
 
     .right-container {

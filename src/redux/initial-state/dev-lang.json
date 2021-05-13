@@ -1337,7 +1337,10 @@
         "-18769692": "Selected Framework",
         "-70958236": "Add Analytical Framework",
         "-8323151": "Clone Analytical Framework",
-        "-68469687": "Successfully added new analytical framework."
+        "-68469687": "Successfully added new analytical framework.",
+        "-44338081": "All frameworks",
+        "-89101159": "My frameworks",
+        "-20004833": "There are no analytical frameworks."
     },
     "links": {
         "browserExtension": {
@@ -3790,7 +3793,13 @@
             "titlePlaceholder": 14,
             "analyticalFramework": -91820939,
             "cloneFrameworkSuccessMessage": -8045218,
-            "createFrameworkSuccessMessage": -68469687
+            "createFrameworkSuccessMessage": -68469687,
+            "createdOnLabel": -779713983,
+            "allFrameworksLabel": -44338081,
+            "myFrameworksLabel": -89101159,
+            "searchLabel": 9,
+            "searchPlaceholder": 14,
+            "noFrameworks": -20004833
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,
