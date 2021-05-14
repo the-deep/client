@@ -200,7 +200,7 @@ function Analysis(props: ComponentProps) {
                         name={undefined}
                         className={styles.button}
                         variant="tertiary"
-                        disabled={disabled}
+                        disabled
                         icons={(
                             <Icon name="add" />
                         )}

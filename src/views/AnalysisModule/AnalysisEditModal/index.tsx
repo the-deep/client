@@ -12,6 +12,7 @@ import {
     ObjectSchema,
     ArraySchema,
     requiredCondition,
+    arrayCondition,
 } from '@togglecorp/toggle-form';
 import {
     Button,
@@ -64,7 +65,7 @@ const analysisPillarSchema: AnalysisPillarSchema = {
         key: [],
         title: [requiredCondition],
         assignee: [requiredCondition],
-        filters: [requiredCondition],
+        filters: [requiredCondition, arrayCondition],
     }),
 };
 
@@ -230,7 +231,7 @@ function AnalysisEditModal(props: AnalysisEditModalProps) {
         if (!errored) {
             const matrixMap = listToMap(
                 matrixPillars,
-                d => d.id,
+                d => d.uniqueId,
                 d => ({
                     id: d.id,
                     key: d.key,

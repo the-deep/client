@@ -38,6 +38,7 @@ const userLabelSelector = (u: UserMini) => u.displayName;
 
 type Value = PartialForm<PillarAnalysisFields>
 const defaultValue: Value = {
+    filters: ['1'],
 };
 
 export interface Props {
@@ -94,6 +95,8 @@ function PillarAnalysisRow(props: Props) {
                 keySelector={idSelector}
                 label={_ts('analysis.editModal', 'pillarAnalysisPillarTitle')}
                 labelSelector={labelSelector}
+                // FIXME: we can remove optionLabelSelector after typing fixed in toggle-ui
+                optionLabelSelector={labelSelector}
                 name="filters"
                 onChange={onFieldChange}
                 options={matrixPillars}

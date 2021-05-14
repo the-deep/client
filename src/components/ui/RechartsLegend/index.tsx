@@ -8,11 +8,12 @@ import styles from './styles.scss';
 
 interface Props {
     className?: string;
-    payload: {
+    payload?: {
         value: string | number;
         color: string;
         payload: {
-            percent?: number;
+            strokeDasharray: React.ReactText;
+            // percent?: number;
         }
     }[];
 }
@@ -25,14 +26,18 @@ function RechartsLegend(props: Props) {
 
     return (
         <div className={_cs(styles.legend, className)}>
-            {payload.map((entry, index) => {
+            {payload?.map((entry, index) => {
                 const {
                     value,
                     color,
-                    payload: {
-                        percent,
-                    },
+                    payload: localPayload,
                 } = entry;
+
+                interface LocalPayload {
+                    percent?: number;
+                }
+
+                const percent = (localPayload as unknown as LocalPayload)?.percent;
 
                 const key = `legend-item-${index}`;
 
@@ -50,7 +55,7 @@ function RechartsLegend(props: Props) {
                         <div className={styles.value} >
                             { value }
                         </div>
-                        { isDefined(percent) && (
+                        {isDefined(percent) && (
                             <div className={styles.percent}>
                                 {`${100 * percent}%`}
                             </div>
