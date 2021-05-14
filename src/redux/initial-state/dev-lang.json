@@ -3848,6 +3848,11 @@
             "nextButtonLabel": 23,
             "buildingModulesHeading": -99661907,
             "viewFrameworkImageButtonLabel": -38544197
+        },
+        "analyticalFramework.secondaryTagging": {
+            "buildingModulesHeading": -99661907,
+            "nextButtonLabel": 23,
+            "viewFrameworkImageButtonLabel": -38544197
         }
     }
 }

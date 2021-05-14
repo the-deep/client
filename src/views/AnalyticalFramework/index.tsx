@@ -22,6 +22,7 @@ import {
 } from '#redux';
 import FrameworkDetails from './FrameworkDetails';
 import PrimaryTagging from './PrimaryTagging';
+import SecondaryTagging from './SecondaryTagging';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -130,7 +131,10 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                     className={styles.tabPanel}
                     name="secondaryTagging"
                 >
-                    {_ts('analyticalFramework', 'secondaryTagging')}
+                    <SecondaryTagging
+                        className={styles.view}
+                        frameworkId={frameworkId}
+                    />
                 </TabPanel>
                 <TabPanel
                     className={styles.tabPanel}
