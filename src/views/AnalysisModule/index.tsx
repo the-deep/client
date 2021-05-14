@@ -21,6 +21,7 @@ import {
     Cell,
 } from 'recharts';
 import {
+    Pager,
     Button,
     Card,
     Container,
@@ -30,7 +31,6 @@ import {
 
 import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
-import Pager from '#rscv/Pager';
 import DateFilter from '#rsci/DateFilter';
 import Timeline from '#components/viz/Timeline';
 
@@ -194,6 +194,22 @@ function AnalysisModule(props: AnalysisModuleProps) {
     });
 
     const {
+        pending: pendingAnalysisClone,
+        trigger: cloneAnalysisTrigger,
+        context,
+    } = useLazyRequest<unknown, { title: string, value: number }>(
+        {
+            url: ctx => `server://projects/${activeProject}/analysis/${ctx.value}/clone-analysis/`,
+            body: ctx => ({ title: ctx.title }),
+            method: 'POST',
+            onSuccess: () => {
+                getAnalysisTrigger();
+            },
+        },
+    );
+    const analysisIdToClone = context?.value;
+
+    const {
         pending: pendingAnalysisDelete,
         trigger: deleteAnalysisTrigger,
         context: analysisIdToDelete,
@@ -218,10 +234,9 @@ function AnalysisModule(props: AnalysisModuleProps) {
         },
     );
 
-    const piechartData: AuthoringOrganizations[]
-        = overviewResponse?.authoringOrganizations ?? [];
-    // const piechartData: AuthoringOrganizations[] = dummyAuthoringOrganizations;
+    const piechartData = overviewResponse?.authoringOrganizations ?? [];
 
+    // FIXME: memoize this
     const timelineData: TimelineData[] = (analysesResponse?.results?.map(d => ({
         key: d.id,
         value: new Date(d.createdAt).getTime(),
@@ -229,6 +244,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
     }))) ?? [];
 
     const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
+
+    const handleAnalysisToCloneClick = useCallback(
+        (value: number, title: string) => {
+            cloneAnalysisTrigger({ title, value });
+        },
+        [cloneAnalysisTrigger],
+    );
 
     const analysisObjectToEdit = useMemo(() => (
         analyses?.find(a => a.id === analysisToEdit)
@@ -254,11 +276,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
         setModalShow();
     }, [setModalShow]);
 
-    const analysisRendererParams = useCallback((key, data) => ({
+    const analysisRendererParams = useCallback((key: number, data: AnalysisElement) => ({
         className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
         onDelete: handleAnalysisToDeleteClick,
+        onClone: handleAnalysisToCloneClick,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
@@ -267,12 +290,16 @@ function AnalysisModule(props: AnalysisModuleProps) {
         modifiedAt: data.modifiedAt,
         onAnalysisPillarDelete: getAnalysisTrigger,
         pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
+        pendingAnalysisClone: pendingAnalysisClone && analysisIdToClone === key,
     }), [
         handleAnalysisEditClick,
         handleAnalysisToDeleteClick,
+        handleAnalysisToCloneClick,
         getAnalysisTrigger,
         pendingAnalysisDelete,
+        pendingAnalysisClone,
         analysisIdToDelete,
+        analysisIdToClone,
     ]);
 
     return (
@@ -302,27 +329,27 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         coloredBackground
                         icon={<IoDocumentTextOutline />}
                         label={_ts('analysis', 'totalSourcesLabel')}
-                        value={100}
+                        value={overviewResponse?.sourcesTotal}
                         variant="accent"
                     />
                     <InformationCard
                         coloredBackground
                         icon={<IoBookmarkOutline />}
                         label={_ts('analysis', 'totalEntriesLabel')}
-                        value={100}
+                        value={overviewResponse?.entriesTotal}
                         variant="complement1"
                     />
                     <PercentageInformationCard
-                        value={72}
-                        variant="complement2"
-                        label={_ts('analysis', 'entriesAnalyzedLabel')}
-                        icon={<IoCheckmarkCircle />}
-                    />
-                    <PercentageInformationCard
-                        value={54}
+                        value={overviewResponse?.analyzedSourceCount}
                         label={_ts('analysis', 'sourcesAnalyzedLabel')}
                         variant="complement1"
                         icon={<IoDocumentOutline />}
+                    />
+                    <PercentageInformationCard
+                        value={overviewResponse?.analyzedEntriesCount}
+                        variant="complement2"
+                        label={_ts('analysis', 'entriesAnalyzedLabel')}
+                        icon={<IoCheckmarkCircle />}
                     />
                 </div>
                 <Card className={styles.pieChartContainer}>
@@ -412,8 +439,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         activePage={activePage}
                         itemsCount={analysisCount}
                         maxItemsPerPage={maxItemsPerPage}
-                        onPageClick={setActivePage}
-                        showItemsPerPageChange={false}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
                     />
                 )}
             >

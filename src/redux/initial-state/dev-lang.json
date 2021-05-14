@@ -1246,8 +1246,8 @@
         "-39611284": "Lead assigned to",
         "-55670188": "Analysis",
         "-69223329": "Analyses overview",
-        "-75339790": "Entries analyzed",
-        "-65511645": "Sources analyzed",
+        "-75339790": "Sources analyzed",
+        "-65511645": "Entries analyzed",
         "-70983044": "Add pillar analysis",
         "-57723792": "No analysis created",
         "-90678740": "Setup a new analysis",
@@ -1324,10 +1324,10 @@
         "-33611896": "Pillar Analysis successfully updated.",
         "-80810293": "Add new framework",
         "-81092939": "Save and select",
-        "-99938191": "Framework Details",
-        "-91832843": "Primary Tagging",
-        "-19828383": "Secondary Tagging",
-        "-82831919": "Review",
+        "-99938191": "1. Framework Details",
+        "-91832843": "2. Primary Tagging",
+        "-19828383": "3. Secondary Tagging",
+        "-82831919": "4. Review",
         "-91820939": "Analytical Framework",
         "-62095001": "Framework Creator",
         "-99242308": "Information on Analytical Frameworks",
@@ -1343,17 +1343,13 @@
         "-20004833": "There are no analytical frameworks.",
         "-13184074": "Are you sure you want to remove this user from this project?",
         "-1778933": "Are you sure you want to remove this user group from this project?",
-        "-99938191": "1. Framework Details",
-        "-91832843": "2. Primary Tagging",
-        "-19828383": "3. Secondary Tagging",
-        "-82831919": "4. Review",
-        "-91820939": "Analytical Framework",
         "-19284382": "Framework Title",
         "-83818181": "Associated Organization",
         "-981828381": "Description",
         "-918283811": "Framework visibility",
         "-918281818": "Public",
-        "-818101082": "Private"
+        "-818101082": "Private",
+        "-31309732": "Statements"
     },
     "links": {
         "browserExtension": {
@@ -3658,7 +3654,8 @@
             "teamLead": -50636670,
             "pillarAssignments": -31952614,
             "allAnalyses": -80223054,
-            "selectAnalysisDate": -35701649
+            "selectAnalysisDate": -35701649,
+            "statementsTitle": -31309732
         },
         "analysis.editModal": {
             "addAnalysisModalHeading": -90678740,

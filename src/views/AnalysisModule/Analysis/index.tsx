@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { _cs } from '@togglecorp/fujs';
 import {
+    Pager,
     ContainerCard,
     Button,
     QuickActionButton,
@@ -10,7 +11,6 @@ import {
 import Icon from '#rscg/Icon';
 import DateRangeOutput from '#dui/DateRangeOutput';
 import ListView from '#rscv/List/ListView';
-import Pager from '#rscv/Pager';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import TextOutput from '#components/general/TextOutput';
 
@@ -36,12 +36,14 @@ interface ComponentProps {
     endDate?: string;
     activeProject: number;
     onEdit: (analysisId: number) => void;
-    onDelete: (value: number) => void;
     onAnalysisPillarDelete: () => void;
     teamLeadName: string;
     createdAt: string;
     modifiedAt: string;
+    onDelete: (value: number) => void;
     pendingAnalysisDelete: boolean;
+    onClone: (value: number, title: string) => void;
+    pendingAnalysisClone: boolean;
 }
 
 type PillarListRendererProps = {
@@ -85,12 +87,14 @@ function Analysis(props: ComponentProps) {
         endDate,
         activeProject,
         analysisId,
-        onDelete,
         teamLeadName,
         onAnalysisPillarDelete,
         createdAt,
         onEdit,
+        onDelete,
         pendingAnalysisDelete,
+        onClone,
+        pendingAnalysisClone,
     } = props;
 
     const handleEditClick = useCallback(() => {
@@ -153,11 +157,12 @@ function Analysis(props: ComponentProps) {
         deletePillarTrigger(toDeleteKey);
     }, [deletePillarTrigger]);
 
-    const analysisPillarRendererParams = useCallback((_, data) => ({
+    const analysisPillarRendererParams = useCallback((_, data: AnalysisPillars) => ({
         analysisId: data.analysis,
         assigneeName: data.assigneeName,
         createdAt,
         onDelete: handlePillarAnalysisToDelete,
+        statements: data.analyticalStatements,
         pillarId: data.id,
         projectId: activeProject,
         title: data.title,
@@ -174,6 +179,10 @@ function Analysis(props: ComponentProps) {
         onDelete(analysisId);
     }, [analysisId, onDelete]);
 
+    const handleCloneAnalysis = useCallback(() => {
+        onClone(analysisId, title);
+    }, [analysisId, onClone, title]);
+
     const pillarListRendererParams = useCallback(
         (_: number, data) => ({
             assigneeName: data.assigneeName,
@@ -182,7 +191,7 @@ function Analysis(props: ComponentProps) {
         [],
     );
 
-    const disabled = pendingPillarDelete || pendingAnalysisDelete;
+    const disabled = pendingPillarDelete || pendingAnalysisDelete || pendingAnalysisClone;
 
     return (
         <ContainerCard
@@ -196,35 +205,22 @@ function Analysis(props: ComponentProps) {
             )}
             headerActions={(
                 <>
-                    <Button
-                        name={undefined}
-                        className={styles.button}
-                        variant="tertiary"
-                        disabled
-                        icons={(
-                            <Icon name="add" />
-                        )}
-                    >
-                        {_ts('analysis', 'addPillarAnalysis')}
-                    </Button>
                     <QuickActionButton
-                        name={undefined}
-                        className={styles.button}
+                        name="edit"
                         onClick={handleEditClick}
                         disabled={disabled}
                     >
                         <Icon name="edit" />
                     </QuickActionButton>
                     <QuickActionButton
-                        name={undefined}
-                        className={styles.button}
+                        name="clone"
+                        onClick={handleCloneAnalysis}
                         disabled={disabled}
                     >
                         <Icon name="copy" />
                     </QuickActionButton>
                     <QuickActionButton
-                        name={undefined}
-                        className={styles.button}
+                        name="delete"
                         onClick={handleDeleteAnalysis}
                         disabled={disabled}
                     >
@@ -245,7 +241,6 @@ function Analysis(props: ComponentProps) {
                         noColon
                     />
                 </div>
-
                 <div className={styles.contentItem}>
                     <h3 className={styles.subHeading}>
                         {_ts('analysis', 'pillarAssignments')}
@@ -258,9 +253,7 @@ function Analysis(props: ComponentProps) {
                     />
                 </div>
             </div>
-            <div
-                className={styles.pillarAnalyses}
-            >
+            <div className={styles.pillarAnalyses}>
                 <Button
                     name={undefined}
                     className={styles.accordionButton}
@@ -286,16 +279,13 @@ function Analysis(props: ComponentProps) {
                                 pending={pillarPending}
                             />
                         </div>
-                        {/* TODO:To be replaced with new Pager Component */}
-                        {pillarResponse && pillarResponse.count > MAX_ITEMS_PER_PAGE && (
-                            <Pager
-                                activePage={activePage}
-                                itemsCount={pillarResponse.count}
-                                maxItemsPerPage={MAX_ITEMS_PER_PAGE}
-                                onPageClick={setActivePage}
-                                showItemsPerPageChange={false}
-                            />
-                        )}
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={pillarResponse?.count ?? 0}
+                            maxItemsPerPage={MAX_ITEMS_PER_PAGE}
+                            onActivePageChange={setActivePage}
+                            itemsPerPageControlHidden
+                        />
                     </>
                 )}
             </div>
