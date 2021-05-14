@@ -7,12 +7,10 @@ import {
     Tab,
     TabList,
     TabPanel,
-    PendingMessage,
 } from '@the-deep/deep-ui';
 
 import FullPageHeader from '#dui/FullPageHeader';
 import BackLink from '#dui/BackLink';
-import { useRequest } from '#utils/request';
 
 import {
     activeProjectFromStateSelector,
@@ -24,7 +22,6 @@ import {
     ProjectDetails,
     AppState,
 } from '#typings';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
 import Framework from './Framework';
@@ -50,20 +47,6 @@ function ProjectEdit(props: ViewProps) {
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabNames>('general');
-    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
-
-    const {
-        pending: projectGetPending,
-    } = useRequest<ProjectDetails>({
-        skip: isNotDefined(projectId),
-        url: `server://projects/${projectId}/`,
-        method: 'GET',
-        onSuccess: (response) => {
-            setProjectDetails(response);
-        },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
-    });
 
     return (
         <div className={styles.projectEdit}>
@@ -125,7 +108,6 @@ function ProjectEdit(props: ViewProps) {
                     </TabList>
                 </FullPageHeader>
                 <div className={styles.tabPanelContainer}>
-                    {projectGetPending && <PendingMessage />}
                     <TabPanel
                         className={styles.tabPanel}
                         name="general"
@@ -133,9 +115,6 @@ function ProjectEdit(props: ViewProps) {
                         <ProjectDetailsForm
                             key={projectId}
                             projectId={projectId}
-                            projectDetails={projectDetails}
-                            pending={projectGetPending}
-                            onProjectChange={setProjectDetails}
                         />
                     </TabPanel>
                     <TabPanel
@@ -153,11 +132,7 @@ function ProjectEdit(props: ViewProps) {
                         className={styles.tabPanel}
                     >
                         { projectId && (
-                            <Framework
-                                projectId={projectId}
-                                projectDetails={projectDetails}
-                                onProjectChange={setProjectDetails}
-                            />
+                            <Framework projectId={projectId} />
                         )}
                     </TabPanel>
                 </div>

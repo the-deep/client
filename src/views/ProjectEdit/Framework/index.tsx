@@ -1,5 +1,8 @@
 import React, { useMemo, useEffect, useCallback, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import {
+    _cs,
+    isNotDefined,
+} from '@togglecorp/fujs';
 import { IoChevronForward } from 'react-icons/io5';
 import {
     Card,
@@ -126,17 +129,28 @@ const defaultFormValue: PartialForm<FormType> = {
 interface Props {
     className?: string;
     projectId: number;
-    projectDetails?: ProjectDetails;
-    onProjectChange: (project: ProjectDetails) => void;
 }
 
 function ProjectFramework(props: Props) {
     const {
         className,
         projectId,
-        projectDetails,
-        onProjectChange,
     } = props;
+
+    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
+
+    const {
+        pending: projectGetPending,
+    } = useRequest<ProjectDetails>({
+        skip: isNotDefined(projectId),
+        url: `server://projects/${projectId}/`,
+        method: 'GET',
+        onSuccess: (response) => {
+            setProjectDetails(response);
+        },
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+    });
 
     const [
         selectedFramework,
@@ -203,6 +217,7 @@ function ProjectFramework(props: Props) {
 
     return (
         <div className={_cs(styles.framework, className)}>
+            {projectGetPending && <PendingMessage />}
             <div className={styles.leftContainer}>
                 <div className={styles.filters}>
                     <SelectInput
@@ -262,7 +277,7 @@ function ProjectFramework(props: Props) {
                     projectId={projectId}
                     frameworkId={selectedFramework}
                     className={styles.rightContainer}
-                    onProjectChange={onProjectChange}
+                    onProjectChange={setProjectDetails}
                     onFrameworkChange={setSelectedFramework}
                 />
             )}

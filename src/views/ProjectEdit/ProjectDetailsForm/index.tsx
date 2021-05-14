@@ -22,6 +22,7 @@ import {
     Checkbox as CheckboxFromDui,
 } from '@the-deep/deep-ui';
 import {
+    isNotDefined,
     listToGroupList,
     reverseRoute,
 } from '@togglecorp/fujs';
@@ -42,7 +43,10 @@ import {
 } from '#typings';
 
 import _ts from '#ts';
-import { useLazyRequest } from '#utils/request';
+import {
+    useLazyRequest,
+    useRequest,
+} from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
@@ -54,9 +58,6 @@ const DateInput = FaramInputElement(DateInputFromDui);
 
 interface Props {
     projectId: number;
-    projectDetails?: ProjectDetails;
-    pending?: boolean;
-    onProjectChange: (project: ProjectDetails) => void;
 }
 
 interface PropsFromDispatch {
@@ -97,15 +98,27 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
         projectId,
         setUserProject,
         setActiveProject,
-        projectDetails,
-        pending,
-        onProjectChange,
     } = props;
 
     const [pristine, setPristine] = useState<boolean>(true);
     const [faramValues, setFaramValues] = useState<Partial<ProjectDetails>>();
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [redirectId, setRedirectId] = useState<number | undefined>();
+
+    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
+
+    const {
+        pending,
+    } = useRequest<ProjectDetails>({
+        skip: isNotDefined(projectId),
+        url: `server://projects/${projectId}/`,
+        method: 'GET',
+        onSuccess: (response) => {
+            setProjectDetails(response);
+        },
+        onFailure: (_, errorBody) =>
+            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+    });
 
     useEffect(() => {
         setFaramValues(projectDetails);
@@ -121,7 +134,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
         method: projectId ? 'PATCH' : 'POST',
         body: ctx => ctx,
         onSuccess: (response) => {
-            onProjectChange(response);
+            setProjectDetails(response);
             if (!projectId) {
                 const { id } = response;
                 setActiveProject({ activeProject: id });
@@ -184,7 +197,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
         >
-            {projectPatchPending && <PendingMessage />}
+            {(pending || projectPatchPending) && <PendingMessage />}
             <NonFieldErrors
                 faramElement
                 persistent={false}
