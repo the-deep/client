@@ -4,6 +4,7 @@
     background-color: var(--dui-color-white);
     height: 100vh;
     overflow-y: auto;
+    --height-analytical-statement: 80vh;
 
     .header {
         flex-shrink: 0;
@@ -58,7 +59,7 @@
             flex-grow: 1;
             background-color: var(--dui-color-background);
             padding: 0 calc(var(--dui-spacing-super-large) - var(--dui-spacing-extra-large));
-            overflow: auto;
+            height: var(--height-analytical-statement);
 
             --width-left-container: 420px;
 
@@ -86,6 +87,27 @@
                     margin: var(--dui-spacing-medium);
                 }
 
+                .drop-container {
+                    display: flex;
+                    overflow: unset;
+                    --width-analytical-statement: 320px;
+
+                    .overlay {
+                        position: relative;
+                        width: var(--width-analytical-statement);
+                        height: 100%;
+                    }
+
+                    &.dragged-over {
+                        outline: 0;
+
+                        .overlay {
+                            margin: var(--dui-spacing-medium);
+                            border: var(--dui-width-separator-thin) dashed var(--dui-color-separator);
+                        }
+                    }
+
+                }
                 .add-statement-button {
                     align-self: flex-start;
                     flex-shrink: 0;

@@ -28,6 +28,7 @@ interface AnalyticalEntryInputProps {
     onRemove: (index: number) => void;
     index: number;
     onAnalyticalEntryDrop: (droppedValue: DroppedValue, dropOverEntryClientId: string) => void;
+    dropDisabled: boolean;
 }
 
 function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
@@ -39,6 +40,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
         index,
         statementClientId,
         onAnalyticalEntryDrop,
+        dropDisabled,
     } = props;
 
     const [
@@ -80,6 +82,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
             dropOverlayContainerClassName={styles.overlay}
             draggedOverClassName={styles.draggedOver}
             contentClassName={styles.content}
+            disabled={dropDisabled}
             // TODO: disable this when entries count is greater than certain count
         >
             <DraggableContent
