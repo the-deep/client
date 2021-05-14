@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { isNotDefined } from '@togglecorp/fujs';
-import { IoChevronBack } from 'react-icons/io5';
+import FullPageHeader from '#dui/FullPageHeader';
 import {
-    Header,
     Button,
     Tabs,
     Tab,
@@ -21,6 +20,7 @@ import {
 import {
     analyticalFrameworkIdFromRouteSelector,
 } from '#redux';
+import FrameworkDetails from './FrameworkDetails';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -51,62 +51,70 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                 value={activeTab}
                 onChange={setActiveTab}
             >
-                <Header
+                <FullPageHeader
                     className={styles.header}
-                    icons={(
-                        <ButtonLikeLink
-                            variant="tertiary"
-                            icons={<IoChevronBack />}
-                            to="/"
-                        >
-                            {_ts('analyticalFramework', 'closeButtonLabel')}
-                        </ButtonLikeLink>
-                    )}
-                    actions={(
-                        <Button
-                            name={undefined}
-                            variant="tertiary"
-                            disabled
-                        >
-                            {_ts('analyticalFramework', 'saveButtonLabel')}
-                        </Button>
-                    )}
+                    actionsClassName={styles.actions}
                     heading={frameworkId ? activeFramework?.title : _ts('analyticalFramework', 'addNewAnalyticalFramework')}
-                />
-                <TabList className={styles.tabList}>
-                    <Tab
-                        name="frameworkDetails"
-                        className={styles.tab}
-                    >
-                        {_ts('analyticalFramework', 'frameworkDetails')}
-                    </Tab>
-                    <Tab
-                        name="primaryTagging"
-                        className={styles.tab}
-                        disabled={isNotDefined(frameworkId)}
-                    >
-                        {_ts('analyticalFramework', 'primaryTagging')}
-                    </Tab>
-                    <Tab
-                        name="secondaryTagging"
-                        className={styles.tab}
-                        disabled={isNotDefined(frameworkId)}
-                    >
-                        {_ts('analyticalFramework', 'secondaryTagging')}
-                    </Tab>
-                    <Tab
-                        name="review"
-                        className={styles.tab}
-                        disabled={isNotDefined(frameworkId)}
-                    >
-                        {_ts('analyticalFramework', 'review')}
-                    </Tab>
-                </TabList>
+                    contentClassName={styles.content}
+                    actions={(
+                        <>
+                            <Button
+                                name={undefined}
+                                variant="tertiary"
+                                disabled
+                            >
+                                {_ts('analyticalFramework', 'saveButtonLabel')}
+                            </Button>
+                            <ButtonLikeLink
+                                variant="tertiary"
+                                to="/"
+                            >
+                                {_ts('analyticalFramework', 'closeButtonLabel')}
+                            </ButtonLikeLink>
+                        </>
+                    )}
+                >
+                    <TabList className={styles.tabList}>
+                        <Tab
+                            name="frameworkDetails"
+                            className={styles.tab}
+                            activeClassName={styles.activeTab}
+                        >
+                            {_ts('analyticalFramework', 'frameworkDetails')}
+                        </Tab>
+                        <Tab
+                            name="primaryTagging"
+                            className={styles.tab}
+                            disabled={isNotDefined(frameworkId)}
+                            activeClassName={styles.activeTab}
+                        >
+                            {_ts('analyticalFramework', 'primaryTagging')}
+                        </Tab>
+                        <Tab
+                            name="secondaryTagging"
+                            className={styles.tab}
+                            disabled={isNotDefined(frameworkId)}
+                            activeClassName={styles.activeTab}
+                        >
+                            {_ts('analyticalFramework', 'secondaryTagging')}
+                        </Tab>
+                        <Tab
+                            name="review"
+                            className={styles.tab}
+                            disabled={isNotDefined(frameworkId)}
+                            activeClassName={styles.activeTab}
+                        >
+                            {_ts('analyticalFramework', 'review')}
+                        </Tab>
+                    </TabList>
+                </FullPageHeader>
                 <TabPanel
                     className={styles.tabPanel}
                     name="frameworkDetails"
                 >
-                    {_ts('analyticalFramework', 'frameworkDetails')}
+                    <FrameworkDetails
+                        frameworkId={frameworkId}
+                    />
                 </TabPanel>
                 <TabPanel
                     className={styles.tabPanel}

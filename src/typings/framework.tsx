@@ -232,4 +232,3 @@ export interface ReportStructure {
     draggable: boolean;
     nodes?: ReportStructure[];
 }
-
