@@ -36,12 +36,14 @@ interface ComponentProps {
     endDate?: string;
     activeProject: number;
     onEdit: (analysisId: number) => void;
-    onDelete: (value: number) => void;
     onAnalysisPillarDelete: () => void;
     teamLeadName: string;
     createdAt: string;
     modifiedAt: string;
+    onDelete: (value: number) => void;
     pendingAnalysisDelete: boolean;
+    onClone: (value: number, title: string) => void;
+    pendingAnalysisClone: boolean;
 }
 
 type PillarListRendererProps = {
@@ -85,12 +87,14 @@ function Analysis(props: ComponentProps) {
         endDate,
         activeProject,
         analysisId,
-        onDelete,
         teamLeadName,
         onAnalysisPillarDelete,
         createdAt,
         onEdit,
+        onDelete,
         pendingAnalysisDelete,
+        onClone,
+        pendingAnalysisClone,
     } = props;
 
     const handleEditClick = useCallback(() => {
@@ -175,6 +179,10 @@ function Analysis(props: ComponentProps) {
         onDelete(analysisId);
     }, [analysisId, onDelete]);
 
+    const handleCloneAnalysis = useCallback(() => {
+        onClone(analysisId, title);
+    }, [analysisId, onClone, title]);
+
     const pillarListRendererParams = useCallback(
         (_: number, data) => ({
             assigneeName: data.assigneeName,
@@ -183,7 +191,7 @@ function Analysis(props: ComponentProps) {
         [],
     );
 
-    const disabled = pendingPillarDelete || pendingAnalysisDelete;
+    const disabled = pendingPillarDelete || pendingAnalysisDelete || pendingAnalysisClone;
 
     return (
         <ContainerCard
@@ -219,6 +227,7 @@ function Analysis(props: ComponentProps) {
                     <QuickActionButton
                         name={undefined}
                         className={styles.button}
+                        onClick={handleCloneAnalysis}
                         disabled={disabled}
                     >
                         <Icon name="copy" />

@@ -194,6 +194,22 @@ function AnalysisModule(props: AnalysisModuleProps) {
     });
 
     const {
+        pending: pendingAnalysisClone,
+        trigger: cloneAnalysisTrigger,
+        context,
+    } = useLazyRequest<unknown, { title: string, value: number }>(
+        {
+            url: ctx => `server://projects/${activeProject}/analysis/${ctx.value}/clone-analysis/`,
+            body: ctx => ({ title: ctx.title }),
+            method: 'POST',
+            onSuccess: () => {
+                getAnalysisTrigger();
+            },
+        },
+    );
+    const analysisIdToClone = context?.value;
+
+    const {
         pending: pendingAnalysisDelete,
         trigger: deleteAnalysisTrigger,
         context: analysisIdToDelete,
@@ -229,6 +245,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
 
+    const handleAnalysisToCloneClick = useCallback(
+        (value: number, title: string) => {
+            cloneAnalysisTrigger({ title, value });
+        },
+        [cloneAnalysisTrigger],
+    );
+
     const analysisObjectToEdit = useMemo(() => (
         analyses?.find(a => a.id === analysisToEdit)
     ), [analyses, analysisToEdit]);
@@ -253,11 +276,12 @@ function AnalysisModule(props: AnalysisModuleProps) {
         setModalShow();
     }, [setModalShow]);
 
-    const analysisRendererParams = useCallback((key, data) => ({
+    const analysisRendererParams = useCallback((key: number, data: AnalysisElement) => ({
         className: styles.analysis,
         analysisId: key,
         onEdit: handleAnalysisEditClick,
         onDelete: handleAnalysisToDeleteClick,
+        onClone: handleAnalysisToCloneClick,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
@@ -266,12 +290,16 @@ function AnalysisModule(props: AnalysisModuleProps) {
         modifiedAt: data.modifiedAt,
         onAnalysisPillarDelete: getAnalysisTrigger,
         pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
+        pendingAnalysisClone: pendingAnalysisClone && analysisIdToClone === key,
     }), [
         handleAnalysisEditClick,
         handleAnalysisToDeleteClick,
+        handleAnalysisToCloneClick,
         getAnalysisTrigger,
         pendingAnalysisDelete,
+        pendingAnalysisClone,
         analysisIdToDelete,
+        analysisIdToClone,
     ]);
 
     return (

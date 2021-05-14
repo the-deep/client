@@ -39,6 +39,7 @@ export interface AnalysisElement {
     startDate?: string;
     endDate?: string;
     createdAt: string;
+    modifiedAt: string;
 }
 
 export interface AnalysisPillarFormItem {
