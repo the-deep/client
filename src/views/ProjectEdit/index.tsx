@@ -54,7 +54,7 @@ function ProjectEdit(props: ViewProps) {
                 useHash
                 value={activeTab}
                 onChange={setActiveTab}
-                initialHash="framework"
+                initialHash="general"
             >
                 <FullPageHeader
                     className={styles.header}

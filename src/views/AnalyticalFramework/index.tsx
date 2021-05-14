@@ -44,7 +44,7 @@ function AnalyticalFramework(props: Props & PropsFromState) {
         activeFramework,
     } = props;
 
-    const [activeTab, setActiveTab] = useState<TabNames>('primaryTagging');
+    const [activeTab, setActiveTab] = useState<TabNames>('frameworkDetails');
 
     return (
         <div className={styles.analyticalFramework}>

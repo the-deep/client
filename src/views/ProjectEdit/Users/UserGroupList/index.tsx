@@ -155,7 +155,7 @@ function UserGroupList(props: Props) {
                         className={styles.button}
                         name={undefined}
                         title={_ts('projectEdit', 'deleteUsergroupLabel')}
-                        onClick={() => handleDeleteUsergroupClick(row.id)}
+                        onConfirm={() => handleDeleteUsergroupClick(row.id)}
                         showConfirmationInitially={false}
                         message={_ts('projectEdit', 'removeUserGroupConfirmation')}
                     >

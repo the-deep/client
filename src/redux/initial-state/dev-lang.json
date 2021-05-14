@@ -1351,7 +1351,9 @@
         "-818101082": "Private",
         "-31309732": "Statements",
         "-99661907": "Building Modules",
-        "-38544197": "View Framework Image for Reference"
+        "-38544197": "View Framework Image for Reference",
+        "-28777942": "Framework users",
+        "-89164075": "Failed to fetch framework roles."
     },
     "links": {
         "browserExtension": {
@@ -3842,7 +3844,9 @@
             "frameworkVisibility": -918283811,
             "publicFramework": -918281818,
             "privateFramework": -818101082,
-            "saveFramework": 25
+            "saveFramework": 25,
+            "addUserButtonLabel": -70810384,
+            "frameworkUsersHeading": -28777942
         },
         "analyticalFramework.primaryTagging": {
             "nextButtonLabel": 23,
@@ -3853,6 +3857,18 @@
             "buildingModulesHeading": -99661907,
             "nextButtonLabel": 23,
             "viewFrameworkImageButtonLabel": -38544197
+        },
+        "analyticalFramework.addUser": {
+            "addUserHeading": -96311582,
+            "editUserHeading": -75535574,
+            "membershipPostFailed": 177,
+            "roleFetchFailed": -89164075,
+            "roleLabel": 12509,
+            "selectRolePlaceholder": 14,
+            "selectUserPlaceholder": 14,
+            "submitLabel": 826,
+            "userLabel": 1200,
+            "usersFetchFailed": -93154523
         }
     }
 }
