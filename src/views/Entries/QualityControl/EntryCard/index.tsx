@@ -287,6 +287,7 @@ function EntryCard(props: EntryCardProps) {
                         />
                     </div>
                 </section>
+                <div className={styles.emptyContainer} />
                 <div className={styles.actionsWrapper}>
                     {isVisible && (
                         <section className={styles.bottom}>

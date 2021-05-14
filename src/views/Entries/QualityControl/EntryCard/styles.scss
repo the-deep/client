@@ -210,6 +210,10 @@
             }
         }
 
+        .empty-container {
+            height: var(--height-action-bar);
+        }
+
         .actions-wrapper {
             display: flex;
             position: absolute;
