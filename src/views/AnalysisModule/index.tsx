@@ -21,6 +21,7 @@ import {
     Cell,
 } from 'recharts';
 import {
+    Pager,
     Button,
     Card,
     Container,
@@ -30,7 +31,6 @@ import {
 
 import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
-import Pager from '#rscv/Pager';
 import DateFilter from '#rsci/DateFilter';
 import Timeline from '#components/viz/Timeline';
 
@@ -439,8 +439,8 @@ function AnalysisModule(props: AnalysisModuleProps) {
                         activePage={activePage}
                         itemsCount={analysisCount}
                         maxItemsPerPage={maxItemsPerPage}
-                        onPageClick={setActivePage}
-                        showItemsPerPageChange={false}
+                        onActivePageChange={setActivePage}
+                        itemsPerPageControlHidden
                     />
                 )}
             >

@@ -16,70 +16,56 @@
         .left {
             display: flex;
 
-            .sub-heading {
-                display: flex;
-                color: var(--color-text-placeholder);
-            }
-
             .tag {
                 flex-shrink: 0;
                 margin-left: var(--spacing-large);
             }
         }
 
+        .sub-heading {
+            display: flex;
+            align-items: center;
+            color: var(--color-text-placeholder);
+        }
+
         .header-right {
             display: flex;
             align-items: center;
-            flex-shrink: 0;
 
             .button {
-                margin: 0 var(--dui-spacing-medium);
+                margin: 0 var(--dui-spacing-extra-small);
             }
         }
     }
 
-    .bold-text {
-        font-weight: var(--font-weight-bold);
-    }
-
     .pillar-body {
-        position: relative;
+        display: flex;
+        align-items: flex-start;
 
-        .left {
+        .analyst-item {
+            flex-shrink: 0;
+        }
+
+        .statements-item {
             display: flex;
+            flex-direction: column;
+            flex-grow: 1;
 
-            .analystItem {
-                flex-shrink: 0;
-                padding: var(--spacing-medium);
-
-                .text-output {
-                    align-items: flex-start;
-                    flex-direction: column;
-
-                    .value {
-                        display: block;
-                        font-weight: var(--font-weight-bold);
-                    }
-                }
-            }
-            .statements-item {
+            .statements {
                 display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                padding: 0 var(--spacing-medium);
+                flex-wrap: wrap;
 
-                .statements {
+                .statement {
                     display: flex;
-                    flex-wrap: wrap;
-                    padding: var(--spacing-medium) 0;
+                    flex-basis: calc(100% / 3);
 
-                    .statement {
-                        display: flex;
-                        flex-basis: calc(100% / 3);
+                    .statement-text {
+                        padding: 0 var(--dui-spacing-small);
+                        font-weight: var(--dui-font-weight-bold);
+                    }
 
-                        &>* {
-                            padding: 0 var(--spacing-medium);
-                        }
+                    .entry-count {
+                        font-weight: var(--dui-font-weight-light);
                     }
                 }
             }
