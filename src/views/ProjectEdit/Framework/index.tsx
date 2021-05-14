@@ -139,9 +139,7 @@ function ProjectFramework(props: Props) {
 
     const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
 
-    const {
-        pending: projectGetPending,
-    } = useRequest<ProjectDetails>({
+    useRequest<ProjectDetails>({
         skip: isNotDefined(projectId),
         url: `server://projects/${projectId}/`,
         method: 'GET',
@@ -217,7 +215,6 @@ function ProjectFramework(props: Props) {
 
     return (
         <div className={_cs(styles.framework, className)}>
-            {projectGetPending && <PendingMessage />}
             <div className={styles.leftContainer}>
                 <div className={styles.filters}>
                     <SelectInput

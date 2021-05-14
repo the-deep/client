@@ -1340,7 +1340,9 @@
         "-68469687": "Successfully added new analytical framework.",
         "-44338081": "All frameworks",
         "-89101159": "My frameworks",
-        "-20004833": "There are no analytical frameworks."
+        "-20004833": "There are no analytical frameworks.",
+        "-13184074": "Are you sure you want to remove this user from this project?",
+        "-1778933": "Are you sure you want to remove this user group from this project?"
     },
     "links": {
         "browserExtension": {
@@ -3799,7 +3801,9 @@
             "myFrameworksLabel": -89101159,
             "searchLabel": 9,
             "searchPlaceholder": 14,
-            "noFrameworks": -20004833
+            "noFrameworks": -20004833,
+            "removeUserConfirmation": -13184074,
+            "removeUserGroupConfirmation": -1778933
         },
         "components.dateRangeOutput": {
             "endDateLabel": 334,
