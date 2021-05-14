@@ -1,37 +1,39 @@
 import ReactDOM from 'react-dom';
+import { MutableRefObject } from 'react';
 import AbortController from 'abort-controller';
 
-import { alterResponseErrorToFaramError } from '#rest';
-
 import sleep from './sleep';
-import { Error, Err } from './types';
 import { ContextInterface } from './context';
 
-import schema from '../../schema';
+// import { alterResponseErrorToFaramError } from '#rest';
+// import { Error, Err } from './types';
+// import schema from '../../schema';
 
-export interface RequestOptions<T, Q> {
-    schemaName?: string;
-    shouldRetry?: (val: T, run: number, context: Q) => number;
-    shouldPoll?: (val: T | undefined, context: Q) => number;
-    onSuccess?: (val: T, context: Q) => void;
-    onFailure?: (val: Err, error: Record<string, unknown>, context: Q) => void;
-    // delay?: number;
-    // preserveResponse?: boolean;
+export interface RequestOptions<R, E, C> {
+    // schemaName?: string;
+    shouldRetry?: (val: R, run: number, context: C) => number;
+    shouldPoll?: (val: R | undefined, context: C) => number;
+    onSuccess?: (val: R, context: C) => void;
+    onFailure?: (val: E, context: C) => void;
 }
 
-async function fetchResource<T, Q>(
+type ExtendedRequestOptions<R, E, C, O> = RequestOptions<R, E, C> & O;
+
+async function fetchResource<R, RE, E, C, O>(
     url: string,
     options: RequestInit,
     delay: number,
 
-    transformUrlRef: React.MutableRefObject<ContextInterface['transformUrl']>,
-    transformOptionsRef: React.MutableRefObject<ContextInterface['transformOptions']>,
-    requestOptionsRef: React.MutableRefObject<RequestOptions<T, Q>>,
-    context: Q,
+    transformUrlRef: MutableRefObject<ContextInterface<R, RE, E, ExtendedRequestOptions<R, E, C, O>>['transformUrl']>,
+    transformOptionsRef: MutableRefObject<ContextInterface<R, RE, E, ExtendedRequestOptions<R, E, C, O>>['transformOptions']>,
+    transformBodyRef: MutableRefObject<ContextInterface<R, RE, E, ExtendedRequestOptions<R, E, C, O>>['transformBody']>,
+    transformErrorRef: MutableRefObject<ContextInterface<R, RE, E, ExtendedRequestOptions<R, E, C, O>>['transformError']>,
+    requestOptionsRef: MutableRefObject<ExtendedRequestOptions<R, E, C, O>>,
+    context: C,
 
     setPendingSafe: (value: boolean, clientId: number) => void,
-    setResponseSafe: (value: T | undefined, clientId: number) => void,
-    setErrorSafe: (value: Error | undefined, clientId: number) => void,
+    setResponseSafe: (value: R | undefined, clientId: number) => void,
+    setErrorSafe: (value: E | undefined, clientId: number) => void,
     callSideEffectSafe: (value: () => void, clientId: number) => void,
 
     myController: AbortController,
@@ -51,6 +53,8 @@ async function fetchResource<T, Q>(
 
             transformUrlRef,
             transformOptionsRef,
+            transformBodyRef,
+            transformErrorRef,
             requestOptionsRef,
             context,
 
@@ -65,7 +69,7 @@ async function fetchResource<T, Q>(
         );
     }
 
-    async function handleError(message: Error) {
+    async function handleError(message: E) {
         const { shouldPoll } = requestOptionsRef.current;
         const pollTime = shouldPoll ? shouldPoll(undefined, context) : -1;
 
@@ -80,29 +84,22 @@ async function fetchResource<T, Q>(
             const { onFailure } = requestOptionsRef.current;
             if (onFailure) {
                 callSideEffectSafe(() => {
-                    const faramErrors = alterResponseErrorToFaramError(message.value);
-
-                    // FIXME: Use strings for this
-                    const messageForNotification = (
-                        faramErrors
-                        && faramErrors.$internal
-                        && faramErrors.$internal.join(' ')
-                    ) || 'There was some error while performing this action. Please try again.';
-
-                    const requestError = {
-                        faramErrors,
-                        messageForNotification,
-                        errorCode: message.errorCode,
-                    };
-
-                    onFailure(message.value, requestError, context);
+                    onFailure(message, context);
                 }, clientId);
             }
         }
     }
 
-    const myUrl = transformUrlRef.current(url);
-    const myOptions = transformOptionsRef.current(url, options);
+    const myUrl = transformUrlRef.current(
+        url,
+        options,
+        requestOptionsRef.current,
+    );
+    const myOptions = transformOptionsRef.current(
+        url,
+        options,
+        requestOptionsRef.current,
+    );
 
     let res;
     try {
@@ -111,53 +108,52 @@ async function fetchResource<T, Q>(
         if (!signal.aborted) {
             console.error(`An error occurred while fetching ${myUrl}`, e);
 
-            const message = {
-                reason: 'network',
-                exception: e,
-                value: { nonFieldErrors: ['Network error'] },
-            };
-            await handleError(message);
+            const terror = transformErrorRef.current(
+                'network',
+                url,
+                options,
+                requestOptionsRef.current,
+            );
+            await handleError(terror);
         }
         return;
     }
 
-    let resBody: unknown;
+    let resBody: R | RE;
     try {
-        const resText = await res.text();
-        if (resText.length > 0) {
-            resBody = JSON.parse(resText);
-        }
+        resBody = await transformBodyRef.current(
+            res,
+            url,
+            options,
+            requestOptionsRef.current,
+        );
     } catch (e) {
-        const message = {
-            reason: 'parse',
-            exception: e,
-            value: { nonFieldErrors: ['JSON parse error'] },
-        };
-        await handleError(message);
+        console.error(`An error occurred while parsing ${myUrl}`, e);
+        const terror = transformErrorRef.current(
+            'parse',
+            url,
+            options,
+            requestOptionsRef.current,
+        );
+        await handleError(terror);
         return;
     }
 
     if (!res.ok) {
-        const message = {
-            reason: 'other',
-            exception: undefined,
-            value: (resBody as { errors: Err }).errors,
-            errorCode: (resBody as { errors: Err; errorCode: number }).errorCode,
-        };
-        await handleError(message);
+        const tError = transformErrorRef.current(
+            resBody as RE,
+            url,
+            options,
+            requestOptionsRef.current,
+        );
+        await handleError(tError);
         return;
     }
 
-    const { schemaName, shouldRetry, shouldPoll } = requestOptionsRef.current;
-    if (schemaName && myOptions.method !== 'DELETE') {
-        try {
-            schema.validate(resBody, schemaName);
-        } catch (e) {
-            console.error(myUrl, myOptions.method, resBody, e.message);
-        }
-    }
+    const { shouldRetry, shouldPoll } = requestOptionsRef.current;
 
-    const retryTime = shouldRetry ? shouldRetry(resBody as T, run, context) : -1;
+    // TODO: define a default shouldRetry when there is network error
+    const retryTime = shouldRetry ? shouldRetry(resBody as R, run, context) : -1;
 
     if (retryTime >= 0) {
         await sleep(retryTime, { signal });
@@ -168,6 +164,8 @@ async function fetchResource<T, Q>(
 
             transformUrlRef,
             transformOptionsRef,
+            transformBodyRef,
+            transformErrorRef,
             requestOptionsRef,
             context,
 
@@ -183,19 +181,19 @@ async function fetchResource<T, Q>(
         return;
     }
 
-    const pollTime = shouldPoll ? shouldPoll(resBody as T, context) : -1;
+    const pollTime = shouldPoll ? shouldPoll(resBody as R, context) : -1;
     ReactDOM.unstable_batchedUpdates(() => {
         if (pollTime < 0) {
             setPendingSafe(false, clientId);
         }
         setErrorSafe(undefined, clientId);
-        setResponseSafe(resBody as T, clientId);
+        setResponseSafe(resBody as R, clientId);
     });
 
     const { onSuccess } = requestOptionsRef.current;
     if (onSuccess) {
         callSideEffectSafe(() => {
-            onSuccess(resBody as T, context);
+            onSuccess(resBody as R, context);
         }, clientId);
     }
 
