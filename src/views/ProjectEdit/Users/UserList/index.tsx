@@ -11,6 +11,7 @@ import {
     Button,
     Pager,
     QuickActionButton,
+    QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -156,14 +157,16 @@ function UserList(props: Props) {
                     >
                         <IoPencil />
                     </QuickActionButton>
-                    <QuickActionButton
+                    <QuickActionConfirmButton
                         className={styles.button}
                         name={undefined}
                         title={_ts('projectEdit', 'deleteUserLabel')}
                         onClick={() => handleDeleteMembershipClick(row.id)}
+                        message={_ts('projectEdit', 'removeUserConfirmation')}
+                        showConfirmationInitially={false}
                     >
                         <IoTrash />
-                    </QuickActionButton>
+                    </QuickActionConfirmButton>
                 </div>
             ),
         },

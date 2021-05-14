@@ -24,6 +24,7 @@ import {
 } from '#typings';
 
 import ProjectDetailsForm from './ProjectDetailsForm';
+import Framework from './Framework';
 import Users from './Users';
 import styles from './styles.scss';
 
@@ -50,8 +51,10 @@ function ProjectEdit(props: ViewProps) {
     return (
         <div className={styles.projectEdit}>
             <Tabs
+                useHash
                 value={activeTab}
                 onChange={setActiveTab}
+                initialHash="framework"
             >
                 <FullPageHeader
                     className={styles.header}
@@ -104,28 +107,35 @@ function ProjectEdit(props: ViewProps) {
                         </Tab>
                     </TabList>
                 </FullPageHeader>
-                <TabPanel
-                    className={styles.tabPanel}
-                    name="general"
-                >
-                    <ProjectDetailsForm
-                        key={projectId}
-                        projectId={projectId}
-                    />
-                </TabPanel>
-                <TabPanel
-                    name="users"
-                    className={styles.tabPanel}
-                >
-                    { projectId && (
-                        <Users
+                <div className={styles.tabPanelContainer}>
+                    <TabPanel
+                        className={styles.tabPanel}
+                        name="general"
+                    >
+                        <ProjectDetailsForm
+                            key={projectId}
                             projectId={projectId}
                         />
-                    )}
-                </TabPanel>
-                <TabPanel name="framework">
-                    {_ts('projectEdit', 'frameworkLabel')}
-                </TabPanel>
+                    </TabPanel>
+                    <TabPanel
+                        name="users"
+                        className={styles.tabPanel}
+                    >
+                        { projectId && (
+                            <Users
+                                projectId={projectId}
+                            />
+                        )}
+                    </TabPanel>
+                    <TabPanel
+                        name="framework"
+                        className={styles.tabPanel}
+                    >
+                        { projectId && (
+                            <Framework projectId={projectId} />
+                        )}
+                    </TabPanel>
+                </div>
             </Tabs>
         </div>
     );

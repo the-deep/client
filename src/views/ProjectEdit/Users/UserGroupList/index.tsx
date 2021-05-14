@@ -14,6 +14,7 @@ import {
     Link,
     Pager,
     QuickActionButton,
+    QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 
 import { notifyOnFailure } from '#utils/requestNotify';
@@ -150,14 +151,16 @@ function UserGroupList(props: Props) {
                     >
                         <IoPencil />
                     </QuickActionButton>
-                    <QuickActionButton
+                    <QuickActionConfirmButton
                         className={styles.button}
                         name={undefined}
                         title={_ts('projectEdit', 'deleteUsergroupLabel')}
                         onClick={() => handleDeleteUsergroupClick(row.id)}
+                        showConfirmationInitially={false}
+                        message={_ts('projectEdit', 'removeUserGroupConfirmation')}
                     >
                         <IoTrash />
-                    </QuickActionButton>
+                    </QuickActionConfirmButton>
                 </div>
             ),
         },

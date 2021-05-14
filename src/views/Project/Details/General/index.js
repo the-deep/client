@@ -7,6 +7,7 @@ import Faram, {
     dateCondition,
 } from '@togglecorp/faram';
 import {
+    _cs,
     decodeDate,
     listToGroupList,
     listToMap,
@@ -290,7 +291,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
     render() {
         const {
             readOnly,
-            className: classNameFromProps,
+            className,
             activityLog,
             projectId,
             projectLocalData: {
@@ -310,17 +311,12 @@ export default class ProjectDetailsGeneral extends PureComponent {
         );
         const UnsavedChangesPrompt = this.renderUnsavedChangesPrompt;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.general}
-        `;
-
         if (loading) {
-            return <LoadingAnimation className={className} />;
+            return <LoadingAnimation className={_cs(styles.general, className)} />;
         }
 
         return (
-            <div className={className}>
+            <div className={_cs(styles.general, className)}>
                 <Faram
                     className={styles.form}
                     onChange={this.handleFaramChange}

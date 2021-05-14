@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { Redirect } from 'react-router-dom';
@@ -15,23 +15,23 @@ import {
     Link,
     Tag,
     Footer,
+    PendingMessage,
     TextInput as TextInputFromDui,
     DateInput as DateInputFromDui,
     TextArea as TextAreaFromDui,
     Checkbox as CheckboxFromDui,
 } from '@the-deep/deep-ui';
 import {
-    listToGroupList,
     isNotDefined,
+    listToGroupList,
     reverseRoute,
 } from '@togglecorp/fujs';
 
 import {
-    userIdFromRouteSelector,
     setActiveProjectAction,
+    activeUserSelector,
     setProjectAction,
 } from '#redux';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rsu/../v2/View/ListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import OrganizationList from '#components/general/OrganizationList';
@@ -43,7 +43,10 @@ import {
 } from '#typings';
 
 import _ts from '#ts';
-import { useRequest, useLazyRequest } from '#utils/request';
+import {
+    useLazyRequest,
+    useRequest,
+} from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
@@ -63,7 +66,7 @@ interface PropsFromDispatch {
 }
 
 interface PropsFromState {
-    userId: number;
+    activeUser: { userId: number };
 }
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
@@ -79,7 +82,7 @@ const schema = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-    userId: userIdFromRouteSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
@@ -89,7 +92,9 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
 
 function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
     const {
-        userId,
+        activeUser: {
+            userId,
+        },
         projectId,
         setUserProject,
         setActiveProject,
@@ -100,19 +105,26 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
     const [faramErrors, setFaramErrors] = useState<FaramErrors>();
     const [redirectId, setRedirectId] = useState<number | undefined>();
 
+    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
+
     const {
-        pending: projectGetPending,
-        response: projectDetails,
+        pending,
     } = useRequest<ProjectDetails>({
         skip: isNotDefined(projectId),
         url: `server://projects/${projectId}/`,
         method: 'GET',
         onSuccess: (response) => {
-            setFaramValues(response);
+            setProjectDetails(response);
         },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
+
+    useEffect(() => {
+        setFaramValues(projectDetails);
+        setPristine(true);
+        setFaramErrors(undefined);
+    }, [projectDetails]);
 
     const {
         pending: projectPatchPending,
@@ -122,6 +134,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
         method: projectId ? 'PATCH' : 'POST',
         body: ctx => ctx,
         onSuccess: (response) => {
+            setProjectDetails(response);
             if (!projectId) {
                 const { id } = response;
                 setActiveProject({ activeProject: id });
@@ -179,12 +192,12 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
             schema={schema}
             value={faramValues}
             error={faramErrors}
-            disabled={projectGetPending}
+            disabled={pending}
             onValidationSuccess={handleFaramValidationSuccess}
             onValidationFailure={setFaramErrors}
             onChange={handleFaramChange}
         >
-            {(projectGetPending || projectPatchPending) && <LoadingAnimation />}
+            {(pending || projectPatchPending) && <PendingMessage />}
             <NonFieldErrors
                 faramElement
                 persistent={false}
@@ -321,7 +334,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                 className={styles.footer}
                 actions={(
                     <Button
-                        disabled={pristine || projectGetPending || projectPatchPending}
+                        disabled={pristine || projectPatchPending}
                         type="submit"
                         variant="primary"
                         name="projectSave"
