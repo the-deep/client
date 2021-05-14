@@ -17,7 +17,6 @@ import {
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import {
     UserGroup,
     MultiResponse,
@@ -112,9 +111,7 @@ function AddUserGroupModal(props: Props) {
     } = useRequest<MultiResponse<ProjectRole>>({
         url: 'server://project-roles/',
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectRoleFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'projectRoleFetchFailed'),
     });
 
     const {
@@ -124,9 +121,7 @@ function AddUserGroupModal(props: Props) {
         url: 'server://user-groups/',
         method: 'GET',
         query: queryForUsergroups,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'usergroupFetchFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'usergroupFetchFailed'),
     });
 
     const {
@@ -144,9 +139,7 @@ function AddUserGroupModal(props: Props) {
             onTableReload();
             onModalClose();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'projectUsergroupPostFailedLabel'))({ error: errorBody });
-        },
+        failureHeader: _ts('projectEdit', 'projectUsergroupPostFailedLabel'),
     });
 
     const handleSubmit = useCallback(

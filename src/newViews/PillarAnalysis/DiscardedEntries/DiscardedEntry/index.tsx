@@ -10,7 +10,6 @@ import {
 } from '@the-deep/deep-ui';
 
 import { useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import EntryItem, { Props as EntryItemProps } from '../../EntryItem';
@@ -40,9 +39,7 @@ function DiscardedEntry(props: Props) {
     } = useLazyRequest<unknown>({
         url: `server://analysis-pillar/${pillarId}/discarded-entries/${entryId}/`,
         method: 'DELETE',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'pillarAnalysisTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
         onSuccess: () => {
             if (onEntryUndiscard) {
                 onEntryUndiscard();

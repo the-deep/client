@@ -30,7 +30,6 @@ import {
     ProjectDetails,
     GeoOptions,
 } from '#typings';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import FrameworkFilter from '#components/other/FrameworkFilter';
 
@@ -212,9 +211,7 @@ function FilterForm(props: OwnProps) {
         },
         method: 'GET',
         schemaName: 'projectLeadFilterOptions',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'leadOptions'))({ error: errorBody });
-        },
+        failureHeader: _ts('export', 'leadOptions'),
     });
 
     /*
@@ -226,9 +223,7 @@ function FilterForm(props: OwnProps) {
             projects: [projectId],
         },
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('export', 'entryOptions'))({ error: errorBody });
-        },
+        failureHeader: _ts('export', 'entryOptions'),
     });
      */
 

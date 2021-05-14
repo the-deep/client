@@ -1,35 +1,32 @@
 import {
     useState,
     useEffect,
-    useMemo,
     useRef,
     useCallback,
     useContext,
     useLayoutEffect,
+    useMemo,
 } from 'react';
 import ReactDOM from 'react-dom';
 
 import AbortController from 'abort-controller';
 
 import { prepareUrlParams, isFetchable, Methods } from './utils';
-import {
-    UrlParams,
-    Error,
-} from './types';
-import RequestContext from './context';
-import fetchResource, { RequestOptions as NonTriggerFetchOptions } from './fetch';
+import { UrlParams } from './types';
+import RequestContext, { ContextInterface } from './context';
+import fetchResource, { RequestOptions as BaseRequestOptions } from './fetch';
 
 
 // NOTE: when context is undefined, the request will not trigger
 // If there is no context, user should instead use null
 
-type Callable<Q, T> = T | ((value: Q) => T);
+type Callable<C, R> = R | ((value: C) => R);
 
-function isCallable<Q, T>(value: Callable<Q, T>): value is ((value: Q) => T) {
+function isCallable<C, R>(value: Callable<C, R>): value is ((value: C) => R) {
     return typeof value === 'function';
 }
 
-function resolveCallable<Q, T>(value: Callable<Q, T>, context: Q | undefined) {
+function resolveCallable<C, R>(value: Callable<C, R>, context: C | undefined) {
     if (isCallable(value)) {
         return context !== undefined ? value(context) : undefined;
     }
@@ -39,26 +36,28 @@ function resolveCallable<Q, T>(value: Callable<Q, T>, context: Q | undefined) {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type RequestBody = RequestInit['body'] | object;
 
-interface LazyRequestOptions<T, Q> extends NonTriggerFetchOptions<T, Q> {
-    url: Callable<Q, string | undefined>;
-    query?: Callable<Q, UrlParams | undefined>;
-    body?: Callable<Q, RequestBody | undefined>;
-    method?: Callable<Q, Methods | undefined>;
-    other?: Callable<Q, Omit<RequestInit, 'body'> | undefined>;
+export type LazyRequestOptions<R, E, C, O> = BaseRequestOptions<R, E, C> & {
+    url: Callable<C, string | undefined>;
+    query?: Callable<C, UrlParams | undefined>;
+    body?: Callable<C, RequestBody | undefined>;
+    method?: Callable<C, Methods | undefined>;
+    other?: Callable<C, Omit<RequestInit, 'body'> | undefined>;
 
     // NOTE: don't ever re-trigger
     delay?: number;
-    mockResponse?: T;
+    mockResponse?: R;
     preserveResponse?: boolean;
-}
+} & O;
 
-function useLazyRequest<T, Q = null>(
-    requestOptions: LazyRequestOptions<T, Q>,
+function useLazyRequest<R, E, O, C = null>(
+    requestOptions: LazyRequestOptions<R, E, C, O>,
 ) {
     const {
         transformOptions,
         transformUrl,
-    } = useContext(RequestContext);
+        transformResponse,
+        transformError,
+    } = useContext(RequestContext as React.Context<ContextInterface<R, unknown, E, O>>);
 
     // NOTE: forgot why the clientId is required but it is required
     const clientIdRef = useRef<number>(-1);
@@ -67,12 +66,15 @@ function useLazyRequest<T, Q = null>(
     const errorSetByRef = useRef<number>(-1);
 
     const [requestOptionsFromState, setRequestOptionsFromState] = useState(requestOptions);
-    const [context, setContext] = useState<Q | undefined>();
+    const [context, setContext] = useState<C | undefined>();
 
     // NOTE: let's not add transformOptions as dependency
     const requestOptionsRef = useRef(requestOptions);
     const transformOptionsRef = useRef(transformOptions);
     const transformUrlRef = useRef(transformUrl);
+    const transformResponseRef = useRef(transformResponse);
+    const transformErrorRef = useRef(transformError);
+
     const contextRef = useRef(context);
 
     const {
@@ -107,8 +109,8 @@ function useLazyRequest<T, Q = null>(
     const urlQuery = query ? prepareUrlParams(query) : undefined;
     const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
 
-    const [response, setResponse] = useState<T | undefined>();
-    const [error, setError] = useState<Error | undefined>();
+    const [response, setResponse] = useState<R | undefined>();
+    const [error, setError] = useState<E | undefined>();
 
     const [runId, setRunId] = useState(-1);
 
@@ -124,7 +126,7 @@ function useLazyRequest<T, Q = null>(
         [],
     );
     const setResponseSafe = useCallback(
-        (value: T | undefined, clientId: number) => {
+        (value: R | undefined, clientId: number) => {
             if (clientId >= responseSetByRef.current) {
                 responseSetByRef.current = clientId;
                 setResponse(value);
@@ -134,7 +136,7 @@ function useLazyRequest<T, Q = null>(
     );
 
     const setErrorSafe = useCallback(
-        (value: Error | undefined, clientId: number) => {
+        (value: E | undefined, clientId: number) => {
             if (clientId >= errorSetByRef.current) {
                 errorSetByRef.current = clientId;
                 setError(value);
@@ -163,6 +165,18 @@ function useLazyRequest<T, Q = null>(
             transformUrlRef.current = transformUrl;
         },
         [transformUrl],
+    );
+    useLayoutEffect(
+        () => {
+            transformResponseRef.current = transformResponse;
+        },
+        [transformResponse],
+    );
+    useLayoutEffect(
+        () => {
+            transformErrorRef.current = transformError;
+        },
+        [transformError],
     );
     useLayoutEffect(
         () => {
@@ -208,7 +222,6 @@ function useLazyRequest<T, Q = null>(
             }
 
             const {
-                schemaName,
                 preserveResponse,
                 delay = 0,
             } = requestOptionsRef.current;
@@ -220,13 +233,10 @@ function useLazyRequest<T, Q = null>(
 
             clientIdRef.current += 1;
 
+            // FIXME: this may need to move up
             setPendingSafe(true, clientIdRef.current);
 
             const controller = new AbortController();
-
-            if (method !== 'DELETE' && !schemaName) {
-                console.error(`Schema is not defined for ${extendedUrl} ${method}`);
-            }
 
             fetchResource(
                 extendedUrl,
@@ -240,6 +250,8 @@ function useLazyRequest<T, Q = null>(
 
                 transformUrlRef,
                 transformOptionsRef,
+                transformResponseRef,
+                transformErrorRef,
                 requestOptionsRef,
                 context,
 
@@ -257,15 +269,15 @@ function useLazyRequest<T, Q = null>(
             };
         },
         [
-            context,
             extendedUrl, method, body, other,
             setPendingSafe, setResponseSafe, setErrorSafe, callSideEffectSafe,
             runId,
+            context,
         ],
     );
 
     const trigger = useCallback(
-        (ctx: Q) => {
+        (ctx: C) => {
             ReactDOM.unstable_batchedUpdates(() => {
                 setRunId(new Date().getTime());
                 setContext(ctx);
@@ -278,7 +290,7 @@ function useLazyRequest<T, Q = null>(
     return {
         response,
         pending,
-        error: error?.value,
+        error,
         trigger,
         context,
     };

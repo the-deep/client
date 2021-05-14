@@ -11,7 +11,6 @@ import {
 
 import { useModalState } from '#hooks/stateManagement';
 import { useLazyRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import EntryItem, { Props as EntryItemProps } from '../EntryItem';
@@ -48,9 +47,7 @@ function SourceEntryItem(props: Props) {
         url: `server://analysis-pillar/${pillarId}/discarded-entries/`,
         method: 'POST',
         body: ctx => ctx,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'pillarAnalysisTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
         onSuccess: () => {
             if (onEntryDiscard) {
                 onEntryDiscard();

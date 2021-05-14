@@ -19,7 +19,6 @@ import List from '#rscv/List';
 import Badge from '#components/viewer/Badge';
 import { pathNames } from '#constants';
 import { useRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import featuresMapping from '#constants/features';
 
 import {
@@ -139,8 +138,7 @@ function Home(props: ViewProps) {
     } = useRequest<ProjectStat[]>({
         url: 'server://projects-stat/recent/',
         method: 'GET',
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('home', 'recentProjectsTitle'))({ error: errorBody }),
+        failureHeader: _ts('home', 'recentProjectsTitle'),
     });
 
     const {
@@ -149,8 +147,7 @@ function Home(props: ViewProps) {
     } = useRequest<ProjectsSummary>({
         url: 'server://projects-stat/summary/',
         method: 'GET',
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('home', 'summaryOfMyProjectsHeading'))({ error: errorBody }),
+        failureHeader: _ts('home', 'summaryOfMyProjectsHeading'),
     });
 
     const {
@@ -160,9 +157,7 @@ function Home(props: ViewProps) {
         skip: isNotDefined(selectedProject),
         url: `server://projects-stat/${selectedProject}/`,
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('home', 'projectDetails'))({ error: errorBody });
-        },
+        failureHeader: _ts('home', 'projectDetails'),
     });
 
     const projectDashboardData = useMemo(() => {

@@ -12,7 +12,6 @@ import {
 } from '#typings';
 
 import _ts from '#ts';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import { EntryFieldsMin } from '../context';
 import DiscardedEntry from './DiscardedEntry';
@@ -63,9 +62,7 @@ function DiscardedEntries(props: Props) {
         onSuccess: (response) => {
             setEntriesCount(response.count);
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'entriesTitle'))({ error: errorBody });
-        },
+        failureHeader: _ts('pillarAnalysis', 'entriesTitle'),
     });
 
     const entryCardRendererParams = useCallback((key: number, data: DiscardedEntry) => ({

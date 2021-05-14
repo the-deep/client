@@ -13,7 +13,6 @@ import {
     TableHeaderCell,
     TableHeaderCellProps,
 } from '@the-deep/deep-ui';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { createDateColumn } from '#dui/tableHelpers';
 import {
     useRequest,
@@ -83,8 +82,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
         skip: isNotDefined(frameworkId),
         url: `server://analysis-frameworks/${frameworkId}/`,
         method: 'GET',
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analyticalFramework', 'title'))({ error: errorBody }),
+        failureHeader: _ts('analyticalFramework', 'title'),
     });
 
     const [activePage, setActivePage] = useState(1);
@@ -104,8 +102,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
         query: frameworkUsersQuery,
         method: 'GET',
         preserveResponse: true,
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('analyticalFramework', 'title'))({ error: errorBody }),
+        failureHeader: _ts('analyticalFramework', 'title'),
     });
 
     const [
@@ -123,9 +120,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
         onSuccess: () => {
             triggerMembersList();
         },
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('analyticalFramework.addUser', 'membershipPostFailed'))({ error: errorBody });
-        },
+        failureHeader: _ts('analyticalFramework.addUser', 'membershipPostFailed'),
     });
 
     const [userToEdit, setUserToEdit] = useState<UserToEdit | undefined>(undefined);

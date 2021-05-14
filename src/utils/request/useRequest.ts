@@ -10,39 +10,38 @@ import {
 import AbortController from 'abort-controller';
 
 import { prepareUrlParams, isFetchable, Methods } from './utils';
-import {
-    UrlParams,
-    Error,
-} from './types';
-import RequestContext from './context';
-import fetchResource, { RequestOptions as NonTriggerFetchOptions } from './fetch';
+import { UrlParams } from './types';
+import RequestContext, { ContextInterface } from './context';
+import fetchResource, { RequestOptions as BaseRequestOptions } from './fetch';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type RequestBody = RequestInit['body'] | object;
 
-interface RequestOptions<T> extends NonTriggerFetchOptions<T, null> {
+export type RequestOptions<R, E, O> = BaseRequestOptions<R, E, null> & {
+    url: string | undefined;
+    query?: UrlParams | undefined;
+    body?: RequestBody | undefined;
+    method?: Methods | undefined;
+    other?: Omit<RequestInit, 'body'> | undefined;
+
     // NOTE: disabling will cancel on-going requests
     skip?: boolean;
 
-    url: string | undefined;
-    query?: UrlParams;
-    body?: RequestBody;
-    method?: Methods;
-    other?: Omit<RequestInit, 'body'>;
-
     // NOTE: don't ever re-trigger
     delay?: number;
-    mockResponse?: T;
+    mockResponse?: R;
     preserveResponse?: boolean;
-}
+} & O;
 
-function useRequest<T>(
-    requestOptions: RequestOptions<T>,
+function useRequest<R, E, O>(
+    requestOptions: RequestOptions<R, E, O>,
 ) {
     const {
         transformOptions,
         transformUrl,
-    } = useContext(RequestContext);
+        transformResponse,
+        transformError,
+    } = useContext(RequestContext as React.Context<ContextInterface<R, unknown, E, O>>);
 
     // NOTE: forgot why the clientId is required but it is required
     const clientIdRef = useRef<number>(-1);
@@ -54,6 +53,8 @@ function useRequest<T>(
     const requestOptionsRef = useRef(requestOptions);
     const transformOptionsRef = useRef(transformOptions);
     const transformUrlRef = useRef(transformUrl);
+    const transformResponseRef = useRef(transformResponse);
+    const transformErrorRef = useRef(transformError);
 
     const { skip = false } = requestOptions;
 
@@ -68,9 +69,8 @@ function useRequest<T>(
     const urlQuery = query ? prepareUrlParams(query) : undefined;
     const extendedUrl = url && urlQuery ? `${url}?${urlQuery}` : url;
 
-
-    const [response, setResponse] = useState<T | undefined>();
-    const [error, setError] = useState<Error | undefined>();
+    const [response, setResponse] = useState<R | undefined>();
+    const [error, setError] = useState<E | undefined>();
 
     const [runId, setRunId] = useState(() => (
         skip ? -1 : new Date().getTime()
@@ -90,7 +90,7 @@ function useRequest<T>(
         [],
     );
     const setResponseSafe = useCallback(
-        (value: T | undefined, clientId: number) => {
+        (value: R | undefined, clientId: number) => {
             if (clientId >= responseSetByRef.current) {
                 responseSetByRef.current = clientId;
                 setResponse(value);
@@ -100,7 +100,7 @@ function useRequest<T>(
     );
 
     const setErrorSafe = useCallback(
-        (value: Error | undefined, clientId: number) => {
+        (value: E | undefined, clientId: number) => {
             if (clientId >= errorSetByRef.current) {
                 errorSetByRef.current = clientId;
                 setError(value);
@@ -129,6 +129,18 @@ function useRequest<T>(
             transformUrlRef.current = transformUrl;
         },
         [transformUrl],
+    );
+    useLayoutEffect(
+        () => {
+            transformResponseRef.current = transformResponse;
+        },
+        [transformResponse],
+    );
+    useLayoutEffect(
+        () => {
+            transformErrorRef.current = transformError;
+        },
+        [transformError],
     );
     useLayoutEffect(
         () => {
@@ -176,7 +188,6 @@ function useRequest<T>(
             }
 
             const {
-                schemaName,
                 preserveResponse,
                 delay = 0,
             } = requestOptionsRef.current;
@@ -188,13 +199,10 @@ function useRequest<T>(
 
             clientIdRef.current += 1;
 
+            // FIXME: this may need to move up
             setPendingSafe(true, clientIdRef.current);
 
             const controller = new AbortController();
-
-            if (method !== 'DELETE' && !schemaName) {
-                console.error(`Schema is not defined for ${extendedUrl} ${method}`);
-            }
 
             fetchResource(
                 extendedUrl,
@@ -208,6 +216,8 @@ function useRequest<T>(
 
                 transformUrlRef,
                 transformOptionsRef,
+                transformResponseRef,
+                transformErrorRef,
                 requestOptionsRef,
                 null,
 
@@ -241,7 +251,7 @@ function useRequest<T>(
     return {
         response,
         pending,
-        error: error?.value,
+        error,
         retrigger,
     };
 }

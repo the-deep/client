@@ -30,7 +30,6 @@ import {
 import TextOutput from '#components/general/TextOutput';
 import { pathNames } from '#constants';
 import { useLazyRequest, useRequest } from '#utils/request';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 import { ProjectDetails } from '#typings';
@@ -81,8 +80,7 @@ function FrameworkDetail(props: Props) {
         skip: isNotDefined(frameworkId),
         url: `server://analysis-frameworks/${frameworkId}/`,
         method: 'GET',
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'frameworkDetails'))({ error: errorBody }),
+        failureHeader: _ts('projectEdit', 'frameworkDetails'),
     });
 
     const {
@@ -97,8 +95,7 @@ function FrameworkDetail(props: Props) {
         onSuccess: (response) => {
             onProjectChange(response);
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
     const itemRendererParams = useCallback((key, data) => ({

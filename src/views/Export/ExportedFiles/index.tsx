@@ -73,14 +73,7 @@ function ExportedFiles(props: Props) {
         shouldPoll: response => (
             (activeTab === 'pending' && response?.count && response.count > 0) ? 5000 : -1
         ),
-        onFailure: () => {
-            notify.send({
-                title: _ts('export', 'userExportsTitle'),
-                type: notify.type.ERROR,
-                message: _ts('export', 'userExportsFailure'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
+        failureHeader: _ts('export', 'userExportsTitle'),
     });
 
     const {
@@ -103,14 +96,7 @@ function ExportedFiles(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: () => {
-            notify.send({
-                title: _ts('export', 'userExportsTitle'),
-                type: notify.type.ERROR,
-                message: _ts('export', 'deleteExportFailure'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
+        failureHeader: _ts('export', 'userExportsTitle'),
     });
 
     const {
@@ -134,14 +120,7 @@ function ExportedFiles(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: () => {
-            notify.send({
-                title: _ts('export', 'userExportsTitle'),
-                type: notify.type.ERROR,
-                message: _ts('export', 'cancelExportFailure'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
+        failureHeader: _ts('export', 'userExportsTitle'),
     });
 
 
@@ -167,15 +146,7 @@ function ExportedFiles(props: Props) {
                 duration: notify.duration.MEDIUM,
             });
         },
-        onFailure: () => {
-            notify.send({
-                title: _ts('export', 'userExportsTitle'),
-                type: notify.type.ERROR,
-                message: archiveStatus ? _ts('export', 'archiveExportFailure') :
-                    _ts('export', 'unArchiveExportFailure'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
+        failureHeader: _ts('export', 'userExportsTitle'),
     });
 
     const handleExportDelete = deleteExport;

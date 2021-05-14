@@ -14,7 +14,6 @@ import { useRequest } from '#utils/request';
 import DateFilter from '#rsci/DateFilter';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
-import { notifyOnFailure } from '#utils/requestNotify';
 import { useModalState } from '#hooks/stateManagement';
 
 import FrameworkFilter from '#components/other/FrameworkFilter';
@@ -122,9 +121,7 @@ function EntriesFilterForm(props: OwnProps) {
         url: 'server://entry-options/',
         query: entryOptionsQueryParams,
         method: 'GET',
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('pillarAnalysis', 'entryOptions'))({ error: errorBody });
-        },
+        failureHeader: _ts('pillarAnalysis', 'entryOptions'),
     });
 
     const schema = useMemo(() => ({

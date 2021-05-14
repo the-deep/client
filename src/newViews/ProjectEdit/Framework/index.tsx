@@ -27,7 +27,6 @@ import {
 } from '#typings';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
-import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import FrameworkDetail from './FrameworkDetail';
@@ -146,8 +145,7 @@ function ProjectFramework(props: Props) {
         onSuccess: (response) => {
             setProjectDetails(response);
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
+        failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
 
     const [
@@ -196,8 +194,7 @@ function ProjectFramework(props: Props) {
                 ...response.results,
             ]);
         },
-        onFailure: (_, errorBody) =>
-            notifyOnFailure(_ts('projectEdit', 'frameworkDetails'))({ error: errorBody }),
+        failureHeader: _ts('projectEdit', 'frameworkDetails'),
         preserveResponse: true,
     });
 
