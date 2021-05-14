@@ -18,8 +18,6 @@ import {
     PendingMessage,
     createStringColumn,
     Table,
-    DateOutputProps,
-    DateOutput,
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
@@ -27,6 +25,7 @@ import {
     QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import { notifyOnFailure } from '#utils/requestNotify';
+import { createDateColumn } from '#dui/tableHelpers';
 import {
     useRequest,
     useLazyRequest,
@@ -98,14 +97,6 @@ const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
 });
 
-interface PropsFromState {
-    activeUser: { userId: number };
-}
-
-interface Props {
-    frameworkId: number;
-}
-
 interface User {
     id: number;
     member: number;
@@ -130,6 +121,14 @@ interface UserToEdit {
 
 const userKeySelector = (user: User) => user.id;
 const maxItemsPerPage = 10;
+
+interface PropsFromState {
+    activeUser: { userId: number };
+}
+
+interface Props {
+    frameworkId: number;
+}
 
 function FrameworkDetails(props: Props & PropsFromState) {
     const {
@@ -192,10 +191,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
     const [userToEdit, setUserToEdit] = useState<UserToEdit | undefined>(undefined);
 
     const handleUserEditClick = useCallback((userId: number) => {
-        if (!frameworkUsers?.results) {
-            return;
-        }
-        const selectedUser = frameworkUsers.results.find(u => u.id === userId);
+        const selectedUser = frameworkUsers?.results?.find(u => u.id === userId);
         if (!selectedUser) {
             return;
         }
@@ -226,21 +222,6 @@ function FrameworkDetails(props: Props & PropsFromState) {
                 }),
             };
 
-            const dateColumn: TableColumn<User, number, DateOutputProps, TableHeaderCellProps> = {
-                id: 'joined_at',
-                title: 'Joined At',
-                headerCellRenderer: TableHeaderCell,
-                headerCellRendererParams: {
-                    sortable: false,
-                },
-                cellRenderer: DateOutput,
-                cellRendererParams: (_, data) => ({
-                    format: 'dd MMM, yyyy',
-                    value: data.joinedAt,
-                }),
-            };
-
-
             return ([
                 createStringColumn<User, number>(
                     'name',
@@ -257,7 +238,11 @@ function FrameworkDetails(props: Props & PropsFromState) {
                     'Added By',
                     item => item?.addedByDetails?.displayName,
                 ),
-                dateColumn,
+                createDateColumn<User, number>(
+                    'joined_at',
+                    'Joined By',
+                    item => item?.joinedAt,
+                ),
                 createStringColumn<User, number>(
                     'role',
                     'Assigned Role',
@@ -278,43 +263,47 @@ function FrameworkDetails(props: Props & PropsFromState) {
                 analyticalFramework={analyticalFramework}
                 frameworkGetPending={frameworkGetPending}
             />
-            <div className={styles.tableContainer}>
-                {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
-                <Header
-                    heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
-                    actions={(
-                        <Button
-                            name="userAdd"
-                            onClick={showUserAddModal}
-                            icons={(<IoAdd />)}
-                        >
-                            {_ts('analyticalFramework', 'addUserButtonLabel')}
-                        </Button>
+            {frameworkId && (
+                <>
+                    <div className={styles.tableContainer}>
+                        {(pendingDeleteAction || frameworkUsersGetPending) && <PendingMessage />}
+                        <Header
+                            heading={_ts('analyticalFramework', 'frameworkUsersHeading')}
+                            actions={(
+                                <Button
+                                    name="userAdd"
+                                    onClick={showUserAddModal}
+                                    icons={(<IoAdd />)}
+                                >
+                                    {_ts('analyticalFramework', 'addUserButtonLabel')}
+                                </Button>
+                            )}
+                        />
+                        <Table
+                            data={frameworkUsers?.results}
+                            keySelector={userKeySelector}
+                            columns={columns}
+                        />
+                        <div className={styles.pagerContainer}>
+                            <Pager
+                                activePage={activePage}
+                                itemsCount={frameworkUsers?.count ?? 0}
+                                maxItemsPerPage={maxItemsPerPage}
+                                onActivePageChange={setActivePage}
+                                itemsPerPageControlHidden
+                            />
+                        </div>
+                    </div>
+                    {analyticalFramework && addUserModalShown && (
+                        <AddUserModal
+                            frameworkId={frameworkId}
+                            onModalClose={hideUserAddModal}
+                            onTableReload={triggerMembersList}
+                            isPrivateFramework={analyticalFramework?.isPrivate}
+                            userValue={userToEdit}
+                        />
                     )}
-                />
-                <Table
-                    data={frameworkUsers?.results}
-                    keySelector={userKeySelector}
-                    columns={columns}
-                />
-                <div className={styles.pagerContainer}>
-                    <Pager
-                        activePage={activePage}
-                        itemsCount={frameworkUsers?.count ?? 0}
-                        maxItemsPerPage={maxItemsPerPage}
-                        onActivePageChange={setActivePage}
-                        itemsPerPageControlHidden
-                    />
-                </div>
-            </div>
-            {analyticalFramework && addUserModalShown && (
-                <AddUserModal
-                    frameworkId={frameworkId}
-                    onModalClose={hideUserAddModal}
-                    onTableReload={triggerMembersList}
-                    isPrivateFramework={analyticalFramework?.isPrivate}
-                    userValue={userToEdit}
-                />
+                </>
             )}
         </div>
     );

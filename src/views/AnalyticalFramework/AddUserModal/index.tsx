@@ -31,14 +31,6 @@ interface UserToEdit {
     role: number;
 }
 
-interface Props {
-    onModalClose: () => void;
-    frameworkId: number;
-    onTableReload: () => void;
-    isPrivateFramework: boolean;
-    userValue?: UserToEdit;
-}
-
 interface Role {
     id: number;
     title: string;
@@ -84,6 +76,14 @@ interface ValueToSend {
     role: number;
     member?: number;
     framework: number;
+}
+
+interface Props {
+    onModalClose: () => void;
+    frameworkId: number;
+    onTableReload: () => void;
+    isPrivateFramework: boolean;
+    userValue?: UserToEdit;
 }
 
 function AddUserModal(props: Props) {
@@ -197,8 +197,7 @@ function AddUserModal(props: Props) {
             }
             onCloseButtonClick={onModalClose}
             bodyClassName={styles.modalBody}
-            footerClassName={styles.footer}
-            footer={(
+            footerActions={(
                 <Button
                     name="submit"
                     variant="primary"
