@@ -21,6 +21,8 @@ import {
     analyticalFrameworkIdFromRouteSelector,
 } from '#redux';
 import FrameworkDetails from './FrameworkDetails';
+import PrimaryTagging from './PrimaryTagging';
+import SecondaryTagging from './SecondaryTagging';
 import styles from './styles.scss';
 
 const mapStateToProps = (state: AppState) => ({
@@ -41,12 +43,11 @@ function AnalyticalFramework(props: Props & PropsFromState) {
         frameworkId,
         activeFramework,
     } = props;
-    const [activeTab, setActiveTab] = useState<TabNames>('frameworkDetails');
+
+    const [activeTab, setActiveTab] = useState<TabNames>('primaryTagging');
 
     return (
-        <div
-            className={styles.analyticalFramework}
-        >
+        <div className={styles.analyticalFramework}>
             <Tabs
                 value={activeTab}
                 onChange={setActiveTab}
@@ -113,6 +114,7 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                     name="frameworkDetails"
                 >
                     <FrameworkDetails
+                        // className={styles.view}
                         frameworkId={frameworkId}
                     />
                 </TabPanel>
@@ -120,13 +122,19 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                     className={styles.tabPanel}
                     name="primaryTagging"
                 >
-                    {_ts('analyticalFramework', 'primaryTagging')}
+                    <PrimaryTagging
+                        className={styles.view}
+                        frameworkId={frameworkId}
+                    />
                 </TabPanel>
                 <TabPanel
                     className={styles.tabPanel}
                     name="secondaryTagging"
                 >
-                    {_ts('analyticalFramework', 'secondaryTagging')}
+                    <SecondaryTagging
+                        className={styles.view}
+                        frameworkId={frameworkId}
+                    />
                 </TabPanel>
                 <TabPanel
                     className={styles.tabPanel}

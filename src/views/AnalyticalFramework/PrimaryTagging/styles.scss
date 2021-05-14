@@ -1,0 +1,33 @@
+.primary-tagging {
+    display: flex;
+
+    .widget-list-container {
+        background-color: var(--dui-color-foreground);
+        width: calc(160px + 10vw);
+    }
+
+    .framework-preview {
+        flex-grow: 1;
+
+        .top-bar {
+            display: flex;
+            background-color: var(--dui-color-foreground);
+            padding: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small))
+        }
+    }
+}
+
+.framework-image-preview-modal {
+    width: 96vw;
+    height: 96vh;
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .preview {
+            flex-grow: 1;
+        }
+    }
+}

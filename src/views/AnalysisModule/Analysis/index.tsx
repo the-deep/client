@@ -197,6 +197,7 @@ function Analysis(props: ComponentProps) {
         <ContainerCard
             className={_cs(className, styles.analysisItem)}
             heading={title}
+            sub
             headerDescription={(
                 <DateRangeOutput
                     startDate={startDate}

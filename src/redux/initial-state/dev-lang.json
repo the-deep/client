@@ -1349,7 +1349,9 @@
         "-918283811": "Framework visibility",
         "-918281818": "Public",
         "-818101082": "Private",
-        "-31309732": "Statements"
+        "-31309732": "Statements",
+        "-99661907": "Building Modules",
+        "-38544197": "View Framework Image for Reference"
     },
     "links": {
         "browserExtension": {
@@ -3841,6 +3843,16 @@
             "publicFramework": -918281818,
             "privateFramework": -818101082,
             "saveFramework": 25
+        },
+        "analyticalFramework.primaryTagging": {
+            "nextButtonLabel": 23,
+            "buildingModulesHeading": -99661907,
+            "viewFrameworkImageButtonLabel": -38544197
+        },
+        "analyticalFramework.secondaryTagging": {
+            "buildingModulesHeading": -99661907,
+            "nextButtonLabel": 23,
+            "viewFrameworkImageButtonLabel": -38544197
         }
     }
 }
