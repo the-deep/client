@@ -161,7 +161,7 @@ function UserList(props: Props) {
                         className={styles.button}
                         name={undefined}
                         title={_ts('projectEdit', 'deleteUserLabel')}
-                        onClick={() => handleDeleteMembershipClick(row.id)}
+                        onConfirm={() => handleDeleteMembershipClick(row.id)}
                         message={_ts('projectEdit', 'removeUserConfirmation')}
                         showConfirmationInitially={false}
                     >

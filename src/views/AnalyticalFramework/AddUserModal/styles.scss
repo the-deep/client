@@ -1,0 +1,21 @@
+.modal {
+    .modal-body {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
+
+        .input {
+            margin: var(--dui-spacing-small);
+        }
+    }
+
+    .footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+.options-popup {
+    z-index: 1;
+}

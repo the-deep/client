@@ -1,5 +1,8 @@
 import React, { useCallback } from 'react';
-import { isDefined } from '@togglecorp/fujs';
+import {
+    _cs,
+    isDefined,
+} from '@togglecorp/fujs';
 import {
     ObjectSchema,
     PartialForm,
@@ -25,6 +28,7 @@ import styles from './styles.scss';
 
 interface Props {
     frameworkId: number;
+    className?: string;
     analyticalFramework?: AnalyticalFramework;
     frameworkGetPending: boolean;
 }
@@ -47,6 +51,7 @@ const organizationLabelSelector = (o: OrganizationDetails) => o.title;
 function FrameworkDetailsForm(props: Props) {
     const {
         frameworkId,
+        className,
         analyticalFramework: analyticalFrameworkFromProps,
         frameworkGetPending,
     } = props;
@@ -86,7 +91,7 @@ function FrameworkDetailsForm(props: Props) {
     const pending = frameworkPatchPending || frameworkGetPending;
 
     return (
-        <div className={styles.frameworkDetailsForm}>
+        <div className={_cs(styles.frameworkDetailsForm, className)}>
             {pending && <PendingMessage />}
             <div className={styles.content}>
                 <div className={styles.details}>
