@@ -38,25 +38,51 @@
         }
     }
 
-    .item {
-        margin: var(--spacing-medium) 0;
-
-        .text-output {
-            align-items: flex-start;
-            flex-direction: column;
-
-            .value {
-                display: block;
-                font-weight: var(--font-weight-bold);
-            }
-        }
-    }
-
     .bold-text {
         font-weight: var(--font-weight-bold);
     }
 
     .pillar-body {
         position: relative;
+
+        .left {
+            display: flex;
+
+            .analystItem {
+                flex-shrink: 0;
+                padding: var(--spacing-medium);
+
+                .text-output {
+                    align-items: flex-start;
+                    flex-direction: column;
+
+                    .value {
+                        display: block;
+                        font-weight: var(--font-weight-bold);
+                    }
+                }
+            }
+            .statements-item {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                padding: 0 var(--spacing-medium);
+
+                .statements {
+                    display: flex;
+                    flex-wrap: wrap;
+                    padding: var(--spacing-medium) 0;
+
+                    .statement {
+                        display: flex;
+                        flex-basis: calc(100% / 3);
+
+                        &>* {
+                            padding: 0 var(--spacing-medium);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

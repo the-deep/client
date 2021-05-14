@@ -25,6 +25,7 @@ import styles from './styles.scss';
 interface ComponentProps {
     analysisId: number;
     assigneeName?: string;
+    statements?: AnalysisPillars['analyticalStatements'];
     title: string;
     createdAt: string;
     onDelete: (value: number) => void;
@@ -43,6 +44,7 @@ function AnalysisPillar(props: ComponentProps) {
         analysisId,
         createdAt,
         pendingPillarDelete,
+        statements,
     } = props;
 
     const completed = false;
@@ -118,7 +120,7 @@ function AnalysisPillar(props: ComponentProps) {
             <div className={styles.pillarBody}>
                 {pendingPillarDelete && <LoadingAnimation />}
                 <div className={styles.left}>
-                    <div className={styles.item}>
+                    <div className={styles.analystItem}>
                         <TextOutput
                             className={styles.textOutput}
                             label={_ts('analysis', 'analyst')}
@@ -126,6 +128,26 @@ function AnalysisPillar(props: ComponentProps) {
                             valueClassName={styles.value}
                             noColon
                         />
+                    </div>
+                    <div className={styles.statementsItem}>
+                        <div>
+                            Statements
+                        </div>
+                        <div className={styles.statements}>
+                            {statements?.map(statement => (
+                                <div
+                                    key={statement.id}
+                                    className={styles.statement}
+                                >
+                                    <div>
+                                        {statement.statement}
+                                    </div>
+                                    <div>
+                                        {statement.analyticalEntries.length}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

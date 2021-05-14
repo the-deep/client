@@ -153,11 +153,12 @@ function Analysis(props: ComponentProps) {
         deletePillarTrigger(toDeleteKey);
     }, [deletePillarTrigger]);
 
-    const analysisPillarRendererParams = useCallback((_, data) => ({
+    const analysisPillarRendererParams = useCallback((_, data: AnalysisPillars) => ({
         analysisId: data.analysis,
         assigneeName: data.assigneeName,
         createdAt,
         onDelete: handlePillarAnalysisToDelete,
+        statements: data.analyticalStatements,
         pillarId: data.id,
         projectId: activeProject,
         title: data.title,
@@ -245,7 +246,6 @@ function Analysis(props: ComponentProps) {
                         noColon
                     />
                 </div>
-
                 <div className={styles.contentItem}>
                     <h3 className={styles.subHeading}>
                         {_ts('analysis', 'pillarAssignments')}
