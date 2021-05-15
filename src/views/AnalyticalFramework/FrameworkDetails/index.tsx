@@ -8,9 +8,7 @@ import {
     IoTrash,
     IoAdd,
 } from 'react-icons/io5';
-import {
-    MdModeEdit,
-} from 'react-icons/md';
+import { MdModeEdit } from 'react-icons/md';
 import {
     Pager,
     Button,

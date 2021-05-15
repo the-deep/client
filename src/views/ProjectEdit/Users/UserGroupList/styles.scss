@@ -21,6 +21,7 @@
                 font-weight: var(--dui-font-weight-regular);
             }
         }
+
         .actions {
             display: flex;
             flex-grow: 1;
@@ -40,21 +41,12 @@
             flex-grow: 1;
             overflow-y: auto;
 
-            :global {
-                .header {
-                    z-index: 1;
-                }
-
-                .actions {
-                    width: 200px;
-                }
-            }
-
-            .row-actions {
+            .action-cell {
                 display: flex;
+                align-items: center;
 
                 .button {
-                    margin: 0 calc(var(--spacing-small) / 2);
+                    margin: 0 var(--dui-spacing-small);
                 }
             }
         }
