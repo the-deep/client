@@ -133,6 +133,7 @@
             flex-shrink: 0;
             opacity: 0;
             border-top: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
             padding: calc(var(--spacing-large) - var(--spacing-small)) calc(var(--spacing-medium) - var(--spacing-small));
             width: 100%;
 
