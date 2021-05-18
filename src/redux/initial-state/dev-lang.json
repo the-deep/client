@@ -1353,7 +1353,8 @@
         "-99661907": "Building Modules",
         "-38544197": "View Framework Image for Reference",
         "-28777942": "Framework users",
-        "-89164075": "Failed to fetch framework roles."
+        "-89164075": "Failed to fetch framework roles.",
+        "-26472388": "Are you sure you want to remove this user from the framework?"
     },
     "links": {
         "browserExtension": {
@@ -3846,7 +3847,10 @@
             "privateFramework": -818101082,
             "saveFramework": 25,
             "addUserButtonLabel": -70810384,
-            "frameworkUsersHeading": -28777942
+            "frameworkUsersHeading": -28777942,
+            "deleteUserLabel": 924,
+            "editUserLabel": -67231440,
+            "removeUserConfirmation": -26472388
         },
         "analyticalFramework.primaryTagging": {
             "nextButtonLabel": 23,

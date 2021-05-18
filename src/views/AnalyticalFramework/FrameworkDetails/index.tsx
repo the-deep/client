@@ -1,14 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
-import {
-    _cs,
-    isNotDefined,
-} from '@togglecorp/fujs';
-import {
-    IoTrash,
-    IoAdd,
-} from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
+import { isNotDefined } from '@togglecorp/fujs';
+import { IoAdd } from 'react-icons/io5';
 import {
     Pager,
     Button,
@@ -19,8 +12,6 @@ import {
     TableColumn,
     TableHeaderCell,
     TableHeaderCellProps,
-    QuickActionButton,
-    QuickActionConfirmButton,
 } from '@the-deep/deep-ui';
 import { notifyOnFailure } from '#utils/requestNotify';
 import { createDateColumn } from '#dui/tableHelpers';
@@ -29,6 +20,7 @@ import {
     useLazyRequest,
 } from '#utils/request';
 import { useModalState } from '#hooks/stateManagement';
+import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import {
     AppState,
     AnalyticalFramework,
@@ -40,56 +32,6 @@ import { activeUserSelector } from '#redux';
 import FrameworkDetailsForm from './FrameworkDetailsForm';
 import AddUserModal from '../AddUserModal';
 import styles from './styles.scss';
-
-interface ActionCellProps {
-    className?: string;
-    userId: number;
-    onUserEditClick: (userId: number) => void;
-    onUserRemoveClick: (userId: number) => void;
-    disabled: boolean;
-}
-
-function ActionCell(props: ActionCellProps) {
-    const {
-        className,
-        userId,
-        onUserEditClick,
-        onUserRemoveClick,
-        disabled,
-    } = props;
-
-    const handleEditButtonClick = useCallback(() => {
-        onUserEditClick(userId);
-    }, [userId, onUserEditClick]);
-
-    const handleDeleteMembershipClick = useCallback(() => {
-        onUserRemoveClick(userId);
-    }, [userId, onUserRemoveClick]);
-
-    return (
-        <div className={_cs(styles.actionCell, className)}>
-            <QuickActionButton
-                className={styles.button}
-                name="editButton"
-                onClick={handleEditButtonClick}
-                disabled={disabled}
-            >
-                <MdModeEdit />
-            </QuickActionButton>
-            <QuickActionConfirmButton
-                className={styles.button}
-                name="deleteButton"
-                title={_ts('projectEdit', 'deleteUserLabel')}
-                onConfirm={handleDeleteMembershipClick}
-                message={_ts('projectEdit', 'removeUserConfirmation')}
-                showConfirmationInitially={false}
-                disabled={disabled}
-            >
-                <IoTrash />
-            </QuickActionConfirmButton>
-        </div>
-    );
-}
 
 const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
@@ -204,7 +146,9 @@ function FrameworkDetails(props: Props & PropsFromState) {
 
     const columns = useMemo(
         () => {
-            const actionColumn: TableColumn<User, number, ActionCellProps, TableHeaderCellProps> = {
+            const actionColumn: TableColumn<
+                User, number, ActionCellProps<number>, TableHeaderCellProps
+            > = {
                 id: 'action',
                 title: 'Actions',
                 headerCellRenderer: TableHeaderCell,
@@ -213,10 +157,13 @@ function FrameworkDetails(props: Props & PropsFromState) {
                 },
                 cellRenderer: ActionCell,
                 cellRendererParams: (userId, data) => ({
-                    userId,
-                    onUserEditClick: handleUserEditClick,
-                    onUserRemoveClick: triggerUserRemove,
+                    itemKey: userId,
+                    onEditClick: handleUserEditClick,
+                    onDeleteClick: triggerUserRemove,
                     disabled: data.member === activeUser.userId,
+                    editButtonTitle: _ts('analyticalFramework', 'editUserLabel'),
+                    deleteButtonTitle: _ts('analyticalFramework', 'deleteUserLabel'),
+                    deleteConfirmationMessage: _ts('analyticalFramework', 'removeUserConfirmation'),
                 }),
             };
 

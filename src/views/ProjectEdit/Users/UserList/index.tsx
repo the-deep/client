@@ -1,18 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
-
-import {
-    IoTrash,
-    IoAdd,
-} from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
+import { IoAdd } from 'react-icons/io5';
 import {
     Container,
     Button,
     Pager,
-    QuickActionButton,
-    QuickActionConfirmButton,
     Table,
     PendingMessage,
     TableColumn,
@@ -25,6 +18,7 @@ import { createDateColumn } from '#dui/tableHelpers';
 import { notifyOnFailure } from '#utils/requestNotify';
 import Message from '#rscv/Message';
 import { useRequest, useLazyRequest } from '#utils/request';
+import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import _ts from '#ts';
 
 import { activeUserSelector } from '#redux';
@@ -37,56 +31,6 @@ import {
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.scss';
-
-interface ActionCellProps {
-    className?: string;
-    userId: number;
-    onUserEditClick: (userId: number) => void;
-    onUserRemoveClick: (userId: number) => void;
-    disabled: boolean;
-}
-
-function ActionCell(props: ActionCellProps) {
-    const {
-        className,
-        userId,
-        onUserEditClick,
-        onUserRemoveClick,
-        disabled,
-    } = props;
-
-    const handleEditButtonClick = useCallback(() => {
-        onUserEditClick(userId);
-    }, [userId, onUserEditClick]);
-
-    const handleDeleteMembershipClick = useCallback(() => {
-        onUserRemoveClick(userId);
-    }, [userId, onUserRemoveClick]);
-
-    return (
-        <div className={_cs(styles.actionCell, className)}>
-            <QuickActionButton
-                className={styles.button}
-                name="editButton"
-                onClick={handleEditButtonClick}
-                disabled={disabled}
-            >
-                <MdModeEdit />
-            </QuickActionButton>
-            <QuickActionConfirmButton
-                className={styles.button}
-                name="deleteButton"
-                title={_ts('projectEdit', 'deleteUserLabel')}
-                onConfirm={handleDeleteMembershipClick}
-                message={_ts('projectEdit', 'removeUserConfirmation')}
-                showConfirmationInitially={false}
-                disabled={disabled}
-            >
-                <IoTrash />
-            </QuickActionConfirmButton>
-        </div>
-    );
-}
 
 const mapStateToProps = (state: AppState) => ({
     activeUser: activeUserSelector(state),
@@ -162,7 +106,7 @@ function UserList(props: Props & PropsFromState) {
 
     const columns = useMemo(() => {
         const actionColumn: TableColumn<
-            Membership, number, ActionCellProps, TableHeaderCellProps
+            Membership, number, ActionCellProps<number>, TableHeaderCellProps
         > = {
             id: 'action',
             title: 'Actions',
@@ -172,10 +116,13 @@ function UserList(props: Props & PropsFromState) {
             },
             cellRenderer: ActionCell,
             cellRendererParams: (userId, data) => ({
-                userId,
-                onUserEditClick: handleEditMembershipClick,
-                onUserRemoveClick: triggerMembershipDelete,
+                itemKey: userId,
+                onEditClick: handleEditMembershipClick,
+                onDeleteClick: triggerMembershipDelete,
                 disabled: data.member === activeUser.userId,
+                editButtonTitle: _ts('projectEdit', 'editUserLabel'),
+                deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
+                deleteConfirmationMessage: _ts('projectEdit', 'removeUserConfirmation'),
             }),
         };
 
@@ -243,7 +190,6 @@ function UserList(props: Props & PropsFromState) {
             {(usersResponse && usersResponse?.count > 0)
                 ? (
                     <Table
-                        className={styles.table}
                         data={usersResponse.results}
                         keySelector={userKeySelector}
                         columns={columns}

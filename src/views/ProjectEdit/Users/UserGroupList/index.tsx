@@ -1,18 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
-    IoTrash,
     IoChevronForward,
     IoAdd,
 } from 'react-icons/io5';
-import { MdModeEdit } from 'react-icons/md';
 import {
     Container,
     Button,
     Link,
     Pager,
-    QuickActionButton,
-    QuickActionConfirmButton,
     Table,
     TableColumn,
     TableHeaderCell,
@@ -34,58 +30,9 @@ import {
     UserGroup,
 } from '#typings';
 
+import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import AddUserGroupModal from './AddUserGroupModal';
 import styles from './styles.scss';
-
-interface ActionCellProps<T> {
-    className?: string;
-    itemKey: T;
-    onEditClick: (key: T) => void;
-    onDeleteClick: (key: T) => void;
-    disabled?: boolean;
-}
-
-function ActionCell<T>(props: ActionCellProps<T>) {
-    const {
-        className,
-        itemKey,
-        onEditClick,
-        onDeleteClick,
-        disabled,
-    } = props;
-
-    const handleEditButtonClick = useCallback(() => {
-        onEditClick(itemKey);
-    }, [itemKey, onEditClick]);
-
-    const handleDeleteUserGroupClick = useCallback(() => {
-        onDeleteClick(itemKey);
-    }, [itemKey, onDeleteClick]);
-
-    return (
-        <div className={_cs(styles.actionCell, className)}>
-            <QuickActionButton
-                className={styles.button}
-                name="editButton"
-                onClick={handleEditButtonClick}
-                disabled={disabled}
-            >
-                <MdModeEdit />
-            </QuickActionButton>
-            <QuickActionConfirmButton
-                className={styles.button}
-                name="deleteButton"
-                title={_ts('projectEdit', 'deleteUserLabel')}
-                onConfirm={handleDeleteUserGroupClick}
-                message={_ts('projectEdit', 'removeUserGroupConfirmation')}
-                showConfirmationInitially={false}
-                disabled={disabled}
-            >
-                <IoTrash />
-            </QuickActionConfirmButton>
-        </div>
-    );
-}
 
 const maxItemsPerPage = 10;
 const emptyLink = '#'; // TODO: Add link when made
@@ -167,6 +114,9 @@ function UserGroupList(props: Props) {
                 itemKey: userId,
                 onEditClick: handleEditUsergroupClick,
                 onDeleteClick: triggerDeleteUsergroup,
+                editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),
+                deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
+                deleteConfirmationMessage: _ts('projectEdit', 'removeUserGroupConfirmation'),
             }),
         };
 
@@ -245,7 +195,6 @@ function UserGroupList(props: Props) {
             {(usergroupResponse && usergroupResponse?.count > 0)
                 ? (
                     <Table
-                        className={styles.table}
                         data={usergroupResponse.results}
                         keySelector={usergroupKeySelector}
                         columns={columns}

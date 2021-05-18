@@ -9,20 +9,6 @@
         flex-grow: 1;
         overflow-x: auto;
 
-        .table {
-            flex-grow: 1;
-            overflow-y: auto;
-
-            .action-cell {
-                display: flex;
-                align-items: center;
-
-                .button {
-                    margin: 0 var(--dui-spacing-small);
-                }
-            }
-        }
-
         .pager {
             align-self: flex-end;
             flex-shrink: 0;
