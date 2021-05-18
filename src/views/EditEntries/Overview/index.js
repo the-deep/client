@@ -37,12 +37,14 @@ import {
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
     editEntriesSetEntryControlStatusAction,
+    editEntriesSetEntryVerificationStatusAction,
 } from '#redux';
 import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
 import ToggleEntryControl from '#components/general/ToggleEntryControl';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import {
     calculateFirstTimeAttributes,
@@ -67,6 +69,7 @@ const propTypes = {
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
     setEditEntryControl: PropTypes.func.isRequired,
+    setEditEntryVerification: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -103,6 +106,9 @@ const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
     setEditEntryControl: params => dispatch(editEntriesSetEntryControlStatusAction(params)),
+    setEditEntryVerification: params => dispatch(
+        editEntriesSetEntryVerificationStatusAction(params),
+    ),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -246,6 +252,21 @@ export default class Overview extends React.PureComponent {
         this.setState({ entryControlPending });
     }
 
+    handleEntryVerificationChange = (verified, count) => {
+        const {
+            entry,
+            leadId,
+            setEditEntryVerification,
+        } = this.props;
+        const entryForPatch = {
+            id: entryAccessor.serverId(entry),
+            isVerifiedByCurrentUser: verified,
+            verifiedByCount: count,
+        };
+
+        setEditEntryVerification({ entry: entryForPatch, leadId });
+    }
+
     handleEntryControlChange = (controlStatus) => {
         const {
             entry,
@@ -291,7 +312,7 @@ export default class Overview extends React.PureComponent {
         const fieldId = entryAccessor.tabularField(entry);
         const controlled = entryAccessor.controlled(entry);
 
-        const disableControlledButton = !entry?.localData?.isPristine
+        const disableEntryControlAndVerify = !entry?.localData?.isPristine
             || isFalsy(entryAccessor.serverId(entry));
 
         const entryLastChangedBy = entry?.controlLastChangedByDetails?.displayName;
@@ -338,6 +359,14 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.rightActionButtons}>
+                                <ToggleEntryVerification
+                                    entryId={entryAccessor.serverId(entry)}
+                                    projectId={lead.project}
+                                    value={entryAccessor.isVerifiedByCurrentUser(entry)}
+                                    verifyCount={entryAccessor.verifiedByCount(entry)}
+                                    onChange={this.handleEntryVerificationChange}
+                                    disabled={disableEntryControlAndVerify}
+                                />
                                 <ToggleEntryControl
                                     tooltip={entryLastChangedBy ? (
                                         _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
@@ -347,7 +376,7 @@ export default class Overview extends React.PureComponent {
                                     value={controlled}
                                     onPendingStatusChange={this.handleEntryControlPendingChange}
                                     onChange={this.handleEntryControlChange}
-                                    disabled={disableControlledButton}
+                                    disabled={disableEntryControlAndVerify}
                                 />
                                 {labels.length > 0 && (
                                     <ModalButton
