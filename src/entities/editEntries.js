@@ -50,6 +50,8 @@ export const entryAccessor = {
 
     unresolvedCommentCount: entry => getServerDataSafe(entry).unresolvedCommentCount || 0,
     controlled: entry => getServerDataSafe(entry).controlled || false,
+    isVerifiedByCurrentUser: entry => getServerDataSafe(entry).isVerifiedByCurrentUser || false,
+    verifiedByCount: entry => getServerDataSafe(entry).verifiedByCount,
     versionId: entry => getServerDataSafe(entry).versionId,
     imageDetails: entry => getServerDataSafe(entry).imageDetails,
 };
@@ -162,6 +164,8 @@ export const createEntry = ({
     serverId,
     versionId,
     controlled,
+    isVerifiedByCurrentUser,
+    verifiedByCount,
     data = {},
     isPristine = false,
     hasError = false,
@@ -205,6 +209,8 @@ export const createEntry = ({
         },
         serverData: {
             controlled: false,
+            isVerifiedByCurrentUser: false,
+            verifiedByCount: 0,
             versionId: undefined,
         },
         data: {
@@ -221,6 +227,8 @@ export const createEntry = ({
             error: { $set: undefined },
         },
         serverData: {
+            isVerifiedByCurrentUser: { $set: isVerifiedByCurrentUser },
+            verifiedByCount: { $set: verifiedByCount },
             controlled: { $set: controlled },
             versionId: { $set: versionId },
             imageDetails: { $set: imageDetails },
@@ -314,6 +322,8 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                 id: remoteServerId,
                 versionId: remoteVersionId,
                 controlled: remoteControlled,
+                isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                verifiedByCount: remoteVerifiedByCount,
                 clientId: remoteKey,
             } = remoteItem;
 
@@ -334,6 +344,8 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
                     controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                     data: remoteItem,
                     isPristine: true,
                     hasError: false,
@@ -372,12 +384,16 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     id: remoteServerId,
                     versionId: remoteVersionId,
                     controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                 } = remoteItem;
                 const newItem = create({
                     key: localId,
                     serverId: remoteServerId, // here
                     versionId: remoteVersionId,
                     controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                     data: remoteItem,
                     isPristine: true,
                     hasError: false,
@@ -391,6 +407,8 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
                     controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                     data: localValues,
                     isPristine: localPristine,
                     hasError: localError,
