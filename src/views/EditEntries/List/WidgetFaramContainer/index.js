@@ -16,6 +16,7 @@ import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
 import EntryCommentButton from '#components/general/EntryCommentButton';
 import ToggleEntryControl from '#components/general/ToggleEntryControl';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import {
     entryAccessor,
@@ -28,6 +29,7 @@ import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     editEntriesSetEntryControlStatusAction,
+    editEntriesSetEntryVerificationStatusAction,
 } from '#redux';
 
 import EntryLabelBadge from '#components/general/EntryLabel';
@@ -64,6 +66,7 @@ const propTypes = {
     entryState: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setEditEntryControl: PropTypes.func.isRequired,
+    setEditEntryVerification: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -88,6 +91,9 @@ const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
     setEditEntryControl: params => dispatch(editEntriesSetEntryControlStatusAction(params)),
+    setEditEntryVerification: params => dispatch(
+        editEntriesSetEntryVerificationStatusAction(params),
+    ),
 });
 
 const entryLabelKeySelector = d => d.labelId;
@@ -114,6 +120,7 @@ function WidgetFaramContainer(props) {
         setSelectedEntryKey,
         markAsDeletedEntry,
         setEditEntryControl,
+        setEditEntryVerification,
     } = props;
 
     const [controlPending, setControlPending] = useState(false);
@@ -148,6 +155,16 @@ function WidgetFaramContainer(props) {
         });
     }, [markAsDeletedEntry, entry, leadId]);
 
+    const handleEntryVerificationChange = useCallback((verified, count) => {
+        const entryForPatch = {
+            id: entryAccessor.serverId(entry),
+            isVerifiedByCurrentUser: verified,
+            verifiedByCount: count,
+        };
+
+        setEditEntryVerification({ entry: entryForPatch, leadId });
+    }, [entry, leadId, setEditEntryVerification]);
+
     const handleEntryControlChange = useCallback((controlStatus) => {
         const entryForPatch = {
             id: entryAccessor.serverId(entry),
@@ -168,7 +185,7 @@ function WidgetFaramContainer(props) {
         )
     ), [entryKey, entryGroups, labels]);
 
-    const disableControlledButton = !entry?.localData?.isPristine
+    const disableEntryControlAndVerify = !entry?.localData?.isPristine
         || isFalsy(entryAccessor.serverId(entry));
 
     const entryLabelsRendererParams = useCallback((key, data) => ({
@@ -204,6 +221,14 @@ function WidgetFaramContainer(props) {
                         keySelector={entryLabelKeySelector}
                         emptyComponent={null}
                     />
+                    <ToggleEntryVerification
+                        entryId={entryAccessor.serverId(entry)}
+                        projectId={lead.project}
+                        value={entryAccessor.isVerifiedByCurrentUser(entry)}
+                        verifyCount={entryAccessor.verifiedByCount(entry)}
+                        onChange={handleEntryVerificationChange}
+                        disabled={disableEntryControlAndVerify}
+                    />
                     <ToggleEntryControl
                         tooltip={entryLastChangedBy ? (
                             _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
@@ -213,7 +238,7 @@ function WidgetFaramContainer(props) {
                         value={controlled}
                         onPendingStatusChange={setControlPending}
                         onChange={handleEntryControlChange}
-                        disabled={disableControlledButton}
+                        disabled={disableEntryControlAndVerify}
                     />
                     {labels.length > 0 && (
                         <ModalButton
