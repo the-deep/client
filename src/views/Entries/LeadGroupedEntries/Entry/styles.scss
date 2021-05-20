@@ -16,6 +16,10 @@
             right: var(--spacing-medium);
             align-items: center;
 
+            >* {
+                margin: 0 var(--spacing-extra-small);
+            }
+
             .entry-labels {
                 display: inline-flex;
                 align-items: center;
@@ -29,21 +33,22 @@
                 }
             }
 
-            .edit-entry-link {
-                margin-right: var(--spacing-small);
-                padding: var(--spacing-extra-small) var(--spacing-small);
+            .toggle-buttons {
+                display: flex;
+                padding: 0 var(--spacing-medium);
             }
 
             .entry-verify {
                 padding: 0 var(--spacing-small);
             }
 
+            .link {
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+
             .button {
                 display: flex;
                 align-items: center;
-                align-self: stretch;
-                margin-right: var(--spacing-small);
-                padding: var(--spacing-extra-small) var(--spacing-small);
 
                 .comment-count {
                     padding-left: var(--spacing-small);
@@ -53,10 +58,6 @@
                     border-color: var(--color-danger)!important;
                     color: var(--color-danger);
                 }
-            }
-
-            .delete-button {
-                padding: var(--spacing-extra-small) var(--spacing-small);
             }
         }
     }

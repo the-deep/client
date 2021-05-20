@@ -2,24 +2,20 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 import { connect } from 'react-redux';
-import {
-    _cs,
-    isFalsy,
-} from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
-import modalize from '#rscg/Modalize';
-import Button from '#rsca/Button';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import EntryEditButton from '#components/general/EntryEditButton';
 import EntryOpenLink from '#components/general/EntryOpenLink';
+import ToggleEntryControl from '#components/general/ToggleEntryControl';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import Cloak from '#components/general/Cloak';
-import EntryVerify from '#components/general/EntryVerify';
-import EntryCommentModal from '#components/general/EntryCommentModal';
+import EntryCommentButton from '#components/general/EntryCommentButton';
 
 import {
     fetchWidgetViewComponent,
@@ -32,6 +28,7 @@ import {
     deleteEntryAction,
     editEntryAction,
     patchEntryVerificationAction,
+    patchEntryControlAction,
 } from '#redux';
 
 import {
@@ -49,8 +46,6 @@ import EntryLabelBadge from '#components/general/EntryLabel';
 
 import styles from './styles.scss';
 
-const ModalButton = modalize(Button);
-
 const propTypes = {
     className: PropTypes.string,
 
@@ -64,6 +59,7 @@ const propTypes = {
     setEntryCommentsCount: PropTypes.func.isRequired,
     onEntryEdit: PropTypes.func.isRequired,
     setEntryVerification: PropTypes.func.isRequired,
+    setEntryControl: PropTypes.func.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     requests: PropTypes.object.isRequired,
 };
@@ -107,6 +103,7 @@ const mapDispatchToProps = dispatch => ({
     onEntryDelete: params => dispatch(deleteEntryAction(params)),
     onEntryEdit: params => dispatch(editEntryAction(params)),
     setEntryVerification: params => dispatch(patchEntryVerificationAction(params)),
+    setEntryControl: params => dispatch(patchEntryControlAction(params)),
 });
 
 const widgetLayoutSelector = (widget) => {
@@ -136,7 +133,7 @@ export default class Entry extends React.PureComponent {
         super(props);
 
         this.state = {
-            entryVerificationPending: false,
+            entryControlPending: false,
         };
     }
 
@@ -164,11 +161,12 @@ export default class Entry extends React.PureComponent {
         setEntryCommentsCount({ entry, projectId, leadId });
     }
 
-    handleEntryVerificationChange = (entry) => {
+    handleEntryVerificationChange = (verified, count) => {
         const {
             setEntryVerification,
             entry: {
                 id: entryId,
+                versionId,
             },
             leadId,
         } = this.props;
@@ -176,13 +174,32 @@ export default class Entry extends React.PureComponent {
         setEntryVerification({
             entryId,
             leadId,
-            status: entry.verified,
-            versionId: entry.versionId,
+            status: verified,
+            versionId,
+            verifiedByCount: count,
         });
     }
 
-    handleEntryVerificationPendingChange = (entryVerificationPending) => {
-        this.setState({ entryVerificationPending });
+    handleEntryControlPendingChange = (entryControlPending) => {
+        this.setState({ entryControlPending });
+    }
+
+    handleEntryControlChange = (controlStatus) => {
+        const {
+            entry: {
+                id: entryId,
+                versionId,
+            },
+            leadId,
+            setEntryControl,
+        } = this.props;
+
+        setEntryControl({
+            entryId,
+            leadId,
+            status: controlStatus,
+            versionId,
+        });
     }
 
     handleEntryDelete = () => {
@@ -309,35 +326,25 @@ export default class Entry extends React.PureComponent {
                 },
             },
             entry,
-            leadId,
+            projectId,
         } = this.props;
 
         const {
             id: entryId,
-            createdBy,
             attributes,
-            unresolvedCommentCount: commentCount,
             projectLabels,
-            verified,
-            verificationLastChangedByDetails,
-            versionId,
+            controlled,
+            isVerifiedByCurrentUser,
+            verifiedByCount,
+            controlLastChangedByDetails,
         } = entry;
 
-        const { entryVerificationPending } = this.state;
+        const { entryControlPending } = this.state;
 
         const filteredWidgets = this.getWidgets(framework?.widgets);
-        /*
-        const entriesPageLink = reverseRoute(
-            pathNames.editEntries,
-            {
-                projectId,
-                leadId,
-            },
-        );
-        */
 
-        const defaultAssignees = this.getDefaultAssignees(createdBy);
-        const pending = deletePending || entryVerificationPending;
+        const pending = deletePending || entryControlPending;
+        const entryLastChangedBy = controlLastChangedByDetails?.displayName;
 
         return (
             <div className={_cs(classNameFromProps, styles.entryContainer)}>
@@ -352,59 +359,24 @@ export default class Entry extends React.PureComponent {
                             keySelector={entryLabelKeySelector}
                             emptyComponent={null}
                         />
-                        <EntryVerify
-                            className={styles.entryVerify}
-                            title={verificationLastChangedByDetails ? (
-                                _ts(
-                                    'entries',
-                                    'verificationLastChangedBy',
-                                    {
-                                        userName: verificationLastChangedByDetails.displayName,
-                                    },
-                                )
-                            ) : undefined}
-                            value={verified}
-                            entryId={entryId}
-                            versionId={versionId}
-                            leadId={leadId}
-                            onPendingChange={this.handleEntryVerificationPendingChange}
-                            handleEntryVerify={this.handleEntryVerificationChange}
-                        />
-                        <EntryOpenLink
-                            className={styles.button}
-                            entryId={entry.id}
-                            leadId={entry.lead}
-                            projectId={entry.project}
-                        />
-                        <EntryEditButton
-                            className={styles.button}
-                            entry={entry}
-                            framework={framework}
-                            onEditSuccess={this.handleEntryEdit}
-                        />
-                        <ModalButton
-                            className={
-                                _cs(
-                                    styles.button,
-                                    commentCount > 0 && styles.accented,
-                                )
-                            }
-                            disabled={isFalsy(entryId)}
-                            modal={
-                                <EntryCommentModal
-                                    entryServerId={entryId}
-                                    onCommentsCountChange={this.handleCommentsCountChange}
-                                    defaultAssignees={defaultAssignees}
-                                />
-                            }
-                            iconName="chat"
-                        >
-                            {commentCount > 0 &&
-                                <div className={styles.commentCount}>
-                                    {commentCount}
-                                </div>
-                            }
-                        </ModalButton>
+                        <div className={styles.toggleButtons}>
+                            <ToggleEntryVerification
+                                entryId={entryId}
+                                projectId={projectId}
+                                value={isVerifiedByCurrentUser}
+                                verifyCount={verifiedByCount}
+                                onChange={this.handleEntryVerificationChange}
+                            />
+                            <ToggleEntryControl
+                                tooltip={entryLastChangedBy ? (
+                                    _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
+                                ) : undefined}
+                                entryId={entryId}
+                                projectId={projectId}
+                                value={controlled}
+                                onChange={this.handleEntryControlChange}
+                            />
+                        </div>
                         <Cloak
                             hide={Entry.shouldHideEntryDelete}
                             render={
@@ -414,9 +386,23 @@ export default class Entry extends React.PureComponent {
                                     confirmationTitle={_ts('entries', 'deleteConfirmTitle')}
                                     confirmationMessage={_ts('entries', 'deleteConfirmMessage')}
                                     disabled={pending}
-                                    className={styles.deleteButton}
                                 />
                             }
+                        />
+                        <EntryOpenLink
+                            className={styles.link}
+                            entryId={entry.id}
+                            leadId={entry.lead}
+                            projectId={entry.project}
+                        />
+                        <EntryCommentButton
+                            entryId={entryId}
+                        />
+                        <EntryEditButton
+                            className={styles.button}
+                            entry={entry}
+                            framework={framework}
+                            onEditSuccess={this.handleEntryEdit}
                         />
                     </div>
                 </header>

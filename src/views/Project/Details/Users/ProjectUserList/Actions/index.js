@@ -6,6 +6,7 @@ import memoize from 'memoize-one';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { getNewActiveProjectId } from '#entities/project';
 
@@ -26,6 +27,13 @@ import {
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const badgeOptions = [
+    { id: 0, label: _ts('project.users', 'qualityController') },
+];
+
+const projectBadgeKeySelector = tag => tag.id;
+const projectBadgeLabelSelector = tag => tag.label;
 
 const requestOptions = {
     changeMembershipRequest: {
@@ -94,6 +102,7 @@ const propTypes = {
         memberEmail: PropTypes.string,
         linkedGroup: PropTypes.number,
         userGroupOptions: PropTypes.array,
+        badges: PropTypes.arrayOf(PropTypes.number),
     }).isRequired,
     projectRoleList: PropTypes.arrayOf(
         PropTypes.shape({
@@ -194,6 +203,22 @@ export default class Actions extends React.PureComponent {
         removeUserMembershipRequest.do({ membership });
     }
 
+    handleBadgeSelection = (value) => {
+        const {
+            row,
+            requests: {
+                changeMembershipRequest,
+            },
+        } = this.props;
+
+        changeMembershipRequest.do({
+            membership: {
+                id: row.id,
+                badges: value,
+            },
+        });
+    };
+
     render() {
         const {
             row,
@@ -216,6 +241,7 @@ export default class Actions extends React.PureComponent {
             memberEmail,
             linkedGroup,
             userGroupOptions,
+            badges,
         } = row;
 
         const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
@@ -257,6 +283,20 @@ export default class Actions extends React.PureComponent {
                     showHintAndError={false}
                     disabled={userGroupOptions.length === 0 || activeUserId === memberId || pending}
                     readOnly={readOnly}
+                />
+                <MultiSelectInput
+                    className={styles.inputElement}
+                    label={_ts('project.users', 'badges')}
+                    placeholder=""
+                    hideClearButton
+                    value={badges}
+                    options={badgeOptions}
+                    onChange={this.handleBadgeSelection}
+                    keySelector={projectBadgeKeySelector}
+                    labelSelector={projectBadgeLabelSelector}
+                    showHintAndError={false}
+                    readOnly={readOnly}
+                    disabled={isSuperior || !!linkedGroup || activeUserId === memberId || pending}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding

@@ -10,3 +10,4 @@ export * from './analysisModule';
 export * from './user';
 export * from './organization';
 export * from './analyticalFramework';
+export * from './notifications';

@@ -44,7 +44,8 @@ export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 
 export const EEB__SET_ENTRIES_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRIES_COMMENTS_COUNT';
 export const EEB__SET_ENTRY_COMMENTS_COUNT = 'siloDomainData/EEB__SET_ENTRY_COMMENTS_COUNT';
-export const EEB__SET_ENTRIES_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRIES_VERIFICATION_STATUS';
+export const EEB__SET_ENTRIES_CONTROL_STATUS = 'siloDomainData/EEB__SET_ENTRIES_CONTROL_STATUS';
+export const EEB__SET_ENTRY_CONTROL_STATUS = 'siloDomainData/EEB__SET_ENTRY_CONTROL_STATUS';
 export const EEB__SET_ENTRY_VERIFICATION_STATUS = 'siloDomainData/EEB__SET_ENTRY_VERIFICATION_STATUS';
 
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
@@ -167,15 +168,21 @@ export const editEntriesSetEntriesCommentsCountAction = ({ entries, leadId }) =>
     leadId,
 });
 
-export const editEntriesSetEntriesVerificationStatusAction = ({
+export const editEntriesSetEntriesControlStatusAction = ({
     updateVersionId,
     entries,
     leadId,
 }) => ({
-    type: EEB__SET_ENTRIES_VERIFICATION_STATUS,
+    type: EEB__SET_ENTRIES_CONTROL_STATUS,
     entries,
     leadId,
     updateVersionId,
+});
+
+export const editEntriesSetEntryControlStatusAction = ({ entry, leadId }) => ({
+    type: EEB__SET_ENTRY_CONTROL_STATUS,
+    entry,
+    leadId,
 });
 
 export const editEntriesSetEntryVerificationStatusAction = ({ entry, leadId }) => ({
@@ -451,6 +458,47 @@ const setEntryCommentsCount = (state, action) => {
     return newState;
 };
 
+const setEntriesControlStatus = (state, action) => {
+    const {
+        leadId,
+        entries: entriesFromServer,
+        updateVersionId = false,
+    } = action;
+
+    const entries = state?.editEntries[leadId]?.entries ?? [];
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.editEntries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries = {};
+        }
+        if (!safeState.editEntries[leadId]) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId] = {};
+        }
+        if (!safeState.editEntries[leadId].entries) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.editEntries[leadId].entries = [];
+        }
+        entriesFromServer.forEach((es) => {
+            const index = entries.findIndex(e => es.id === entryAccessor.serverId(e));
+
+            if (index > -1) {
+                const safeEntry = safeState.editEntries[leadId].entries[index];
+                // eslint-disable-next-line no-param-reassign
+                safeEntry.serverData.controlled = es.controlled;
+
+                if (updateVersionId) {
+                    // eslint-disable-next-line no-param-reassign
+                    safeEntry.serverData.versionId = es.versionId;
+                }
+            }
+        });
+    });
+
+    return newState;
+};
+
 const setEntriesVerificationStatus = (state, action) => {
     const {
         leadId,
@@ -479,7 +527,8 @@ const setEntriesVerificationStatus = (state, action) => {
             if (index > -1) {
                 const safeEntry = safeState.editEntries[leadId].entries[index];
                 // eslint-disable-next-line no-param-reassign
-                safeEntry.serverData.verified = es.verified;
+                safeEntry.serverData.isVerifiedByCurrentUser = es.isVerifiedByCurrentUser;
+                safeEntry.serverData.verifiedByCount = es.verifiedByCount;
 
                 if (updateVersionId) {
                     // eslint-disable-next-line no-param-reassign
@@ -492,6 +541,21 @@ const setEntriesVerificationStatus = (state, action) => {
     return newState;
 };
 
+const setEntryControlStatus = (state, action) => {
+    const {
+        leadId,
+        entry,
+    } = action;
+
+    const newAction = {
+        leadId,
+        entries: [entry],
+        updateVersionId: false,
+    };
+
+    return setEntriesControlStatus(state, newAction);
+};
+
 const setEntryVerificationStatus = (state, action) => {
     const {
         leadId,
@@ -501,7 +565,7 @@ const setEntryVerificationStatus = (state, action) => {
     const newAction = {
         leadId,
         entries: [entry],
-        updateVersionId: true,
+        updateVersionId: false,
     };
 
     return setEntriesVerificationStatus(state, newAction);
@@ -977,7 +1041,6 @@ const applyToAllEntries = mode => (state, action) => {
     let iterableEntries;
     if (mode === 'all-below') {
         const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === entryKey);
-        console.warn(entryIndex);
         // set all entries before current entry to undefined
         iterableEntries = entries.map((entry, i) => (i < entryIndex ? undefined : entry));
     } else if (mode === 'all') {
@@ -1480,8 +1543,9 @@ const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
     [EEB__SET_ENTRIES_COMMENTS_COUNT]: setEntriesCommentsCount,
-    [EEB__SET_ENTRIES_VERIFICATION_STATUS]: setEntriesVerificationStatus,
+    [EEB__SET_ENTRIES_CONTROL_STATUS]: setEntriesControlStatus,
     [EEB__SET_ENTRY_COMMENTS_COUNT]: setEntryCommentsCount,
+    [EEB__SET_ENTRY_CONTROL_STATUS]: setEntryControlStatus,
     [EEB__SET_ENTRY_VERIFICATION_STATUS]: setEntryVerificationStatus,
     [EEB__UPDATE_ENTRIES_BULK]: updateEntriesBulk,
     [EEB__CLEAR_ENTRIES]: clearEntries,

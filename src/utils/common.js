@@ -246,3 +246,26 @@ export function hasKey(data, key, keySelector, childrenSelector) {
     }
     return false;
 }
+
+export function joinList(
+    list,
+    separator = ', ',
+    finalSeparator = ' and ',
+) {
+    const ll = list.length;
+
+    return list.map(
+        (item, index) => {
+            if (index === ll - 1) {
+                return [item];
+            } else if (index === ll - 2) {
+                return [item, finalSeparator];
+            }
+
+            return [
+                item,
+                separator,
+            ];
+        },
+    ).flat();
+}

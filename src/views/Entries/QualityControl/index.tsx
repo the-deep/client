@@ -84,8 +84,8 @@ const tocFilterIdSelector = (d: MatrixKeyId) => d.id;
 const keySelector = (d: MatrixTocElement) => d.key;
 const idSelector = (d: MatrixTocElement) => d.uniqueId;
 const labelSelector = (d: MatrixTocElement) => d.title;
-const verifiedCountSelector = (d: MatrixTocElement) => d.verified;
-const unverifiedCountSelector = (d: MatrixTocElement) => d.unverified;
+const controlledCountSelector = (d: MatrixTocElement) => d.controlled;
+const uncontrolledCountSelector = (d: MatrixTocElement) => d.uncontrolled;
 const childrenSelector = (d: MatrixTocElement) => d.children;
 const entryKeySelector = (d: EntryFields) => d.id;
 
@@ -430,8 +430,8 @@ function QualityControl(props: Props) {
                         keySelector={keySelector}
                         labelSelector={labelSelector}
                         childrenSelector={childrenSelector}
-                        verifiedCountSelector={verifiedCountSelector}
-                        unverifiedCountSelector={unverifiedCountSelector}
+                        controlledCountSelector={controlledCountSelector}
+                        uncontrolledCountSelector={uncontrolledCountSelector}
                         onChange={handleSelection}
                         searchValue={searchValue}
                         value={tocFilters}

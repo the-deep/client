@@ -69,7 +69,7 @@ const projectSchema = [];
             numberOfEntries: { type: 'uint' },
             numberOfLeads: { type: 'uint' },
             numberOfLeadsTagged: { type: 'uint' },
-            numberOfLeadsTaggedAndVerified: { type: 'uint' },
+            numberOfLeadsTaggedAndControlled: { type: 'uint' },
             numberOfUsers: { type: 'uint' },
             organizations: { type: 'array.object' },
             regions: { type: 'array.object' },

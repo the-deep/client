@@ -1,0 +1,34 @@
+.toggle-entry-control {
+    display: flex;
+    align-items: center;
+
+    .icons {
+        padding: 0;
+    }
+    .children {
+        padding: 0;
+    }
+
+    .actions {
+        padding: 0;
+    }
+
+    .icon {
+        color: var(--dui-color-negative);
+        font-size: var(--dui-font-size-medium);
+    }
+
+    .disabled {
+        color: var(--dui-color-text-disabled);
+    }
+
+    &.controlled {
+        .icon {
+            color: var(--color-success);
+        }
+    }
+}
+
+.comment-modal {
+    width: 400px;
+}

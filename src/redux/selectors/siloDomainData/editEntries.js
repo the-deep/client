@@ -134,6 +134,7 @@ export const editEntriesSelectedEntrySelector = createSelector(
         if (selectedEntryKey === undefined) {
             return undefined;
         }
+
         return entries.find(
             entry => entryAccessor.key(entry) === selectedEntryKey,
         );

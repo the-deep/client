@@ -28,26 +28,26 @@ type StaticEntrySummary = Omit<EntrySummary, 'orgTypeCount' | 'countPerTocItem'>
 const staticEntryStatTitles: { [ key in (keyof StaticEntrySummary)]: string } = {
     totalLeads: _ts('entries.qualityControl', 'totalLeads'),
     totalSources: _ts('entries.qualityControl', 'totalSources'),
-    totalUnverifiedEntries: _ts('entries.qualityControl', 'totalUnverifiedEntries'),
-    totalVerifiedEntries: _ts('entries.qualityControl', 'totalVerifiedEntries'),
+    totalUncontrolledEntries: _ts('entries.qualityControl', 'totalUncontrolledEntries'),
+    totalControlledEntries: _ts('entries.qualityControl', 'totalControlledEntries'),
 };
 
-const clickableKeys = ['totalUnverifiedEntries', 'totalVerifiedEntries'];
+const clickableKeys = ['totalUncontrolledEntries', 'totalControlledEntries'];
 
-type FilterableKeys = 'totalUnverifiedEntries' | 'totalVerifiedEntries';
+type FilterableKeys = 'totalUncontrolledEntries' | 'totalControlledEntries';
 
-interface VerificationKeyValue {
+interface ControlStatusKeyValue {
     key: FilterableKeys;
     value: boolean;
 }
 
-const filterValues: VerificationKeyValue[] = [
+const filterValues: ControlStatusKeyValue[] = [
     {
-        key: 'totalUnverifiedEntries',
+        key: 'totalUncontrolledEntries',
         value: false,
     },
     {
-        key: 'totalVerifiedEntries',
+        key: 'totalControlledEntries',
         value: true,
     },
 ];
@@ -69,7 +69,7 @@ interface EntryStatProps {
     isClickable: boolean;
     handleClick: (v: Record<string, unknown>) => void;
     entriesFilters: {
-        verified?: boolean;
+        controlled?: boolean;
         'authoring_organization_types'?: number[];
     };
 }
@@ -83,7 +83,7 @@ function EntryStat({
     isClickable,
     handleClick,
     entriesFilters: {
-        verified: oldVerificationValue,
+        controlled: oldControlStatus,
         authoring_organization_types: oldOrganizationType = [],
     },
 }: EntryStatProps) {
@@ -93,10 +93,10 @@ function EntryStat({
     const onClickHandler = () => {
         if (isClickable) {
             if (clickableKeys.includes(id)) {
-                const verified = filterValues.find(f => f.key === id)?.value;
-                const newVerificationValue = isNotDefined(oldVerificationValue) ||
-                    oldVerificationValue !== verified ? verified : undefined;
-                handleClick({ verified: newVerificationValue });
+                const controlled = filterValues.find(f => f.key === id)?.value;
+                const newControlStatus = isNotDefined(oldControlStatus) ||
+                    oldControlStatus !== controlled ? controlled : undefined;
+                handleClick({ controlled: newControlStatus });
             } else {
                 const newOrganizationType = oldOrganizationType.length > 0
                     ? oldOrganizationType.filter(v => v !== Number(id))
@@ -144,8 +144,8 @@ const statsKeySelector = (d: Stats) => d.id;
 const defaultStats: EntrySummary = {
     totalLeads: 0,
     totalSources: 0,
-    totalUnverifiedEntries: 0,
-    totalVerifiedEntries: 0,
+    totalUncontrolledEntries: 0,
+    totalControlledEntries: 0,
     orgTypeCount: [],
 };
 
@@ -153,7 +153,7 @@ interface ComponentProps {
     className?: string;
     stats?: EntrySummary;
     entriesFilters: {
-        verified?: boolean;
+        controlled?: boolean;
         'authoring_organization_types'?: number[];
     };
 }
@@ -174,17 +174,17 @@ function EntriesStats(props: Props) {
     } = stats;
 
     const {
-        verified: oldVerificationValue,
+        controlled: oldControlStatus,
         authoring_organization_types: oldOrganizationType = [],
     } = entriesFilters;
 
-    const verificationFilter = useMemo(() => (isNotDefined(oldVerificationValue)
-        ? [] : filterValues.filter(v => v.value === oldVerificationValue).map(v => v.key)
-    ), [oldVerificationValue]);
+    const controlStatusFilter = useMemo(() => (isNotDefined(oldControlStatus)
+        ? [] : filterValues.filter(v => v.value === oldControlStatus).map(v => v.key)
+    ), [oldControlStatus]);
 
     const selectedFilter = useMemo(() =>
-        [...oldOrganizationType, ...verificationFilter],
-    [oldOrganizationType, verificationFilter]);
+        [...oldOrganizationType, ...controlStatusFilter],
+    [oldOrganizationType, controlStatusFilter]);
 
     const handleClick = useCallback((filter: Record<string, unknown>) => {
         setEntriesViewFilter({ filters: { ...entriesFilters, ...filter } });

@@ -1,0 +1,12 @@
+.comment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+    padding: var(--spacing-medium);
+
+    .submit-button {
+        align-self: flex-end;
+    }
+}

@@ -49,7 +49,9 @@ export const entryAccessor = {
     createdBy: entry => getDataSafe(entry).createdBy,
 
     unresolvedCommentCount: entry => getServerDataSafe(entry).unresolvedCommentCount || 0,
-    verified: entry => getServerDataSafe(entry).verified || false,
+    controlled: entry => getServerDataSafe(entry).controlled || false,
+    isVerifiedByCurrentUser: entry => getServerDataSafe(entry).isVerifiedByCurrentUser || false,
+    verifiedByCount: entry => getServerDataSafe(entry).verifiedByCount,
     versionId: entry => getServerDataSafe(entry).versionId,
     imageDetails: entry => getServerDataSafe(entry).imageDetails,
 };
@@ -161,7 +163,9 @@ export const createEntry = ({
     key,
     serverId,
     versionId,
-    verified,
+    controlled,
+    isVerifiedByCurrentUser,
+    verifiedByCount,
     data = {},
     isPristine = false,
     hasError = false,
@@ -204,8 +208,10 @@ export const createEntry = ({
             isMarkedAsDeleted: false,
         },
         serverData: {
+            controlled: false,
+            isVerifiedByCurrentUser: false,
+            verifiedByCount: 0,
             versionId: undefined,
-            verified: false,
         },
         data: {
             id: undefined, // serverId
@@ -221,8 +227,10 @@ export const createEntry = ({
             error: { $set: undefined },
         },
         serverData: {
+            isVerifiedByCurrentUser: { $set: isVerifiedByCurrentUser },
+            verifiedByCount: { $set: verifiedByCount },
+            controlled: { $set: controlled },
             versionId: { $set: versionId },
-            verified: { $set: verified },
             imageDetails: { $set: imageDetails },
         },
         data: {
@@ -313,7 +321,9 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
             const {
                 id: remoteServerId,
                 versionId: remoteVersionId,
-                verified: remoteVerified,
+                controlled: remoteControlled,
+                isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                verifiedByCount: remoteVerifiedByCount,
                 clientId: remoteKey,
             } = remoteItem;
 
@@ -333,7 +343,9 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     key: localId,
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
-                    verified: remoteVerified,
+                    controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                     data: remoteItem,
                     isPristine: true,
                     hasError: false,
@@ -371,13 +383,17 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                 const {
                     id: remoteServerId,
                     versionId: remoteVersionId,
-                    verified: remoteVerified,
+                    controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                 } = remoteItem;
                 const newItem = create({
                     key: localId,
                     serverId: remoteServerId, // here
                     versionId: remoteVersionId,
-                    verified: remoteVerified,
+                    controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                     data: remoteItem,
                     isPristine: true,
                     hasError: false,
@@ -390,7 +406,9 @@ export const createDiff = (locals, remotes, accessor = entryAccessor, create = c
                     key: localId,
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
-                    verified: remoteVerified,
+                    controlled: remoteControlled,
+                    isVerifiedByCurrentUser: remoteIsVerifiedByCurrentUser,
+                    verifiedByCount: remoteVerifiedByCount,
                     data: localValues,
                     isPristine: localPristine,
                     hasError: localError,

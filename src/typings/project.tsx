@@ -23,6 +23,7 @@ export interface Membership {
     memberStatus: 'admin' | 'member';
     project: number;
     role: number;
+    badges: number[];
     roleDetails: {
         id: number;
         title: string;
@@ -107,7 +108,7 @@ export interface ProjectStat {
     numberOfEntries: number;
     numberOfLeads: number;
     numberOfLeadsTagged: number;
-    numberOfLeadsTaggedAndVerified: number;
+    numberOfLeadsTaggedAndControlled: number;
     numberOfUsers: number;
     role: number;
     startDate?: string;
@@ -154,6 +155,7 @@ export interface UserGroup {
     role: number;
     addedBy: number;
     addedByName: string;
+    badges: number[];
     roleDetails: {
         id: number;
         title: string;
@@ -174,4 +176,5 @@ export interface ProjectRole {
     level: number;
     isCreatorRole: boolean;
     isDefaultRole: boolean;
+    qualityController: boolean; //TODO: fix this later
 }

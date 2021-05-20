@@ -6,8 +6,8 @@ import {
 import { Lead } from './lead';
 
 export type EntryType = 'excerpt' | 'image' | 'dataSeries';
-
-export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality' | 'sourceRaw' | 'authorsDetail' | 'sourceDetail' | 'confidentialityDisplay' | 'assignee' | 'attachment';
+export type EntryReviewType = 0 | 1 | 2 | 3 | 4;
+export type EntryLeadType = 'id' | 'title' | 'createdAt' | 'url' | 'assigneeDetails' | 'publishedOn' | 'pageCount' | 'confidentiality' | 'sourceRaw' | 'authorsDetail' | 'sourceDetail' | 'confidentialityDisplay' | 'assignee';
 
 export interface ProjectLabelFields {
     count: number;
@@ -86,8 +86,11 @@ export interface EntryFields extends DatabaseEntityBase {
     tabularFieldData: TabularDataFields;
     lead: Pick<Lead, EntryLeadType>;
     projectLabel: ProjectLabelFields[];
-    verified: boolean;
-    verificationLastChangedByDetails: UserFields;
+    controlled: boolean;
+    controlledChangedByDetails: UserFields;
+    verifiedBy: UserFields['id'][];
+    verifiedByCount: number;
+    isVerifiedByCurrentUser: boolean;
 }
 
 export interface LeadWithGroupedEntriesFields {
@@ -111,16 +114,16 @@ export type Entry = Omit<EntryFields, 'lead'> & {
 export interface TocItemCount {
     labelKey: string;
     widgetKey: string;
-    unverifiedCount: number;
-    verifiedCount: number;
+    uncontrolledCount: number;
+    controlledCount: number;
 }
 
 export interface EntrySummary {
     countPerTocItem?: TocItemCount[];
     totalLeads: number;
     totalSources: number;
-    totalUnverifiedEntries: number;
-    totalVerifiedEntries: number;
+    totalUncontrolledEntries: number;
+    totalControlledEntries: number;
     orgTypeCount: {
         count: number;
         org: {
@@ -140,4 +143,34 @@ export interface TocCountMap {
 export interface EntryOptions {
     createdBy: KeyValueElement;
     projectEntryLabel: BasicElement[];
+}
+
+interface UserDetail {
+    id: number;
+    name: string;
+    email: string;
+    organization: string;
+}
+
+export interface EntryComment {
+    id: number;
+    textHistory: {
+        createdAt: string;
+        text: string;
+    }[];
+    lead: number;
+    createdByDetails: UserDetail & { displayPictureUrl: string };
+    mentionedUsersDetails: UserDetail[];
+    commentTypeDisplay: string;
+    commentType: number;
+    createdBy: number;
+    createdAt: string;
+    entry: number;
+    mentionedUsers: number[];
+}
+
+export interface EntryReviewSummary {
+    verifiedBy: UserDetail[];
+    controlled: boolean;
+    controlledChangedByDetails: UserFields;
 }

@@ -1,0 +1,36 @@
+.toggle-entry-verification {
+    display: flex;
+    align-items: center;
+    padding-right: var(--spacing-small);
+
+    .icons {
+        padding: 0;
+    }
+    .children {
+        padding: 0;
+    }
+
+    .actions {
+        padding: 0;
+    }
+
+    .toggle-button {
+        display: flex;
+        align-items: center;
+    }
+
+    .icon {
+        color: var(--dui-color-negative);
+        font-size: var(--dui-font-size-medium);
+    }
+
+    &.verified {
+        .icon {
+            color: var(--color-primary);
+        }
+    }
+}
+
+.comment-modal {
+    width: 400px;
+}

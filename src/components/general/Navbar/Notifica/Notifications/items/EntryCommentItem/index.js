@@ -71,8 +71,7 @@ const getNotificationText = (notificationType, notification, projects, closeModa
         comment: (
             <LinkItem
                 link={entriesLink}
-                // This is intentional
-                title="comment"
+                title={_ts('notifications.entryCommentItem', 'comment')}
                 closeModal={closeModal}
             />
         ),

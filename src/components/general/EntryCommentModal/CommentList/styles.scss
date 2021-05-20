@@ -1,0 +1,39 @@
+.comment {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+    padding: var(--spacing-medium);
+
+    .display-picture {
+        align-self: flex-start;
+        flex: 0 0 auto;
+        width: var(--width-navbar-avatar);
+        height: var(--height-navbar-avatar);
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding-left: var(--spacing-small);
+
+        .heading {
+            display: flex;
+            align-items: flex-start;
+            flex: 1 0 auto;
+            justify-content: space-between;
+
+            .detail {
+                .name {
+                    font-weight: var(--font-weight-bold);
+                }
+
+                .modified {
+                    color: var(--color-text-disabled);
+                }
+            }
+        }
+    }
+}

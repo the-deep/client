@@ -9,7 +9,7 @@ import {
 import memoize from 'memoize-one';
 
 import modalize from '#rscg/Modalize';
-import EntryCommentModal from '#components/general/EntryCommentModal';
+import EntryCommentButton from '#components/general/EntryCommentButton';
 import EntryGroupModal from '#components/general/EntryGroupModal';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import SelectInput from '#rsci/SelectInput';
@@ -33,16 +33,18 @@ import {
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetEntryCommentsCountAction,
-    editEntriesSetEntryVerificationStatusAction,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
     fieldsMapForTabularBookSelector,
+    editEntriesSetEntryControlStatusAction,
+    editEntriesSetEntryVerificationStatusAction,
 } from '#redux';
 import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import Cloak from '#components/general/Cloak';
-import EntryVerify from '#components/general/EntryVerify';
+import ToggleEntryControl from '#components/general/ToggleEntryControl';
+import ToggleEntryVerification from '#components/general/ToggleEntryVerification';
 
 import {
     calculateFirstTimeAttributes,
@@ -54,6 +56,7 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 
 const propTypes = {
+    className: PropTypes.string,
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -65,13 +68,15 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     setEntryCommentsCount: PropTypes.func.isRequired,
-    setEntryVerificationStatus: PropTypes.func.isRequired,
+    setEditEntryControl: PropTypes.func.isRequired,
+    setEditEntryVerification: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     entryGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     labels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    className: undefined,
     entry: undefined,
     widgets: [],
     entries: [],
@@ -98,11 +103,12 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     setEntryCommentsCount: params => dispatch(editEntriesSetEntryCommentsCountAction(params)),
-    setEntryVerificationStatus: params => dispatch(
-        editEntriesSetEntryVerificationStatusAction(params),
-    ),
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
     markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
+    setEditEntryControl: params => dispatch(editEntriesSetEntryControlStatusAction(params)),
+    setEditEntryVerification: params => dispatch(
+        editEntriesSetEntryVerificationStatusAction(params),
+    ),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -124,8 +130,7 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         this.state = {
-            mountModalButton: false,
-            entryVerifyPending: false,
+            entryControlPending: false,
         };
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -141,12 +146,6 @@ export default class Overview extends React.PureComponent {
         }
 
         this.showInitial = !!entryLocalId && showComment === 'true';
-    }
-
-    componentDidMount() {
-        this.entryCommentTimeout = setTimeout(() => {
-            this.setState({ mountModalButton: true });
-        }, 200);
     }
 
     componentWillUnmount() {
@@ -249,27 +248,42 @@ export default class Overview extends React.PureComponent {
         setEntryCommentsCount({ entry, leadId });
     }
 
-    handleVerificationChange = (newEntry) => {
-        const {
-            leadId,
-            setEntryVerificationStatus,
-        } = this.props;
-
-        const entry = {
-            versionId: newEntry.versionId,
-            verified: newEntry.verified,
-            id: newEntry.id,
-        };
-
-        setEntryVerificationStatus({ entry, leadId });
+    handleEntryControlPendingChange = (entryControlPending) => {
+        this.setState({ entryControlPending });
     }
 
-    handleEntryVerifyPendingChange = (entryVerifyPending) => {
-        this.setState({ entryVerifyPending });
+    handleEntryVerificationChange = (verified, count) => {
+        const {
+            entry,
+            leadId,
+            setEditEntryVerification,
+        } = this.props;
+        const entryForPatch = {
+            id: entryAccessor.serverId(entry),
+            isVerifiedByCurrentUser: verified,
+            verifiedByCount: count,
+        };
+
+        setEditEntryVerification({ entry: entryForPatch, leadId });
+    }
+
+    handleEntryControlChange = (controlStatus) => {
+        const {
+            entry,
+            leadId,
+            setEditEntryControl,
+        } = this.props;
+        const entryForPatch = {
+            id: entryAccessor.serverId(entry),
+            controlled: controlStatus,
+        };
+
+        setEditEntryControl({ entry: entryForPatch, leadId });
     }
 
     render() {
         const {
+            className,
             entry,
             leadId,
             lead,
@@ -289,24 +303,22 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         const {
-            mountModalButton,
-            entryVerifyPending,
+            entryControlPending,
         } = this.state;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
 
-        const unresolvedCommentCount = entryAccessor.unresolvedCommentCount(entry);
         const fieldId = entryAccessor.tabularField(entry);
-        const verified = entryAccessor.verified(entry);
+        const controlled = entryAccessor.controlled(entry);
 
-        const defaultAssignees = this.getDefaultAssignees(entry);
-        const disableVerifiedButton = !entry?.localData?.isPristine
+        const disableEntryControlAndVerify = !entry?.localData?.isPristine
             || isFalsy(entryAccessor.serverId(entry));
 
+        const entryLastChangedBy = entry?.controlLastChangedByDetails?.displayName;
         return (
             <ResizableH
-                className={styles.overview}
+                className={_cs(className, styles.overview)}
                 leftChild={
                     <LeftPane
                         className={styles.leftPanel}
@@ -319,7 +331,7 @@ export default class Overview extends React.PureComponent {
                 }
                 rightChild={
                     <React.Fragment>
-                        {entryVerifyPending && <LoadingAnimation />}
+                        {entryControlPending && <LoadingAnimation />}
                         <header className={styles.header}>
                             <div className={styles.leftActionButtons}>
                                 <Cloak
@@ -347,24 +359,24 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.rightActionButtons}>
-                                <EntryVerify
-                                    title={entry?.verificationLastChangedByDetails ? (
-                                        _ts(
-                                            'entries',
-                                            'verificationLastChangedBy',
-                                            {
-                                                userName: entry
-                                                    ?.verificationLastChangedByDetails.displayName,
-                                            },
-                                        )
+                                <ToggleEntryVerification
+                                    entryId={entryAccessor.serverId(entry)}
+                                    projectId={lead.project}
+                                    value={entryAccessor.isVerifiedByCurrentUser(entry)}
+                                    verifyCount={entryAccessor.verifiedByCount(entry)}
+                                    onChange={this.handleEntryVerificationChange}
+                                    disabled={disableEntryControlAndVerify}
+                                />
+                                <ToggleEntryControl
+                                    tooltip={entryLastChangedBy ? (
+                                        _ts('entries', 'controlStatusLastChangedBy', { userName: entryLastChangedBy })
                                     ) : undefined}
                                     entryId={entryAccessor.serverId(entry)}
-                                    leadId={leadId}
-                                    versionId={entryAccessor.versionId(entry)}
-                                    disabled={disableVerifiedButton}
-                                    value={verified}
-                                    handleEntryVerify={this.handleVerificationChange}
-                                    onPendingChange={this.handleEntryVerifyPendingChange}
+                                    projectId={lead.project}
+                                    value={controlled}
+                                    onPendingStatusChange={this.handleEntryControlPendingChange}
+                                    onChange={this.handleEntryControlChange}
+                                    disabled={disableEntryControlAndVerify}
                                 />
                                 {labels.length > 0 && (
                                     <ModalButton
@@ -383,34 +395,7 @@ export default class Overview extends React.PureComponent {
                                         }
                                     />
                                 )}
-                                {mountModalButton && (
-                                    <ModalButton
-                                        className={
-                                            _cs(
-                                                styles.entryCommentButton,
-                                                unresolvedCommentCount > 0 && styles.accented,
-                                            )
-                                        }
-                                        disabled={isFalsy(entryAccessor.serverId(entry))}
-                                        initialShowModal={this.showInitial}
-                                        modal={
-                                            <EntryCommentModal
-                                                entryServerId={entryAccessor.serverId(entry)}
-                                                onCommentsCountChange={
-                                                    this.handleCommentsCountChange
-                                                }
-                                                defaultAssignees={defaultAssignees}
-                                            />
-                                        }
-                                        iconName="chat"
-                                    >
-                                        {unresolvedCommentCount > 0 &&
-                                            <div className={styles.commentCount}>
-                                                {unresolvedCommentCount}
-                                            </div>
-                                        }
-                                    </ModalButton>
-                                )}
+                                <EntryCommentButton entryId={entryAccessor.serverId(entry)} />
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
                                     render={
