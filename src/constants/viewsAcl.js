@@ -2,10 +2,10 @@ const notLoggedIn = ({ isLoggedIn }) => !isLoggedIn;
 const notProjectMember = ({ isLoggedIn, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.view
 );
-/*
 const notProjectAdmin = ({ isLoggedIn, setupPermissions }) => (
     !isLoggedIn || !setupPermissions.modify
 );
+/*
 const notDev = ({ isLoggedIn, isDevMode }) => (
     !isLoggedIn || !isDevMode
 );
@@ -74,7 +74,7 @@ const acl = {
 
     discoverProjects: { hide: notLoggedIn },
     projects: { hide: notLoggedIn },
-    projectEdit: { hide: notLoggedIn },
+    editProject: { hide: notProjectAdmin },
     home: { hide: notProjectMember },
     dashboard: { hide: notProjectMember },
     connectors: { hide: notLoggedIn },

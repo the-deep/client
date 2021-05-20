@@ -148,7 +148,7 @@ function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [projectActivity]);
 
-    const canEditProject = projectRoles[role].setupPermissions.modify;
+    const canEditProject = projectRoles[role]?.setupPermissions?.modify;
 
     return (
         <ContainerCard

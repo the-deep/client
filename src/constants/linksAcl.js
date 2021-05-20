@@ -14,6 +14,7 @@ export const allLinks = {
 
     userProfile: viewsAcl.userProfile,
     projects: viewsAcl.projects,
+    editProject: viewsAcl.editProject,
     countries: viewsAcl.countries,
     clusterViz: { hide: notClusteringViewable },
     connectors: viewsAcl.connectors,
