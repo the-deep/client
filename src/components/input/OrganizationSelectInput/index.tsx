@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { SearchSelectInput, SearchSelectInputProps } from '@the-deep/deep-ui';
-import { Organization, MultiResponse } from '#typings';
+import { BasicOrganization, MultiResponse } from '#typings';
 
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
@@ -11,18 +11,19 @@ type Def = { containerClassName?: string };
 type OrganizationSelectInputProps<K extends string> = SearchSelectInputProps<
     number,
     K,
-    Organization,
+    BasicOrganization,
     Def,
-    'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount'
+    'onSearchValueChange' | 'searchOptions' | 'optionsPending' | 'keySelector' | 'labelSelector' | 'totalOptionsCount' | 'onShowDropdownChange'
 >;
-const keySelector = (d: Organization) => d.id;
-const labelSelector = (d: Organization) => d.title;
+const keySelector = (d: BasicOrganization) => d.id;
+const labelSelector = (d: BasicOrganization) => d.title;
 function OrganizationSelectInput<K extends string>(props: OrganizationSelectInputProps<K>) {
     const {
         className,
         ...otherProps
     } = props;
 
+    const [opened, setOpened] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
@@ -33,13 +34,14 @@ function OrganizationSelectInput<K extends string>(props: OrganizationSelectInpu
     const {
         pending: organizationSearchPending,
         response: organizations,
-    } = useRequest<MultiResponse<Organization>>(
+    } = useRequest<MultiResponse<BasicOrganization>>(
         {
             url: 'server://organizations/',
             method: 'GET',
+            skip: !opened,
             query: searchQueryParams,
             onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('assignment', 'markAsDoneFailed'))({ error: errorBody }),
+                notifyOnFailure(_ts('components.organizationSelectInput', 'title'))({ error: errorBody }),
         },
     );
 
@@ -53,6 +55,7 @@ function OrganizationSelectInput<K extends string>(props: OrganizationSelectInpu
             searchOptions={organizations?.results}
             optionsPending={organizationSearchPending}
             totalOptionsCount={organizations?.count}
+            onShowDropdownChange={setOpened}
         />
     );
 }

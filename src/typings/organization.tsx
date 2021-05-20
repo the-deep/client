@@ -1,6 +1,11 @@
 import { BasicElement } from './';
 
-export interface Organization {
+export interface BasicOrganization {
+    id: number;
+    title: string;
+}
+
+export interface Organization extends BasicOrganization {
     id: number;
     createdAt: string;
     modifiedAt: string;
