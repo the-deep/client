@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import {
     _cs,
     isDefined,
@@ -11,7 +11,6 @@ import {
 } from '@togglecorp/toggle-form';
 import {
     Button,
-    SelectInput,
     TextArea,
     PendingMessage,
     TextInput,
@@ -22,8 +21,8 @@ import {
 import { notifyOnFailure } from '#utils/requestNotify';
 import { useLazyRequest } from '#utils/request';
 import _ts from '#ts';
-import { AnalyticalFramework, OrganizationDetails } from '#typings';
-
+import { AnalyticalFramework, BasicOrganization } from '#typings';
+import OrganizationSelectInput from '#components/input/OrganizationSelectInput';
 import styles from './styles.scss';
 
 interface Props {
@@ -43,10 +42,9 @@ const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         title: [requiredCondition],
         description: [],
+        organization: [],
     }),
 };
-const organizationKeySelector = (o: OrganizationDetails) => o.id;
-const organizationLabelSelector = (o: OrganizationDetails) => o.title;
 
 function FrameworkDetailsForm(props: Props) {
     const {
@@ -55,6 +53,11 @@ function FrameworkDetailsForm(props: Props) {
         analyticalFramework: analyticalFrameworkFromProps,
         frameworkGetPending,
     } = props;
+
+    const [
+        organizationOptions,
+        setOrganizationOptions,
+    ] = useState<BasicOrganization[] | undefined | null>();
 
     const {
         pristine,
@@ -87,6 +90,10 @@ function FrameworkDetailsForm(props: Props) {
             patchFramework(val);
         }
     }, [onErrorSet, validate, patchFramework]);
+
+    const projectOrganizations = useMemo(() => (analyticalFrameworkFromProps?.organizationDetails ?
+        [analyticalFrameworkFromProps.organizationDetails] : []
+    ), [analyticalFrameworkFromProps?.organizationDetails]);
 
     const pending = frameworkPatchPending || frameworkGetPending;
 
@@ -123,15 +130,13 @@ function FrameworkDetailsForm(props: Props) {
                             label={_ts('analyticalFramework', 'createdOn')}
                         />
                     </div>
-                    <SelectInput
+                    <OrganizationSelectInput
                         className={styles.input}
                         name="organization"
-                        options={[]} // TODO: will add organization selection later
-                        readOnly
-                        keySelector={organizationKeySelector}
-                        labelSelector={organizationLabelSelector}
-                        onChange={onValueChange}
                         value={value.organization}
+                        onChange={onValueChange}
+                        options={organizationOptions ?? projectOrganizations}
+                        onOptionsChange={setOrganizationOptions}
                         error={error?.fields?.organization}
                         disabled={pending}
                         label={_ts('analyticalFramework', 'associatedOrganization')}

@@ -1,3 +1,4 @@
+
 export interface AnalyticalFramework {
     title: string;
     createdBy: number;
@@ -6,4 +7,9 @@ export interface AnalyticalFramework {
     organization: number;
     description: string;
     isPrivate: boolean;
+    organizationDetails: {
+        id: number;
+        title: string;
+        shortName: string;
+    }
 }
