@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { connect } from 'react-redux';
 import {
     _cs,
     compareDate,
@@ -32,8 +33,11 @@ import {
 import {
     UserActivityStat,
     CountTimeSeries,
+    AppState,
+    ProjectRolesMap,
 } from '#typings';
 import { pathNames } from '#constants';
+import { projectRolesSelector } from '#redux';
 
 import _ts from '#ts';
 
@@ -83,8 +87,18 @@ const minTickFormatter = (value: number | string) => {
     return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(date);
 };
 
+const recentlyActiveKeySelector = (d: UserActivityStat) => d.id;
+
+const mapStateToProps = (state: AppState) => ({
+    projectRoles: projectRolesSelector(state),
+});
+interface PropsFromState {
+    projectRoles: ProjectRolesMap;
+}
+
 interface RecentProjectItemProps {
     className?: string;
+    role: number;
     projectId: number;
     title: string;
     isPrivate: boolean;
@@ -101,9 +115,7 @@ interface RecentProjectItemProps {
     recentlyActive: UserActivityStat[];
 }
 
-const recentlyActiveKeySelector = (d: UserActivityStat) => d.id;
-
-function ProjectItem(props: RecentProjectItemProps) {
+function ProjectItem(props: RecentProjectItemProps & PropsFromState) {
     const {
         className,
         title,
@@ -120,6 +132,8 @@ function ProjectItem(props: RecentProjectItemProps) {
         totalSourcesValidated = 0,
         recentlyActive,
         projectActivity,
+        projectRoles,
+        role,
     } = props;
 
     const recentlyActiveRendererParams = useCallback((key, data) => ({
@@ -133,6 +147,8 @@ function ProjectItem(props: RecentProjectItemProps) {
             date: (new Date(pa.date)).getTime(),
         })).sort((a, b) => compareDate(a.date, b.date))
     ), [projectActivity]);
+
+    const canEditProject = projectRoles[role]?.setupPermissions?.modify;
 
     return (
         <ContainerCard
@@ -158,18 +174,20 @@ function ProjectItem(props: RecentProjectItemProps) {
                         className={styles.privacyIcon}
                         name={isPrivate ? 'locked' : 'unlocked'}
                     />
-                    <ButtonLikeLink
-                        className={styles.link}
-                        variant="tertiary"
-                        to={reverseRoute(pathNames.editProject, { projectId })}
-                        icons={(
-                            <Icon
-                                name="edit"
-                            />
-                        )}
-                    >
-                        {_ts('home.recentProjects', 'editProjectButtonLabel')}
-                    </ButtonLikeLink>
+                    {canEditProject && (
+                        <ButtonLikeLink
+                            className={styles.link}
+                            variant="tertiary"
+                            to={reverseRoute(pathNames.editProject, { projectId })}
+                            icons={(
+                                <Icon
+                                    name="edit"
+                                />
+                            )}
+                        >
+                            {_ts('home.recentProjects', 'editProjectButtonLabel')}
+                        </ButtonLikeLink>
+                    )}
                 </>
             )}
             contentClassName={styles.content}
@@ -284,4 +302,4 @@ function ProjectItem(props: RecentProjectItemProps) {
     );
 }
 
-export default ProjectItem;
+export default connect(mapStateToProps)(ProjectItem);
