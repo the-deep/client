@@ -160,18 +160,27 @@ export interface UserGroup {
     };
 }
 
-type Permissions = 'view' | 'create' | 'modify' | 'delete'
+interface Permission {
+    view?: boolean;
+    create?: boolean;
+    modify?: boolean;
+    delete?: boolean;
+}
 
 export interface ProjectRole {
     id: number;
-    leadPermissions: [Permissions];
-    entryPermissions: [Permissions];
-    setupPermissions: [Permissions];
-    exportPermissions: [Permissions];
-    assessmentPermissions: [Permissions];
+    leadPermissions: Permission;
+    entryPermissions: Permission;
+    setupPermissions: Permission;
+    exportPermissions: Permission;
+    assessmentPermissions: Permission;
     title: string;
     description: string;
     level: number;
     isCreatorRole: boolean;
     isDefaultRole: boolean;
+}
+
+export interface ProjectRolesMap {
+    [key: number]: ProjectRole;
 }

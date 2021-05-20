@@ -86,26 +86,20 @@
         }
     }
 
-    .header-right {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
+    .privacy-label {
+        margin: 0 var(--spacing-small);
+        text-transform: uppercase;
+        color: var(--dui-color-label);
+        font-weight: var(--font-weight-bold);
+    }
 
-        .privacy-label {
-            margin: 0 var(--spacing-small);
-            text-transform: uppercase;
-            color: var(--dui-color-label);
-            font-weight: var(--font-weight-bold);
-        }
+    .privacy-icon {
+        margin: 0 var(--spacing-small);
+        color: var(--dui-color-label);
+    }
 
-        .privacy-icon {
-            margin: 0 var(--spacing-small);
-            color: var(--dui-color-label);
-        }
-
-        .link {
-            margin: 0 var(--spacing-small);
-        }
+    .link {
+        margin: 0 var(--spacing-small);
     }
 }
 

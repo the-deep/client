@@ -97,6 +97,7 @@ const getRecentProjectStat = (projectStat: ProjectStat) => ({
     totalSourcesTagged: projectStat.numberOfLeadsTagged,
     totalSourcesValidated: projectStat.numberOfLeadsTaggedAndVerified,
     projectActivity: projectStat.entriesActivity,
+    role: projectStat.role,
     // TODO: Use better activity after API is ready
     recentlyActive: projectStat.topTaggers,
 });
