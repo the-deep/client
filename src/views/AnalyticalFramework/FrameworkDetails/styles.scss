@@ -14,15 +14,6 @@
         padding: calc(var(--dui-spacing-super-large) - var(--dui-spacing-medium));
         min-height: clamp(320px, 30vh, 50%);
 
-        .action-cell {
-            display: flex;
-            align-items: center;
-
-            .button {
-                margin: 0 var(--dui-spacing-small);
-            }
-        }
-
         .pager-container {
             display: flex;
             justify-content: flex-end;

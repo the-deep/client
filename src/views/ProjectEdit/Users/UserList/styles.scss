@@ -9,29 +9,6 @@
         flex-grow: 1;
         overflow-x: auto;
 
-        .table {
-            flex-grow: 1;
-            overflow-y: auto;
-
-            :global {
-                .header {
-                    z-index: 1;
-                }
-
-                .actions {
-                    width: 200px;
-                }
-            }
-
-            .row-actions {
-                display: flex;
-
-                .button {
-                    margin: 0 calc(var(--spacing-small) / 2)
-                }
-            }
-        }
-
         .pager {
             align-self: flex-end;
             flex-shrink: 0;

@@ -1,29 +1,25 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
-
 import {
-    IoPencil,
-    IoTrash,
     IoChevronForward,
     IoAdd,
 } from 'react-icons/io5';
-
 import {
     Container,
     Button,
     Link,
     Pager,
-    QuickActionButton,
-    QuickActionConfirmButton,
+    Table,
+    TableColumn,
+    TableHeaderCell,
+    TableHeaderCellProps,
+    createStringColumn,
+    PendingMessage,
 } from '@the-deep/deep-ui';
 
+import { createDateColumn } from '#dui/tableHelpers';
 import { notifyOnFailure } from '#utils/requestNotify';
-import RawTable from '#rscv/RawTable';
-import { Header } from '#rscv/Table';
-import TableHeader from '#rscv/TableHeader';
 import Message from '#rscv/Message';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import FormattedDate from '#rscv/FormattedDate';
 import { useRequest, useLazyRequest } from '#utils/request';
 import _ts from '#ts';
 
@@ -34,17 +30,18 @@ import {
     UserGroup,
 } from '#typings';
 
+import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import AddUserGroupModal from './AddUserGroupModal';
 import styles from './styles.scss';
+
+const maxItemsPerPage = 10;
+const emptyLink = '#'; // TODO: Add link when made
+const usergroupKeySelector = (d: UserGroup) => d.id;
 
 interface Props{
     className?: string;
     projectId: number;
 }
-
-const maxItemsPerPage = 10;
-const emptyLink = '#'; // TODO: Add link when made
-const usergroupKeySelector = (d: UserGroup) => d.id;
 
 function UserGroupList(props: Props) {
     const {
@@ -97,90 +94,56 @@ function UserGroupList(props: Props) {
         },
     });
 
-    const handleDeleteUsergroupClick = triggerDeleteUsergroup;
-
     const handleEditUsergroupClick = useCallback((usergroupId) => {
         setUsergroupIdToEdit(usergroupId);
         setModalShow();
     }, [setModalShow]);
 
-    const headers: Header<UserGroup>[] = useMemo(() => ([
-        {
-            key: 'title',
-            label: _ts('projectEdit', 'group'),
-            order: 1,
-            sortable: false,
-        },
-        {
-            key: 'addedByName',
-            label: _ts('projectEdit', 'addedByName'),
-            order: 2,
-            sortable: false,
-        },
-        {
-            key: 'joinedAt',
-            label: _ts('projectEdit', 'addedOn'),
-            order: 3,
-            sortable: false,
-            modifier: row => (
-                <FormattedDate
-                    value={row.joinedAt}
-                    mode="dd MMM yyyy"
-                />
-            ),
-        },
-        {
-            key: 'roleDetails',
-            label: _ts('projectEdit', 'groupRole'),
-            order: 4,
-            sortable: false,
-            modifier: row => row.roleDetails.title,
-        },
-        {
-            key: 'actions',
-            label: _ts('projectEdit', 'actionsLabel'),
-            order: 5,
-            sortable: false,
-            modifier: row => (
-                <div className={styles.rowActions}>
-                    <QuickActionButton
-                        className={styles.button}
-                        name={undefined}
-                        title={_ts('projectEdit', 'editUsergroupLabel')}
-                        onClick={() => handleEditUsergroupClick(row.id)}
-                    >
-                        <IoPencil />
-                    </QuickActionButton>
-                    <QuickActionConfirmButton
-                        className={styles.button}
-                        name={undefined}
-                        title={_ts('projectEdit', 'deleteUsergroupLabel')}
-                        onConfirm={() => handleDeleteUsergroupClick(row.id)}
-                        showConfirmationInitially={false}
-                        message={_ts('projectEdit', 'removeUserGroupConfirmation')}
-                    >
-                        <IoTrash />
-                    </QuickActionConfirmButton>
-                </div>
-            ),
-        },
-    ]), [handleDeleteUsergroupClick, handleEditUsergroupClick]);
+    const columns = useMemo(() => {
+        const actionColumn: TableColumn<
+            UserGroup, number, ActionCellProps<number>, TableHeaderCellProps
+        > = {
+            id: 'action',
+            title: 'Actions',
+            headerCellRenderer: TableHeaderCell,
+            headerCellRendererParams: {
+                sortable: false,
+            },
+            cellRenderer: ActionCell,
+            cellRendererParams: userId => ({
+                itemKey: userId,
+                onEditClick: handleEditUsergroupClick,
+                onDeleteClick: triggerDeleteUsergroup,
+                editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),
+                deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
+                deleteConfirmationMessage: _ts('projectEdit', 'removeUserGroupConfirmation'),
+            }),
+        };
 
-    const dataModifier = useCallback(
-        (data, columnKey) => {
-            const header = headers.find(d => d.key === columnKey);
-            if (header?.modifier) {
-                return header.modifier(data);
-            }
-            return data[columnKey];
-        }, [headers],
-    );
-
-    const headerModifier = useCallback(headerData => (
-        <TableHeader
-            label={headerData.label}
-        />
-    ), []);
+        return ([
+            createStringColumn<UserGroup, number>(
+                'title',
+                _ts('projectEdit', 'group'),
+                item => item.title,
+            ),
+            createStringColumn<UserGroup, number>(
+                'addedByName',
+                _ts('projectEdit', 'addedByName'),
+                item => item.addedByName,
+            ),
+            createDateColumn<UserGroup, number>(
+                'joinedAt',
+                _ts('projectEdit', 'addedOn'),
+                item => item.joinedAt,
+            ),
+            createStringColumn<UserGroup, number>(
+                'role',
+                'Assigned Role',
+                item => item?.roleDetails.title,
+            ),
+            actionColumn,
+        ]);
+    }, [triggerDeleteUsergroup, handleEditUsergroupClick]);
 
     const usergroupToEdit = useMemo(() => (
         usergroupResponse?.results?.find(d => d.id === usergroupIdToEdit)
@@ -228,16 +191,13 @@ function UserGroupList(props: Props) {
                 </div>
             )}
         >
-            {usergroupPending && (<LoadingAnimation />)}
+            {usergroupPending && (<PendingMessage />)}
             {(usergroupResponse && usergroupResponse?.count > 0)
                 ? (
-                    <RawTable
-                        className={styles.table}
-                        data={usergroupResponse?.results ?? []}
-                        dataModifier={dataModifier}
-                        headerModifier={headerModifier}
-                        headers={headers}
+                    <Table
+                        data={usergroupResponse.results}
                         keySelector={usergroupKeySelector}
+                        columns={columns}
                     />
                 ) : (
                     <div className={styles.emptyTable}>

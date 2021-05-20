@@ -1,50 +1,58 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { _cs } from '@togglecorp/fujs';
-
-import {
-    IoPencil,
-    IoTrash,
-    IoAdd,
-} from 'react-icons/io5';
+import { connect } from 'react-redux';
+import { IoAdd } from 'react-icons/io5';
 import {
     Container,
     Button,
     Pager,
-    QuickActionButton,
-    QuickActionConfirmButton,
+    Table,
+    PendingMessage,
+    TableColumn,
+    TableHeaderCell,
+    TableHeaderCellProps,
+    createStringColumn,
 } from '@the-deep/deep-ui';
 
+import { createDateColumn } from '#dui/tableHelpers';
 import { notifyOnFailure } from '#utils/requestNotify';
-import RawTable from '#rscv/RawTable';
-import { Header } from '#rscv/Table';
-import TableHeader from '#rscv/TableHeader';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import FormattedDate from '#rscv/FormattedDate';
 import { useRequest, useLazyRequest } from '#utils/request';
+import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import _ts from '#ts';
 
+import { activeUserSelector } from '#redux';
 import { useModalState } from '#hooks/stateManagement';
 import {
     Membership,
     MultiResponse,
+    AppState,
 } from '#typings';
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.scss';
+
+const mapStateToProps = (state: AppState) => ({
+    activeUser: activeUserSelector(state),
+});
+
+const maxItemsPerPage = 10;
+const userKeySelector = (d: Membership) => d.id;
+
+interface PropsFromState {
+    activeUser: { userId: number };
+}
 
 interface Props{
     className?: string;
     projectId: number;
 }
 
-const maxItemsPerPage = 10;
-const userKeySelector = (d: Membership) => d.id;
-
-function UserList(props: Props) {
+function UserList(props: Props & PropsFromState) {
     const {
         projectId,
         className,
+        activeUser,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -91,102 +99,67 @@ function UserList(props: Props) {
         },
     });
 
-    const handleDeleteMembershipClick = triggerMembershipDelete;
-
     const handleEditMembershipClick = useCallback((membershipId) => {
         setMembershipIdToEdit(membershipId);
         setModalShow();
     }, [setModalShow]);
 
-    const headers: Header<Membership>[] = useMemo(() => ([
-        {
-            key: 'memberName',
-            label: _ts('projectEdit', 'memberName'),
-            order: 1,
-            sortable: false,
-        },
-        {
-            key: 'memberEmail',
-            label: _ts('projectEdit', 'memberEmail'),
-            order: 2,
-            sortable: false,
-        },
-        {
-            key: 'memberOrganization',
-            label: _ts('projectEdit', 'memberOrganization'),
-            order: 3,
-            sortable: false,
-        },
-        {
-            key: 'addedByName',
-            label: _ts('projectEdit', 'addedByName'),
-            order: 4,
-            sortable: false,
-        },
-        {
-            key: 'joinedAt',
-            label: _ts('projectEdit', 'addedOn'),
-            order: 5,
-            sortable: false,
-            modifier: row => (
-                <FormattedDate
-                    value={row.joinedAt}
-                    mode="dd MMM yyyy"
-                />
-            ),
-        },
-        {
-            key: 'roleDetails',
-            label: _ts('projectEdit', 'assignedRole'),
-            order: 6,
-            sortable: false,
-            modifier: row => row.roleDetails.title,
-        },
-        {
-            key: 'actions',
-            label: _ts('projectEdit', 'actionsLabel'),
-            order: 7,
-            sortable: false,
-            modifier: row => (
-                <div className={styles.rowActions}>
-                    <QuickActionButton
-                        className={styles.button}
-                        name={undefined}
-                        title={_ts('projectEdit', 'editUserLabel')}
-                        onClick={() => handleEditMembershipClick(row.id)}
-                    >
-                        <IoPencil />
-                    </QuickActionButton>
-                    <QuickActionConfirmButton
-                        className={styles.button}
-                        name={undefined}
-                        title={_ts('projectEdit', 'deleteUserLabel')}
-                        onConfirm={() => handleDeleteMembershipClick(row.id)}
-                        message={_ts('projectEdit', 'removeUserConfirmation')}
-                        showConfirmationInitially={false}
-                    >
-                        <IoTrash />
-                    </QuickActionConfirmButton>
-                </div>
-            ),
-        },
-    ]), [handleDeleteMembershipClick, handleEditMembershipClick]);
+    const columns = useMemo(() => {
+        const actionColumn: TableColumn<
+            Membership, number, ActionCellProps<number>, TableHeaderCellProps
+        > = {
+            id: 'action',
+            title: 'Actions',
+            headerCellRenderer: TableHeaderCell,
+            headerCellRendererParams: {
+                sortable: false,
+            },
+            cellRenderer: ActionCell,
+            cellRendererParams: (userId, data) => ({
+                itemKey: userId,
+                onEditClick: handleEditMembershipClick,
+                onDeleteClick: triggerMembershipDelete,
+                disabled: data.member === activeUser.userId,
+                editButtonTitle: _ts('projectEdit', 'editUserLabel'),
+                deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
+                deleteConfirmationMessage: _ts('projectEdit', 'removeUserConfirmation'),
+            }),
+        };
 
-    const dataModifier = useCallback(
-        (data, columnKey) => {
-            const header = headers.find(d => d.key === columnKey);
-            if (header?.modifier) {
-                return header.modifier(data);
-            }
-            return data[columnKey];
-        }, [headers],
-    );
-
-    const headerModifier = useCallback(headerData => (
-        <TableHeader
-            label={headerData.label}
-        />
-    ), []);
+        return ([
+            createStringColumn<Membership, number>(
+                'memberName',
+                _ts('projectEdit', 'memberName'),
+                item => item.memberName,
+            ),
+            createStringColumn<Membership, number>(
+                'memberEmail',
+                _ts('projectEdit', 'memberEmail'),
+                item => item.memberEmail,
+            ),
+            createStringColumn<Membership, number>(
+                'memberOrganization',
+                _ts('projectEdit', 'memberOrganization'),
+                item => item.memberOrganization,
+            ),
+            createStringColumn<Membership, number>(
+                'addedByName',
+                _ts('projectEdit', 'addedByName'),
+                item => item.addedByName,
+            ),
+            createDateColumn<Membership, number>(
+                'joinedAt',
+                _ts('projectEdit', 'addedOn'),
+                item => item.joinedAt,
+            ),
+            createStringColumn<Membership, number>(
+                'role',
+                'Assigned Role',
+                item => item?.roleDetails.title,
+            ),
+            actionColumn,
+        ]);
+    }, [triggerMembershipDelete, handleEditMembershipClick, activeUser.userId]);
 
     const membershipToEdit = useMemo(() => (
         usersResponse?.results?.find(d => d.id === membershipIdToEdit)
@@ -213,17 +186,13 @@ function UserList(props: Props) {
                 </Button>
             )}
         >
-            {usersPending && (<LoadingAnimation />)}
+            {usersPending && (<PendingMessage />)}
             {(usersResponse && usersResponse?.count > 0)
                 ? (
-                    <RawTable
-                        className={styles.table}
-                        data={usersResponse?.results ?? []}
-                        dataModifier={dataModifier}
-                        headerModifier={headerModifier}
-                        headers={headers}
+                    <Table
+                        data={usersResponse.results}
                         keySelector={userKeySelector}
-                        pending={usersPending}
+                        columns={columns}
                     />
                 )
                 : (
@@ -254,4 +223,4 @@ function UserList(props: Props) {
     );
 }
 
-export default UserList;
+export default connect(mapStateToProps)(UserList);

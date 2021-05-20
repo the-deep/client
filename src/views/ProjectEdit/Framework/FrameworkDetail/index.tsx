@@ -9,6 +9,7 @@ import {
     IoCheckmark,
     IoAdd,
 } from 'react-icons/io5';
+import { MdModeEdit } from 'react-icons/md';
 import {
     Modal,
     ImagePreview,
@@ -27,15 +28,12 @@ import {
 } from '@the-deep/deep-ui';
 
 import TextOutput from '#components/general/TextOutput';
-import Icon from '#rscg/Icon';
 import { pathNames } from '#constants';
 import { useLazyRequest, useRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
-import {
-    ProjectDetails,
-} from '#typings';
+import { ProjectDetails } from '#typings';
 
 import AddFrameworkModal from '../AddFrameworkModal';
 import styles from './styles.scss';
@@ -232,9 +230,7 @@ function FrameworkDetail(props: Props) {
                                 },
                             )}
                         >
-                            <Icon
-                                name="edit"
-                            />
+                            <MdModeEdit />
                         </QuickActionLink>
                         <QuickActionButton
                             title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
