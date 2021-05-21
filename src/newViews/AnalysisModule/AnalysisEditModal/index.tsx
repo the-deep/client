@@ -82,10 +82,17 @@ const analysisFormSchema: FormSchema = {
         teamLead: [requiredCondition],
         analysisPillar: analysisPillarListSchema,
     }),
+    validation: (value) => {
+        if (value.analysisPillar.length < 1) {
+            return _ts('analysis.editModal', 'pillarAnalysisRequired');
+        }
+        return undefined;
+    },
 };
 
-const defaultAnalysisFormValues: PartialForm<FormType> = {};
-
+const defaultAnalysisFormValues: PartialForm<FormType> = {
+    analysisPillar: [{ key: randomString(16) }],
+};
 
 const userKeySelector = (u: UserMini) => u.id;
 const userLabelSelector = (u: UserMini) => u.displayName;

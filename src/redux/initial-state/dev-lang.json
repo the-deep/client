@@ -1259,6 +1259,7 @@
         "-50636670": "Team Lead",
         "-31952614": "Pillar Assignments",
         "-30091387": "Edit analysis",
+        "-91939891": "Pillar analysis required",
         "-49556": "Pillars",
         "-35552020": "Team lead",
         "-76422871": "Add pillar analysis",
@@ -3680,7 +3681,8 @@
             "addAnAnalystButtonLabel": -76422871,
             "anaylsisEditModal": -88197654,
             "editButtonLabel": 363,
-            "editAnalysisModalHeading": -30091387
+            "editAnalysisModalHeading": -30091387,
+            "pillarAnalysisRequired": -91939891
         },
         "pillarAnalysis": {
             "saveButtonLabel": 25,
