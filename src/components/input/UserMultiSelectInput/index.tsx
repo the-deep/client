@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { SearchSelectInput, SearchSelectInputProps } from '@the-deep/deep-ui';
+import { SearchMultiSelectInput, SearchMultiSelectInputProps } from '@the-deep/deep-ui';
 import { MultiResponse, BasicUser } from '#typings';
 
 import { useRequest } from '#utils/request';
@@ -8,7 +8,7 @@ import _ts from '#ts';
 import { notifyOnFailure } from '#utils/requestNotify';
 
 type Def = { containerClassName?: string };
-type UserSelectInputProps<K extends string> = SearchSelectInputProps<
+type UserMultiSelectInputProps<K extends string> = SearchMultiSelectInputProps<
     number,
     K,
     BasicUser,
@@ -20,7 +20,7 @@ type UserSelectInputProps<K extends string> = SearchSelectInputProps<
 const keySelector = (d: BasicUser) => d.id;
 const labelSelector = (d: BasicUser) => d.displayName;
 
-function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
+function UserMultiSelectInput<K extends string>(props: UserMultiSelectInputProps<K>) {
     const {
         className,
         queryParams,
@@ -28,7 +28,7 @@ function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
     } = props;
 
     const [opened, setOpened] = useState(false);
-    const [searchText, setSearchText] = useState('');
+    const [searchText, setSearchText] = useState<string>('');
     const debouncedSearchText = useDebouncedValue(searchText);
 
     const searchQueryParams = useMemo(() => ({
@@ -53,7 +53,7 @@ function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
     );
 
     return (
-        <SearchSelectInput
+        <SearchMultiSelectInput
             {...otherProps}
             className={className}
             keySelector={keySelector}
@@ -67,4 +67,4 @@ function UserSelectInput<K extends string>(props: UserSelectInputProps<K>) {
     );
 }
 
-export default UserSelectInput;
+export default UserMultiSelectInput;
