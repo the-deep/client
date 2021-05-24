@@ -1,0 +1,36 @@
+.section-edit {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--spacing-medium) - var(--spacing-small));
+
+    .button-container {
+        display: flex;
+        justify-content: flex-end;
+        padding: calc(var(--spacing-small) - var(--spacing-extra-small));
+
+        .button {
+            margin: var(--spacing-extra-small);
+        }
+    }
+
+    .section-input {
+        display: flex;
+        align-items: flex-end;
+
+        .title {
+            flex-grow: 1;
+            padding: var(--spacing-small);
+        }
+
+        .remove-button {
+            flex-shrink: 0;
+            padding: var(--spacing-small);
+        }
+    }
+
+    .footer-container {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--spacing-small);
+    }
+}

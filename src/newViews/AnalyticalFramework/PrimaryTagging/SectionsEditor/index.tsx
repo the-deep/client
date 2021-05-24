@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
 import {
-    IoClose,
+    IoTrash,
+    IoAdd,
 } from 'react-icons/io5';
 import {
     Button,
     TextInput,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -22,6 +24,7 @@ import {
 import { randomString } from '@togglecorp/fujs';
 
 import { Section } from '../types';
+import styles from './styles.scss';
 
 const SECTIONS_LIMIT = 10;
 
@@ -92,6 +95,7 @@ function SectionInput(props: SectionInputProps) {
                 </p>
             )}
             <TextInput
+                className={styles.title}
                 // FIXME: use translation
                 label="Title"
                 name="title"
@@ -100,14 +104,15 @@ function SectionInput(props: SectionInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.title}
             />
-            <Button
+            <QuickActionButton
+                className={styles.removeButton}
                 name={index}
                 onClick={onRemove}
                 // FIXME: use translation
                 title="Remove Title"
             >
-                <IoClose />
-            </Button>
+                <IoTrash />
+            </QuickActionButton>
         </div>
     );
 }
@@ -182,10 +187,31 @@ function SectionsEditor(props: Props) {
 
     return (
         <form
+            className={styles.sectionEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
+            <div className={styles.buttonContainer}>
+                <Button
+                    className={styles.button}
+                    name={undefined}
+                    onClick={onCancel}
+                    // FIXME: use strings
+                >
+                    Cancel
+                </Button>
+                <Button
+                    className={styles.button}
+                    name={undefined}
+                    type="submit"
+                    disabled={pristine}
+                    // FIXME: use strings
+                >
+                    Save
+                </Button>
+            </div>
             {value.sections?.map((section, index) => (
                 <SectionInput
+                    className={styles.sectionInput}
                     key={section.clientId}
                     index={index}
                     value={section}
@@ -196,29 +222,17 @@ function SectionsEditor(props: Props) {
                 />
             ))}
             {(value.sections?.length ?? 0) < SECTIONS_LIMIT && (
-                <Button
-                    name={undefined}
-                    onClick={handleAdd}
-                    // FIXME: use strings
-                >
-                    Add
-                </Button>
+                <div className={styles.footerContainer}>
+                    <Button
+                        name={undefined}
+                        icons={(<IoAdd />)}
+                        onClick={handleAdd}
+                        // FIXME: use strings
+                    >
+                        Add
+                    </Button>
+                </div>
             )}
-            <Button
-                name={undefined}
-                onClick={onCancel}
-                // FIXME: use strings
-            >
-                Close
-            </Button>
-            <Button
-                name={undefined}
-                type="submit"
-                disabled={pristine}
-                // FIXME: use strings
-            >
-                Save
-            </Button>
         </form>
     );
 }
