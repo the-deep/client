@@ -104,6 +104,7 @@ export const routes = {
         hideNavbar: true,
     }, // _ts('pageTitle', 'pillarAnalysis');
 
+    // NOTE: new ui
     editProject: {
         order: 21,
         type: ROUTE.private,
@@ -129,6 +130,7 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'dashboard');
 
+    // NOTE: new ui
     home: {
         order: 23,
         type: ROUTE.private,
@@ -281,6 +283,7 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'analysisFramework');
 
+    // NOTE: new ui
     analyticalFramework: {
         order: 101,
         type: ROUTE.private,

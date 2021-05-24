@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 
 import {
     ElementFragments,
@@ -6,12 +6,17 @@ import {
     Button,
     Container,
     Modal,
+    Tabs,
+    Tab,
+    TabList,
 } from '@the-deep/deep-ui';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, randomString } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
-
 import _ts from '#ts';
+
+import SectionsEditor, { PartialSectionType } from './SectionsEditor';
+import { Section } from './types';
 import styles from './styles.scss';
 
 interface Props {
@@ -27,11 +32,53 @@ function PrimaryTagging(props: Props) {
 
     // NOTE: intentional console.info
     console.info('primary tagging in the framework', frameworkId);
+
     const [
         showPreviewModal,
         setShowPreviewModalTrue,
         setShowPreviewModalFalse,
     ] = useModalState(false);
+
+    const [selectedSection, setSelectedSection] = useState<string>('test');
+    const [
+        sectionEditMode,
+        setSectionEditMode,
+        unsetSectionEditMode,
+    ] = useModalState(false);
+
+    const [sections, setSections] = useState<Section[]>(() => [
+        {
+            clientId: randomString(),
+            title: 'Operational Environment',
+            widgets: [],
+        },
+        {
+            clientId: randomString(),
+            title: 'My Analogies',
+            widgets: [],
+        },
+    ]);
+
+    const [tempSections, setTempSections] = useState<PartialSectionType[] | undefined>();
+
+    const handleSectionSave = useCallback(
+        (value: Section[]) => {
+            setTempSections(undefined);
+            setSections(value);
+            unsetSectionEditMode();
+        },
+        [unsetSectionEditMode],
+    );
+
+    const handleSectionCancel = useCallback(
+        () => {
+            setTempSections(undefined);
+            unsetSectionEditMode();
+        },
+        [unsetSectionEditMode],
+    );
+
+    const appliedSections = tempSections ?? sections;
 
     return (
         <div className={_cs(styles.primaryTagging, className)}>
@@ -40,29 +87,63 @@ function PrimaryTagging(props: Props) {
                 heading={_ts('analyticalFramework.primaryTagging', 'buildingModulesHeading')}
                 sub
             >
-                Under construction
+                {!sectionEditMode && (
+                    <Button
+                        name={undefined}
+                        onClick={setSectionEditMode}
+                        // FIXME: use strings
+                    >
+                        Edit Sections
+                    </Button>
+                )}
+                {sectionEditMode && (
+                    <SectionsEditor
+                        initialValue={sections}
+                        onChange={setTempSections}
+                        onSave={handleSectionSave}
+                        onCancel={handleSectionCancel}
+                    />
+                )}
             </Container>
             <div className={styles.frameworkPreview}>
-                <div className={styles.topBar}>
-                    <ElementFragments
-                        actions={(
+                <Tabs
+                    value={selectedSection}
+                    onChange={setSelectedSection}
+                    variant="step"
+                >
+                    <div className={styles.topBar}>
+                        <ElementFragments
+                            actions={(
+                                <Button
+                                    name={undefined}
+                                    disabled
+                                >
+                                    {_ts('analyticalFramework.primaryTagging', 'nextButtonLabel')}
+                                </Button>
+                            )}
+                        >
                             <Button
                                 name={undefined}
-                                disabled
+                                variant="inverted"
+                                onClick={setShowPreviewModalTrue}
                             >
-                                {_ts('analyticalFramework.primaryTagging', 'nextButtonLabel')}
+                                {_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
                             </Button>
-                        )}
-                    >
-                        <Button
-                            name={undefined}
-                            variant="inverted"
-                            onClick={setShowPreviewModalTrue}
-                        >
-                            {_ts('analyticalFramework.primaryTagging', 'viewFrameworkImageButtonLabel')}
-                        </Button>
-                    </ElementFragments>
-                </div>
+                        </ElementFragments>
+                    </div>
+                    <TabList>
+                        {appliedSections.map(section => (
+                            <Tab
+                                key={section.clientId}
+                                name={section.clientId}
+                                className={styles.tab}
+                                // FIXME: use strings
+                            >
+                                {section.title || 'Unnamed'}
+                            </Tab>
+                        ))}
+                    </TabList>
+                </Tabs>
             </div>
             {showPreviewModal && (
                 <Modal
