@@ -477,22 +477,40 @@ class LeadAdd extends React.PureComponent {
 
                     this.uploadCoordinator.add(key, request);
                 } else if (leadType === LEAD_TYPE.drive) {
-                    const { title, accessToken, fileId, mimeType } = drive;
+                    const {
+                        accessToken,
+                        fileId,
+                        title: titleFromOptions,
+                        mimeType: mimeTypeFromOptions,
+                    } = drive;
                     const request = new FgRestBuilder()
                         .url(urlForGoogleDriveFileUpload)
                         .params(() => createHeaderForGoogleDriveFileUpload({
-                            title, accessToken, fileId, mimeType,
+                            title: titleFromOptions,
+                            mimeType: mimeTypeFromOptions,
+                            accessToken,
+                            fileId,
                         }))
                         .delay(0)
                         .preLoad(() => {
                             this.handleDriveUploadPendingChange(key, true);
                         })
                         .success((response) => {
-                            const { id: attachment } = response;
+                            const {
+                                id,
+                                file: attachmentFile,
+                                mimeType,
+                                title,
+                            } = response;
 
                             setLeadAttachment({
                                 leadKey: key,
-                                attachmentId: attachment,
+                                attachment: {
+                                    id,
+                                    file: attachmentFile,
+                                    mimeType,
+                                    title,
+                                },
                             });
                             this.handleDriveUploadPendingChange(key, undefined);
                             this.driveUploadCoordinator.notifyComplete(key);
@@ -533,20 +551,34 @@ class LeadAdd extends React.PureComponent {
 
                     this.driveUploadCoordinator.add(key, request);
                 } else if (leadType === LEAD_TYPE.dropbox) {
-                    const { title, fileUrl } = dropbox;
+                    const {
+                        title: titleFromOptions,
+                        fileUrl,
+                    } = dropbox;
+
                     const request = new FgRestBuilder()
                         .url(urlForDropboxFileUpload)
-                        .params(createHeaderForDropboxUpload({ title, fileUrl }))
+                        .params(createHeaderForDropboxUpload({ title: titleFromOptions, fileUrl }))
                         .delay(0)
                         .preLoad(() => {
                             this.handleDropboxUploadPendingChange(key, true);
                         })
                         .success((response) => {
-                            const { id: attachment } = response;
+                            const {
+                                id,
+                                file: attachmentFile,
+                                mimeType,
+                                title,
+                            } = response;
 
                             setLeadAttachment({
                                 leadKey: key,
-                                attachmentId: attachment,
+                                attachment: {
+                                    id,
+                                    file: attachmentFile,
+                                    mimeType,
+                                    title,
+                                },
                             });
                             this.handleDropboxUploadPendingChange(key, undefined);
                             this.dropboxUploadCoordinator.notifyComplete(key);
