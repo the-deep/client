@@ -10,7 +10,6 @@ import {
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
-    PartialForm,
     ArraySchema,
     arrayCondition,
     requiredStringCondition,
@@ -23,7 +22,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
-import { Section } from '../types';
+import { Section, PartialForm } from '../types';
 import styles from './styles.scss';
 
 const SECTIONS_LIMIT = 10;
@@ -31,15 +30,20 @@ const SECTIONS_LIMIT = 10;
 type FormType = {
     sections: Section[];
 };
-type PartialFormType = PartialForm<FormType, { clientId: string }>;
+type PartialFormType = PartialForm<
+    FormType,
+    'clientId' | 'type'
+>;
 
 type FormSchema = ObjectSchema<PartialFormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
 type SectionType = NonNullable<NonNullable<FormType['sections']>>[number];
 export type PartialSectionType = PartialForm<
-    SectionType, { clientId: string }
+    SectionType,
+    'clientId' | 'type'
 >;
+// type PartialWidgetType = NonNullable<PartialSectionType['widgets']>[number];
 
 type SectionSchema = ObjectSchema<PartialSectionType>;
 type SectionSchemaFields = ReturnType<SectionSchema['fields']>;
@@ -118,7 +122,7 @@ function SectionInput(props: SectionInputProps) {
 }
 
 interface Props {
-    initialValue: Section[] | undefined;
+    initialValue: PartialSectionType[] | undefined;
     onCancel: () => void;
     onSave: (value: Section[]) => void;
     onChange: (value: PartialSectionType[]) => void;

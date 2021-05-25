@@ -1,3 +1,33 @@
+type Intersects<A, B> = A extends B ? true : never;
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type PartialForm<T, J extends string> = T extends object ? (
+    T extends (infer K)[] ? (
+        PartialForm<K, J>[]
+    ) : (
+        Intersects<J, keyof T> extends true ? (
+            { [P in Exclude<keyof T, J>]?: PartialForm<T[P], J> }
+            & Pick<T, keyof T & J>
+        ) : (
+            { [P in keyof T]?: PartialForm<T[P], J> }
+        )
+    )
+) : T;
+
+
+export type Types = 'number'
+    | 'text'
+    | 'single-select'
+    | 'multi-select'
+    | 'date'
+    | 'time'
+    | 'time-range'
+    | 'date-range'
+    | 'matrix-2d'
+    | 'matrix-1d'
+    | 'organigram'
+    | 'scale';
+
 interface BasicEntity {
     id: number;
     createdAt: string;
@@ -15,8 +45,21 @@ interface KeyLabelColor extends KeyLabel {
 
 interface Condition {
     clientId: string;
-    // NOTE: this is repetative
-    type: 'number' | 'text' | 'single-select' | 'multi-select' | 'date' | 'time' | 'date-range' | 'matrix-2d' | 'matrix-1d' | 'organigram' | 'scale';
+    // NOTE: this is repeative
+    /*
+    type: 'number'
+        | 'text'
+        | 'single-select'
+        | 'multi-select'
+        | 'date'
+        | 'time'
+        | 'date-range'
+        | 'matrix-2d'
+        | 'matrix-1d'
+        | 'organigram'
+        | 'scale';
+    */
+    type: unknown;
     directive: unknown;
 
     order: number;
@@ -26,6 +69,7 @@ interface Condition {
 interface BaseData<T> {
     defaultValue?: T;
 }
+
 interface NumberData extends BaseData<number> {
     maxValue?: number;
     minValue?: number;
@@ -68,44 +112,71 @@ interface BaseWidget {
 
     parent?: string;
     condition: Condition[];
+
+    type: Types;
 }
-type Widget = BaseWidget & ({
+
+interface NumberWidget extends BaseWidget {
     type: 'number';
     data: NumberData;
-} | {
+}
+export interface TextWidget extends BaseWidget {
     type: 'text';
     data: BaseData<string>;
-} | {
+}
+interface SingleSelectWidget extends BaseWidget {
     type: 'single-select';
     data: SelectData;
-} | {
+}
+interface MultiSelectWidget extends BaseWidget {
     type: 'multi-select';
     data: SelectData;
-} | {
+}
+interface DateWidget extends BaseWidget {
     type: 'date';
     data: BaseData<string>;
-} | {
+}
+interface TimeWidget extends BaseWidget {
     type: 'time';
     data: BaseData<string>;
-} | {
+}
+interface TimeRangeWidget extends BaseWidget {
     type: 'time-range';
     data: BaseData<string>;
-} | {
+}
+interface DateRangeWidget extends BaseWidget {
     type: 'date-range';
     data: BaseData<string>;
-} | {
-    type: 'matrix-2d';
-    data: Matrix2Data;
-} | {
+}
+interface Matrix1dWidget extends BaseWidget {
     type: 'matrix-1d';
     data: Matrix1dData;
-} | {
+}
+interface Matrix2dWidget extends BaseWidget {
+    type: 'matrix-2d';
+    data: Matrix2Data;
+}
+interface OrganigramWidget extends BaseWidget {
     type: 'organigram';
     data: OrganigramData;
-} | {
+}
+interface ScaleWidget extends BaseWidget {
     type: 'scale';
     data: ScaleData;
-});
+}
+
+export type Widget = NumberWidget
+    | TextWidget
+    | SingleSelectWidget
+    | MultiSelectWidget
+    | DateWidget
+    | TimeWidget
+    | TimeRangeWidget
+    | DateRangeWidget
+    | Matrix1dWidget
+    | Matrix2dWidget
+    | OrganigramWidget
+    | ScaleWidget;
 
 export interface Section {
     clientId: string;
