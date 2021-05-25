@@ -6,10 +6,18 @@
         display: flex;
 
         .header {
+            align-items: center;
             flex-grow: 1;
         }
         .actions {
+            display: flex;
+            align-items: center;
             flex-shrink: 0;
+            padding: var(--spacing-small);
+
+            &> * {
+                margin: 0 var(--spacing-small);
+            }
         }
     }
 }

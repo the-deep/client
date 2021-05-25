@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import produce from 'immer';
 import {
     IoCreateOutline,
+    IoTrash,
 } from 'react-icons/io5';
 import {
     ElementFragments,
@@ -63,19 +64,45 @@ function injectWidget(sections: PartialSectionType[], sectionId: string, widget:
     return produce(sections, (safeSections) => {
         const selectedSection = safeSections[selectedSectionIndex];
 
-        const widgetIndex = selectedSection.widgets?.findIndex(
-            w => w.clientId === widget.clientId,
-        );
-
         if (!selectedSection.widgets) {
             selectedSection.widgets = [];
         }
+
+        const widgetIndex = selectedSection.widgets.findIndex(
+            w => w.clientId === widget.clientId,
+        );
 
         if (isNotDefined(widgetIndex) || widgetIndex === -1) {
             selectedSection.widgets.push(widget);
         } else {
             selectedSection.widgets.splice(widgetIndex, 1, widget);
         }
+    });
+}
+
+function deleteWidget(sections: Section[], sectionId: string, widgetId: string): Section[] {
+    const selectedSectionIndex = sections.findIndex(s => s.clientId === sectionId);
+    if (selectedSectionIndex === -1) {
+        console.error('The selected section does not exist:', sectionId);
+        return sections;
+    }
+
+    return produce(sections, (safeSections) => {
+        const selectedSection = safeSections[selectedSectionIndex];
+
+        if (!selectedSection.widgets) {
+            return;
+        }
+
+        const widgetIndex = selectedSection.widgets.findIndex(
+            w => w.clientId === widgetId,
+        );
+
+        if (isNotDefined(widgetIndex) || widgetIndex === -1) {
+            return;
+        }
+
+        selectedSection.widgets.splice(widgetIndex, 1);
     });
 }
 
@@ -169,6 +196,13 @@ function PrimaryTagging(props: Props) {
                     type: 'date',
                 },
             });
+        },
+        [selectedSection],
+    );
+
+    const handleWidgetDeleteClick = useCallback(
+        (widgetId: string) => {
+            setSections(oldSections => deleteWidget(oldSections, selectedSection, widgetId));
         },
         [selectedSection],
     );
@@ -339,15 +373,26 @@ function PrimaryTagging(props: Props) {
                                     widget={widget}
                                     readOnly
                                     actions={(
-                                        <QuickActionButton
-                                            name={widget.clientId}
-                                            onClick={handleWidgetEditClick}
-                                            // FIXME: use translation
-                                            title="Edit Widget"
-                                            disabled={editMode}
-                                        >
-                                            <IoCreateOutline />
-                                        </QuickActionButton>
+                                        <>
+                                            <QuickActionButton
+                                                name={widget.clientId}
+                                                onClick={handleWidgetEditClick}
+                                                // FIXME: use translation
+                                                title="Edit Widget"
+                                                disabled={editMode}
+                                            >
+                                                <IoCreateOutline />
+                                            </QuickActionButton>
+                                            <QuickActionButton
+                                                name={widget.clientId}
+                                                onClick={handleWidgetDeleteClick}
+                                                // FIXME: use translation
+                                                title="Delete Widget"
+                                                disabled={editMode}
+                                            >
+                                                <IoTrash />
+                                            </QuickActionButton>
+                                        </>
                                     )}
                                 />
                             ))}
