@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import produce from 'immer';
-
+import {
+    IoCreateOutline,
+} from 'react-icons/io5';
 import {
     ElementFragments,
     ImagePreview,
@@ -11,6 +13,7 @@ import {
     Tab,
     TabList,
     TabPanel,
+    QuickActionButton,
 } from '@the-deep/deep-ui';
 import { _cs, randomString, isNotDefined } from '@togglecorp/fujs';
 
@@ -32,6 +35,19 @@ type PartialWidget = PartialForm<
 interface TempWidget {
     sectionId: string;
     widget: PartialWidget;
+}
+
+function findWidget(sections: Section[], sectionId: string, widgetId: string): Widget | undefined {
+    const selectedSectionIndex = sections.findIndex(s => s.clientId === sectionId);
+    if (selectedSectionIndex === -1) {
+        console.error('The selected section does not exist:', sectionId);
+        return undefined;
+    }
+    const selectedSection = sections[selectedSectionIndex];
+
+    return selectedSection.widgets?.find(
+        w => w.clientId === widgetId,
+    );
 }
 
 function injectWidget(sections: Section[], sectionId: string, widget: Widget): Section[];
@@ -131,7 +147,7 @@ function PrimaryTagging(props: Props) {
         [],
     );
 
-    const handleWidgetAddClick = useCallback(
+    const handleTextWidgetAddClick = useCallback(
         () => {
             setTempWidget({
                 sectionId: selectedSection,
@@ -142,6 +158,32 @@ function PrimaryTagging(props: Props) {
             });
         },
         [selectedSection],
+    );
+
+    const handleDateWidgetAddClick = useCallback(
+        () => {
+            setTempWidget({
+                sectionId: selectedSection,
+                widget: {
+                    clientId: randomString(),
+                    type: 'date',
+                },
+            });
+        },
+        [selectedSection],
+    );
+
+    const handleWidgetEditClick = useCallback(
+        (widgetId: string) => {
+            const widget = findWidget(sections, selectedSection, widgetId);
+            if (widget) {
+                setTempWidget({
+                    sectionId: selectedSection,
+                    widget,
+                });
+            }
+        },
+        [selectedSection, sections],
     );
 
     const handleWidgetChange = useCallback(
@@ -169,6 +211,13 @@ function PrimaryTagging(props: Props) {
         [],
     );
 
+    const handleWidgetValueChange = useCallback(
+        (value: unknown, name: string) => {
+            console.warn('Trying to set value', value, 'on', name);
+        },
+        [],
+    );
+
     const appliedSections = useMemo(
         () => {
             const mySections = tempSections ?? sections;
@@ -179,10 +228,11 @@ function PrimaryTagging(props: Props) {
         },
         [sections, tempSections, tempWidget],
     );
-    console.warn(appliedSections);
 
     const sectionEditMode = !!tempSections && !tempWidget;
     const widgetEditMode = !tempSections && !!tempWidget;
+
+    const editMode = sectionEditMode || widgetEditMode;
 
     return (
         <div className={_cs(styles.primaryTagging, className)}>
@@ -191,7 +241,7 @@ function PrimaryTagging(props: Props) {
                 heading={_ts('analyticalFramework.primaryTagging', 'buildingModulesHeading')}
                 sub
             >
-                {!sectionEditMode && (
+                {!editMode && (
                     <Button
                         name={undefined}
                         onClick={handleSectionsEditClick}
@@ -200,14 +250,23 @@ function PrimaryTagging(props: Props) {
                         Edit Sections
                     </Button>
                 )}
-                {!widgetEditMode && (
-                    <Button
-                        name={undefined}
-                        onClick={handleWidgetAddClick}
-                        // FIXME: use strings
-                    >
-                        Add Text Widget
-                    </Button>
+                {!editMode && (
+                    <>
+                        <Button
+                            name={undefined}
+                            onClick={handleTextWidgetAddClick}
+                            // FIXME: use strings
+                        >
+                            Add Text Widget
+                        </Button>
+                        <Button
+                            name={undefined}
+                            onClick={handleDateWidgetAddClick}
+                            // FIXME: use strings
+                        >
+                            Add Date Widget
+                        </Button>
+                    </>
                 )}
                 {sectionEditMode && tempSections && (
                     <SectionsEditor
@@ -269,12 +328,27 @@ function PrimaryTagging(props: Props) {
                         <TabPanel
                             key={section.clientId}
                             name={section.clientId}
-                            // FIXME: use strings
+                            className={styles.panel}
                         >
                             {section.widgets?.map(widget => (
                                 <WidgetPreview
                                     key={widget.clientId}
+                                    name={widget.clientId}
+                                    value={undefined}
+                                    onChange={handleWidgetValueChange}
                                     widget={widget}
+                                    readOnly
+                                    actions={(
+                                        <QuickActionButton
+                                            name={widget.clientId}
+                                            onClick={handleWidgetEditClick}
+                                            // FIXME: use translation
+                                            title="Edit Widget"
+                                            disabled={editMode}
+                                        >
+                                            <IoCreateOutline />
+                                        </QuickActionButton>
+                                    )}
                                 />
                             ))}
                         </TabPanel>

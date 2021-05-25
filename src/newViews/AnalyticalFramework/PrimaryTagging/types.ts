@@ -132,7 +132,7 @@ interface MultiSelectWidget extends BaseWidget {
     type: 'multi-select';
     data: SelectData;
 }
-interface DateWidget extends BaseWidget {
+export interface DateWidget extends BaseWidget {
     type: 'date';
     data: BaseData<string>;
 }

@@ -199,6 +199,7 @@ function SectionsEditor(props: Props) {
                     className={styles.button}
                     name={undefined}
                     onClick={onCancel}
+                    variant="tertiary"
                     // FIXME: use strings
                 >
                     Cancel
@@ -232,6 +233,7 @@ function SectionsEditor(props: Props) {
                         icons={(<IoAdd />)}
                         onClick={handleAdd}
                         // FIXME: use strings
+                        variant="tertiary"
                     >
                         Add
                     </Button>

@@ -1,0 +1,15 @@
+.widget-preview {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+
+        .header {
+            flex-grow: 1;
+        }
+        .actions {
+            flex-shrink: 0;
+        }
+    }
+}
