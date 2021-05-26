@@ -49,6 +49,7 @@ module.exports = {
                     '#ts': './src/ts',
                     '#utils': './src/utils',
                     '#views': './src/views',
+                    '#newViews': './src/newViews',
                     '#widgetComponents': './src/widgetComponents',
                     '#widgets': './src/widgets',
                     '#typings': './src/typings',

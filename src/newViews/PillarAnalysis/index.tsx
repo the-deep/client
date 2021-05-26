@@ -145,7 +145,9 @@ function PillarAnalysis(props: Props) {
         onValueSet,
         validate,
         onErrorSet,
-    } = useForm(pillarAnalysisFromProps?.data ?? defaultFormValues, schema);
+    } = useForm(
+        pillarAnalysisFromProps?.data ?? defaultFormValues,
+        schema);
 
     const [statementDraggedStatus, setStatementDraggedStatus] = useState(false);
 
