@@ -346,58 +346,61 @@ function PrimaryTagging(props: Props) {
                             </Button>
                         </ElementFragments>
                     </div>
-                    <TabList>
+                    <div className={styles.canvas}>
+                        <TabList className={styles.tabs}>
+                            {appliedSections.map(section => (
+                                <Tab
+                                    key={section.clientId}
+                                    name={section.clientId}
+                                    className={styles.tab}
+                                    // FIXME: use strings
+                                >
+                                    {section.title || 'Unnamed'}
+                                </Tab>
+                            ))}
+                        </TabList>
                         {appliedSections.map(section => (
-                            <Tab
+                            <TabPanel
                                 key={section.clientId}
                                 name={section.clientId}
-                                className={styles.tab}
-                                // FIXME: use strings
+                                className={styles.panel}
                             >
-                                {section.title || 'Unnamed'}
-                            </Tab>
+                                {section.widgets?.map(widget => (
+                                    <WidgetPreview
+                                        className={styles.widget}
+                                        key={widget.clientId}
+                                        name={widget.clientId}
+                                        value={undefined}
+                                        onChange={handleWidgetValueChange}
+                                        widget={widget}
+                                        readOnly
+                                        actions={(
+                                            <>
+                                                <QuickActionButton
+                                                    name={widget.clientId}
+                                                    onClick={handleWidgetEditClick}
+                                                    // FIXME: use translation
+                                                    title="Edit Widget"
+                                                    disabled={editMode}
+                                                >
+                                                    <IoCreateOutline />
+                                                </QuickActionButton>
+                                                <QuickActionButton
+                                                    name={widget.clientId}
+                                                    onClick={handleWidgetDeleteClick}
+                                                    // FIXME: use translation
+                                                    title="Delete Widget"
+                                                    disabled={editMode}
+                                                >
+                                                    <IoTrash />
+                                                </QuickActionButton>
+                                            </>
+                                        )}
+                                    />
+                                ))}
+                            </TabPanel>
                         ))}
-                    </TabList>
-                    {appliedSections.map(section => (
-                        <TabPanel
-                            key={section.clientId}
-                            name={section.clientId}
-                            className={styles.panel}
-                        >
-                            {section.widgets?.map(widget => (
-                                <WidgetPreview
-                                    key={widget.clientId}
-                                    name={widget.clientId}
-                                    value={undefined}
-                                    onChange={handleWidgetValueChange}
-                                    widget={widget}
-                                    readOnly
-                                    actions={(
-                                        <>
-                                            <QuickActionButton
-                                                name={widget.clientId}
-                                                onClick={handleWidgetEditClick}
-                                                // FIXME: use translation
-                                                title="Edit Widget"
-                                                disabled={editMode}
-                                            >
-                                                <IoCreateOutline />
-                                            </QuickActionButton>
-                                            <QuickActionButton
-                                                name={widget.clientId}
-                                                onClick={handleWidgetDeleteClick}
-                                                // FIXME: use translation
-                                                title="Delete Widget"
-                                                disabled={editMode}
-                                            >
-                                                <IoTrash />
-                                            </QuickActionButton>
-                                        </>
-                                    )}
-                                />
-                            ))}
-                        </TabPanel>
-                    ))}
+                    </div>
                 </Tabs>
             </div>
             {showPreviewModal && (

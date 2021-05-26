@@ -10,6 +10,7 @@ type PartialWidget = PartialForm<
 >;
 
 interface Props <N extends string, T>{
+    className?: string,
     widget: PartialWidget,
     name: N,
     value: T | null | undefined,
@@ -20,6 +21,7 @@ interface Props <N extends string, T>{
 }
 function WidgetPreview<N extends string, T>(props: Props<N, T>) {
     const {
+        className,
         widget,
         name,
         value,
@@ -36,6 +38,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
 
         return (
             <TextWidgetInput
+                className={className}
                 title={widget.title ?? 'Unnamed'}
                 name={name}
                 onChange={onChangeForText}
@@ -53,6 +56,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
 
         return (
             <DateWidgetInput
+                className={className}
                 title={widget.title ?? 'Unnamed'}
                 name={name}
                 onChange={onChangeForDate}

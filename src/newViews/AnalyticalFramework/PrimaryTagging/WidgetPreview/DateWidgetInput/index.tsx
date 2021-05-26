@@ -1,12 +1,11 @@
 import React from 'react';
-import {
-    DateInput,
-} from '@the-deep/deep-ui';
+import { DateInput } from '@the-deep/deep-ui';
 
-import styles from './styles.scss';
+import WidgetWrapper from '../../../Widget';
 
 export interface Props <N extends string>{
     title: string;
+    className?: string;
 
     name: N,
     value: string | null | undefined,
@@ -19,6 +18,7 @@ export interface Props <N extends string>{
 
 function DateWidgetInput<N extends string>(props: Props<N>) {
     const {
+        className,
         title,
         name,
         value,
@@ -29,17 +29,11 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
     } = props;
 
     return (
-        <div className={styles.widgetPreview}>
-            <div className={styles.header}>
-                <h3 className={styles.header}>
-                    {title}
-                </h3>
-                {actions && (
-                    <div className={styles.actions}>
-                        {actions}
-                    </div>
-                )}
-            </div>
+        <WidgetWrapper
+            className={className}
+            title={title}
+            actions={actions}
+        >
             <DateInput
                 name={name}
                 onChange={onChange}
@@ -47,7 +41,7 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
                 readOnly={readOnly}
                 disabled={disabled}
             />
-        </div>
+        </WidgetWrapper>
     );
 }
 
