@@ -42,7 +42,6 @@ import { getDateWithTimezone } from '#utils/common';
 import { shortMonthNamesMap } from '#utils/safeCommon';
 import {
     useModalState,
-    useArrayEdit,
 } from '#hooks/stateManagement';
 
 import {
@@ -154,13 +153,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
     ] = useModalState(false);
 
     const [activePage, setActivePage] = useState(1);
-    const [analyses, setAnalyses] = useState<AnalysisElement[] | undefined>([]);
-    const [
-        addAnalysis,
-        ,
-        modifyAnalysis,
-    ] = useArrayEdit(setAnalyses, analysisKeySelector);
-    const [analysisCount, setAnalysisCount] = useState(0);
     const [analysisToEdit, setAnalysisToEdit] = useState();
     const [filter, setFilter] = useState<Filter | undefined>(undefined);
 
@@ -185,10 +177,6 @@ function AnalysisModule(props: AnalysisModuleProps) {
         url: `server://projects/${activeProject}/analysis/`,
         method: 'GET',
         query: analysisQueryOptions,
-        onSuccess: (response) => {
-            setAnalyses(response.results);
-            setAnalysisCount(response.count);
-        },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('analysis', 'analysisModule'))({ error: errorBody }),
     });
@@ -236,12 +224,11 @@ function AnalysisModule(props: AnalysisModuleProps) {
 
     const piechartData = overviewResponse?.authoringOrganizations ?? [];
 
-    // FIXME: memoize this
-    const timelineData: TimelineData[] = (analysesResponse?.results?.map(d => ({
+    const timelineData: TimelineData[] = useMemo(() => (analysesResponse?.results?.map(d => ({
         key: d.id,
         value: new Date(d.createdAt).getTime(),
         label: d.title,
-    }))) ?? [];
+    })) ?? []), [analysesResponse?.results]);
 
     const handleAnalysisToDeleteClick = deleteAnalysisTrigger;
 
@@ -253,18 +240,13 @@ function AnalysisModule(props: AnalysisModuleProps) {
     );
 
     const analysisObjectToEdit = useMemo(() => (
-        analyses?.find(a => a.id === analysisToEdit)
-    ), [analyses, analysisToEdit]);
+        analysesResponse?.results?.find(a => a.id === analysisToEdit)
+    ), [analysesResponse?.results, analysisToEdit]);
 
-    const handleAnalysisEditSuccess = useCallback((analysis, isEditMode) => {
-        if (isEditMode) {
-            modifyAnalysis(analysis.id, analysis);
-        } else {
-            addAnalysis(analysis);
-            setAnalysisCount(oldVal => oldVal + 1);
-        }
+    const handleAnalysisEditSuccess = useCallback(() => {
+        getAnalysisTrigger();
         setModalHidden();
-    }, [setModalHidden, modifyAnalysis, addAnalysis]);
+    }, [setModalHidden, getAnalysisTrigger]);
 
     const handleAnalysisEditClick = useCallback((analysisId) => {
         setAnalysisToEdit(analysisId);
@@ -288,6 +270,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
         teamLeadName: data.teamLeadName,
         createdAt: data.createdAt,
         modifiedAt: data.modifiedAt,
+        analysisPillars: data.analysisPillar,
         onAnalysisPillarDelete: getAnalysisTrigger,
         pendingAnalysisDelete: pendingAnalysisDelete && analysisIdToDelete === key,
         pendingAnalysisClone: pendingAnalysisClone && analysisIdToClone === key,
@@ -437,7 +420,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
                 footerActions={(
                     <Pager
                         activePage={activePage}
-                        itemsCount={analysisCount}
+                        itemsCount={analysesResponse?.count ?? 0}
                         maxItemsPerPage={maxItemsPerPage}
                         onActivePageChange={setActivePage}
                         itemsPerPageControlHidden
@@ -446,7 +429,7 @@ function AnalysisModule(props: AnalysisModuleProps) {
             >
                 <ListView
                     className={styles.analysisList}
-                    data={analyses}
+                    data={analysesResponse?.results}
                     renderer={Analysis}
                     rendererParams={analysisRendererParams}
                     keySelector={analysisKeySelector}
@@ -465,5 +448,4 @@ function AnalysisModule(props: AnalysisModuleProps) {
         </div>
     );
 }
-
 export default connect(mapStateToProps)(AnalysisModule);

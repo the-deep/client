@@ -44,6 +44,7 @@ interface ComponentProps {
     pendingAnalysisDelete: boolean;
     onClone: (value: number, title: string) => void;
     pendingAnalysisClone: boolean;
+    analysisPillars: AnalysisPillars[];
 }
 
 type PillarListRendererProps = {
@@ -89,6 +90,7 @@ function Analysis(props: ComponentProps) {
         analysisId,
         teamLeadName,
         onAnalysisPillarDelete,
+        analysisPillars: analysisPillarsFromProps,
         createdAt,
         onEdit,
         onDelete,
@@ -101,7 +103,6 @@ function Analysis(props: ComponentProps) {
         onEdit(analysisId);
     }, [analysisId, onEdit]);
 
-    const [analysisPillar, setAnalysisPillar] = useState<AnalysisPillars[]>([]);
     const [activePage, setActivePage] = useState<number>(1);
     const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -116,12 +117,10 @@ function Analysis(props: ComponentProps) {
         retrigger: pillarGetTrigger,
     } = useRequest<MultiResponse<AnalysisPillars>>(
         {
+            skip: !expanded,
             url: `server://projects/${activeProject}/analysis/${analysisId}/pillars/`,
             method: 'GET',
             query: queryOptions,
-            onSuccess: (response) => {
-                setAnalysisPillar(response.results);
-            },
         },
     );
 
@@ -247,7 +246,7 @@ function Analysis(props: ComponentProps) {
                         {_ts('analysis', 'pillarAssignments')}
                     </h3>
                     <ListView
-                        data={analysisPillar}
+                        data={analysisPillarsFromProps}
                         renderer={PillarListItem}
                         rendererParams={pillarListRendererParams}
                         keySelector={keySelector}
@@ -266,14 +265,14 @@ function Analysis(props: ComponentProps) {
                     )}
                     onClick={handleClick}
                 >
-                    {_ts('analysis', 'pillarAnalysisCount', { count: pillarResponse?.count })}
+                    {_ts('analysis', 'pillarAnalysisCount', { count: analysisPillarsFromProps.length })}
                 </Button>
                 {expanded && (
                     <>
                         <div className={styles.pillarAnalysisContent}>
                             <ListView
                                 className={styles.pillarList}
-                                data={analysisPillar}
+                                data={pillarResponse?.results}
                                 keySelector={keySelector}
                                 renderer={AnalysisPillar}
                                 rendererParams={analysisPillarRendererParams}
