@@ -1,7 +1,6 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import {
     isDefined,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
@@ -19,30 +18,17 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldError from '#components/ui/NonFieldError';
 import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
-import { MultiResponse } from '#typings';
+import { MultiResponse, BasicUser, Membership } from '#typings';
+import UserSelectInput from '#components/input/UserSelectInput';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
-interface UserToEdit {
-    id: number;
-    member: number;
-    memberName: string;
-    role: number;
-}
-
+type Member = Pick<Membership, 'id' | 'member' | 'memberName' | 'role'>;
 interface Role {
     id: number;
     title: string;
 }
-
-interface User {
-    id: number;
-    displayName: string;
-}
-
-const membersKeySelector = (d: User) => d.id;
-const membersLabelSelector = (d: User) => d.displayName;
 
 const roleKeySelector = (d: Role) => d.id;
 const roleLabelSelector = (d: Role) => d.title;
@@ -83,7 +69,7 @@ interface Props {
     frameworkId: number;
     onTableReload: () => void;
     isPrivateFramework: boolean;
-    userValue?: UserToEdit;
+    userValue?: Member;
 }
 
 function AddUserModal(props: Props) {
@@ -97,6 +83,10 @@ function AddUserModal(props: Props) {
 
     const formValueFromProps: PartialForm<FormType> = userValue ?? defaultFormValue;
 
+    const [
+        userOptions,
+        setUserOptions,
+    ] = useState<BasicUser[] | undefined | null>();
     const {
         pristine,
         value,
@@ -106,14 +96,14 @@ function AddUserModal(props: Props) {
         onErrorSet,
     } = useForm(formValueFromProps, schema);
 
-    const queryForUsers = useMemo(() => ({
-        members_exclude_framework: frameworkId,
-    }), [frameworkId]);
-
     const queryForRoles = useMemo(
         () => (isPrivateFramework ? ({ is_default_role: false }) : undefined),
         [isPrivateFramework],
     );
+
+    const queryForUsers = useMemo(() => ({
+        members_exclude_framework: frameworkId,
+    }), [frameworkId]);
 
     const {
         pending: pendingRoles,
@@ -126,18 +116,6 @@ function AddUserModal(props: Props) {
         query: queryForRoles,
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('analyticalFramework.addUser', 'roleFetchFailed'))({ error: errorBody });
-        },
-    });
-
-    const {
-        pending: pendingUserList,
-        response: usersListResponse,
-    } = useRequest<MultiResponse<User>>({
-        url: 'server://users/',
-        method: 'GET',
-        query: queryForUsers,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('analyticalFramework.addUser', 'usersFetchFailed'))({ error: errorBody });
         },
     });
 
@@ -172,20 +150,11 @@ function AddUserModal(props: Props) {
         [onErrorSet, validate, triggerAddFrameworkMember, frameworkId],
     );
 
-    const usersList = useMemo(() => {
-        if (isNotDefined(userValue)) {
-            return usersListResponse?.results ?? [];
-        }
-        return [
-            ...(usersListResponse?.results ?? []),
-            {
-                id: userValue.member,
-                displayName: userValue.memberName,
-            },
-        ];
-    }, [usersListResponse, userValue]);
+    const currentUser = useMemo(() => (userValue ?
+        [{ id: userValue.member, displayName: userValue.memberName }] : []
+    ), [userValue]);
 
-    const pendingRequests = pendingRoles || pendingUserList;
+    const pendingRequests = pendingRoles;
 
     return (
         <Modal
@@ -211,20 +180,20 @@ function AddUserModal(props: Props) {
         >
             {pendingAddAction && (<LoadingAnimation />)}
             <NonFieldError error={error} />
-            <SelectInput
+            <UserSelectInput
+                className={styles.input}
+                queryParams={queryForUsers}
                 name="member"
                 readOnly={isDefined(userValue)}
-                className={styles.input}
-                options={usersList}
-                keySelector={membersKeySelector}
-                labelSelector={membersLabelSelector}
-                optionsPopupClassName={styles.optionsPopup}
-                onChange={onValueChange}
                 value={value.member}
-                label={_ts('analyticalFramework.addUser', 'userLabel')}
-                placeholder={_ts('analyticalFramework.addUser', 'selectUserPlaceholder')}
+                onChange={onValueChange}
+                options={userOptions ?? currentUser}
+                onOptionsChange={setUserOptions}
                 error={error?.fields?.member}
                 disabled={pendingRequests}
+                optionsPopupClassName={styles.optionsPopup}
+                label={_ts('analyticalFramework.addUser', 'userLabel')}
+                placeholder={_ts('analyticalFramework.addUser', 'selectUserPlaceholder')}
             />
             <SelectInput
                 name="role"

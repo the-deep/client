@@ -1,7 +1,6 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import {
     isDefined,
-    isNotDefined,
 } from '@togglecorp/fujs';
 import {
     ObjectSchema,
@@ -15,11 +14,13 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 
+import UserSelectInput from '#components/input/UserSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
 import { notifyOnFailure } from '#utils/requestNotify';
 import {
     MultiResponse,
+    BasicUser,
     Membership,
 } from '#typings';
 import { ProjectRole } from '#typings/project';
@@ -33,14 +34,6 @@ interface Props {
     onTableReload: () => void;
     userValue?: Membership;
 }
-
-interface User {
-    id: number;
-    displayName: string;
-}
-
-const membersKeySelector = (d: User) => d.id;
-const membersLabelSelector = (d: User) => d.displayName;
 
 const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
@@ -98,6 +91,10 @@ function AddUserModal(props: Props) {
         members_exclude_project: projectId,
     }), [projectId]);
 
+    const [
+        userOptions,
+        setUserOptions,
+    ] = useState<BasicUser[] | undefined | null>();
     const {
         pending: pendingRoles,
         response: projectRolesResponse,
@@ -106,18 +103,6 @@ function AddUserModal(props: Props) {
         method: 'GET',
         onFailure: (_, errorBody) => {
             notifyOnFailure(_ts('projectEdit', 'projectRoleFetchFailed'))({ error: errorBody });
-        },
-    });
-
-    const {
-        pending: pendingUserList,
-        response: usersListResponse,
-    } = useRequest<MultiResponse<User>>({
-        url: 'server://users/',
-        method: 'GET',
-        query: queryForUsers,
-        onFailure: (_, errorBody) => {
-            notifyOnFailure(_ts('projectEdit', 'usersFetchFailed'))({ error: errorBody });
         },
     });
 
@@ -152,20 +137,11 @@ function AddUserModal(props: Props) {
         [onErrorSet, validate, triggerAddProjectMember],
     );
 
-    const usersList = useMemo(() => {
-        if (isNotDefined(userValue)) {
-            return usersListResponse?.results ?? [];
-        }
-        return [
-            ...(usersListResponse?.results ?? []),
-            {
-                id: userValue.member,
-                displayName: userValue.memberName,
-            },
-        ];
-    }, [usersListResponse, userValue]);
+    const currentUser = useMemo(() => (userValue ?
+        [{ id: userValue.member, displayName: userValue.memberName }] : []
+    ), [userValue]);
 
-    const pendingRequests = pendingRoles || pendingUserList;
+    const pendingRequests = pendingRoles;
 
     return (
         <Modal
@@ -195,20 +171,20 @@ function AddUserModal(props: Props) {
                     {error?.$internal}
                 </p>
             )}
-            <SelectInput
+            <UserSelectInput
+                className={styles.input}
+                queryParams={queryForUsers}
                 name="member"
                 readOnly={isDefined(userValue)}
-                className={styles.input}
-                options={usersList}
-                keySelector={membersKeySelector}
-                labelSelector={membersLabelSelector}
-                optionsPopupClassName={styles.optionsPopup}
-                onChange={onValueChange}
                 value={value.member}
-                label={_ts('projectEdit', 'userLabel')}
-                placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
+                onChange={onValueChange}
+                options={userOptions ?? currentUser}
+                onOptionsChange={setUserOptions}
                 error={error?.fields?.member}
                 disabled={pendingRequests}
+                optionsPopupClassName={styles.optionsPopup}
+                label={_ts('projectEdit', 'userLabel')}
+                placeholder={_ts('projectEdit', 'selectUserPlaceholder')}
             />
             <SelectInput
                 name="role"

@@ -144,6 +144,11 @@ function FrameworkDetails(props: Props & PropsFromState) {
         showUserAddModal();
     }, [frameworkUsers?.results, showUserAddModal]);
 
+    const handleUserAddClick = useCallback(() => {
+        setUserToEdit(undefined);
+        showUserAddModal();
+    }, [showUserAddModal]);
+
     const columns = useMemo(
         () => {
             const actionColumn: TableColumn<
@@ -217,7 +222,7 @@ function FrameworkDetails(props: Props & PropsFromState) {
                             actions={(
                                 <Button
                                     name="userAdd"
-                                    onClick={showUserAddModal}
+                                    onClick={handleUserAddClick}
                                     icons={(<IoAdd />)}
                                 >
                                     {_ts('analyticalFramework', 'addUserButtonLabel')}
