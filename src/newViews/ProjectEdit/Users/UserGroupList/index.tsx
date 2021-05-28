@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import {
     IoChevronForward,
     IoAdd,
@@ -41,12 +41,16 @@ const usergroupKeySelector = (d: UserGroup) => d.id;
 interface Props{
     className?: string;
     projectId: number;
+    activeUserRoleLevel?: number;
+    pending?: boolean;
 }
 
 function UserGroupList(props: Props) {
     const {
         className,
         projectId,
+        activeUserRoleLevel,
+        pending,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -110,10 +114,14 @@ function UserGroupList(props: Props) {
                 sortable: false,
             },
             cellRenderer: ActionCell,
-            cellRendererParams: userId => ({
+            cellRendererParams: (userId, data) => ({
                 itemKey: userId,
                 onEditClick: handleEditUsergroupClick,
                 onDeleteClick: triggerDeleteUsergroup,
+                disabled: (
+                    isNotDefined(activeUserRoleLevel)
+                    || data.roleDetails.level < activeUserRoleLevel
+                ),
                 editButtonTitle: _ts('projectEdit', 'editUsergroupLabel'),
                 deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
                 deleteConfirmationMessage: _ts('projectEdit', 'removeUserGroupConfirmation'),
@@ -143,7 +151,7 @@ function UserGroupList(props: Props) {
             ),
             actionColumn,
         ]);
-    }, [triggerDeleteUsergroup, handleEditUsergroupClick]);
+    }, [triggerDeleteUsergroup, handleEditUsergroupClick, activeUserRoleLevel]);
 
     const usergroupToEdit = useMemo(() => (
         usergroupResponse?.results?.find(d => d.id === usergroupIdToEdit)
@@ -185,13 +193,14 @@ function UserGroupList(props: Props) {
                             <IoAdd />
                         )}
                         onClick={handleAddUsergroupClick}
+                        disabled={pending}
                     >
                         {_ts('projectEdit', 'addUserGroup')}
                     </Button>
                 </div>
             )}
         >
-            {usergroupPending && (<PendingMessage />)}
+            {(usergroupPending || pending) && (<PendingMessage />)}
             {(usergroupResponse && usergroupResponse?.count > 0)
                 ? (
                     <Table
@@ -221,6 +230,7 @@ function UserGroupList(props: Props) {
                     projectId={projectId}
                     onTableReload={triggerUsergroupResponse}
                     usergroupValue={usergroupToEdit}
+                    activeUserRoleLevel={activeUserRoleLevel}
                 />
             )}
         </Container>

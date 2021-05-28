@@ -38,13 +38,6 @@ interface UserGroupMembership {
     usergroup: number;
 }
 
-interface Props {
-    onModalClose: () => void;
-    projectId: number;
-    onTableReload: () => void;
-    usergroupValue?: UserGroupMembership;
-}
-
 const usergroupKeySelector = (d: UserGroupMini) => d.id;
 const usergroupLabelSelector = (d: UserGroupMini) => d.title;
 
@@ -81,12 +74,21 @@ interface ValueToSend {
 
 const defaultFormValue: PartialForm<FormType> = {};
 
+interface Props {
+    onModalClose: () => void;
+    projectId: number;
+    onTableReload: () => void;
+    usergroupValue?: UserGroupMembership;
+    activeUserRoleLevel?: number;
+}
+
 function AddUserGroupModal(props: Props) {
     const {
         onModalClose,
         projectId,
         onTableReload,
         usergroupValue,
+        activeUserRoleLevel,
     } = props;
 
     const formValue: PartialForm<FormType> = usergroupValue ?? defaultFormValue;
@@ -173,6 +175,12 @@ function AddUserGroupModal(props: Props) {
 
     const pendingRequests = pendingRoles || pendingUsergroupList;
 
+    const roles = isDefined(activeUserRoleLevel)
+        ? projectRolesResponse?.results.filter(
+            role => role.level >= activeUserRoleLevel,
+        )
+        : undefined;
+
     return (
         <Modal
             className={styles.modal}
@@ -219,7 +227,7 @@ function AddUserGroupModal(props: Props) {
             <SelectInput
                 name="role"
                 className={styles.input}
-                options={projectRolesResponse?.results}
+                options={roles}
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
                 optionsPopupClassName={styles.optionsPopup}

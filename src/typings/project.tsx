@@ -26,6 +26,7 @@ export interface Membership {
     roleDetails: {
         id: number;
         title: string;
+        level: number;
     };
     joinedAt: string;
     userGroupOptions: BasicElement[];
@@ -157,6 +158,7 @@ export interface UserGroup {
     roleDetails: {
         id: number;
         title: string;
+        level: number;
     };
 }
 
@@ -179,6 +181,27 @@ export interface ProjectRole {
     level: number;
     isCreatorRole: boolean;
     isDefaultRole: boolean;
+}
+
+export interface ProjectMemberships {
+    id: number;
+    joinedAt: string;
+    member: number;
+    memberEmail: string;
+    memberName: string;
+    memberOrganization?: string;
+    memberStatus: string;
+    project: number;
+    role: number;
+    roleDetails: {
+        id: number;
+        title: string;
+        level: number;
+    };
+    userGroupOptions: {
+        id: number;
+        title: string;
+    }[];
 }
 
 export interface ProjectRolesMap {

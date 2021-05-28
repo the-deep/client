@@ -15,6 +15,7 @@ import BackLink from '#dui/BackLink';
 import {
     activeProjectFromStateSelector,
     projectIdFromRouteSelector,
+    activeUserSelector,
 } from '#redux';
 import _ts from '#ts';
 
@@ -31,11 +32,13 @@ import styles from './styles.scss';
 const mapStateToProps = (state: AppState) => ({
     projectId: projectIdFromRouteSelector(state),
     activeProject: activeProjectFromStateSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 interface ViewProps {
     projectId: number;
     activeProject: ProjectDetails;
+    activeUser: { userId: number };
 }
 
 type TabNames = 'general' | 'users' | 'framework';
@@ -44,6 +47,7 @@ function ProjectEdit(props: ViewProps) {
     const {
         projectId,
         activeProject,
+        activeUser,
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabNames>('general');
@@ -121,9 +125,10 @@ function ProjectEdit(props: ViewProps) {
                         name="users"
                         className={styles.tabPanel}
                     >
-                        { projectId && (
+                        {projectId && (
                             <Users
                                 projectId={projectId}
+                                activeUserId={activeUser.userId}
                             />
                         )}
                     </TabPanel>
