@@ -1,0 +1,18 @@
+.widget-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .header {
+        align-items: center;
+    }
+
+    .add-more-item {
+        border-bottom: var(--dui-width-separator-thin) solid var(--color-separator);
+    }
+
+    .children {
+        border: none;
+        padding: 0;
+    }
+}
