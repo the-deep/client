@@ -26,6 +26,7 @@ function SourceEntryItem(props: Props) {
             className={_cs(className, styles.entryItem, disabled && styles.disabled)}
             name="entry"
             value={value}
+            childrenContainerClassName={styles.children}
         >
             <EntryItem
                 {...otherProps}

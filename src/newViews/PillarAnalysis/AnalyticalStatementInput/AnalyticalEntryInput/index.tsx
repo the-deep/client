@@ -92,8 +92,8 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 value={dragValue}
                 onDragStart={setDragStart}
                 onDragStop={setDragEnd}
-                childrenContainerClassName={styles.content}
-                actions={(
+                contentClassName={styles.content}
+                headerActions={(
                     <QuickActionButton
                         className={styles.removeButton}
                         name={index}
@@ -112,7 +112,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 {entry && (
                     <EntryItem
                         excerpt={entry.excerpt}
-                        image={entry.image}
+                        imageDetails={entry.imageDetails}
                         tabularFieldData={entry.tabularFieldData}
                         type={entry.entryType}
                     />

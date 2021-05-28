@@ -147,7 +147,8 @@ function PillarAnalysis(props: Props) {
         onErrorSet,
     } = useForm(
         pillarAnalysisFromProps?.data ?? defaultFormValues,
-        schema);
+        schema,
+    );
 
     const [statementDraggedStatus, setStatementDraggedStatus] = useState(false);
 
@@ -361,7 +362,7 @@ function PillarAnalysis(props: Props) {
             'id',
             'excerpt',
             'dropped_excerpt',
-            'image',
+            'image_details',
             'entry_type',
             'tabular_field_data',
         ],
@@ -507,6 +508,8 @@ function PillarAnalysis(props: Props) {
         entryId: key,
         excerpt: data.excerpt,
         image: data.image,
+        imageRaw: data.imageRaw,
+        imageDetails: data.imageDetails,
         tabularFieldData: data.tabularFieldData,
         type: data.entryType,
         disabled: usedUpEntriesMap[key],
