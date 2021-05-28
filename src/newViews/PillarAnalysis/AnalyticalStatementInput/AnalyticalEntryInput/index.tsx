@@ -95,7 +95,6 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                 contentClassName={styles.content}
                 headerActions={(
                     <QuickActionButton
-                        className={styles.removeButton}
                         name={index}
                         onClick={onRemove}
                         title={_ts('pillarAnalysis', 'removeAnalyticalEntryButtonTitle')}

@@ -22,14 +22,14 @@ import {
     Tab,
     TabList,
     TabPanel,
+    ListView,
+    Pager,
 } from '@the-deep/deep-ui';
 import {
     useForm,
     useFormArray,
 } from '@togglecorp/toggle-form';
 
-import ListView from '#rsu/../v2/View/ListView';
-import Pager from '#rscv/Pager';
 import FullPageHeader from '#dui/FullPageHeader';
 import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
@@ -252,7 +252,7 @@ function PillarAnalysis(props: Props) {
             notify.send({
                 title: _ts('pillarAnalysis', 'pillarAnalysisTitle'),
                 type: notify.type.SUCCESS,
-                message: _ts('pillarAnalysis', 'pillarAnalaysisUpdateSuccess'),
+                message: _ts('pillarAnalysis', 'pillarAnalysisUpdateSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         },
@@ -313,6 +313,7 @@ function PillarAnalysis(props: Props) {
                 ...processedFilters,
                 ...Object.entries(otherFilters),
             ],
+            discarded: false,
         });
     }, [geoOptions, filtersValue, framework, projectId]);
 
@@ -323,7 +324,7 @@ function PillarAnalysis(props: Props) {
             'id',
             'excerpt',
             'dropped_excerpt',
-            'image',
+            'image_details',
             'entry_type',
             'tabular_field_data',
         ],
@@ -331,8 +332,9 @@ function PillarAnalysis(props: Props) {
 
     const {
         pending: pendingEntries,
+        retrigger: reTriggerEntriesList,
     } = useRequest<MultiResponse<EntryFieldsMin>>({
-        url: 'server://entries/filter/',
+        url: `server://analysis-pillar/${pillarId}/entries/`,
         method: 'POST',
         skip: pendingPillarAnalysis || pendingFramework,
         body: entriesRequestBody,
@@ -370,12 +372,11 @@ function PillarAnalysis(props: Props) {
     const {
         pending: pendingEntriesInitialData,
     } = useRequest<MultiResponse<EntryFieldsMin>>({
-        url: 'server://entries/filter/',
+        url: `server://analysis-pillar/${pillarId}/entries/`,
         method: 'POST',
         body: analysisEntriesRequestBody,
         query: analysisEntriesRequestQuery,
         onSuccess: (response) => {
-            setEntriesCount(response.count);
             setEntriesMapping(oldEntriesMappings => ({
                 ...oldEntriesMappings,
                 ...listToMap(
@@ -513,7 +514,9 @@ function PillarAnalysis(props: Props) {
         tabularFieldData: data.tabularFieldData,
         type: data.entryType,
         disabled: usedUpEntriesMap[key],
-    }), [usedUpEntriesMap]);
+        pillarId,
+        onEntryDiscard: reTriggerEntriesList,
+    }), [usedUpEntriesMap, pillarId, reTriggerEntriesList]);
 
     const pending = pendingPillarAnalysis || pendingEntriesInitialData || pendingPillarAnalysisSave;
 
@@ -625,8 +628,8 @@ function PillarAnalysis(props: Props) {
                                     activePage={activePage}
                                     itemsCount={entriesCount}
                                     maxItemsPerPage={maxItemsPerPage}
-                                    onPageClick={setActivePage}
-                                    showItemsPerPageChange={false}
+                                    onActivePageChange={setActivePage}
+                                    itemsPerPageControlHidden
                                 />
                             )}
                         >

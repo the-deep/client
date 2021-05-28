@@ -14,3 +14,19 @@
         pointer-events: none;
     }
 }
+
+.popup-container {
+    display: flex;
+    flex-direction: column;
+
+    .popup-button {
+        display: flex;
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+        width: auto;
+        text-align: left;
+
+        &:hover {
+            background-color: var(--dui-color-background-hover);
+        }
+    }
+}
