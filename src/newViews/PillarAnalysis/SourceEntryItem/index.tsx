@@ -15,12 +15,8 @@ import { notifyOnFailure } from '#utils/requestNotify';
 import _ts from '#ts';
 
 import EntryItem, { Props as EntryItemProps } from '../EntryItem';
+import { DiscardedTags } from '../index';
 import styles from './styles.scss';
-
-const REDUNDANT = 0;
-const TOO_OLD = 1;
-const ANECDOTAL = 2;
-const OUTLIER = 3;
 
 interface Props extends EntryItemProps {
     className?: string;
@@ -28,6 +24,7 @@ interface Props extends EntryItemProps {
     disabled?: boolean;
     pillarId: number;
     onEntryDiscard: () => void;
+    discardedTags?: DiscardedTags[];
 }
 
 function SourceEntryItem(props: Props) {
@@ -37,6 +34,7 @@ function SourceEntryItem(props: Props) {
         disabled,
         pillarId,
         onEntryDiscard,
+        discardedTags,
         ...otherProps
     } = props;
 
@@ -60,31 +58,10 @@ function SourceEntryItem(props: Props) {
         },
     });
 
-    const handleRedundantClick = useCallback(() => {
+    const handleDiscardClick = useCallback((tagKey: number) => {
         trigger({
             entry: entryId,
-            tag: REDUNDANT,
-        });
-    }, [trigger, entryId]);
-
-    const handleTooOldClick = useCallback(() => {
-        trigger({
-            entry: entryId,
-            tag: TOO_OLD,
-        });
-    }, [trigger, entryId]);
-
-    const handleOutlierClick = useCallback(() => {
-        trigger({
-            entry: entryId,
-            tag: OUTLIER,
-        });
-    }, [trigger, entryId]);
-
-    const handleAnecdotalClick = useCallback(() => {
-        trigger({
-            entry: entryId,
-            tag: ANECDOTAL,
+            tag: tagKey,
         });
     }, [trigger, entryId]);
 
@@ -105,46 +82,18 @@ function SourceEntryItem(props: Props) {
                         freeWidth
                         contentClassName={styles.popupContainer}
                     >
-                        <Button
-                            className={styles.popupButton}
-                            variant="action"
-                            name="anecdotal"
-                            onClick={handleAnecdotalClick}
-                            disabled={pending}
-                            // FIXME: Use strings
-                        >
-                            Anecdotal
-                        </Button>
-                        <Button
-                            className={styles.popupButton}
-                            variant="action"
-                            name="redundant"
-                            disabled={pending}
-                            onClick={handleRedundantClick}
-                            // FIXME: Use strings
-                        >
-                            Redundant
-                        </Button>
-                        <Button
-                            className={styles.popupButton}
-                            variant="action"
-                            name="tooOld"
-                            disabled={pending}
-                            onClick={handleTooOldClick}
-                            // FIXME: Use strings
-                        >
-                            Too old
-                        </Button>
-                        <Button
-                            variant="action"
-                            className={styles.popupButton}
-                            name="outlier"
-                            onClick={handleOutlierClick}
-                            disabled={pending}
-                            // FIXME: Use strings
-                        >
-                            Outlier
-                        </Button>
+                        {discardedTags && discardedTags.map(tag => (
+                            <Button
+                                key={tag.key}
+                                className={styles.popupButton}
+                                variant="action"
+                                name={tag.value}
+                                onClick={() => handleDiscardClick(tag.key)}
+                                disabled={pending}
+                            >
+                                {tag.value}
+                            </Button>
+                        ))}
                     </Popup>
                 </QuickActionButton>
             )}

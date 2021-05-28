@@ -59,6 +59,7 @@ import {
     setPillarAnalysisDataAction,
 } from '#redux';
 import EntriesFilterForm from './EntriesFilterForm';
+import DiscardedEntries from './DiscardedEntries';
 import SourceEntryItem from './SourceEntryItem';
 import AnalyticalStatementInput from './AnalyticalStatementInput';
 import {
@@ -69,6 +70,30 @@ import {
 import EntryContext, { EntryFieldsMin } from './context';
 
 import styles from './styles.scss';
+
+export interface DiscardedTags {
+    key: number;
+    value: string;
+}
+
+const fakeTags: DiscardedTags[] = [
+    {
+        key: 0,
+        value: 'Redundant',
+    },
+    {
+        key: 1,
+        value: 'Too old',
+    },
+    {
+        key: 2,
+        value: 'Anecdotal',
+    },
+    {
+        key: 3,
+        value: 'Outlier',
+    },
+];
 
 // This is an aribitrary number
 const STATEMENTS_LIMIT = 30;
@@ -349,6 +374,20 @@ function PillarAnalysis(props: Props) {
         // FIXME: add schema
     });
 
+    const {
+        pending: pendingDiscardedTags,
+        response: discardedTags,
+    } = useRequest<DiscardedTags[]>({
+        skip: !pendingEntries,
+        url: 'server://discarded-entry-options/',
+        query: entriesRequestQuery,
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('pillarAnalysis', 'entriesTitle'))({ error: errorBody });
+        },
+        // FIXME: Remove this response later on
+        mockResponse: fakeTags,
+    });
+
     const analysisEntriesRequestBody = useMemo(
         () => ({
             filters: [
@@ -505,20 +544,22 @@ function PillarAnalysis(props: Props) {
         [onErrorSet, validate, updateAnalysisPillars],
     );
 
-    const entryCardRendererParams = useCallback((key, data) => ({
+    const entryCardRendererParams = useCallback((key: number, data: EntryFieldsMin) => ({
         entryId: key,
         excerpt: data.excerpt,
-        image: data.image,
-        imageRaw: data.imageRaw,
         imageDetails: data.imageDetails,
         tabularFieldData: data.tabularFieldData,
         type: data.entryType,
         disabled: usedUpEntriesMap[key],
         pillarId,
+        discardedTags,
         onEntryDiscard: reTriggerEntriesList,
-    }), [usedUpEntriesMap, pillarId, reTriggerEntriesList]);
+    }), [usedUpEntriesMap, pillarId, reTriggerEntriesList, discardedTags]);
 
-    const pending = pendingPillarAnalysis || pendingEntriesInitialData || pendingPillarAnalysisSave;
+    const pending = pendingPillarAnalysis
+    || pendingEntriesInitialData
+    || pendingPillarAnalysisSave
+    || pendingDiscardedTags;
 
     return (
         <div className={styles.pillarAnalysis}>
@@ -615,22 +656,10 @@ function PillarAnalysis(props: Props) {
                                     <Tab name="entries">
                                         {_ts('pillarAnalysis', 'entriesTabLabel')}
                                     </Tab>
-                                    <Tab
-                                        name="discarded"
-                                        disabled
-                                    >
+                                    <Tab name="discarded">
                                         {_ts('pillarAnalysis', 'discardedEntriesTabLabel')}
                                     </Tab>
                                 </TabList>
-                            )}
-                            footerContent={(
-                                <Pager
-                                    activePage={activePage}
-                                    itemsCount={entriesCount}
-                                    maxItemsPerPage={maxItemsPerPage}
-                                    onActivePageChange={setActivePage}
-                                    itemsPerPageControlHidden
-                                />
                             )}
                         >
                             <TabPanel name="entries">
@@ -641,10 +670,19 @@ function PillarAnalysis(props: Props) {
                                     rendererParams={entryCardRendererParams}
                                     pending={pendingEntries}
                                 />
+                                <Pager
+                                    activePage={activePage}
+                                    itemsCount={entriesCount}
+                                    maxItemsPerPage={maxItemsPerPage}
+                                    onActivePageChange={setActivePage}
+                                    itemsPerPageControlHidden
+                                />
                             </TabPanel>
                             <TabPanel name="discarded">
-                                {/* NOTE: This is a dummy text */}
-                                Discarded entries go here
+                                <DiscardedEntries
+                                    pillarId={pillarId}
+                                    discardedTags={discardedTags}
+                                />
                             </TabPanel>
                         </CollapsibleContainer>
                     </Tabs>

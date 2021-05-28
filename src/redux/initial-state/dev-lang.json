@@ -1355,7 +1355,8 @@
         "-38544197": "View Framework Image for Reference",
         "-28777942": "Framework users",
         "-89164075": "Failed to fetch framework roles.",
-        "-26472388": "Are you sure you want to remove this user from the framework?"
+        "-26472388": "Are you sure you want to remove this user from the framework?",
+        "-53075174": "Are you sure you want to remove this entry from discarded entries list?"
     },
     "links": {
         "browserExtension": {
@@ -3722,7 +3723,9 @@
             "entriesTitle": 15,
             "pillarAnalysisTitle": -52946834,
             "analysisPillarEntriesTitle": -30397704,
-            "pillarAnalaysisUpdateSuccess": -33611896
+            "pillarAnalaysisUpdateSuccess": -33611896,
+            "confirmUndiscardEntryMessage": -53075174,
+            "pillarAnalysisUpdateSuccess": -33611896
         },
         "projectEdit": {
             "closeButtonLabel": -39430073,

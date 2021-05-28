@@ -1,0 +1,17 @@
+.discarded-entries {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .filter {
+        flex-shrink: 0;
+    }
+
+    .list {
+        flex-grow: 1;
+    }
+
+    .footer {
+        flex-shrink: 0;
+    }
+}
