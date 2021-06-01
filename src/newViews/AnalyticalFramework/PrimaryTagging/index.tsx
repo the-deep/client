@@ -24,6 +24,7 @@ import _ts from '#ts';
 import SectionsEditor, { PartialSectionType } from './SectionsEditor';
 import WidgetPreview from './WidgetPreview';
 import WidgetEditor from './WidgetEditor';
+import WidgetList from '../WidgetList';
 import { Section, Widget, PartialForm } from './types';
 import styles from './styles.scss';
 
@@ -276,31 +277,11 @@ function PrimaryTagging(props: Props) {
                 sub
             >
                 {!editMode && (
-                    <Button
-                        name={undefined}
-                        onClick={handleSectionsEditClick}
-                        // FIXME: use strings
-                    >
-                        Edit Sections
-                    </Button>
-                )}
-                {!editMode && (
-                    <>
-                        <Button
-                            name={undefined}
-                            onClick={handleTextWidgetAddClick}
-                            // FIXME: use strings
-                        >
-                            Add Text Widget
-                        </Button>
-                        <Button
-                            name={undefined}
-                            onClick={handleDateWidgetAddClick}
-                            // FIXME: use strings
-                        >
-                            Add Date Widget
-                        </Button>
-                    </>
+                    <WidgetList
+                        onSectionsEditClick={handleSectionsEditClick}
+                        onTextWidgetAddClick={handleTextWidgetAddClick}
+                        onDateWidgetAddClick={handleDateWidgetAddClick}
+                    />
                 )}
                 {sectionEditMode && tempSections && (
                     <SectionsEditor
