@@ -62,7 +62,7 @@ function StakeholderList(props: Props) {
     } = props;
 
     if (!data || data.length === 0) {
-        return null;
+        return (<></>);
     }
 
     return (

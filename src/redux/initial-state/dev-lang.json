@@ -1357,7 +1357,10 @@
         "-89164075": "Failed to fetch framework roles.",
         "-26472388": "Are you sure you want to remove this user from the framework?",
         "-53075174": "Are you sure you want to remove this entry from discarded entries list?",
-        "-810289191": "My Profile"
+        "-810289191": "My Profile",
+        "-91292812": "Add Stakeholder",
+        "-91928382": "Edit Stakeholder",
+        "-91293882": "Search Stakeholder"
     },
     "links": {
         "browserExtension": {
@@ -3577,6 +3580,8 @@
             "projectStakeholdersHeading": -41977678
         },
         "project.detail.stakeholders": {
+            "addStakeholder": -91292812,
+            "editStakeholder": -91928382,
             "stakeholdersModalTitle": -35334807,
             "organizationsTitle": 154,
             "addNewOrganizationTitle": 301,
@@ -3591,7 +3596,12 @@
             "cancelButtonLabel": 61,
             "doneButtonLabel": 25,
             "emptyListMessage": -13101548,
-            "emptyReadOnlyMessage": -10912171
+            "emptyReadOnlyMessage": -10912171,
+            "save": 25,
+            "searchLabel": -91293882,
+            "searching": -435034987,
+            "typeToSearchOrganizationMessage": -41987822,
+            "noResultsFoundMessage": -95930063
         },
         "components.entryEditButton": {
             "cancelButtonLabel": 61,

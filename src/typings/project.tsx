@@ -77,11 +77,13 @@ export interface UserActivityStat {
     date?: string;
 }
 
+export type OrganizationTypes = 'lead_organization' | 'international_partner' | 'national_partner' | 'donor' | 'government';
+
 export interface ProjectOrganization {
     id: number;
     organization: number;
     organizationDetails: OrganizationDetails;
-    organizationType: 'lead_organization' | 'international_partners' | 'national_partners' | 'donors' | 'government';
+    organizationType: OrganizationTypes;
     organizationTypeDisplay: string;
 }
 

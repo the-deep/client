@@ -24,6 +24,7 @@ function Stakeholder(props: Props) {
     const dragValue = useMemo(() => ({
         id: value.id,
         title: value.title,
+        logoUrl: value.logoUrl,
     }), [value]);
 
     return (
@@ -39,6 +40,7 @@ function Stakeholder(props: Props) {
                     <Avatar
                         className={styles.icon}
                         src={value.logoUrl}
+                        alt={value.title}
                     />
                 )}
             >

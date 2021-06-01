@@ -32,9 +32,6 @@ function StakeholderList(props: Props) {
         label,
     } = props;
 
-    const handleDragEnter = useCallback(() => {
-    }, []);
-
     const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         try {
             const data = e.dataTransfer.getData('text');
@@ -43,14 +40,13 @@ function StakeholderList(props: Props) {
                 throw new Error('Invalid data');
             }
 
-            console.warn('parsedData', parsedData);
-            const { id, title } = parsedData;
+            const { id, title, logoUrl } = parsedData;
 
+            const droppedOrganization = { id, title, logoUrl };
             if (!value) {
-                onChange([{ id, title }], name);
+                onChange([droppedOrganization], name);
             } else if (value.findIndex(v => v.id === id) === -1) {
-                console.warn('id', id, title);
-                onChange([...value, { id, title }], name);
+                onChange([...value, droppedOrganization], name);
             }
         } catch (ex) {
             console.warn('Only organizations supported');
@@ -63,7 +59,7 @@ function StakeholderList(props: Props) {
         onDragEnter,
         onDragLeave,
         onDrop,
-    } = useDropHandler(handleDragEnter, handleDrop);
+    } = useDropHandler(handleDrop);
 
     const onRowRemove = useCallback((id: number) => {
         if (value) {

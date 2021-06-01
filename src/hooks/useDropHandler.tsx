@@ -5,8 +5,8 @@ interface DragHandler<T> {
 }
 
 function useDropHandler(
-    dragStartHandler: DragHandler<HTMLDivElement>,
     dropHandler: DragHandler<HTMLDivElement>,
+    dragStartHandler?: DragHandler<HTMLDivElement>,
 ) {
     const [dropping, setDropping] = React.useState(false);
     const dragEnterCount = React.useRef(0);
@@ -19,7 +19,9 @@ function useDropHandler(
         if (dragEnterCount.current === 0) {
             setDropping(true);
 
-            dragStartHandler(e);
+            if (dragStartHandler) {
+                dragStartHandler(e);
+            }
         }
         dragEnterCount.current += 1;
     }, [dragStartHandler]);

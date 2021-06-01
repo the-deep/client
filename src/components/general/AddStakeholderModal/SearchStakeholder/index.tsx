@@ -14,17 +14,17 @@ import { notifyOnFailure } from '#utils/requestNotify';
 import Stakeholder from './Stakeholder';
 import styles from './styles.scss';
 
+const stakeholderKeySelector = (d: Organization) => d.id.toString();
+
 interface Props {
     className?: string;
 }
 
-const stakeholderKeySelector = (d: Organization) => d.id.toString();
 function SearchStakeholder(props: Props) {
     const {
         className,
     } = props;
 
-    console.warn('className', className);
     const [searchText, setSearchText] = useState<string | undefined>();
     const debouncedSearchText = useDebouncedValue(searchText);
 
@@ -42,7 +42,7 @@ function SearchStakeholder(props: Props) {
             skip: !searchText,
             query: searchQueryParams,
             onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('components.organizationSelectInput', 'title'))({ error: errorBody }),
+                notifyOnFailure(_ts('project.detail.stakeholders', 'stakeholdersModalTitle'))({ error: errorBody }),
         },
     );
 
@@ -52,23 +52,22 @@ function SearchStakeholder(props: Props) {
     }), [searchText]);
 
     const emptyMessage = useMemo(() => ((stakeholders?.count ?? 0) === 0 && !searchText ?
-        _ts('assessment.metadata.stakeholder', 'typeToSearchOrganizationMessage')
-        : _ts('assessment.metadata.stakeholder', 'noResultsFoundMessage')),
+        _ts('project.detail.stakeholders', 'typeToSearchOrganizationMessage')
+        : _ts('project.detail.stakeholders', 'noResultsFoundMessage')),
     [searchText, stakeholders?.count]);
 
-    console.warn('emptymessage', stakeholders?.count === 0 && !searchText, emptyMessage);
     return (
         <div className={_cs(className, styles.search)}>
             <TextInput
                 name="search"
                 onChange={setSearchText}
                 value={searchText}
-                label="Search Stakeholder"
-                placeholder="Search Stakeholder"
+                label={_ts('project.detail.stakeholders', 'searchLabel')}
+                placeholder={_ts('project.detail.stakeholders', 'searchLabel')}
             />
             <ListView
                 className={styles.items}
-                pendingMessage={_ts('assessment.metadata.stakeholder', 'searching')}
+                pendingMessage={_ts('project.detail.stakeholders', 'searching')}
                 emptyMessage={emptyMessage}
                 pending={pending}
                 data={stakeholders?.results}

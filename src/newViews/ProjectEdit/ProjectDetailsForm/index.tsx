@@ -11,6 +11,7 @@ import {
     DateInput,
     TextArea,
     Checkbox,
+    ListView,
 } from '@the-deep/deep-ui';
 import {
     isNotDefined,
@@ -18,17 +19,18 @@ import {
 } from '@togglecorp/fujs';
 
 import {
+    ArraySchema,
     ObjectSchema,
     requiredStringCondition,
     idCondition,
     useForm,
     createSubmitHandler,
+    requiredCondition,
 } from '@togglecorp/toggle-form';
 
-import ListView from '#rsu/../v2/View/ListView';
-import OrganizationList from '#components/general/OrganizationList';
 import NonFieldError from '#components/ui/NonFieldError';
-import { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
+import AddStakeholderButton from '#components/general/AddStakeholderButton';
+import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
 import { ProjectDetails } from '#typings';
 
 import _ts from '#ts';
@@ -38,6 +40,35 @@ import {
 } from '#utils/request';
 
 import styles from './styles.scss';
+import StakeholderList from './StakeholderList';
+
+interface StakeholderType {
+    id: string;
+    label: string;
+}
+
+const stakeholderTypes: StakeholderType[] = [
+    {
+        label: _ts('project.detail.stakeholders', 'leadOrganization'),
+        id: 'lead_organization',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'internationalPartner'),
+        id: 'international_partner',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'nationalPartner'),
+        id: 'national_partner',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'donor'),
+        id: 'donor',
+    },
+    {
+        label: _ts('project.detail.stakeholders', 'government'),
+        id: 'government',
+    },
+];
 
 type FormType = {
     id?: number;
@@ -46,13 +77,30 @@ type FormType = {
     endDate?: string;
     description?: string;
     hasAssessments?: boolean;
-    // TODO: @samshara to add this back after new organizations popup is completed
-    // organizations?: ProjectOrganization[];
+    organizations?: BasicProjectOrganization[];
 }
 
 
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
+
+type StakeholderSchema = ObjectSchema<BasicProjectOrganization>;
+type StakeholderSchemaFields = ReturnType<StakeholderSchema['fields']>;
+const organizationSchema: StakeholderSchema = {
+    fields: (): StakeholderSchemaFields => ({
+        organization: [requiredCondition],
+        organizationType: [requiredCondition],
+        organizationDetails: [requiredCondition],
+    }),
+};
+
+type StakeholderListSchema = ArraySchema<BasicProjectOrganization>;
+type StakeholderListMember = ReturnType<StakeholderListSchema['member']>;
+const organizationListSchema: StakeholderListSchema = {
+    keySelector: d => d.organization,
+    member: (): StakeholderListMember => organizationSchema,
+};
+
 const schema: FormSchema = {
     fields: (): FormSchemaFields => ({
         id: [idCondition],
@@ -61,7 +109,7 @@ const schema: FormSchema = {
         endDate: [],
         description: [],
         hasAssessments: [],
-        // organizations: organizationListSchema,
+        organizations: organizationListSchema,
     }),
 };
 
@@ -131,30 +179,27 @@ function ProjectDetailsForm(props: Props) {
     const handleSubmit = useCallback((values: FormType) => {
         projectPatch({
             ...values,
-            organizations: projectDetails?.organizations ?? [],
         });
-    }, [projectPatch, projectDetails]);
+    }, [projectPatch]);
 
-    const selectedOrganizations = projectDetails?.organizations;
-
-    const groupedOrganizations = useMemo(
+    const groupedStakeholders = useMemo(
         () => listToGroupList(
-            selectedOrganizations ?? [],
+            value?.organizations ?? [],
             o => o.organizationType,
             o => o,
         ),
-        [selectedOrganizations],
+        [value],
     );
 
     const organizationListRendererParams = useCallback(
         (key: string, v: StakeholderType) => {
-            const organizations = groupedOrganizations[key];
+            const organizations = groupedStakeholders[key];
             return {
                 data: organizations,
                 title: v.label,
             };
         },
-        [groupedOrganizations],
+        [groupedStakeholders],
     );
 
     const disabled = pending || projectPatchPending;
@@ -278,17 +323,22 @@ function ProjectDetailsForm(props: Props) {
                         headerClassName={styles.header}
                         headingClassName={styles.heading}
                         heading={_ts('projectEdit', 'projectStakeholders')}
-                        // headerActions={<AddStakeholdersButton />}
+                        headerActions={(
+                            <AddStakeholderButton
+                                name="organizations"
+                                value={value?.organizations}
+                                onChange={onValueChange}
+                            />
+                        )}
                         contentClassName={styles.content}
                     >
                         <ListView
                             className={styles.items}
                             data={stakeholderTypes}
                             rendererParams={organizationListRendererParams}
-                            renderer={OrganizationList}
+                            renderer={StakeholderList}
                             rendererClassName={styles.organizations}
                             keySelector={stakeholderTypeKeySelector}
-                            emptyComponent={null}
                         />
                     </ContainerCard>
                     <div className={styles.createdByDetails}>

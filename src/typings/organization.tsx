@@ -3,6 +3,7 @@ import { BasicElement } from './';
 export interface BasicOrganization {
     id: number;
     title: string;
+    logoUrl?: string;
 }
 
 export interface Organization extends BasicOrganization {
@@ -25,5 +26,5 @@ export interface OrganizationDetails {
     shortName?: string;
     title: string;
     logo?: string;
-    mergedAs: BasicElement;
+    mergedAs?: BasicElement;
 }

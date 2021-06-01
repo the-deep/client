@@ -1,39 +1,29 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { useModalState } from '#hooks/stateManagement';
 import { MdEdit } from 'react-icons/md';
 import { Button } from '@the-deep/deep-ui';
+import AddStakeholderModal, { Props as AddStakeholderModalProps } from '#components/general/AddStakeholderModal';
 
-import AddStakeholderModal, { FormType } from '#components/general/AddStakeholderModal';
-
-interface Props {
-    onChange: (value: FormType) => void;
-    value?: FormType;
+type Props<T> = AddStakeholderModalProps<T> & {
     className?: string;
     disabled?: boolean;
 }
 
-function AddStakeholderButton(props: Props) {
+function AddStakeholderButton<T extends string>(props: Props<T>) {
     const {
         className,
         disabled,
-        value,
-        onChange,
+        ...stakeholderModalProps
     } = props;
 
     const [
         showModal,
-        setModalVisible,
-        setModalHidden,
+        ,
+        hideModal,
+        ,
+        toggleModalShow,
     ] = useModalState(false);
-
-    const handleShowStakeholdersModal = useCallback(() => {
-        if (showModal) {
-            setModalHidden();
-        } else {
-            setModalVisible();
-        }
-    }, [setModalHidden, setModalVisible, showModal]);
 
     return (
         <>
@@ -41,15 +31,14 @@ function AddStakeholderButton(props: Props) {
                 className={className}
                 name={undefined}
                 variant="tertiary"
-                onClick={handleShowStakeholdersModal}
+                onClick={toggleModalShow}
                 disabled={disabled}
                 icons={<MdEdit />}
             />
             {showModal && (
                 <AddStakeholderModal
-                    onChange={onChange}
-                    value={value}
-                    onModalClose={setModalHidden}
+                    {...stakeholderModalProps}
+                    onModalClose={hideModal}
                 />
             )}
         </>

@@ -1,5 +1,10 @@
 import React, { useCallback } from 'react';
 import {
+    isDefined,
+    listToGroupList,
+    mapToList,
+} from '@togglecorp/fujs';
+import {
     useForm,
     ObjectSchema,
     requiredCondition,
@@ -11,20 +16,18 @@ import {
     Modal,
 } from '@the-deep/deep-ui';
 import _ts from '#ts';
-import { BasicOrganization } from '#typings';
+import {
+    BasicOrganization,
+    ProjectOrganization,
+    OrganizationTypes,
+} from '#typings';
 
 import SearchStakeholder from './SearchStakeholder';
 import StakeholderList from './StakeholderList';
 
 import styles from './styles.scss';
 
-export type FormType = {
-    lead_organization?: BasicOrganization[];
-    international_partner?: BasicOrganization[];
-    national_partner?: BasicOrganization[];
-    donor?: BasicOrganization[];
-    government?: BasicOrganization[];
-}
+export type FormType = Partial<Record<OrganizationTypes, BasicOrganization[]>>;
 type FormSchema = ObjectSchema<FormType>;
 type FormSchemaFields = ReturnType<FormSchema['fields']>;
 
@@ -54,40 +57,72 @@ const stakeholdersSchema: FormSchema = {
         government: stakeholderListSchema,
     }),
 };
+
 export interface StakeholderOptionType {
     label: string;
     name: string;
 }
 
-interface Props {
-    onChange: (value: FormType) => void;
-    value?: FormType;
+export type BasicProjectOrganization = Omit<ProjectOrganization, 'id' | 'organizationTypeDisplay'>;
+
+export interface Props<T> {
+    name: T;
+    onChange: (value: BasicProjectOrganization[], name: T) => void;
+    value?: BasicProjectOrganization[];
     onModalClose: () => void;
 }
+
 const defaultFormValues: FormType = {};
-function AddStakeholderModal(props: Props) {
+
+function AddStakeholderModal<T extends string>(props: Props<T>) {
     const {
-        value: valueFromProps,
+        name,
+        value: initialValue,
         onChange,
         onModalClose,
     } = props;
 
-    console.warn('value', valueFromProps, onChange);
-    const handleSubmitButtonClick = () => {};
+    const groupOrganizations = useCallback(
+        (organizations: BasicProjectOrganization[]) => listToGroupList(
+            organizations,
+            o => o.organizationType,
+            o => ({ id: o.organization, title: o.organizationDetails.title }),
+        ),
+        [],
+    );
+
+    const [initialFormValue] = React.useState<FormType>(
+        isDefined(initialValue) ? groupOrganizations(initialValue) : defaultFormValues,
+    );
 
     const {
         pristine,
         value,
         onValueChange,
-    } = useForm(defaultFormValues, stakeholdersSchema);
+    } = useForm(initialFormValue, stakeholdersSchema);
 
     const handleChange = useCallback(
-        (stakeholders: BasicOrganization[], name) => {
+        (stakeholders: BasicOrganization[], organizationType) => {
             onValueChange(() => (
                 stakeholders
-            ), name);
+            ), organizationType);
         }, [onValueChange],
     );
+    const handleSubmitButtonClick = () => {
+        const organizations = mapToList(value, (v, key) => {
+            const out = v?.map(o => ({
+                organization: o.id,
+                organizationDetails: {
+                    ...o,
+                    logo: o.logoUrl,
+                },
+                organizationType: key as OrganizationTypes,
+            }));
+            return out;
+        }).filter(isDefined).flat();
+        onChange(organizations, name);
+        onModalClose();
+    };
 
     return (
         <Modal
@@ -96,7 +131,10 @@ function AddStakeholderModal(props: Props) {
                 <Heading
                     className={styles.heading}
                 >
-                    Add Stakeholder
+                    {initialValue?.length === 0 ?
+                        _ts('project.detail.stakeholders', 'addStakeholder')
+                        : _ts('project.detail.stakeholders', 'editStakeholder')
+                    }
                 </Heading>
             }
             onCloseButtonClick={onModalClose}
@@ -109,7 +147,7 @@ function AddStakeholderModal(props: Props) {
                     disabled={pristine}
                     onClick={handleSubmitButtonClick}
                 >
-                    Save
+                    {_ts('project.detail.stakeholders', 'save')}
                 </Button>
             )}
         >
