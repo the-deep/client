@@ -16,6 +16,8 @@ export interface Organization extends BasicOrganization {
     url: string;
     verified: boolean;
     regions: number[];
+    logo?: number;
+    logoUrl?: string;
 }
 
 export interface OrganizationDetails {

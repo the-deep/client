@@ -1,0 +1,12 @@
+.search {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+
+    .items {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+}

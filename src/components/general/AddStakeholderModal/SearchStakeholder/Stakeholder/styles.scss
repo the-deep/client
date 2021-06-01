@@ -1,0 +1,45 @@
+.item {
+    display: flex;
+    background-color: var(--dui-color-background-card);
+
+    .header {
+        padding: 0;
+    }
+
+    .content {
+        display: flex;
+        padding: var(--dui-spacing-extra-small);
+
+        .icon {
+            width: var(--dui-height-navbar-icon);
+            height: var(--dui-height-navbar-icon);
+        }
+    }
+
+    .text {
+        flex-grow: 1;
+        padding: var(--dui-spacing-extra-small) 0;
+
+        .name {
+            padding: 0 var(--dui-spacing-extra-small);
+            font-size: var(--dui-font-size-large);
+        }
+
+        .abbr {
+            flex-grow: 1;
+            padding: 0 var(--dui-spacing-extra-small);
+            color: var(--dui-color-text-label);
+        }
+
+        .type {
+            padding: 0 var(--dui-spacing-extra-small);
+            font-size: var(--dui--font-size-small);
+        }
+    }
+
+
+    &:hover {
+        background-color: var(--dui-color-background-hover);
+    }
+}
+

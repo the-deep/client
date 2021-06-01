@@ -1,0 +1,31 @@
+.modal {
+    display: flex;
+    width: 80vw;
+    height: 90vh;
+
+    .heading {
+        color: var(--dui-color-brand);
+    }
+
+    .modal-body {
+        display: flex;
+
+        .left {
+            display: flex;
+            flex-basis: 40%;
+            flex-grow: 1;
+        }
+
+        .right {
+            display: flex;
+            flex-basis: 60%;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            overflow: auto;
+        }
+    }
+
+    .footer {
+        display: flex;
+    }
+}
