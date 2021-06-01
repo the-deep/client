@@ -13,17 +13,6 @@ import { organizationTitleSelector } from '#entities/organization';
 
 import styles from './styles.scss';
 
-interface Props {
-    className?: string;
-    data?: ProjectOrganization[];
-    title: string;
-}
-const organizationDetailsKeySelector = (d: ProjectOrganization) => d.organization;
-const organizationDetailsRendererParams = (_: number, d: ProjectOrganization) => ({
-    logo: d.organizationDetails.logo,
-    title: organizationTitleSelector(d.organizationDetails),
-});
-
 interface OrganizationDetailProps {
     logo?: string;
     title: string;
@@ -50,8 +39,24 @@ function OrganizationDetail(props: OrganizationDetailProps) {
     );
 }
 
+
+const organizationDetailsKeySelector = (d: ProjectOrganization) => d.organization;
+const organizationDetailsRendererParams = (_: number, d: ProjectOrganization) => ({
+    logo: d.organizationDetails.logo,
+    title: organizationTitleSelector(d.organizationDetails),
+});
+
+interface Props {
+    className?: string;
+    data?: ProjectOrganization[];
+    title: string;
+}
 function OrganizationList(props: Props) {
-    const { data, title, className } = props;
+    const {
+        data,
+        title,
+        className,
+    } = props;
 
     if (!data || data.length === 0) {
         return null;

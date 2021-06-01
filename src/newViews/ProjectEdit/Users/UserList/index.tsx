@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { _cs } from '@togglecorp/fujs';
-import { connect } from 'react-redux';
+import { _cs, isNotDefined } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     Container,
@@ -21,38 +20,33 @@ import { useRequest, useLazyRequest } from '#utils/request';
 import ActionCell, { Props as ActionCellProps } from '#dui/EditDeleteActionCell';
 import _ts from '#ts';
 
-import { activeUserSelector } from '#redux';
 import { useModalState } from '#hooks/stateManagement';
 import {
     Membership,
     MultiResponse,
-    AppState,
 } from '#typings';
 
 import AddUserModal from './AddUserModal';
 import styles from './styles.scss';
 
-const mapStateToProps = (state: AppState) => ({
-    activeUser: activeUserSelector(state),
-});
-
 const maxItemsPerPage = 10;
 const userKeySelector = (d: Membership) => d.id;
-
-interface PropsFromState {
-    activeUser: { userId: number };
-}
 
 interface Props{
     className?: string;
     projectId: number;
+    activeUserId: number;
+    activeUserRoleLevel?: number;
+    pending?: boolean;
 }
 
-function UserList(props: Props & PropsFromState) {
+function UserList(props: Props) {
     const {
         projectId,
         className,
-        activeUser,
+        activeUserId,
+        activeUserRoleLevel,
+        pending,
     } = props;
 
     const [activePage, setActivePage] = useState<number>(1);
@@ -119,7 +113,11 @@ function UserList(props: Props & PropsFromState) {
                 itemKey: userId,
                 onEditClick: handleEditMembershipClick,
                 onDeleteClick: triggerMembershipDelete,
-                disabled: data.member === activeUser.userId,
+                disabled: (
+                    data.member === activeUserId
+                    || isNotDefined(activeUserRoleLevel)
+                    || data.roleDetails.level < activeUserRoleLevel
+                ),
                 editButtonTitle: _ts('projectEdit', 'editUserLabel'),
                 deleteButtonTitle: _ts('projectEdit', 'deleteUserLabel'),
                 deleteConfirmationMessage: _ts('projectEdit', 'removeUserConfirmation'),
@@ -159,7 +157,7 @@ function UserList(props: Props & PropsFromState) {
             ),
             actionColumn,
         ]);
-    }, [triggerMembershipDelete, handleEditMembershipClick, activeUser.userId]);
+    }, [triggerMembershipDelete, handleEditMembershipClick, activeUserId, activeUserRoleLevel]);
 
     const membershipToEdit = useMemo(() => (
         usersResponse?.results?.find(d => d.id === membershipIdToEdit)
@@ -181,12 +179,13 @@ function UserList(props: Props & PropsFromState) {
                         <IoAdd />
                     )}
                     onClick={handleAddUserClick}
+                    disabled={pending}
                 >
                     {_ts('projectEdit', 'addUser')}
                 </Button>
             )}
         >
-            {usersPending && (<PendingMessage />)}
+            {(usersPending || pending) && (<PendingMessage />)}
             {(usersResponse && usersResponse?.count > 0)
                 ? (
                     <Table
@@ -217,10 +216,10 @@ function UserList(props: Props & PropsFromState) {
                     projectId={projectId}
                     onTableReload={triggerGetUsers}
                     userValue={membershipToEdit}
+                    activeUserRoleLevel={activeUserRoleLevel}
                 />
             }
         </Container>
     );
 }
-
-export default connect(mapStateToProps)(UserList);
+export default UserList;

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { isNotDefined } from '@togglecorp/fujs';
+import { Dispatch } from 'redux';
+import { isNotDefined, reverseRoute } from '@togglecorp/fujs';
+import { Redirect } from 'react-router-dom';
 import {
     Button,
     Tabs,
@@ -9,12 +11,16 @@ import {
     TabPanel,
 } from '@the-deep/deep-ui';
 
+import { pathNames } from '#constants';
 import FullPageHeader from '#dui/FullPageHeader';
 import BackLink from '#dui/BackLink';
 
 import {
     activeProjectFromStateSelector,
     projectIdFromRouteSelector,
+    activeUserSelector,
+    setProjectAction,
+    setActiveProjectAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -28,25 +34,51 @@ import Framework from './Framework';
 import Users from './Users';
 import styles from './styles.scss';
 
-const mapStateToProps = (state: AppState) => ({
-    projectId: projectIdFromRouteSelector(state),
-    activeProject: activeProjectFromStateSelector(state),
-});
-
-interface ViewProps {
-    projectId: number;
-    activeProject: ProjectDetails;
-}
-
 type TabNames = 'general' | 'users' | 'framework';
 
-function ProjectEdit(props: ViewProps) {
+interface PropsFromDispatch {
+    setUserProject: typeof setProjectAction;
+    setActiveProject: typeof setActiveProjectAction;
+}
+
+interface PropsFromState {
+    projectId: number;
+    activeProject: ProjectDetails;
+    activeUser: { userId: number };
+}
+
+function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
     const {
         projectId,
         activeProject,
+        activeUser,
+        setUserProject,
+        setActiveProject,
     } = props;
 
     const [activeTab, setActiveTab] = useState<TabNames>('general');
+    const [redirectId, setRedirectId] = useState<number | undefined>();
+
+    const handleCreate = useCallback(
+        (response: ProjectDetails) => {
+            const { id } = response;
+            setActiveProject({ activeProject: id });
+            setUserProject({ project: response, userId: activeUser.userId });
+            setRedirectId(id);
+        },
+        [activeUser.userId, setActiveProject, setUserProject],
+    );
+
+    if (redirectId) {
+        const newRoute = reverseRoute(pathNames.editProject, {
+            redirectId,
+        });
+        return (
+            <Redirect
+                to={newRoute}
+            />
+        );
+    }
 
     return (
         <div className={styles.projectEdit}>
@@ -115,15 +147,17 @@ function ProjectEdit(props: ViewProps) {
                         <ProjectDetailsForm
                             key={projectId}
                             projectId={projectId}
+                            onCreate={handleCreate}
                         />
                     </TabPanel>
                     <TabPanel
                         name="users"
                         className={styles.tabPanel}
                     >
-                        { projectId && (
+                        {projectId && (
                             <Users
                                 projectId={projectId}
+                                activeUserId={activeUser.userId}
                             />
                         )}
                     </TabPanel>
@@ -131,7 +165,7 @@ function ProjectEdit(props: ViewProps) {
                         name="framework"
                         className={styles.tabPanel}
                     >
-                        { projectId && (
+                        {projectId && (
                             <Framework projectId={projectId} />
                         )}
                     </TabPanel>
@@ -141,4 +175,15 @@ function ProjectEdit(props: ViewProps) {
     );
 }
 
-export default connect(mapStateToProps)(ProjectEdit);
+const mapStateToProps = (state: AppState) => ({
+    projectId: projectIdFromRouteSelector(state),
+    activeProject: activeProjectFromStateSelector(state),
+    activeUser: activeUserSelector(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
+    setUserProject: params => dispatch(setProjectAction(params)),
+    setActiveProject: params => dispatch(setActiveProjectAction(params)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectEdit);

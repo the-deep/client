@@ -1,13 +1,4 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { Redirect } from 'react-router-dom';
-import { pathNames } from '#constants';
-import Faram, {
-    requiredCondition,
-    FaramInputElement,
-    dateCondition,
-} from '@togglecorp/faram';
 import {
     Button,
     Container,
@@ -16,31 +7,28 @@ import {
     Tag,
     Footer,
     PendingMessage,
-    TextInput as TextInputFromDui,
-    DateInput as DateInputFromDui,
-    TextArea as TextAreaFromDui,
-    Checkbox as CheckboxFromDui,
+    TextInput,
+    DateInput,
+    TextArea,
+    Checkbox,
 } from '@the-deep/deep-ui';
 import {
     isNotDefined,
     listToGroupList,
-    reverseRoute,
 } from '@togglecorp/fujs';
 
 import {
-    setActiveProjectAction,
-    activeUserSelector,
-    setProjectAction,
-} from '#redux';
+    ObjectSchema,
+    requiredStringCondition,
+    idCondition,
+    useForm,
+    createSubmitHandler,
+} from '@togglecorp/toggle-form';
+
 import ListView from '#rsu/../v2/View/ListView';
-import NonFieldErrors from '#rsci/NonFieldErrors';
 import OrganizationList from '#components/general/OrganizationList';
-import AddStakeholdersButton, { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
-import {
-    AppState,
-    FaramErrors,
-    ProjectDetails,
-} from '#typings';
+import { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
+import { ProjectDetails } from '#typings';
 
 import _ts from '#ts';
 import {
@@ -51,61 +39,66 @@ import { notifyOnFailure } from '#utils/requestNotify';
 
 import styles from './styles.scss';
 
-const TextInput = FaramInputElement(TextInputFromDui);
-const Checkbox = FaramInputElement(CheckboxFromDui);
-const TextArea = FaramInputElement(TextAreaFromDui);
-const DateInput = FaramInputElement(DateInputFromDui);
+type FormType = {
+    id?: number;
+    title?: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+    hasAssessments?: boolean;
+    // TODO: @samshara to add this back after new organizations popup is completed
+    // organizations?: ProjectOrganization[];
+}
+
+
+type FormSchema = ObjectSchema<FormType>;
+type FormSchemaFields = ReturnType<FormSchema['fields']>;
+const schema: FormSchema = {
+    fields: (): FormSchemaFields => ({
+        id: [idCondition],
+        title: [requiredStringCondition],
+        startDate: [],
+        endDate: [],
+        description: [],
+        hasAssessments: [],
+        // organizations: organizationListSchema,
+    }),
+};
+
+const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
+
+const initialValue: FormType = {};
 
 interface Props {
     projectId: number;
+    onCreate: (value: ProjectDetails) => void;
 }
 
-interface PropsFromDispatch {
-    setUserProject: typeof setProjectAction;
-    setActiveProject: typeof setActiveProjectAction;
-}
-
-interface PropsFromState {
-    activeUser: { userId: number };
-}
-const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
-
-const schema = {
-    fields: {
-        title: [requiredCondition],
-        startDate: [dateCondition],
-        endDate: [dateCondition],
-        description: [],
-        organizations: [],
-        hasAssessments: [],
-    },
-};
-
-const mapStateToProps = (state: AppState) => ({
-    activeUser: activeUserSelector(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => ({
-    setUserProject: params => dispatch(setProjectAction(params)),
-    setActiveProject: params => dispatch(setActiveProjectAction(params)),
-});
-
-function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
+function ProjectDetailsForm(props: Props) {
     const {
-        activeUser: {
-            userId,
-        },
         projectId,
-        setUserProject,
-        setActiveProject,
+        onCreate,
     } = props;
 
-    const [pristine, setPristine] = useState<boolean>(true);
-    const [faramValues, setFaramValues] = useState<Partial<ProjectDetails>>();
-    const [faramErrors, setFaramErrors] = useState<FaramErrors>();
-    const [redirectId, setRedirectId] = useState<number | undefined>();
+    const {
+        pristine,
+        value,
+        error,
+        onValueChange,
+        validate,
+        onErrorSet,
+        onValueSet,
+    } = useForm(initialValue, schema);
 
-    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>(undefined);
+    const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
+
+    useEffect(
+        () => {
+            onValueSet(projectDetails ?? {});
+            onErrorSet({});
+        },
+        [projectDetails, onErrorSet, onValueSet],
+    );
 
     const {
         pending,
@@ -120,12 +113,6 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
 
-    useEffect(() => {
-        setFaramValues(projectDetails);
-        setPristine(true);
-        setFaramErrors(undefined);
-    }, [projectDetails]);
-
     const {
         pending: projectPatchPending,
         trigger: projectPatch,
@@ -136,77 +123,64 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
         onSuccess: (response) => {
             setProjectDetails(response);
             if (!projectId) {
-                const { id } = response;
-                setActiveProject({ activeProject: id });
-                setUserProject({ project: response, userId });
-                setRedirectId(id);
-            } else {
-                setFaramValues(response);
+                onCreate(response);
             }
         },
         onFailure: (_, errorBody) =>
             notifyOnFailure(_ts('projectEdit', 'projectDetailsLabel'))({ error: errorBody }),
     });
 
-    const handleFaramChange = useCallback((
-        newValues: Partial<ProjectDetails>,
-        newErrors: FaramErrors,
-    ) => {
-        setPristine(false);
-        setFaramValues(newValues);
-        setFaramErrors(newErrors);
-    }, []);
+    const handleSubmit = useCallback((values: FormType) => {
+        projectPatch({
+            ...values,
+            organizations: projectDetails?.organizations ?? [],
+        });
+    }, [projectPatch, projectDetails]);
 
-    const handleFaramValidationSuccess = useCallback((_, values: Partial<ProjectDetails>) => {
-        projectPatch({ ...values, organizations: values.organizations ?? [] });
-    }, [projectPatch]);
+    const selectedOrganizations = projectDetails?.organizations;
 
-    const groupedOrganizations = useMemo(() => (
-        listToGroupList(
-            faramValues?.organizations ?? [],
+    const groupedOrganizations = useMemo(
+        () => listToGroupList(
+            selectedOrganizations ?? [],
             o => o.organizationType,
             o => o,
-        )
-    ), [faramValues]);
+        ),
+        [selectedOrganizations],
+    );
 
-    const organizationListRendererParams = useCallback((key: string, v: StakeholderType) => {
-        const organizations = groupedOrganizations[key];
+    const organizationListRendererParams = useCallback(
+        (key: string, v: StakeholderType) => {
+            const organizations = groupedOrganizations[key];
+            return {
+                data: organizations,
+                title: v.label,
+            };
+        },
+        [groupedOrganizations],
+    );
 
-        return { data: organizations, title: v.label };
-    }, [groupedOrganizations]);
-
-    if (redirectId) {
-        const newRoute = reverseRoute(pathNames.editProject, {
-            redirectId,
-        });
-        return (
-            <Redirect
-                to={newRoute}
-            />
-        );
-    }
+    const disabled = pending || projectPatchPending;
 
     return (
-        <Faram
+        <form
             className={styles.projectDetails}
-            schema={schema}
-            value={faramValues}
-            error={faramErrors}
-            disabled={pending}
-            onValidationSuccess={handleFaramValidationSuccess}
-            onValidationFailure={setFaramErrors}
-            onChange={handleFaramChange}
+            onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
             {(pending || projectPatchPending) && <PendingMessage />}
-            <NonFieldErrors
-                faramElement
-                persistent={false}
-            />
+            {error?.$internal && (
+                <p>
+                    {error?.$internal}
+                </p>
+            )}
             <div className={styles.content}>
                 <div className={styles.main}>
                     <TextInput
                         className={styles.input}
-                        faramElementName="title"
+                        name="title"
+                        disabled={disabled}
+                        onChange={onValueChange}
+                        value={value?.title}
+                        error={error?.fields?.title}
                         label={_ts('projectEdit', 'projectTitle')}
                         placeholder={_ts('projectEdit', 'projectTitle')}
                         autoFocus
@@ -214,21 +188,32 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                     <div className={styles.dates}>
                         <DateInput
                             className={styles.dateInput}
-                            faramElementName="startDate"
+                            name="startDate"
+                            disabled={disabled}
+                            onChange={onValueChange}
+                            value={value?.startDate}
+                            error={error?.fields?.startDate}
                             label={_ts('projectEdit', 'projectStartDate')}
                             placeholder={_ts('projectEdit', 'projectStartDate')}
                         />
                         <DateInput
                             className={styles.dateInput}
-                            faramElementName="endDate"
+                            name="endDate"
+                            disabled={disabled}
+                            onChange={onValueChange}
+                            value={value?.endDate}
+                            error={error?.fields?.endDate}
                             label={_ts('projectEdit', 'projectEndDate')}
                             placeholder={_ts('projectEdit', 'projectEndDate')}
                         />
                     </div>
                     <TextArea
-                        name="this-is-not-used"
                         className={styles.input}
-                        faramElementName="description"
+                        name="description"
+                        disabled={disabled}
+                        onChange={onValueChange}
+                        value={value?.description}
+                        error={error?.fields?.description}
                         label={_ts('projectEdit', 'projectDescription')}
                         placeholder={_ts('projectEdit', 'projectDescription')}
                         rows={4}
@@ -242,11 +227,13 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         >
                             <Tag
                                 className={styles.firstTag}
-                                variant={faramValues?.status ? 'complement1' : 'default'}
+                                variant={projectDetails?.status === 'active' ? 'complement1' : 'default'}
                             >
                                 {_ts('projectEdit', 'activeProject')}
                             </Tag>
-                            <Tag variant={faramValues?.status ? 'default' : 'complement1'}>
+                            <Tag
+                                variant={!projectDetails?.status || projectDetails.status === 'inactive' ? 'complement1' : 'default'}
+                            >
                                 {_ts('projectEdit', 'inactiveProject')}
                             </Tag>
                         </Container>
@@ -258,11 +245,11 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         >
                             <Tag
                                 className={styles.firstTag}
-                                variant={faramValues?.isPrivate ? 'default' : 'complement1'}
+                                variant={projectDetails?.isPrivate ? 'default' : 'complement1'}
                             >
                                 {_ts('projectEdit', 'publicProject')}
                             </Tag>
-                            {faramValues?.isPrivate ? (
+                            {projectDetails?.isPrivate ? (
                                 <Tag
                                     variant="complement1"
                                 >
@@ -284,8 +271,11 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         heading={_ts('projectEdit', 'projectAdditionalFeatures')}
                     >
                         <Checkbox
-                            name="this-is-not-used"
-                            faramElementName="hasAssessments"
+                            name="hasAssessments"
+                            disabled={disabled}
+                            onChange={onValueChange}
+                            value={value?.hasAssessments}
+                            // error={error?.fields?.hasAssessments}
                             label={_ts('projectEdit', 'projectAssessmentRegistry')}
                         />
                     </Container>
@@ -294,7 +284,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         headerClassName={styles.header}
                         headingClassName={styles.heading}
                         heading={_ts('projectEdit', 'projectStakeholders')}
-                        headerActions={<AddStakeholdersButton />}
+                        // headerActions={<AddStakeholdersButton />}
                         contentClassName={styles.content}
                     >
                         <ListView
@@ -310,6 +300,8 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                     <div className={styles.createdByDetails}>
                         {projectDetails?.createdByName && (
                             <TextInput
+                                name="createdByName"
+                                disabled={disabled}
                                 className={styles.input}
                                 label={_ts('projectEdit', 'projectCreatedBy')}
                                 value={projectDetails.createdByName}
@@ -318,6 +310,8 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                         )}
                         {projectDetails?.createdAt && (
                             <DateInput
+                                name="createdAt"
+                                disabled={disabled}
                                 className={styles.input}
                                 value={projectDetails.createdAt.split('T')[0]}
                                 label={_ts('projectEdit', 'projectCreatedOn')}
@@ -334,7 +328,7 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                 className={styles.footer}
                 actions={(
                     <Button
-                        disabled={pristine || projectPatchPending}
+                        disabled={disabled || pristine}
                         type="submit"
                         variant="primary"
                         name="projectSave"
@@ -343,8 +337,8 @@ function ProjectDetailsForm(props: Props & PropsFromDispatch & PropsFromState) {
                     </Button>
                 )}
             />
-        </Faram>
+        </form>
     );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectDetailsForm);
+export default ProjectDetailsForm;

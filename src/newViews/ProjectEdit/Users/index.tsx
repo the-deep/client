@@ -1,4 +1,12 @@
 import React from 'react';
+import { isNotDefined } from '@togglecorp/fujs';
+import { useRequest } from '#utils/request';
+import {
+    MultiResponse,
+} from '#typings';
+import { ProjectMemberships } from '#typings/project';
+import { notifyOnFailure } from '#utils/requestNotify';
+import _ts from '#ts';
 
 import UserList from './UserList';
 import UserGroupList from './UserGroupList';
@@ -7,20 +15,48 @@ import styles from './styles.scss';
 
 interface Props {
     projectId: number;
+    activeUserId: number;
 }
 
 function Users(props: Props) {
-    const { projectId } = props;
+    const {
+        projectId,
+        activeUserId,
+    } = props;
+
+    // FIXME: we should have a request to get project role of a certain user
+    const {
+        pending: pendingMemberships,
+        response: projectMembershipsResponse,
+    } = useRequest<MultiResponse<ProjectMemberships>>({
+        skip: isNotDefined(activeUserId),
+        url: `server://projects/${projectId}/project-memberships/`,
+        query: {
+            member: activeUserId,
+        },
+        method: 'GET',
+        onFailure: (_, errorBody) => {
+            notifyOnFailure(_ts('projectEdit', 'projectMembershipFetchFailed'))({ error: errorBody });
+        },
+    });
+
+    const activeUserMembership = projectMembershipsResponse?.results?.[0];
+    const activeUserRoleLevel = activeUserMembership?.roleDetails?.level;
 
     return (
         <div className={styles.users}>
             <UserList
                 className={styles.userList}
                 projectId={projectId}
+                activeUserId={activeUserId}
+                activeUserRoleLevel={activeUserRoleLevel}
+                pending={pendingMemberships}
             />
             <UserGroupList
                 className={styles.userGroupList}
                 projectId={projectId}
+                activeUserRoleLevel={activeUserRoleLevel}
+                pending={pendingMemberships}
             />
         </div>
     );

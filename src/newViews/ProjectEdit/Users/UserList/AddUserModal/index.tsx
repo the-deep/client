@@ -28,13 +28,6 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-interface Props {
-    onModalClose: () => void;
-    projectId: number;
-    onTableReload: () => void;
-    userValue?: Membership;
-}
-
 const roleKeySelector = (d: ProjectRole) => d.id;
 const roleLabelSelector = (d: ProjectRole) => d.title;
 
@@ -68,12 +61,21 @@ interface ValueToSend {
     member?: number;
 }
 
+interface Props {
+    onModalClose: () => void;
+    projectId: number;
+    onTableReload: () => void;
+    userValue?: Membership;
+    activeUserRoleLevel?: number;
+}
+
 function AddUserModal(props: Props) {
     const {
         onModalClose,
         projectId,
         onTableReload,
         userValue,
+        activeUserRoleLevel,
     } = props;
 
     const formValueFromProps: PartialForm<FormType> = userValue ?? defaultFormValue;
@@ -95,6 +97,7 @@ function AddUserModal(props: Props) {
         userOptions,
         setUserOptions,
     ] = useState<BasicUser[] | undefined | null>();
+
     const {
         pending: pendingRoles,
         response: projectRolesResponse,
@@ -143,6 +146,12 @@ function AddUserModal(props: Props) {
 
     const pendingRequests = pendingRoles;
 
+    const roles = isDefined(activeUserRoleLevel)
+        ? projectRolesResponse?.results.filter(
+            role => role.level >= activeUserRoleLevel,
+        )
+        : undefined;
+
     return (
         <Modal
             className={styles.modal}
@@ -189,7 +198,7 @@ function AddUserModal(props: Props) {
             <SelectInput
                 name="role"
                 className={styles.input}
-                options={projectRolesResponse?.results}
+                options={roles}
                 keySelector={roleKeySelector}
                 labelSelector={roleLabelSelector}
                 optionsPopupClassName={styles.optionsPopup}

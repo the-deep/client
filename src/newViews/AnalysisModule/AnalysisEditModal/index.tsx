@@ -83,7 +83,7 @@ const analysisFormSchema: FormSchema = {
         analysisPillar: analysisPillarListSchema,
     }),
     validation: (value) => {
-        if (value.analysisPillar.length < 1) {
+        if ((value?.analysisPillar?.length ?? 0) < 1) {
             return _ts('analysis.editModal', 'pillarAnalysisRequired');
         }
         return undefined;

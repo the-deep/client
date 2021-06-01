@@ -224,7 +224,11 @@ export default class Actions extends React.PureComponent {
         // need to filter the options so that they can change it to lower roles only
         // if not all the options are shown but it is disabled
         // isSuperior means whether or not the row's user role is superior to active user role
-        const isSuperior = this.getUserRoleLevel(projectRoleList, role) < activeUserRole.level;
+        const isSuperior = this.getUserRoleLevel(
+            projectRoleList,
+            role,
+        ) < activeUserRole.level;
+
         const filteredProjectRoleList = isSuperior ?
             projectRoleList : this.filterProjectRole(projectRoleList, activeUserRole.level);
 
