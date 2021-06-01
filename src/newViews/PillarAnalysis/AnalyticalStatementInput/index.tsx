@@ -214,38 +214,41 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                 onDragStart={handleStatementDragStart}
                 onDragStop={handleStatementDragEnd}
                 className={styles.dragStatement}
-                childrenContainerClassName={styles.dragContent}
-                actionsContainerClassName={styles.actionsContainer}
+                contentClassName={styles.dragContent}
+                headerClassName={styles.header}
+                headerIcons={(
+                    <>
+                        <QuickActionButton
+                            className={styles.button}
+                            name={undefined}
+                            disabled
+                        >
+                            <IoCheckmarkCircleSharp />
+                        </QuickActionButton>
+                        <QuickActionButton
+                            className={styles.button}
+                            name={undefined}
+                            disabled
+                        >
+                            <BiBarChartSquare />
+                        </QuickActionButton>
+                    </>
+                )}
+                // actionsContainerClassName={styles.actionsContainer}
+                headerActions={(
+                    <QuickActionButton
+                        className={styles.button}
+                        name={index}
+                        onClick={onRemove}
+                        // FIXME: use translation
+                        title="Remove Analytical Statement"
+                    >
+                        <IoClose />
+                    </QuickActionButton>
+                )}
             >
                 <div className={_cs(styles.analyticalStatement, className)}>
                     <div className={styles.upperContent}>
-                        <header className={styles.upperContentHeader}>
-                            <div className={styles.leftHeaderContainer}>
-                                <QuickActionButton
-                                    className={styles.button}
-                                    name={undefined}
-                                    disabled
-                                >
-                                    <IoCheckmarkCircleSharp />
-                                </QuickActionButton>
-                                <QuickActionButton
-                                    className={styles.button}
-                                    name={undefined}
-                                    disabled
-                                >
-                                    <BiBarChartSquare />
-                                </QuickActionButton>
-                            </div>
-                            <QuickActionButton
-                                className={styles.button}
-                                name={index}
-                                onClick={onRemove}
-                                // FIXME: use translation
-                                title="Remove Analytical Statement"
-                            >
-                                <IoClose />
-                            </QuickActionButton>
-                        </header>
                         {error?.$internal && (
                             <p className={styles.error}>
                                 {error.$internal}

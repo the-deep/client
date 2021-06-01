@@ -6,22 +6,23 @@ export function useModalState(initialValue: boolean): [
     () => void,
     () => void,
     React.Dispatch<React.SetStateAction<boolean>>,
+    () => void,
 ] {
-    const [visible, setVisibility] = useState(initialValue);
-    const setVisible = useCallback(
-        () => {
-            setVisibility(true);
-        },
-        [],
-    );
-    const setHidden = useCallback(
-        () => {
-            setVisibility(false);
-        },
-        [],
-    );
+    const [value, setValue] = useState(initialValue);
 
-    return [visible, setVisible, setHidden, setVisibility];
+    const setTrue = useCallback(() => {
+        setValue(true);
+    }, [setValue]);
+
+    const setFalse = useCallback(() => {
+        setValue(false);
+    }, [setValue]);
+
+    const toggleFn = useCallback(() => {
+        setValue(oldValue => !oldValue);
+    }, [setValue]);
+
+    return [value, setTrue, setFalse, setValue, toggleFn];
 }
 
 function isCallable<T>(val: T | ((oldVal: T) => T)): val is (oldVal: T) => T {

@@ -9,16 +9,20 @@ import ExcerptOutput from '#widgetComponents/ExcerptOutput';
 export interface Props {
     type: EntryType;
     excerpt?: string; // eslint-disable-line react/no-unused-prop-types
-    image?: string; // eslint-disable-line react/no-unused-prop-types
+    imageDetails?: {
+        file?: string;
+    }; // eslint-disable-line react/no-unused-prop-types
     tabularFieldData?: TabularDataFields; // eslint-disable-line react/no-unused-prop-types
 }
 
-const entryTypeToValueMap: {
-    [key in EntryType]: 'excerpt' | 'image' | 'tabularFieldData';
-} = {
-    excerpt: 'excerpt',
-    image: 'image',
-    dataSeries: 'tabularFieldData',
+const getEntryValue = (props: Props, entryType: EntryType) => {
+    if (entryType === 'image') {
+        return props.imageDetails?.file;
+    }
+    if (entryType === 'dataSeries') {
+        return props.tabularFieldData;
+    }
+    return props.excerpt;
 };
 
 const entryTypeToExcerptTypeMap: {
@@ -37,7 +41,7 @@ function EntryItem(props: Props) {
     return (
         <ExcerptOutput
             type={entryTypeToExcerptTypeMap[type]}
-            value={props[entryTypeToValueMap[type]]}
+            value={getEntryValue(props, type)}
         />
     );
 }

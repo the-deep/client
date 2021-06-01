@@ -3,11 +3,30 @@
 
     margin: var(--dui-spacing-medium);
     background-color: var(--dui-color-white);
-    min-height: var(--min-height-entry);
+
+    .children {
+        height: var(--min-height-entry);
+    }
 
     &.disabled {
         opacity: var(--dui-opacity-disabled-element);
         /* FIXME: this is a hack */
         pointer-events: none;
+    }
+}
+
+.popup-container {
+    display: flex;
+    flex-direction: column;
+
+    .popup-button {
+        display: flex;
+        padding: var(--dui-spacing-extra-small) var(--dui-spacing-medium);
+        width: auto;
+        text-align: left;
+
+        &:hover {
+            background-color: var(--dui-color-background-hover);
+        }
     }
 }
