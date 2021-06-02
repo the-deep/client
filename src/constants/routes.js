@@ -89,7 +89,7 @@ export const routes = {
     analysisModule: {
         order: 19,
         type: ROUTE.private,
-        path: '/projects/:projectId/analysis/',
+        path: '/new-ui/projects/:projectId/analysis/',
         loader: () => import('../newViews/AnalysisModule'),
         links: allLinks,
         showSubNavbar: true,
@@ -98,7 +98,7 @@ export const routes = {
     pillarAnalysis: {
         order: 20,
         type: ROUTE.private,
-        path: '/projects/:projectId/analysis/:analysisId/pillar/:pillarId/',
+        path: '/new-ui/projects/:projectId/analysis/:analysisId/pillar/:pillarId/',
         loader: () => import('../newViews/PillarAnalysis'),
         links: allLinks,
         hideNavbar: true,
@@ -107,7 +107,7 @@ export const routes = {
     editProject: {
         order: 21,
         type: ROUTE.private,
-        path: '/project/:projectId?/',
+        path: '/new-ui/project/:projectId?/',
         loader: () => import('../newViews/ProjectEdit'),
         links: allLinks,
         hideNavbar: true,
@@ -132,7 +132,7 @@ export const routes = {
     home: {
         order: 23,
         type: ROUTE.private,
-        path: '/home/',
+        path: '/new-ui/home/',
         loader: () => import('../newViews/Home'),
         links: allLinks,
     }, // _ts('pageTitle', 'home');
@@ -284,11 +284,20 @@ export const routes = {
     analyticalFramework: {
         order: 101,
         type: ROUTE.private,
-        path: '/framework/:analyticalFrameworkId?/',
+        path: '/new-ui/frameworks/:analyticalFrameworkId?/',
         loader: () => import('../newViews/AnalyticalFramework'),
         links: allLinks,
         hideNavbar: true,
     }, // _ts('pageTitle', 'analyticalFramework');
+
+    myProfile: {
+        order: 101,
+        type: ROUTE.private,
+        path: '/new-ui/my-profile/',
+        loader: () => import('../newViews/MyProfile'),
+        links: allLinks,
+        hideNavbar: true,
+    }, // _ts('pageTitle', 'myProfile');
 
     categoryEditor: {
         order: 110,
