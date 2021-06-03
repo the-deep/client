@@ -26,6 +26,7 @@ export type Types = 'number'
     | 'matrix-2d'
     | 'matrix-1d'
     | 'organigram'
+    | 'geo-location'
     | 'scale';
 
 interface BasicEntity {
@@ -45,7 +46,7 @@ interface KeyLabelColor extends KeyLabel {
 
 interface Condition {
     clientId: string;
-    // NOTE: this is repeative
+    // NOTE: this is repetitive
     /*
     type: 'number'
         | 'text'
@@ -57,6 +58,7 @@ interface Condition {
         | 'matrix-2d'
         | 'matrix-1d'
         | 'organigram'
+        | 'geo-location'
         | 'scale';
     */
     type: unknown;
@@ -80,8 +82,15 @@ interface SelectData extends BaseData<string> {
 interface ScaleData extends BaseData<string> {
     options: KeyLabelColor[];
 }
-interface OrganigramData extends BaseData<string> {
-    options: unknown;
+
+interface OrganigramDatum extends KeyLabel {
+    children?: OrganigramDatum[];
+}
+interface OrganigramData extends BaseData<string[]> {
+    options: OrganigramDatum;
+}
+
+interface GeoLocationData extends BaseData<string[]> {
 }
 
 interface Matrix1dRows extends KeyLabelColor {
@@ -164,6 +173,10 @@ interface ScaleWidget extends BaseWidget {
     type: 'scale';
     data: ScaleData;
 }
+interface GeoLocationWidget extends BaseWidget {
+    type: 'geo-location';
+    data: GeoLocationData;
+}
 
 export type Widget = NumberWidget
     | TextWidget
@@ -176,6 +189,7 @@ export type Widget = NumberWidget
     | Matrix1dWidget
     | Matrix2dWidget
     | OrganigramWidget
+    | GeoLocationWidget
     | ScaleWidget;
 
 export interface Section {
