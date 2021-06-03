@@ -38,10 +38,6 @@
                 flex-direction: column;
                 padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
                 overflow-y: auto;
-
-                .widget {
-                    padding: var(--dui-spacing-medium);
-                }
             }
         }
     }

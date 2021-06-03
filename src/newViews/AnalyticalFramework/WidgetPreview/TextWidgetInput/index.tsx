@@ -1,7 +1,7 @@
 import React from 'react';
-import { DateInput } from '@the-deep/deep-ui';
+import { TextArea } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../../Widget';
+import WidgetWrapper from '../../Widget';
 
 export interface Props <N extends string>{
     title: string;
@@ -16,7 +16,7 @@ export interface Props <N extends string>{
     readOnly?: boolean;
 }
 
-function DateWidgetInput<N extends string>(props: Props<N>) {
+function TextWidgetInput<N extends string>(props: Props<N>) {
     const {
         className,
         title,
@@ -34,10 +34,11 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
             title={title}
             actions={actions}
         >
-            <DateInput
+            <TextArea
                 name={name}
                 onChange={onChange}
                 value={value}
+                rows={5}
                 readOnly={readOnly}
                 disabled={disabled}
             />
@@ -45,4 +46,4 @@ function DateWidgetInput<N extends string>(props: Props<N>) {
     );
 }
 
-export default DateWidgetInput;
+export default TextWidgetInput;

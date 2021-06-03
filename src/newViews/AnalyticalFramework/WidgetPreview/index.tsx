@@ -4,7 +4,7 @@ import { Widget, PartialForm } from '../types';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 
-type PartialWidget = PartialForm<
+export type PartialWidget = PartialForm<
     Widget,
     'clientId' | 'type'
 >;

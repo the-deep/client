@@ -9,14 +9,14 @@ type PartialWidget = PartialForm<
     'type' | 'clientId'
 >;
 
-interface Props {
-    sectionId: string;
+interface Props<T> {
+    sectionId: T;
     initialValue: PartialWidget,
-    onChange: (value: PartialWidget, sectionId: string) => void;
-    onSave: (value: Widget, sectionId: string) => void;
+    onChange: (value: PartialWidget, sectionId: T) => void;
+    onSave: (value: Widget, sectionId: T) => void;
     onCancel: () => void;
 }
-function WidgetEditor(props: Props) {
+function WidgetEditor<T>(props: Props<T>) {
     const {
         sectionId,
         initialValue,

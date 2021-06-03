@@ -1,9 +1,4 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import produce from 'immer';
-import {
-    IoCreateOutline,
-    IoTrash,
-} from 'react-icons/io5';
 import {
     ElementFragments,
     ImagePreview,
@@ -14,98 +9,27 @@ import {
     Tab,
     TabList,
     TabPanel,
-    QuickActionButton,
 } from '@the-deep/deep-ui';
-import { _cs, randomString, isNotDefined } from '@togglecorp/fujs';
+import { _cs, randomString } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
 
-import SectionsEditor, { PartialSectionType } from './SectionsEditor';
-import WidgetPreview from './WidgetPreview';
-import WidgetEditor from './WidgetEditor';
+import Canvas from '../Canvas';
+import WidgetEditor from '../WidgetEditor';
 import WidgetList from '../WidgetList';
-import { Section, Widget, PartialForm } from './types';
+import { PartialWidget } from '../WidgetPreview';
+import { Section, Widget } from '../types';
+
+import SectionsEditor, { PartialSectionType } from './SectionsEditor';
+import {
+    TempWidget,
+    findWidget,
+    injectWidget,
+    deleteWidget,
+} from './utils';
+
 import styles from './styles.scss';
-
-
-type PartialWidget = PartialForm<
-    Widget,
-    'clientId' | 'type'
->;
-
-interface TempWidget {
-    sectionId: string;
-    widget: PartialWidget;
-}
-
-function findWidget(sections: Section[], sectionId: string, widgetId: string): Widget | undefined {
-    const selectedSectionIndex = sections.findIndex(s => s.clientId === sectionId);
-    if (selectedSectionIndex === -1) {
-        console.error('The selected section does not exist:', sectionId);
-        return undefined;
-    }
-    const selectedSection = sections[selectedSectionIndex];
-
-    return selectedSection.widgets?.find(
-        w => w.clientId === widgetId,
-    );
-}
-
-function injectWidget(sections: Section[], sectionId: string, widget: Widget): Section[];
-// eslint-disable-next-line max-len
-function injectWidget(sections: PartialSectionType[], sectionId: string, widget: PartialWidget): PartialSectionType[];
-function injectWidget(sections: PartialSectionType[], sectionId: string, widget: PartialWidget) {
-    const selectedSectionIndex = sections.findIndex(s => s.clientId === sectionId);
-    if (selectedSectionIndex === -1) {
-        console.error('The selected section does not exist:', sectionId);
-        return sections;
-    }
-
-    return produce(sections, (safeSections) => {
-        const selectedSection = safeSections[selectedSectionIndex];
-
-        if (!selectedSection.widgets) {
-            selectedSection.widgets = [];
-        }
-
-        const widgetIndex = selectedSection.widgets.findIndex(
-            w => w.clientId === widget.clientId,
-        );
-
-        if (isNotDefined(widgetIndex) || widgetIndex === -1) {
-            selectedSection.widgets.push(widget);
-        } else {
-            selectedSection.widgets.splice(widgetIndex, 1, widget);
-        }
-    });
-}
-
-function deleteWidget(sections: Section[], sectionId: string, widgetId: string): Section[] {
-    const selectedSectionIndex = sections.findIndex(s => s.clientId === sectionId);
-    if (selectedSectionIndex === -1) {
-        console.error('The selected section does not exist:', sectionId);
-        return sections;
-    }
-
-    return produce(sections, (safeSections) => {
-        const selectedSection = safeSections[selectedSectionIndex];
-
-        if (!selectedSection.widgets) {
-            return;
-        }
-
-        const widgetIndex = selectedSection.widgets.findIndex(
-            w => w.clientId === widgetId,
-        );
-
-        if (isNotDefined(widgetIndex) || widgetIndex === -1) {
-            return;
-        }
-
-        selectedSection.widgets.splice(widgetIndex, 1);
-    });
-}
 
 interface Props {
     className?: string;
@@ -134,11 +58,6 @@ function PrimaryTagging(props: Props) {
                 title: 'Operational Environment',
                 widgets: [],
             },
-            {
-                clientId: randomString(),
-                title: 'Temp Env',
-                widgets: [],
-            },
         ],
         [],
     );
@@ -151,21 +70,11 @@ function PrimaryTagging(props: Props) {
 
     const [tempWidget, setTempWidget] = useState<TempWidget | undefined>();
 
-    const handleSectionsChange = setTempSections;
-
-    const handleSectionsEditClick = useCallback(
+    const handleSectionsEdit = useCallback(
         () => {
             setTempSections(sections);
         },
         [sections],
-    );
-
-    const handleSectionsSave = useCallback(
-        (value: Section[]) => {
-            setTempSections(undefined);
-            setSections(value);
-        },
-        [],
     );
 
     const handleSectionsEditCancel = useCallback(
@@ -175,68 +84,44 @@ function PrimaryTagging(props: Props) {
         [],
     );
 
-    const handleTextWidgetAddClick = useCallback(
-        () => {
-            setTempWidget({
-                sectionId: selectedSection,
-                widget: {
-                    clientId: randomString(),
-                    type: 'text',
-                },
-            });
+    const handleTempSectionsChange = setTempSections;
+
+    const handleTempSectionsSave = useCallback(
+        (value: Section[]) => {
+            setTempSections(undefined);
+            setSections(value);
         },
-        [selectedSection],
+        [],
     );
 
-    const handleDateWidgetAddClick = useCallback(
-        () => {
+    const handleWidgetAdd = useCallback(
+        (value: PartialWidget) => {
             setTempWidget({
                 sectionId: selectedSection,
-                widget: {
-                    clientId: randomString(),
-                    type: 'date',
-                },
+                widget: value,
             });
         },
         [selectedSection],
     );
 
     const handleWidgetDeleteClick = useCallback(
-        (widgetId: string) => {
-            setSections(oldSections => deleteWidget(oldSections, selectedSection, widgetId));
+        (widgetId: string, sectionId: string) => {
+            setSections(oldSections => deleteWidget(oldSections, sectionId, widgetId));
         },
-        [selectedSection],
+        [],
     );
 
     const handleWidgetEditClick = useCallback(
-        (widgetId: string) => {
-            const widget = findWidget(sections, selectedSection, widgetId);
+        (widgetId: string, sectionId: string) => {
+            const widget = findWidget(sections, sectionId, widgetId);
             if (widget) {
                 setTempWidget({
-                    sectionId: selectedSection,
+                    sectionId,
                     widget,
                 });
             }
         },
-        [selectedSection, sections],
-    );
-
-    const handleWidgetChange = useCallback(
-        (value: PartialWidget, sectionId: string) => {
-            setTempWidget({
-                sectionId,
-                widget: value,
-            });
-        },
-        [],
-    );
-
-    const handleWidgetSave = useCallback(
-        (value: Widget, sectionId: string) => {
-            setTempWidget(undefined);
-            setSections(oldSections => injectWidget(oldSections, sectionId, value));
-        },
-        [],
+        [sections],
     );
 
     const handleWidgetEditCancel = useCallback(
@@ -246,9 +131,20 @@ function PrimaryTagging(props: Props) {
         [],
     );
 
-    const handleWidgetValueChange = useCallback(
-        (value: unknown, name: string) => {
-            console.warn('Trying to set value', value, 'on', name);
+    const handleTempWidgetChange = useCallback(
+        (value: PartialWidget, sectionId: string) => {
+            setTempWidget({
+                sectionId,
+                widget: value,
+            });
+        },
+        [],
+    );
+
+    const handleTempWidgetSave = useCallback(
+        (value: Widget, sectionId: string) => {
+            setTempWidget(undefined);
+            setSections(oldSections => injectWidget(oldSections, sectionId, value));
         },
         [],
     );
@@ -278,16 +174,15 @@ function PrimaryTagging(props: Props) {
             >
                 {!editMode && (
                     <WidgetList
-                        onSectionsEditClick={handleSectionsEditClick}
-                        onTextWidgetAddClick={handleTextWidgetAddClick}
-                        onDateWidgetAddClick={handleDateWidgetAddClick}
+                        onSectionsEdit={handleSectionsEdit}
+                        onWidgetAdd={handleWidgetAdd}
                     />
                 )}
                 {sectionEditMode && tempSections && (
                     <SectionsEditor
                         initialValue={tempSections}
-                        onChange={handleSectionsChange}
-                        onSave={handleSectionsSave}
+                        onChange={handleTempSectionsChange}
+                        onSave={handleTempSectionsSave}
                         onCancel={handleSectionsEditCancel}
                     />
                 )}
@@ -295,8 +190,8 @@ function PrimaryTagging(props: Props) {
                     <WidgetEditor
                         sectionId={tempWidget.sectionId}
                         initialValue={tempWidget.widget}
-                        onChange={handleWidgetChange}
-                        onSave={handleWidgetSave}
+                        onChange={handleTempWidgetChange}
+                        onSave={handleTempWidgetSave}
                         onCancel={handleWidgetEditCancel}
                     />
                 )}
@@ -346,39 +241,13 @@ function PrimaryTagging(props: Props) {
                                 name={section.clientId}
                                 className={styles.panel}
                             >
-                                {section.widgets?.map(widget => (
-                                    <WidgetPreview
-                                        className={styles.widget}
-                                        key={widget.clientId}
-                                        name={widget.clientId}
-                                        value={undefined}
-                                        onChange={handleWidgetValueChange}
-                                        widget={widget}
-                                        readOnly
-                                        actions={(
-                                            <>
-                                                <QuickActionButton
-                                                    name={widget.clientId}
-                                                    onClick={handleWidgetEditClick}
-                                                    // FIXME: use translation
-                                                    title="Edit Widget"
-                                                    disabled={editMode}
-                                                >
-                                                    <IoCreateOutline />
-                                                </QuickActionButton>
-                                                <QuickActionButton
-                                                    name={widget.clientId}
-                                                    onClick={handleWidgetDeleteClick}
-                                                    // FIXME: use translation
-                                                    title="Delete Widget"
-                                                    disabled={editMode}
-                                                >
-                                                    <IoTrash />
-                                                </QuickActionButton>
-                                            </>
-                                        )}
-                                    />
-                                ))}
+                                <Canvas
+                                    name={selectedSection}
+                                    widgets={section.widgets}
+                                    onWidgetDelete={handleWidgetDeleteClick}
+                                    onWidgetEdit={handleWidgetEditClick}
+                                    editMode={editMode}
+                                />
                             </TabPanel>
                         ))}
                     </div>
