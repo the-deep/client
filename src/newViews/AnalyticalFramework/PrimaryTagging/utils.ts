@@ -37,7 +37,6 @@ export function injectWidget(
     sectionId: string,
     widget: PartialWidget,
 ): PartialSectionType[];
-// eslint-disable-next-line max-len
 export function injectWidget(
     sections: PartialSectionType[],
     sectionId: string,

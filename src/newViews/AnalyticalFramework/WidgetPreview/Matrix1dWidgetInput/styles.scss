@@ -1,0 +1,25 @@
+.matrix1d {
+    display: flex;
+    flex-direction: column;
+    margin: calc(var(--spacing-medium) - var(--spacing-small));
+
+    .row {
+        display: flex;
+        flex-direction: column;
+        padding: var(--spacing-small);
+
+        .title {
+            font-size: var(--font-size-medium);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+
+            >* {
+                margin: var(--spacing-small);
+            }
+        }
+    }
+}

@@ -3,6 +3,7 @@ import React from 'react';
 import { Widget, PartialForm } from '../types';
 import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInput';
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
+import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
 
 export type PartialWidget = PartialForm<
     Widget,
@@ -64,6 +65,25 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
                 readOnly={readOnly}
                 disabled={disabled}
                 actions={actions}
+            />
+        );
+    }
+    if (widget.type === 'matrix-1d') {
+        // NOTE: we are casting this value
+        const onChangeForMatrix1d = onChange as Matrix1dWidgetInputProps<string>['onChange'];
+        const valueForMatrix1d = value as Matrix1dWidgetInputProps<string>['value'];
+
+        return (
+            <Matrix1dWidgetInput
+                className={className}
+                title={widget.title ?? 'Unnamed'}
+                name={name}
+                onChange={onChangeForMatrix1d}
+                value={valueForMatrix1d}
+                readOnly={readOnly}
+                disabled={disabled}
+                actions={actions}
+                widget={widget}
             />
         );
     }

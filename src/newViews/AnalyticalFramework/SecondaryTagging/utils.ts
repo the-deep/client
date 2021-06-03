@@ -21,7 +21,6 @@ export function injectWidget(
     widgets: PartialWidget[],
     widget: PartialWidget,
 ): PartialWidget[];
-// eslint-disable-next-line max-len
 export function injectWidget(
     widgets: PartialWidget[],
     widget: PartialWidget,

@@ -9,7 +9,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: string | null | undefined,
-    onChange: (value: string | undefined) => void,
+    onChange: (value: string | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;

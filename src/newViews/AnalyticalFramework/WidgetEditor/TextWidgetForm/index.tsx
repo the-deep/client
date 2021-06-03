@@ -166,7 +166,7 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                 // FIXME: use translation
                 label="Title"
                 name="title"
-                value={value?.title}
+                value={value.title}
                 onChange={onValueChange}
                 error={error?.fields?.title}
             />

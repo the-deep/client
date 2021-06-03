@@ -106,9 +106,7 @@ function SecondaryTagging(props: Props) {
         [tempWidget, widgets],
     );
 
-    const widgetEditMode = !!tempWidget;
-
-    const editMode = widgetEditMode;
+    const editMode = !!tempWidget;
 
     return (
         <div className={_cs(styles.secondaryTagging, className)}>

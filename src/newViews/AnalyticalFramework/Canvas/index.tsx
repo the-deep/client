@@ -29,6 +29,8 @@ function Canvas<T>(props: Props<T>) {
 
     const handleWidgetValueChange = useCallback(
         (value: unknown, widgetName: string) => {
+            // NOTE: when we start work no tagging page, we need to handle this
+            // for preview page, we can skip this as the components are disabled any way
             console.warn(`Trying to edit widget ${widgetName} from section ${name}`);
         },
         [name],
@@ -37,13 +39,13 @@ function Canvas<T>(props: Props<T>) {
         (widgetId: string) => {
             onWidgetDelete(widgetId, name);
         },
-        [name],
+        [onWidgetDelete, name],
     );
     const handleWidgetEditClick = useCallback(
         (widgetId: string) => {
             onWidgetEdit(widgetId, name);
         },
-        [name],
+        [onWidgetEdit, name],
     );
 
     return (
