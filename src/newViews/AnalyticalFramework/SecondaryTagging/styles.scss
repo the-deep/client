@@ -7,12 +7,25 @@
     }
 
     .framework-preview {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
+        overflow-y: auto;
 
         .top-bar {
             display: flex;
             background-color: var(--dui-color-foreground);
             padding: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small))
+        }
+
+        .canvas {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            margin: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) var(--dui-spacing-extra-large);
+            background-color: var(--dui-color-foreground);
+            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
+            overflow-y: auto;
         }
     }
 }

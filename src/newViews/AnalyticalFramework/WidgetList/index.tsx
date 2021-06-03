@@ -63,16 +63,19 @@ function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) 
     );
 }
 
-interface Props {
+type Props = {
     className?: string;
-    onSectionsEdit: () => void;
     onWidgetAdd: (widget: PartialWidget) => void;
-}
+} & ({
+    sectionsDisabled: true;
+} | {
+    onSectionsEdit: () => void;
+    sectionsDisabled?: false;
+})
 
 function WidgetList(props: Props) {
     const {
         className,
-        onSectionsEdit,
         onWidgetAdd,
     } = props;
 
@@ -91,16 +94,19 @@ function WidgetList(props: Props) {
 
     return (
         <div className={_cs(className, styles.widgetList)}>
-            <AddItem
-                name="section"
-                // FIXME: use strings
-                label="Sections"
-                onAddClick={onSectionsEdit}
-            />
+            {!props.sectionsDisabled && (
+                <AddItem
+                    name="section"
+                    // FIXME: use strings
+                    label="Sections"
+                    onAddClick={props.onSectionsEdit}
+                />
+            )}
             <ExpandableContainer
                 // FIXME: use strings
-                heading="More Widgets"
+                heading="Widgets"
                 childrenContainerClassName={styles.children}
+                defaultVisibility={!!props.sectionsDisabled}
             >
                 <AddItem
                     name="text"
