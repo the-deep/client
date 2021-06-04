@@ -1,5 +1,49 @@
 .my-profile {
     display: flex;
-    flex-direction: column;
+    background-color: var(--dui-color-background);
     height: 100%;
+
+    .header {
+        padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+
+        .heading {
+            text-transform: uppercase;
+            color: var(--dui-color-brand);
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-grow: 1;
+        padding: var(--dui-spacing-medium) var(--dui-spacing-extra-large);
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: var(--dui-color-foreground);
+            padding: var(--dui-spacing-super-large) var(--dui-spacing-mega-large);
+
+            .main-content {
+                display: flex;
+                flex-grow: 1;
+
+                .personal-info {
+                    flex: 1;
+                    background-color: var(--dui-color-foreground);
+                    padding: var(--dui-spacing-large);
+                }
+
+                .preferences {
+                    flex: 1;
+                    background-color: var(--dui-color-foreground);
+                    padding: var(--dui-spacing-large);
+                }
+            }
+
+            .footer {
+                display: flex;
+            }
+        }
+    }
 }

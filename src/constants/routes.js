@@ -296,7 +296,7 @@ export const routes = {
         path: '/new-ui/my-profile/',
         loader: () => import('../newViews/MyProfile'),
         links: allLinks,
-        hideNavbar: true,
+        hideNavbar: false,
     }, // _ts('pageTitle', 'myProfile');
 
     categoryEditor: {
