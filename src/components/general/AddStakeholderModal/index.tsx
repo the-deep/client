@@ -126,7 +126,7 @@ function AddStakeholderModal<T extends string>(props: Props<T>) {
 
     return (
         <Modal
-            className={styles.modal}
+            className={styles.addStakeholderModal}
             heading={
                 <Heading
                     className={styles.heading}

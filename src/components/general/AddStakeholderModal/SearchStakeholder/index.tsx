@@ -57,7 +57,7 @@ function SearchStakeholder(props: Props) {
     [searchText, stakeholders?.count]);
 
     return (
-        <div className={_cs(className, styles.search)}>
+        <div className={_cs(className, styles.searchStakeholder)}>
             <TextInput
                 name="search"
                 onChange={setSearchText}

@@ -75,7 +75,7 @@ function StakeholderList(props: Props) {
     return (
         <div
             className={_cs(
-                styles.widget,
+                styles.stakeholderList,
                 className,
                 dropping && styles.draggedOver,
             )}

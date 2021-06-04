@@ -31,7 +31,7 @@ function Stakeholder(props: Props) {
         <DraggableContent
             name="stakeholder"
             value={dragValue}
-            className={styles.item}
+            className={styles.stakeholder}
             headerClassName={styles.header}
             contentClassName={styles.content}
         >
@@ -43,19 +43,18 @@ function Stakeholder(props: Props) {
                         alt={value.title}
                     />
                 )}
+                childrenContainerClassName={styles.text}
             >
-                <div className={styles.text}>
-                    <HighlightableTextOutput
-                        className={styles.name}
-                        text={value.title}
-                        highlightText={searchValue}
-                    />
-                    <HighlightableTextOutput
-                        className={styles.abbr}
-                        text={value.shortName}
-                        highlightText={searchValue}
-                    />
-                </div>
+                <HighlightableTextOutput
+                    className={styles.name}
+                    text={value.title}
+                    highlightText={searchValue}
+                />
+                <HighlightableTextOutput
+                    className={styles.abbr}
+                    text={value.shortName}
+                    highlightText={searchValue}
+                />
             </ElementFragments>
         </DraggableContent>
     );
