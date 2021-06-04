@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
-import useDropHandler from '#hooks/useDropHandler';
 import {
     List,
     Heading,
+    DropContainer,
 } from '@the-deep/deep-ui';
 
 import { BasicOrganization } from '#typings';
@@ -12,13 +12,14 @@ import StakeholderRow from './StakeholderRow';
 
 import styles from './styles.scss';
 
-
-const stakeholderRowKeySelector = (d: BasicOrganization) => d.id;
+const stakeholderRowKeySelector = (d: number) => d;
 
 interface Props {
     className?: string;
-    value?: BasicOrganization[];
-    onChange: (stakeholders: BasicOrganization[], name: string) => void;
+    value?: number[];
+    onChange: (stakeholders: number[], name: string) => void;
+    options: BasicOrganization[];
+    onOptionsChange: (value: BasicOrganization[]) => void;
     label: string;
     name: string;
 }
@@ -28,61 +29,50 @@ function StakeholderList(props: Props) {
         className,
         onChange,
         value,
+        options,
+        onOptionsChange,
         name,
         label,
     } = props;
 
-    const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-        try {
-            const data = e.dataTransfer.getData('text');
-            const parsedData = JSON.parse(data);
-            if (!parsedData || !parsedData.id) {
-                throw new Error('Invalid data');
+    const handleDrop = useCallback((val?: Record<'id' | 'title' | 'logoUrl', string | unknown>) => {
+        if (val) {
+            const typedVal = val as BasicOrganization;
+            if (options.findIndex(option => option.id === typedVal.id) < 0) {
+                onOptionsChange([...options, typedVal]);
             }
-
-            const { id, title, logoUrl } = parsedData;
-
-            const droppedOrganization = { id, title, logoUrl };
             if (!value) {
-                onChange([droppedOrganization], name);
-            } else if (value.findIndex(v => v.id === id) === -1) {
-                onChange([...value, droppedOrganization], name);
+                onChange([typedVal.id], name);
+            } else if (value.findIndex(v => v === typedVal.id) === -1) {
+                onChange([...value, typedVal.id], name);
             }
-        } catch (ex) {
-            console.warn('Only organizations supported');
         }
-    }, [value, name, onChange]);
+    }, [value, name, onChange, onOptionsChange, options]);
 
-    const {
-        dropping,
-        onDragOver,
-        onDragEnter,
-        onDragLeave,
-        onDrop,
-    } = useDropHandler(handleDrop);
+    const getValueLabel = useCallback((val: number) =>
+        options.find(v => v.id === val)?.title,
+    [options]);
 
     const onRowRemove = useCallback((id: number) => {
         if (value) {
-            onChange(value.filter(v => v.id !== id), name);
+            onChange(value.filter(v => v !== id), name);
         }
     }, [value, name, onChange]);
 
-    const rowRendererParams = useCallback((_, data) => ({
+    const rowRendererParams = useCallback((_, val) => ({
         onRemove: onRowRemove,
-        value: data,
-    }), [onRowRemove]);
+        value: val,
+        displayValue: getValueLabel(val),
+    }), [onRowRemove, getValueLabel]);
 
     return (
-        <div
+        <DropContainer
             className={_cs(
                 styles.stakeholderList,
                 className,
-                dropping && styles.draggedOver,
             )}
-            onDragEnter={onDragEnter}
-            onDragLeave={onDragLeave}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
+            name="stakeholder"
+            onDrop={handleDrop}
         >
             <Heading
                 className={styles.label}
@@ -90,7 +80,6 @@ function StakeholderList(props: Props) {
             >
                 {label}
             </Heading>
-            <div className={styles.dropOverlay} />
             <div className={styles.items}>
                 <List
                     data={value}
@@ -100,7 +89,7 @@ function StakeholderList(props: Props) {
                     rendererParams={rowRendererParams}
                 />
             </div>
-        </div>
+        </DropContainer>
     );
 }
 

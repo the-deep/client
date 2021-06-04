@@ -1,7 +1,5 @@
 .add-stakeholder-modal {
     display: flex;
-    width: 80vw;
-    height: 90vh;
 
     .heading {
         color: var(--dui-color-brand);
@@ -12,13 +10,13 @@
 
         .left {
             display: flex;
-            flex-basis: 40%;
+            flex-basis: 35%;
             flex-grow: 1;
         }
 
         .right {
             display: flex;
-            flex-basis: 60%;
+            flex-basis: 65%;
             flex-grow: 1;
             flex-wrap: wrap;
             overflow: auto;

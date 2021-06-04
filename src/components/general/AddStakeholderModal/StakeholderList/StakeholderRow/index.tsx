@@ -5,12 +5,11 @@ import {
     ElementFragments,
 } from '@the-deep/deep-ui';
 
-import { BasicOrganization } from '#typings';
-
 export interface Props {
     className?: string;
     onRemove: (index: number) => void;
-    value: BasicOrganization;
+    value: number;
+    displayValue?: string;
 }
 
 function StakeholderRow(props: Props) {
@@ -18,11 +17,12 @@ function StakeholderRow(props: Props) {
         className,
         onRemove,
         value,
+        displayValue,
     } = props;
 
     const handleClick = useCallback(() => {
-        onRemove(value.id);
-    }, [value.id, onRemove]);
+        onRemove(value);
+    }, [value, onRemove]);
 
     return (
         <div
@@ -38,7 +38,7 @@ function StakeholderRow(props: Props) {
                     </QuickActionButton>
                 )}
             >
-                {value.title}
+                {displayValue}
             </ElementFragments>
         </div>
     );

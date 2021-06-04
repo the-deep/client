@@ -10,11 +10,9 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 
-import { ProjectOrganization } from '#typings';
+import { BasicOrganization } from '#typings';
 
 import styles from './styles.scss';
-
-type BasicProjectOrganization = Omit<ProjectOrganization, 'id' | 'organizationTypeDisplay'>;
 
 interface StakeholderDetailProps {
     logo?: string;
@@ -43,15 +41,15 @@ function StakeholderDetail(props: StakeholderDetailProps) {
     );
 }
 
-const stakeholderDetailsKeySelector = (d: BasicProjectOrganization) => d.organization;
-const stakeholderDetailsRendererParams = (_: number, d: BasicProjectOrganization) => ({
-    logo: d.organizationDetails.logo,
-    title: d.organizationDetails.title,
+const stakeholderDetailsKeySelector = (d: BasicOrganization) => d.id;
+const stakeholderDetailsRendererParams = (_: number, d: BasicOrganization) => ({
+    logo: d.logoUrl,
+    title: d.title,
 });
 
 interface Props {
     className?: string;
-    data?: BasicProjectOrganization[];
+    data?: BasicOrganization[];
     title: string;
 }
 function StakeholderList(props: Props) {

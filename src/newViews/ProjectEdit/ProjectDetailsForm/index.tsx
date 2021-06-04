@@ -14,6 +14,7 @@ import {
     ListView,
 } from '@the-deep/deep-ui';
 import {
+    isDefined,
     isNotDefined,
     listToGroupList,
 } from '@togglecorp/fujs';
@@ -31,7 +32,8 @@ import {
 import NonFieldError from '#components/ui/NonFieldError';
 import AddStakeholderButton from '#components/general/AddStakeholderButton';
 import { BasicProjectOrganization } from '#components/general/AddStakeholderModal';
-import { ProjectDetails } from '#typings';
+import { BasicOrganization, ProjectDetails } from '#typings';
+import { organizationTitleSelector } from '#entities/organization';
 
 import _ts from '#ts';
 import {
@@ -90,7 +92,6 @@ const organizationSchema: StakeholderSchema = {
     fields: (): StakeholderSchemaFields => ({
         organization: [requiredCondition],
         organizationType: [requiredCondition],
-        organizationDetails: [requiredCondition],
     }),
 };
 
@@ -112,6 +113,19 @@ const schema: FormSchema = {
         organizations: organizationListSchema,
     }),
 };
+
+const getOrganizationValues = (project: ProjectDetails) =>
+    project.organizations.map(v => ({
+        organization: v.organization,
+        organizationType: v.organizationType,
+    }));
+
+const getOrganizationOptions = (project: ProjectDetails) =>
+    project.organizations.map(v => ({
+
+        id: v.organization,
+        title: organizationTitleSelector(v.organizationDetails),
+    }));
 
 const stakeholderTypeKeySelector = (d: StakeholderType) => d.id;
 
@@ -139,10 +153,16 @@ function ProjectDetailsForm(props: Props) {
     } = useForm(initialValue, schema);
 
     const [projectDetails, setProjectDetails] = useState<ProjectDetails | undefined>();
+    const [stakeholderOptions, setStakeholderOptions] = useState<BasicOrganization[]>([]);
 
     useEffect(
         () => {
-            onValueSet(projectDetails ?? {});
+            onValueSet((): FormType => (
+                projectDetails ? {
+                    ...projectDetails,
+                    organizations: getOrganizationValues(projectDetails),
+                } : {}
+            ));
             onErrorSet({});
         },
         [projectDetails, onErrorSet, onValueSet],
@@ -156,6 +176,9 @@ function ProjectDetailsForm(props: Props) {
         method: 'GET',
         onSuccess: (response) => {
             setProjectDetails(response);
+            const options = getOrganizationOptions(response);
+            setStakeholderOptions(options);
+            onErrorSet({});
         },
         failureHeader: _ts('projectEdit', 'projectDetailsLabel'),
     });
@@ -169,6 +192,8 @@ function ProjectDetailsForm(props: Props) {
         body: ctx => ctx,
         onSuccess: (response) => {
             setProjectDetails(response);
+            const options = getOrganizationOptions(response);
+            setStakeholderOptions(options);
             if (!projectId) {
                 onCreate(response);
             }
@@ -184,9 +209,10 @@ function ProjectDetailsForm(props: Props) {
 
     const groupedStakeholders = useMemo(
         () => listToGroupList(
-            value?.organizations ?? [],
+
+            value.organizations ?? [],
             o => o.organizationType,
-            o => o,
+            o => o.organization,
         ),
         [value],
     );
@@ -195,11 +221,13 @@ function ProjectDetailsForm(props: Props) {
         (key: string, v: StakeholderType) => {
             const organizations = groupedStakeholders[key];
             return {
-                data: organizations,
+                data: organizations
+                    ?.map(o => stakeholderOptions.find(option => option.id === o))
+                    .filter(isDefined),
                 title: v.label,
             };
         },
-        [groupedStakeholders],
+        [groupedStakeholders, stakeholderOptions],
     );
 
     const disabled = pending || projectPatchPending;
@@ -328,6 +356,8 @@ function ProjectDetailsForm(props: Props) {
                                 name="organizations"
                                 value={value?.organizations}
                                 onChange={onValueChange}
+                                onOptionsChange={setStakeholderOptions}
+                                options={stakeholderOptions}
                             />
                         )}
                         contentClassName={styles.content}
