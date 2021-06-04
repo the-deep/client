@@ -34,8 +34,6 @@ import Framework from './Framework';
 import Users from './Users';
 import styles from './styles.scss';
 
-type TabNames = 'general' | 'users' | 'framework';
-
 interface PropsFromDispatch {
     setUserProject: typeof setProjectAction;
     setActiveProject: typeof setActiveProjectAction;
@@ -56,7 +54,6 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
         setActiveProject,
     } = props;
 
-    const [activeTab, setActiveTab] = useState<TabNames>('general');
     const [redirectId, setRedirectId] = useState<number | undefined>();
 
     const handleCreate = useCallback(
@@ -84,9 +81,7 @@ function ProjectEdit(props: PropsFromState & PropsFromDispatch) {
         <div className={styles.projectEdit}>
             <Tabs
                 useHash
-                value={activeTab}
-                onChange={setActiveTab}
-                initialHash="general"
+                defaultHash="general"
             >
                 <FullPageHeader
                     className={styles.header}

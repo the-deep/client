@@ -12,6 +12,7 @@ import { _cs } from '@togglecorp/fujs';
 
 import { useModalState } from '#hooks/stateManagement';
 import _ts from '#ts';
+import NonFieldError from '#components/ui/NonFieldError';
 
 import EntryItem from '../../EntryItem';
 import EntryContext from '../../context';
@@ -103,11 +104,7 @@ function AnalyticalEntryInput(props: AnalyticalEntryInputProps) {
                     </QuickActionButton>
                 )}
             >
-                {error?.$internal && (
-                    <p>
-                        {error.$internal}
-                    </p>
-                )}
+                <NonFieldError error={error} />
                 {entry && (
                     <EntryItem
                         excerpt={entry.excerpt}

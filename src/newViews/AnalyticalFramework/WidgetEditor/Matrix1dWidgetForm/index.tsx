@@ -8,7 +8,8 @@ import {
     TextInput,
     TextArea,
     QuickActionButton,
-    Header,
+    ExpandableContainer,
+    ContainerCard,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -18,13 +19,13 @@ import {
     useFormArray,
     createSubmitHandler,
     StateArg,
+    analyzeErrors,
     Error,
     requiredStringCondition,
 } from '@togglecorp/toggle-form';
-import {
-    _cs,
-    randomString,
-} from '@togglecorp/fujs';
+import { randomString } from '@togglecorp/fujs';
+
+import NonFieldError from '#components/ui/NonFieldError';
 
 import { Matrix1dWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
@@ -149,28 +150,31 @@ function CellInput(props: CellInputProps) {
 
     const onFieldChange = useFormObject(index, onChange, defaultCellVal);
 
+    const errored = analyzeErrors(error);
+    const heading = value.label ?? `Cell ${index + 1}`;
+
     return (
-        <div className={className}>
-            <Header
-                heading={`Cell ${index + 1}`}
-                headingSize="extraSmall"
-                actions={(
+        <ExpandableContainer
+            className={className}
+            // NOTE: newly created elements should be open, else closed
+            defaultVisibility={!value.label}
+            // FIXME: use strings
+            heading={(
+                <>
+                    {`${heading} ${errored ? '*' : ''}`}
                     <QuickActionButton
                         className={styles.removeButton}
                         name={index}
                         onClick={onRemove}
                         // FIXME: use translation
-                        title="Remove Title"
+                        title="Remove Cell"
                     >
                         <IoTrash />
                     </QuickActionButton>
-                )}
-            />
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
+                </>
             )}
+        >
+            <NonFieldError error={error} />
             <TextInput
                 className={styles.label}
                 // FIXME: use translation
@@ -190,7 +194,7 @@ function CellInput(props: CellInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-        </div>
+        </ExpandableContainer>
     );
 }
 
@@ -224,7 +228,7 @@ function RowInput(props: RowInputProps) {
 
     const handleAdd = useCallback(
         () => {
-            const oldCells = value?.cells ?? [];
+            const oldCells = value.cells ?? [];
             // NOTE: Don't let users add more that certain statements
             if (oldCells.length >= CELLS_LIMIT) {
                 return;
@@ -239,31 +243,34 @@ function RowInput(props: RowInputProps) {
                 'cells' as const,
             );
         },
-        [onFieldChange, value?.cells],
+        [onFieldChange, value.cells],
     );
 
+    const errored = analyzeErrors(error);
+    const heading = value.label ?? `Row ${index + 1}`;
+
     return (
-        <div className={className}>
-            <Header
-                heading={`Row ${index + 1}`}
-                headingSize="small"
-                actions={(
+        <ExpandableContainer
+            className={className}
+            // NOTE: newly created elements should be open, else closed
+            defaultVisibility={!value.label}
+            // FIXME: use strings
+            heading={(
+                <>
+                    {`${heading} ${errored ? '*' : ''}`}
                     <QuickActionButton
                         className={styles.removeButton}
                         name={index}
                         onClick={onRemove}
                         // FIXME: use translation
-                        title="Remove Title"
+                        title="Remove Row"
                     >
                         <IoTrash />
                     </QuickActionButton>
-                )}
-            />
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
+                </>
             )}
+        >
+            <NonFieldError error={error} />
             <TextInput
                 className={styles.label}
                 // FIXME: use translation
@@ -283,32 +290,35 @@ function RowInput(props: RowInputProps) {
                 onChange={onFieldChange}
                 error={error?.fields?.tooltip}
             />
-            {value?.cells?.map((cell, cellIndex) => (
-                <CellInput
-                    className={styles.cellInput}
-                    key={cell.clientId}
-                    index={cellIndex}
-                    value={cell}
-                    onChange={onCellsChange}
-                    onRemove={onCellsRemove}
-                    // eslint-disable-next-line max-len
-                    error={error?.fields?.cells?.members?.[cell.clientId]}
-                />
-            ))}
-            {(value?.cells?.length ?? 0) < CELLS_LIMIT && (
-                <div className={styles.footerContainer}>
-                    <Button
+            <ContainerCard
+                className={className}
+                sub
+                heading="Cells"
+                headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
+                    <QuickActionButton
                         name={undefined}
-                        icons={(<IoAdd />)}
                         onClick={handleAdd}
                         // FIXME: use strings
-                        variant="tertiary"
+                        title="Add Cell"
                     >
-                        Add cell
-                    </Button>
-                </div>
-            )}
-        </div>
+                        <IoAdd />
+                    </QuickActionButton>
+                )}
+            >
+                {value.cells?.map((cell, cellIndex) => (
+                    <CellInput
+                        className={styles.cellInput}
+                        key={cell.clientId}
+                        index={cellIndex}
+                        value={cell}
+                        onChange={onCellsChange}
+                        onRemove={onCellsRemove}
+                        // eslint-disable-next-line max-len
+                        error={error?.fields?.cells?.members?.[cell.clientId]}
+                    />
+                ))}
+            </ContainerCard>
+        </ExpandableContainer>
     );
 }
 
@@ -358,14 +368,22 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     );
 
     return (
-        <div
-            className={_cs(className, styles.data)}
-        >
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
+        <ContainerCard
+            className={className}
+            sub
+            heading="Rows"
+            headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
+                <QuickActionButton
+                    name={undefined}
+                    onClick={handleAdd}
+                    // FIXME: use strings
+                    title="Add row"
+                >
+                    <IoAdd />
+                </QuickActionButton>
             )}
+        >
+            <NonFieldError error={error} />
             {value?.rows?.map((row, index) => (
                 <RowInput
                     className={styles.rowInput}
@@ -378,20 +396,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     error={error?.fields?.rows?.members?.[row.clientId]}
                 />
             ))}
-            {(value?.rows?.length ?? 0) < ROWS_LIMIT && (
-                <div className={styles.footerContainer}>
-                    <Button
-                        name={undefined}
-                        icons={(<IoAdd />)}
-                        onClick={handleAdd}
-                        // FIXME: use strings
-                        variant="tertiary"
-                    >
-                        Add row
-                    </Button>
-                </div>
-            )}
-        </div>
+        </ContainerCard>
     );
 }
 
@@ -438,47 +443,49 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
             className={styles.widgetEdit}
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
-            <div className={styles.buttonContainer}>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    onClick={onCancel}
-                    variant="tertiary"
-                    // FIXME: use strings
-                >
-                    Cancel
-                </Button>
-                <Button
-                    className={styles.button}
-                    name={undefined}
-                    type="submit"
-                    disabled={pristine}
-                    // FIXME: use strings
-                >
-                    Save
-                </Button>
-            </div>
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
-            )}
-            <TextInput
-                className={styles.input}
-                // FIXME: use translation
-                label="Title"
-                name="title"
-                value={value.title}
-                onChange={onValueChange}
-                error={error?.fields?.title}
-            />
-            <DataInput
-                name="data"
-                value={value.data}
-                onChange={onValueChange}
-                // eslint-disable-next-line max-len
-                error={error?.fields?.data}
-            />
+            <ContainerCard
+                heading={value.title ?? 'Unnamed'}
+                headerActions={(
+                    <>
+                        <Button
+                            className={styles.button}
+                            name={undefined}
+                            onClick={onCancel}
+                            variant="tertiary"
+                            // FIXME: use strings
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            className={styles.button}
+                            name={undefined}
+                            type="submit"
+                            disabled={pristine}
+                            // FIXME: use strings
+                        >
+                            Save
+                        </Button>
+                    </>
+                )}
+            >
+                <NonFieldError error={error} />
+                <TextInput
+                    className={styles.input}
+                    // FIXME: use translation
+                    label="Title"
+                    name="title"
+                    value={value.title}
+                    onChange={onValueChange}
+                    error={error?.fields?.title}
+                />
+                <DataInput
+                    name="data"
+                    value={value.data}
+                    onChange={onValueChange}
+                    // eslint-disable-next-line max-len
+                    error={error?.fields?.data}
+                />
+            </ContainerCard>
         </form>
     );
 }

@@ -23,6 +23,7 @@ import {
     Error,
 } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/ui/NonFieldError';
 import { useModalState } from '#hooks/stateManagement';
 import {
     AnalyticalStatementType,
@@ -249,11 +250,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             >
                 <div className={_cs(styles.analyticalStatement, className)}>
                     <div className={styles.upperContent}>
-                        {error?.$internal && (
-                            <p className={styles.error}>
-                                {error.$internal}
-                            </p>
-                        )}
+                        <NonFieldError error={error} />
                         <TextArea
                             className={styles.statement}
                             // FIXME: use translation

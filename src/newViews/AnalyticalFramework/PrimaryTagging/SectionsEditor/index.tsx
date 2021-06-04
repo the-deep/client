@@ -22,6 +22,8 @@ import {
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
+import NonFieldError from '#components/ui/NonFieldError';
+
 import { Section, PartialForm } from '../../types';
 import styles from './styles.scss';
 
@@ -93,11 +95,7 @@ function SectionInput(props: SectionInputProps) {
 
     return (
         <div className={className}>
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <TextInput
                 className={styles.title}
                 // FIXME: use translation

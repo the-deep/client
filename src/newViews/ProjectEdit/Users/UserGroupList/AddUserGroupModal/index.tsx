@@ -23,6 +23,7 @@ import {
 } from '#typings';
 import { ProjectRole } from '#typings/project';
 import _ts from '#ts';
+import NonFieldError from '#components/ui/NonFieldError';
 
 import styles from './styles.scss';
 
@@ -198,11 +199,7 @@ function AddUserGroupModal(props: Props) {
             )}
         >
             {pendingAddAction && (<LoadingAnimation />)}
-            {error?.$internal && (
-                <p>
-                    {error?.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <SelectInput
                 name="usergroup"
                 className={styles.input}
