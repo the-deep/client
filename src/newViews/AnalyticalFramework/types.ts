@@ -36,7 +36,7 @@ interface BasicEntity {
     createdByName: string;
 }
 interface KeyLabel {
-    key: string;
+    clientId: string;
     label: string;
     tooltip?: string;
 }
@@ -157,7 +157,7 @@ interface DateRangeWidget extends BaseWidget {
     type: 'date-range';
     data: BaseData<string>;
 }
-interface Matrix1dWidget extends BaseWidget {
+export interface Matrix1dWidget extends BaseWidget {
     type: 'matrix-1d';
     data: Matrix1dData;
 }

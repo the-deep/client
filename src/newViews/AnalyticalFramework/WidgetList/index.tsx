@@ -1,5 +1,5 @@
-import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import React, { useCallback } from 'react';
+import { _cs, randomString } from '@togglecorp/fujs';
 import { IoAdd } from 'react-icons/io5';
 import {
     Header,
@@ -7,22 +7,37 @@ import {
     ExpandableContainer,
 } from '@the-deep/deep-ui';
 
+import { Types } from '../types';
+import { PartialWidget } from '../WidgetPreview';
 import styles from './styles.scss';
 
-interface AddItemProps {
+const partialWidgets: PartialWidget[] = [
+    {
+        type: 'text',
+        clientId: 'random',
+    },
+    {
+        type: 'date',
+        clientId: 'random',
+    },
+];
+
+interface AddItemProps<T extends string | number | undefined> {
+    name: T;
     className?: string;
     label: string;
-    onAddClick: () => void;
+    onAddClick: (name: T) => void;
     // NOTE: Send Icon/SVG of widget type in children
     children?: React.ReactNode;
 }
 
-function AddItem(props: AddItemProps) {
+function AddItem<T extends string | number | undefined>(props: AddItemProps<T>) {
     const {
         className,
         onAddClick,
         label,
         children,
+        name,
     } = props;
 
     return (
@@ -33,7 +48,7 @@ function AddItem(props: AddItemProps) {
                 headingSize="small"
                 actions={(
                     <QuickActionButton
-                        name={label}
+                        name={name}
                         variant="action"
                         onClick={onAddClick}
                     >
@@ -48,44 +63,64 @@ function AddItem(props: AddItemProps) {
     );
 }
 
-interface Props {
+type Props = {
     className?: string;
-    onSectionsEditClick: () => void;
-    onTextWidgetAddClick: () => void;
-    onDateWidgetAddClick: () => void;
-}
+    onWidgetAdd: (widget: PartialWidget) => void;
+} & ({
+    sectionsDisabled: true;
+} | {
+    onSectionsEdit: () => void;
+    sectionsDisabled?: false;
+})
 
 function WidgetList(props: Props) {
     const {
         className,
-        onSectionsEditClick,
-        onTextWidgetAddClick,
-        onDateWidgetAddClick,
+        onWidgetAdd,
     } = props;
+
+    const handleAddClick = useCallback(
+        (name: Types) => {
+            const widget = partialWidgets.find(item => item.type === name);
+            if (widget) {
+                onWidgetAdd({
+                    ...widget,
+                    clientId: randomString(),
+                });
+            }
+        },
+        [onWidgetAdd],
+    );
 
     return (
         <div className={_cs(className, styles.widgetList)}>
-            <AddItem
-                // FIXME: use strings
-                label="Sections"
-                onAddClick={onSectionsEditClick}
-            />
+            {!props.sectionsDisabled && (
+                <AddItem
+                    name="section"
+                    // FIXME: use strings
+                    label="Sections"
+                    onAddClick={props.onSectionsEdit}
+                />
+            )}
             <ExpandableContainer
                 // FIXME: use strings
-                heading="More Widgets"
+                heading="Widgets"
                 childrenContainerClassName={styles.children}
+                defaultVisibility={!!props.sectionsDisabled}
             >
                 <AddItem
+                    name="text"
                     // FIXME: use strings
                     label="Text Widget"
                     className={styles.addMoreItem}
-                    onAddClick={onTextWidgetAddClick}
+                    onAddClick={handleAddClick}
                 />
                 <AddItem
+                    name="date"
                     // FIXME: use strings
                     label="Date Widget"
                     className={styles.addMoreItem}
-                    onAddClick={onDateWidgetAddClick}
+                    onAddClick={handleAddClick}
                 />
             </ExpandableContainer>
         </div>

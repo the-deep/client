@@ -22,7 +22,7 @@ import {
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
-import { Section, PartialForm } from '../types';
+import { Section, PartialForm } from '../../types';
 import styles from './styles.scss';
 
 const SECTIONS_LIMIT = 10;

@@ -9,16 +9,16 @@ type PartialWidget = PartialForm<
     'type' | 'clientId'
 >;
 
-interface Props {
-    sectionId: string;
+interface Props<T> {
+    name: T;
     initialValue: PartialWidget,
-    onChange: (value: PartialWidget, sectionId: string) => void;
-    onSave: (value: Widget, sectionId: string) => void;
+    onChange: (value: PartialWidget, name: T) => void;
+    onSave: (value: Widget, name: T) => void;
     onCancel: () => void;
 }
-function WidgetEditor(props: Props) {
+function WidgetEditor<T>(props: Props<T>) {
     const {
-        sectionId,
+        name,
         initialValue,
         onChange,
         onSave,
@@ -27,16 +27,16 @@ function WidgetEditor(props: Props) {
 
     const handleChange = useCallback(
         (val: PartialWidget) => {
-            onChange(val, sectionId);
+            onChange(val, name);
         },
-        [onChange, sectionId],
+        [onChange, name],
     );
 
     const handleSave = useCallback(
         (val: Widget) => {
-            onSave(val, sectionId);
+            onSave(val, name);
         },
-        [onSave, sectionId],
+        [onSave, name],
     );
 
     if (initialValue.type === 'text') {

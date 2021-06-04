@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from 'react';
 import {
     Button,
     TextInput,
-    DateInput,
 } from '@the-deep/deep-ui';
 import {
     ObjectSchema,
@@ -15,10 +14,10 @@ import {
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 
-import { DateWidget, PartialForm } from '../../types';
+import { TextWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
 
-type FormType = DateWidget;
+type FormType = TextWidget;
 type PartialFormType = PartialForm<
     FormType,
     'clientId' | 'type'
@@ -81,7 +80,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                     {error.$internal}
                 </p>
             )}
-            <DateInput
+            <TextInput
                 className={styles.input}
                 // FIXME: use translation
                 label="Default Value"
@@ -94,14 +93,14 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     );
 }
 
-interface DateWidgetFormProps {
+interface TextWidgetFormProps {
     onCancel: () => void;
     onSave: (value: FormType) => void;
     onChange: (value: PartialFormType) => void;
     initialValue: PartialFormType;
 }
 
-function DateWidgetForm(props: DateWidgetFormProps) {
+function TextWidgetForm(props: TextWidgetFormProps) {
     const {
         onChange,
         onSave,
@@ -167,7 +166,7 @@ function DateWidgetForm(props: DateWidgetFormProps) {
                 // FIXME: use translation
                 label="Title"
                 name="title"
-                value={value?.title}
+                value={value.title}
                 onChange={onValueChange}
                 error={error?.fields?.title}
             />
@@ -182,4 +181,4 @@ function DateWidgetForm(props: DateWidgetFormProps) {
     );
 }
 
-export default DateWidgetForm;
+export default TextWidgetForm;

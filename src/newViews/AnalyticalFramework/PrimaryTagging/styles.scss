@@ -14,6 +14,7 @@
 
         .top-bar {
             display: flex;
+            background-color: var(--dui-color-foreground);
             padding: calc(var(--dui-spacing-large) - var(--dui-spacing-extra-small)) calc(var(--dui-spacing-extra-large) - var(--dui-spacing-small));
         }
 
@@ -38,10 +39,6 @@
                 flex-direction: column;
                 padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-medium));
                 overflow-y: auto;
-
-                .widget {
-                    padding: var(--dui-spacing-medium);
-                }
             }
         }
     }

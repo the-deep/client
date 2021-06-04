@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextArea } from '@the-deep/deep-ui';
 
-import WidgetWrapper from '../../../Widget';
+import WidgetWrapper from '../../Widget';
 
 export interface Props <N extends string>{
     title: string;
@@ -9,7 +9,7 @@ export interface Props <N extends string>{
 
     name: N,
     value: string | null | undefined,
-    onChange: (value: string | undefined) => void,
+    onChange: (value: string | undefined, name: N) => void,
 
     actions?: React.ReactNode,
     disabled?: boolean;

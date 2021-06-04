@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 
 import {
     ElementFragments,
@@ -12,6 +12,18 @@ import { _cs } from '@togglecorp/fujs';
 import { useModalState } from '#hooks/stateManagement';
 
 import _ts from '#ts';
+
+import { PartialWidget } from '../WidgetPreview';
+import Canvas from '../Canvas';
+import WidgetEditor from '../WidgetEditor';
+import WidgetList from '../WidgetList';
+import { Widget } from '../types';
+
+import {
+    findWidget,
+    injectWidget,
+    deleteWidget,
+} from './utils';
 import styles from './styles.scss';
 
 interface Props {
@@ -27,11 +39,74 @@ function SecondaryTagging(props: Props) {
 
     // NOTE: intentional console.info
     console.info('secondary tagging in the framework', frameworkId);
+
     const [
         showPreviewModal,
         setShowPreviewModalTrue,
         setShowPreviewModalFalse,
     ] = useModalState(false);
+
+    const [widgets, setWidgets] = useState<Widget[]>([]);
+
+    const [tempWidget, setTempWidget] = useState<PartialWidget | undefined>();
+
+    const handleWidgetAdd = useCallback(
+        (value: PartialWidget) => {
+            setTempWidget(value);
+        },
+        [],
+    );
+
+    const handleWidgetDeleteClick = useCallback(
+        (widgetId: string) => {
+            setWidgets(oldWidgets => deleteWidget(oldWidgets, widgetId));
+        },
+        [],
+    );
+
+    const handleWidgetEditClick = useCallback(
+        (widgetId: string) => {
+            const widget = findWidget(widgets, widgetId);
+            if (widget) {
+                setTempWidget(widget);
+            }
+        },
+        [widgets],
+    );
+
+    const handleWidgetEditCancel = useCallback(
+        () => {
+            setTempWidget(undefined);
+        },
+        [],
+    );
+
+    const handleTempWidgetChange = useCallback(
+        (value: PartialWidget) => {
+            setTempWidget(value);
+        },
+        [],
+    );
+
+    const handleTempWidgetSave = useCallback(
+        (value: Widget) => {
+            setTempWidget(undefined);
+            setWidgets(oldWidgets => injectWidget(oldWidgets, value));
+        },
+        [],
+    );
+
+    const appliedWidgets = useMemo(
+        () => {
+            if (tempWidget) {
+                return injectWidget(widgets, tempWidget);
+            }
+            return widgets;
+        },
+        [tempWidget, widgets],
+    );
+
+    const editMode = !!tempWidget;
 
     return (
         <div className={_cs(styles.secondaryTagging, className)}>
@@ -40,7 +115,21 @@ function SecondaryTagging(props: Props) {
                 heading={_ts('analyticalFramework.secondaryTagging', 'buildingModulesHeading')}
                 sub
             >
-                Under construction
+                {!editMode && (
+                    <WidgetList
+                        sectionsDisabled
+                        onWidgetAdd={handleWidgetAdd}
+                    />
+                )}
+                {editMode && tempWidget && (
+                    <WidgetEditor
+                        name={undefined}
+                        initialValue={tempWidget}
+                        onChange={handleTempWidgetChange}
+                        onSave={handleTempWidgetSave}
+                        onCancel={handleWidgetEditCancel}
+                    />
+                )}
             </Container>
             <div className={styles.frameworkPreview}>
                 <div className={styles.topBar}>
@@ -62,6 +151,15 @@ function SecondaryTagging(props: Props) {
                             {_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}
                         </Button>
                     </ElementFragments>
+                </div>
+                <div className={styles.canvas}>
+                    <Canvas
+                        name={undefined}
+                        widgets={appliedWidgets}
+                        onWidgetDelete={handleWidgetDeleteClick}
+                        onWidgetEdit={handleWidgetEditClick}
+                        editMode={editMode}
+                    />
                 </div>
             </div>
             {showPreviewModal && (
