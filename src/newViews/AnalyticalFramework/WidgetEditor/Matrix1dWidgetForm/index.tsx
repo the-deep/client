@@ -305,6 +305,7 @@ function RowInput(props: RowInputProps) {
                     </QuickActionButton>
                 )}
             >
+                <NonFieldError error={error?.fields?.cells} />
                 {value.cells?.map((cell, cellIndex) => (
                     <CellInput
                         className={styles.cellInput}
@@ -368,35 +369,38 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     );
 
     return (
-        <ContainerCard
-            className={className}
-            sub
-            heading="Rows"
-            headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
-                <QuickActionButton
-                    name={undefined}
-                    onClick={handleAdd}
-                    // FIXME: use strings
-                    title="Add row"
-                >
-                    <IoAdd />
-                </QuickActionButton>
-            )}
-        >
+        <>
             <NonFieldError error={error} />
-            {value?.rows?.map((row, index) => (
-                <RowInput
-                    className={styles.rowInput}
-                    key={row.clientId}
-                    index={index}
-                    value={row}
-                    onChange={onRowsChange}
-                    onRemove={onRowsRemove}
-                    // eslint-disable-next-line max-len
-                    error={error?.fields?.rows?.members?.[row.clientId]}
-                />
-            ))}
-        </ContainerCard>
+            <ContainerCard
+                className={className}
+                sub
+                heading="Rows"
+                headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
+                    <QuickActionButton
+                        name={undefined}
+                        onClick={handleAdd}
+                        // FIXME: use strings
+                        title="Add row"
+                    >
+                        <IoAdd />
+                    </QuickActionButton>
+                )}
+            >
+                <NonFieldError error={error?.fields?.rows} />
+                {value?.rows?.map((row, index) => (
+                    <RowInput
+                        className={styles.rowInput}
+                        key={row.clientId}
+                        index={index}
+                        value={row}
+                        onChange={onRowsChange}
+                        onRemove={onRowsRemove}
+                        // eslint-disable-next-line max-len
+                        error={error?.fields?.rows?.members?.[row.clientId]}
+                    />
+                ))}
+            </ContainerCard>
+        </>
     );
 }
 

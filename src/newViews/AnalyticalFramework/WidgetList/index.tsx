@@ -24,6 +24,10 @@ const partialWidgets: PartialWidget[] = [
         type: 'matrix-1d',
         clientId: 'random',
     },
+    {
+        type: 'matrix-2d',
+        clientId: 'random',
+    },
 ];
 
 interface AddItemProps<T extends string | number | undefined> {
@@ -130,6 +134,13 @@ function WidgetList(props: Props) {
                     name="matrix-1d"
                     // FIXME: use strings
                     label="Matrix1d Widget"
+                    className={styles.addMoreItem}
+                    onAddClick={handleAddClick}
+                />
+                <AddItem
+                    name="matrix-2d"
+                    // FIXME: use strings
+                    label="Matrix2d Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />

@@ -5,6 +5,8 @@ import TextWidgetInput, { Props as TextWidgetInputProps } from './TextWidgetInpu
 import DateWidgetInput, { Props as DateWidgetInputProps } from './DateWidgetInput';
 import Matrix1dWidgetInput, { Props as Matrix1dWidgetInputProps } from './Matrix1dWidgetInput';
 
+import BaseWidgetInput from './BaseWidgetInput';
+
 export type PartialWidget = PartialForm<
     Widget,
     'clientId' | 'type'
@@ -40,7 +42,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
         return (
             <TextWidgetInput
                 className={className}
-                title={widget.title ?? 'Unnamed'}
+                title={widget.title}
                 name={name}
                 onChange={onChangeForText}
                 value={valueForText}
@@ -58,7 +60,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
         return (
             <DateWidgetInput
                 className={className}
-                title={widget.title ?? 'Unnamed'}
+                title={widget.title}
                 name={name}
                 onChange={onChangeForDate}
                 value={valueForDate}
@@ -76,7 +78,7 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
         return (
             <Matrix1dWidgetInput
                 className={className}
-                title={widget.title ?? 'Unnamed'}
+                title={widget.title}
                 name={name}
                 onChange={onChangeForMatrix1d}
                 value={valueForMatrix1d}
@@ -87,7 +89,13 @@ function WidgetPreview<N extends string, T>(props: Props<N, T>) {
             />
         );
     }
-    return null;
+    return (
+        <BaseWidgetInput
+            className={className}
+            title={widget.title}
+            actions={actions}
+        />
+    );
 }
 
 export default WidgetPreview;
