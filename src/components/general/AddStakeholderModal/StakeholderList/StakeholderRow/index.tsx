@@ -25,9 +25,7 @@ function StakeholderRow(props: Props) {
     }, [value, onRemove]);
 
     return (
-        <div
-            className={className}
-        >
+        <div className={className}>
             <ElementFragments
                 actions={(
                     <QuickActionButton

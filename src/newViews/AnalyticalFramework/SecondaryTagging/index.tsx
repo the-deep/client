@@ -145,7 +145,7 @@ function SecondaryTagging(props: Props) {
                     >
                         <Button
                             name={undefined}
-                            variant="inverted"
+                            variant="secondary"
                             onClick={setShowPreviewModalTrue}
                         >
                             {_ts('analyticalFramework.secondaryTagging', 'viewFrameworkImageButtonLabel')}

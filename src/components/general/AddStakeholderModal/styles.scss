@@ -1,5 +1,6 @@
 .add-stakeholder-modal {
-    display: flex;
+    width: 96vw;
+    height: 96vh;
 
     .heading {
         color: var(--dui-color-brand);
@@ -7,18 +8,21 @@
 
     .modal-body {
         display: flex;
+        padding: var(--dui-spacing-medium);
+        --width-left-container: 20rem;
 
         .left {
-            display: flex;
-            flex-basis: 35%;
-            flex-grow: 1;
+            padding: calc(var(--dui-spacing-medium) - var(--dui-spacing-small));
+            width: var(--width-left-container);
+            overflow-y: auto;
         }
 
         .right {
             display: flex;
-            flex-basis: 65%;
-            flex-grow: 1;
             flex-wrap: wrap;
+            background-color: var(--dui-color-surface-information);
+            padding: calc(var(--dui-spacing-extra-large) - var(--dui-spacing-large));
+            width: calc(100% - var(--width-left-container));
             overflow: auto;
         }
     }

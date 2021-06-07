@@ -1,12 +1,16 @@
 .search-stakeholder {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
-    border-right: var(--dui-width-separator-thin) solid var(--dui-color-separator);
+    overflow-y: auto;
+
+    .search-input {
+        flex-shrink: 0;
+    }
 
     .items {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         overflow-y: auto;
     }
 }

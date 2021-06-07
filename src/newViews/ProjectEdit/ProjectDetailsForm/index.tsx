@@ -122,7 +122,6 @@ const getOrganizationValues = (project: ProjectDetails) =>
 
 const getOrganizationOptions = (project: ProjectDetails) =>
     project.organizations.map(v => ({
-
         id: v.organization,
         title: organizationTitleSelector(v.organizationDetails),
     }));

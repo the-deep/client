@@ -5,7 +5,7 @@ import { MdEdit } from 'react-icons/md';
 import { Button } from '@the-deep/deep-ui';
 import AddStakeholderModal, { Props as AddStakeholderModalProps } from '#components/general/AddStakeholderModal';
 
-type Props<T> = AddStakeholderModalProps<T> & {
+type Props<T> = Omit<AddStakeholderModalProps<T>, 'onModalClose'> & {
     className?: string;
     disabled?: boolean;
 }

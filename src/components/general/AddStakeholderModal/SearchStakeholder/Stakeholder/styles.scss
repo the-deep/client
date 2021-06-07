@@ -1,6 +1,9 @@
 .stakeholder {
     display: flex;
+    border: none;
+    border-bottom: var(--dui-width-separator-thin) solid var(--dui-color-separator);
     background-color: var(--dui-color-background-card);
+    overflow: unset;
 
     .header {
         padding: 0;
@@ -9,6 +12,7 @@
     .content {
         display: flex;
         padding: var(--dui-spacing-extra-small);
+        overflow: unset;
 
         .icon {
             width: var(--dui-height-navbar-icon);
@@ -17,6 +21,9 @@
     }
 
     .text {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
         flex-grow: 1;
         padding: var(--dui-spacing-extra-small) 0;
 
@@ -28,11 +35,6 @@
         .abbr {
             padding: 0 var(--dui-spacing-extra-small);
             color: var(--dui-color-text-label);
-        }
-
-        .type {
-            padding: 0 var(--dui-spacing-extra-small);
-            font-size: var(--dui--font-size-small);
         }
     }
 

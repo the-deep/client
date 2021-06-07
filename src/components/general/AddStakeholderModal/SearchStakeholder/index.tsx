@@ -9,7 +9,6 @@ import { Organization, MultiResponse } from '#typings';
 import { useRequest } from '#utils/request';
 import useDebouncedValue from '#hooks/useDebouncedValue';
 import _ts from '#ts';
-import { notifyOnFailure } from '#utils/requestNotify';
 
 import Stakeholder from './Stakeholder';
 import styles from './styles.scss';
@@ -41,8 +40,7 @@ function SearchStakeholder(props: Props) {
             method: 'GET',
             skip: !searchText,
             query: searchQueryParams,
-            onFailure: (_, errorBody) =>
-                notifyOnFailure(_ts('project.detail.stakeholders', 'stakeholdersModalTitle'))({ error: errorBody }),
+            failureHeader: _ts('project.detail.stakeholders', 'stakeholdersModalTitle'),
         },
     );
 
@@ -56,11 +54,16 @@ function SearchStakeholder(props: Props) {
         : _ts('project.detail.stakeholders', 'noResultsFoundMessage')),
     [searchText, stakeholders?.count]);
 
+    const handleSearchTextChange = useCallback((newValue: string | undefined) => {
+        setSearchText(newValue);
+    }, []);
+
     return (
         <div className={_cs(className, styles.searchStakeholder)}>
             <TextInput
+                className={styles.searchInput}
                 name="search"
-                onChange={setSearchText}
+                onChange={handleSearchTextChange}
                 value={searchText}
                 label={_ts('project.detail.stakeholders', 'searchLabel')}
                 placeholder={_ts('project.detail.stakeholders', 'searchLabel')}

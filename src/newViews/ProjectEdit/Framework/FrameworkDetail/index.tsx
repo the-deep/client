@@ -181,7 +181,7 @@ function FrameworkDetail(props: Props) {
                     <>
                         {projectFrameworkId !== frameworkId && (
                             <ConfirmButton
-                                variant="inverted"
+                                variant="secondary"
                                 name="useFramework"
                                 title={_ts('projectEdit', 'selectFrameworkButtonLabel')}
                                 disabled={disableAllButtons}
@@ -217,7 +217,7 @@ function FrameworkDetail(props: Props) {
                             </Tag>
                         )}
                         <QuickActionLink
-                            variant="inverted"
+                            variant="secondary"
                             title={_ts('projectEdit', 'editFrameworkLinkTitle')}
                             disabled={disableAllButtons}
                             to={reverseRoute(
@@ -231,7 +231,7 @@ function FrameworkDetail(props: Props) {
                         </QuickActionLink>
                         <QuickActionButton
                             title={_ts('projectEdit', 'cloneFrameworkButtonTitle')}
-                            variant="inverted"
+                            variant="secondary"
                             disabled={disableAllButtons}
                             onClick={handleFrameworkCloneClick}
                             name="clone"

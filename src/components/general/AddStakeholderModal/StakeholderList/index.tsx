@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { _cs } from '@togglecorp/fujs';
 import {
     List,
-    Heading,
     DropContainer,
 } from '@the-deep/deep-ui';
 
@@ -35,17 +34,18 @@ function StakeholderList(props: Props) {
         label,
     } = props;
 
-    const handleDrop = useCallback((val?: Record<'id' | 'title' | 'logoUrl', string | unknown>) => {
-        if (val) {
-            const typedVal = val as BasicOrganization;
-            if (options.findIndex(option => option.id === typedVal.id) < 0) {
-                onOptionsChange([...options, typedVal]);
-            }
-            if (!value) {
-                onChange([typedVal.id], name);
-            } else if (value.findIndex(v => v === typedVal.id) === -1) {
-                onChange([...value, typedVal.id], name);
-            }
+    const handleDrop = useCallback((val: Record<string, unknown> | undefined) => {
+        if (!val) {
+            return;
+        }
+        const typedVal = val as { id: number; title: string; logoUrl?: string };
+        if (options.findIndex(option => option.id === typedVal.id) < 0) {
+            onOptionsChange([...options, typedVal]);
+        }
+        if (!value) {
+            onChange([typedVal.id], name);
+        } else if (value.findIndex(v => v === typedVal.id) === -1) {
+            onChange([...value, typedVal.id], name);
         }
     }, [value, name, onChange, onOptionsChange, options]);
 
@@ -73,22 +73,18 @@ function StakeholderList(props: Props) {
             )}
             name="stakeholder"
             onDrop={handleDrop}
+            contentClassName={styles.content}
+            headerClassName={styles.header}
+            heading={label}
+            sub
         >
-            <Heading
-                className={styles.label}
-                size="small"
-            >
-                {label}
-            </Heading>
-            <div className={styles.items}>
-                <List
-                    data={value}
-                    renderer={StakeholderRow}
-                    keySelector={stakeholderRowKeySelector}
-                    rendererClassName={styles.row}
-                    rendererParams={rowRendererParams}
-                />
-            </div>
+            <List
+                data={value}
+                renderer={StakeholderRow}
+                keySelector={stakeholderRowKeySelector}
+                rendererClassName={styles.row}
+                rendererParams={rowRendererParams}
+            />
         </DropContainer>
     );
 }

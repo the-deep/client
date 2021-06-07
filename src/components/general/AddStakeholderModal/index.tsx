@@ -45,7 +45,7 @@ export type BasicProjectOrganization = Pick<ProjectOrganization, 'organization' 
 
 export interface Props<T> {
     name: T;
-    onChange: (value: StateArg<BasicProjectOrganization[] | undefined>, name: string) => void;
+    onChange: (value: StateArg<BasicProjectOrganization[] | undefined>, name: T) => void;
     options: BasicOrganization[];
     onOptionsChange: (value: BasicOrganization[]) => void;
     value?: BasicProjectOrganization[];
