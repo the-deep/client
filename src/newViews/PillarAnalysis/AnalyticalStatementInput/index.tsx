@@ -23,6 +23,7 @@ import {
     Error,
 } from '@togglecorp/toggle-form';
 
+import NonFieldError from '#components/ui/NonFieldError';
 import { useModalState } from '#hooks/stateManagement';
 import {
     AnalyticalStatementType,
@@ -98,7 +99,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     const movedItem = value.analyticalEntries
                         ?.find(item => item.entry === dropValue.entryId);
 
-                    // NOTE: Don't let users add more that certain entries
+                    // NOTE: Don't let users add more that certain items
                     if (
                         isNotDefined(movedItem)
                         && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT
@@ -249,11 +250,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
             >
                 <div className={_cs(styles.analyticalStatement, className)}>
                     <div className={styles.upperContent}>
-                        {error?.$internal && (
-                            <p className={styles.error}>
-                                {error.$internal}
-                            </p>
-                        )}
+                        <NonFieldError error={error} />
                         <TextArea
                             className={styles.statement}
                             // FIXME: use translation

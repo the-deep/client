@@ -14,6 +14,7 @@ import {
     Button,
 } from '@the-deep/deep-ui';
 
+import NonFieldError from '#components/ui/NonFieldError';
 import UserSelectInput from '#components/input/UserSelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -170,11 +171,7 @@ function AddUserModal(props: Props) {
             )}
         >
             {pendingAddAction && (<LoadingAnimation />)}
-            {error?.$internal && (
-                <p>
-                    {error?.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <UserSelectInput
                 className={styles.input}
                 queryParams={queryForUsers}

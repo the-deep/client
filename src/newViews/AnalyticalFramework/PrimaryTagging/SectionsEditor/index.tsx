@@ -22,6 +22,8 @@ import {
 } from '@togglecorp/toggle-form';
 import { randomString } from '@togglecorp/fujs';
 
+import NonFieldError from '#components/ui/NonFieldError';
+
 import { Section, PartialForm } from '../../types';
 import styles from './styles.scss';
 
@@ -93,11 +95,7 @@ function SectionInput(props: SectionInputProps) {
 
     return (
         <div className={className}>
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <TextInput
                 className={styles.title}
                 // FIXME: use translation
@@ -164,7 +162,7 @@ function SectionsEditor(props: Props) {
     const handleAdd = useCallback(
         () => {
             const oldSections = value.sections ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldSections.length >= SECTIONS_LIMIT) {
                 return;
             }
@@ -222,7 +220,6 @@ function SectionsEditor(props: Props) {
                     value={section}
                     onChange={onSectionsChange}
                     onRemove={onSectionsRemove}
-                    // eslint-disable-next-line max-len
                     error={error?.fields?.sections?.members?.[section.clientId]}
                 />
             ))}

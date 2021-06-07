@@ -161,7 +161,7 @@ export interface Matrix1dWidget extends BaseWidget {
     type: 'matrix-1d';
     data: Matrix1dData;
 }
-interface Matrix2dWidget extends BaseWidget {
+export interface Matrix2dWidget extends BaseWidget {
     type: 'matrix-2d';
     data: Matrix2Data;
 }

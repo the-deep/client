@@ -127,7 +127,7 @@ function Row(props: RowProps) {
 }
 
 export interface Props <N extends string>{
-    title: string;
+    title: string | undefined;
     className?: string;
 
     name: N,

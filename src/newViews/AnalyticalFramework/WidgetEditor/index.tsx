@@ -3,6 +3,8 @@ import React, { useCallback } from 'react';
 import { Widget, PartialForm } from '../types';
 import TextWidgetForm from './TextWidgetForm';
 import DateWidgetForm from './DateWidgetForm';
+import Matrix2dWidgetForm from './Matrix2dWidgetForm';
+import Matrix1dWidgetForm from './Matrix1dWidgetForm';
 
 type PartialWidget = PartialForm<
     Widget,
@@ -52,6 +54,26 @@ function WidgetEditor<T>(props: Props<T>) {
     if (initialValue.type === 'date') {
         return (
             <DateWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'matrix-1d') {
+        return (
+            <Matrix1dWidgetForm
+                initialValue={initialValue}
+                onChange={handleChange}
+                onSave={handleSave}
+                onCancel={onCancel}
+            />
+        );
+    }
+    if (initialValue.type === 'matrix-2d') {
+        return (
+            <Matrix2dWidgetForm
                 initialValue={initialValue}
                 onChange={handleChange}
                 onSave={handleSave}

@@ -5,7 +5,7 @@ import { Header } from '@the-deep/deep-ui';
 import styles from './styles.scss';
 
 export interface Props {
-    title: string;
+    title: string | undefined;
     className?: string;
     headerClassName?: string;
 
@@ -33,7 +33,8 @@ function WidgetWrapper(props: Props) {
     return (
         <div className={_cs(className, styles.widget)}>
             <Header
-                heading={title}
+                // FIXME: use strings
+                heading={title ?? 'Unnamed'}
                 className={_cs(headerClassName, styles.header)}
                 headingSize="small"
                 actionsContainerClassName={_cs(actionsContainerClassName, styles.actions)}

@@ -27,6 +27,7 @@ import {
 
 import ListView from '#rsu/../v2/View/ListView';
 import OrganizationList from '#components/general/OrganizationList';
+import NonFieldError from '#components/ui/NonFieldError';
 import { StakeholderType, stakeholderTypes } from '#components/general/AddStakeholdersButton';
 import { ProjectDetails } from '#typings';
 
@@ -164,11 +165,7 @@ function ProjectDetailsForm(props: Props) {
             onSubmit={createSubmitHandler(validate, onErrorSet, handleSubmit)}
         >
             {(pending || projectPatchPending) && <PendingMessage />}
-            {error?.$internal && (
-                <p>
-                    {error?.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <div className={styles.content}>
                 <div className={styles.main}>
                     <TextInput

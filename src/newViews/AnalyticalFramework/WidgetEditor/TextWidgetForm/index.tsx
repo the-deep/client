@@ -14,6 +14,8 @@ import {
 } from '@togglecorp/toggle-form';
 import { _cs } from '@togglecorp/fujs';
 
+import NonFieldError from '#components/ui/NonFieldError';
+
 import { TextWidget, PartialForm } from '../../types';
 import styles from './styles.scss';
 
@@ -75,11 +77,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
         <div
             className={_cs(className, styles.data)}
         >
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <TextInput
                 className={styles.input}
                 // FIXME: use translation
@@ -156,11 +154,7 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                     Save
                 </Button>
             </div>
-            {error?.$internal && (
-                <p>
-                    {error.$internal}
-                </p>
-            )}
+            <NonFieldError error={error} />
             <TextInput
                 className={styles.input}
                 // FIXME: use translation
@@ -174,7 +168,6 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                 name="data"
                 value={value.data}
                 onChange={onValueChange}
-                // eslint-disable-next-line max-len
                 error={error?.fields?.data}
             />
         </form>

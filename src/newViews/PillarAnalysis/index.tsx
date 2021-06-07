@@ -35,6 +35,7 @@ import { breadcrumb } from '#utils/safeCommon';
 import BackLink from '#dui/BackLink';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { processEntryFilters } from '#entities/entries';
+import NonFieldError from '#components/ui/NonFieldError';
 
 import notify from '#notify';
 import { useRequest, useLazyRequest } from '#utils/request';
@@ -467,7 +468,7 @@ function PillarAnalysis(props: Props) {
 
     const handleAnalyticalStatementAdd = useCallback(
         () => {
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if ((value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT) {
                 return;
             }
@@ -573,11 +574,7 @@ function PillarAnalysis(props: Props) {
             </FullPageHeader>
             <div className={styles.content}>
                 {pending && <LoadingAnimation />}
-                {error?.$internal && (
-                    <p>
-                        {error.$internal}
-                    </p>
-                )}
+                <NonFieldError error={error} />
                 <div className={styles.inputsContainer}>
                     <div className={styles.inputContainer}>
                         <Heading

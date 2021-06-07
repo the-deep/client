@@ -4,7 +4,7 @@ import { TextArea } from '@the-deep/deep-ui';
 import WidgetWrapper from '../../Widget';
 
 export interface Props <N extends string>{
-    title: string;
+    title: string | undefined;
     className?: string;
 
     name: N,

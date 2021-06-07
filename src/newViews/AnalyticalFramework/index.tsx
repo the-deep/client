@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { isNotDefined } from '@togglecorp/fujs';
 import FullPageHeader from '#dui/FullPageHeader';
@@ -36,21 +36,17 @@ interface Props {
     activeFramework: FrameworkFields;
 }
 
-type TabNames = 'frameworkDetails' | 'primaryTagging' | 'secondaryTagging' | 'review';
-
 function AnalyticalFramework(props: Props & PropsFromState) {
     const {
         frameworkId,
         activeFramework,
     } = props;
 
-    const [activeTab, setActiveTab] = useState<TabNames>('frameworkDetails');
-
     return (
         <div className={styles.analyticalFramework}>
             <Tabs
-                value={activeTab}
-                onChange={setActiveTab}
+                useHash
+                defaultHash="framework-details"
             >
                 <FullPageHeader
                     className={styles.header}
@@ -77,14 +73,14 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                 >
                     <TabList className={styles.tabList}>
                         <Tab
-                            name="frameworkDetails"
+                            name="framework-details"
                             className={styles.tab}
                             activeClassName={styles.activeTab}
                         >
                             {_ts('analyticalFramework', 'frameworkDetails')}
                         </Tab>
                         <Tab
-                            name="primaryTagging"
+                            name="primary-tagging"
                             className={styles.tab}
                             disabled={isNotDefined(frameworkId)}
                             activeClassName={styles.activeTab}
@@ -92,7 +88,7 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                             {_ts('analyticalFramework', 'primaryTagging')}
                         </Tab>
                         <Tab
-                            name="secondaryTagging"
+                            name="secondary-tagging"
                             className={styles.tab}
                             disabled={isNotDefined(frameworkId)}
                             activeClassName={styles.activeTab}
@@ -111,7 +107,7 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                 </FullPageHeader>
                 <TabPanel
                     className={styles.tabPanel}
-                    name="frameworkDetails"
+                    name="framework-details"
                 >
                     <FrameworkDetails
                         // className={styles.view}
@@ -120,7 +116,7 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                 </TabPanel>
                 <TabPanel
                     className={styles.tabPanel}
-                    name="primaryTagging"
+                    name="primary-tagging"
                 >
                     <PrimaryTagging
                         className={styles.view}
@@ -129,7 +125,7 @@ function AnalyticalFramework(props: Props & PropsFromState) {
                 </TabPanel>
                 <TabPanel
                     className={styles.tabPanel}
-                    name="secondaryTagging"
+                    name="secondary-tagging"
                 >
                     <SecondaryTagging
                         className={styles.view}
