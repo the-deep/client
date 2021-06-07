@@ -103,12 +103,28 @@ function WidgetList(props: Props) {
     return (
         <div className={_cs(className, styles.widgetList)}>
             {!props.sectionsDisabled && (
-                <AddItem
-                    name="section"
-                    // FIXME: use strings
-                    label="Sections"
-                    onAddClick={props.onSectionsEdit}
-                />
+                <>
+                    <AddItem
+                        name="section"
+                        // FIXME: use strings
+                        label="Sections"
+                        onAddClick={props.onSectionsEdit}
+                    />
+                    <AddItem
+                        name="matrix-1d"
+                        // FIXME: use strings
+                        label="Matrix1d Widget"
+                        className={styles.addMoreItem}
+                        onAddClick={handleAddClick}
+                    />
+                    <AddItem
+                        name="matrix-2d"
+                        // FIXME: use strings
+                        label="Matrix2d Widget"
+                        className={styles.addMoreItem}
+                        onAddClick={handleAddClick}
+                    />
+                </>
             )}
             <ExpandableContainer
                 // FIXME: use strings
@@ -127,20 +143,6 @@ function WidgetList(props: Props) {
                     name="date"
                     // FIXME: use strings
                     label="Date Widget"
-                    className={styles.addMoreItem}
-                    onAddClick={handleAddClick}
-                />
-                <AddItem
-                    name="matrix-1d"
-                    // FIXME: use strings
-                    label="Matrix1d Widget"
-                    className={styles.addMoreItem}
-                    onAddClick={handleAddClick}
-                />
-                <AddItem
-                    name="matrix-2d"
-                    // FIXME: use strings
-                    label="Matrix2d Widget"
                     className={styles.addMoreItem}
                     onAddClick={handleAddClick}
                 />
