@@ -168,7 +168,6 @@ function TextWidgetForm(props: TextWidgetFormProps) {
                 name="data"
                 value={value.data}
                 onChange={onValueChange}
-                // eslint-disable-next-line max-len
                 error={error?.fields?.data}
             />
         </form>

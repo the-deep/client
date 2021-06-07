@@ -159,19 +159,17 @@ function CellInput(props: CellInputProps) {
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
-            heading={(
-                <>
-                    {`${heading} ${errored ? '*' : ''}`}
-                    <QuickActionButton
-                        className={styles.removeButton}
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Cell"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <QuickActionButton
+                    className={styles.removeButton}
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Cell"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -229,7 +227,7 @@ function RowInput(props: RowInputProps) {
     const handleAdd = useCallback(
         () => {
             const oldCells = value.cells ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldCells.length >= CELLS_LIMIT) {
                 return;
             }
@@ -255,19 +253,17 @@ function RowInput(props: RowInputProps) {
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
-            heading={(
-                <>
-                    {`${heading} ${errored ? '*' : ''}`}
-                    <QuickActionButton
-                        className={styles.removeButton}
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Row"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <QuickActionButton
+                    className={styles.removeButton}
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Row"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -294,6 +290,7 @@ function RowInput(props: RowInputProps) {
                 className={className}
                 sub
                 heading="Cells"
+                horizontallyCompactContent
                 headerActions={(value.cells?.length ?? 0) < CELLS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -314,7 +311,6 @@ function RowInput(props: RowInputProps) {
                         value={cell}
                         onChange={onCellsChange}
                         onRemove={onCellsRemove}
-                        // eslint-disable-next-line max-len
                         error={error?.fields?.cells?.members?.[cell.clientId]}
                     />
                 ))}
@@ -351,7 +347,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const handleAdd = useCallback(
         () => {
             const oldRows = value?.rows ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldRows.length >= ROWS_LIMIT) {
                 return;
             }
@@ -375,6 +371,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 className={className}
                 sub
                 heading="Rows"
+                horizontallyCompactContent
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -395,7 +392,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         value={row}
                         onChange={onRowsChange}
                         onRemove={onRowsRemove}
-                        // eslint-disable-next-line max-len
                         error={error?.fields?.rows?.members?.[row.clientId]}
                     />
                 ))}
@@ -449,6 +445,7 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
         >
             <ContainerCard
                 heading={value.title ?? 'Unnamed'}
+                horizontallyCompactContent
                 headerActions={(
                     <>
                         <Button
@@ -486,7 +483,6 @@ function Matrix1dWidgetForm(props: Matrix1dWidgetFormProps) {
                     name="data"
                     value={value.data}
                     onChange={onValueChange}
-                    // eslint-disable-next-line max-len
                     error={error?.fields?.data}
                 />
             </ContainerCard>

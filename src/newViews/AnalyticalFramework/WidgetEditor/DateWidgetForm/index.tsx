@@ -169,7 +169,6 @@ function DateWidgetForm(props: DateWidgetFormProps) {
                 name="data"
                 value={value.data}
                 onChange={onValueChange}
-                // eslint-disable-next-line max-len
                 error={error?.fields?.data}
             />
         </form>

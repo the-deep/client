@@ -87,7 +87,7 @@ const columnSchema: ColumnSchema = {
     }),
     validation: (column) => {
         if ((column?.subColumns?.length ?? 0) <= 0) {
-            return 'At least one sub column is required.';
+            return 'At least one column is required.';
         }
         return undefined;
     },
@@ -218,19 +218,17 @@ function SubRowInput(props: SubRowInputProps) {
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
-            heading={(
-                <>
-                    {`${heading} ${errored ? '*' : ''}`}
-                    <QuickActionButton
-                        className={styles.removeButton}
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Sub Row"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <QuickActionButton
+                    className={styles.removeButton}
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Sub Row"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -288,7 +286,7 @@ function RowInput(props: RowInputProps) {
     const handleAdd = useCallback(
         () => {
             const oldSubRows = value.subRows ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldSubRows.length >= SUB_ROWS_LIMIT) {
                 return;
             }
@@ -314,19 +312,17 @@ function RowInput(props: RowInputProps) {
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
-            heading={(
-                <>
-                    {`${heading} ${errored ? '*' : ''}`}
-                    <QuickActionButton
-                        className={styles.removeButton}
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Row"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <QuickActionButton
+                    className={styles.removeButton}
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Row"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -353,6 +349,7 @@ function RowInput(props: RowInputProps) {
                 className={className}
                 sub
                 heading="Sub Rows"
+                horizontallyCompactContent
                 headerActions={(value.subRows?.length ?? 0) < SUB_ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -373,7 +370,6 @@ function RowInput(props: RowInputProps) {
                         value={subRow}
                         onChange={onSubRowsChange}
                         onRemove={onSubRowsRemove}
-                        // eslint-disable-next-line max-len
                         error={error?.fields?.subRows?.members?.[subRow.clientId]}
                     />
                 ))}
@@ -414,19 +410,17 @@ function SubColumnInput(props: SubColumnInputProps) {
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
-            heading={(
-                <>
-                    {`${heading} ${errored ? '*' : ''}`}
-                    <QuickActionButton
-                        className={styles.removeButton}
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Sub Column"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <QuickActionButton
+                    className={styles.removeButton}
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Sub Column"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -484,7 +478,7 @@ function ColumnInput(props: ColumnInputProps) {
     const handleAdd = useCallback(
         () => {
             const oldSubColumns = value.subColumns ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldSubColumns.length >= SUB_COLUMNS_LIMIT) {
                 return;
             }
@@ -510,19 +504,17 @@ function ColumnInput(props: ColumnInputProps) {
             // NOTE: newly created elements should be open, else closed
             defaultVisibility={!value.label}
             // FIXME: use strings
-            heading={(
-                <>
-                    {`${heading} ${errored ? '*' : ''}`}
-                    <QuickActionButton
-                        className={styles.removeButton}
-                        name={index}
-                        onClick={onRemove}
-                        // FIXME: use translation
-                        title="Remove Column"
-                    >
-                        <IoTrash />
-                    </QuickActionButton>
-                </>
+            heading={`${heading} ${errored ? '*' : ''}`}
+            headerActions={(
+                <QuickActionButton
+                    className={styles.removeButton}
+                    name={index}
+                    onClick={onRemove}
+                    // FIXME: use translation
+                    title="Remove Column"
+                >
+                    <IoTrash />
+                </QuickActionButton>
             )}
         >
             <NonFieldError error={error} />
@@ -549,6 +541,7 @@ function ColumnInput(props: ColumnInputProps) {
                 className={className}
                 sub
                 heading="Sub Columns"
+                horizontallyCompactContent
                 headerActions={(value.subColumns?.length ?? 0) < SUB_COLUMNS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -569,7 +562,6 @@ function ColumnInput(props: ColumnInputProps) {
                         value={subColumn}
                         onChange={onSubColumnsChange}
                         onRemove={onSubColumnsRemove}
-                        // eslint-disable-next-line max-len
                         error={error?.fields?.subColumns?.members?.[subColumn.clientId]}
                     />
                 ))}
@@ -606,7 +598,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const handleRowAdd = useCallback(
         () => {
             const oldRows = value?.rows ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldRows.length >= ROWS_LIMIT) {
                 return;
             }
@@ -631,7 +623,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
     const handleColumnAdd = useCallback(
         () => {
             const oldColumns = value?.columns ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldColumns.length >= COLUMNS_LIMIT) {
                 return;
             }
@@ -655,6 +647,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 className={className}
                 sub
                 heading="Rows"
+                horizontallyCompactContent
                 headerActions={(value?.rows?.length ?? 0) < ROWS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -675,7 +668,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         value={row}
                         onChange={onRowsChange}
                         onRemove={onRowsRemove}
-                        // eslint-disable-next-line max-len
                         error={error?.fields?.rows?.members?.[row.clientId]}
                     />
                 ))}
@@ -684,6 +676,7 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                 className={className}
                 sub
                 heading="Columns"
+                horizontallyCompactContent
                 headerActions={(value?.columns?.length ?? 0) < COLUMNS_LIMIT && (
                     <QuickActionButton
                         name={undefined}
@@ -704,7 +697,6 @@ function DataInput<K extends string>(props: DataInputProps<K>) {
                         value={column}
                         onChange={onColumnsChange}
                         onRemove={onColumnsRemove}
-                        // eslint-disable-next-line max-len
                         error={error?.fields?.columns?.members?.[column.clientId]}
                     />
                 ))}
@@ -758,6 +750,7 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
         >
             <ContainerCard
                 heading={value.title ?? 'Unnamed'}
+                horizontallyCompactContent
                 headerActions={(
                     <>
                         <Button
@@ -795,7 +788,6 @@ function Matrix2dWidgetForm(props: Matrix2dWidgetFormProps) {
                     name="data"
                     value={value.data}
                     onChange={onValueChange}
-                    // eslint-disable-next-line max-len
                     error={error?.fields?.data}
                 />
             </ContainerCard>

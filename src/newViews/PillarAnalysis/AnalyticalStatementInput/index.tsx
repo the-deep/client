@@ -99,7 +99,7 @@ function AnalyticalStatementInput(props: AnalyticalStatementInputProps) {
                     const movedItem = value.analyticalEntries
                         ?.find(item => item.entry === dropValue.entryId);
 
-                    // NOTE: Don't let users add more that certain entries
+                    // NOTE: Don't let users add more that certain items
                     if (
                         isNotDefined(movedItem)
                         && (value?.analyticalEntries?.length ?? 0) >= ENTRIES_LIMIT

@@ -162,7 +162,7 @@ function SectionsEditor(props: Props) {
     const handleAdd = useCallback(
         () => {
             const oldSections = value.sections ?? [];
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if (oldSections.length >= SECTIONS_LIMIT) {
                 return;
             }
@@ -220,7 +220,6 @@ function SectionsEditor(props: Props) {
                     value={section}
                     onChange={onSectionsChange}
                     onRemove={onSectionsRemove}
-                    // eslint-disable-next-line max-len
                     error={error?.fields?.sections?.members?.[section.clientId]}
                 />
             ))}

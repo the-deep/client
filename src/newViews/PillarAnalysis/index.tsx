@@ -468,7 +468,7 @@ function PillarAnalysis(props: Props) {
 
     const handleAnalyticalStatementAdd = useCallback(
         () => {
-            // NOTE: Don't let users add more that certain statements
+            // NOTE: Don't let users add more that certain items
             if ((value.analyticalStatements?.length ?? 0) >= STATEMENTS_LIMIT) {
                 return;
             }
